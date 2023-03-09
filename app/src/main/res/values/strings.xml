@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AirSignal_App</string>
+
+    <string name="social_login_info_naver_client_id">A5LH8xGwsu17CTaLZV2w</string>
+    <string name="social_login_info_naver_client_secret">P5j8dhBsRM</string>
+    <string name="social_login_info_naver_client_name">tekken5953@naver.com</string>
+</resources>
