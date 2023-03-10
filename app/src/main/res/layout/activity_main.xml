@@ -8,6 +8,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/currentSort"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="50dp"
+            android:text="현재 로그인 : "
+            android:gravity="center"
+            android:textSize="18sp"/>
+
         <Button
             android:id="@+id/signOutGoogleButton"
             android:layout_width="wrap_content"

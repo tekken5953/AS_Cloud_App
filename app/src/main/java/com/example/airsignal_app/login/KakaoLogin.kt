@@ -2,9 +2,11 @@ package com.example.airsignal_app.login
 
 import android.app.Activity
 import android.content.Intent
-import com.example.airsignal_app.MainActivity
 import com.example.airsignal_app.SignInActivity
+import com.example.airsignal_app.firebase.RDBLogcat
+import com.example.airsignal_app.util.EnterPage
 import com.kakao.sdk.auth.AuthApiClient
+import com.kakao.sdk.auth.TokenManagerProvider
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
@@ -20,9 +22,11 @@ import timber.log.Timber
  * @since : 2023-03-09 오전 11:29
  * @version : 1.0.0
  **/
+
 class KakaoLogin(mActivity: Activity) {
     private val activity = mActivity
     private val NATIVE_APP_KEY = "c6eb5158a7c0293e81b5ffdd83abadf0"
+    private val rdbLog = RDBLogcat("Log")
 
     fun getInstance() {
         KakaoSdk.init(activity, NATIVE_APP_KEY)
@@ -53,9 +57,11 @@ class KakaoLogin(mActivity: Activity) {
                 // 로그인 성공 부분
                 else {
                     token?.let {
-                        getTokenInfo(it)
+                        getTokenInfo()
                         enterMainPage()
                     }
+
+                    rdbLog.sendLogInWithPhoneForKakao(activity,"로그인 성공", "카카오톡", "수동")
                 }
             }
         } else {
@@ -68,14 +74,18 @@ class KakaoLogin(mActivity: Activity) {
     private val mCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
             Logger.t("TAG_LOGIN").e("로그인 실패 : Cause is $error")
+            rdbLog.sendLogToFail("로그인 실패", error.toString())
         } else {
             token?.let {
-                getTokenInfo(it)
+                getTokenInfo()
                 enterMainPage()
             }
+
+            rdbLog.sendLogInWithPhoneForKakao(activity,"로그인 성공", "카카오 이메일", "수동")
         }
     }
 
+    // 자동 로그인
     fun isValidToken() {
         if (AuthApiClient.instance.hasToken()) {
             UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
@@ -94,11 +104,14 @@ class KakaoLogin(mActivity: Activity) {
                         Logger.t("TAG_LOGIN")
                             .d(
                                 "카카오 자동로그인 성공\n" +
-                                        "user code is ${it.id}\n" +
-                                        "token is ${it.expiresIn}\nexpired in ${it.expiresIn}"
+                                        "user code is ${it}\n"
                             )
+
+
                     }
-                    getUserData()
+                    rdbLog.sendLogInWithPhoneForKakao(activity,"로그인 성공", "카카오", "자동")
+
+//                    getUserData()
                 }
             }
         } else {
@@ -107,28 +120,33 @@ class KakaoLogin(mActivity: Activity) {
         }
     }
 
-    private fun getTokenInfo(token: OAuthToken) {
-        Logger.t("TAG_LOGIN")
-            .d(
-                "카카오 로그인 성공\n" +
-                        "user code is ${token.idToken}\n" +
-                        "access is ${token.accessToken}\naccess was expired at ${token.accessTokenExpiresAt}\n" +
-                        "refresh is ${token.refreshToken}\nrefresh was expired at ${token.refreshTokenExpiresAt}"
-            )
+    private fun getTokenInfo() : OAuthToken? {
+        val token = TokenManagerProvider.instance.manager.getToken()
+        token?.let {
+            Logger.t("TAG_LOGIN")
+                .d(
+                    "카카오 로그인 성공\n" +
+                            "user code is ${it.idToken}\n" +
+                            "access is ${it.accessToken}\naccess was expired at ${it.accessTokenExpiresAt}\n" +
+                            "refresh is ${it.refreshToken}\nrefresh was expired at ${it.refreshTokenExpiresAt}"
+                )
+        }
+        return token
     }
 
     private fun enterMainPage() {
-        val intent = Intent(activity, MainActivity::class.java)
-        activity.startActivity(intent)
-        activity.finish()
+        EnterPage(activity).toMain("카카오")
     }
 
-    private fun getUserData() {
+    private fun getUserAllData() {
         UserApiClient.instance.me { user, _ ->
             if (user != null) {
-                Timber.tag("TAG_LOGIN").d(
-                    "$user"
-                )
+                val array = user.toString()
+                    .replace("User(", "\n------------------------------\n")
+                    .replace(user.toString().last().toString(), "\n------------------------------")
+                    .replace("=", ":")
+                    .replace(",", "\n")
+                Timber.tag("TAG_LOGIN").d(array)
             }
         }
     }
@@ -138,16 +156,22 @@ class KakaoLogin(mActivity: Activity) {
     }
 
 
-    fun signOut() {
-        UserApiClient.instance.logout { error ->
-            if (error != null) {
-                Logger.t("TAG_LOGIN").e("로그아웃에 실패함 : $error")
-            } else {
-                Logger.t("TAG_LOGIN").d("정상적으로 로그아웃 성공")
-                val intent = Intent(activity, SignInActivity::class.java)
-                activity.startActivity(intent)
-                activity.finish()
+    fun logout(phone: String) {
+        try {
+            UserApiClient.instance.logout { error ->
+                if (error != null) {
+                    Logger.t("TAG_LOGIN").e("로그아웃에 실패함 : $error")
+                    rdbLog.sendLogToFail("카카오 로그아웃 실패", error.toString())
+                } else {
+                    Logger.t("TAG_LOGIN").d("정상적으로 로그아웃 성공")
+                    rdbLog.sendLogOutWithPhone("로그아웃 성공", phone.replace("+82 ","0"), "카카오")
+                    val intent = Intent(activity, SignInActivity::class.java)
+                    activity.startActivity(intent)
+                    activity.finish()
+                }
             }
+        } catch (e: UninitializedPropertyAccessException) {
+            e.printStackTrace()
         }
     }
 

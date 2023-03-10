@@ -2,7 +2,6 @@ package com.example.airsignal_app
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -11,11 +10,11 @@ import com.example.airsignal_app.databinding.ActivitySignInBinding
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
+import com.example.airsignal_app.util.SharedPreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.kakao.sdk.common.util.Utility
 import com.orhanobut.logger.Logger
 import timber.log.Timber
-
 
 class SignInActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignInBinding
@@ -26,9 +25,6 @@ class SignInActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_in)
-
-        // 키해시 불러오기
-        Timber.tag("TAG_LOGIN").d("keyhash : ${Utility.getKeyHash(this)}")
 
         googleLogin = GoogleLogin(this)
         kakaoLogin = KakaoLogin(this)
@@ -68,4 +64,6 @@ class SignInActivity : AppCompatActivity() {
                 binding.googleLoginButton.isEnabled = true
             }
         }
+
+
 }

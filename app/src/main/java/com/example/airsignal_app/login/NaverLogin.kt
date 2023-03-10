@@ -1,17 +1,16 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
-import android.content.Intent
-import com.example.airsignal_app.MainActivity
 import com.example.airsignal_app.R
-import com.example.airsignal_app.SignInActivity
+import com.example.airsignal_app.firebase.RDBLogcat
+import com.example.airsignal_app.util.EnterPage
+import com.example.airsignal_app.util.SharedPreferenceManager
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
 import com.orhanobut.logger.Logger
-
 
 /**
  * @user : USER
@@ -25,6 +24,7 @@ class NaverLogin(mActivity: Activity) {
     private val naverClientSecret =
         activity.getString(R.string.social_login_info_naver_client_secret)
     private val naverClientName = activity.getString(R.string.social_login_info_naver_client_name)
+    private val rdbLog = RDBLogcat("Log")
 
     fun initializing() {
         NaverIdLoginSDK.initialize(activity, naverClientId, naverClientSecret, naverClientName)
@@ -34,22 +34,32 @@ class NaverLogin(mActivity: Activity) {
         NaverIdLoginSDK.authenticate(activity, oauthLoginCallback)
     }
 
-    fun logout() {
+    fun logout(phone: String) {
         NaverIdLoginSDK.logout()
-        enterLoginPage()
+//        enterLoginPage()
         Logger.t("TAG_LOGIN").d("네이버 아이디 로그아웃 성공")
+        rdbLog.sendLogOutWithPhone("로그아웃 성공",phone, "네이버")
     }
 
+    // 엑세스 토큰 불러오기
     fun getAccessToken(): String? {
         return NaverIdLoginSDK.getAccessToken()
+    }
+
+    // 엑세스 토큰 리프래시
+    suspend fun refreshToken() {
+        NidOAuthLogin().refreshToken()
     }
 
     val profileCallback = object : NidProfileCallback<NidProfileResponse> {
         override fun onSuccess(result: NidProfileResponse) {
             val userId = result.profile?.id
+            val phone = result.profile?.mobile.toString()
+            SharedPreferenceManager(activity).setString("phone_number",phone)
             Logger.t("TAG_LOGIN").d("네이버 로그인 성공")
             Logger.t("TAG_LOGIN").d(
                 "user id : $userId\n" +
+                        "mobile : $phone\n" +
                         "token Type : ${NaverIdLoginSDK.getTokenType()}\n" +
                         "access : $NaverIdLoginSDK.getAccessToken()\n" +
                         "refresh : ${NaverIdLoginSDK.getRefreshToken()}\n" +
@@ -57,6 +67,7 @@ class NaverLogin(mActivity: Activity) {
                         "state : ${NaverIdLoginSDK.getState()}"
             )
 
+            rdbLog.sendLogInWithPhone("로그인 성공",phone,"네이버","수동")
             enterMainPage()
         }
 
@@ -67,6 +78,7 @@ class NaverLogin(mActivity: Activity) {
                 "errorCode: $errorCode\n" +
                         "errorDescription: $errorDescription"
             )
+            rdbLog.sendLogToFail("네이버 로그인 실패", "$errorCode - $errorDescription")
         }
 
         override fun onError(errorCode: Int, message: String) {
@@ -96,15 +108,11 @@ class NaverLogin(mActivity: Activity) {
     }
 
     private fun enterMainPage() {
-        val intent = Intent(activity, MainActivity::class.java)
-        activity.startActivity(intent)
-        activity.finish()
+       EnterPage(activity).toMain("네이버")
     }
 
     private fun enterLoginPage() {
-        val intent = Intent(activity, SignInActivity::class.java)
-        activity.startActivity(intent)
-        activity.finish()
+       EnterPage(activity).toLogin()
     }
 
     private fun disconnectFromNaver() {

@@ -6,7 +6,9 @@ import androidx.activity.result.ActivityResultLauncher
 import com.example.airsignal_app.MainActivity
 import com.example.airsignal_app.R
 import com.example.airsignal_app.SignInActivity
+import com.example.airsignal_app.firebase.RDBLogcat
 import com.example.airsignal_app.util.LoggerUtil
+import com.example.airsignal_app.util.SharedPreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -22,11 +24,13 @@ import com.orhanobut.logger.Logger
  * @since : 2023-03-08 오후 3:47
  * @version : 1.0.0
  **/
+
 class GoogleLogin(mActivity: Activity) {
 
     private val activity = mActivity
     private var client: GoogleSignInClient
     private var lastLogin: GoogleSignInAccount? = null
+    private val rdbLog = RDBLogcat("Log")
 
     init {
         LoggerUtil().getInstance()
@@ -45,6 +49,7 @@ class GoogleLogin(mActivity: Activity) {
         client.signOut()
             .addOnCompleteListener {
                 Logger.t("TAG_LOGIN").d("정상적으로 로그아웃 성공")
+                saveLogoutStatus()
                 val intent = Intent(activity, SignInActivity::class.java)
                 activity.startActivity(intent)
                 activity.finish()
@@ -59,6 +64,7 @@ class GoogleLogin(mActivity: Activity) {
             .addOnCompleteListener {
                 handleSignInResult(it)
                 Logger.t("TAG_LOGIN").d("자동 로그인 됨")
+                saveLoginStatus()
             }
             .addOnFailureListener {
                 Logger.t("TAG_LOGIN").w("마지막 로그인 세션을 찾을 수 없습니다")
@@ -74,6 +80,14 @@ class GoogleLogin(mActivity: Activity) {
             .build()
     }
 
+    private fun saveLoginStatus() {
+        SharedPreferenceManager(activity).setString("last_login","구글")
+        rdbLog.sendLogInWithPhone("로그인 성공", "010-4180-5953", "구글", "수동")
+    }
+
+    private fun saveLogoutStatus() {
+        rdbLog.sendLogOutWithPhone("로그아웃 성공","010-4180-5953","구글")
+    }
 
     // 로그인 이벤트 성공
     fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
@@ -94,6 +108,7 @@ class GoogleLogin(mActivity: Activity) {
                 profile : $photo
                 """.trimIndent()
             )
+            saveLoginStatus()
             enterMainPage(activity, MainActivity())
         } catch (e: ApiException) {
             e.printStackTrace()

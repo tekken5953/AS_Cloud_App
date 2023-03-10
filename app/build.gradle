@@ -55,9 +55,10 @@ dependencies {
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:31.2.0')
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-messaging'
-    implementation 'com.google.firebase:firebase-messaging-directboot:23.1.2'
+    implementation 'com.google.firebase:firebase-analytics-ktx' // Analytics
+    implementation 'com.google.firebase:firebase-messaging' // FCM
+    implementation 'com.google.firebase:firebase-messaging-directboot:23.1.2' // FCM
+    implementation 'com.google.firebase:firebase-database-ktx' // RDB
 
     // logger
     implementation "com.orhanobut:logger:2.2.0"
