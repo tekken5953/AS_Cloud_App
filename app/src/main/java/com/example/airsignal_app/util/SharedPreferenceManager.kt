@@ -2,16 +2,12 @@ package com.example.airsignal_app.util
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.kakao.sdk.common.util.Utility
 import org.json.JSONException
 import org.json.JSONObject
-import timber.log.Timber
 
 /**
- * @user : USER
- * @autor : Lee Jae Young
+ * @author : Lee Jae Young
  * @since : 2023-03-07 오전 9:43
- * @version : 1.0.0
  **/
 
 class SharedPreferenceManager(mContext: Context) {

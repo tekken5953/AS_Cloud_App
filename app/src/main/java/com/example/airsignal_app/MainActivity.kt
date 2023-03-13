@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.example.airsignal_app.IgnoredKeyFile.lastLoginPhone
+import com.example.airsignal_app.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
@@ -12,9 +14,9 @@ import com.example.airsignal_app.util.SharedPreferenceManager
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var googleLogin: GoogleLogin
-    private lateinit var kakakoLogin: KakaoLogin
-    private lateinit var naverLogin: NaverLogin
+    private val googleLogin: GoogleLogin by lazy { GoogleLogin(this) }
+    private val kakakoLogin: KakaoLogin by lazy { KakaoLogin(this) }
+    private val naverLogin: NaverLogin by lazy { NaverLogin(this) }
     private var phoneNumber: String = ""
 
 
@@ -22,28 +24,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        val lastLogin = SharedPreferenceManager(this).getString("last_login")
+        val lastLogin = SharedPreferenceManager(this).getString(lastLoginPlatform)
 
         @SuppressLint("SetTextI18n")
         binding.currentSort.text = "현재 로그인 : $lastLogin"
 
-        googleLogin = GoogleLogin(this)
-        kakakoLogin = KakaoLogin(this)
-        naverLogin = NaverLogin(this)
-
-        phoneNumber = SharedPreferenceManager(this).getString("phone_number")
+        phoneNumber = SharedPreferenceManager(this).getString(lastLoginPhone)
 
         binding.signOutGoogleButton.setOnClickListener {
             googleLogin.logout()
         }
 
         binding.signOutKakaoButton.setOnClickListener {
-            kakakoLogin.getInstance()
+            kakakoLogin.initialize()
             kakakoLogin.logout(phoneNumber)
         }
 
         binding.signOutNaverButton.setOnClickListener {
-            naverLogin.initializing()
+            naverLogin.initialize()
             naverLogin.logout(phoneNumber)
         }
     }

@@ -2,17 +2,18 @@ package com.example.airsignal_app.util
 
 import android.app.Activity
 import android.content.Intent
+import com.example.airsignal_app.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.MainActivity
 import com.example.airsignal_app.SignInActivity
 
 /**
- * @user : USER
- * @autor : Lee Jae Young
+ *
+ * @author : Lee Jae Young
  * @since : 2023-03-10 오전 10:55
- * @version : 1.0.0
+ *
+ * 페이지의 이동을 모아놓은 클래스
  **/
 
-/** 페이지의 이동을 모아놓은 클래스 **/
 class EnterPage(mActivity: Activity) {
     private val activity = mActivity
 
@@ -22,7 +23,7 @@ class EnterPage(mActivity: Activity) {
      * @param sort 간편로그인의 분류 ex) "카카오"
      */
     fun toMain(sort: String) {
-        SharedPreferenceManager(activity).setString("last_login", sort)
+        SharedPreferenceManager(activity).setString(lastLoginPlatform, sort)
         val intent = Intent(activity, MainActivity::class.java)
         activity.startActivity(intent)
         activity.finish()

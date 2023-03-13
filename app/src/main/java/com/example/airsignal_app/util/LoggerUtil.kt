@@ -11,10 +11,8 @@ import com.orhanobut.logger.Logger
 import timber.log.Timber
 
 /**
- * @user : USER
- * @autor : Lee Jae Young
+ * @author : Lee Jae Young
  * @since : 2023-03-06 오후 5:10
- * @version : 1.0.0
  **/
 class LoggerUtil {
     fun getInstance() {

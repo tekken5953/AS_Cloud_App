@@ -66,9 +66,9 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
     //server
-    implementation 'com.squareup.retrofit2:retrofit:2.7.2'
-    implementation 'com.squareup.retrofit2:converter-gson:2.7.2'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
     implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter'// String 처리시
+    testImplementation 'org.junit.jupiter:junit-jupiter' // String 처리시
 }

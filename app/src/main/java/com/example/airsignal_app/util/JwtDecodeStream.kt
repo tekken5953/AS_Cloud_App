@@ -3,14 +3,8 @@ package com.example.airsignal_app.util
 import org.json.JSONObject
 import java.util.*
 
-/**
- * @user : USER
- * @autor : Lee Jae Young
- * @since : 2023-03-10 오전 9:10
- * @version : 1.0.0
- **/
 
-/**
+/*
  * JWT Payload 명세
  * KAKAO
  * {
@@ -25,8 +19,12 @@ import java.util.*
 }
  */
 
-
-/**JWT 토큰의 payload 로 전달된 데이터 추출 **/
+/**
+ *
+ * @author : Lee Jae Young
+ * @since : 2023-03-10 오전 9:10
+ *
+ * JWT 토큰의 payload 로 전달된 데이터 추출 **/
 class JwtDecodeStream {
 
     /**

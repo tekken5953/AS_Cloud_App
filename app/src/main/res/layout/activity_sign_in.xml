@@ -35,8 +35,5 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"/>
 
-
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
