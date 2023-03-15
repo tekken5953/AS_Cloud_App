@@ -4,10 +4,16 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.124" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/add.xml" value="0.198" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/add_device_dialog_bottom_radius.xml" value="0.198" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/add_device_field_bg.xml" value="0.198" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/add_device_top_guide_bg.xml" value="0.198" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/cancel.xml" value="0.198" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/ic_launcher_background.xml" value="0.124" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/activity_login.xml" value="0.24010416666666667" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/activity_sign_in.xml" value="0.2299349240780911" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/add_device_dialog.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.124" />
       </map>
     </option>

@@ -12,6 +12,7 @@ import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.util.SharedPreferenceManager
 
+
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val googleLogin: GoogleLogin by lazy { GoogleLogin(this) }
@@ -43,6 +44,11 @@ class MainActivity : AppCompatActivity() {
         binding.signOutNaverButton.setOnClickListener {
             naverLogin.initialize()
             naverLogin.logout(phoneNumber)
+        }
+
+        binding.mainDialogBtn.setOnClickListener {
+            val bottomSheet = AddDeviceDialog()
+            bottomSheet.show(supportFragmentManager, bottomSheet.tag)
         }
     }
 }

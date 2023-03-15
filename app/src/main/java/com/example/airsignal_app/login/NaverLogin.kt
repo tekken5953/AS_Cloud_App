@@ -40,10 +40,12 @@ class NaverLogin(mActivity: Activity) {
 
     /** 로그아웃 + 기록 저장 */
     fun logout(phone: String) {
-        NaverIdLoginSDK.logout()
-//        enterLoginPage()
-        Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")
-        rdbLog.sendLogOutWithPhone("로그아웃 성공", phone, "네이버")
+        if (getAccessToken() != null) {
+            NaverIdLoginSDK.logout()
+            enterLoginPage()
+            Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")
+            rdbLog.sendLogOutWithPhone("로그아웃 성공", phone, "네이버")
+        }
     }
 
     /** 엑세스 토큰 불러오기

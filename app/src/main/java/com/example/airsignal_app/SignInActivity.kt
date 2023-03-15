@@ -34,7 +34,7 @@ class SignInActivity : AppCompatActivity() {
 //        // 구글 자동 로그인
 //        googleLogin.checkSilenceLogin()
 //        // 카카오 자동 로그인
-        kakaoLogin.isValidToken()
+//        kakaoLogin.isValidToken()
 
         binding.googleLoginButton.setOnClickListener {
             googleLogin.login(binding.googleLoginButton, startActivityResult)
@@ -63,6 +63,4 @@ class SignInActivity : AppCompatActivity() {
                 binding.googleLoginButton.isEnabled = true
             }
         }
-
-
 }

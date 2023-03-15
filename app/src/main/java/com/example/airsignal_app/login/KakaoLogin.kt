@@ -2,7 +2,7 @@ package com.example.airsignal_app.login
 
 import android.app.Activity
 import android.content.Intent
-import com.example.airsignal_app.IgnoredKeyFile.NATIVE_APP_KEY
+import com.example.airsignal_app.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import com.example.airsignal_app.IgnoredKeyFile.TAG_LOGIN
 import com.example.airsignal_app.SignInActivity
 import com.example.airsignal_app.firebase.RDBLogcat
@@ -28,7 +28,7 @@ class KakaoLogin(mActivity: Activity) {
     private val rdbLog = RDBLogcat("Log")
 
     fun initialize  () {
-        KakaoSdk.init(activity, NATIVE_APP_KEY)
+        KakaoSdk.init(activity, KAKAO_NATIVE_APP_KEY)
     }
 
     /** 카카오톡 설치 확인 **/

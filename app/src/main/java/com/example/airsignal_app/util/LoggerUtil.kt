@@ -1,10 +1,9 @@
 package com.example.airsignal_app.util
 
 import android.content.Context
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import com.google.gson.JsonArray
 import com.kakao.sdk.common.util.Utility
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
@@ -32,9 +31,7 @@ class LoggerUtil {
     fun logJsonTimberDebug(tag: String, json: String) {
         Timber.tag(tag).d(
             GsonBuilder().setPrettyPrinting().create().toJson(
-                GsonBuilder().setPrettyPrinting().create().toJson(
-                    json
-                )
+                Gson().fromJson(json, JsonArray::class.java)
             )
         )
     }
@@ -42,7 +39,7 @@ class LoggerUtil {
     fun logJsonTimberInfo(tag: String, json: String) {
         Timber.tag(tag).i(
             GsonBuilder().setPrettyPrinting().create().toJson(
-                JsonParser().parse(json)
+                Gson().fromJson(json, JsonArray::class.java)
             )
         )
     }
@@ -50,7 +47,7 @@ class LoggerUtil {
     fun logJsonTimberWarning(tag: String, json: String) {
         Timber.tag(tag).w(
             GsonBuilder().setPrettyPrinting().create().toJson(
-                JsonParser().parse(json)
+                Gson().fromJson(json, JsonArray::class.java)
             )
         )
     }
@@ -58,7 +55,7 @@ class LoggerUtil {
     fun logJsonTimberError(tag: String, json: String) {
         Timber.tag(tag).e(
             GsonBuilder().setPrettyPrinting().create().toJson(
-                JsonParser().parse(json)
+                Gson().fromJson(json, JsonArray::class.java)
             )
         )
     }
