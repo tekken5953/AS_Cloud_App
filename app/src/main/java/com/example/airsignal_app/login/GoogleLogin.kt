@@ -7,9 +7,10 @@ import com.example.airsignal_app.IgnoredKeyFile.TAG_LOGIN
 import com.example.airsignal_app.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.IgnoredKeyFile.temporalPhoneNumber
-import com.example.airsignal_app.MainActivity
+import com.example.airsignal_app.TestPageActivity
 import com.example.airsignal_app.SignInActivity
 import com.example.airsignal_app.firebase.RDBLogcat
+import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.util.LoggerUtil
 import com.example.airsignal_app.util.SharedPreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -119,16 +120,14 @@ class GoogleLogin(mActivity: Activity) {
                 """.trimIndent()
             )
             saveLoginStatus()
-            enterMainPage(activity, MainActivity())
+            enterMainPage()
         } catch (e: ApiException) {
             e.printStackTrace()
         }
     }
 
     /** 메인 페이지로 이동 **/
-    private fun enterMainPage(sendActivity: Activity, receiveActivity: Activity) {
-        val intent = Intent(sendActivity, receiveActivity::class.java)
-        activity.startActivity(intent)
-        activity.finish()
+    private fun enterMainPage() {
+        EnterPage(activity).toLogin()
     }
 }

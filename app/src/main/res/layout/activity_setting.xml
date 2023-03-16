@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data></data>
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/settingTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="35dp"
+                android:text="앱 설정"
+                android:textColor="@color/dummy_gray_dark"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/settingUserTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="계정"
+                android:textColor="@color/dummy_gray_medium"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/settingTitle"
+                app:layout_constraintTop_toBottomOf="@+id/settingTitle" />
+
+            <View
+                android:id="@+id/settingLine1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="24dp"
+                android:background="@color/dummy_gray_dark"
+                app:layout_constraintTop_toBottomOf="@+id/settingUserTitle" />
+
+            <TextView
+                android:id="@+id/settingUserText"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center_vertical"
+                android:text="admin@airsignal.kr"
+                android:textColor="@color/dummy_gray_dark"
+                android:textSize="19sp"
+                app:layout_constraintTop_toBottomOf="@+id/settingLine1" />
+
+            <TextView
+                android:id="@+id/settingThemeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="테마"
+                android:textColor="@color/dummy_gray_medium"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/settingTitle"
+                app:layout_constraintTop_toBottomOf="@+id/settingUserText" />
+
+            <View
+                android:id="@+id/settingLine2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="24dp"
+                android:background="@color/dummy_gray_dark"
+                app:layout_constraintTop_toBottomOf="@+id/settingThemeTitle" />
+
+            <TableRow
+                android:id="@+id/settingThemeTR1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="24dp"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                app:layout_constraintTop_toBottomOf="@+id/settingLine2">
+
+                <TextView
+                    android:id="@+id/settingThemeThemeLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical|start"
+                    android:text="테마설정"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="19sp" />
+
+                <TextView
+                    android:id="@+id/settingThemeThemeRight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical|end"
+                    android:text="기기설정"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="19sp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/settingThemeTR2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="24dp"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                app:layout_constraintTop_toBottomOf="@+id/settingThemeTR1">
+
+                <TextView
+                    android:id="@+id/settingThemeLangLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical|start"
+                    android:text="언어설정"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="19sp" />
+
+                <TextView
+                    android:id="@+id/settingThemeLangRight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical|end"
+                    android:text="한국어"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="19sp" />
+            </TableRow>
+
+            <TextView
+                android:id="@+id/settingNotiTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="테마"
+                android:textColor="@color/dummy_gray_medium"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/settingTitle"
+                app:layout_constraintTop_toBottomOf="@+id/settingThemeTR2" />
+
+            <View
+                android:id="@+id/settingLine3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="24dp"
+                android:background="@color/dummy_gray_dark"
+                app:layout_constraintTop_toBottomOf="@+id/settingNotiTitle" />
+
+            <TableRow
+                android:id="@+id/settingNotiTR1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="24dp"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                app:layout_constraintTop_toBottomOf="@+id/settingLine3">
+
+                <TextView
+                    android:id="@+id/settingNotiPMLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical|start"
+                    android:text="언어설정"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="19sp" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/settingNotiPMRight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:checked="true"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
+                    android:gravity="center_vertical|end"
+                    android:thumb="@drawable/switch_thumb"
+                    app:track="@drawable/switch_selector"/>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/settingNotiTR2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="24dp"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                app:layout_constraintTop_toBottomOf="@+id/settingNotiTR1">
+
+                <TextView
+                    android:id="@+id/settingNotiIgnoreLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical|start"
+                    android:text="방해 금지 시간"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="19sp" />
+
+                <TextView
+                    android:id="@+id/settingNotiIgnoreRight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical|end"
+                    android:text="오전 7:00 ~ 오전 11:00"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="19sp" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/settingNotiTR3"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="24dp"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                app:layout_constraintTop_toBottomOf="@+id/settingNotiTR2">
+
+                <TextView
+                    android:id="@+id/settingNotiEventLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical|start"
+                    android:text="이벤트 알림 받기"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="19sp" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/settingNotiEventRight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.5"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="10dp"
+                    android:gravity="center_vertical|end"
+                    android:thumb="@drawable/switch_thumb"
+                    app:track="@drawable/switch_selector" />
+            </TableRow>
+
+            <TextView
+                android:id="@+id/settingCustomerTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:text="테마"
+                android:textColor="@color/dummy_gray_medium"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="@+id/settingTitle"
+                app:layout_constraintTop_toBottomOf="@+id/settingNotiTR3" />
+
+            <View
+                android:id="@+id/settingLine4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="24dp"
+                android:background="@color/dummy_gray_dark"
+                app:layout_constraintTop_toBottomOf="@+id/settingCustomerTitle" />
+
+            <TextView
+                android:id="@+id/settingIAQ"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center_vertical"
+                android:text="자주 묻는 질문"
+                android:textColor="@color/dummy_gray_medium"
+                android:textSize="19sp"
+                app:layout_constraintTop_toBottomOf="@+id/settingLine4" />
+
+            <TextView
+                android:id="@+id/settingNotice"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center_vertical"
+                android:text="공지사항"
+                android:textColor="@color/dummy_gray_medium"
+                android:textSize="19sp"
+                app:layout_constraintTop_toBottomOf="@+id/settingIAQ" />
+
+            <TextView
+                android:id="@+id/settingAppData"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="30dp"
+                android:gravity="center_vertical"
+                android:text="앱 정보"
+                android:textColor="@color/dummy_gray_medium"
+                android:textSize="19sp"
+                app:layout_constraintTop_toBottomOf="@+id/settingNotice"/>
+
+            <TextView
+                android:id="@+id/settingLogOut"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="30dp"
+                android:gravity="center_vertical"
+                android:text="로그아웃"
+                android:textColor="@color/dummy_gray_medium"
+                android:textSize="19sp"
+                app:layout_constraintTop_toBottomOf="@+id/settingAppData"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

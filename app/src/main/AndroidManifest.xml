@@ -16,7 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AirSignal_App">
         <activity
-            android:name=".AddDeviceDialog"
+            android:name=".MyDeviceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
@@ -42,7 +45,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".TestPageActivity"
             android:exported="false" />
     </application>
 
