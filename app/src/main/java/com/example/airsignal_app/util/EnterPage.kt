@@ -4,8 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import com.example.airsignal_app.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.MainActivity
-import com.example.airsignal_app.TestPageActivity
-import com.example.airsignal_app.SignInActivity
 
 /**
  *
@@ -25,7 +23,7 @@ class EnterPage(mActivity: Activity) {
      */
     fun toMain(sort: String) {
         SharedPreferenceManager(activity).setString(lastLoginPlatform, sort)
-        val intent = Intent(activity, TestPageActivity::class.java)
+        val intent = Intent(activity, MainActivity::class.java)
         activity.startActivity(intent)
         activity.finish()
     }

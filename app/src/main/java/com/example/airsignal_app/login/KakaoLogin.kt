@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import com.example.airsignal_app.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import com.example.airsignal_app.IgnoredKeyFile.TAG_LOGIN
-import com.example.airsignal_app.SignInActivity
+import com.example.airsignal_app.LoginActivity
 import com.example.airsignal_app.firebase.RDBLogcat
 import com.example.airsignal_app.util.EnterPage
 import com.kakao.sdk.auth.AuthApiClient
@@ -136,7 +136,7 @@ class KakaoLogin(mActivity: Activity) {
     }
 
     private fun enterMainPage() {
-        EnterPage(activity).toMain("카카오")
+        EnterPage(activity).toMain("kakao")
     }
 
     private fun getUserAllData() {
@@ -166,7 +166,7 @@ class KakaoLogin(mActivity: Activity) {
                 } else {
                     Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
                     rdbLog.sendLogOutWithPhone("로그아웃 성공", phone.replace("+82 ","0"), "카카오")
-                    val intent = Intent(activity, SignInActivity::class.java)
+                    val intent = Intent(activity, LoginActivity::class.java)
                     activity.startActivity(intent)
                     activity.finish()
                 }

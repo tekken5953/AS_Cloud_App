@@ -4,4 +4,7 @@
     <color name="dummy_gray_medium">#88ffffff</color>
     <color name="dummy_gray_line">#79ffffff</color>
     <color name="dummy_gray_light">#66ffffff</color>
+
+    <color name="mode_color_text">#FFFFFFFF</color>
+    <color name="mode_color_view">#FF000000</color>
 </resources>

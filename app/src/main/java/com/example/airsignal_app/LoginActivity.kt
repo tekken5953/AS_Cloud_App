@@ -5,16 +5,19 @@ import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import com.example.airsignal_app.IgnoredKeyFile.TAG_LOGIN
 import com.example.airsignal_app.databinding.ActivitySignInBinding
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
+import com.example.airsignal_app.util.ConvertDataType
+import com.example.airsignal_app.util.SharedPreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.orhanobut.logger.Logger
 
-class SignInActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignInBinding
     private lateinit var googleLogin: GoogleLogin
     private lateinit var kakaoLogin: KakaoLogin

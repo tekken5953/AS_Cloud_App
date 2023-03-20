@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="35dp"
-        android:text="제품등록"
+        android:text="@string/new_device"
         android:textSize="19sp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
@@ -18,12 +18,12 @@
         android:id="@+id/inputSerialCancel"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/cancel"
         android:layout_alignTop="@+id/inputSerialTitle"
         android:layout_alignBottom="@+id/inputSerialTitle"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="24dp"/>
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="24dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/cancel" />
 
     <TextView
         android:id="@+id/inputSerialContent"
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="75dp"
-        android:text="제품의 시리얼 번호를\n입력해주세요"
+        android:text="@string/input_serial"
         android:textColor="@color/dummy_gray_dark"
         android:textSize="25sp"
         android:textStyle="bold"
@@ -43,7 +43,7 @@
         android:layout_height="70dp"
         android:layout_below="@+id/inputSerialContent"
         android:layout_marginVertical="150dp"
-        android:hint="제품 시리얼 번호"
+        android:hint="@string/serial_number"
         android:textColorHint="@color/dummy_gray_dark"
         android:textSize="18sp"
         android:layout_marginStart="24dp"
@@ -57,7 +57,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/add_device_button_bg"
-        android:text="다음"
+        android:text="@string/next"
         android:layout_marginTop="40dp"
         android:textColor="@color/dummy_gray_dark"
         android:textSize="20sp"

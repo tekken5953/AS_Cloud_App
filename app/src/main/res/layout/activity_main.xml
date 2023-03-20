@@ -6,14 +6,15 @@
     <data>
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.drawerlayout.widget.DrawerLayout
             android:id="@+id/mainDrawerLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            tools:openDrawer="start">
 
             <com.google.android.material.navigation.NavigationView
                 android:id="@+id/mainNavView"
@@ -23,6 +24,7 @@
                 android:fitsSystemWindows="true"
                 app:headerLayout="@layout/nav_header"
                 app:menu="@menu/nav_menu"
+                app:itemTextAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:itemTextColor="@color/dummy_gray_dark"/>
 
         </androidx.drawerlayout.widget.DrawerLayout>
@@ -30,7 +32,8 @@
             <ScrollView
                 android:id="@+id/mainScrollView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:overScrollMode="never">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -52,7 +55,7 @@
                         android:id="@+id/mainGpsTitleTv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="분당구 야탑동"
+                        android:text="@string/main_gps_title"
                         android:textSize="18sp"
                         android:drawablePadding="5dp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -92,7 +95,7 @@
                         android:id="@+id/mainMinMaxTempTv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="최저: 17˚\t\t\t\t최고: 30˚"
+                        android:text="@string/main_min_max_temp"
                         android:textSize="18sp"
                         android:layout_marginTop="15dp"
                         android:gravity="center"
@@ -104,7 +107,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTempTv"
-                        android:text="2023년 03월 14일 화요일"
+                        android:text="@string/main_today_date"
                         android:textSize="17sp"
                         android:textColor="@color/dummy_gray_medium"
                         android:layout_marginTop="18dp"/>
@@ -131,7 +134,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="5㎧\n풍속"
+                            android:text="@string/main_wind_speed"
                             android:textSize="16sp"
                             android:gravity="center"
                             app:drawableTopCompat="@drawable/dummy"
@@ -140,7 +143,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="10%\n습도"
+                            android:text="@string/main_humid"
                             android:textSize="16sp"
                             android:layout_marginStart="30dp"
                             android:gravity="center"
@@ -150,7 +153,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="20%\n강수확률"
+                            android:text="@string/main_rain_chance"
                             android:textSize="16sp"
                             android:gravity="center"
                             android:layout_marginStart="30dp"
@@ -162,7 +165,7 @@
                         android:id="@+id/mainTodayWeatherTitleTv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="오늘의 날씨"
+                        android:text="@string/main_today_weather"
                         android:textSize="21sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toBottomOf="@+id/mainTable2"
@@ -182,7 +185,7 @@
                             android:id="@+id/mainTodayWeatherPM10"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="미세먼지\t\t매우나쁨"
+                            android:text="@string/main_today_pm_10"
                             android:background="@drawable/today_weather_box_bg"
                             android:textSize="16.5sp"/>
 
@@ -190,7 +193,7 @@
                             android:id="@+id/mainTodayWeatherPM2.5"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="초미세먼지\t\t매우나쁨"
+                            android:text="@string/main_today_pm_2p5"
                             android:layout_marginStart="12dp"
                             android:lines="1"
                             android:background="@drawable/today_weather_box_bg"
@@ -213,7 +216,5 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </ScrollView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
+    </RelativeLayout>
 </layout>
