@@ -120,7 +120,7 @@ class NaverLogin(mActivity: Activity) {
     }
 
     private fun enterMainPage() {
-       EnterPage(activity).toMain("네이버")
+       EnterPage(activity).toMain("naver")
     }
 
     private fun enterLoginPage() {

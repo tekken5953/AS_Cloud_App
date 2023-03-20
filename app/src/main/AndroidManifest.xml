@@ -16,6 +16,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AirSignal_App">
         <activity
+            android:name=".SplashActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:theme="@style/Theme.AirSignal_App.Fullscreen" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".SettingActivity"
+            android:exported="false" />
+        <activity
             android:name=".MyDeviceActivity"
             android:exported="false" />
         <activity
@@ -36,14 +50,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignInActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:name=".LoginActivity"
+            android:exported="false"/>
         <activity
             android:name=".TestPageActivity"
             android:exported="false" />

@@ -17,4 +17,9 @@
         <!-- 상태바까지 view를 보여줄 수 있다-->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
+
+    <style name="ThemeOverlay.AirSignal_App.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/light_blue_900</item>
+        <item name="fullscreenTextColor">@color/light_blue_A400</item>
+    </style>
 </resources>

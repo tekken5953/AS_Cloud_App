@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,49 +8,112 @@
     tools:context=".MyDeviceActivity">
 
     <TextView
-        android:id="@+id/addDeviceTitleText"
+        android:id="@+id/myDeviceTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="35dp"
-        android:text="제품등록"
+        android:text="@string/my_device_title"
         android:textSize="19sp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
-        android:id="@+id/addDeviceBack"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="24dp"
+        android:id="@+id/myDeviceBack"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:src="@drawable/back"
-        app:layout_constraintBottom_toBottomOf="@+id/addDeviceTitleText"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/addDeviceTitleText" />
+        app:layout_constraintTop_toTopOf="@+id/myDeviceTitle"
+        app:layout_constraintBottom_toBottomOf="@+id/myDeviceTitle"
+        android:layout_marginStart="24dp"/>
 
-    <FrameLayout
-        android:id="@+id/addDeviceFrame"
+    <TextView
+        android:id="@+id/myDeviceName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/myDeviceTitle"
+        android:text="@string/as_eye"
+        android:textSize="19sp"
+        android:gravity="center"
+        android:layout_marginTop="30dp"/>
+
+    <LinearLayout
+        android:id="@+id/myDeviceCqiTr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/myDeviceName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/myDeviceVirusTr"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="180dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="180dp"
-        android:background="@drawable/add_device_field_bg"
-        android:padding="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addDeviceTitleText">
+        android:layout_marginTop="15dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:text="30"
+            android:lines="1"
+            android:textSize="20sp"
+            android:gravity="center"/>
 
         <TextView
-            android:id="@+id/addDeviceFrameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawablePadding="10dp"
-            android:text="제품을 등록해주세요"
-            android:textSize="19sp"
-            app:drawableTopCompat="@drawable/add" />
+            android:text="@string/aqi"
+            android:textSize="18sp"
+            android:layout_marginTop="15dp"/>
+    </LinearLayout>
 
-    </FrameLayout>
+    <LinearLayout
+        android:id="@+id/myDeviceVirusTr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/myDeviceName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/myDeviceCqiTr"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="15dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:text="30"
+            android:lines="1"
+            android:textSize="20sp"
+            android:gravity="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/virus"
+            android:textSize="18sp"
+            android:layout_marginTop="15dp"/>
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/myDeviceDataRv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/myDeviceVirusTr"
+        android:layout_margin="24dp"
+        android:scrollbars="none"
+        android:gravity="center"
+        tools:listitem="@layout/list_item_data_mydevice"
+        android:numColumns="3"/>
+
+    <ImageView
+        android:id="@+id/myDeviceAddDevice"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/myDeviceBack"
+        app:layout_constraintBottom_toBottomOf="@+id/myDeviceBack"
+        android:layout_marginEnd="24dp"/>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

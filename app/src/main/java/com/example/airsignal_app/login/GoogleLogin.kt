@@ -7,8 +7,7 @@ import com.example.airsignal_app.IgnoredKeyFile.TAG_LOGIN
 import com.example.airsignal_app.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.IgnoredKeyFile.temporalPhoneNumber
-import com.example.airsignal_app.TestPageActivity
-import com.example.airsignal_app.SignInActivity
+import com.example.airsignal_app.LoginActivity
 import com.example.airsignal_app.firebase.RDBLogcat
 import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.util.LoggerUtil
@@ -53,7 +52,7 @@ class GoogleLogin(mActivity: Activity) {
             .addOnCompleteListener {
                 Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
                 saveLogoutStatus()
-                val intent = Intent(activity, SignInActivity::class.java)
+                val intent = Intent(activity, LoginActivity::class.java)
                 activity.startActivity(intent)
                 activity.finish()
             }
@@ -89,7 +88,7 @@ class GoogleLogin(mActivity: Activity) {
      *
      * TODO 구글로그인은 아직 테스팅 단계라 임시로 파라미터를 설정**/
     private fun saveLoginStatus() {
-        SharedPreferenceManager(activity).setString(lastLoginPlatform,"구글")
+        SharedPreferenceManager(activity).setString(lastLoginPlatform,"google")
         rdbLog.sendLogInWithPhone("로그인 성공", temporalPhoneNumber, "구글", "수동")
     }
 
