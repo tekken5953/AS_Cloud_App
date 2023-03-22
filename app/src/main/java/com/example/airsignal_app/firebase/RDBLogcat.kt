@@ -1,14 +1,13 @@
 package com.example.airsignal_app.firebase
 
-import android.annotation.SuppressLint
 import android.app.Activity
-import com.example.airsignal_app.IgnoredKeyFile.lastLoginPhone
+import com.example.airsignal_app.util.IgnoredKeyFile.lastLoginPhone
+import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
+import com.example.airsignal_app.util.ConvertDataType.millsToString
 import com.example.airsignal_app.util.SharedPreferenceManager
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.kakao.sdk.user.UserApiClient
-import java.text.SimpleDateFormat
-import java.util.*
 
 /**
  * @author  Lee Jae Young
@@ -74,7 +73,7 @@ class RDBLogcat(ref: String) {
         )
     }
 
-    /** 실패 로그 전송 **/
+    /** 경로를 탐색할 수 없는 실패 로그 전송 **/
     fun sendLogToFail(isSuccess: String, log: String) {
         writeLogCause(
             isSuccess,
@@ -82,20 +81,11 @@ class RDBLogcat(ref: String) {
         )
     }
 
+    /** 경로를 탐색 가능한 실패로그 전송 **/
     private fun writeLogCause(isSuccess: String, log: String) {
         myRef.child(isSuccess)
             .child(millsToString(getCurrentTime(), "yyyy-MM-dd"))
             .child(millsToString(getCurrentTime(), "HH:mm:ss"))
             .push().setValue(log)
-    }
-
-
-    private fun getCurrentTime(): Long {
-        return System.currentTimeMillis()
-    }
-
-    private fun millsToString(mills: Long, pattern: String): String {
-        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(pattern, Locale.KOREA)
-        return format.format(Date(mills))
     }
 }

@@ -1,11 +1,11 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
-import com.example.airsignal_app.IgnoredKeyFile.TAG_LOGIN
-import com.example.airsignal_app.IgnoredKeyFile.lastLoginPhone
-import com.example.airsignal_app.IgnoredKeyFile.naverDefaultClientId
-import com.example.airsignal_app.IgnoredKeyFile.naverDefaultClientName
-import com.example.airsignal_app.IgnoredKeyFile.naverDefaultClientSecret
+import com.example.airsignal_app.util.IgnoredKeyFile.TAG_LOGIN
+import com.example.airsignal_app.util.IgnoredKeyFile.lastLoginPhone
+import com.example.airsignal_app.util.IgnoredKeyFile.naverDefaultClientId
+import com.example.airsignal_app.util.IgnoredKeyFile.naverDefaultClientName
+import com.example.airsignal_app.util.IgnoredKeyFile.naverDefaultClientSecret
 import com.example.airsignal_app.firebase.RDBLogcat
 import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.util.SharedPreferenceManager
@@ -119,10 +119,12 @@ class NaverLogin(mActivity: Activity) {
         }
     }
 
+    // 메인 페이지로 이동
     private fun enterMainPage() {
        EnterPage(activity).toMain("naver")
     }
 
+    // 로그인 페이지로 이동
     private fun enterLoginPage() {
        EnterPage(activity).toLogin()
     }

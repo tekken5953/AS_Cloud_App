@@ -1,19 +1,17 @@
-package com.example.airsignal_app
+package com.example.airsignal_app.view
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
-import com.example.airsignal_app.IgnoredKeyFile.TAG_LOGIN
+import com.example.airsignal_app.util.IgnoredKeyFile.TAG_LOGIN
+import com.example.airsignal_app.R
 import com.example.airsignal_app.databinding.ActivitySignInBinding
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
-import com.example.airsignal_app.util.ConvertDataType
-import com.example.airsignal_app.util.SharedPreferenceManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.orhanobut.logger.Logger
 
@@ -27,9 +25,9 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_in)
 
-        googleLogin = GoogleLogin(this)
-        kakaoLogin = KakaoLogin(this)
-        naverLogin = NaverLogin(this)
+        googleLogin = GoogleLogin(this) // 구글 로그인
+        kakaoLogin = KakaoLogin(this)   // 카카오 로그인
+        naverLogin = NaverLogin(this)   // 네이버 로그인
 
         kakaoLogin.initialize()
         naverLogin.initialize()

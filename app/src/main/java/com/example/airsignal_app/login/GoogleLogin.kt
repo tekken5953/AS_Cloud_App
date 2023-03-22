@@ -3,11 +3,11 @@ package com.example.airsignal_app.login
 import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
-import com.example.airsignal_app.IgnoredKeyFile.TAG_LOGIN
-import com.example.airsignal_app.IgnoredKeyFile.googleDefaultClientId
-import com.example.airsignal_app.IgnoredKeyFile.lastLoginPlatform
-import com.example.airsignal_app.IgnoredKeyFile.temporalPhoneNumber
-import com.example.airsignal_app.LoginActivity
+import com.example.airsignal_app.util.IgnoredKeyFile.TAG_LOGIN
+import com.example.airsignal_app.util.IgnoredKeyFile.googleDefaultClientId
+import com.example.airsignal_app.util.IgnoredKeyFile.lastLoginPlatform
+import com.example.airsignal_app.util.IgnoredKeyFile.temporalPhoneNumber
+import com.example.airsignal_app.view.LoginActivity
 import com.example.airsignal_app.firebase.RDBLogcat
 import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.util.LoggerUtil

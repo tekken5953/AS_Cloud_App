@@ -2,9 +2,9 @@ package com.example.airsignal_app.login
 
 import android.app.Activity
 import android.content.Intent
-import com.example.airsignal_app.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
-import com.example.airsignal_app.IgnoredKeyFile.TAG_LOGIN
-import com.example.airsignal_app.LoginActivity
+import com.example.airsignal_app.util.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
+import com.example.airsignal_app.util.IgnoredKeyFile.TAG_LOGIN
+import com.example.airsignal_app.view.LoginActivity
 import com.example.airsignal_app.firebase.RDBLogcat
 import com.example.airsignal_app.util.EnterPage
 import com.kakao.sdk.auth.AuthApiClient
@@ -31,7 +31,7 @@ class KakaoLogin(mActivity: Activity) {
         KakaoSdk.init(activity, KAKAO_NATIVE_APP_KEY)
     }
 
-    /** 카카오톡 설치 확인 **/
+    /** 카카오톡 설치 확인 후 로그인**/
     fun checkInstallKakaoTalk() {
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(activity)) {
             // 카카오톡 로그인
@@ -109,8 +109,6 @@ class KakaoLogin(mActivity: Activity) {
 
                     }
                     rdbLog.sendLogInWithPhoneForKakao(activity,"로그인 성공", "카카오", "자동")
-
-//                    getUserData()
                 }
             }
         } else {
@@ -166,9 +164,11 @@ class KakaoLogin(mActivity: Activity) {
                 } else {
                     Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
                     rdbLog.sendLogOutWithPhone("로그아웃 성공", phone.replace("+82 ","0"), "카카오")
-                    val intent = Intent(activity, LoginActivity::class.java)
-                    activity.startActivity(intent)
-                    activity.finish()
+                    activity.run {
+                        val intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
                 }
             }
         } catch (e: UninitializedPropertyAccessException) {

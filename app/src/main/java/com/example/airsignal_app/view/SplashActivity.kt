@@ -1,4 +1,4 @@
-package com.example.airsignal_app
+package com.example.airsignal_app.view
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -7,7 +7,11 @@ import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.airsignal_app.util.ConvertDataType
+import com.example.airsignal_app.R
+import com.example.airsignal_app.util.ConvertDataType.setFullScreenMode
+import com.example.airsignal_app.util.ConvertDataType.setLocaleToEnglish
+import com.example.airsignal_app.util.ConvertDataType.setLocaleToKorea
+import com.example.airsignal_app.util.ConvertDataType.setLocaleToSystem
 import com.example.airsignal_app.util.SharedPreferenceManager
 
 @SuppressLint("CustomSplashScreen")
@@ -17,6 +21,8 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+
+        // 설정된 테마 정보 불러오기
         when(sp.getString("theme")) {
             "dark" -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
@@ -29,20 +35,22 @@ class SplashActivity : AppCompatActivity() {
             }
         }
 
+        // 설정된 언어정보 불러오기
         when(sp.getString("lang")) {
             "korean" -> {
-                ConvertDataType().setLocaleToKorea(this)
+                setLocaleToKorea(this)
             }
             "english" -> {
-                ConvertDataType().setLocaleToEnglish(this)
+                setLocaleToEnglish(this)
             }
             else -> {
-                ConvertDataType().setLocaleToSystem(this)
+                setLocaleToSystem(this)
             }
         }
 
-        ConvertDataType().setFullScreenMode(this)
+        setFullScreenMode(this) // 풀 스크린
 
+        // 2초 뒤 이동
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
