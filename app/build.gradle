@@ -4,6 +4,7 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+
 android {
     compileSdk 32
 
@@ -81,5 +82,17 @@ dependencies {
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+    // Room
+    def room_version = "2.4.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+
+    // 구글 지도
+    implementation 'com.google.android.gms:play-services-maps:18.1.0' // 구글지도 라이브러리
+    implementation 'com.google.android.gms:play-services-location:21.0.1' // 위치정보 라이브러리
+
+    // Work Manager
+    implementation "androidx.work:work-runtime-ktx:2.7.0"
 
 }

@@ -1,11 +1,12 @@
-package com.example.airsignal_app
+package com.example.airsignal_app.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.example.airsignal_app.IgnoredKeyFile.lastLoginPhone
-import com.example.airsignal_app.IgnoredKeyFile.lastLoginPlatform
+import com.example.airsignal_app.util.IgnoredKeyFile.lastLoginPhone
+import com.example.airsignal_app.util.IgnoredKeyFile.lastLoginPlatform
+import com.example.airsignal_app.R
 import com.example.airsignal_app.databinding.ActivityTestPageBinding
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin

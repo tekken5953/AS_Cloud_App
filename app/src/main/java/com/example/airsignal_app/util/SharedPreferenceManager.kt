@@ -26,7 +26,7 @@ class SharedPreferenceManager(mContext: Context) {
         )
     }
 
-    //String 값 저장
+    /**String 값 저장 **/
     fun setString(key: String, value: String) {
         val prefs = getPreferences()
         val editor = prefs.edit()
@@ -34,7 +34,7 @@ class SharedPreferenceManager(mContext: Context) {
         editor.apply()
     }
 
-    //Boolean 값 저장
+    /**Boolean 값 저장**/
     fun setBoolean(key: String, value: Boolean) {
         val prefs = getPreferences()
         val editor = prefs.edit()
@@ -42,7 +42,7 @@ class SharedPreferenceManager(mContext: Context) {
         editor.apply()
     }
 
-    //Integer 값 저장
+    /**Integer 값 저장**/
     fun setInt(key: String, value: Int) {
         val prefs = getPreferences()
         val editor = prefs.edit()
@@ -50,7 +50,7 @@ class SharedPreferenceManager(mContext: Context) {
         editor.apply()
     }
 
-    //Long 값 저장
+    /**Long 값 저장**/
     fun setLong(key: String, value: Long) {
         val prefs = getPreferences()
         val editor = prefs.edit()
@@ -58,7 +58,7 @@ class SharedPreferenceManager(mContext: Context) {
         editor.apply()
     }
 
-    //Float 값 저장
+    /**Float 값 저장**/
     fun setFloat(key: String, value: Float) {
         val prefs = getPreferences()
         val editor = prefs.edit()
@@ -66,7 +66,7 @@ class SharedPreferenceManager(mContext: Context) {
         editor.apply()
     }
 
-    //String 값 호출
+    /**String 값 호출**/
     fun getString(key: String): String {
         val prefs =
             getPreferences()
@@ -76,7 +76,7 @@ class SharedPreferenceManager(mContext: Context) {
         )!!
     }
 
-    //Boolean 값 호출
+    /**Boolean 값 호출**/
     fun getBoolean(key: String): Boolean {
         val prefs =
             getPreferences()
@@ -86,14 +86,14 @@ class SharedPreferenceManager(mContext: Context) {
         )
     }
 
-    //Integer 값 호출
+    /**Integer 값 호출**/
     fun getInt(key: String): Int {
         val prefs =
             getPreferences()
         return prefs.getInt(key, DEFAULT_VALUE_INT)
     }
 
-    //Long 값 호출
+    /**Long 값 호출**/
     fun getLong(key: String): Long {
         val prefs =
             getPreferences()
@@ -103,7 +103,7 @@ class SharedPreferenceManager(mContext: Context) {
         )
     }
 
-    //Float 값 호출
+    /**Float 값 호출**/
     fun getFloat(key: String): Float {
         val prefs =
             getPreferences()
@@ -113,7 +113,7 @@ class SharedPreferenceManager(mContext: Context) {
         )
     }
 
-    //키 값 삭제
+    /**키 값 삭제**/
     fun removeKey(key: String) {
         val prefs = getPreferences()
         val edit = prefs.edit()
@@ -121,7 +121,7 @@ class SharedPreferenceManager(mContext: Context) {
         edit.apply()
     }
 
-    //모든 데이터 값 삭제
+    /**모든 데이터 값 삭제**/
     fun clear() {
         val prefs = getPreferences()
         val edit = prefs.edit()
@@ -129,7 +129,7 @@ class SharedPreferenceManager(mContext: Context) {
         edit.apply()
     }
 
-    // 키쌍 리스트 구하기
+    /** 키쌍 리스트 구하기**/
     fun getAllList(): Map<String, Any>? {
         val jsonObject = JSONObject()
         val prefs = getPreferences()
@@ -144,7 +144,7 @@ class SharedPreferenceManager(mContext: Context) {
         return null
     }
 
-    //키를 제이슨 형태로 변환
+    /**키를 제이슨 형태로 변환**/
     @Throws(JSONException::class)
     fun toMap(`object`: JSONObject): Map<String, Any> {
         val map: MutableMap<String, Any> = HashMap()

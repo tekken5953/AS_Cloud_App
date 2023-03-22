@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.widget.Toast;
 
 public class ToastUtils {
-    Activity mContext;
-    Toast toast;
+    private final Activity mContext;
+    private Toast toast;
 
     public ToastUtils(Activity context) {
         this.mContext = context;

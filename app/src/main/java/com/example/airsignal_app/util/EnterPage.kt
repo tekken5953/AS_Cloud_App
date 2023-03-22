@@ -2,8 +2,8 @@ package com.example.airsignal_app.util
 
 import android.app.Activity
 import android.content.Intent
-import com.example.airsignal_app.IgnoredKeyFile.lastLoginPlatform
-import com.example.airsignal_app.MainActivity
+import com.example.airsignal_app.util.IgnoredKeyFile.lastLoginPlatform
+import com.example.airsignal_app.view.MainActivity
 
 /**
  *

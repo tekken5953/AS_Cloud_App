@@ -15,3 +15,4 @@
 local.properties
 google-services.json
 app/src/main/java/com/example/airsignal_app/IgnoredKeyFile.kt
+app/src/main/res/values/ignored_key.xml

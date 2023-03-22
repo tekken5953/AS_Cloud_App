@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchAddressView"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        app:queryHint="주소를 검색해주세요"
+        android:layout_margin="15dp"
+        app:closeIcon="@drawable/cancel"
+        android:inputType="textPersonName|textNoSuggestions"
+        app:iconifiedByDefault="false"
+        android:background="@drawable/search_bg"
+        app:queryBackground="@android:color/transparent"/>
+
+    <ListView
+        android:id="@+id/searchAddressListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        android:scrollbars="none"
+        android:layout_below="@+id/searchAddressView"/>
+
+</RelativeLayout>
