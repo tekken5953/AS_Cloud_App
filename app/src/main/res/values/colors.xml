@@ -11,10 +11,17 @@
     <color name="mode_color_text">#FF000000</color>
     <color name="mode_color_view">#FFFFFFFF</color>
 
+    <color name="progressBad">#FBC93D</color> // 프로그래스 바 양호도 나쁨 컬러
+    <color name="progressWorst">#FB4F4F</color> // 프로그래스 바 양호도 매우나쁨 컬러
+    <color name="progressGood">#5CC2E4</color> // 프로그래스 바 양호도 좋음 컬러
+    <color name="progressNormal">#1ccf7f</color> // 프로그래스 바 양호도 보통 컬러
+    <color name="progressError">#A0A0A0</color> // 프로그래스 바 에러 컬러
+
     <color name="dummy_gray_dark">#66000000</color>
     <color name="dummy_gray_medium">#55000000</color>
     <color name="dummy_gray_line">#25000000</color>
     <color name="dummy_gray_light">#11000000</color>
+    <color name="dummy_gray_super_light">#f9f9f9</color>
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
     <color name="light_blue_A200">#FF40C4FF</color>

@@ -3,7 +3,6 @@ package com.example.airsignal_app.view.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -13,7 +12,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.viewpager.widget.ViewPager.PageTransformer
 import androidx.viewpager2.widget.ViewPager2
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
@@ -40,7 +38,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     val addressList = ArrayList<AdapterModel.ViewPagerItem>()
-    private val vAdapter = HomeViewPagerAdapter(this,addressList)
+    private val viewPagerAdapter = HomeViewPagerAdapter(this, addressList)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,22 +48,27 @@ class MainActivity : AppCompatActivity() {
 
         setUpSideMenu()
 
-        binding.mainGpsTitleTv.setOnClickListener {
+        binding.mainSearchAddressIv.setOnClickListener {
             @SuppressLint("InflateParams")
             val searchLayout: View =
-                LayoutInflater.from(this).inflate(R.layout.dialog_search_address,null)
+                LayoutInflater.from(this).inflate(R.layout.dialog_search_address, null)
             RefreshUtils(this).showDialog(searchLayout, true)
 
             val searchListView: ListView = searchLayout.findViewById(R.id.searchAddressListView)
             val searchItem = ArrayList<String>()
             val allTextArray = resources.getStringArray(R.array.address)
-            val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, searchItem)
+            val adapter =
+                ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, searchItem)
             val searchView: SearchView = searchLayout.findViewById(R.id.searchAddressView)
             searchListView.adapter = adapter
 
+            // 서치 뷰 텍스트 변환 콜벡
             searchView.setOnQueryTextListener(object :
                 SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean { return false }
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return false
+                }
+
                 override fun onQueryTextChange(newText: String): Boolean {
                     if (newText.isNotEmpty()) {
                         searchItem.clear()
@@ -92,10 +95,14 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
+            // 검색주소 리스트
             searchListView.onItemClickListener =
                 AdapterView.OnItemClickListener { parent, view, position, id ->
                     Logger.t("searchView").d("$position : ${searchItem[position]}")
-                    ToastUtils(this).customDurationMessage("$position : ${searchItem[position]}",500)
+                    ToastUtils(this).customDurationMessage(
+                        "$position : ${searchItem[position]}",
+                        500
+                    )
                 }
         }
     }
@@ -119,42 +126,80 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
-        if (!RequestPermissionsUtil(this).isLocationPermitted())
-        { RequestPermissionsUtil(this).requestLocation() }
+        if (!RequestPermissionsUtil(this).isLocationPermitted()) {
+            RequestPermissionsUtil(this).requestLocation()
+        }
 
+        // 워크 매니저 생성
         CoroutineScope(Dispatchers.IO).launch { createWorkManager() }
 
         binding.mainViewPager.apply {
-            adapter = vAdapter
-            orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            offscreenPageLimit = 3
+            adapter = viewPagerAdapter
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL // 가로모드
+            offscreenPageLimit = 3  // 최대 3개
+
+            // 뷰 페이저 페이지 변환 중 리스너
             setPageTransformer { page, position ->
                 //TODO
             }
 
+            // 뷰 페이저 페이지 전환 후 리스너
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    binding.mainGpsTitleTv.text = addressList[position].item
+
+                    // 페이지 변환 시 주소 텍스트 변경
+                    binding.mainGpsTitleTv.text = addressList[position].address
                 }
             })
 
+            // 탭레이아웃 연동
             TabLayoutMediator(binding.mainTabLayout, this@apply) { tab, position ->
                 //TODO
             }.attach()
         }
 
-        addLayout("address1")
-        addLayout("address2")
-        addLayout("address3")
-        vAdapter.notifyDataSetChanged()
+        addViewPagerItem()
     }
 
-    private fun addLayout(title: String) {
-        val item = AdapterModel.ViewPagerItem(title)
+    @SuppressLint("NotifyDataSetChanged")
+    private fun addViewPagerItem() {
+        // Add Item
+        addViewPagerLayout("address1","0","0","0","0","0","0","0",0,2)
+        addViewPagerLayout("address2","0","0","0","0","0","0","0",3,1)
+        addViewPagerLayout("address3","0","0","0","0","0","0","0",1,3)
+        viewPagerAdapter.notifyDataSetChanged()
+    }
+
+    // 뷰 페이저 아이템 추가
+    private fun addViewPagerLayout(
+        address: String,
+        temp: String,
+        sunrise: String,
+        sunSet: String,
+        sky: String,
+        humid: String,
+        wind: String,
+        rainPer: String,
+        pm2p5Grade: Int,
+        pm10Grade: Int,
+    ) {
+        val item = AdapterModel.ViewPagerItem(
+            address = address,
+            temp = temp,
+            sunRise = sunrise,
+            sunSet = sunSet,
+            sky = sky,
+            humid = humid,
+            wind = wind,
+            rainPer = rainPer,
+            pm2p5Grade = pm2p5Grade,
+            pm10Grade = pm10Grade,
+        )
         addressList.add(item)
     }
 
+    // 사이드 메뉴 세팅
     private fun setUpSideMenu() {
         // 사이드 메뉴 아이콘
         binding.mainSideMenuIv.setOnClickListener {
@@ -179,6 +224,7 @@ class MainActivity : AppCompatActivity() {
             override fun onDrawerClosed(drawerView: View) {
                 binding.viewPagerLayout.bringToFront()
             }
+
             override fun onDrawerStateChanged(newState: Int) {}
         })
 

@@ -34,6 +34,7 @@ class GetLocation(mContext: Context, params: WorkerParameters) : GetLocationList
                         latitude = 35.0
                         longitude = 120.0
                     }
+
                     Logger.t("Location")
                         .i(
                             ConvertDataType.millsToString(ConvertDataType.getCurrentTime(),"HH:mm") +
@@ -70,6 +71,7 @@ class GetLocation(mContext: Context, params: WorkerParameters) : GetLocationList
         return nowAddress
     }
 
+    /** 워크 매니저 백그라운드 반복 **/
     override suspend fun doWork(): Result {
         return try {
             getLocation()
