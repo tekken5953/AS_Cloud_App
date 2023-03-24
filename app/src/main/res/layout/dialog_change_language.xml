@@ -12,7 +12,7 @@
         android:src="@drawable/back"
         android:layout_marginStart="24dp"
         android:layout_marginTop="30dp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:background="?selectableItemBackgroundBorderless"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -39,7 +39,7 @@
             android:layout_height="65dp"
             android:text="@string/system_lang"
             android:textSize="16sp"
-            android:background="?android:attr/selectableItemBackground"
+            android:background="?selectableItemBackground"
             android:paddingTop="5dp"
             android:button="@null"
             android:paddingEnd="15dp"
@@ -54,7 +54,7 @@
             android:layout_height="65dp"
             android:paddingTop="5dp"
             android:button="@null"
-            android:background="?android:attr/selectableItemBackground"
+            android:background="?selectableItemBackground"
             android:gravity="center_vertical"
             android:text="@string/korean"
             android:textSize="16sp"

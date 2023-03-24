@@ -1,14 +1,16 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
-import com.example.airsignal_app.util.IgnoredKeyFile.TAG_LOGIN
-import com.example.airsignal_app.util.IgnoredKeyFile.lastLoginPhone
-import com.example.airsignal_app.util.IgnoredKeyFile.naverDefaultClientId
-import com.example.airsignal_app.util.IgnoredKeyFile.naverDefaultClientName
-import com.example.airsignal_app.util.IgnoredKeyFile.naverDefaultClientSecret
-import com.example.airsignal_app.firebase.RDBLogcat
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithPhone
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithPhone
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
 import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.util.SharedPreferenceManager
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
+import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientId
+import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientName
+import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientSecret
+import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
@@ -23,7 +25,6 @@ import com.orhanobut.logger.Logger
 
 class NaverLogin(mActivity: Activity) {
     private val activity = mActivity
-    private val rdbLog = RDBLogcat("Log")
 
     fun initialize() {
         //TODO 정식버전이 되면 동적할당
@@ -44,7 +45,7 @@ class NaverLogin(mActivity: Activity) {
             NaverIdLoginSDK.logout()
             enterLoginPage()
             Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")
-            rdbLog.sendLogOutWithPhone("로그아웃 성공", phone, "네이버")
+            sendLogOutWithPhone("로그아웃 성공", phone, "네이버")
         }
     }
 
@@ -78,7 +79,7 @@ class NaverLogin(mActivity: Activity) {
                         "state : ${NaverIdLoginSDK.getState()}"
             )
 
-            rdbLog.sendLogInWithPhone("로그인 성공",phone,"네이버","수동")
+            sendLogInWithPhone("로그인 성공",phone,"네이버","수동")
             enterMainPage()
         }
 
@@ -89,7 +90,7 @@ class NaverLogin(mActivity: Activity) {
                 "errorCode: $errorCode\n" +
                         "errorDescription: $errorDescription"
             )
-            rdbLog.sendLogToFail("네이버 로그인 실패", "$errorCode - $errorDescription")
+            sendLogToFail("네이버 로그인 실패", "$errorCode - $errorDescription")
         }
 
         override fun onError(errorCode: Int, message: String) {

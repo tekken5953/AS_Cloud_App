@@ -12,6 +12,7 @@
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/back.xml" value="0.142" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/cancel.xml" value="0.198" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/check.xml" value="0.198" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/default_tap_dot.xml" value="0.1715" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/dummy.xml" value="0.198" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/dummy_dark.xml" value="0.198" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/gps.xml" value="0.198" />
@@ -19,6 +20,7 @@
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/radio_button_selector.xml" value="0.198" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/radio_selelctor.xml" value="0.198" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/search_bg.xml" value="0.198" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/selected_tap_dot.xml" value="0.1715" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/switch_selector.xml" value="0.198" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/switch_thumb.xml" value="0.198" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/switch_track_on.xml" value="0.198" />

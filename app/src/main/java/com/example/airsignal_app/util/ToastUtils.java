@@ -17,6 +17,7 @@ public class ToastUtils {
             toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
             toast.show();
         };
+
         mContext.runOnUiThread(r);
     }
 
@@ -33,6 +34,7 @@ public class ToastUtils {
         if (toast != null) {
             this.mContext.runOnUiThread(() -> toast.cancel());
         }
+
         toast = new Toast(mContext);
     }
 }

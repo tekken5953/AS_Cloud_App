@@ -21,7 +21,7 @@ class LoggerUtil {
 
     /** 앱 키해시 불러오기 */
     fun getKeyHash(context: Context) {
-        Timber.tag("TAG_LOGIN").d("keyhash : ${Utility.getKeyHash(context)}")
+        Timber.tag("TAG_LOGIN").d("key_hash : ${Utility.getKeyHash(context)}")
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.example.airsignal_app.view
+package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import com.bumptech.glide.Glide
@@ -16,7 +15,6 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.util.RefreshUtils
 
 class MyDeviceActivity : AppCompatActivity() {
-    private lateinit var builder: AlertDialog.Builder
 
     @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
  * @since : 2023-03-21 오후 1:35
  **/
 class WeatherDataModel {
-    /** GPS의 위치에 따른 데이터 정보보**/
+    /** GPS 의 위치에 따른 데이터 정보보**/
     @Entity
     data class GetData(
         @PrimaryKey(autoGenerate = true) val id: Int,

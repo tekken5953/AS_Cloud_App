@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView android:id="@+id/mainScrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:overScrollMode="never"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".view.activity.MainActivity">
+
+        <TableRow
+            android:id="@+id/mainTable1"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:gravity="center"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/mainSkyIv"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:src="@drawable/cloudy"
+                app:tint="@color/dummy_gray_dark"/>
+
+            <TextView
+                android:id="@+id/mainLiveTempTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="25˚"
+                android:textColor="@color/dummy_gray_dark"
+                android:layout_marginStart="15dp"
+                android:textSize="62sp"/>
+        </TableRow>
+
+        <TextView
+            android:id="@+id/mainMinMaxTempTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/main_min_max_temp"
+            android:textSize="18sp"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/mainTable1"/>
+
+        <TextView
+            android:id="@+id/mainTodayDateTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTempTv"
+            android:text="@string/main_today_date"
+            android:textSize="17sp"
+            android:textColor="@color/dummy_gray_medium"
+            android:layout_marginTop="18dp"/>
+
+        <View
+            android:id="@+id/mainView1"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@color/dummy_gray_line"
+            app:layout_constraintTop_toBottomOf="@+id/mainTodayDateTv"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="20dp"/>
+
+        <TableRow
+            android:id="@+id/mainTable2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/mainView1"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/main_wind_speed"
+                android:textSize="16sp"
+                android:gravity="center"
+                app:drawableTopCompat="@drawable/dummy"
+                android:drawablePadding="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/main_humid"
+                android:textSize="16sp"
+                android:layout_marginStart="30dp"
+                android:gravity="center"
+                android:drawablePadding="5dp"
+                app:drawableTopCompat="@drawable/dummy" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/main_rain_chance"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:layout_marginStart="30dp"
+                android:drawablePadding="5dp"
+                app:drawableTopCompat="@drawable/dummy" />
+        </TableRow>
+
+        <TextView
+            android:id="@+id/mainTodayWeatherTitleTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_today_weather"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/mainTable2"
+            android:layout_marginStart="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="30dp"/>
+
+        <TableRow
+            android:id="@+id/mainTable3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:padding="12dp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/mainTodayWeatherTitleTv">
+            <TextView
+                android:id="@+id/mainTodayWeatherPM10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/main_today_pm_10"
+                android:background="@drawable/today_weather_box_bg"
+                android:textSize="16.5sp"/>
+
+            <TextView
+                android:id="@+id/mainTodayWeatherPM2.5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/main_today_pm_2p5"
+                android:layout_marginStart="12dp"
+                android:lines="1"
+                android:background="@drawable/today_weather_box_bg"
+                android:textSize="16.5sp"/>
+        </TableRow>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/mainTimeWeatherRv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/list_item_time_weather"
+            android:orientation="horizontal"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:layout_marginTop="15dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="30dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/mainTable3"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

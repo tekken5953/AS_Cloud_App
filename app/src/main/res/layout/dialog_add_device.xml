@@ -21,7 +21,7 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginEnd="24dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="?selectableItemBackgroundBorderless"
         android:src="@drawable/cancel"
         app:layout_constraintBottom_toBottomOf="@+id/addDeviceTitleText"
         app:layout_constraintEnd_toEndOf="parent"
@@ -47,6 +47,7 @@
             android:layout_gravity="center"
             android:drawablePadding="10dp"
             android:text="@string/register_product"
+            android:gravity="center"
             android:textSize="19sp"
             app:drawableTopCompat="@drawable/add" />
 
