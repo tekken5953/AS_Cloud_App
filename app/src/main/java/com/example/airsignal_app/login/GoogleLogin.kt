@@ -3,15 +3,16 @@ package com.example.airsignal_app.login
 import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
-import com.example.airsignal_app.util.IgnoredKeyFile.TAG_LOGIN
-import com.example.airsignal_app.util.IgnoredKeyFile.googleDefaultClientId
-import com.example.airsignal_app.util.IgnoredKeyFile.lastLoginPlatform
-import com.example.airsignal_app.util.IgnoredKeyFile.temporalPhoneNumber
-import com.example.airsignal_app.view.LoginActivity
-import com.example.airsignal_app.firebase.RDBLogcat
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithPhone
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithPhone
 import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.util.LoggerUtil
 import com.example.airsignal_app.util.SharedPreferenceManager
+import com.example.airsignal_app.view.activity.LoginActivity
+import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
+import com.example.airsignal_app.dao.IgnoredKeyFile.temporalPhoneNumber
+import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -31,7 +32,6 @@ class GoogleLogin(mActivity: Activity) {
     private val activity = mActivity
     private var client: GoogleSignInClient
     private var lastLogin: GoogleSignInAccount? = null
-    private val rdbLog = RDBLogcat("Log")
 
     init {
         LoggerUtil().getInstance()
@@ -89,14 +89,14 @@ class GoogleLogin(mActivity: Activity) {
      * TODO 구글로그인은 아직 테스팅 단계라 임시로 파라미터를 설정**/
     private fun saveLoginStatus() {
         SharedPreferenceManager(activity).setString(lastLoginPlatform,"google")
-        rdbLog.sendLogInWithPhone("로그인 성공", temporalPhoneNumber, "구글", "수동")
+        sendLogInWithPhone("로그인 성공", temporalPhoneNumber, "구글", "수동")
     }
 
     /** 사용자 로그아웃 정보를 저장
      *
      * TODO 임시로 번호를 지정해 놓음**/
     private fun saveLogoutStatus() {
-        rdbLog.sendLogOutWithPhone("로그아웃 성공",temporalPhoneNumber,"구글")
+        sendLogOutWithPhone("로그아웃 성공",temporalPhoneNumber,"구글")
     }
 
     /** 로그인 이벤트 성공 **/

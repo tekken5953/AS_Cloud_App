@@ -22,20 +22,21 @@
         android:layout_alignBottom="@+id/inputSerialTitle"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="24dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
+        android:background="?selectableItemBackgroundBorderless"
         android:src="@drawable/cancel" />
 
     <TextView
         android:id="@+id/inputSerialContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/inputSerialTitle"
         android:layout_marginStart="24dp"
         android:layout_marginTop="75dp"
         android:text="@string/input_serial"
+        android:maxEms="15"
         android:textColor="@color/dummy_gray_dark"
         android:textSize="25sp"
-        android:textStyle="bold"
-        android:layout_below="@+id/inputSerialTitle"/>
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/inputSerialEditText"

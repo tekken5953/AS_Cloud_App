@@ -1,4 +1,4 @@
-package com.example.airsignal_app.db.room.dao
+package com.example.airsignal_app.db.room.scheme
 
 import androidx.room.Dao
 import androidx.room.Insert

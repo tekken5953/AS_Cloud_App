@@ -1,4 +1,4 @@
-package com.example.airsignal_app.util
+package com.example.airsignal_app.dao
 
 /**
  * @autor : Lee Jae Young
@@ -18,11 +18,4 @@ object IgnoredKeyFile {
     /** 로컬 DB 키값 **/
     const val lastLoginPlatform = "last_login"
     const val lastLoginPhone = "phone_number"
-
-    /** Logger 태그 키값 **/
-    const val TAG_LOGIN = "TAG_LOGIN"
-    const val TAG_DRAWER_LAYOUT = "TAG_DRAWER_LAYOUT"
-
-    const val REQUEST_LOCATION = 1                        // 위치권한 요청 Result Code
-    const val CHECK_GPS_BACK = "GPS_OK"
 }

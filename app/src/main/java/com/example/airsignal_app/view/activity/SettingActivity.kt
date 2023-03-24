@@ -1,4 +1,4 @@
-package com.example.airsignal_app.view
+package com.example.airsignal_app.view.activity
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
-import com.example.airsignal_app.util.IgnoredKeyFile
+import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.R
 import com.example.airsignal_app.databinding.ActivitySettingBinding
 import com.example.airsignal_app.login.GoogleLogin

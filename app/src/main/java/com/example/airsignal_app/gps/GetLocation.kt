@@ -8,7 +8,7 @@ import android.location.Geocoder
 import android.location.Location
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.airsignal_app.util.ConvertDataType
+import com.example.airsignal_app.dao.ConvertDataType
 import com.example.airsignal_app.util.ToastUtils
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
@@ -21,7 +21,7 @@ class GetLocation(mContext: Context, params: WorkerParameters) : GetLocationList
 
     private val geocoder by lazy { Geocoder(mContext, Locale.KOREA) }
 
-    /** GPS의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
+    /** GPS 의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
     @SuppressLint("MissingPermission")
     fun getLocation() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
@@ -34,7 +34,10 @@ class GetLocation(mContext: Context, params: WorkerParameters) : GetLocationList
                         latitude = 35.0
                         longitude = 120.0
                     }
-                    Logger.t("Location").i("${ConvertDataType.millsToString(ConvertDataType.getCurrentTime(),"HH:mm")} - ${it.distanceTo(testLocal)}")
+                    Logger.t("Location")
+                        .i(
+                            ConvertDataType.millsToString(ConvertDataType.getCurrentTime(),"HH:mm") +
+                                " - ${it.distanceTo(testLocal)}")
                 }
             }
             .addOnFailureListener {
@@ -52,8 +55,9 @@ class GetLocation(mContext: Context, params: WorkerParameters) : GetLocationList
         val nowAddress = "현재 위치를 확인 할 수 없습니다."
         lateinit var address: List<Address>
         try {
-            address = geocoder.getFromLocation(lat, lng, 1)
-            if (address != null && address.isNotEmpty()) {
+            @Suppress("DEPRECATION")
+            address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
+            if (address.isNotEmpty()) {
                 address.forEach {
                     Logger.t("Location").d("${it.latitude},${it.longitude}\n${it.getAddressLine(0)}")
                 }
@@ -68,7 +72,6 @@ class GetLocation(mContext: Context, params: WorkerParameters) : GetLocationList
 
     override suspend fun doWork(): Result {
         return try {
-            Logger.t("Location").d("Start WorkManager")
             getLocation()
             Result.success()
         } catch (e: Exception) {

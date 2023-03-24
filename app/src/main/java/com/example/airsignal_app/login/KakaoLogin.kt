@@ -2,11 +2,13 @@ package com.example.airsignal_app.login
 
 import android.app.Activity
 import android.content.Intent
-import com.example.airsignal_app.util.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
-import com.example.airsignal_app.util.IgnoredKeyFile.TAG_LOGIN
-import com.example.airsignal_app.view.LoginActivity
-import com.example.airsignal_app.firebase.RDBLogcat
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithPhoneForKakao
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithPhone
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
 import com.example.airsignal_app.util.EnterPage
+import com.example.airsignal_app.view.activity.LoginActivity
+import com.example.airsignal_app.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
+import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider
 import com.kakao.sdk.auth.model.OAuthToken
@@ -25,7 +27,6 @@ import timber.log.Timber
 
 class KakaoLogin(mActivity: Activity) {
     private val activity = mActivity
-    private val rdbLog = RDBLogcat("Log")
 
     fun initialize  () {
         KakaoSdk.init(activity, KAKAO_NATIVE_APP_KEY)
@@ -60,7 +61,7 @@ class KakaoLogin(mActivity: Activity) {
                         enterMainPage()
                     }
 
-                    rdbLog.sendLogInWithPhoneForKakao(activity,"로그인 성공", "카카오톡", "수동")
+                    sendLogInWithPhoneForKakao(activity,"로그인 성공", "카카오톡", "수동")
                 }
             }
         } else {
@@ -73,14 +74,14 @@ class KakaoLogin(mActivity: Activity) {
     private val mCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
             Logger.t(TAG_LOGIN).e("로그인 실패 : Cause is $error")
-            rdbLog.sendLogToFail("로그인 실패", error.toString())
+            sendLogToFail("로그인 실패", error.toString())
         } else {
             token?.let {
                 loginSilenceKakao()
                 enterMainPage()
             }
 
-            rdbLog.sendLogInWithPhoneForKakao(activity,"로그인 성공", "카카오 이메일", "수동")
+            sendLogInWithPhoneForKakao(activity,"로그인 성공", "카카오 이메일", "수동")
         }
     }
 
@@ -108,7 +109,7 @@ class KakaoLogin(mActivity: Activity) {
 
 
                     }
-                    rdbLog.sendLogInWithPhoneForKakao(activity,"로그인 성공", "카카오", "자동")
+                    sendLogInWithPhoneForKakao(activity,"로그인 성공", "카카오", "자동")
                 }
             }
         } else {
@@ -160,10 +161,10 @@ class KakaoLogin(mActivity: Activity) {
             UserApiClient.instance.logout { error ->
                 if (error != null) {
                     Logger.t(TAG_LOGIN).e("로그아웃에 실패함 : $error")
-                    rdbLog.sendLogToFail("카카오 로그아웃 실패", error.toString())
+                    sendLogToFail("카카오 로그아웃 실패", error.toString())
                 } else {
                     Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
-                    rdbLog.sendLogOutWithPhone("로그아웃 성공", phone.replace("+82 ","0"), "카카오")
+                    sendLogOutWithPhone("로그아웃 성공", phone.replace("+82 ","0"), "카카오")
                     activity.run {
                         val intent = Intent(this, LoginActivity::class.java)
                         startActivity(intent)
@@ -183,7 +184,7 @@ class KakaoLogin(mActivity: Activity) {
             if (error != null) {
                 Logger.t(TAG_LOGIN).e("연결 끊기 실패 : $error")
             } else {
-                Logger.t(TAG_LOGIN).i("연결 끊기 성공. SDK에서 토큰 삭제 됨")
+                Logger.t(TAG_LOGIN).i("연결 끊기 성공. SDK 에서 토큰 삭제 됨")
             }
         }
     }

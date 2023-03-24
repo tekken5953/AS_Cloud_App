@@ -1,4 +1,4 @@
-package com.example.airsignal_app.view
+package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -8,10 +8,10 @@ import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.airsignal_app.R
-import com.example.airsignal_app.util.ConvertDataType.setFullScreenMode
-import com.example.airsignal_app.util.ConvertDataType.setLocaleToEnglish
-import com.example.airsignal_app.util.ConvertDataType.setLocaleToKorea
-import com.example.airsignal_app.util.ConvertDataType.setLocaleToSystem
+import com.example.airsignal_app.dao.ConvertDataType.setFullScreenMode
+import com.example.airsignal_app.dao.ConvertDataType.setLocaleToEnglish
+import com.example.airsignal_app.dao.ConvertDataType.setLocaleToKorea
+import com.example.airsignal_app.dao.ConvertDataType.setLocaleToSystem
 import com.example.airsignal_app.util.SharedPreferenceManager
 
 @SuppressLint("CustomSplashScreen")
@@ -55,6 +55,6 @@ class SplashActivity : AppCompatActivity() {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
-        },2000)
+        },500)
     }
 }

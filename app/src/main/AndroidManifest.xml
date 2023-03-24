@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"
+        android:minSdkVersion="33"/>
+
     <uses-permission
         android:name="android.permission.BIND_REMOTEVIEWS"
         tools:ignore="ProtectedPermissions" />
@@ -18,10 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AirSignal_App">
         <activity
-            android:name=".WeatherFragment"
-            android:exported="false" />
-        <activity
-            android:name=".view.SplashActivity"
+            android:name=".view.activity.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
             android:theme="@style/Theme.AirSignal_App.Fullscreen">
@@ -32,13 +32,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.SettingActivity"
+            android:name=".view.activity.SettingActivity"
             android:exported="false" />
         <activity
-            android:name=".view.MyDeviceActivity"
+            android:name=".view.activity.MyDeviceActivity"
             android:exported="false" />
         <activity
-            android:name=".view.MainActivity"
+            android:name=".view.activity.MainActivity"
             android:exported="false" />
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
@@ -55,10 +55,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.LoginActivity"
+            android:name=".view.activity.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".view.TestPageActivity"
+            android:name=".view.activity.TestPageActivity"
             android:exported="false" />
     </application>
 
