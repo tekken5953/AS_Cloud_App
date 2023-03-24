@@ -14,9 +14,9 @@
 .cxx
 local.properties
 app/google-services.json
-app/src/main/java/com/example/airsignal_app/IgnoredKeyFile.kt
-*/src/main/res/values/ignored_key.xml
-*/src/main/res/values/address.xml
+app/src/main/java/com/example/airsignal_app/dao/IgnoredKeyFile.kt
+app/src/main/res/values/ignored_key.xml
+app/src/main/res/values/address.xml
 *.jar
 *.war
 *.zip
