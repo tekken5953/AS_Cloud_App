@@ -8,7 +8,7 @@
     <string name="main_rain_chance">20%\n강수확률</string>
     <string name="main_today_weather">오늘의 날씨</string>
     <string name="main_today_pm_10">미세먼지\t\t매우나쁨</string>
-    <string name="main_today_pm_2p5">초미세먼지\t\t매우나쁨</string>
+    <string name="main_today_pm_2p5">초미세먼지\t\t좋음</string>
     <string name="my_device_title">내 기기</string>
     <string name="as_eye">AS_Eye</string>
     <string name="aqi">공기질 통합지수</string>

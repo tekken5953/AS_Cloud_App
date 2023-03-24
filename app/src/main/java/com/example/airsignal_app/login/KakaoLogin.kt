@@ -16,6 +16,7 @@ import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.common.model.KakaoSdkError
+import com.kakao.sdk.common.util.Utility
 import com.kakao.sdk.user.UserApiClient
 import com.orhanobut.logger.Logger
 import timber.log.Timber
@@ -30,6 +31,11 @@ class KakaoLogin(mActivity: Activity) {
 
     fun initialize  () {
         KakaoSdk.init(activity, KAKAO_NATIVE_APP_KEY)
+    }
+
+    /** 앱 히시키 받아오기 **/
+    private fun getKeyHash() : String {
+        return Utility.getKeyHash(activity)
     }
 
     /** 카카오톡 설치 확인 후 로그인**/

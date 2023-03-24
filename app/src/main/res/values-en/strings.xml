@@ -9,7 +9,7 @@
     <string name="main_rain_chance">20%\nrain</string>
     <string name="main_today_weather">today\'s weather</string>
     <string name="main_today_pm_10">PM10\t\tVery bad</string>
-    <string name="main_today_pm_2p5">PM2.5\t\tVery bad</string>
+    <string name="main_today_pm_2p5">PM2.5\t\tGood</string>
     <string name="my_device_title">My Product</string>
     <string name="as_eye">AS_Eye</string>
     <string name="aqi">Air Quality Index</string>

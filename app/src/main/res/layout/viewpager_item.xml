@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/viewPagerMainScroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:overScrollMode="never">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/viewPagerLiveTempFrame"
+            android:layout_width="150dp"
+            android:layout_height="160dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="24dp">
+            <ImageView
+                android:id="@+id/viewPagerSkyImg"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="top|center_horizontal"
+                android:src="@drawable/cloudy"
+                app:tint="@color/dummy_gray_medium" />
+            <TextView
+                android:id="@+id/viewPagerLiveTempValue"
+                style="@style/basicTextView"
+                android:text="23˚"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textSize="90sp"/>
+            <TextView
+                android:id="@+id/viewPagerSkyValue"
+                style="@style/basicTextView"
+                android:text="구름 조금"
+                android:layout_marginTop="5dp"
+                android:textSize="19sp"
+                android:layout_gravity="bottom|center_horizontal"/>
+        </FrameLayout>
+
+        <TableLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="24dp"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            app:layout_constraintBottom_toBottomOf="@+id/viewPagerLiveTempFrame"
+            app:layout_constraintStart_toEndOf="@+id/viewPagerLiveTempFrame"
+            app:layout_constraintTop_toTopOf="@+id/viewPagerLiveTempFrame">
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1">
+                <TextView
+                    style="@style/basicTextView"
+                    android:text="일출 시간"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="17sp"
+                    android:layout_weight="0.5"/>
+                <TextView
+                    android:id="@+id/viewPagerSunRiseValue"
+                    style="@style/basicTextView"
+                    android:text="06:45"
+                    android:gravity="end"
+                    android:textSize="18sp"
+                    android:layout_weight="0.5"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+                <TextView
+                    style="@style/basicTextView"
+                    android:text="일몰 시간"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="17sp"
+                    android:layout_weight="0.5"/>
+                <TextView
+                    android:id="@+id/viewPagerSunSetValue"
+                    style="@style/basicTextView"
+                    android:text="18:32"
+                    android:gravity="end"
+                    android:textSize="18sp"
+                    android:layout_weight="0.5"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                android:weightSum="1">
+                <TextView
+                    style="@style/basicTextView"
+                    android:text="최고 기온"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="17sp"
+                    android:layout_weight="0.5"/>
+                <TextView
+                    android:id="@+id/viewPagerMaxTempValue"
+                    style="@style/basicTextView"
+                    android:text="23˚"
+                    android:gravity="end"
+                    android:textSize="18sp"
+                    android:layout_weight="0.5"/>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                android:weightSum="1">
+                <TextView
+                    style="@style/basicTextView"
+                    android:text="최저 기온"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="17sp"
+                    android:layout_weight="0.5"/>
+                <TextView
+                    android:id="@+id/viewPagerMinTempValue"
+                    style="@style/basicTextView"
+                    android:text="15˚"
+                    android:gravity="end"
+                    android:textSize="18sp"
+                    android:layout_weight="0.5"/>
+            </TableRow>
+
+        </TableLayout>
+
+        <TableRow
+            android:id="@+id/viewPagerHumidBoxTr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:weightSum="1"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/time_weather_box_bg"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/viewPagerLiveTempFrame">
+
+            <LinearLayout
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="0.33"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/viewPagerHumidImg"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/cloudy"
+                    app:tint="@color/progressGood"/>
+
+                <TextView
+                    android:id="@+id/viewPagerHumidValue"
+                    style="@style/basicTextView"
+                    android:textSize="21sp"
+                    android:text="45%"/>
+                <TextView
+                    style="@style/basicTextView"
+                    android:text="습도"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="19sp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/dummy_gray_light"
+                android:scaleY="0.75"/>
+
+            <LinearLayout
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="0.33"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/viewPagerWindImg"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:tint="@color/progressGood"
+                    android:src="@drawable/cloudy"/>
+
+                <TextView
+                    android:id="@+id/viewPagerWindValue"
+                    style="@style/basicTextView"
+                    android:textSize="20sp"
+                    android:text="4m/s, 동"/>
+                <TextView
+                    style="@style/basicTextView"
+                    android:text="바람"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="19sp"/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/dummy_gray_light"
+                android:scaleY="0.75"/>
+
+            <LinearLayout
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="0.33"
+                android:gravity="center">
+                <ImageView
+                    android:id="@+id/viewPagerRainPerImg"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:tint="@color/progressGood"
+                    android:src="@drawable/cloudy"/>
+
+                <TextView
+                    android:id="@+id/viewPagerRainPerValue"
+                    style="@style/basicTextView"
+                    android:textSize="21sp"
+                    android:text="30%"/>
+                <TextView
+                    style="@style/basicTextView"
+                    android:text="강수확률"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/dummy_gray_dark"
+                    android:textSize="18sp"/>
+
+            </LinearLayout>
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/viewPagerPmBoxTr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/today_weather_box_bg"
+            app:layout_constraintTop_toBottomOf="@+id/viewPagerHumidBoxTr"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp">
+
+            <TextView
+                style="@style/basicTextView"
+                android:layout_weight="0.25"
+                android:text="미세먼지"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/viewPagerPm10Grade"
+                style="@style/basicTextView"
+                android:text="매우나쁨"
+                android:layout_weight="0.25"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/progressWorst"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/dummy_gray_light"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="center"
+                android:scaleY="0.75"/>
+
+            <TextView
+                style="@style/basicTextView"
+                android:text="초미세먼지"
+                android:layout_weight="0.25"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/viewPagerPm2p5Grade"
+                style="@style/basicTextView"
+                android:layout_weight="0.25"
+                android:text="좋음"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginStart="10dp"
+                android:textColor="@color/progressGood"/>
+
+        </TableRow>
+
+        <TextView
+            android:id="@+id/viewPagerTimeWeatherTitle"
+            style="@style/basicTextView"
+            android:text="시간별 날씨"
+            android:textColor="@color/mode_color_text"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/viewPagerPmBoxTr"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="40dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/viewPagerTimeWeatherRv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/time_weather_recycler_bg"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@+id/viewPagerTimeWeatherTitle"
+            tools:listitem="@layout/list_item_time_weather" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

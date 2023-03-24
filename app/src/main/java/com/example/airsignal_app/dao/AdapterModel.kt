@@ -10,13 +10,32 @@ object AdapterModel {
     data class AirCondData(var title: String, var data: String?, var sort: String)
 
     // 장치검색 시 GET할 데이터 모델
-    data class GetDeviceList(val userId: String, val device: String,
-                             val deviceName: String?, val businessType: String?,
-                             @SerializedName("CAIval") var cqiValue: String?,
-                             @SerializedName("Virusval") var virusValue: String?,
-                             var starred: Boolean, val owned: Boolean)
+    data class GetDeviceList(
+        val userId: String, val device: String,
+        val deviceName: String?, val businessType: String?,
+        @SerializedName("CAIval") var cqiValue: String?,
+        @SerializedName("Virusval") var virusValue: String?,
+        var starred: Boolean, val owned: Boolean
+    )
 
     data class GridItem(val img: Drawable, val text: String)
 
-    data class ViewPagerItem(val item: String)
+    data class ViewPagerItem (
+        val address: String,
+        val temp: String,
+        val sunRise: String,
+        val sunSet: String,
+        val sky: String,
+        val humid: String,
+        val wind: String,
+        val rainPer: String,
+        val pm2p5Grade: Int,
+        val pm10Grade: Int,
+    )
+
+    data class TimeWeatherItem (
+        val time: String,
+        val img: Drawable,
+        val value: String
+    )
 }

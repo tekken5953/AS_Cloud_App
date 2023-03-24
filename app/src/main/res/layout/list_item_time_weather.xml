@@ -10,9 +10,10 @@
         android:id="@+id/itemTimeWeatherTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hour_12"
         android:layout_centerHorizontal="true"
-        android:textSize="18sp"/>
+        android:text="@string/hour_12"
+        android:textColor="@color/mode_color_text"
+        android:textSize="18sp" />
 
     <ImageView
         android:id="@+id/itemTimeWeatherSky"
@@ -29,6 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="18˚"
+        android:textColor="@color/mode_color_text"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
         android:textSize="18sp"

@@ -6,7 +6,7 @@ package com.example.airsignal_app.dao
  **/
 object IgnoredKeyFile {
     /** 카카오 네이티브 앱 키 **/
-    const val KAKAO_NATIVE_APP_KEY = "c6eb5158a7c0293e81b5ffdd83abadf0"
+    const val KAKAO_NATIVE_APP_KEY = "8115738ac20442b672f8e82b7b4e6a08"
     /** 네이버 클라이언트 시크릿키 **/
     const val naverDefaultClientSecret = "P5j8dhBsRM"
     /** 네이버 클라이언트 이름,아이디 (테스팅 끝나면 소멸 예정) **/
