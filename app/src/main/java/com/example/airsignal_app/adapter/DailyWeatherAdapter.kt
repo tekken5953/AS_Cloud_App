@@ -14,18 +14,18 @@ import com.example.airsignal_app.dao.AdapterModel
  * @author : Lee Jae Young
  * @since : 2023-03-23 오후 4:00
  **/
-class TimeWeatherAdapter(mContext: Context, list: ArrayList<AdapterModel.TimeWeatherItem>) :
-    RecyclerView.Adapter<TimeWeatherAdapter.ViewHolder>() {
+class DailyWeatherAdapter(mContext: Context, list: ArrayList<AdapterModel.DailyWeatherItem>) :
+    RecyclerView.Adapter<DailyWeatherAdapter.ViewHolder>() {
     private val mList = list
     private val context = mContext
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): TimeWeatherAdapter.ViewHolder {
+    ): DailyWeatherAdapter.ViewHolder {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
-        val view: View = inflater.inflate(R.layout.list_item_time_weather, parent, false)
+        val view: View = inflater.inflate(R.layout.list_item_daily_weather, parent, false)
         return ViewHolder(view)
     }
 
@@ -41,7 +41,7 @@ class TimeWeatherAdapter(mContext: Context, list: ArrayList<AdapterModel.TimeWea
         private val image: ImageView = itemView.findViewById(R.id.itemTimeWeatherSky)
         private val value: TextView = itemView.findViewById(R.id.itemTimeWeatherValue)
 
-        fun bind(dao: AdapterModel.TimeWeatherItem) {
+        fun bind(dao: AdapterModel.DailyWeatherItem) {
             time.text = dao.time
             image.setImageDrawable(dao.img)
             value.text = dao.value

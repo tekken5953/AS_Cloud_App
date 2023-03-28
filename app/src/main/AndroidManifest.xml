@@ -19,7 +19,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AirSignal_App">
+        android:theme="@style/Theme.AirSignal_App"
+        android:windowSoftInputMode="adjustNothing">
         <activity
             android:name=".view.activity.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -36,7 +37,7 @@
             android:exported="false" />
         <activity
             android:name=".view.activity.MyDeviceActivity"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".view.activity.MainActivity"
             android:exported="false" />

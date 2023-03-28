@@ -3,6 +3,7 @@ package com.example.airsignal_app.util
 import android.app.Activity
 import android.content.Intent
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
+import com.example.airsignal_app.view.activity.LoginActivity
 import com.example.airsignal_app.view.activity.MainActivity
 
 /**
@@ -30,7 +31,7 @@ class EnterPage(mActivity: Activity) {
 
     /**로그인 페이지로 이동한다*/
     fun toLogin() {
-        val intent = Intent(activity, MainActivity::class.java)
+        val intent = Intent(activity, LoginActivity::class.java)
         activity.startActivity(intent)
         activity.finish()
     }

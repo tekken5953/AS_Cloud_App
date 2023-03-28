@@ -14,6 +14,8 @@ import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.orhanobut.logger.Logger
+import timber.log.Timber
+import kotlin.system.exitProcess
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignInBinding
@@ -33,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
         naverLogin.initialize()
 
 //        // 구글 자동 로그인
-//        googleLogin.checkSilenceLogin()
+        googleLogin.checkSilenceLogin()
 //        // 카카오 자동 로그인
 //        kakaoLogin.isValidToken()
 
@@ -42,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.kakakoLoginButton.setOnClickListener {
-            kakaoLogin.checkInstallKakaoTalk()
+            kakaoLogin.checkInstallKakaoTalk(binding.mainPb)
         }
 
         binding.naverLoginButton.setOnClickListener {

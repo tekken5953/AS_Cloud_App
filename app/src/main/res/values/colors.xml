@@ -17,7 +17,7 @@
     <color name="progressNormal">#1ccf7f</color> // 프로그래스 바 양호도 보통 컬러
     <color name="progressError">#A0A0A0</color> // 프로그래스 바 에러 컬러
 
-    <color name="dummy_gray_dark">#66000000</color>
+    <color name="dummy_gray_dark">#A7A7A7</color>
     <color name="dummy_gray_medium">#55000000</color>
     <color name="dummy_gray_line">#25000000</color>
     <color name="dummy_gray_light">#11000000</color>
@@ -27,4 +27,13 @@
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
+
+
+    <color name="background_color">#F9F9F9</color>
+    <color name="indicator_default">#D6D6D6</color>
+    <color name="main_blue_color">#00C2FF</color>
+    <color name="main_gray_color">#A7A7A7</color>
+    <color name="view_line_color">#F3F3F3</color>
+    <color name="option_title_color">#5D5D5D</color>
+    <color name="red">#FF0000</color>
 </resources>

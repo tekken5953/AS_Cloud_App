@@ -31,17 +31,4 @@ class RefreshUtils(mContext: Context) {
         context.startActivity(mainIntent)
         exitProcess(0)
     }
-
-    /** 다이얼로그 뷰 갱신 **/
-    fun showDialog(v: View, cancelable: Boolean) {
-        val builder = androidx.appcompat.app.AlertDialog.Builder(context, R.style.AlertDialog)
-        v.let {
-            if (v.parent == null)
-                builder.setView(v).show().setCancelable(cancelable)
-            else {
-                (v.parent as ViewGroup).removeView(v)
-                builder.setView(v).show().setCancelable(cancelable)
-            }
-        }
-    }
 }

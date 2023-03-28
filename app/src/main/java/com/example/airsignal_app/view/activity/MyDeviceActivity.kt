@@ -4,15 +4,18 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.FrameLayout
-import android.widget.ImageView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
 import com.example.airsignal_app.util.RefreshUtils
+import com.example.airsignal_app.util.ShowDialogClass
 
 class MyDeviceActivity : AppCompatActivity() {
 
@@ -42,7 +45,7 @@ class MyDeviceActivity : AppCompatActivity() {
         back.setOnClickListener { onBackPressed() }
 
         addBtn.setOnClickListener {
-            refreshUtils.showDialog(viewAddDevice, true)  // 장치추가 레이아웃 출력
+            ShowDialogClass(this).show(viewAddDevice, true)  // 장치추가 레이아웃 출력
             val addDeviceFrame: FrameLayout = viewAddDevice.findViewById(R.id.addDeviceFrame)   // 장치추가 클릭 필드
             val cancelAddDevice: ImageView = viewAddDevice.findViewById(R.id.addDeviceCancel) // 등록취소
             cancelAddDevice.setOnClickListener {
@@ -50,32 +53,71 @@ class MyDeviceActivity : AppCompatActivity() {
                 refreshUtils.refreshActivity(this)
             }
             addDeviceFrame.setOnClickListener {
-                refreshUtils.showDialog(viewInputSerial,true)   // 시리얼입력 레이아웃 출력
+                ShowDialogClass(this).show(viewInputSerial,true)   // 시리얼입력 레이아웃 출력
                 val nextBtn: AppCompatButton = viewInputSerial.findViewById(R.id.inputSerialNextBtn)    // 다음으로 이동
                 val cancelSerial: ImageView = viewInputSerial.findViewById(R.id.inputSerialCancel)    // 등록취소
+                val serialEt: EditText = viewInputSerial.findViewById(R.id.inputSerialEditText)
+                val serialErrorText: TextView = viewInputSerial.findViewById(R.id.inputSerialErrorText)
 
                 cancelSerial.setOnClickListener {
                     // 액티비티 갱신
                     refreshUtils.refreshActivity(this)
                 }
 
-                nextBtn.setOnClickListener {
-                    //TODO 시리얼 번호 유효성 검사 작성 필요
-                    refreshUtils.showDialog(viewLoading, false) // 로딩 레이아웃 출력
-                    // 로딩 GIF
-                    Glide.with(it.context).asGif().load(R.drawable.loading_gif)
-                        .into(viewLoading.findViewById(R.id.progressAddFrameImage))
-                    val handler = Handler(Looper.getMainLooper())
-                    handler.postDelayed({
-                        // 2초뒤에 완료 레이아웃 출력
-                        refreshUtils.showDialog(viewComplete, false)
-                        val viewCompleteOkBtn: AppCompatButton =    // 완료 버튼
-                            viewComplete.findViewById(R.id.compAddOkBtn)
-                        viewCompleteOkBtn.setOnClickListener {
-                            // 액티비티 갱신
-                            refreshUtils.refreshActivity(this)
+                serialEt.addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        count: Int,
+                        after: Int
+                    ) {
+                        nextBtn.apply {
+                            isEnabled = false
+                            setTextColor(ResourcesCompat.getColor(resources, R.color.main_gray_color, null))
                         }
-                    }, 2000)
+                    }
+
+                    override fun onTextChanged(
+                        s: CharSequence?,
+                        start: Int,
+                        before: Int,
+                        count: Int
+                    ) {
+                        if (serialEt.text.length >= serialEt.maxEms) {
+                            nextBtn.apply {
+                                isEnabled = true
+                                setTextColor(ResourcesCompat.getColor(resources, R.color.mode_color_view, null))
+                            }
+                        }
+                    }
+
+                    override fun afterTextChanged(s: Editable?) {}
+                })
+
+                nextBtn.setOnClickListener {
+                    if (serialEt.length() != serialEt.maxEms) {
+                        serialEt.background = ResourcesCompat.getDrawable(resources,R.drawable.serial_error,null)
+                        serialErrorText.visibility = View.VISIBLE
+                    } else {
+                        serialEt.background = ResourcesCompat.getDrawable(resources,R.drawable.normal_box_bg,null)
+                        serialErrorText.visibility = View.GONE
+
+                        ShowDialogClass(this).show(viewLoading, false) // 로딩 레이아웃 출력
+                        // 로딩 GIF
+                        Glide.with(it.context).asGif().load(R.drawable.loading_gif)
+                            .into(viewLoading.findViewById(R.id.progressAddFrameImage))
+                        val handler = Handler(Looper.getMainLooper())
+                        handler.postDelayed({
+                            // 2초뒤에 완료 레이아웃 출력
+                            ShowDialogClass(this).show(viewComplete, false)
+                            val viewCompleteOkBtn: AppCompatButton =    // 완료 버튼
+                                viewComplete.findViewById(R.id.compAddOkBtn)
+                            viewCompleteOkBtn.setOnClickListener {
+                                // 액티비티 갱신
+                                refreshUtils.refreshActivity(this)
+                            }
+                        }, 2000)
+                    }
                 }
             }
         }

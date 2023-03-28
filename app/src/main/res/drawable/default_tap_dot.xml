@@ -6,9 +6,7 @@
             android:shape="ring"
             android:thickness="4dp"
             android:useLevel="false">
-            <solid android:color="@color/mode_color_view"/>
-            <stroke android:color="@color/dummy_gray_medium"
-                android:width="0.5dp"/>
+            <solid android:color="@color/indicator_default"/>
         </shape>
     </item>
 </layer-list>

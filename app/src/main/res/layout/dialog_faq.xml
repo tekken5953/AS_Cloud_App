@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/faqBack"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:src="@drawable/back_arrow" />
+
+    <TextView
+        android:id="@+id/faqTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:text="@string/setting_faq"
+        android:textColor="@color/mode_color_text"
+        android:textSize="16sp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@+id/faqBack"
+        android:layout_alignBottom="@+id/faqBack"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/faqRv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/faqBack"
+        android:clipToPadding="false"
+        tools:listitem="@layout/list_item_faq"
+        android:layout_marginTop="30dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+</RelativeLayout>

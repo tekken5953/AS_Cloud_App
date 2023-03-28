@@ -2,14 +2,7 @@
 <resources>
     <string name="app_name">AirSignal_App</string>
     <string name="main_gps_title">Yatap-dong, Bundang-gu</string>
-    <string name="main_min_max_temp">min: 17˚\t\t\t\tmax: 30˚</string>
-    <string name="main_today_date">Tuesday, March 14, 2023.</string>
-    <string name="main_wind_speed">5㎧\nwind speed</string>
-    <string name="main_humid">10%\nhumidity</string>
-    <string name="main_rain_chance">20%\nrain</string>
     <string name="main_today_weather">today\'s weather</string>
-    <string name="main_today_pm_10">PM10\t\tVery bad</string>
-    <string name="main_today_pm_2p5">PM2.5\t\tGood</string>
     <string name="my_device_title">My Product</string>
     <string name="as_eye">AS_Eye</string>
     <string name="aqi">Air Quality Index</string>
@@ -25,7 +18,7 @@
     <string name="setting_notify_free_time">7:00 am to 11:00 am</string>
     <string name="setting_notify_event">Receive event notifications</string>
     <string name="setting_customer_service">Customer Service</string>
-    <string name="setting_iaq">IAQ</string>
+    <string name="setting_faq">faq</string>
     <string name="setting_notice">Notice</string>
     <string name="setting_app_data">About</string>
     <string name="setting_logout">Logout</string>
@@ -50,4 +43,25 @@
     <string name="save_change">Settings have been saved successfully.\nRestart the app</string>
     <string name="ok">Ok</string>
     <string name="theme_system">System Theme</string>
+    <string name="monday">Mon</string>
+    <string name="sun_set_time">Sunset</string>
+    <string name="humid">Humidity</string>
+    <string name="wind">Wind</string>
+    <string name="rain_per">Precipitation</string>
+    <string name="pm_10">Fine dust</string>
+    <string name="pm_2p5">Aerosol</string>
+    <string name="daily_weather">Hourly Weather</string>
+    <string name="weekly_weather">Weekly Weather</string>
+    <string name="progress_good">Good</string>
+    <string name="progress_verybad">Worst</string>
+    <string name="progress_normal">Normal</string>
+    <string name="progress_bad">Bad</string>
+    <string name="sun_rise_time">Sunrise</string>
+    <string name="little_cloudy">Partly Cloudy</string>
+    <string name="event">Event</string>
+    <string name="dat_of_sat">Sat</string>
+    <string name="logout_msg">Do you want to log out?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="apply">Apply</string>
 </resources>

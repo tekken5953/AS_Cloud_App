@@ -1,67 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/inputSerialBack"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/back_arrow"
+        android:layout_alignTop="@+id/inputSerialCancel"
+        android:layout_alignBottom="@+id/inputSerialCancel"
+        android:layout_marginStart="20dp"/>
+
 
     <TextView
         android:id="@+id/inputSerialTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
-        android:text="@string/new_device"
-        android:textSize="19sp"
+        style="@style/basicTextView"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:text="@string/new_device"
+        android:textSize="16sp" />
 
     <ImageView
         android:id="@+id/inputSerialCancel"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:tint="@color/mode_color_text"
         android:layout_alignTop="@+id/inputSerialTitle"
         android:layout_alignBottom="@+id/inputSerialTitle"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="19dp"
         android:background="?selectableItemBackgroundBorderless"
         android:src="@drawable/cancel" />
 
     <TextView
         android:id="@+id/inputSerialContent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/basicTextView"
+        android:gravity="start"
         android:layout_below="@+id/inputSerialTitle"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="75dp"
-        android:text="@string/input_serial"
+        android:layout_marginTop="49dp"
+        android:fontFamily="@font/spoqa_hansansneo_medium"
         android:maxEms="15"
-        android:textColor="@color/dummy_gray_dark"
-        android:textSize="25sp"
-        android:textStyle="bold" />
+        android:text="@string/input_serial"
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/inputSerialEditText"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
         android:layout_below="@+id/inputSerialContent"
-        android:layout_marginVertical="150dp"
-        android:hint="@string/serial_number"
-        android:textColorHint="@color/dummy_gray_dark"
-        android:textSize="18sp"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="130dp"
         android:layout_marginEnd="24dp"
-        android:background="@drawable/today_weather_box_bg"/>
+        android:background="@drawable/normal_box_bg"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:gravity="start|center_vertical"
+        android:hint="@string/input_serial"
+        android:inputType="text"
+        android:maxEms="5"
+        android:textColorHint="@color/main_gray_color"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/inputSerialErrorText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/inputSerialEditText"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:text="제품 시리얼 번호를 다시 확인해주세요."
+        android:textColor="@color/progressWorst"
+        android:textSize="14sp"
+        android:visibility="gone"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="40dp"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/inputSerialNextBtn"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_below="@+id/inputSerialEditText"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="170dp"
         android:layout_marginEnd="24dp"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/add_device_button_bg"
+        android:enabled="false"
+        android:fontFamily="@font/spoqa_hansansneo_medium"
         android:text="@string/next"
-        android:layout_marginTop="40dp"
-        android:textColor="@color/dummy_gray_dark"
-        android:textSize="20sp"
-        android:layout_below="@+id/inputSerialEditText"/>
+        android:textColor="@color/main_gray_color"
+        android:textSize="16sp" />
 
 </RelativeLayout>

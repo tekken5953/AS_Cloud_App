@@ -2,7 +2,10 @@ package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -16,14 +19,16 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.HomeViewPagerAdapter
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.gps.GetLocation
-import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.RequestPermissionsUtil
-import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
+import com.example.airsignal_app.util.SharedPreferenceManager
+import com.example.airsignal_app.util.ShowDialogClass
 import com.example.airsignal_app.util.ToastUtils
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayoutMediator
@@ -32,6 +37,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,6 +45,7 @@ class MainActivity : AppCompatActivity() {
 
     val addressList = ArrayList<AdapterModel.ViewPagerItem>()
     private val viewPagerAdapter = HomeViewPagerAdapter(this, addressList)
+    private var isBackPressed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             @SuppressLint("InflateParams")
             val searchLayout: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_search_address, null)
-            RefreshUtils(this).showDialog(searchLayout, true)
+            ShowDialogClass(this).show(searchLayout, true)
 
             val searchListView: ListView = searchLayout.findViewById(R.id.searchAddressListView)
             val searchItem = ArrayList<String>()
@@ -108,20 +115,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     // 사이드 메뉴 닫기
-    private fun closeDrawerMenu() {
+    fun closeDrawerMenu() {
         if (binding.mainDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
         }
     }
 
-    // 사이드 메뉴 열려있으면 닫고 닫혀있으면 종료
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        if (binding.mainDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
+    private fun openMenu(menu: DrawerLayout) {
+        menu.openDrawer(GravityCompat.START)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -155,7 +156,6 @@ class MainActivity : AppCompatActivity() {
 
             // 탭레이아웃 연동
             TabLayoutMediator(binding.mainTabLayout, this@apply) { tab, position ->
-                //TODO
             }.attach()
         }
 
@@ -205,7 +205,7 @@ class MainActivity : AppCompatActivity() {
         binding.mainSideMenuIv.setOnClickListener {
             binding.mainDrawerLayout.apply {
                 // 사이드 메뉴 열림
-                openDrawer(GravityCompat.START)
+                openMenu(this)
                 clipToPadding = false
                 bringToFront()
             }
@@ -217,45 +217,53 @@ class MainActivity : AppCompatActivity() {
                 binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
             }
 
-        // 사이드 메뉴 생성 소멸에 따른 처리
-        binding.mainDrawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
-            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
-            override fun onDrawerOpened(drawerView: View) {}
-            override fun onDrawerClosed(drawerView: View) {
-                binding.viewPagerLayout.bringToFront()
-            }
+        binding.mainNavView.getHeaderView(0).apply {
+            findViewById<TextView>(R.id.navHeaderUserId)
+                .text = SharedPreferenceManager(this@MainActivity).getString("user_email")
+            Glide.with(context)
+                .load(Uri.parse(SharedPreferenceManager(context).getString("user_profile")))
+                .into(findViewById(R.id.navHeaderProfileImg))
 
-            override fun onDrawerStateChanged(newState: Int) {}
-        })
+            // 사이드 메뉴 생성 소멸에 따른 처리
+            binding.mainDrawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+                override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+                override fun onDrawerOpened(drawerView: View) {}
+                override fun onDrawerClosed(drawerView: View) {
+                    binding.viewPagerLayout.bringToFront()
+                }
 
-        // 사이드 메뉴 아이템 클릭 리스너
-        binding.mainNavView.setNavigationItemSelectedListener(object :
-            NavigationView.OnNavigationItemSelectedListener {
-            override fun onNavigationItemSelected(item: MenuItem): Boolean {
-                closeDrawerMenu()
-                when (item.itemId) {
-                    // 날씨정보
-                    R.id.side_menu_weather -> {
-                        return true
-                    }
-                    // 내 기기
-                    R.id.side_menu_device -> {
-                        val intent = Intent(this@MainActivity, MyDeviceActivity::class.java)
-                        startActivity(intent)
-                        return true
-                    }
-                    // 설정
-                    R.id.side_menu_setting -> {
-                        val intent = Intent(this@MainActivity, SettingActivity::class.java)
-                        startActivity(intent)
-                        return true
-                    }
-                    else -> {
-                        return false
+                override fun onDrawerStateChanged(newState: Int) {}
+            })
+
+            // 사이드 메뉴 아이템 클릭 리스너
+            binding.mainNavView.setNavigationItemSelectedListener(object :
+                NavigationView.OnNavigationItemSelectedListener {
+                override fun onNavigationItemSelected(item: MenuItem): Boolean {
+                    closeDrawerMenu()
+                    when (item.itemId) {
+                        // 날씨정보
+                        R.id.side_menu_weather -> {
+                            return true
+                        }
+                        // 내 기기
+                        R.id.side_menu_device -> {
+                            val intent = Intent(this@MainActivity, MyDeviceActivity::class.java)
+                            startActivity(intent)
+                            return true
+                        }
+                        // 설정
+                        R.id.side_menu_setting -> {
+                            val intent = Intent(this@MainActivity, SettingActivity::class.java)
+                            startActivity(intent)
+                            return true
+                        }
+                        else -> {
+                            return false
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     // 백그라운드에서 GPS 를 불러오기 위한 WorkManager
@@ -267,5 +275,28 @@ class MainActivity : AppCompatActivity() {
             CHECK_GPS_BACKGROUND,
             ExistingPeriodicWorkPolicy.KEEP, workRequest
         )
+    }
+
+    override fun onBackPressed() {
+        if (binding.mainDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            if (binding.mainViewPager.currentItem == 0) {
+                val toast = ToastUtils(this)
+                if (!isBackPressed) {
+                    toast.customDurationMessage("버튼을 한번 더 누르면 앱이 종료됩니다", 2)
+                    isBackPressed = true
+                } else {
+                    finishAffinity()  // 해당 어플리케이션의 루트 액티비티를 종료
+                    System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
+                    exitProcess(0) // 현재의 액티비티를 종료
+                }
+                Handler(Looper.getMainLooper()).postDelayed({
+                    isBackPressed = false
+                }, 2000)
+            } else {
+                binding.mainViewPager.currentItem = 0
+            }
+        }
     }
 }

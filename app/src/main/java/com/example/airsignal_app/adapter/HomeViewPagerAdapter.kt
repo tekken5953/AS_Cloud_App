@@ -13,6 +13,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
+import kotlin.random.Random
 
 /**
  * @author : Lee Jae Young
@@ -22,7 +23,8 @@ class HomeViewPagerAdapter(mContext: Context, list: ArrayList<AdapterModel.ViewP
     RecyclerView.Adapter<HomeViewPagerAdapter.ViewHolder>() {
     private val mList = list
     private val context = mContext
-    private val timeWeatherList = ArrayList<AdapterModel.TimeWeatherItem>()
+    private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
+    private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -51,20 +53,39 @@ class HomeViewPagerAdapter(mContext: Context, list: ArrayList<AdapterModel.ViewP
         private val sunset: TextView = itemView.findViewById(R.id.viewPagerSunSetValue)
         private val sunrise: TextView = itemView.findViewById(R.id.viewPagerSunRiseValue)
 
-        private val timeWeather: RecyclerView = itemView.findViewById(R.id.viewPagerTimeWeatherRv)
-        private val timeWeatherAdapter = TimeWeatherAdapter(context, timeWeatherList)
+        private val dailyWeather: RecyclerView = itemView.findViewById(R.id.viewPagerDailyWeatherRv)
+        private val weeklyWeather: RecyclerView = itemView.findViewById(R.id.viewPagerWeeklyWeatherRv)
+
+        private val dailyWeatherAdapter = DailyWeatherAdapter(context,
+            this@HomeViewPagerAdapter.dailyWeatherList)
+
+        private val weeklyWeatherAdapter = WeeklyWeatherAdapter(context,
+        this@HomeViewPagerAdapter.weeklyWeatherList)
 
         fun bind(dao: AdapterModel.ViewPagerItem) {
             settingSpan(pm10, dao.pm10Grade)
             settingSpan(pm2p5, dao.pm2p5Grade)
 
-            timeWeather.adapter = timeWeatherAdapter
-            timeWeatherList.clear()
+            dailyWeather.adapter = dailyWeatherAdapter
+            this@HomeViewPagerAdapter.dailyWeatherList.clear()
+
+            weeklyWeather.adapter = weeklyWeatherAdapter
+            this@HomeViewPagerAdapter.weeklyWeatherList.clear()
+
+
+            val testDailyArray = intArrayOf(R.drawable.sunny,R.drawable.cloudy,R.drawable.sunny_cloudy)
             for(i: Int in 0..7) {
-                addTimeWeatherItem("${i+12}시",
-                    ResourcesCompat.getDrawable(context.resources,R.drawable.cloudy,null)!!,
+                addDailyWeatherItem("${i+12}시",
+                    ResourcesCompat.getDrawable(context.resources, testDailyArray.random() ,null)!!,
                     "${i+18}˚")
-                timeWeatherAdapter.notifyItemInserted(i)
+                addWeeklyWeatherItem(context.getString(R.string.dat_of_sat),
+                    ResourcesCompat.getDrawable(context.resources, testDailyArray.random() ,null)!!,
+                    ResourcesCompat.getDrawable(context.resources, testDailyArray.random() ,null)!!,
+                    "${Random.nextInt(0,30)}˚",
+                    "${Random.nextInt(0,30)}˚")
+
+                dailyWeatherAdapter.notifyItemInserted(i)
+                weeklyWeatherAdapter.notifyItemInserted(i)
             }
         }
     }
@@ -90,18 +111,27 @@ class HomeViewPagerAdapter(mContext: Context, list: ArrayList<AdapterModel.ViewP
     // 등급에 따른 텍스트 변환
     private fun getDataString(grade: Int) : String {
         return when (grade) {
-            0 -> "좋음"
-            1 -> "보통"
-            2 -> "나쁨"
-            3 -> "매우나쁨"
+            0 -> context.getString(R.string.progress_good)
+            1 -> context.getString(R.string.progress_normal)
+            2 -> context.getString(R.string.progress_bad)
+            3 -> context.getString(R.string.progress_verybad)
             else -> ""
         }
     }
 
     // 시간별 날씨 리사이클러뷰 아이템 추가
-    private fun addTimeWeatherItem(time: String, img: Drawable, value: String) {
-        val item = AdapterModel.TimeWeatherItem(time, img, value)
+    private fun addDailyWeatherItem(time: String, img: Drawable, value: String) {
+        val item = AdapterModel.DailyWeatherItem(time, img, value)
 
-        timeWeatherList.add(item)
+        this.dailyWeatherList.add(item)
+    }
+
+    // 시간별 날씨 리사이클러뷰 아이템 추가
+    private fun addWeeklyWeatherItem(
+        day: String, minImg: Drawable,
+        maxImg: Drawable, minText: String, maxText: String) {
+        val item = AdapterModel.WeeklyWeatherItem(day, minImg, maxImg,minText,maxText)
+
+        this.weeklyWeatherList.add(item)
     }
 }
