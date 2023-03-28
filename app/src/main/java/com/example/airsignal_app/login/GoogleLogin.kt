@@ -12,6 +12,9 @@ import com.example.airsignal_app.view.activity.LoginActivity
 import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.dao.IgnoredKeyFile.temporalPhoneNumber
+import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
+import com.example.airsignal_app.dao.IgnoredKeyFile.userId
+import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -118,6 +121,11 @@ class GoogleLogin(mActivity: Activity) {
                 profile : $photo
                 """.trimIndent()
             )
+            SharedPreferenceManager(activity).apply {
+                setString(userId,displayName.toString())
+                setString(userProfile,photo)
+                setString(userEmail, email)
+            }
             saveLoginStatus()
             enterMainPage()
         } catch (e: ApiException) {
@@ -127,6 +135,6 @@ class GoogleLogin(mActivity: Activity) {
 
     /** 메인 페이지로 이동 **/
     private fun enterMainPage() {
-        EnterPage(activity).toLogin()
+        EnterPage(activity).toMain("google")
     }
 }

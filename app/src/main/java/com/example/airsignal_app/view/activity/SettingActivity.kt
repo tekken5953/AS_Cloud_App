@@ -6,22 +6,30 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.R
+import com.example.airsignal_app.adapter.FaqAdapter
+import com.example.airsignal_app.adapter.NoticeAdapter
+import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.databinding.ActivitySettingBinding
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.SharedPreferenceManager
+import com.example.airsignal_app.util.ShowDialogClass
 
 class SettingActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingBinding
     private val sp by lazy { SharedPreferenceManager(this) }
+    private val faqItem = arrayListOf<String>()
+    private val noticeItem = arrayListOf<AdapterModel.NoticeItem>()
 
     override fun onResume() {
         super.onResume()
@@ -68,14 +76,22 @@ class SettingActivity : AppCompatActivity() {
         // 로그아웃 버튼 클릭
         binding.settingLogOut.setOnClickListener {
             val builder = AlertDialog.Builder(this)
-            builder.setTitle("로그아웃").setMessage("${lastLogin}에서 로그아웃 하시겠습니까?")
+            builder.setTitle(getString(R.string.setting_logout))
+                .setMessage(getString(R.string.logout_msg))
                 .setPositiveButton(
-                    "예"
+                    getString(R.string.ok)
                 ) { _, _ ->
-                    sp.clear()  // LocalDB Clear
+                    sp.run {
+                        removeKey("user_id")
+                        removeKey("user_profile")
+                        removeKey("lastLoginPhone")
+                        removeKey("lastLoginPlatform")
+                        removeKey("user_email")
+                    }
                     when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
                         "kakao" -> {
                             KakaoLogin(this).logout(phoneNumber)
+//                            KakaoLogin(this).disconnectFromKakao()
                         }
                         "naver" -> {
                             NaverLogin(this).logout(phoneNumber)
@@ -86,7 +102,7 @@ class SettingActivity : AppCompatActivity() {
                     }
                 }
                 .setNegativeButton(
-                    "아니오"
+                    getString(R.string.no)
                 ) { dialog, _ -> dialog?.dismiss() }
 
             builder.create().show()
@@ -125,24 +141,30 @@ class SettingActivity : AppCompatActivity() {
                 when (checkedId) {
                     // 시스템 설정
                     systemTheme.id -> {
-                        changedThemeRadio(mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
+                        changedThemeRadio(
+                            mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
                             dbData = "system",
                             radioGroup = radioGroup,
-                            radioButton = systemTheme)
+                            radioButton = systemTheme
+                        )
                     }
                     // 라이트 모드
                     lightTheme.id -> {
-                        changedThemeRadio(mode = AppCompatDelegate.MODE_NIGHT_NO,
+                        changedThemeRadio(
+                            mode = AppCompatDelegate.MODE_NIGHT_NO,
                             dbData = "light",
                             radioGroup = radioGroup,
-                            radioButton = lightTheme)
+                            radioButton = lightTheme
+                        )
                     }
                     // 다크 모드
                     darkTheme.id -> {
-                        changedThemeRadio(mode = AppCompatDelegate.MODE_NIGHT_YES,
+                        changedThemeRadio(
+                            mode = AppCompatDelegate.MODE_NIGHT_YES,
                             dbData = "dark",
                             radioGroup = radioGroup,
-                            radioButton = darkTheme)
+                            radioButton = darkTheme
+                        )
                     }
                 }
             }
@@ -188,24 +210,83 @@ class SettingActivity : AppCompatActivity() {
             radioGroup.setOnCheckedChangeListener { _, checkedId ->
                 when (checkedId) {
                     systemLang.id -> {
-                        changedLangRadio(lang = "system",
+                        changedLangRadio(
+                            lang = "system",
                             radioGroup = radioGroup,
-                            radioButton = systemLang)
+                            radioButton = systemLang
+                        )
                     }
                     koreanLang.id -> {
-                        changedLangRadio(lang = "korean",
+                        changedLangRadio(
+                            lang = "korean",
                             radioGroup = radioGroup,
-                            radioButton = koreanLang)
+                            radioButton = koreanLang
+                        )
                     }
                     englishLang.id -> {
-                        changedLangRadio(lang = "english",
+                        changedLangRadio(
+                            lang = "english",
                             radioGroup = radioGroup,
-                            radioButton = englishLang)
+                            radioButton = englishLang
+                        )
                     }
                 }
             }
 
             alertDialog.show()
+        }
+
+        val detailView: View =
+            LayoutInflater.from(this).inflate(R.layout.dialog_detail, null)
+        val detailDate: TextView = detailView.findViewById(R.id.detailNoticeDate)
+        val backDetail: ImageView = detailView.findViewById(R.id.detailBack)
+        backDetail.setOnClickListener { onBackPressed() }
+
+        binding.settingNotice.setOnClickListener {
+            val noticeMainView: View = LayoutInflater.from(this).inflate(R.layout.dialog_notice, null)
+            val noticeAdapter = NoticeAdapter(this, noticeItem)
+            val recyclerView: RecyclerView = noticeMainView.findViewById(R.id.noticeRv)
+            recyclerView.adapter = noticeAdapter
+            for (i: Int in 0..5) {
+                addNoticeItem("01.1${i}", "가나다 라마바사아 자차 카 타파하 가나다 라마바사아 자차 카 타파하")
+                noticeAdapter.notifyItemInserted(i)
+            }
+
+            val backNotice: ImageView = noticeMainView.findViewById(R.id.noticeBack)
+            backNotice.setOnClickListener { onBackPressed() }
+
+            ShowDialogClass(this).show(noticeMainView, true)
+
+            noticeAdapter.setOnItemClickListener(object : NoticeAdapter.OnItemClickListener {
+                override fun onItemClick(v: View, position: Int) {
+                    detailDate.text = noticeItem[position].date
+                    detailDate.visibility = View.VISIBLE
+                    ShowDialogClass(this@SettingActivity).show(detailView, true)
+                }
+            })
+        }
+
+        binding.settingFaq.setOnClickListener {
+            val faqMainView: View = LayoutInflater.from(this).inflate(R.layout.dialog_faq, null)
+            val faqAdapter = FaqAdapter(this, faqItem)
+            val recyclerView = faqMainView.findViewById<RecyclerView>(R.id.faqRv)
+            recyclerView.adapter = faqAdapter
+            for (i: Int in 0..5) {
+                addFaqItem("가나다 라마바사아 자차 카 타파하")
+                faqAdapter.notifyItemInserted(i)
+            }
+
+            val backFaq: ImageView = faqMainView.findViewById(R.id.faqBack)
+            backFaq.setOnClickListener { onBackPressed() }
+
+            ShowDialogClass(this).show(faqMainView, true)
+
+            faqAdapter.setOnItemClickListener(object : FaqAdapter.OnItemClickListener {
+                override fun onItemClick(v: View, position: Int) {
+                    detailDate.visibility = View.GONE
+                    ShowDialogClass(this@SettingActivity).show(detailView, true)
+                }
+            })
         }
     }
 
@@ -219,7 +300,12 @@ class SettingActivity : AppCompatActivity() {
     }
 
     /** 테마 라디오 버튼 클릭 시 이벤트 처리 **/
-    private fun changedThemeRadio(mode: Int,dbData: String, radioGroup: RadioGroup, radioButton: RadioButton) {
+    private fun changedThemeRadio(
+        mode: Int,
+        dbData: String,
+        radioGroup: RadioGroup,
+        radioButton: RadioButton
+    ) {
         // 테마모드 변경
         AppCompatDelegate.setDefaultNightMode(mode)
         // DB에 바뀐 정보 저장
@@ -232,10 +318,20 @@ class SettingActivity : AppCompatActivity() {
     private fun saveLanguageChange() {
         val builder = AlertDialog.Builder(this)
         builder.setMessage(getString(R.string.save_change))
-            .setPositiveButton(getString(R.string.ok)
+            .setPositiveButton(
+                getString(R.string.apply)
             ) { _, _ ->
                 RefreshUtils(this).refreshApplication()
             }
             .show()
+    }
+
+    private fun addFaqItem(text: String) {
+        faqItem.add(text)
+    }
+
+    private fun addNoticeItem(date: String, title: String) {
+        val item = AdapterModel.NoticeItem(date, title)
+        noticeItem.add(item)
     }
 }

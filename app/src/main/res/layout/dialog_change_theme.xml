@@ -7,10 +7,10 @@
 
     <ImageView
         android:id="@+id/changeThemeBack"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@drawable/back"
-        android:layout_marginStart="24dp"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/back_arrow"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:background="?selectableItemBackgroundBorderless"
         app:layout_constraintTop_toTopOf="parent"
@@ -21,11 +21,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/setting_theme_left"
-        android:textSize="20sp"
+        android:textSize="16sp"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:textColor="@color/mode_color_text"
         android:layout_marginStart="10dp"
         app:layout_constraintTop_toTopOf="@+id/changeThemeBack"
         app:layout_constraintBottom_toBottomOf="@+id/changeThemeBack"
-        app:layout_constraintStart_toEndOf="@+id/changeThemeBack"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <RadioGroup
         android:id="@+id/changeThemeRadioGroup"
@@ -33,20 +36,22 @@
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
         app:layout_constraintTop_toBottomOf="@+id/changeThemeTitle">
+
         <RadioButton
             android:id="@+id/systemThemeRb"
             android:layout_width="match_parent"
             android:layout_height="65dp"
-            android:paddingTop="5dp"
-            android:button="@null"
             android:background="?selectableItemBackground"
+            android:button="@null"
+            android:fontFamily="@font/spoqa_hansansneo_regular"
             android:gravity="center_vertical"
+            android:paddingStart="24dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="24dp"
             android:text="@string/theme_system"
-            android:textSize="16sp"
-            android:paddingEnd="15dp"
-            android:paddingStart="10dp"
-            android:drawableEnd="@drawable/radio_button_selector"
-            android:textColor="@drawable/radio_text_selector"/>
+            android:textColor="@drawable/radio_text_selector"
+            android:textSize="16sp" />
+
         <RadioButton
             android:id="@+id/lightThemeRb"
             android:layout_width="match_parent"
@@ -56,11 +61,12 @@
             android:background="?selectableItemBackground"
             android:paddingTop="5dp"
             android:button="@null"
-            android:paddingEnd="15dp"
-            android:paddingStart="10dp"
-            android:drawableEnd="@drawable/radio_button_selector"
+            android:paddingEnd="24dp"
+            android:fontFamily="@font/spoqa_hansansneo_regular"
+            android:paddingStart="24dp"
             android:textColor="@drawable/radio_text_selector"
             android:gravity="center_vertical"/>
+
         <RadioButton
             android:id="@+id/darkThemeRb"
             android:layout_width="match_parent"
@@ -70,9 +76,9 @@
             android:background="?selectableItemBackground"
             android:paddingTop="5dp"
             android:button="@null"
-            android:paddingEnd="15dp"
-            android:paddingStart="10dp"
-            android:drawableEnd="@drawable/radio_button_selector"
+            android:paddingEnd="24dp"
+            android:fontFamily="@font/spoqa_hansansneo_regular"
+            android:paddingStart="24dp"
             android:textColor="@drawable/radio_text_selector"
             android:gravity="center_vertical"/>
     </RadioGroup>

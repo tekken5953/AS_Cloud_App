@@ -12,6 +12,7 @@ import com.example.airsignal_app.dao.ConvertDataType.setFullScreenMode
 import com.example.airsignal_app.dao.ConvertDataType.setLocaleToEnglish
 import com.example.airsignal_app.dao.ConvertDataType.setLocaleToKorea
 import com.example.airsignal_app.dao.ConvertDataType.setLocaleToSystem
+import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.util.SharedPreferenceManager
 
 @SuppressLint("CustomSplashScreen")
@@ -52,9 +53,7 @@ class SplashActivity : AppCompatActivity() {
 
         // 2초 뒤 이동
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        },500)
+           EnterPage(this).toLogin()
+        },1000)
     }
 }

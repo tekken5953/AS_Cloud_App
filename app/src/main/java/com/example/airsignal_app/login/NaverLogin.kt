@@ -10,6 +10,9 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientId
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientName
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientSecret
+import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
+import com.example.airsignal_app.dao.IgnoredKeyFile.userId
+import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
@@ -28,7 +31,12 @@ class NaverLogin(mActivity: Activity) {
 
     fun initialize() {
         //TODO 정식버전이 되면 동적할당
-        NaverIdLoginSDK.initialize(activity, naverDefaultClientId, naverDefaultClientSecret, naverDefaultClientName)
+        NaverIdLoginSDK.initialize(
+            activity,
+            naverDefaultClientId,
+            naverDefaultClientSecret,
+            naverDefaultClientName
+        )
     }
 
     /** 로그인
@@ -43,9 +51,9 @@ class NaverLogin(mActivity: Activity) {
     fun logout(phone: String) {
         if (getAccessToken() != null) {
             NaverIdLoginSDK.logout()
-            enterLoginPage()
             Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")
             sendLogOutWithPhone("로그아웃 성공", phone, "네이버")
+            enterLoginPage()
         }
     }
 
@@ -53,7 +61,7 @@ class NaverLogin(mActivity: Activity) {
      *
      * @return String?
      * **/
-    fun getAccessToken(): String? {
+    private fun getAccessToken(): String? {
         return NaverIdLoginSDK.getAccessToken()
     }
 
@@ -65,21 +73,17 @@ class NaverLogin(mActivity: Activity) {
     // 프로필 콜벡 메서드
     val profileCallback = object : NidProfileCallback<NidProfileResponse> {
         override fun onSuccess(result: NidProfileResponse) {
-            val userId = result.profile?.id
-            val phone = result.profile?.mobile.toString()
-            SharedPreferenceManager(activity).setString(lastLoginPhone,phone)
-            Logger.t(TAG_LOGIN).d("네이버 로그인 성공")
-            Logger.t(TAG_LOGIN).d(
-                "user id : $userId\n" +
-                        "mobile : $phone\n" +
-                        "token Type : ${NaverIdLoginSDK.getTokenType()}\n" +
-                        "access : $NaverIdLoginSDK.getAccessToken()\n" +
-                        "refresh : ${NaverIdLoginSDK.getRefreshToken()}\n" +
-                        "expired at : ${NaverIdLoginSDK.getExpiresAt()}\n" +
-                        "state : ${NaverIdLoginSDK.getState()}"
-            )
+            result.profile?.let {
+                Logger.t(TAG_LOGIN).d("네이버 로그인 성공")
+                SharedPreferenceManager(activity).apply {
+                    setString(lastLoginPhone, it.mobile.toString())
+                    setString(userId, it.name.toString())
+                    setString(userProfile, it.profileImage!!)
+                    setString(userEmail, it.email.toString())
+                }
+                sendLogInWithPhone("로그인 성공", it.mobile.toString(), "네이버", "수동")
+            }
 
-            sendLogInWithPhone("로그인 성공",phone,"네이버","수동")
             enterMainPage()
         }
 
@@ -122,16 +126,16 @@ class NaverLogin(mActivity: Activity) {
 
     // 메인 페이지로 이동
     private fun enterMainPage() {
-       EnterPage(activity).toMain("naver")
+        EnterPage(activity).toMain("naver")
     }
 
     // 로그인 페이지로 이동
     private fun enterLoginPage() {
-       EnterPage(activity).toLogin()
+        EnterPage(activity).toLogin()
     }
 
     /** 네이버 클라이언트와 연동 해제 **/
-    private fun disconnectFromNaver() {
+    fun disconnectFromNaver() {
         NidOAuthLogin().callDeleteTokenApi(activity, object : OAuthLoginCallback {
             override fun onSuccess() {
                 //서버에서 토큰 삭제에 성공한 상태입니다.

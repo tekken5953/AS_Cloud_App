@@ -4,11 +4,11 @@
         <shape android:shape="rectangle" />
     </item>
 
-    <item android:width="60dp" android:height="31dp">
+    <item android:width="45dp" android:height="22dp">
         <shape android:shape="rectangle">
             <!-- 양쪽 라운드 처리 -->
-            <corners android:radius="25dp"/>
-            <solid android:color="@color/dummy_gray_medium"/>
+            <corners android:radius="11dp"/>
+            <solid android:color="@color/main_gray_color"/>
         </shape>
     </item>
 </layer-list>

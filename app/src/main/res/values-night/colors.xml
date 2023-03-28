@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="dummy_gray_dark">#99ffffff</color>
+    <color name="dummy_gray_dark">#A7A7A7</color>
     <color name="dummy_gray_medium">#88ffffff</color>
     <color name="dummy_gray_line">#79ffffff</color>
     <color name="dummy_gray_light">#66ffffff</color>

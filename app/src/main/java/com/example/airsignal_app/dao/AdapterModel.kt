@@ -20,7 +20,7 @@ object AdapterModel {
 
     data class GridItem(val img: Drawable, val text: String)
 
-    data class ViewPagerItem (
+    data class ViewPagerItem(
         val address: String,
         val temp: String,
         val sunRise: String,
@@ -33,9 +33,28 @@ object AdapterModel {
         val pm10Grade: Int,
     )
 
-    data class TimeWeatherItem (
+    data class DailyWeatherItem(
         val time: String,
         val img: Drawable,
         val value: String
+    )
+
+    data class WeeklyWeatherItem(
+        val day: String,
+        val minImg: Drawable,
+        val maxImg: Drawable,
+        val minText: String,
+        val maxText: String
+    )
+
+    data class NoticeItem(
+        val date: String,
+        val title: String
+    )
+
+    data class DetailItem(
+        val title: String,
+        val content: String,
+        val isNotice: Boolean
     )
 }

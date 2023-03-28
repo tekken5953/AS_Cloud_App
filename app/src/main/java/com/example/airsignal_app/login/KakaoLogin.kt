@@ -2,13 +2,21 @@ package com.example.airsignal_app.login
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
+import com.example.airsignal_app.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
+import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
+import com.example.airsignal_app.dao.IgnoredKeyFile.userId
+import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
+import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithPhoneForKakao
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithPhone
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
 import com.example.airsignal_app.util.EnterPage
+import com.example.airsignal_app.util.SharedPreferenceManager
 import com.example.airsignal_app.view.activity.LoginActivity
-import com.example.airsignal_app.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
-import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider
 import com.kakao.sdk.auth.model.OAuthToken
@@ -19,6 +27,7 @@ import com.kakao.sdk.common.model.KakaoSdkError
 import com.kakao.sdk.common.util.Utility
 import com.kakao.sdk.user.UserApiClient
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.*
 import timber.log.Timber
 
 /**
@@ -29,18 +38,20 @@ import timber.log.Timber
 class KakaoLogin(mActivity: Activity) {
     private val activity = mActivity
 
-    fun initialize  () {
+    fun initialize() {
         KakaoSdk.init(activity, KAKAO_NATIVE_APP_KEY)
     }
 
     /** 앱 히시키 받아오기 **/
-    private fun getKeyHash() : String {
+    private fun getKeyHash(): String {
         return Utility.getKeyHash(activity)
     }
 
     /** 카카오톡 설치 확인 후 로그인**/
-    fun checkInstallKakaoTalk() {
+    fun checkInstallKakaoTalk(pb: ProgressBar) {
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(activity)) {
+            pb.visibility = View.VISIBLE
+            pb.bringToFront()
             // 카카오톡 로그인
             UserApiClient.instance.loginWithKakaoTalk(activity) { token, error ->
                 // 로그인 실패 부분
@@ -66,8 +77,7 @@ class KakaoLogin(mActivity: Activity) {
                         loginSilenceKakao()
                         enterMainPage()
                     }
-
-                    sendLogInWithPhoneForKakao(activity,"로그인 성공", "카카오톡", "수동")
+                    sendLogInWithPhoneForKakao(activity, "로그인 성공", "카카오톡", "수동")
                 }
             }
         } else {
@@ -87,7 +97,7 @@ class KakaoLogin(mActivity: Activity) {
                 enterMainPage()
             }
 
-            sendLogInWithPhoneForKakao(activity,"로그인 성공", "카카오 이메일", "수동")
+            sendLogInWithPhoneForKakao(activity, "로그인 성공", "카카오 이메일", "수동")
         }
     }
 
@@ -112,10 +122,8 @@ class KakaoLogin(mActivity: Activity) {
                                 "카카오 자동로그인 성공\n" +
                                         "user code is ${it}\n"
                             )
-
-
                     }
-                    sendLogInWithPhoneForKakao(activity,"로그인 성공", "카카오", "자동")
+                    sendLogInWithPhoneForKakao(activity, "로그인 성공", "카카오", "자동")
                 }
             }
         } else {
@@ -126,7 +134,7 @@ class KakaoLogin(mActivity: Activity) {
 
     /** 카카오 자동 로그인
      * @return OAuthToken? **/
-    private fun loginSilenceKakao() : OAuthToken? {
+    private fun loginSilenceKakao(): OAuthToken? {
         val token = TokenManagerProvider.instance.manager.getToken()
         token?.let {
             Logger.t(TAG_LOGIN)
@@ -141,18 +149,25 @@ class KakaoLogin(mActivity: Activity) {
     }
 
     private fun enterMainPage() {
-        EnterPage(activity).toMain("kakao")
+        CoroutineScope(Dispatchers.IO).launch {
+            saveUserSettings()
+            delay(1000)
+            EnterPage(activity).toMain("kakao")
+        }
     }
 
-    private fun getUserAllData() {
+    private fun saveUserSettings() {
         UserApiClient.instance.me { user, _ ->
-            if (user != null) {
-                val array = user.toString()
-                    .replace("User(", "\n------------------------------\n")
-                    .replace(user.toString().last().toString(), "\n------------------------------")
-                    .replace("=", ":")
-                    .replace(",", "\n")
-                Timber.tag(TAG_LOGIN).d(array)
+            user?.kakaoAccount?.let { account ->
+                val sp = SharedPreferenceManager(activity)
+                sp.apply {
+                    setString(lastLoginPhone, account.phoneNumber.toString())
+                    setString(userId, account.profile!!.nickname.toString())
+                    setString(userProfile, account.profile!!.profileImageUrl.toString())
+                    setString(userEmail, account.email.toString())
+                }
+                Timber.tag("testtest")
+                    .d("name : %s profile : %s", account.profile!!.nickname, account.profile!!.thumbnailImageUrl)
             }
         }
     }
@@ -170,12 +185,8 @@ class KakaoLogin(mActivity: Activity) {
                     sendLogToFail("카카오 로그아웃 실패", error.toString())
                 } else {
                     Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
-                    sendLogOutWithPhone("로그아웃 성공", phone.replace("+82 ","0"), "카카오")
-                    activity.run {
-                        val intent = Intent(this, LoginActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
+                    sendLogOutWithPhone("로그아웃 성공", phone.replace("+82 ", "0"), "카카오")
+                    EnterPage(activity).toLogin()
                 }
             }
         } catch (e: UninitializedPropertyAccessException) {
@@ -190,6 +201,7 @@ class KakaoLogin(mActivity: Activity) {
             if (error != null) {
                 Logger.t(TAG_LOGIN).e("연결 끊기 실패 : $error")
             } else {
+                EnterPage(activity).toLogin()
                 Logger.t(TAG_LOGIN).i("연결 끊기 성공. SDK 에서 토큰 삭제 됨")
             }
         }
