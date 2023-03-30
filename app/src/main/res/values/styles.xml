@@ -41,5 +41,8 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <declare-styleable name="Common">
+        <attr name="android:src" />
+    </declare-styleable>
 
 </resources>

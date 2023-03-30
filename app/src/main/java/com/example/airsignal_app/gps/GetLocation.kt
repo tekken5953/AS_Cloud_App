@@ -6,7 +6,9 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.widget.TextView
 import com.example.airsignal_app.dao.ConvertDataType
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.db.SharedPreferenceManager
@@ -14,7 +16,9 @@ import com.example.airsignal_app.util.ToastUtils
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
 import java.io.IOException
+import java.lang.Thread.sleep
 import java.util.*
+import kotlin.math.abs
 
 class GetLocation(mContext: Context) : GetLocationListener {
     private val context = mContext
@@ -47,12 +51,12 @@ class GetLocation(mContext: Context) : GetLocationListener {
             }
     }
 
-    override fun onGetLocal(location: Location) {
+    override fun onGetLocal(location: Location){
         getAddress(location.latitude, location.longitude)
     }
 
     /** 현재 주소를 불러옵니다 **/
-    private fun getAddress(lat: Double, lng: Double) : String {
+    private fun getAddress(lat: Double, lng: Double) {
         val email = SharedPreferenceManager(context).getString(userEmail)
         val nowAddress = "현재 위치를 확인 할 수 없습니다."
         lateinit var address: List<Address>
@@ -66,6 +70,7 @@ class GetLocation(mContext: Context) : GetLocationListener {
                         isSuccess = "Background Location",
                         log = "${it.latitude.toInt()} , ${it.longitude.toInt()}\t ${it.getAddressLine(0)}")
                     Logger.t("Location").d("${it.latitude},${it.longitude}\n${it.getAddressLine(0)}")
+                    SharedPreferenceManager(context).setString(lastAddress, "${it.locality} ${it.thoroughfare}")
                 }
             } else {
                 writeLogCause(
@@ -80,8 +85,6 @@ class GetLocation(mContext: Context) : GetLocationListener {
                 "Background Location",
                 "Error : ${e.printStackTrace()}")
         }
-
-        return nowAddress
     }
 }
 

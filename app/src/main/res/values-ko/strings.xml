@@ -13,8 +13,7 @@
     <string name="setting_lang">언어설정</string>
     <string name="setting_notify">알림</string>
     <string name="setting_notify_pm">미세먼지 알림 받기</string>
-    <string name="setting_notify_night">방해 금지 시간</string>
-    <string name="setting_notify_free_time">오전 7:00 ~ 오전 11:00</string>
+    <string name="setting_notify_night">야간 알림 허용\n야간시간(12:00~06:00)알림 허용 여부</string>
     <string name="setting_notify_event">이벤트 알림 받기</string>
     <string name="setting_customer_service">고객센터</string>
     <string name="setting_faq">자주 묻는 질문</string>

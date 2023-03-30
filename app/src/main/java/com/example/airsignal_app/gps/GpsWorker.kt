@@ -11,6 +11,7 @@ import java.lang.Exception
  **/
 class GpsWorker(mContext: Context, params: WorkerParameters) : CoroutineWorker(mContext,params) {
     private val context = mContext
+
     /** 워크 매니저 백그라운드 반복 **/
     override suspend fun doWork(): Result {
         return try {
