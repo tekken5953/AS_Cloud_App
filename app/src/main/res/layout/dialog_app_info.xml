@@ -44,7 +44,7 @@
         android:id="@+id/appInfoVersionValue"
         style="@style/basicTextView"
         app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle"
-        android:text="1.11 (최종 업데이트 2023.03.28)"
+        android:text="1.1.1 (최종 업데이트 2023.03.28)"
         android:textSize="12sp"
         android:textColor="@color/main_blue_color"
         app:layout_constraintStart_toStartOf="@+id/appInfoVersionTitle"

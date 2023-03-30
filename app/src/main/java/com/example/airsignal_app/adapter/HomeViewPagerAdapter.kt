@@ -73,7 +73,8 @@ class HomeViewPagerAdapter(mContext: Context, list: ArrayList<AdapterModel.ViewP
             this@HomeViewPagerAdapter.weeklyWeatherList.clear()
 
 
-            val testDailyArray = intArrayOf(R.drawable.sunny,R.drawable.cloudy,R.drawable.sunny_cloudy)
+            val testDailyArray = intArrayOf(R.drawable.sunny_test,R.drawable.cloud_test,
+                R.drawable.cloud2_test,R.drawable.rainy_test,R.drawable.snow_test)
             for(i: Int in 0..7) {
                 addDailyWeatherItem("${i+12}시",
                     ResourcesCompat.getDrawable(context.resources, testDailyArray.random() ,null)!!,

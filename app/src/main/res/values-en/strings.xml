@@ -14,8 +14,7 @@
     <string name="setting_lang">Language</string>
     <string name="setting_notify">Notification</string>
     <string name="setting_notify_pm">Get a PM notification</string>
-    <string name="setting_notify_night">No disturbance time</string>
-    <string name="setting_notify_free_time">7:00 am to 11:00 am</string>
+    <string name="setting_notify_night">Allow night alerts\nPM12:00~AM06:00</string>
     <string name="setting_notify_event">Receive event notifications</string>
     <string name="setting_customer_service">Customer Service</string>
     <string name="setting_faq">faq</string>

@@ -59,6 +59,7 @@ object ConvertDataType {
         return format.format(Date(mills))
     }
 
+    /** Email을 RealtimeDB의 child 형식에 맞게 변환**/
     fun formatEmailToRDB(email: String) : String {
         return email.replace(".", "_")
     }

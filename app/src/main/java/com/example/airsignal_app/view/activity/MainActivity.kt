@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.HomeViewPagerAdapter
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
@@ -45,9 +46,14 @@ class MainActivity : AppCompatActivity() {
     private val viewPagerAdapter = HomeViewPagerAdapter(this, addressList)
     private var isBackPressed = false
 
+    override fun onStart() {
+        super.onStart()
+        GetLocation(this).getLocation()
+    }
+
     override fun onResume() {
         super.onResume()
-        GetLocation(this).getLocation()
+        addViewPagerItem()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,15 +89,6 @@ class MainActivity : AppCompatActivity() {
                     if (newText.isNotEmpty()) {
                         searchItem.clear()
                         allTextArray.forEach { allList ->
-//                                val formatText = if (allList.contains("특별시")) {
-//                                    allList.replace("특별","")
-//                                } else if (allList.contains("광역시")) {
-//                                    allList.replace("광역","")
-//                                } else if (allList.contains("특별자치도")) {
-//                                    allList.replace("특별자치","")
-//                                } else {
-//                                    allList
-//                                }
                             if (allList.contains(newText)) {
                                 searchItem.add(allList)
                             }
@@ -124,12 +121,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // 사이드 메뉴 열기
     private fun openMenu(menu: DrawerLayout) {
         menu.openDrawer(GravityCompat.START)
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
+        // 위치 권한 요청
         if (!RequestPermissionsUtil(this).isLocationPermitted()) {
             RequestPermissionsUtil(this).requestLocation()
         }
@@ -137,15 +136,11 @@ class MainActivity : AppCompatActivity() {
         // 워크 매니저 생성
         CoroutineScope(Dispatchers.IO).launch { createWorkManager() }
 
+        // 뷰페이저 세팅
         binding.mainViewPager.apply {
-            adapter = viewPagerAdapter
+            adapter = viewPagerAdapter // 어댑터 할당
             orientation = ViewPager2.ORIENTATION_HORIZONTAL // 가로모드
             offscreenPageLimit = 3  // 최대 3개
-
-            // 뷰 페이저 페이지 변환 중 리스너
-            setPageTransformer { page, position ->
-                //TODO
-            }
 
             // 뷰 페이저 페이지 전환 후 리스너
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -159,6 +154,7 @@ class MainActivity : AppCompatActivity() {
 
             // 탭레이아웃 연동
             TabLayoutMediator(binding.mainTabLayout, this@apply) { tab, position ->
+                // 페이지가 1개이면 인디케이터 숨김
                 if (binding.mainTabLayout.tabCount <= 1) {
                     binding.mainTabLayout.visibility = View.GONE
                 } else {
@@ -166,16 +162,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }.attach()
         }
-
-        addViewPagerItem()
     }
 
+    // 뷰페이저 화면 생성
     @SuppressLint("NotifyDataSetChanged")
     private fun addViewPagerItem() {
         // Add Item
-        addViewPagerLayout("address1","0","0","0","0","0","0","0",0,2)
-//        addViewPagerLayout("address2","0","0","0","0","0","0","0",3,1)
-//        addViewPagerLayout("address3","0","0","0","0","0","0","0",1,3)
+        addressList.clear()
+        addViewPagerLayout(SharedPreferenceManager(this).getString(lastAddress),"0","0","0","0","0","0","0",0,2)
+        addViewPagerLayout("address2","0","0","0","0","0","0","0",3,1)
+        addViewPagerLayout("address3","0","0","0","0","0","0","0",1,3)
 //        addViewPagerLayout("address4","0","0","0","0","0","0","0",3,1)
 //        addViewPagerLayout("address5","0","0","0","0","0","0","0",3,1)
         viewPagerAdapter.notifyDataSetChanged()

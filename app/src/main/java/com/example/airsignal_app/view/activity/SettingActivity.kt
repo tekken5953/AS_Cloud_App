@@ -3,7 +3,12 @@ package com.example.airsignal_app.view.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
@@ -11,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
@@ -23,11 +29,12 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.notiNight
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiPM
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.databinding.ActivitySettingBinding
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
+import com.example.airsignal_app.util.CustomSnackBar
 import com.example.airsignal_app.util.RefreshUtils
-import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.example.airsignal_app.util.ShowDialogClass
 import com.example.airsignal_app.view.test.TestDesignActivity
@@ -41,6 +48,7 @@ class SettingActivity : AppCompatActivity() {
     private val sp by lazy { SharedPreferenceManager(this) }
     private val faqItem = arrayListOf<String>()
     private val noticeItem = arrayListOf<AdapterModel.NoticeItem>()
+    private var isInit = true
 
     override fun onResume() {
         super.onResume()
@@ -82,6 +90,14 @@ class SettingActivity : AppCompatActivity() {
             switch = binding.settingNotiNightRight,
             checked = sp.getBoolean(notiNight)
         )
+
+        // 야간 알림 허용 텍스트 설정
+        setNightAlertsSpan(binding.settingNotiNightLeft)
+
+        // 알림 스위치 이벤트 리스너
+        checkNotification(binding.settingNotiPMRight, notiPM,"미세먼지")
+        checkNotification(binding.settingNotiEventRight, notiEvent,"이벤트")
+        checkNotification(binding.settingNotiNightRight, notiNight,"야간")
     }
 
     @SuppressLint("InflateParams")
@@ -93,6 +109,8 @@ class SettingActivity : AppCompatActivity() {
         val lastLogin = SharedPreferenceManager(this).getString(lastLoginPlatform)
         // 로그인 시 저장된 핸드폰 번호
         val email = SharedPreferenceManager(this).getString(userEmail)
+
+        isInit = false
 
         // 뒤로가기 버튼 클릭
         binding.settingBack.setOnClickListener { onBackPressed() }
@@ -343,12 +361,9 @@ class SettingActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        checkNotification(binding.settingNotiPMRight, notiPM)
-        checkNotification(binding.settingNotiEventRight, notiEvent)
-        checkNotification(binding.settingNotiNightRight, notiNight)
-
         binding.settingAppInfo.setOnClickListener {
-            val viewAppInfo: View = LayoutInflater.from(this).inflate(R.layout.dialog_app_info, null)
+            val viewAppInfo: View =
+                LayoutInflater.from(this).inflate(R.layout.dialog_app_info, null)
             val backAppInfo: ImageView = viewAppInfo.findViewById(R.id.appInfoBack)
             backAppInfo.setOnClickListener { onBackPressed() }
             ShowDialogClass(this@SettingActivity).show(viewAppInfo, true)
@@ -403,26 +418,25 @@ class SettingActivity : AppCompatActivity() {
     }
 
     /** 알림 권한을 체크하고 상태저장 **/
-    private fun checkNotification(switch: SwitchCompat, tag: String) {
+    private fun checkNotification(switch: SwitchCompat, tag: String, title: String) {
         switch.setOnCheckedChangeListener { _, isChecked ->
             val permission = RequestPermissionsUtil(this@SettingActivity)
             if (!permission.isNotificationPermitted()) {
-                Toast.makeText(
-                    this,
-                    "알림 ${permission.isNotificationPermitted()}",
-                    Toast.LENGTH_SHORT
-                ).show()
                 permission.requestNotification()
                 if (isChecked) {
                     sp.setBoolean(tag, true)
+                    showSnackBar(true,title)
                 } else {
                     sp.setBoolean(tag, false)
+                    showSnackBar(false,title)
                 }
             } else {
                 if (isChecked) {
                     sp.setBoolean(tag, true)
+                    showSnackBar(true,title)
                 } else {
                     sp.setBoolean(tag, false)
+                    showSnackBar(false,title)
                 }
             }
         }
@@ -442,5 +456,36 @@ class SettingActivity : AppCompatActivity() {
     private fun addNoticeItem(date: String, title: String) {
         val item = AdapterModel.NoticeItem(date, title)
         noticeItem.add(item)
+    }
+
+    /** 야간 알림 허용 텍스트 설정 **/
+    private fun setNightAlertsSpan(textView: TextView) {
+        val span = SpannableStringBuilder(textView.text)
+        val formatText = textView.text.split(System.lineSeparator())
+        // 색상변경
+        span.setSpan(
+            ForegroundColorSpan(getColor(R.color.main_gray_color)),
+            formatText[0].length, span.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        // 크기변경
+        span.setSpan(
+            RelativeSizeSpan(0.8f),
+            formatText[0].length, span.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        textView.text = span
+    }
+
+    private fun showSnackBar(isAllow: Boolean, title: String) {
+        val img = ContextCompat.getDrawable(this@SettingActivity, R.drawable.alert)!!
+        img.setTint(getColor(R.color.mode_color_view))
+        CoroutineScope(Dispatchers.Main).launch {
+            if (isAllow){
+                if (!isInit) { CustomSnackBar.make(binding.root, "$title 알림을 허용하였습니다", img).show() }
+            } else {
+                if (!isInit) { CustomSnackBar.make(binding.root, "$title 알림을 거부하였습니다", img).show() }
+            }
+        }
     }
 }
