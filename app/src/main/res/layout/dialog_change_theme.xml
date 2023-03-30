@@ -50,7 +50,9 @@
             android:paddingEnd="24dp"
             android:text="@string/theme_system"
             android:textColor="@drawable/radio_text_selector"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:drawableEnd="@drawable/check"
+            android:drawableTint="@android:color/transparent"/>
 
         <RadioButton
             android:id="@+id/lightThemeRb"
@@ -65,7 +67,9 @@
             android:fontFamily="@font/spoqa_hansansneo_regular"
             android:paddingStart="24dp"
             android:textColor="@drawable/radio_text_selector"
-            android:gravity="center_vertical"/>
+            android:gravity="center_vertical"
+            android:drawableEnd="@drawable/check"
+            android:drawableTint="@android:color/transparent"/>
 
         <RadioButton
             android:id="@+id/darkThemeRb"
@@ -80,7 +84,9 @@
             android:fontFamily="@font/spoqa_hansansneo_regular"
             android:paddingStart="24dp"
             android:textColor="@drawable/radio_text_selector"
-            android:gravity="center_vertical"/>
+            android:gravity="center_vertical"
+            android:drawableEnd="@drawable/check"
+            android:drawableTint="@android:color/transparent"/>
     </RadioGroup>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

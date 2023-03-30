@@ -1,11 +1,11 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithPhone
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithPhone
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
 import com.example.airsignal_app.util.EnterPage
-import com.example.airsignal_app.util.SharedPreferenceManager
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientId
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientName
@@ -48,11 +48,11 @@ class NaverLogin(mActivity: Activity) {
     }
 
     /** 로그아웃 + 기록 저장 */
-    fun logout(phone: String) {
+    fun logout(email: String) {
         if (getAccessToken() != null) {
             NaverIdLoginSDK.logout()
             Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")
-            sendLogOutWithPhone("로그아웃 성공", phone, "네이버")
+            sendLogOutWithEmail(email ,"로그아웃 성공","네이버")
             enterLoginPage()
         }
     }
@@ -81,7 +81,7 @@ class NaverLogin(mActivity: Activity) {
                     setString(userProfile, it.profileImage!!)
                     setString(userEmail, it.email.toString())
                 }
-                sendLogInWithPhone("로그인 성공", it.mobile.toString(), "네이버", "수동")
+                sendLogInWithEmail("로그인 성공", it.email.toString(), "네이버", "수동")
             }
 
             enterMainPage()
@@ -94,7 +94,10 @@ class NaverLogin(mActivity: Activity) {
                 "errorCode: $errorCode\n" +
                         "errorDescription: $errorDescription"
             )
-            sendLogToFail("네이버 로그인 실패", "$errorCode - $errorDescription")
+            sendLogToFail(
+                SharedPreferenceManager(activity).getString(userEmail),
+                "네이버 로그인 실패",
+                "$errorCode - $errorDescription")
         }
 
         override fun onError(errorCode: Int, message: String) {

@@ -1,22 +1,23 @@
-package com.example.airsignal_app.adapter
+package com.example.airsignal_app.view.test
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
+
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-03-28 오전 11:52
  **/
-class NoticeAdapter(mContext: Context, list: ArrayList<AdapterModel.NoticeItem>) :
-    RecyclerView.Adapter<NoticeAdapter.ViewHolder>() {
+class TestAdapter(mContext: Context, list: ArrayList<AdapterModel.TestAdapter>) :
+    RecyclerView.Adapter<TestAdapter.ViewHolder>() {
     private val mList = list
     private val context = mContext
 
@@ -29,10 +30,10 @@ class NoticeAdapter(mContext: Context, list: ArrayList<AdapterModel.NoticeItem>)
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): NoticeAdapter.ViewHolder {
+    ): ViewHolder {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
-        val view: View = inflater.inflate(R.layout.list_item_notice, parent, false)
+        val view: View = inflater.inflate(R.layout.list_item_test, parent, false)
         return ViewHolder(view)
     }
 
@@ -48,20 +49,16 @@ class NoticeAdapter(mContext: Context, list: ArrayList<AdapterModel.NoticeItem>)
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
     {
-        private val date: TextView = itemView.findViewById(R.id.itemNoticeDate)
-        private val title: TextView = itemView.findViewById(R.id.itemNoticeHeader)
+        val textView: TextView = itemView.findViewById(R.id.itemTestText)
 
-        fun bind(dao: AdapterModel.NoticeItem) {
-            date.text = dao.date
-            title.text = dao.title
-
-            if (adapterPosition == 0) {
-                date.setTextColor(context.getColor(R.color.main_blue_color))
-            }
+        fun bind(dao: AdapterModel.TestAdapter) {
+            textView.text = dao.value
+            textView.typeface = Typeface.createFromAsset(context.assets, "${dao.font}.ttf")
+            textView.setTextColor(Color.parseColor(dao.color))
+            textView.textSize = dao.size.toFloat()
 
             itemView.setOnClickListener {
                 val position = adapterPosition
-
                 if (position != RecyclerView.NO_POSITION) {
                     onClickListener.onItemClick(it, position)
                 }

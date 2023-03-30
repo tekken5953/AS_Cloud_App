@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-
     <data></data>
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -59,7 +58,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/settingUserTitle" />
 
             <TextView
-                android:id="@+id/settingUserText"
+                android:id="@+id/settingUserEmail"
                 style="@style/basicTextView"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="12dp"
@@ -72,14 +71,15 @@
             <TextView
                 android:id="@+id/settingLogOut"
                 style="@style/basicTextView"
+                android:padding="5dp"
                 android:textColor="@color/red"
                 android:text="@string/setting_logout"
                 android:fontFamily="@font/spoqa_hansansneo_regular"
                 android:layout_marginEnd="26dp"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/settingUserText"
+                app:layout_constraintBottom_toBottomOf="@+id/settingUserEmail"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/settingUserText" />
+                app:layout_constraintTop_toTopOf="@+id/settingUserEmail" />
 
             <TextView
                 android:id="@+id/settingThemeTitle"
@@ -90,7 +90,7 @@
                 android:textSize="14sp"
                 android:fontFamily="@font/spoqa_hansansneo_bold"
                 app:layout_constraintStart_toStartOf="@+id/settingUserTitle"
-                app:layout_constraintTop_toBottomOf="@+id/settingUserText" />
+                app:layout_constraintTop_toBottomOf="@+id/settingUserEmail" />
 
             <View
                 android:id="@+id/settingLine2"
@@ -207,7 +207,7 @@
                     android:id="@+id/settingNotiPMLeft"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.95"
                     android:background="?selectableItemBackground"
                     android:gravity="center_vertical|start"
                     android:text="@string/setting_notify_pm"
@@ -219,8 +219,7 @@
                     android:id="@+id/settingNotiPMRight"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:checked="true"
+                    android:layout_weight="0.05"
                     android:gravity="center_vertical|end"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
@@ -243,7 +242,7 @@
                     android:id="@+id/settingNotiEventLeft"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.95"
                     android:background="?selectableItemBackground"
                     android:gravity="center_vertical|start"
                     android:text="@string/setting_notify_event"
@@ -255,7 +254,7 @@
                     android:id="@+id/settingNotiEventRight"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.05"
                     android:gravity="center_vertical|end"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
@@ -278,7 +277,7 @@
                     android:id="@+id/settingNotiIgnoreLeft"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.95"
                     android:background="?selectableItemBackground"
                     android:gravity="center_vertical|start"
                     android:text="@string/setting_notify_night"
@@ -287,10 +286,10 @@
                     android:textSize="16sp" />
 
                 <androidx.appcompat.widget.SwitchCompat
-                    android:id="@+id/settingNotiIgnoreRight"
+                    android:id="@+id/settingNotiNightRight"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.05"
                     android:gravity="center_vertical|end"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
@@ -367,7 +366,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/settingEvent" />
 
             <TextView
-                android:id="@+id/settingAppData"
+                android:id="@+id/settingAppInfo"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="5dp"
@@ -380,8 +379,25 @@
                 android:fontFamily="@font/spoqa_hansansneo_regular"
                 android:textColor="@color/mode_color_text"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/settingFaq" />
+
+            <TextView
+                android:id="@+id/settingTest"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="30dp"
+                android:background="?selectableItemBackground"
+                android:gravity="center_vertical"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="Test"
+                android:fontFamily="@font/spoqa_hansansneo_regular"
+                android:textColor="@color/mode_color_text"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/settingAppInfo" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </layout>

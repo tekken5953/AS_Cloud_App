@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.test.TestDesignActivity">
+
+    <EditText
+        android:id="@+id/testTextSize"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="24dp"
+        android:hint="Text Size"
+        android:inputType="number"
+        android:textColor="@color/mode_color_text" />
+
+    <EditText
+        android:id="@+id/testTextColor"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@+id/testTextSize"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="24dp"
+        android:hint="Text Color"
+        android:inputType="textCapWords"
+        android:textColor="@color/mode_color_text" />
+
+    <Spinner
+        android:id="@+id/testFont"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/testTextColor"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="24dp"
+        tools:listitem="@android:layout/simple_dropdown_item_1line" />
+
+    <EditText
+        android:id="@+id/testTextValue"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@+id/testFont"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:hint="Text Value"
+        android:inputType="text"
+        android:textColor="@color/mode_color_text"
+        android:layout_marginTop="5dp"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/testCreateBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/testTextValue"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="24dp"
+        android:background="@color/main_blue_color"
+        android:text="생성"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/testClearBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/testCreateBtn"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="24dp"
+        android:background="@color/main_gray_color"
+        android:text="초기화"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <View
+        android:id="@+id/testViewLine"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/testClearBtn"
+        android:layout_marginTop="15dp"
+        android:background="@color/main_gray_color" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/testRv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/testViewLine"
+        tools:listitem="@layout/list_item_test"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+</RelativeLayout>

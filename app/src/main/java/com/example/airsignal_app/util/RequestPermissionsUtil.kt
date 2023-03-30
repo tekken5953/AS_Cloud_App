@@ -31,9 +31,10 @@ class RequestPermissionsUtil(activity: Context) {
     )
 
     /** 알림 권한 SDK 버전 33 이상**/
-    private val permissionNotification =
-        if (Build.VERSION.SDK_INT > 33)
-            Manifest.permission.ACCESS_NOTIFICATION_POLICY else null
+    @TargetApi(Build.VERSION_CODES.TIRAMISU)
+    private val permissionNotification = arrayOf(
+        Manifest.permission.POST_NOTIFICATIONS
+    )
 
     /** 위치정보 권한 요청**/
     fun requestLocation() {
@@ -78,21 +79,22 @@ class RequestPermissionsUtil(activity: Context) {
 
     /** 알림 권한 요청 **/
     fun requestNotification() {
-        if (permissionNotification?.let {
-                ActivityCompat.checkSelfPermission(
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(
                     context,
-                    it
+                    permissionNotification[0]
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    context as Activity,
+                    permissionNotification,
+                    REQUEST_NOTIFICATION
                 )
-            } != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                context as Activity,
-                arrayOf(permissionNotification), REQUEST_NOTIFICATION
-            )
+            }
         }
     }
 
-    /**알림권한의 허용 여부검사**/
+    /**위치권한 허용 여부 검사**/
     fun isLocationPermitted(): Boolean {
         if (Build.VERSION.SDK_INT >= 29) {
             for (perm in permissionsLocationUpApi29Impl) {
@@ -116,6 +118,21 @@ class RequestPermissionsUtil(activity: Context) {
             }
         }
 
+        return true
+    }
+
+    /**알림권한 허용 여부 검사**/
+    fun isNotificationPermitted(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            for (perm in permissionNotification) {
+                return ContextCompat.checkSelfPermission(
+                    context,
+                    perm
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+        } else {
+            return true
+        }
         return true
     }
 }

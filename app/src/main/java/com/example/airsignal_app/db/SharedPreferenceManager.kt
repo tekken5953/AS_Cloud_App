@@ -1,4 +1,4 @@
-package com.example.airsignal_app.util
+package com.example.airsignal_app.db
 
 import android.content.Context
 import android.content.SharedPreferences

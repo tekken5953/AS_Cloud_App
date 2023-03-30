@@ -6,17 +6,17 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import androidx.work.CoroutineWorker
-import androidx.work.WorkerParameters
 import com.example.airsignal_app.dao.ConvertDataType
+import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
+import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.ToastUtils
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
 import java.io.IOException
-import java.lang.Exception
 import java.util.*
 
-class GetLocation(mContext: Context, params: WorkerParameters) : GetLocationListener, CoroutineWorker(mContext,params) {
+class GetLocation(mContext: Context) : GetLocationListener {
     private val context = mContext
 
     private val geocoder by lazy { Geocoder(mContext, Locale.KOREA) }
@@ -53,6 +53,7 @@ class GetLocation(mContext: Context, params: WorkerParameters) : GetLocationList
 
     /** 현재 주소를 불러옵니다 **/
     private fun getAddress(lat: Double, lng: Double) : String {
+        val email = SharedPreferenceManager(context).getString(userEmail)
         val nowAddress = "현재 위치를 확인 할 수 없습니다."
         lateinit var address: List<Address>
         try {
@@ -60,26 +61,27 @@ class GetLocation(mContext: Context, params: WorkerParameters) : GetLocationList
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             if (address.isNotEmpty()) {
                 address.forEach {
+                    writeLogCause(
+                        email = email,
+                        isSuccess = "Background Location",
+                        log = "${it.latitude.toInt()} , ${it.longitude.toInt()}\t ${it.getAddressLine(0)}")
                     Logger.t("Location").d("${it.latitude},${it.longitude}\n${it.getAddressLine(0)}")
                 }
+            } else {
+                writeLogCause(
+                    email,
+                    "Background Location",
+                    "Address is Empty : $nowAddress")
             }
         } catch (e: IOException) {
             ToastUtils(context as Activity).shortMessage("주소를 가져 올 수 없습니다.")
-            e.printStackTrace()
+            writeLogCause(
+                email,
+                "Background Location",
+                "Error : ${e.printStackTrace()}")
         }
 
         return nowAddress
-    }
-
-    /** 워크 매니저 백그라운드 반복 **/
-    override suspend fun doWork(): Result {
-        return try {
-            getLocation()
-            Result.success()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Result.failure()
-        }
     }
 }
 

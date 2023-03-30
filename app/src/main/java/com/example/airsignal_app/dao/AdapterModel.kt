@@ -57,4 +57,11 @@ object AdapterModel {
         val content: String,
         val isNotice: Boolean
     )
+
+    data class TestAdapter(
+        val font: String,
+        val size: String,
+        val color: String,
+        val value: String
+    )
 }

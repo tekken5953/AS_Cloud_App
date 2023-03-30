@@ -9,7 +9,8 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="35dp"
+        android:layout_below="@+id/headerCancel"
+        android:layout_marginTop="15dp"
         android:backgroundTint="@color/dummy_gray_dark"
         app:cardElevation="8dp"
         app:cardCornerRadius="50dp"
@@ -35,22 +36,22 @@
 
     <ImageView
         android:id="@+id/headerCancel"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:src="@drawable/cancel"
-        app:tint="@color/mode_color_text"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
         android:layout_alignParentEnd="true"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginTop="15dp"/>
+        android:src="@drawable/cancel"
+        app:tint="@color/mode_color_text" />
 
     <View
         android:id="@+id/navHeaderView1"
         android:layout_width="match_parent"
         android:layout_height="0.7dp"
-        android:background="@color/dummy_gray_dark"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
         android:layout_below="@+id/navHeaderProfileCard"
-        android:layout_marginTop="25dp"/>
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="24dp"
+        android:background="@color/dummy_gray_dark" />
 
 </RelativeLayout>

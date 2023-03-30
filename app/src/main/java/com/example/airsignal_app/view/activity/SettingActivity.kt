@@ -1,29 +1,40 @@
 package com.example.airsignal_app.view.activity
 
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.RadioButton
-import android.widget.RadioGroup
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SwitchCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.FaqAdapter
 import com.example.airsignal_app.adapter.NoticeAdapter
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiEvent
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiNight
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiPM
+import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.databinding.ActivitySettingBinding
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.util.RefreshUtils
-import com.example.airsignal_app.util.SharedPreferenceManager
+import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.example.airsignal_app.util.ShowDialogClass
+import com.example.airsignal_app.view.test.TestDesignActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SettingActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingBinding
@@ -33,6 +44,8 @@ class SettingActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
+        binding.settingUserEmail.text = SharedPreferenceManager(this).getString(userEmail)
 
         // 설정 페이지 테마 항목이름 바꾸기
         when (sp.getString("theme")) {
@@ -59,16 +72,27 @@ class SettingActivity : AppCompatActivity() {
                 binding.settingThemeLangRight.text = getString(R.string.system_lang)
             }
         }
+
+        settingAlarmRadio(switch = binding.settingNotiPMRight, checked = sp.getBoolean(notiPM))
+        settingAlarmRadio(
+            switch = binding.settingNotiEventRight,
+            checked = sp.getBoolean(notiEvent)
+        )
+        settingAlarmRadio(
+            switch = binding.settingNotiNightRight,
+            checked = sp.getBoolean(notiNight)
+        )
     }
 
+    @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this@SettingActivity, R.layout.activity_setting)
 
         // 마지막 로그인 플랫폼 종류
-        val lastLogin = SharedPreferenceManager(this).getString(IgnoredKeyFile.lastLoginPlatform)
+        val lastLogin = SharedPreferenceManager(this).getString(lastLoginPlatform)
         // 로그인 시 저장된 핸드폰 번호
-        val phoneNumber = SharedPreferenceManager(this).getString(IgnoredKeyFile.lastLoginPhone)
+        val email = SharedPreferenceManager(this).getString(userEmail)
 
         // 뒤로가기 버튼 클릭
         binding.settingBack.setOnClickListener { onBackPressed() }
@@ -81,23 +105,26 @@ class SettingActivity : AppCompatActivity() {
                 .setPositiveButton(
                     getString(R.string.ok)
                 ) { _, _ ->
-                    sp.run {
-                        removeKey("user_id")
-                        removeKey("user_profile")
-                        removeKey("lastLoginPhone")
-                        removeKey("lastLoginPlatform")
-                        removeKey("user_email")
-                    }
-                    when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
-                        "kakao" -> {
-                            KakaoLogin(this).logout(phoneNumber)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
+                            "kakao" -> {
+                                KakaoLogin(this@SettingActivity).logout(email)
 //                            KakaoLogin(this).disconnectFromKakao()
+                            }
+                            "naver" -> {
+                                NaverLogin(this@SettingActivity).logout(email)
+                            }
+                            "google" -> {
+                                GoogleLogin(this@SettingActivity).logout()
+                            }
                         }
-                        "naver" -> {
-                            NaverLogin(this).logout(phoneNumber)
-                        }
-                        "google" -> {
-                            GoogleLogin(this).logout()
+                        delay(100)
+                        sp.run {
+                            removeKey("user_id")
+                            removeKey("user_profile")
+                            removeKey("lastLoginPhone")
+                            removeKey("lastLoginPlatform")
+                            removeKey("user_email")
                         }
                     }
                 }
@@ -126,12 +153,15 @@ class SettingActivity : AppCompatActivity() {
             when (sp.getString("theme")) {
                 "dark" -> {
                     radioGroup.check(darkTheme.id)
+                    changeCheckIcon(darkTheme, lightTheme, systemTheme)
                 }
                 "light" -> {
                     radioGroup.check(lightTheme.id)
+                    changeCheckIcon(lightTheme, systemTheme, darkTheme)
                 }
                 else -> {
                     radioGroup.check(systemTheme.id)
+                    changeCheckIcon(systemTheme, lightTheme, darkTheme)
                 }
             }
 
@@ -147,6 +177,7 @@ class SettingActivity : AppCompatActivity() {
                             radioGroup = radioGroup,
                             radioButton = systemTheme
                         )
+                        changeCheckIcon(systemTheme, lightTheme, darkTheme)
                     }
                     // 라이트 모드
                     lightTheme.id -> {
@@ -156,6 +187,7 @@ class SettingActivity : AppCompatActivity() {
                             radioGroup = radioGroup,
                             radioButton = lightTheme
                         )
+                        changeCheckIcon(lightTheme, systemTheme, darkTheme)
                     }
                     // 다크 모드
                     darkTheme.id -> {
@@ -165,6 +197,7 @@ class SettingActivity : AppCompatActivity() {
                             radioGroup = radioGroup,
                             radioButton = darkTheme
                         )
+                        changeCheckIcon(darkTheme, systemTheme, lightTheme)
                     }
                 }
             }
@@ -198,12 +231,15 @@ class SettingActivity : AppCompatActivity() {
             when (sp.getString("lang")) {
                 "korean" -> {
                     radioGroup.check(koreanLang.id)
+                    changeCheckIcon(koreanLang, englishLang, systemLang)
                 }
                 "english" -> {
                     radioGroup.check(englishLang.id)
+                    changeCheckIcon(englishLang, koreanLang, systemLang)
                 }
                 else -> {
                     radioGroup.check(systemLang.id)
+                    changeCheckIcon(systemLang, englishLang, koreanLang)
                 }
             }
 
@@ -215,6 +251,7 @@ class SettingActivity : AppCompatActivity() {
                             radioGroup = radioGroup,
                             radioButton = systemLang
                         )
+                        changeCheckIcon(systemLang, koreanLang, englishLang)
                     }
                     koreanLang.id -> {
                         changedLangRadio(
@@ -222,6 +259,7 @@ class SettingActivity : AppCompatActivity() {
                             radioGroup = radioGroup,
                             radioButton = koreanLang
                         )
+                        changeCheckIcon(koreanLang, systemLang, englishLang)
                     }
                     englishLang.id -> {
                         changedLangRadio(
@@ -229,6 +267,7 @@ class SettingActivity : AppCompatActivity() {
                             radioGroup = radioGroup,
                             radioButton = englishLang
                         )
+                        changeCheckIcon(englishLang, koreanLang, systemLang)
                     }
                 }
             }
@@ -239,16 +278,21 @@ class SettingActivity : AppCompatActivity() {
         val detailView: View =
             LayoutInflater.from(this).inflate(R.layout.dialog_detail, null)
         val detailDate: TextView = detailView.findViewById(R.id.detailNoticeDate)
+        val detailTitle: TextView = detailView.findViewById(R.id.detailTitle)
         val backDetail: ImageView = detailView.findViewById(R.id.detailBack)
         backDetail.setOnClickListener { onBackPressed() }
 
+        // 공지사항 클릭
         binding.settingNotice.setOnClickListener {
-            val noticeMainView: View = LayoutInflater.from(this).inflate(R.layout.dialog_notice, null)
+            val noticeMainView: View =
+                LayoutInflater.from(this).inflate(R.layout.dialog_notice, null)
             val noticeAdapter = NoticeAdapter(this, noticeItem)
             val recyclerView: RecyclerView = noticeMainView.findViewById(R.id.noticeRv)
+            val noticeTitle: TextView = noticeMainView.findViewById(R.id.noticeTitle)
             recyclerView.adapter = noticeAdapter
-            for (i: Int in 0..5) {
-                addNoticeItem("01.1${i}", "가나다 라마바사아 자차 카 타파하 가나다 라마바사아 자차 카 타파하")
+            noticeItem.clear()
+            for (i: Int in 5 downTo 0) {
+                addNoticeItem("01.1${i}", "$i 가나다 라마바사아 자차 카 타파하 가나다 라마바사아 자차 카 타파하")
                 noticeAdapter.notifyItemInserted(i)
             }
 
@@ -261,18 +305,22 @@ class SettingActivity : AppCompatActivity() {
                 override fun onItemClick(v: View, position: Int) {
                     detailDate.text = noticeItem[position].date
                     detailDate.visibility = View.VISIBLE
+                    detailTitle.text = noticeTitle.text.toString()
                     ShowDialogClass(this@SettingActivity).show(detailView, true)
                 }
             })
         }
 
+        // 자주묻는질문 클릭
         binding.settingFaq.setOnClickListener {
             val faqMainView: View = LayoutInflater.from(this).inflate(R.layout.dialog_faq, null)
             val faqAdapter = FaqAdapter(this, faqItem)
             val recyclerView = faqMainView.findViewById<RecyclerView>(R.id.faqRv)
+            val faqTitle: TextView = faqMainView.findViewById(R.id.faqTitle)
+            faqItem.clear()
             recyclerView.adapter = faqAdapter
             for (i: Int in 0..5) {
-                addFaqItem("가나다 라마바사아 자차 카 타파하")
+                addFaqItem("$i 가나다 라마바사아 자차 카 타파하")
                 faqAdapter.notifyItemInserted(i)
             }
 
@@ -284,10 +332,38 @@ class SettingActivity : AppCompatActivity() {
             faqAdapter.setOnItemClickListener(object : FaqAdapter.OnItemClickListener {
                 override fun onItemClick(v: View, position: Int) {
                     detailDate.visibility = View.GONE
+                    detailTitle.text = faqTitle.text.toString()
                     ShowDialogClass(this@SettingActivity).show(detailView, true)
                 }
             })
         }
+
+        binding.settingTest.setOnClickListener {
+            val intent = Intent(this, TestDesignActivity::class.java)
+            startActivity(intent)
+        }
+
+        checkNotification(binding.settingNotiPMRight, notiPM)
+        checkNotification(binding.settingNotiEventRight, notiEvent)
+        checkNotification(binding.settingNotiNightRight, notiNight)
+
+        binding.settingAppInfo.setOnClickListener {
+            val viewAppInfo: View = LayoutInflater.from(this).inflate(R.layout.dialog_app_info, null)
+            val backAppInfo: ImageView = viewAppInfo.findViewById(R.id.appInfoBack)
+            backAppInfo.setOnClickListener { onBackPressed() }
+            ShowDialogClass(this@SettingActivity).show(viewAppInfo, true)
+        }
+    }
+
+    /** 라디오 버튼 DrawableEnd Tint 변경 **/
+    @SuppressLint("UseCompatTextViewDrawableApis")
+    private fun changeCheckIcon(rbOn: RadioButton, rbOff1: RadioButton, rbOff2: RadioButton) {
+        rbOn.compoundDrawableTintList =
+            ColorStateList.valueOf(getColor(R.color.main_blue_color))
+        rbOff1.compoundDrawableTintList =
+            ColorStateList.valueOf(getColor(android.R.color.transparent))
+        rbOff2.compoundDrawableTintList =
+            ColorStateList.valueOf(getColor(android.R.color.transparent))
     }
 
     /** 언어 라디오 버튼 클릭 시 이벤트 처리 **/
@@ -326,10 +402,43 @@ class SettingActivity : AppCompatActivity() {
             .show()
     }
 
+    /** 알림 권한을 체크하고 상태저장 **/
+    private fun checkNotification(switch: SwitchCompat, tag: String) {
+        switch.setOnCheckedChangeListener { _, isChecked ->
+            val permission = RequestPermissionsUtil(this@SettingActivity)
+            if (!permission.isNotificationPermitted()) {
+                Toast.makeText(
+                    this,
+                    "알림 ${permission.isNotificationPermitted()}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                permission.requestNotification()
+                if (isChecked) {
+                    sp.setBoolean(tag, true)
+                } else {
+                    sp.setBoolean(tag, false)
+                }
+            } else {
+                if (isChecked) {
+                    sp.setBoolean(tag, true)
+                } else {
+                    sp.setBoolean(tag, false)
+                }
+            }
+        }
+    }
+
+    /** 알림 설정 불러오기 **/
+    private fun settingAlarmRadio(switch: SwitchCompat, checked: Boolean) {
+        switch.isChecked = checked
+    }
+
+    /** 자주묻는질문 아이템 추가하기 **/
     private fun addFaqItem(text: String) {
         faqItem.add(text)
     }
 
+    /** 공지사항 아이템 추가하기 **/
     private fun addNoticeItem(date: String, title: String) {
         val item = AdapterModel.NoticeItem(date, title)
         noticeItem.add(item)

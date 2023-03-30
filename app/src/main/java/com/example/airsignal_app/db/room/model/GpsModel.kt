@@ -14,10 +14,9 @@ class GpsModel {
      * @property mills
      */
     @Entity
-    data class GetGPS(@PrimaryKey(autoGenerate = true)val id: Int, val xAxis: String, val yAxis: String, val mills: Long)
-
-    @Entity
-    data class GetBookMark(@PrimaryKey(autoGenerate = true)val id: Int, val sn: String)
-
-
+    data class GetGPS(@PrimaryKey(autoGenerate = false)val index: Int,
+                      val latitude: String,
+                      val longitude: String,
+                      val address: String
+                      )
 }

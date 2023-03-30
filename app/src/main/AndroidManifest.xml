@@ -7,9 +7,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"
-        android:minSdkVersion="33"/>
-
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission
         android:name="android.permission.BIND_REMOTEVIEWS"
         tools:ignore="ProtectedPermissions" />
@@ -21,6 +20,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AirSignal_App"
         android:windowSoftInputMode="adjustNothing">
+        <activity
+            android:name=".view.test.TestDesignActivity"
+            android:exported="false" />
         <activity
             android:name=".view.activity.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -37,7 +39,7 @@
             android:exported="false" />
         <activity
             android:name=".view.activity.MyDeviceActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".view.activity.MainActivity"
             android:exported="false" />

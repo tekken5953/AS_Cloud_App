@@ -23,7 +23,7 @@
                 android:layout_gravity="start"
                 android:fitsSystemWindows="true"
                 app:headerLayout="@layout/nav_header"
-                app:itemTextAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:itemTextAppearance="@style/TextAppearance.AppCompat.Small"
                 app:itemTextColor="@color/mode_color_text"
                 app:menu="@menu/nav_menu" />
 
@@ -48,13 +48,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/mainSideMenuIv"
+                android:layout_alignBottom="@+id/mainSideMenuIv"
                 android:layout_centerHorizontal="true"
                 android:drawablePadding="7dp"
                 android:fontFamily="@font/spoqa_hansansneo_regular"
                 android:gravity="center"
                 android:text="@string/main_gps_title"
                 android:textColor="@color/mode_color_text"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 app:drawableStartCompat="@drawable/gps" />
 
             <com.google.android.material.tabs.TabLayout
@@ -86,7 +87,8 @@
                 android:layout_height="match_parent"
                 android:layout_below="@+id/mainSideMenuIv"
                 android:layout_marginTop="47dp"
-                android:clipToPadding="false" />
+                android:overScrollMode="never"
+                android:clipToPadding="false"/>
         </RelativeLayout>
     </RelativeLayout>
 </layout>

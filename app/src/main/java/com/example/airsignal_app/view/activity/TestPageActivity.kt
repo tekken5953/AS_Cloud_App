@@ -4,14 +4,14 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
-import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
+import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.databinding.ActivityTestPageBinding
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
-import com.example.airsignal_app.util.SharedPreferenceManager
+import com.example.airsignal_app.db.SharedPreferenceManager
 
 
 class TestPageActivity : AppCompatActivity() {
@@ -19,7 +19,7 @@ class TestPageActivity : AppCompatActivity() {
     private val googleLogin: GoogleLogin by lazy { GoogleLogin(this) }
     private val kakakoLogin: KakaoLogin by lazy { KakaoLogin(this) }
     private val naverLogin: NaverLogin by lazy { NaverLogin(this) }
-    private var phoneNumber: String = ""
+    private var email: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +31,7 @@ class TestPageActivity : AppCompatActivity() {
         @SuppressLint("SetTextI18n")
         binding.currentSort.text = "현재 로그인 : $lastLogin"
 
-        phoneNumber = SharedPreferenceManager(this).getString(lastLoginPhone)
+        email = SharedPreferenceManager(this).getString(userEmail)
 
         binding.signOutGoogleButton.setOnClickListener {
             googleLogin.logout()
@@ -39,12 +39,12 @@ class TestPageActivity : AppCompatActivity() {
 
         binding.signOutKakaoButton.setOnClickListener {
             kakakoLogin.initialize()
-            kakakoLogin.logout(phoneNumber)
+            kakakoLogin.logout(email)
         }
 
         binding.signOutNaverButton.setOnClickListener {
             naverLogin.initialize()
-            naverLogin.logout(phoneNumber)
+            naverLogin.logout(email)
         }
 
     }
