@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="font">
+        <item>spoqa_hansansneo_bold</item>
+        <item>spoqa_hansansneo_medium</item>
+        <item>spoqa_hansansneo_light</item>
+        <item>spoqa_hansansneo_regular</item>
+    </string-array>
+</resources>

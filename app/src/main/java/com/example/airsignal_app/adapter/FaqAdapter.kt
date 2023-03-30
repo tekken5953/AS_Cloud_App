@@ -59,9 +59,4 @@ class FaqAdapter(mContext: Context, list: ArrayList<String>) :
             }
         }
     }
-
-    fun getDetailItem(title: String, content: String, isNotice: Boolean) {
-
-
-    }
 }

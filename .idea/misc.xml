@@ -21,6 +21,7 @@
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/dummy_dark.xml" value="0.198" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/gps.xml" value="0.198" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/ic_launcher_background.xml" value="0.124" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/loading_img.xml" value="0.1755" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/normal_box_bg.xml" value="0.196" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/options_menu.xml" value="0.196" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/drawable/pm_box_bg.xml" value="0.196" />
@@ -46,15 +47,18 @@
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/activity_setting.xml" value="0.264" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/activity_sign_in.xml" value="0.2299349240780911" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/activity_splash.xml" value="0.2520833333333333" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/activity_test_design.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/activity_test_page.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/activity_weather.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/add_device_dialog.xml" value="0.264" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/base_header_settings.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/custom_menu.xml" value="0.26510416666666664" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/dialog_add_device.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/dialog_app_info.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/dialog_change_language.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/dialog_change_theme.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/dialog_comp_add_device.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/dialog_detail.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/dialog_faq.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/dialog_faq_detail.xml" value="0.264" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/dialog_faq_detial.xml" value="0.26614583333333336" />
@@ -64,6 +68,7 @@
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/dialog_notice.xml" value="0.26510416666666664" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/dialog_progress_add_device.xml" value="0.26510416666666664" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/dialog_search_address.xml" value="0.264" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/dialog_test_design.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/et_cursor.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/fragment_weather.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/list_item_daily_weather.xml" value="0.26614583333333336" />
@@ -72,6 +77,7 @@
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/list_item_iaq.xml" value="0.21752136752136753" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/list_item_main_address.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/list_item_notice.xml" value="0.26614583333333336" />
+        <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/list_item_test.xml" value="0.26510416666666664" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/list_item_time_weather.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/list_item_weekly_weather.xml" value="0.26614583333333336" />
         <entry key="..\:/Users/USER/AndroidStudioProjects/AirSignal_App/app/src/main/res/layout/main_nav.xml" value="0.26510416666666664" />

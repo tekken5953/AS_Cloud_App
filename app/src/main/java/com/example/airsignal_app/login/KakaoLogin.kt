@@ -1,22 +1,19 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
-import android.content.Intent
-import android.util.Log
 import android.view.View
-import android.widget.ProgressBar
+import android.widget.LinearLayout
 import com.example.airsignal_app.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithPhoneForKakao
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithPhone
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmailForKakao
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
 import com.example.airsignal_app.util.EnterPage
-import com.example.airsignal_app.util.SharedPreferenceManager
-import com.example.airsignal_app.view.activity.LoginActivity
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider
 import com.kakao.sdk.auth.model.OAuthToken
@@ -27,7 +24,10 @@ import com.kakao.sdk.common.model.KakaoSdkError
 import com.kakao.sdk.common.util.Utility
 import com.kakao.sdk.user.UserApiClient
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
@@ -48,7 +48,7 @@ class KakaoLogin(mActivity: Activity) {
     }
 
     /** 카카오톡 설치 확인 후 로그인**/
-    fun checkInstallKakaoTalk(pb: ProgressBar) {
+    fun checkInstallKakaoTalk(pb: LinearLayout) {
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(activity)) {
             pb.visibility = View.VISIBLE
             pb.bringToFront()
@@ -56,6 +56,7 @@ class KakaoLogin(mActivity: Activity) {
             UserApiClient.instance.loginWithKakaoTalk(activity) { token, error ->
                 // 로그인 실패 부분
                 if (error != null) {
+                    pb.visibility = View.GONE
                     Logger.t(TAG_LOGIN).e("로그인 실패")
                     // 사용자가 취소
                     if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled)) {
@@ -77,7 +78,7 @@ class KakaoLogin(mActivity: Activity) {
                         loginSilenceKakao()
                         enterMainPage()
                     }
-                    sendLogInWithPhoneForKakao(activity, "로그인 성공", "카카오톡", "수동")
+                    sendLogInWithEmailForKakao(activity, "로그인 성공", "카카오톡", "수동")
                 }
             }
         } else {
@@ -90,14 +91,17 @@ class KakaoLogin(mActivity: Activity) {
     private val mCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
             Logger.t(TAG_LOGIN).e("로그인 실패 : Cause is $error")
-            sendLogToFail("로그인 실패", error.toString())
+            sendLogToFail(
+                SharedPreferenceManager(activity).getString(userEmail),
+                "로그인 실패",
+                error.toString())
         } else {
             token?.let {
                 loginSilenceKakao()
                 enterMainPage()
             }
 
-            sendLogInWithPhoneForKakao(activity, "로그인 성공", "카카오 이메일", "수동")
+            sendLogInWithEmailForKakao(activity, "로그인 성공", "카카오 이메일", "수동")
         }
     }
 
@@ -123,7 +127,7 @@ class KakaoLogin(mActivity: Activity) {
                                         "user code is ${it}\n"
                             )
                     }
-                    sendLogInWithPhoneForKakao(activity, "로그인 성공", "카카오", "자동")
+                    sendLogInWithEmailForKakao(activity, "로그인 성공", "카카오", "자동")
                 }
             }
         } else {
@@ -177,15 +181,18 @@ class KakaoLogin(mActivity: Activity) {
     }
 
     /** 카카오 로그아웃 + 기록 **/
-    fun logout(phone: String) {
+    fun logout(email: String) {
         try {
             UserApiClient.instance.logout { error ->
                 if (error != null) {
                     Logger.t(TAG_LOGIN).e("로그아웃에 실패함 : $error")
-                    sendLogToFail("카카오 로그아웃 실패", error.toString())
+                    sendLogToFail(
+                        SharedPreferenceManager(activity).getString(userEmail),
+                        "카카오 로그아웃 실패",
+                        error.toString())
                 } else {
                     Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
-                    sendLogOutWithPhone("로그아웃 성공", phone.replace("+82 ", "0"), "카카오")
+                    sendLogOutWithEmail(email,"로그아웃 성공", "카카오")
                     EnterPage(activity).toLogin()
                 }
             }

@@ -3,8 +3,10 @@ package com.example.airsignal_app.util
 import android.app.Activity
 import android.content.Intent
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.view.activity.LoginActivity
 import com.example.airsignal_app.view.activity.MainActivity
+import kotlin.system.exitProcess
 
 /**
  *
@@ -34,5 +36,14 @@ class EnterPage(mActivity: Activity) {
         val intent = Intent(activity, LoginActivity::class.java)
         activity.startActivity(intent)
         activity.finish()
+    }
+
+    /** 액티비티를 완전히 종료한다 **/
+    fun fullyExit() {
+        activity.run {
+            finishAffinity()  // 해당 어플리케이션의 루트 액티비티를 종료
+            System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
+            exitProcess(0) // 현재의 액티비티를 종료
+        }
     }
 }

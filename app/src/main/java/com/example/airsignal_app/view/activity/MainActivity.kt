@@ -25,11 +25,10 @@ import com.example.airsignal_app.adapter.HomeViewPagerAdapter
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import com.example.airsignal_app.databinding.ActivityMainBinding
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.gps.GetLocation
-import com.example.airsignal_app.util.RequestPermissionsUtil
-import com.example.airsignal_app.util.SharedPreferenceManager
-import com.example.airsignal_app.util.ShowDialogClass
-import com.example.airsignal_app.util.ToastUtils
+import com.example.airsignal_app.gps.GpsWorker
+import com.example.airsignal_app.util.*
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.orhanobut.logger.Logger
@@ -37,7 +36,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
-import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,6 +44,11 @@ class MainActivity : AppCompatActivity() {
     val addressList = ArrayList<AdapterModel.ViewPagerItem>()
     private val viewPagerAdapter = HomeViewPagerAdapter(this, addressList)
     private var isBackPressed = false
+
+    override fun onResume() {
+        super.onResume()
+        GetLocation(this).getLocation()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -156,6 +159,11 @@ class MainActivity : AppCompatActivity() {
 
             // 탭레이아웃 연동
             TabLayoutMediator(binding.mainTabLayout, this@apply) { tab, position ->
+                if (binding.mainTabLayout.tabCount <= 1) {
+                    binding.mainTabLayout.visibility = View.GONE
+                } else {
+                    binding.mainTabLayout.visibility = View.VISIBLE
+                }
             }.attach()
         }
 
@@ -166,8 +174,10 @@ class MainActivity : AppCompatActivity() {
     private fun addViewPagerItem() {
         // Add Item
         addViewPagerLayout("address1","0","0","0","0","0","0","0",0,2)
-        addViewPagerLayout("address2","0","0","0","0","0","0","0",3,1)
-        addViewPagerLayout("address3","0","0","0","0","0","0","0",1,3)
+//        addViewPagerLayout("address2","0","0","0","0","0","0","0",3,1)
+//        addViewPagerLayout("address3","0","0","0","0","0","0","0",1,3)
+//        addViewPagerLayout("address4","0","0","0","0","0","0","0",3,1)
+//        addViewPagerLayout("address5","0","0","0","0","0","0","0",3,1)
         viewPagerAdapter.notifyDataSetChanged()
     }
 
@@ -270,13 +280,14 @@ class MainActivity : AppCompatActivity() {
     private fun createWorkManager() {
         val workManager = WorkManager.getInstance(this)
         val workRequest =
-            PeriodicWorkRequest.Builder(GetLocation::class.java, 15, TimeUnit.MINUTES).build()
+            PeriodicWorkRequest.Builder(GpsWorker::class.java, 15, TimeUnit.MINUTES).build()
         workManager.enqueueUniquePeriodicWork(
             CHECK_GPS_BACKGROUND,
             ExistingPeriodicWorkPolicy.KEEP, workRequest
         )
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (binding.mainDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
@@ -287,9 +298,7 @@ class MainActivity : AppCompatActivity() {
                     toast.customDurationMessage("버튼을 한번 더 누르면 앱이 종료됩니다", 2)
                     isBackPressed = true
                 } else {
-                    finishAffinity()  // 해당 어플리케이션의 루트 액티비티를 종료
-                    System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
-                    exitProcess(0) // 현재의 액티비티를 종료
+                   EnterPage(this).fullyExit()
                 }
                 Handler(Looper.getMainLooper()).postDelayed({
                     isBackPressed = false

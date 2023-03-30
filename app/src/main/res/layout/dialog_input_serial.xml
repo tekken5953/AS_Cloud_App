@@ -39,11 +39,11 @@
     <TextView
         android:id="@+id/inputSerialContent"
         style="@style/basicTextView"
-        android:gravity="start"
         android:layout_below="@+id/inputSerialTitle"
         android:layout_marginStart="24dp"
         android:layout_marginTop="49dp"
         android:fontFamily="@font/spoqa_hansansneo_medium"
+        android:gravity="start"
         android:maxEms="15"
         android:text="@string/input_serial"
         android:textSize="20sp" />

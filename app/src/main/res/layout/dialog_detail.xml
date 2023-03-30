@@ -22,7 +22,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="10dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:text="@string/setting_faq"
         android:textColor="@color/mode_color_text"
         android:textSize="16sp" />
 

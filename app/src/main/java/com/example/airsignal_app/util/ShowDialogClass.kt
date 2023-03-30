@@ -13,7 +13,7 @@ class ShowDialogClass(context: Context) {
     private val mContext = context
 
     /** 다이얼로그 뷰 갱신 **/
-    fun show(v: View, cancelable: Boolean) : androidx.appcompat.app.AlertDialog.Builder{
+    fun show(v: View, cancelable: Boolean) {
         v.let {
             val builder = androidx.appcompat.app.AlertDialog.Builder(mContext, R.style.AlertDialog)
             if (v.parent == null)
@@ -22,7 +22,6 @@ class ShowDialogClass(context: Context) {
                 (v.parent as ViewGroup).removeView(v)
                 builder.setView(v).show().setCancelable(cancelable)
             }
-            return builder
         }
     }
 }

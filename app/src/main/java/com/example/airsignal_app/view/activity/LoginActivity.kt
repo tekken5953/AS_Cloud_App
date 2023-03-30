@@ -44,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.kakakoLoginButton.setOnClickListener {
-            kakaoLogin.checkInstallKakaoTalk(binding.mainPb)
+            kakaoLogin.checkInstallKakaoTalk(binding.pbLayout)
         }
 
         binding.naverLoginButton.setOnClickListener {

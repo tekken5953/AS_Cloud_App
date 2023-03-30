@@ -1,7 +1,6 @@
 package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -13,7 +12,7 @@ import com.example.airsignal_app.dao.ConvertDataType.setLocaleToEnglish
 import com.example.airsignal_app.dao.ConvertDataType.setLocaleToKorea
 import com.example.airsignal_app.dao.ConvertDataType.setLocaleToSystem
 import com.example.airsignal_app.util.EnterPage
-import com.example.airsignal_app.util.SharedPreferenceManager
+import com.example.airsignal_app.db.SharedPreferenceManager
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {

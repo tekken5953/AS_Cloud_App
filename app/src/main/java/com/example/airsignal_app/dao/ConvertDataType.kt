@@ -58,4 +58,8 @@ object ConvertDataType {
         @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(pattern, Locale.KOREA)
         return format.format(Date(mills))
     }
+
+    fun formatEmailToRDB(email: String) : String {
+        return email.replace(".", "_")
+    }
 }

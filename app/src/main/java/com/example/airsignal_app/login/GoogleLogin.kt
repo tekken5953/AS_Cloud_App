@@ -3,25 +3,26 @@ package com.example.airsignal_app.login
 import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithPhone
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithPhone
-import com.example.airsignal_app.util.EnterPage
-import com.example.airsignal_app.util.LoggerUtil
-import com.example.airsignal_app.util.SharedPreferenceManager
-import com.example.airsignal_app.view.activity.LoginActivity
 import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
-import com.example.airsignal_app.dao.IgnoredKeyFile.temporalPhoneNumber
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
+import com.example.airsignal_app.util.EnterPage
+import com.example.airsignal_app.util.LoggerUtil
+import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.firebase.db.RDBLogcat
+import com.example.airsignal_app.view.activity.LoginActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.RuntimeExecutionException
 import com.google.android.gms.tasks.Task
 import com.orhanobut.logger.Logger
 
@@ -54,10 +55,11 @@ class GoogleLogin(mActivity: Activity) {
         client.signOut()
             .addOnCompleteListener {
                 Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
-                saveLogoutStatus()
-                val intent = Intent(activity, LoginActivity::class.java)
-                activity.startActivity(intent)
-                activity.finish()
+                    saveLogoutStatus()
+                    val intent = Intent(activity, LoginActivity::class.java)
+                    System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
+                    activity.startActivity(intent)
+                    activity.finish()
             }
             .addOnCanceledListener {
                 Logger.t(TAG_LOGIN).e("로그아웃에 실패했습니다")
@@ -70,7 +72,13 @@ class GoogleLogin(mActivity: Activity) {
             .addOnCompleteListener {
                 handleSignInResult(it)
                 Logger.t(TAG_LOGIN).d("자동 로그인 됨")
-                saveLoginStatus()
+                try {
+                    saveLoginStatus(it.result.email.toString(), "자동")
+                } catch (e: RuntimeExecutionException) {
+                    e.printStackTrace()
+                } catch (e: ApiException) {
+                    e.printStackTrace()
+                }
             }
             .addOnFailureListener {
                 Logger.t(TAG_LOGIN).w("마지막 로그인 세션을 찾을 수 없습니다")
@@ -90,16 +98,20 @@ class GoogleLogin(mActivity: Activity) {
     /** 사용자의 로그인 정보를 저장
      *
      * TODO 구글로그인은 아직 테스팅 단계라 임시로 파라미터를 설정**/
-    private fun saveLoginStatus() {
-        SharedPreferenceManager(activity).setString(lastLoginPlatform,"google")
-        sendLogInWithPhone("로그인 성공", temporalPhoneNumber, "구글", "수동")
+    private fun saveLoginStatus(email: String, isAuto: String) {
+        SharedPreferenceManager(activity).setString(lastLoginPlatform, "google")
+        sendLogInWithEmail(isSuccess = "로그인 성공", email = email, sort = "구글", isAuto = isAuto)
     }
 
     /** 사용자 로그아웃 정보를 저장
      *
      * TODO 임시로 번호를 지정해 놓음**/
     private fun saveLogoutStatus() {
-        sendLogOutWithPhone("로그아웃 성공",temporalPhoneNumber,"구글")
+        sendLogOutWithEmail(
+            SharedPreferenceManager(activity).getString(userEmail),
+            "로그아웃 성공",
+            "구글",
+        )
     }
 
     /** 로그인 이벤트 성공 **/
@@ -122,11 +134,11 @@ class GoogleLogin(mActivity: Activity) {
                 """.trimIndent()
             )
             SharedPreferenceManager(activity).apply {
-                setString(userId,displayName.toString())
-                setString(userProfile,photo)
+                setString(userId, displayName.toString())
+                setString(userProfile, photo)
                 setString(userEmail, email)
             }
-            saveLoginStatus()
+            saveLoginStatus(email, "수동")
             enterMainPage()
         } catch (e: ApiException) {
             e.printStackTrace()
