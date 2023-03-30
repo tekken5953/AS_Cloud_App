@@ -43,7 +43,7 @@ object HttpClient {
                     }
                     try {
                         // Timber 와 Gson setPrettyPrinting 를 이용해 json 을 보기 편하게 표시해준다.
-                        LoggerUtil().logJsonTimberDebug("Timber", message)
+                        LoggerUtil().getInstance().logJsonTimberDebug("Timber", message)
                     } catch (m: JsonSyntaxException) {
                         Timber.tag("Timber").e(message)
                     }

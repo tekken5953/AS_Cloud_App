@@ -37,9 +37,11 @@ import timber.log.Timber
 
 class KakaoLogin(mActivity: Activity) {
     private val activity = mActivity
+    private val sp by lazy { SharedPreferenceManager(activity) }
 
-    fun initialize() {
+    fun initialize() : KakaoLogin {
         KakaoSdk.init(activity, KAKAO_NATIVE_APP_KEY)
+        return this
     }
 
     /** 앱 히시키 받아오기 **/
@@ -92,7 +94,7 @@ class KakaoLogin(mActivity: Activity) {
         if (error != null) {
             Logger.t(TAG_LOGIN).e("로그인 실패 : Cause is $error")
             sendLogToFail(
-                SharedPreferenceManager(activity).getString(userEmail),
+                sp.getString(userEmail),
                 "로그인 실패",
                 error.toString())
         } else {
@@ -163,13 +165,11 @@ class KakaoLogin(mActivity: Activity) {
     private fun saveUserSettings() {
         UserApiClient.instance.me { user, _ ->
             user?.kakaoAccount?.let { account ->
-                val sp = SharedPreferenceManager(activity)
-                sp.apply {
-                    setString(lastLoginPhone, account.phoneNumber.toString())
-                    setString(userId, account.profile!!.nickname.toString())
-                    setString(userProfile, account.profile!!.profileImageUrl.toString())
-                    setString(userEmail, account.email.toString())
-                }
+                sp .setString(lastLoginPhone, account.phoneNumber.toString())
+                    .setString(userId, account.profile!!.nickname.toString())
+                    .setString(userProfile, account.profile!!.profileImageUrl.toString())
+                    .setString(userEmail, account.email.toString())
+
                 Timber.tag("testtest")
                     .d("name : %s profile : %s", account.profile!!.nickname, account.profile!!.thumbnailImageUrl)
             }
@@ -187,7 +187,7 @@ class KakaoLogin(mActivity: Activity) {
                 if (error != null) {
                     Logger.t(TAG_LOGIN).e("로그아웃에 실패함 : $error")
                     sendLogToFail(
-                        SharedPreferenceManager(activity).getString(userEmail),
+                        sp.getString(userEmail),
                         "카카오 로그아웃 실패",
                         error.toString())
                 } else {

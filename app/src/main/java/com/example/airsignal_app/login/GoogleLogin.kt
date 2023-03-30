@@ -9,12 +9,10 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
 import com.example.airsignal_app.util.EnterPage
-import com.example.airsignal_app.util.LoggerUtil
-import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.view.activity.LoginActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -36,9 +34,9 @@ class GoogleLogin(mActivity: Activity) {
     private val activity = mActivity
     private var client: GoogleSignInClient
     private var lastLogin: GoogleSignInAccount? = null
+    private val sp by lazy { SharedPreferenceManager(activity) }
 
     init {
-        LoggerUtil().getInstance()
         client = GoogleSignIn.getClient(activity, getGoogleSignInOptions())
         lastLogin = GoogleSignIn.getLastSignedInAccount(activity)
     }
@@ -99,7 +97,7 @@ class GoogleLogin(mActivity: Activity) {
      *
      * TODO 구글로그인은 아직 테스팅 단계라 임시로 파라미터를 설정**/
     private fun saveLoginStatus(email: String, isAuto: String) {
-        SharedPreferenceManager(activity).setString(lastLoginPlatform, "google")
+        sp.setString(lastLoginPlatform, "google")
         sendLogInWithEmail(isSuccess = "로그인 성공", email = email, sort = "구글", isAuto = isAuto)
     }
 
@@ -108,7 +106,7 @@ class GoogleLogin(mActivity: Activity) {
      * TODO 임시로 번호를 지정해 놓음**/
     private fun saveLogoutStatus() {
         sendLogOutWithEmail(
-            SharedPreferenceManager(activity).getString(userEmail),
+            sp.getString(userEmail),
             "로그아웃 성공",
             "구글",
         )
@@ -133,11 +131,11 @@ class GoogleLogin(mActivity: Activity) {
                 profile : $photo
                 """.trimIndent()
             )
-            SharedPreferenceManager(activity).apply {
-                setString(userId, displayName.toString())
-                setString(userProfile, photo)
-                setString(userEmail, email)
-            }
+
+                sp.setString(userId, displayName.toString())
+                .setString(userProfile, photo)
+                .setString(userEmail, email)
+
             saveLoginStatus(email, "수동")
             enterMainPage()
         } catch (e: ApiException) {

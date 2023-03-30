@@ -1,7 +1,6 @@
 package com.example.airsignal_app.util
 
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.view.Gravity
@@ -9,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.example.airsignal_app.R
@@ -23,6 +21,7 @@ import com.google.android.material.snackbar.Snackbar
 class CustomSnackBar(view: View, private val message: String, private val drawable: Drawable) {
     //https://velog.io/@nagosooo/custom-Snackbar
 
+    /**Constructor**/
     companion object {
         fun make(view: View, message: String, drawable: Drawable) =
             CustomSnackBar(view, message, drawable)
@@ -42,6 +41,7 @@ class CustomSnackBar(view: View, private val message: String, private val drawab
         initData()
     }
 
+    /** 뷰 세팅 **/
     private fun initView() {
         with(snackBarLayout) {
             val layoutParams = layoutParams as FrameLayout.LayoutParams
@@ -66,12 +66,13 @@ class CustomSnackBar(view: View, private val message: String, private val drawab
 
     }
 
+    /** 스낵바 텍스트, 이미지 할당**/
     private fun initData() {
         snackBarBinding.tvSample.text = message
         snackBarBinding.image.background = drawable
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    /** 진동, 스낵바 Show**/
     fun show() {
         MakeVibrator().init(context).make(100)
         snackBar.show()

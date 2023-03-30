@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -12,11 +13,13 @@ import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
@@ -53,7 +56,8 @@ class SettingActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        binding.settingUserEmail.text = SharedPreferenceManager(this).getString(userEmail)
+        binding.settingUserEmail.text =
+            sp.getString(userEmail)
 
         // 설정 페이지 테마 항목이름 바꾸기
         when (sp.getString("theme")) {
@@ -106,9 +110,18 @@ class SettingActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this@SettingActivity, R.layout.activity_setting)
 
         // 마지막 로그인 플랫폼 종류
-        val lastLogin = SharedPreferenceManager(this).getString(lastLoginPlatform)
+        val lastLogin = sp.getString(lastLoginPlatform)
         // 로그인 시 저장된 핸드폰 번호
-        val email = SharedPreferenceManager(this).getString(userEmail)
+        val email = sp.getString(userEmail)
+
+        when(lastLogin) {
+            "google" -> { binding.settingUserIcon.setImageDrawable(ResourcesCompat.getDrawable(resources,
+                R.drawable.google_icon,null))}
+            "kakao" -> { binding.settingUserIcon.setImageDrawable(ResourcesCompat.getDrawable(resources,
+                    R.drawable.kakao_icon,null))}
+            "naver" -> { binding.settingUserIcon.setImageDrawable(ResourcesCompat.getDrawable(resources,
+                R.drawable.naver_icon,null))}
+        }
 
         isInit = false
 
@@ -423,21 +436,11 @@ class SettingActivity : AppCompatActivity() {
             val permission = RequestPermissionsUtil(this@SettingActivity)
             if (!permission.isNotificationPermitted()) {
                 permission.requestNotification()
-                if (isChecked) {
-                    sp.setBoolean(tag, true)
-                    showSnackBar(true,title)
-                } else {
-                    sp.setBoolean(tag, false)
-                    showSnackBar(false,title)
-                }
+                showSnackBar(isChecked,title)
+                sp.setBoolean(tag, isChecked)
             } else {
-                if (isChecked) {
-                    sp.setBoolean(tag, true)
-                    showSnackBar(true,title)
-                } else {
-                    sp.setBoolean(tag, false)
-                    showSnackBar(false,title)
-                }
+                showSnackBar(isChecked,title)
+                sp.setBoolean(tag, isChecked)
             }
         }
     }
@@ -480,12 +483,10 @@ class SettingActivity : AppCompatActivity() {
     private fun showSnackBar(isAllow: Boolean, title: String) {
         val img = ContextCompat.getDrawable(this@SettingActivity, R.drawable.alert)!!
         img.setTint(getColor(R.color.mode_color_view))
-        CoroutineScope(Dispatchers.Main).launch {
-            if (isAllow){
-                if (!isInit) { CustomSnackBar.make(binding.root, "$title 알림을 허용하였습니다", img).show() }
-            } else {
-                if (!isInit) { CustomSnackBar.make(binding.root, "$title 알림을 거부하였습니다", img).show() }
-            }
+        if (isAllow) {
+            if (!isInit) { CustomSnackBar.make(binding.root, "$title 알림을 허용하였습니다", img).show() }
+        } else {
+            if (!isInit) { CustomSnackBar.make(binding.root, "$title 알림을 거부하였습니다", img).show() }
         }
     }
 }

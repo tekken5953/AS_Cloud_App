@@ -7,21 +7,26 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.databinding.ActivitySignInBinding
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.orhanobut.logger.Logger
-import timber.log.Timber
-import kotlin.system.exitProcess
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignInBinding
     private lateinit var googleLogin: GoogleLogin
     private lateinit var kakaoLogin: KakaoLogin
     private lateinit var naverLogin: NaverLogin
+
+    override fun onStart() {
+        super.onStart()
+        silentLogin()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,24 +36,16 @@ class LoginActivity : AppCompatActivity() {
         kakaoLogin = KakaoLogin(this)   // 카카오 로그인
         naverLogin = NaverLogin(this)   // 네이버 로그인
 
-        kakaoLogin.initialize()
-        naverLogin.initialize()
-
-//        // 구글 자동 로그인
-        googleLogin.checkSilenceLogin()
-//        // 카카오 자동 로그인
-//        kakaoLogin.isValidToken()
-
         binding.googleLoginButton.setOnClickListener {
             googleLogin.login(binding.googleLoginButton, startActivityResult)
         }
 
         binding.kakakoLoginButton.setOnClickListener {
-            kakaoLogin.checkInstallKakaoTalk(binding.pbLayout)
+            kakaoLogin.initialize().checkInstallKakaoTalk(binding.pbLayout)
         }
 
         binding.naverLoginButton.setOnClickListener {
-            naverLogin.login()
+            naverLogin.initialize().login()
         }
     }
 
@@ -66,4 +63,21 @@ class LoginActivity : AppCompatActivity() {
                 binding.googleLoginButton.isEnabled = true
             }
         }
+
+    private fun silentLogin() {
+        when(SharedPreferenceManager(this).getString(lastLoginPlatform)) {
+            "google" -> {
+                // 구글 자동 로그인
+                googleLogin.checkSilenceLogin()
+            }
+            "kakao" -> {
+                // 카카오 자동 로그인
+                kakaoLogin.isValidToken()
+            }
+            "naver" -> {
+                // 네이버 자동 로그인
+                naverLogin.initialize().login()
+            }
+        }
+    }
 }

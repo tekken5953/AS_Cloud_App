@@ -57,16 +57,25 @@
                 android:background="@color/view_line_color"
                 app:layout_constraintTop_toBottomOf="@+id/settingUserTitle" />
 
+            <ImageView
+                android:id="@+id/settingUserIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/settingLine1"/>
+
             <TextView
                 android:id="@+id/settingUserEmail"
                 style="@style/basicTextView"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="12dp"
                 android:text="admin@airsignal.kr"
                 android:textSize="16sp"
-                android:fontFamily="@font/spoqa_hansansneo_regular"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/settingLine1" />
+                app:layout_constraintStart_toEndOf="@+id/settingUserIcon"
+                app:layout_constraintTop_toTopOf="@+id/settingUserIcon"
+                app:layout_constraintBottom_toBottomOf="@+id/settingUserIcon"
+                android:layout_marginStart="6dp"
+                android:fontFamily="@font/spoqa_hansansneo_regular" />
 
             <TextView
                 android:id="@+id/settingLogOut"
@@ -77,9 +86,9 @@
                 android:fontFamily="@font/spoqa_hansansneo_regular"
                 android:layout_marginEnd="26dp"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/settingUserEmail"
+                app:layout_constraintBottom_toBottomOf="@+id/settingUserIcon"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/settingUserEmail" />
+                app:layout_constraintTop_toTopOf="@+id/settingUserIcon" />
 
             <TextView
                 android:id="@+id/settingThemeTitle"
@@ -90,7 +99,7 @@
                 android:textSize="14sp"
                 android:fontFamily="@font/spoqa_hansansneo_bold"
                 app:layout_constraintStart_toStartOf="@+id/settingUserTitle"
-                app:layout_constraintTop_toBottomOf="@+id/settingUserEmail" />
+                app:layout_constraintTop_toBottomOf="@+id/settingUserIcon" />
 
             <View
                 android:id="@+id/settingLine2"
