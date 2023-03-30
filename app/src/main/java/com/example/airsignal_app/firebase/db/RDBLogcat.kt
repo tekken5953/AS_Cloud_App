@@ -89,7 +89,7 @@ object RDBLogcat {
             myRef.child(formatEmailToRDB(email))
                 .child(isSuccess)
                 .child(millsToString(getCurrentTime(), "yyyy-MM-dd"))
-                .child(millsToString(getCurrentTime(), "HH:mm"))
+                .child(millsToString(getCurrentTime(), "HH:mm:ss"))
                 .setValue(log)
         }
 }
