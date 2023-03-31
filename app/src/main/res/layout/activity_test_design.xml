@@ -9,7 +9,7 @@
     <EditText
         android:id="@+id/testTextSize"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="24dp"
@@ -20,7 +20,7 @@
     <EditText
         android:id="@+id/testTextColor"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:layout_below="@+id/testTextSize"
         android:layout_marginStart="24dp"
         android:layout_marginTop="5dp"
@@ -32,7 +32,7 @@
     <Spinner
         android:id="@+id/testFont"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_below="@+id/testTextColor"
         android:layout_marginStart="24dp"
         android:layout_marginTop="5dp"
@@ -42,7 +42,7 @@
     <EditText
         android:id="@+id/testTextValue"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:layout_below="@+id/testFont"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
@@ -54,28 +54,26 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/testCreateBtn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_below="@+id/testTextValue"
         android:layout_marginStart="24dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="24dp"
         android:background="@color/main_blue_color"
         android:text="생성"
-        android:textColor="@color/white"
-        android:textSize="16sp" />
+        android:textColor="@color/white"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/testClearBtn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_below="@+id/testCreateBtn"
         android:layout_marginStart="24dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="24dp"
         android:background="@color/main_gray_color"
         android:text="초기화"
-        android:textColor="@color/white"
-        android:textSize="16sp" />
+        android:textColor="@color/white" />
 
     <View
         android:id="@+id/testViewLine"

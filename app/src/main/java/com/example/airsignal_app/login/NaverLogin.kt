@@ -1,11 +1,6 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
-import com.example.airsignal_app.util.EnterPage
-import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientId
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientName
@@ -14,12 +9,18 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
+import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
+import com.example.airsignal_app.util.EnterPage
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
 import com.orhanobut.logger.Logger
+
 
 /**
  * @author : Lee Jae Young
@@ -28,8 +29,9 @@ import com.orhanobut.logger.Logger
 
 class NaverLogin(mActivity: Activity) {
     private val activity = mActivity
+    private val sp by lazy { SharedPreferenceManager(activity) }
 
-    fun initialize() {
+    fun initialize() : NaverLogin {
         //TODO 정식버전이 되면 동적할당
         NaverIdLoginSDK.initialize(
             activity,
@@ -37,6 +39,7 @@ class NaverLogin(mActivity: Activity) {
             naverDefaultClientSecret,
             naverDefaultClientName
         )
+        return this
     }
 
     /** 로그인
@@ -75,12 +78,12 @@ class NaverLogin(mActivity: Activity) {
         override fun onSuccess(result: NidProfileResponse) {
             result.profile?.let {
                 Logger.t(TAG_LOGIN).d("네이버 로그인 성공")
-                SharedPreferenceManager(activity).apply {
-                    setString(lastLoginPhone, it.mobile.toString())
-                    setString(userId, it.name.toString())
-                    setString(userProfile, it.profileImage!!)
-                    setString(userEmail, it.email.toString())
-                }
+
+                 sp .setString(lastLoginPhone, it.mobile.toString())
+                    .setString(userId, it.name.toString())
+                    .setString(userProfile, it.profileImage!!)
+                    .setString(userEmail, it.email.toString())
+
                 sendLogInWithEmail("로그인 성공", it.email.toString(), "네이버", "수동")
             }
 
@@ -95,7 +98,7 @@ class NaverLogin(mActivity: Activity) {
                         "errorDescription: $errorDescription"
             )
             sendLogToFail(
-                SharedPreferenceManager(activity).getString(userEmail),
+                sp.getString(userEmail),
                 "네이버 로그인 실패",
                 "$errorCode - $errorDescription")
         }
@@ -143,6 +146,7 @@ class NaverLogin(mActivity: Activity) {
             override fun onSuccess() {
                 //서버에서 토큰 삭제에 성공한 상태입니다.
                 Logger.t(TAG_LOGIN).d("네이버 로그인 서비스와의 연동을 해제하였습니다다")
+                enterLoginPage()
             }
 
             override fun onFailure(httpStatus: Int, message: String) {

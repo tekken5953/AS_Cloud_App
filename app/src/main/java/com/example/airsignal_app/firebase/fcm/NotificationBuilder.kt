@@ -37,6 +37,7 @@ class NotificationBuilder {
         }
 
         val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+
         notificationBuilder.setAutoCancel(true)
             .setDefaults(Notification.DEFAULT_ALL)
             .setWhen(time)
@@ -45,6 +46,7 @@ class NotificationBuilder {
             .setContentIntent(pendingIntent)
             .setContentTitle(title)
             .setContentText(data.data.toString())
+
         notificationManager!!.run {
             createNotificationChannel(notificationChannel)
             notify(1, notificationBuilder.build())

@@ -6,24 +6,22 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.widget.TextView
 import com.example.airsignal_app.dao.ConvertDataType
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
-import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.util.ToastUtils
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
 import java.io.IOException
-import java.lang.Thread.sleep
 import java.util.*
-import kotlin.math.abs
 
 class GetLocation(mContext: Context) : GetLocationListener {
     private val context = mContext
 
     private val geocoder by lazy { Geocoder(mContext, Locale.KOREA) }
+    private val sp by lazy { SharedPreferenceManager(context) }
 
     /** GPS 의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
     @SuppressLint("MissingPermission")
@@ -41,8 +39,12 @@ class GetLocation(mContext: Context) : GetLocationListener {
 
                     Logger.t("Location")
                         .i(
-                            ConvertDataType.millsToString(ConvertDataType.getCurrentTime(),"HH:mm") +
-                                " - ${it.distanceTo(testLocal)}")
+                            ConvertDataType.millsToString(
+                                ConvertDataType.getCurrentTime(),
+                                "HH:mm"
+                            ) +
+                                    " - ${it.distanceTo(testLocal)}"
+                        )
                 }
             }
             .addOnFailureListener {
@@ -51,13 +53,13 @@ class GetLocation(mContext: Context) : GetLocationListener {
             }
     }
 
-    override fun onGetLocal(location: Location){
+    override fun onGetLocal(location: Location) {
         getAddress(location.latitude, location.longitude)
     }
 
     /** 현재 주소를 불러옵니다 **/
     private fun getAddress(lat: Double, lng: Double) {
-        val email = SharedPreferenceManager(context).getString(userEmail)
+        val email = sp.getString(userEmail)
         val nowAddress = "현재 위치를 확인 할 수 없습니다."
         lateinit var address: List<Address>
         try {
@@ -68,22 +70,28 @@ class GetLocation(mContext: Context) : GetLocationListener {
                     writeLogCause(
                         email = email,
                         isSuccess = "Background Location",
-                        log = "${it.latitude.toInt()} , ${it.longitude.toInt()}\t ${it.getAddressLine(0)}")
-                    Logger.t("Location").d("${it.latitude},${it.longitude}\n${it.getAddressLine(0)}")
-                    SharedPreferenceManager(context).setString(lastAddress, "${it.locality} ${it.thoroughfare}")
+                        log = "${it.latitude.toInt()} , ${it.longitude.toInt()}\t ${
+                            it.getAddressLine(0)
+                        }"
+                    )
+                    Logger.t("Location")
+                        .d("${it.latitude},${it.longitude}\n${it.getAddressLine(0)}")
+                    sp.setString(lastAddress, "${it.locality} ${it.thoroughfare}")
                 }
             } else {
                 writeLogCause(
                     email,
                     "Background Location",
-                    "Address is Empty : $nowAddress")
+                    "Address is Empty : $nowAddress"
+                )
             }
         } catch (e: IOException) {
             ToastUtils(context as Activity).shortMessage("주소를 가져 올 수 없습니다.")
             writeLogCause(
                 email,
                 "Background Location",
-                "Error : ${e.printStackTrace()}")
+                "Error : ${e.printStackTrace()}"
+            )
         }
     }
 }

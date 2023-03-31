@@ -14,9 +14,10 @@ import timber.log.Timber
  * @since : 2023-03-06 오후 5:10
  **/
 class LoggerUtil {
-    fun getInstance() {
+    fun getInstance() : LoggerUtil {
         Logger.addLogAdapter(AndroidLogAdapter())
         Timber.plant(Timber.DebugTree())
+        return this
     }
 
     /** 앱 키해시 불러오기 */

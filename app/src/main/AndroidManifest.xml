@@ -60,7 +60,8 @@
         </activity>
         <activity
             android:name=".view.activity.LoginActivity"
-            android:exported="false" />
+            android:exported="true" >
+        </activity>
     </application>
 
 </manifest>

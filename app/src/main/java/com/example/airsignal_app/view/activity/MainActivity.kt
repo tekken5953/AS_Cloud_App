@@ -68,7 +68,10 @@ class MainActivity : AppCompatActivity() {
             @SuppressLint("InflateParams")
             val searchLayout: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_search_address, null)
-            ShowDialogClass(this).show(searchLayout, true)
+            ShowDialogClass()
+                .getInstance(this)
+                .setBackPress(searchLayout.findViewById(R.id.searchBack))
+                .show(searchLayout, true)
 
             val searchListView: ListView = searchLayout.findViewById(R.id.searchAddressListView)
             val searchItem = ArrayList<String>()
@@ -77,6 +80,7 @@ class MainActivity : AppCompatActivity() {
                 ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, searchItem)
             val searchView: SearchView = searchLayout.findViewById(R.id.searchAddressView)
             searchListView.adapter = adapter
+            searchView.requestFocus()
 
             // 서치 뷰 텍스트 변환 콜벡
             searchView.setOnQueryTextListener(object :

@@ -27,6 +27,7 @@ public class ToastUtils {
             toast = Toast.makeText(mContext, message, duration);
             toast.show();
         };
+
         mContext.runOnUiThread(r);
     }
 

@@ -90,7 +90,6 @@
                     android:lines="1"
                     android:text="23˚"
                     android:textSize="32sp" />
-
             </TableRow>
 
             <TableRow
@@ -146,7 +145,6 @@
                     android:text="18:32"
                     android:textSize="14sp" />
             </TableRow>
-
         </TableLayout>
 
         <TableRow
@@ -191,7 +189,6 @@
                     android:text="@string/humid"
                     android:textColor="@color/main_gray_color"
                     android:textSize="14sp" />
-
             </LinearLayout>
 
             <View
@@ -230,7 +227,6 @@
                     android:text="@string/wind"
                     android:textColor="@color/main_gray_color"
                     android:textSize="14sp" />
-
             </LinearLayout>
 
             <View
@@ -269,9 +265,7 @@
                     android:text="@string/rain_per"
                     android:textColor="@color/main_gray_color"
                     android:textSize="14sp" />
-
             </LinearLayout>
-
         </TableRow>
 
         <TableRow
@@ -331,7 +325,6 @@
                 android:textColor="@color/progressGood"
                 android:textSize="15sp"
                 android:textStyle="bold" />
-
         </TableRow>
 
         <TextView
@@ -377,7 +370,6 @@
             app:layout_constraintStart_toStartOf="@+id/viewPagerDailyWeatherTitle"
             app:layout_constraintTop_toBottomOf="@+id/viewPagerDailyWeatherRv" />
 
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/viewPagerWeeklyWeatherRv"
             android:layout_width="match_parent"
@@ -398,5 +390,4 @@
             tools:listitem="@layout/list_item_weekly_weather" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.core.widget.NestedScrollView>

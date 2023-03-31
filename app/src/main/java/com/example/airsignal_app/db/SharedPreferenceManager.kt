@@ -27,43 +27,48 @@ class SharedPreferenceManager(mContext: Context) {
     }
 
     /**String 값 저장 **/
-    fun setString(key: String, value: String) {
+    fun setString(key: String, value: String) : SharedPreferenceManager{
         val prefs = getPreferences()
         val editor = prefs.edit()
         editor.putString(key, value)
         editor.apply()
+        return this
     }
 
     /**Boolean 값 저장**/
-    fun setBoolean(key: String, value: Boolean) {
+    fun setBoolean(key: String, value: Boolean) : SharedPreferenceManager {
         val prefs = getPreferences()
         val editor = prefs.edit()
         editor.putBoolean(key, value)
         editor.apply()
+        return this
     }
 
     /**Integer 값 저장**/
-    fun setInt(key: String, value: Int) {
+    fun setInt(key: String, value: Int) : SharedPreferenceManager {
         val prefs = getPreferences()
         val editor = prefs.edit()
         editor.putInt(key, value)
         editor.apply()
+        return this
     }
 
     /**Long 값 저장**/
-    fun setLong(key: String, value: Long) {
+    fun setLong(key: String, value: Long) : SharedPreferenceManager {
         val prefs = getPreferences()
         val editor = prefs.edit()
         editor.putLong(key, value)
         editor.apply()
+        return this
     }
 
     /**Float 값 저장**/
-    fun setFloat(key: String, value: Float) {
+    fun setFloat(key: String, value: Float) : SharedPreferenceManager {
         val prefs = getPreferences()
         val editor = prefs.edit()
         editor.putFloat(key, value)
         editor.apply()
+        return this
     }
 
     /**String 값 호출**/
