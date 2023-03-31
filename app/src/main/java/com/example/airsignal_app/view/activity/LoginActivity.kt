@@ -2,6 +2,9 @@ package com.example.airsignal_app.view.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.window.SplashScreen
+import android.window.SplashScreenView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -9,7 +12,7 @@ import androidx.databinding.DataBindingUtil
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
-import com.example.airsignal_app.databinding.ActivitySignInBinding
+import com.example.airsignal_app.databinding.ActivityLoginBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
@@ -18,7 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.orhanobut.logger.Logger
 
 class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySignInBinding
+    private lateinit var binding: ActivityLoginBinding
     private lateinit var googleLogin: GoogleLogin
     private lateinit var kakaoLogin: KakaoLogin
     private lateinit var naverLogin: NaverLogin
@@ -30,22 +33,22 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_in)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
 
         googleLogin = GoogleLogin(this) // 구글 로그인
-        kakaoLogin = KakaoLogin(this)   // 카카오 로그인
-        naverLogin = NaverLogin(this)   // 네이버 로그인
+        kakaoLogin = KakaoLogin(this).initialize()   // 카카오 로그인
+        naverLogin = NaverLogin(this).initialize()   // 네이버 로그인
 
         binding.googleLoginButton.setOnClickListener {
             googleLogin.login(binding.googleLoginButton, startActivityResult)
         }
 
         binding.kakakoLoginButton.setOnClickListener {
-            kakaoLogin.initialize().checkInstallKakaoTalk(binding.pbLayout)
+            kakaoLogin.checkInstallKakaoTalk(binding.pbLayout)
         }
 
         binding.naverLoginButton.setOnClickListener {
-            naverLogin.initialize().login()
+            naverLogin.login()
         }
     }
 
@@ -64,6 +67,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
+    // 플랫폼 별 자동로그인
     private fun silentLogin() {
         when(SharedPreferenceManager(this).getString(lastLoginPlatform)) {
             "google" -> {
@@ -72,11 +76,11 @@ class LoginActivity : AppCompatActivity() {
             }
             "kakao" -> {
                 // 카카오 자동 로그인
-                kakaoLogin.isValidToken()
+                kakaoLogin.isValidToken(binding.pbLayout)
             }
             "naver" -> {
                 // 네이버 자동 로그인
-                naverLogin.initialize().login()
+                naverLogin.login()
             }
         }
     }

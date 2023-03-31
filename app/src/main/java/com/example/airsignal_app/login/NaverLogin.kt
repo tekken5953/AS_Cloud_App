@@ -146,6 +146,7 @@ class NaverLogin(mActivity: Activity) {
             override fun onSuccess() {
                 //서버에서 토큰 삭제에 성공한 상태입니다.
                 Logger.t(TAG_LOGIN).d("네이버 로그인 서비스와의 연동을 해제하였습니다다")
+                enterLoginPage()
             }
 
             override fun onFailure(httpStatus: Int, message: String) {

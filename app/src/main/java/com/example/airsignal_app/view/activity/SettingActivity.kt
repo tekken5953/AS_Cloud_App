@@ -3,8 +3,6 @@ package com.example.airsignal_app.view.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -13,7 +11,6 @@ import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -26,11 +23,14 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.FaqAdapter
 import com.example.airsignal_app.adapter.NoticeAdapter
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiEvent
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiNight
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiPM
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
+import com.example.airsignal_app.dao.IgnoredKeyFile.userId
+import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.databinding.ActivitySettingBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.login.GoogleLogin
@@ -52,6 +52,7 @@ class SettingActivity : AppCompatActivity() {
     private val faqItem = arrayListOf<String>()
     private val noticeItem = arrayListOf<AdapterModel.NoticeItem>()
     private var isInit = true
+    private val dialog by lazy { ShowDialogClass().getInstance(this) }
 
     override fun onResume() {
         super.onResume()
@@ -85,16 +86,20 @@ class SettingActivity : AppCompatActivity() {
             }
         }
 
-        settingAlarmRadio(switch = binding.settingNotiPMRight, checked = sp.getBoolean(notiPM))
-        settingAlarmRadio(
+        // 미세먼지 알림 허용 스위치 설정
+        settingAlertsRadio(
+            switch = binding.settingNotiPMRight,
+            checked = sp.getBoolean(notiPM))
+        // 이벤트 알림 허용 스위치 설정
+        settingAlertsRadio(
             switch = binding.settingNotiEventRight,
             checked = sp.getBoolean(notiEvent)
         )
-        settingAlarmRadio(
+        // 야간 알림 허용 스위치 설정
+        settingAlertsRadio(
             switch = binding.settingNotiNightRight,
             checked = sp.getBoolean(notiNight)
         )
-
         // 야간 알림 허용 텍스트 설정
         setNightAlertsSpan(binding.settingNotiNightLeft)
 
@@ -151,11 +156,11 @@ class SettingActivity : AppCompatActivity() {
                         }
                         delay(100)
                         sp.run {
-                            removeKey("user_id")
-                            removeKey("user_profile")
-                            removeKey("lastLoginPhone")
-                            removeKey("lastLoginPlatform")
-                            removeKey("user_email")
+                            removeKey(userId)
+                            removeKey(userProfile)
+                            removeKey(lastLoginPhone)
+                            removeKey(lastLoginPlatform)
+                            removeKey(userEmail)
                         }
                     }
                 }
@@ -168,17 +173,17 @@ class SettingActivity : AppCompatActivity() {
 
         // 테마 설정 클릭
         binding.settingThemeTR1.setOnClickListener {
-            val build = AlertDialog.Builder(this, R.style.AlertDialog)
             // 레이아웃 뷰 생성
             val themeView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_change_theme, null)
-            build.setView(themeView)
-            val alertDialog: AlertDialog = build.create()
-            val backBtn: ImageView = themeView.findViewById(R.id.changeThemeBack)
             val systemTheme: RadioButton = themeView.findViewById(R.id.systemThemeRb)
             val lightTheme: RadioButton = themeView.findViewById(R.id.lightThemeRb)
             val darkTheme: RadioButton = themeView.findViewById(R.id.darkThemeRb)
             val radioGroup: RadioGroup = themeView.findViewById(R.id.changeThemeRadioGroup)
+
+            dialog
+                .setBackPressRefresh(themeView.findViewById(R.id.changeThemeBack))
+                .show(themeView, true)
 
             // 현재 저장된 테마에 따라서 라디오버튼 체크
             when (sp.getString("theme")) {
@@ -232,31 +237,21 @@ class SettingActivity : AppCompatActivity() {
                     }
                 }
             }
-            backBtn.setOnClickListener {
-                alertDialog.dismiss()
-                onResume()
-            }
-
-            alertDialog.show()
         }
 
         // 언어 설정 클릭
         binding.settingThemeTR2.setOnClickListener {
-            val build = AlertDialog.Builder(this, R.style.AlertDialog)
             // 뷰 레이아웃 생성
             val langView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_change_language, null)
-            build.setView(langView)
-            val alertDialog: AlertDialog = build.create()
-            // 뒤로가기 버튼
-            val back: ImageView = langView.findViewById(R.id.changeLangBack)
-            back.setOnClickListener {
-                alertDialog.dismiss()
-            }
             val systemLang: RadioButton = langView.findViewById(R.id.systemLangRb)
             val koreanLang: RadioButton = langView.findViewById(R.id.koreanRB)
             val englishLang: RadioButton = langView.findViewById(R.id.englishRB)
             val radioGroup: RadioGroup = langView.findViewById(R.id.changeLangRadioGroup)
+
+            dialog
+                .setBackPress(langView.findViewById(R.id.changeLangBack))
+                .show(langView, true)
 
             // 기존에 저장 된 언어로 라디오 버튼 체크
             when (sp.getString("lang")) {
@@ -302,16 +297,12 @@ class SettingActivity : AppCompatActivity() {
                     }
                 }
             }
-
-            alertDialog.show()
         }
 
         val detailView: View =
             LayoutInflater.from(this).inflate(R.layout.dialog_detail, null)
         val detailDate: TextView = detailView.findViewById(R.id.detailNoticeDate)
         val detailTitle: TextView = detailView.findViewById(R.id.detailTitle)
-        val backDetail: ImageView = detailView.findViewById(R.id.detailBack)
-        backDetail.setOnClickListener { onBackPressed() }
 
         // 공지사항 클릭
         binding.settingNotice.setOnClickListener {
@@ -327,17 +318,18 @@ class SettingActivity : AppCompatActivity() {
                 noticeAdapter.notifyItemInserted(i)
             }
 
-            val backNotice: ImageView = noticeMainView.findViewById(R.id.noticeBack)
-            backNotice.setOnClickListener { onBackPressed() }
-
-            ShowDialogClass(this).show(noticeMainView, true)
+            dialog
+                .setBackPress(noticeMainView.findViewById(R.id.noticeBack))
+                .show(noticeMainView, true)
 
             noticeAdapter.setOnItemClickListener(object : NoticeAdapter.OnItemClickListener {
                 override fun onItemClick(v: View, position: Int) {
                     detailDate.text = noticeItem[position].date
                     detailDate.visibility = View.VISIBLE
                     detailTitle.text = noticeTitle.text.toString()
-                    ShowDialogClass(this@SettingActivity).show(detailView, true)
+                    dialog
+                        .setBackPress(detailView.findViewById(R.id.detailBack))
+                        .show(detailView, true)
                 }
             })
         }
@@ -355,16 +347,15 @@ class SettingActivity : AppCompatActivity() {
                 faqAdapter.notifyItemInserted(i)
             }
 
-            val backFaq: ImageView = faqMainView.findViewById(R.id.faqBack)
-            backFaq.setOnClickListener { onBackPressed() }
-
-            ShowDialogClass(this).show(faqMainView, true)
+            dialog
+                .setBackPress(faqMainView.findViewById(R.id.faqBack))
+                .show(faqMainView, true)
 
             faqAdapter.setOnItemClickListener(object : FaqAdapter.OnItemClickListener {
                 override fun onItemClick(v: View, position: Int) {
                     detailDate.visibility = View.GONE
                     detailTitle.text = faqTitle.text.toString()
-                    ShowDialogClass(this@SettingActivity).show(detailView, true)
+                    dialog.show(detailView, true)
                 }
             })
         }
@@ -377,9 +368,9 @@ class SettingActivity : AppCompatActivity() {
         binding.settingAppInfo.setOnClickListener {
             val viewAppInfo: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_app_info, null)
-            val backAppInfo: ImageView = viewAppInfo.findViewById(R.id.appInfoBack)
-            backAppInfo.setOnClickListener { onBackPressed() }
-            ShowDialogClass(this@SettingActivity).show(viewAppInfo, true)
+            dialog
+                .setBackPress(viewAppInfo.findViewById(R.id.appInfoBack))
+                .show(viewAppInfo, true)
         }
     }
 
@@ -446,7 +437,7 @@ class SettingActivity : AppCompatActivity() {
     }
 
     /** 알림 설정 불러오기 **/
-    private fun settingAlarmRadio(switch: SwitchCompat, checked: Boolean) {
+    private fun settingAlertsRadio(switch: SwitchCompat, checked: Boolean) {
         switch.isChecked = checked
     }
 

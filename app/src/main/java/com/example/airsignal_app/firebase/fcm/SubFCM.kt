@@ -25,6 +25,7 @@ class SubFCM : FirebaseMessagingService() {
         NotificationBuilder().sendNotification(this,intent,message,"AS-Cloud FCM Test Msg", System.currentTimeMillis())
     }
 
+    // 토픽 구독 설정
     fun subTopic(s: String) {
         FirebaseMessaging.getInstance().subscribeToTopic(s)
             .addOnCompleteListener { task ->
@@ -36,6 +37,7 @@ class SubFCM : FirebaseMessagingService() {
             }
     }
 
+    // 토픽 구독 해제
     fun unSubTopic(s: String) {
         FirebaseMessaging.getInstance().unsubscribeFromTopic(s)
             .addOnCompleteListener { task ->

@@ -16,11 +16,12 @@ import com.example.airsignal_app.db.SharedPreferenceManager
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
-    private val sp by lazy { SharedPreferenceManager(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+
+        val sp = SharedPreferenceManager(this)
 
         // 설정된 테마 정보 불러오기
         when(sp.getString("theme")) {

@@ -3,6 +3,7 @@ package com.example.airsignal_app.login
 import android.app.Activity
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import com.example.airsignal_app.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
@@ -37,7 +38,7 @@ import timber.log.Timber
 
 class KakaoLogin(mActivity: Activity) {
     private val activity = mActivity
-    private val sp by lazy { SharedPreferenceManager(activity) }
+    private var sp: SharedPreferenceManager = SharedPreferenceManager(activity)
 
     fun initialize() : KakaoLogin {
         KakaoSdk.init(activity, KAKAO_NATIVE_APP_KEY)
@@ -71,11 +72,11 @@ class KakaoLogin(mActivity: Activity) {
                         UserApiClient.instance.loginWithKakaoAccount(
                             activity,
                             callback = mCallback
-                        ) // 카카오 이메일 로그인
+                        )
                     }
                 }
-                // 로그인 성공 부분
                 else {
+                    // 로그인 성공 부분
                     token?.let {
                         loginSilenceKakao()
                         enterMainPage()
@@ -108,16 +109,17 @@ class KakaoLogin(mActivity: Activity) {
     }
 
     /** 자동 로그인 **/
-    fun isValidToken() {
+    fun isValidToken(pb: LinearLayout) {
+        pb.visibility = View.VISIBLE
+        pb.bringToFront()
         if (AuthApiClient.instance.hasToken()) {
             UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
                 if (error != null) {
+                    pb.visibility = View.GONE
                     if (error is KakaoSdkError && error.isInvalidTokenError()) {
-                        // 만료된 토큰임 로그인 필요
-                        Logger.t(TAG_LOGIN).w("만료된 토큰입니다")
+                        Logger.t(TAG_LOGIN).w("만료된 토큰입니다") // 만료된 토큰임 로그인 필요
                     } else {
-                        //기타 에러
-                        Logger.t("TAG_LOG").e("기타 에러 발생 : $error")
+                        Logger.t("TAG_LOG").e("기타 에러 발생 : $error") //기타 에러
                     }
                 } else {
                     //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
@@ -135,6 +137,7 @@ class KakaoLogin(mActivity: Activity) {
         } else {
             // 토큰이 없음 로그인 필요
             Logger.t("TAG_LOG").w("토큰이 없음 로그인 필요")
+            pb.visibility = View.GONE
         }
     }
 
@@ -160,6 +163,10 @@ class KakaoLogin(mActivity: Activity) {
             delay(1000)
             EnterPage(activity).toMain("kakao")
         }
+    }
+
+    private fun enterLoginPage() {
+        EnterPage(activity).toLogin()
     }
 
     private fun saveUserSettings() {
@@ -203,7 +210,6 @@ class KakaoLogin(mActivity: Activity) {
 
     /** 클라이언트와 완전히 연결 끊기 **/
     fun disconnectFromKakao() {
-        // 연결 끊기
         UserApiClient.instance.unlink { error ->
             if (error != null) {
                 Logger.t(TAG_LOGIN).e("연결 끊기 실패 : $error")

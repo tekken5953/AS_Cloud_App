@@ -132,7 +132,7 @@ class GoogleLogin(mActivity: Activity) {
                 """.trimIndent()
             )
 
-                sp.setString(userId, displayName.toString())
+            sp  .setString(userId, displayName.toString())
                 .setString(userProfile, photo)
                 .setString(userEmail, email)
 

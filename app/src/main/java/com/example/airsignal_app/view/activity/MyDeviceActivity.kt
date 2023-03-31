@@ -19,6 +19,8 @@ import com.example.airsignal_app.util.ShowDialogClass
 
 class MyDeviceActivity : AppCompatActivity() {
 
+    private val sp by lazy { ShowDialogClass().getInstance(this) }
+
     @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,37 +29,42 @@ class MyDeviceActivity : AppCompatActivity() {
 
         /** 장치 추가 다이얼로그 **/
         val viewAddDevice: View =
-            LayoutInflater.from(this).inflate(R.layout.dialog_add_device,null)
+            LayoutInflater.from(this).inflate(R.layout.dialog_add_device, null)
+
         /** 시리얼 번호 입력 다이얼로그 **/
         val viewInputSerial: View =
             LayoutInflater.from(this).inflate(R.layout.dialog_input_serial, null)
+
         /** 등록 처리 다이얼로그 **/
         val viewLoading: View =
             LayoutInflater.from(this).inflate(R.layout.dialog_progress_add_device, null)
         viewLoading.isEnabled = false   // 클릭 막기
+
         /** 등록 완료 다이얼로그 **/
         val viewComplete: View =
             LayoutInflater.from(this).inflate(R.layout.dialog_comp_add_device, null)
 
-        val back: ImageView = findViewById(R.id.myDeviceBack)
         val addBtn: ImageView = findViewById(R.id.myDeviceAddDevice)
 
-        back.setOnClickListener { onBackPressed() }
-
         addBtn.setOnClickListener {
-            ShowDialogClass(this).show(viewAddDevice, true)  // 장치추가 레이아웃 출력
-            val addDeviceFrame: FrameLayout = viewAddDevice.findViewById(R.id.addDeviceFrame)   // 장치추가 클릭 필드
-            val cancelAddDevice: ImageView = viewAddDevice.findViewById(R.id.addDeviceCancel) // 등록취소
+            ShowDialogClass().show(viewAddDevice, true)  // 장치추가 레이아웃 출력
+            val addDeviceFrame: FrameLayout =
+                viewAddDevice.findViewById(R.id.addDeviceFrame)   // 장치추가 클릭 필드
+            val cancelAddDevice: ImageView =
+                viewAddDevice.findViewById(R.id.addDeviceCancel) // 등록취소
             cancelAddDevice.setOnClickListener {
                 // 액티비티 갱신
                 refreshUtils.refreshActivity(this)
             }
             addDeviceFrame.setOnClickListener {
-                ShowDialogClass(this).show(viewInputSerial,true)   // 시리얼입력 레이아웃 출력
-                val nextBtn: AppCompatButton = viewInputSerial.findViewById(R.id.inputSerialNextBtn)    // 다음으로 이동
-                val cancelSerial: ImageView = viewInputSerial.findViewById(R.id.inputSerialCancel)    // 등록취소
+                sp.show(viewInputSerial, true)   // 시리얼입력 레이아웃 출력
+                val nextBtn: AppCompatButton =
+                    viewInputSerial.findViewById(R.id.inputSerialNextBtn)    // 다음으로 이동
+                val cancelSerial: ImageView =
+                    viewInputSerial.findViewById(R.id.inputSerialCancel)    // 등록취소
                 val serialEt: EditText = viewInputSerial.findViewById(R.id.inputSerialEditText)
-                val serialErrorText: TextView = viewInputSerial.findViewById(R.id.inputSerialErrorText)
+                val serialErrorText: TextView =
+                    viewInputSerial.findViewById(R.id.inputSerialErrorText)
 
                 cancelSerial.setOnClickListener {
                     // 액티비티 갱신
@@ -73,7 +80,13 @@ class MyDeviceActivity : AppCompatActivity() {
                     ) {
                         nextBtn.apply {
                             isEnabled = false
-                            setTextColor(ResourcesCompat.getColor(resources, R.color.main_gray_color, null))
+                            setTextColor(
+                                ResourcesCompat.getColor(
+                                    resources,
+                                    R.color.main_gray_color,
+                                    null
+                                )
+                            )
                         }
                     }
 
@@ -86,7 +99,13 @@ class MyDeviceActivity : AppCompatActivity() {
                         if (serialEt.text.length >= serialEt.maxEms) {
                             nextBtn.apply {
                                 isEnabled = true
-                                setTextColor(ResourcesCompat.getColor(resources, R.color.mode_color_view, null))
+                                setTextColor(
+                                    ResourcesCompat.getColor(
+                                        resources,
+                                        R.color.mode_color_view,
+                                        null
+                                    )
+                                )
                             }
                         }
                     }
@@ -96,20 +115,24 @@ class MyDeviceActivity : AppCompatActivity() {
 
                 nextBtn.setOnClickListener {
                     if (serialEt.length() != serialEt.maxEms) {
-                        serialEt.background = ResourcesCompat.getDrawable(resources,R.drawable.serial_error,null)
+                        serialEt.background =
+                            ResourcesCompat.getDrawable(resources, R.drawable.serial_error, null)
                         serialErrorText.visibility = View.VISIBLE
                     } else {
-                        serialEt.background = ResourcesCompat.getDrawable(resources,R.drawable.normal_box_bg,null)
+                        serialEt.background =
+                            ResourcesCompat.getDrawable(resources, R.drawable.normal_box_bg, null)
                         serialErrorText.visibility = View.GONE
 
-                        ShowDialogClass(this).show(viewLoading, false) // 로딩 레이아웃 출력
+                        sp.show(viewLoading, false) // 로딩 레이아웃 출력
                         // 로딩 GIF
                         Glide.with(it.context).asGif().load(R.drawable.loading_gif)
                             .into(viewLoading.findViewById(R.id.progressAddFrameImage))
                         val handler = Handler(Looper.getMainLooper())
                         handler.postDelayed({
                             // 2초뒤에 완료 레이아웃 출력
-                            ShowDialogClass(this).show(viewComplete, false)
+                            sp
+                                .setBackPress(findViewById(R.id.myDeviceBack))
+                                .show(viewComplete, false)
                             val viewCompleteOkBtn: AppCompatButton =    // 완료 버튼
                                 viewComplete.findViewById(R.id.compAddOkBtn)
                             viewCompleteOkBtn.setOnClickListener {

@@ -62,7 +62,6 @@ class TestDesignActivity : AppCompatActivity() {
                 }
             }
         })
-
     }
 
     private fun addItem(value: String, size: String, color: String, font: String) {

@@ -20,7 +20,7 @@ object AdapterModel {
 
     data class GridItem(val img: Drawable, val text: String)
 
-    data class ViewPagerItem(
+    data class ViewPagerItem (
         val address: String,
         val temp: String,
         val sunRise: String,
