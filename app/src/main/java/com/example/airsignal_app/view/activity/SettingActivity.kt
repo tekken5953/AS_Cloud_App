@@ -36,10 +36,7 @@ import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
-import com.example.airsignal_app.util.CustomSnackBar
-import com.example.airsignal_app.util.RefreshUtils
-import com.example.airsignal_app.util.RequestPermissionsUtil
-import com.example.airsignal_app.util.ShowDialogClass
+import com.example.airsignal_app.util.*
 import com.example.airsignal_app.view.test.TestDesignActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -58,7 +55,11 @@ class SettingActivity : AppCompatActivity() {
         super.onResume()
 
         binding.settingUserEmail.text =
-            sp.getString(userEmail)
+            if (sp.getString(userEmail) != "") {
+                sp.getString(userEmail)
+            } else {
+                getString(R.string.please_login)
+            }
 
         // 설정 페이지 테마 항목이름 바꾸기
         when (sp.getString("theme")) {
@@ -89,7 +90,8 @@ class SettingActivity : AppCompatActivity() {
         // 미세먼지 알림 허용 스위치 설정
         settingAlertsRadio(
             switch = binding.settingNotiPMRight,
-            checked = sp.getBoolean(notiPM))
+            checked = sp.getBoolean(notiPM)
+        )
         // 이벤트 알림 허용 스위치 설정
         settingAlertsRadio(
             switch = binding.settingNotiEventRight,
@@ -104,9 +106,9 @@ class SettingActivity : AppCompatActivity() {
         setNightAlertsSpan(binding.settingNotiNightLeft)
 
         // 알림 스위치 이벤트 리스너
-        checkNotification(binding.settingNotiPMRight, notiPM,"미세먼지")
-        checkNotification(binding.settingNotiEventRight, notiEvent,"이벤트")
-        checkNotification(binding.settingNotiNightRight, notiNight,"야간")
+        checkNotification(binding.settingNotiPMRight, notiPM, "미세먼지")
+        checkNotification(binding.settingNotiEventRight, notiEvent, "이벤트")
+        checkNotification(binding.settingNotiNightRight, notiNight, "야간")
     }
 
     @SuppressLint("InflateParams")
@@ -116,59 +118,88 @@ class SettingActivity : AppCompatActivity() {
 
         // 마지막 로그인 플랫폼 종류
         val lastLogin = sp.getString(lastLoginPlatform)
+        if (lastLogin != "") {
+            binding.settingLogOut.text = getString(R.string.setting_logout)
+        } else {
+            binding.settingLogOut.text = getString(R.string.login_title)
+        }
+
         // 로그인 시 저장된 핸드폰 번호
         val email = sp.getString(userEmail)
 
-        when(lastLogin) {
-            "google" -> { binding.settingUserIcon.setImageDrawable(ResourcesCompat.getDrawable(resources,
-                R.drawable.google_icon,null))}
-            "kakao" -> { binding.settingUserIcon.setImageDrawable(ResourcesCompat.getDrawable(resources,
-                    R.drawable.kakao_icon,null))}
-            "naver" -> { binding.settingUserIcon.setImageDrawable(ResourcesCompat.getDrawable(resources,
-                R.drawable.naver_icon,null))}
+        // 로그인 플랫폼 아이콘 설정
+        when (lastLogin) {
+            "google" -> {
+                binding.settingUserIcon.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.google_icon, null
+                    )
+                )
+            }
+            "kakao" -> {
+                binding.settingUserIcon.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.kakao_icon, null
+                    )
+                )
+            }
+            "naver" -> {
+                binding.settingUserIcon.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.naver_icon, null
+                    )
+                )
+            }
         }
 
         isInit = false
 
         // 뒤로가기 버튼 클릭
-        binding.settingBack.setOnClickListener { onBackPressed() }
+        binding.settingBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         // 로그아웃 버튼 클릭
         binding.settingLogOut.setOnClickListener {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle(getString(R.string.setting_logout))
-                .setMessage(getString(R.string.logout_msg))
-                .setPositiveButton(
-                    getString(R.string.ok)
-                ) { _, _ ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
-                            "kakao" -> {
-                                KakaoLogin(this@SettingActivity).logout(email)
+            if (binding.settingLogOut.text == getString(R.string.setting_logout)) {
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle(getString(R.string.setting_logout))
+                    .setMessage(getString(R.string.logout_msg))
+                    .setPositiveButton(
+                        getString(R.string.ok)
+                    ) { _, _ ->
+                        CoroutineScope(Dispatchers.IO).launch {
+                            when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
+                                "kakao" -> {
+                                    KakaoLogin(this@SettingActivity).logout(email)
 //                            KakaoLogin(this).disconnectFromKakao()
+                                }
+                                "naver" -> {
+                                    NaverLogin(this@SettingActivity).logout(email)
+                                }
+                                "google" -> {
+                                    GoogleLogin(this@SettingActivity).logout()
+                                }
                             }
-                            "naver" -> {
-                                NaverLogin(this@SettingActivity).logout(email)
+                            delay(100)
+                            sp.run {
+                                removeKey(userId)
+                                removeKey(userProfile)
+                                removeKey(lastLoginPhone)
+                                removeKey(lastLoginPlatform)
+                                removeKey(userEmail)
                             }
-                            "google" -> {
-                                GoogleLogin(this@SettingActivity).logout()
-                            }
-                        }
-                        delay(100)
-                        sp.run {
-                            removeKey(userId)
-                            removeKey(userProfile)
-                            removeKey(lastLoginPhone)
-                            removeKey(lastLoginPlatform)
-                            removeKey(userEmail)
                         }
                     }
-                }
-                .setNegativeButton(
-                    getString(R.string.no)
-                ) { dialog, _ -> dialog?.dismiss() }
+                    .setNegativeButton(
+                        getString(R.string.no)
+                    ) { dialog, _ -> dialog?.dismiss() }
 
-            builder.create().show()
+                builder.create().show()
+            } else if (binding.settingLogOut.text == getString(R.string.login_title)) {
+                EnterPage(this).toLogin()
+            }
         }
 
         // 테마 설정 클릭
@@ -365,6 +396,7 @@ class SettingActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // 앱 정보 클릭
         binding.settingAppInfo.setOnClickListener {
             val viewAppInfo: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_app_info, null)
@@ -407,6 +439,11 @@ class SettingActivity : AppCompatActivity() {
         sp.setString("theme", dbData)
         // 라디오 버튼 체크
         radioGroup.check(radioButton.id)
+
+        val intent = Intent(this@SettingActivity, MainActivity::class.java)
+        startActivity(intent)
+        overridePendingTransition(0, 0)
+        finish()
     }
 
     /** 언어 설정 변경 후 어플리케이션 재시작 **/
@@ -427,10 +464,10 @@ class SettingActivity : AppCompatActivity() {
             val permission = RequestPermissionsUtil(this@SettingActivity)
             if (!permission.isNotificationPermitted()) {
                 permission.requestNotification()
-                showSnackBar(isChecked,title)
+                showSnackBar(isChecked, title)
                 sp.setBoolean(tag, isChecked)
             } else {
-                showSnackBar(isChecked,title)
+                showSnackBar(isChecked, title)
                 sp.setBoolean(tag, isChecked)
             }
         }
@@ -471,13 +508,20 @@ class SettingActivity : AppCompatActivity() {
         textView.text = span
     }
 
+    // 알림 커스텀 스낵바 세팅
     private fun showSnackBar(isAllow: Boolean, title: String) {
-        val img = ContextCompat.getDrawable(this@SettingActivity, R.drawable.alert)!!
-        img.setTint(getColor(R.color.mode_color_view))
+        val alertOn = ContextCompat.getDrawable(this@SettingActivity, R.drawable.alert_on)!!
+        val alertOff = ContextCompat.getDrawable(this@SettingActivity, R.drawable.alert_off)!!
+        alertOn.setTint(getColor(R.color.mode_color_view))
+        alertOff.setTint(getColor(R.color.mode_color_view))
         if (isAllow) {
-            if (!isInit) { CustomSnackBar.make(binding.root, "$title 알림을 허용하였습니다", img).show() }
+            if (!isInit) {
+                CustomSnackBar.make(binding.root, "$title 알림을 허용하였습니다", alertOn).show()
+            }
         } else {
-            if (!isInit) { CustomSnackBar.make(binding.root, "$title 알림을 거부하였습니다", img).show() }
+            if (!isInit) {
+                CustomSnackBar.make(binding.root, "$title 알림을 거부하였습니다", alertOff).show()
+            }
         }
     }
 }

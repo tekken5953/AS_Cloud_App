@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2.ScrollState
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
 import kotlin.random.Random
@@ -19,10 +20,9 @@ import kotlin.random.Random
  * @author : Lee Jae Young
  * @since : 2023-03-23 오후 4:00
  **/
-class HomeViewPagerAdapter(mContext: Context, list: ArrayList<AdapterModel.ViewPagerItem>) :
+class HomeViewPagerAdapter(private val context : Context, list: ArrayList<AdapterModel.WeatherItem>) :
     RecyclerView.Adapter<HomeViewPagerAdapter.ViewHolder>() {
     private val mList = list
-    private val context = mContext
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
 
@@ -62,7 +62,7 @@ class HomeViewPagerAdapter(mContext: Context, list: ArrayList<AdapterModel.ViewP
         private val weeklyWeatherAdapter = WeeklyWeatherAdapter(context,
         this@HomeViewPagerAdapter.weeklyWeatherList)
 
-        fun bind(dao: AdapterModel.ViewPagerItem) {
+        fun bind(dao: AdapterModel.WeatherItem) {
             settingSpan(pm10, dao.pm10Grade)
             settingSpan(pm2p5, dao.pm2p5Grade)
 

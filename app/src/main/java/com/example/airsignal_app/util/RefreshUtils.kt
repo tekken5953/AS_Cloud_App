@@ -1,18 +1,14 @@
 package com.example.airsignal_app.util
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.view.View
-import android.view.ViewGroup
-import com.example.airsignal_app.R
 import kotlin.system.exitProcess
 
-class RefreshUtils(mContext: Context) {
-    private val context = mContext
+class RefreshUtils(private val activity: Activity) {
+
     /** 액티비티 갱신 **/
-    fun refreshActivity(activity: Activity) {
+    fun refreshActivity() {
         activity.let {
             it.finish() //인텐트 종료
             it.overridePendingTransition(0, 0) //인텐트 효과 없애기
@@ -24,11 +20,12 @@ class RefreshUtils(mContext: Context) {
 
     /** 어플리케이션 재시작 **/
     fun refreshApplication() {
-        val packageManager: PackageManager = context.packageManager
-        val intent = packageManager.getLaunchIntentForPackage(context.packageName)
+        val packageName: String = activity.packageName
+        val packageManager: PackageManager = activity.packageManager
+        val intent = packageManager.getLaunchIntentForPackage(packageName)
         val componentName = intent!!.component
         val mainIntent = Intent.makeRestartActivityTask(componentName)
-        context.startActivity(mainIntent)
+        activity.startActivity(mainIntent)
         exitProcess(0)
     }
 }

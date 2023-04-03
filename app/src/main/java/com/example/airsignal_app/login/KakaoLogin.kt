@@ -36,8 +36,7 @@ import timber.log.Timber
  * @since : 2023-03-09 오전 11:29
  **/
 
-class KakaoLogin(mActivity: Activity) {
-    private val activity = mActivity
+class KakaoLogin(private val activity: Activity) {
     private var sp: SharedPreferenceManager = SharedPreferenceManager(activity)
 
     fun initialize() : KakaoLogin {
@@ -176,9 +175,6 @@ class KakaoLogin(mActivity: Activity) {
                     .setString(userId, account.profile!!.nickname.toString())
                     .setString(userProfile, account.profile!!.profileImageUrl.toString())
                     .setString(userEmail, account.email.toString())
-
-                Timber.tag("testtest")
-                    .d("name : %s profile : %s", account.profile!!.nickname, account.profile!!.thumbnailImageUrl)
             }
         }
     }
@@ -200,7 +196,7 @@ class KakaoLogin(mActivity: Activity) {
                 } else {
                     Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
                     sendLogOutWithEmail(email,"로그아웃 성공", "카카오")
-                    EnterPage(activity).toLogin()
+                    EnterPage(activity).toMain(null)
                 }
             }
         } catch (e: UninitializedPropertyAccessException) {

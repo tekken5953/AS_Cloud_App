@@ -19,7 +19,6 @@ import com.google.android.material.snackbar.Snackbar
  * @since : 2023-03-30 오후 1:22
  **/
 class CustomSnackBar(view: View, private val message: String, private val drawable: Drawable) {
-    //https://velog.io/@nagosooo/custom-Snackbar
 
     /**Constructor**/
     companion object {
@@ -71,12 +70,12 @@ class CustomSnackBar(view: View, private val message: String, private val drawab
 
     /** 진동, 스낵바 Show**/
     fun show() {
-        vibrate(100)
+        vibrate()
         snackBar.show()
     }
 
-    // 진동 발생
-    private fun vibrate(long: Long) {
-        MakeVibrator().init(context).make(long)
+    /** 진동 발생 **/
+    private fun vibrate() {
+        MakeVibrator().init(context).make(100)
     }
 }

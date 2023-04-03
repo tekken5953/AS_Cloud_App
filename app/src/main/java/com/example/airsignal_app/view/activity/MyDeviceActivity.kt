@@ -54,7 +54,7 @@ class MyDeviceActivity : AppCompatActivity() {
                 viewAddDevice.findViewById(R.id.addDeviceCancel) // 등록취소
             cancelAddDevice.setOnClickListener {
                 // 액티비티 갱신
-                refreshUtils.refreshActivity(this)
+                refreshUtils.refreshActivity()
             }
             addDeviceFrame.setOnClickListener {
                 sp.show(viewInputSerial, true)   // 시리얼입력 레이아웃 출력
@@ -68,7 +68,7 @@ class MyDeviceActivity : AppCompatActivity() {
 
                 cancelSerial.setOnClickListener {
                     // 액티비티 갱신
-                    refreshUtils.refreshActivity(this)
+                    refreshUtils.refreshActivity()
                 }
 
                 serialEt.addTextChangedListener(object : TextWatcher {
@@ -77,19 +77,7 @@ class MyDeviceActivity : AppCompatActivity() {
                         start: Int,
                         count: Int,
                         after: Int
-                    ) {
-                        nextBtn.apply {
-                            isEnabled = false
-                            setTextColor(
-                                ResourcesCompat.getColor(
-                                    resources,
-                                    R.color.main_gray_color,
-                                    null
-                                )
-                            )
-                        }
-                    }
-
+                    ) { setNextButton(nextBtn, false, R.color.main_gray_color) }
                     override fun onTextChanged(
                         s: CharSequence?,
                         start: Int,
@@ -97,19 +85,9 @@ class MyDeviceActivity : AppCompatActivity() {
                         count: Int
                     ) {
                         if (serialEt.text.length >= serialEt.maxEms) {
-                            nextBtn.apply {
-                                isEnabled = true
-                                setTextColor(
-                                    ResourcesCompat.getColor(
-                                        resources,
-                                        R.color.mode_color_view,
-                                        null
-                                    )
-                                )
-                            }
+                            setNextButton(nextBtn, true, R.color.mode_color_view)
                         }
                     }
-
                     override fun afterTextChanged(s: Editable?) {}
                 })
 
@@ -130,19 +108,31 @@ class MyDeviceActivity : AppCompatActivity() {
                         val handler = Handler(Looper.getMainLooper())
                         handler.postDelayed({
                             // 2초뒤에 완료 레이아웃 출력
-                            sp
-                                .setBackPress(findViewById(R.id.myDeviceBack))
+                            sp  .setBackPress(findViewById(R.id.myDeviceBack))
                                 .show(viewComplete, false)
                             val viewCompleteOkBtn: AppCompatButton =    // 완료 버튼
                                 viewComplete.findViewById(R.id.compAddOkBtn)
                             viewCompleteOkBtn.setOnClickListener {
                                 // 액티비티 갱신
-                                refreshUtils.refreshActivity(this)
+                                refreshUtils.refreshActivity()
                             }
                         }, 2000)
                     }
                 }
             }
+        }
+    }
+
+    private fun setNextButton(button: AppCompatButton,isEnable: Boolean, color: Int) {
+        button.apply {
+            isEnabled = isEnable
+            setTextColor(
+                ResourcesCompat.getColor(
+                    resources,
+                    color,
+                    null
+                )
+            )
         }
     }
 }

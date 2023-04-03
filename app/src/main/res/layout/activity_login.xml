@@ -3,12 +3,11 @@
 
     <data></data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/mainConstLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/mainConstLayout">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/pbLayout"
@@ -29,15 +28,28 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/loginMainBack"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="45dp"
+            android:src="@drawable/back_arrow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/loginMainTitleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="45dp"
+            android:layout_marginStart="20dp"
             android:text="@string/login_title"
             android:textSize="23sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textColor="@color/mode_color_text"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            app:layout_constraintTop_toTopOf="@+id/loginMainBack"
+            app:layout_constraintBottom_toBottomOf="@+id/loginMainBack"
+            app:layout_constraintStart_toEndOf="@+id/loginMainBack"/>
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/googleLoginButton"

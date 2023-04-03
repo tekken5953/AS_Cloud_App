@@ -29,9 +29,7 @@ import com.orhanobut.logger.Logger
  * @since : 2023-03-08 오후 3:47
  **/
 
-class GoogleLogin(mActivity: Activity) {
-
-    private val activity = mActivity
+class GoogleLogin(private val activity: Activity) {
     private var client: GoogleSignInClient
     private var lastLogin: GoogleSignInAccount? = null
     private val sp by lazy { SharedPreferenceManager(activity) }
@@ -54,10 +52,7 @@ class GoogleLogin(mActivity: Activity) {
             .addOnCompleteListener {
                 Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
                     saveLogoutStatus()
-                    val intent = Intent(activity, LoginActivity::class.java)
-                    System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
-                    activity.startActivity(intent)
-                    activity.finish()
+                    EnterPage(activity).toMain(null)
             }
             .addOnCanceledListener {
                 Logger.t(TAG_LOGIN).e("로그아웃에 실패했습니다")

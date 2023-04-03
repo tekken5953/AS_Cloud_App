@@ -12,8 +12,7 @@ import androidx.core.content.ContextCompat
 import com.example.airsignal_app.dao.StaticDataObject.REQUEST_LOCATION
 import com.example.airsignal_app.dao.StaticDataObject.REQUEST_NOTIFICATION
 
-class RequestPermissionsUtil(activity: Context) {
-    val context = activity
+class RequestPermissionsUtil(private val context: Context) {
 
     /** 위치 권한 SDK 버전 29 이상**/
     @RequiresApi(Build.VERSION_CODES.Q)

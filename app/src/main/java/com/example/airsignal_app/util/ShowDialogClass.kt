@@ -34,7 +34,7 @@ class ShowDialogClass {
     fun setBackPressRefresh(imageView: ImageView): ShowDialogClass {
         imageView.setOnClickListener {
             dismiss()
-            RefreshUtils(context).refreshActivity(context)
+            RefreshUtils(context).refreshActivity()
         }
         return this
     }

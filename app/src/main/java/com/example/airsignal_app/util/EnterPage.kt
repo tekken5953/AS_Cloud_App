@@ -16,16 +16,17 @@ import kotlin.system.exitProcess
  * 페이지의 이동을 모아놓은 클래스
  **/
 
-class EnterPage(mActivity: Activity) {
-    private val activity = mActivity
+class EnterPage(private val activity: Activity) {
 
     /**
      * 메인 페이지로 이동한다
      *
      * @param sort 간편로그인의 분류 ex) "카카오"
      */
-    fun toMain(sort: String) {
-        SharedPreferenceManager(activity).setString(lastLoginPlatform, sort)
+    fun toMain(sort: String?) {
+        sort?.let {
+            SharedPreferenceManager(activity).setString(lastLoginPlatform, it)
+        }
         val intent = Intent(activity, MainActivity::class.java)
         activity.startActivity(intent)
         activity.finish()
@@ -35,7 +36,7 @@ class EnterPage(mActivity: Activity) {
     fun toLogin() {
         val intent = Intent(activity, LoginActivity::class.java)
         activity.startActivity(intent)
-        activity.finish()
+        activity.overridePendingTransition(0,0)
     }
 
     /** 액티비티를 완전히 종료한다 **/

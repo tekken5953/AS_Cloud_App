@@ -24,6 +24,8 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.HomeViewPagerAdapter
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
+import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
@@ -42,9 +44,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    val addressList = ArrayList<AdapterModel.ViewPagerItem>()
+    val addressList = ArrayList<AdapterModel.WeatherItem>()
     private val viewPagerAdapter = HomeViewPagerAdapter(this, addressList)
     private var isBackPressed = false
+    private val sp by lazy { SharedPreferenceManager(this) }
 
     override fun onStart() {
         super.onStart()
@@ -173,9 +176,20 @@ class MainActivity : AppCompatActivity() {
     private fun addViewPagerItem() {
         // Add Item
         addressList.clear()
-        addViewPagerLayout(SharedPreferenceManager(this).getString(lastAddress),"0","0","0","0","0","0","0",0,2)
-        addViewPagerLayout("address2","0","0","0","0","0","0","0",3,1)
-        addViewPagerLayout("address3","0","0","0","0","0","0","0",1,3)
+        addViewPagerLayout(
+            SharedPreferenceManager(this).getString(lastAddress),
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            "0",
+            0,
+            2
+        )
+        addViewPagerLayout("address2", "0", "0", "0", "0", "0", "0", "0", 3, 1)
+        addViewPagerLayout("address3", "0", "0", "0", "0", "0", "0", "0", 1, 3)
 //        addViewPagerLayout("address4","0","0","0","0","0","0","0",3,1)
 //        addViewPagerLayout("address5","0","0","0","0","0","0","0",3,1)
         viewPagerAdapter.notifyDataSetChanged()
@@ -194,7 +208,7 @@ class MainActivity : AppCompatActivity() {
         pm2p5Grade: Int,
         pm10Grade: Int,
     ) {
-        val item = AdapterModel.ViewPagerItem(
+        val item = AdapterModel.WeatherItem(
             address = address,
             temp = temp,
             sunRise = sunrise,
@@ -227,9 +241,19 @@ class MainActivity : AppCompatActivity() {
                 binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
             }
 
+        binding.mainNavView.getHeaderView(0).findViewById<TextView>(R.id.navHeaderUserId)
+            .setOnClickListener {
+                if (sp.getString(lastLoginPlatform) == "")
+                    EnterPage(this).toLogin()
+            }
+
+        // 로그인 이력이 없을 시 기본 메시지로 설정
         binding.mainNavView.getHeaderView(0).apply {
-            findViewById<TextView>(R.id.navHeaderUserId)
-                .text = SharedPreferenceManager(this@MainActivity).getString("user_email")
+            findViewById<TextView>(R.id.navHeaderUserId).text =
+                if (sp.getString(userEmail) != "") {
+                    sp.getString(userEmail)
+                } else getString(R.string.please_login)
+
             Glide.with(context)
                 .load(Uri.parse(SharedPreferenceManager(context).getString("user_profile")))
                 .into(findViewById(R.id.navHeaderProfileImg))
@@ -298,7 +322,7 @@ class MainActivity : AppCompatActivity() {
                     toast.customDurationMessage("버튼을 한번 더 누르면 앱이 종료됩니다", 2)
                     isBackPressed = true
                 } else {
-                   EnterPage(this).fullyExit()
+                    EnterPage(this).fullyExit()
                 }
                 Handler(Looper.getMainLooper()).postDelayed({
                     isBackPressed = false
