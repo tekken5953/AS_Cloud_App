@@ -16,10 +16,9 @@ import com.example.airsignal_app.dao.AdapterModel
  * @author : Lee Jae Young
  * @since : 2023-03-28 오전 11:52
  **/
-class TestAdapter(mContext: Context, list: ArrayList<AdapterModel.TestAdapter>) :
+class TestAdapter(private val context: Context, list: ArrayList<AdapterModel.TestItem>) :
     RecyclerView.Adapter<TestAdapter.ViewHolder>() {
     private val mList = list
-    private val context = mContext
 
     private lateinit var onClickListener: OnItemClickListener
 
@@ -51,7 +50,7 @@ class TestAdapter(mContext: Context, list: ArrayList<AdapterModel.TestAdapter>) 
     {
         val textView: TextView = itemView.findViewById(R.id.itemTestText)
 
-        fun bind(dao: AdapterModel.TestAdapter) {
+        fun bind(dao: AdapterModel.TestItem) {
             textView.text = dao.value
             textView.typeface = Typeface.createFromAsset(context.assets, "${dao.font}.ttf")
             textView.setTextColor(Color.parseColor(dao.color))

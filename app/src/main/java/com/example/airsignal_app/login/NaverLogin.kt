@@ -27,8 +27,7 @@ import com.orhanobut.logger.Logger
  * @since : 2023-03-09 오후 2:56
  **/
 
-class NaverLogin(mActivity: Activity) {
-    private val activity = mActivity
+class NaverLogin(private val activity: Activity) {
     private val sp by lazy { SharedPreferenceManager(activity) }
 
     fun initialize() : NaverLogin {
@@ -56,7 +55,7 @@ class NaverLogin(mActivity: Activity) {
             NaverIdLoginSDK.logout()
             Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")
             sendLogOutWithEmail(email ,"로그아웃 성공","네이버")
-            enterLoginPage()
+            EnterPage(activity).toMain(null)
         }
     }
 

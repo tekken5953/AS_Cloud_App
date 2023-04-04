@@ -17,10 +17,8 @@ import com.orhanobut.logger.Logger
 import java.io.IOException
 import java.util.*
 
-class GetLocation(mContext: Context) : GetLocationListener {
-    private val context = mContext
-
-    private val geocoder by lazy { Geocoder(mContext, Locale.KOREA) }
+class GetLocation(private val context: Context) : GetLocationListener {
+    private val geocoder by lazy { Geocoder(context, Locale.KOREA) }
     private val sp by lazy { SharedPreferenceManager(context) }
 
     /** GPS 의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
@@ -86,7 +84,7 @@ class GetLocation(mContext: Context) : GetLocationListener {
                 )
             }
         } catch (e: IOException) {
-            ToastUtils(context as Activity).shortMessage("주소를 가져 올 수 없습니다.")
+            ToastUtils(context as Activity).shortMessage("주소를 가져오는 도중 오류가 발생했습니다")
             writeLogCause(
                 email,
                 "Background Location",

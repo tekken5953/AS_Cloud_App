@@ -9,7 +9,7 @@
         android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
-            android:layout_width="320dp"
+            android:layout_width="310dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             app:cardBackgroundColor="@color/mode_color_text"
@@ -21,7 +21,7 @@
                 android:layout_height="50dp"
                 android:layout_gravity="center_horizontal"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:paddingEnd="12dp">
 
                 <ImageView
                     android:id="@+id/image"
@@ -38,7 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="7dp"
                     android:textColor="@color/mode_color_view"
                     android:textSize="15sp"
                     android:gravity="center"

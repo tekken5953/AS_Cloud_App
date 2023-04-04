@@ -16,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class TestDesignActivity : AppCompatActivity() {
-    private val testItem = arrayListOf<AdapterModel.TestAdapter>()
+    private val testItem = arrayListOf<AdapterModel.TestItem>()
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +66,7 @@ class TestDesignActivity : AppCompatActivity() {
 
     private fun addItem(value: String, size: String, color: String, font: String) {
         CoroutineScope(Dispatchers.Main).launch {
-            val item = AdapterModel.TestAdapter(font, size, color, value)
+            val item = AdapterModel.TestItem(font, size, color, value)
             testItem.add(item)
         }
     }

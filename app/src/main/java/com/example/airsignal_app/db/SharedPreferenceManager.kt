@@ -10,14 +10,14 @@ import org.json.JSONObject
  * @since : 2023-03-07 오전 9:43
  **/
 
-class SharedPreferenceManager(mContext: Context) {
-    private val context = mContext
-    private val PREFERENCES_NAME = "rebuild_preference"
-    private val DEFAULT_VALUE_STRING = ""
-    private val DEFAULT_VALUE_BOOLEAN = false
-    private val DEFAULT_VALUE_INT = -1
-    private val DEFAULT_VALUE_LONG = -1L
-    private val DEFAULT_VALUE_FLOAT = -1f
+
+class SharedPreferenceManager(private val context: Context) {
+    @Suppress("PrivatePropertyName") private val PREFERENCES_NAME = "rebuild_preference"
+    @Suppress("PrivatePropertyName") private val DEFAULT_VALUE_STRING = ""
+    @Suppress("PrivatePropertyName") private val DEFAULT_VALUE_BOOLEAN = false
+    @Suppress("PrivatePropertyName") private val DEFAULT_VALUE_INT = -1
+    @Suppress("PrivatePropertyName") private val DEFAULT_VALUE_LONG = -1L
+    @Suppress("PrivatePropertyName") private val DEFAULT_VALUE_FLOAT = -1f
 
     private fun getPreferences(): SharedPreferences {
         return context.getSharedPreferences(

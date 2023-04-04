@@ -11,6 +11,7 @@ import com.example.airsignal_app.dao.ConvertDataType.setFullScreenMode
 import com.example.airsignal_app.dao.ConvertDataType.setLocaleToEnglish
 import com.example.airsignal_app.dao.ConvertDataType.setLocaleToKorea
 import com.example.airsignal_app.dao.ConvertDataType.setLocaleToSystem
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.db.SharedPreferenceManager
 
@@ -53,7 +54,11 @@ class SplashActivity : AppCompatActivity() {
 
         // 2초 뒤 이동
         Handler(Looper.getMainLooper()).postDelayed({
-           EnterPage(this).toLogin()
+            if (sp.getString(lastLoginPlatform) != "") {
+                EnterPage(this).toMain(sp.getString(lastLoginPlatform))
+            } else {
+                EnterPage(this).toMain(null)
+            }
         },1000)
     }
 }

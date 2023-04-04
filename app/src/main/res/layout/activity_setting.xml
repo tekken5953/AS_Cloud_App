@@ -20,6 +20,7 @@
                 android:layout_marginTop="30dp"
                 android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/back_arrow"
+                app:tint="@color/mode_color_text"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -69,7 +70,7 @@
             <TextView
                 android:id="@+id/settingUserEmail"
                 style="@style/basicTextView"
-                android:text="admin@airsignal.kr"
+                android:text="@string/please_login"
                 android:textSize="16sp"
                 app:layout_constraintStart_toEndOf="@+id/settingUserIcon"
                 app:layout_constraintTop_toTopOf="@+id/settingUserIcon"

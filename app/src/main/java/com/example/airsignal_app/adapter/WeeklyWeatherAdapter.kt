@@ -14,10 +14,9 @@ import com.example.airsignal_app.dao.AdapterModel
  * @author : Lee Jae Young
  * @since : 2023-03-27 오전 9:37
  **/
-class WeeklyWeatherAdapter(mContext: Context, list: ArrayList<AdapterModel.WeeklyWeatherItem>) :
+class WeeklyWeatherAdapter(private val context: Context, list: ArrayList<AdapterModel.WeeklyWeatherItem>) :
     RecyclerView.Adapter<WeeklyWeatherAdapter.ViewHolder>() {
         private val mList = list
-        private val context = mContext
 
         override fun onCreateViewHolder(
             parent: ViewGroup,

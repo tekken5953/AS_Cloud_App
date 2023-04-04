@@ -1,9 +1,8 @@
 package com.example.airsignal_app.dao
 
 import android.graphics.drawable.Drawable
-import android.view.View
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-import org.jetbrains.annotations.Nullable
 
 object AdapterModel {
     // 디테일 페이지 공기질데이터 모델
@@ -20,7 +19,7 @@ object AdapterModel {
 
     data class GridItem(val img: Drawable, val text: String)
 
-    data class ViewPagerItem (
+    data class WeatherItem(
         val address: String,
         val temp: String,
         val sunRise: String,
@@ -58,10 +57,21 @@ object AdapterModel {
         val isNotice: Boolean
     )
 
-    data class TestAdapter(
+    data class TestItem(
         val font: String,
         val size: String,
         val color: String,
         val value: String
+    )
+
+    data class AppVersionItem(
+        val version: String
+    )
+
+    data class EventItem(
+        @PrimaryKey(autoGenerate = true) val id: Int,
+        val date: String,
+        val title: String,
+        val content: Any?
     )
 }

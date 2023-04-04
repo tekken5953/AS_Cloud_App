@@ -15,10 +15,9 @@ import com.example.airsignal_app.dao.AdapterModel
  * @author : Lee Jae Young
  * @since : 2023-03-28 오전 11:52
  **/
-class NoticeAdapter(mContext: Context, list: ArrayList<AdapterModel.NoticeItem>) :
+class NoticeAdapter(private val context: Context, list: ArrayList<AdapterModel.NoticeItem>) :
     RecyclerView.Adapter<NoticeAdapter.ViewHolder>() {
     private val mList = list
-    private val context = mContext
 
     private lateinit var onClickListener: OnItemClickListener
 

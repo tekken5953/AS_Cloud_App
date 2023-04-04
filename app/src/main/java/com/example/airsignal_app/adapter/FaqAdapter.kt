@@ -12,10 +12,9 @@ import com.example.airsignal_app.R
  * @author : Lee Jae Young
  * @since : 2023-03-28 오전 11:52
  **/
-class FaqAdapter(mContext: Context, list: ArrayList<String>) :
+class FaqAdapter(private val context: Context, list: ArrayList<String>) :
     RecyclerView.Adapter<FaqAdapter.ViewHolder>() {
     private val mList = list
-    private val context = mContext
 
     private lateinit var onClickListener: OnItemClickListener
 

@@ -2,9 +2,6 @@ package com.example.airsignal_app.view.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.window.SplashScreen
-import android.window.SplashScreenView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -22,9 +19,9 @@ import com.orhanobut.logger.Logger
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var googleLogin: GoogleLogin
-    private lateinit var kakaoLogin: KakaoLogin
-    private lateinit var naverLogin: NaverLogin
+    private val googleLogin by lazy { GoogleLogin(this) } // 구글 로그인
+    private val kakaoLogin by lazy { KakaoLogin(this).initialize() } // 카카오 로그인
+    private val naverLogin by lazy {NaverLogin(this).initialize() } // 네이버 로그인
 
     override fun onStart() {
         super.onStart()
@@ -34,10 +31,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
-
-        googleLogin = GoogleLogin(this) // 구글 로그인
-        kakaoLogin = KakaoLogin(this).initialize()   // 카카오 로그인
-        naverLogin = NaverLogin(this).initialize()   // 네이버 로그인
 
         binding.googleLoginButton.setOnClickListener {
             googleLogin.login(binding.googleLoginButton, startActivityResult)
@@ -49,6 +42,10 @@ class LoginActivity : AppCompatActivity() {
 
         binding.naverLoginButton.setOnClickListener {
             naverLogin.login()
+        }
+
+        binding.loginMainBack.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
         }
     }
 
