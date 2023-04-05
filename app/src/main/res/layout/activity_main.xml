@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-
     <data></data>
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background_color">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:id="@+id/mainPb"
+            android:visibility="gone"/>
 
         <androidx.drawerlayout.widget.DrawerLayout
             android:id="@+id/mainDrawerLayout"
@@ -75,8 +82,9 @@
 
             <ImageView
                 android:id="@+id/mainSearchAddressIv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="4dp"
                 android:layout_alignTop="@+id/mainSideMenuIv"
                 android:layout_alignBottom="@+id/mainSideMenuIv"
                 android:layout_alignParentEnd="true"

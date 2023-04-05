@@ -51,7 +51,7 @@
     <string name="daily_weather">시간별 날씨</string>
     <string name="weekly_weather">주간별 날씨</string>
     <string name="progress_good">좋음</string>
-    <string name="progress_verybad">매우나쁨</string>
+    <string name="progress_worst">매우나쁨</string>
     <string name="progress_normal">보통</string>
     <string name="progress_bad">나쁨</string>
     <string name="sun_rise_time">일출 시간</string>

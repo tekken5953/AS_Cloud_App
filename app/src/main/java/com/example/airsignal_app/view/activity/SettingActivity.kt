@@ -33,6 +33,7 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.databinding.ActivitySettingBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.login.EmailLogin
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
@@ -54,12 +55,13 @@ class SettingActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        binding.settingUserEmail.text =
-            if (sp.getString(userEmail) != "") {
-                sp.getString(userEmail)
-            } else {
-                getString(R.string.please_login)
-            }
+        if (sp.getString(userEmail) != "") {
+            binding.settingUserEmail.text = sp.getString(userEmail)
+            binding.settingUserIcon.visibility = View.VISIBLE
+        } else {
+            binding.settingUserEmail.text = getString(R.string.please_login)
+            binding.settingUserIcon.visibility = View.GONE
+        }
 
         // 설정 페이지 테마 항목이름 바꾸기
         when (sp.getString("theme")) {
@@ -130,28 +132,16 @@ class SettingActivity : AppCompatActivity() {
         // 로그인 플랫폼 아이콘 설정
         when (lastLogin) {
             "google" -> {
-                binding.settingUserIcon.setImageDrawable(
-                    ResourcesCompat.getDrawable(
-                        resources,
-                        R.drawable.google_icon, null
-                    )
-                )
+                setImageDrawable(binding.settingUserIcon,R.drawable.google_icon)
             }
             "kakao" -> {
-                binding.settingUserIcon.setImageDrawable(
-                    ResourcesCompat.getDrawable(
-                        resources,
-                        R.drawable.kakao_icon, null
-                    )
-                )
+                setImageDrawable(binding.settingUserIcon,R.drawable.kakao_icon)
             }
             "naver" -> {
-                binding.settingUserIcon.setImageDrawable(
-                    ResourcesCompat.getDrawable(
-                        resources,
-                        R.drawable.naver_icon, null
-                    )
-                )
+                setImageDrawable(binding.settingUserIcon,R.drawable.naver_icon)
+            }
+            "email" -> {
+                setImageDrawable(binding.settingUserIcon,R.drawable.email_icon)
             }
         }
 
@@ -167,7 +157,7 @@ class SettingActivity : AppCompatActivity() {
                 builder.setTitle(getString(R.string.setting_logout))
                     .setMessage(getString(R.string.logout_msg))
                     .setPositiveButton(
-                        getString(R.string.ok)
+                        getString(R.string.yes)
                     ) { _, _ ->
                         CoroutineScope(Dispatchers.IO).launch {
                             when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
@@ -180,6 +170,9 @@ class SettingActivity : AppCompatActivity() {
                                 }
                                 "google" -> {
                                     GoogleLogin(this@SettingActivity).logout()
+                                }
+                                "email" -> {
+                                    EmailLogin(this@SettingActivity).initialize().logoutEmail()
                                 }
                             }
                             delay(100)
@@ -281,7 +274,7 @@ class SettingActivity : AppCompatActivity() {
             val radioGroup: RadioGroup = langView.findViewById(R.id.changeLangRadioGroup)
 
             dialog
-                .setBackPress(langView.findViewById(R.id.changeLangBack))
+                .setBackPressed(langView.findViewById(R.id.changeLangBack))
                 .show(langView, true)
 
             // 기존에 저장 된 언어로 라디오 버튼 체크
@@ -350,7 +343,7 @@ class SettingActivity : AppCompatActivity() {
             }
 
             dialog
-                .setBackPress(noticeMainView.findViewById(R.id.noticeBack))
+                .setBackPressed(noticeMainView.findViewById(R.id.noticeBack))
                 .show(noticeMainView, true)
 
             noticeAdapter.setOnItemClickListener(object : NoticeAdapter.OnItemClickListener {
@@ -359,7 +352,7 @@ class SettingActivity : AppCompatActivity() {
                     detailDate.visibility = View.VISIBLE
                     detailTitle.text = noticeTitle.text.toString()
                     dialog
-                        .setBackPress(detailView.findViewById(R.id.detailBack))
+                        .setBackPressed(detailView.findViewById(R.id.detailBack))
                         .show(detailView, true)
                 }
             })
@@ -379,7 +372,7 @@ class SettingActivity : AppCompatActivity() {
             }
 
             dialog
-                .setBackPress(faqMainView.findViewById(R.id.faqBack))
+                .setBackPressed(faqMainView.findViewById(R.id.faqBack))
                 .show(faqMainView, true)
 
             faqAdapter.setOnItemClickListener(object : FaqAdapter.OnItemClickListener {
@@ -400,10 +393,19 @@ class SettingActivity : AppCompatActivity() {
         binding.settingAppInfo.setOnClickListener {
             val viewAppInfo: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_app_info, null)
-            dialog
-                .setBackPress(viewAppInfo.findViewById(R.id.appInfoBack))
+
+            dialog.setBackPressed(viewAppInfo.findViewById(R.id.appInfoBack))
                 .show(viewAppInfo, true)
         }
+    }
+
+    private fun setImageDrawable(imageView: ImageView, src: Int) {
+        imageView.setImageDrawable(
+            ResourcesCompat.getDrawable(
+                resources,
+                src, null
+            )
+        )
     }
 
     /** 라디오 버튼 DrawableEnd Tint 변경 **/
@@ -516,11 +518,11 @@ class SettingActivity : AppCompatActivity() {
         alertOff.setTint(getColor(R.color.mode_color_view))
         if (isAllow) {
             if (!isInit) {
-                CustomSnackBar.make(binding.root, "$title 알림을 허용하였습니다", alertOn).show()
+                SnackBarCustom.make(binding.root, "$title 알림을 허용하였습니다", alertOn).show()
             }
         } else {
             if (!isInit) {
-                CustomSnackBar.make(binding.root, "$title 알림을 거부하였습니다", alertOff).show()
+                SnackBarCustom.make(binding.root, "$title 알림을 거부하였습니다", alertOff).show()
             }
         }
     }

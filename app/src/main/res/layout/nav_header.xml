@@ -4,41 +4,11 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/navHeaderProfileCard"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="24dp"
-        android:layout_below="@+id/headerCancel"
-        android:layout_marginTop="15dp"
-        android:backgroundTint="@color/dummy_gray_dark"
-        app:cardElevation="8dp"
-        app:cardCornerRadius="50dp"
-        android:translationZ="8dp">
-        <ImageView
-            android:id="@+id/navHeaderProfileImg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    </androidx.cardview.widget.CardView>
-
-
-    <TextView
-        android:id="@+id/navHeaderUserId"
-        style="@style/basicTextView"
-        android:gravity="start|center_vertical"
-        android:layout_alignTop="@+id/navHeaderProfileCard"
-        android:layout_alignBottom="@+id/navHeaderProfileCard"
-        android:layout_marginStart="20dp"
-        android:layout_toEndOf="@+id/navHeaderProfileCard"
-        android:text="@string/please_login"
-        android:textColor="@color/mode_color_text"
-        android:textSize="16sp" />
-
     <ImageView
         android:id="@+id/headerCancel"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="4dp"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="24dp"
@@ -46,14 +16,50 @@
         android:background="?android:attr/selectableItemBackgroundBorderless"
         app:tint="@color/mode_color_text" />
 
+    <TableRow
+        android:id="@+id/headerTr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center_vertical"
+        android:layout_below="@+id/headerCancel">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/navHeaderProfileCard"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="7dp"
+            android:layout_marginStart="4dp"
+            android:background="@color/main_gray_color"
+            app:cardCornerRadius="50dp">
+            <ImageView
+                android:id="@+id/navHeaderProfileImg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"/>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/navHeaderUserId"
+            style="@style/basicTextView"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="30dp"
+            android:text="@string/please_login"
+            android:textColor="@color/mode_color_text"
+            android:textSize="16sp" />
+    </TableRow>
+
     <View
         android:id="@+id/navHeaderView1"
         android:layout_width="match_parent"
         android:layout_height="0.7dp"
-        android:layout_below="@+id/navHeaderProfileCard"
+        android:layout_below="@+id/headerTr"
         android:layout_marginStart="24dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="24dp"
-        android:background="@color/dummy_gray_dark" />
+        android:background="@color/main_gray_color" />
 
 </RelativeLayout>

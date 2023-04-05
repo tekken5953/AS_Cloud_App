@@ -22,7 +22,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="55dp"
         android:text="@string/progress_server"
-        android:textColor="@color/dummy_gray_dark"
+        android:textColor="@color/main_gray_color"
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"

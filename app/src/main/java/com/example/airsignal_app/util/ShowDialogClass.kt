@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.example.airsignal_app.R
+import javax.inject.Singleton
 
 /**
  * @author : Lee Jae Young
@@ -12,18 +13,19 @@ import com.example.airsignal_app.R
  **/
 
 class ShowDialogClass {
-    private lateinit var context: Activity
+    private lateinit var activity: Activity
     private lateinit var builder: androidx.appcompat.app.AlertDialog.Builder
     private lateinit var alertDialog: androidx.appcompat.app.AlertDialog
 
+    @Singleton
     fun getInstance(mActivity: Activity) : ShowDialogClass {
-        context = mActivity
-        builder = androidx.appcompat.app.AlertDialog.Builder(context, R.style.AlertDialog)
+        activity = mActivity
+        builder = androidx.appcompat.app.AlertDialog.Builder(activity, R.style.AlertDialog)
         return this
     }
 
     /** 다이얼로그 뒤로가기 버튼 리스너 등록 **/
-    fun setBackPress(imageView: ImageView): ShowDialogClass {
+    fun setBackPressed(imageView: View): ShowDialogClass {
         imageView.setOnClickListener {
             dismiss()
         }
@@ -34,13 +36,13 @@ class ShowDialogClass {
     fun setBackPressRefresh(imageView: ImageView): ShowDialogClass {
         imageView.setOnClickListener {
             dismiss()
-            RefreshUtils(context).refreshActivity()
+            RefreshUtils(activity).refreshActivity()
         }
         return this
     }
 
     /** 다이얼로그 뷰 소멸 **/
-    private fun dismiss() {
+    fun dismiss() {
         if (alertDialog.isShowing)
             alertDialog.dismiss()
     }
