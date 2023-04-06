@@ -1,4 +1,4 @@
-package com.example.airsignal_app.dao
+package com.example.airsignal_app.util
 
 import android.annotation.SuppressLint
 import android.app.Activity

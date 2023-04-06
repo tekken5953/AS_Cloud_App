@@ -1,9 +1,12 @@
 package com.example.airsignal_app.koin
 
 import android.app.Application
+import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
+import org.koin.dsl.module
 
 class BaseApplication : Application() {
     override fun onCreate() {
@@ -12,7 +15,7 @@ class BaseApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@BaseApplication)
-            modules(listOf())
+            modules(listOf(weatherDataModule))
         }
     }
 
@@ -20,6 +23,6 @@ class BaseApplication : Application() {
     /* factory : 호출될 때마다 객체 생성 */
     /* viewModel : 뷰모델 의존성 제거 객체 생성 */
 
-//    val loginModule = module { viewModel { LoginViewModel() } }
+    val weatherDataModule = module { viewModel { GetWeatherViewModel() } }
 
 }

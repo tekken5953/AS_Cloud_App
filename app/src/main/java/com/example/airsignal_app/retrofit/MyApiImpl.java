@@ -1,10 +1,12 @@
 package com.example.airsignal_app.retrofit;
 
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 public interface MyApiImpl {
 //    // 회원가입 API
@@ -57,8 +59,33 @@ public interface MyApiImpl {
 //    @POST("authenticate/mobile/")
 //    Call<ApiModel.LoginToken> refreshToken(@Header("Authorization") String access, @Body ApiModel.RefreshToken item);
 
+    @GET("api/forecast")
+    Call<ApiModel.GetEntireData> getForecast(
+            @Nullable @Query("lat") Double lat,
+            @Nullable @Query("lng") Double lng);
 
     @GET("api/forecast/realtime")
-    Call<MetaWrapper<List<ApiModel.GetRealTime>>> getRealTime(@Body String item);
+    Call<List<ApiModel.RealTimeData>> getRealTime(
+            @Nullable @Query("lat")Double lat,
+            @Nullable @Query("lng")Double lng);
 
+    @GET("api/forecast/mid")
+    Call<List<ApiModel.WeeklyMidData>> getWeeklyMid(
+            @Nullable @Query("lat")Double lat,
+            @Nullable @Query("lng")Double lng);
+
+    @GET("api/forecast/temp")
+    Call<List<ApiModel.WeeklyTempData>> getWeeklyTemp(
+            @Nullable @Query("lat")Double lat,
+            @Nullable @Query("lng")Double lng);
+
+    @GET("api/forecast/quality")
+    Call<List<ApiModel.AirQualityData>> getAirQuality(
+            @Nullable @Query("lat")Double lat,
+            @Nullable @Query("lng")Double lng);
+
+    @GET("api/forecast/sun")
+    Call<List<ApiModel.SunData>> getSun(
+            @Nullable @Query("lat")Double lat,
+            @Nullable @Query("lng")Double lng);
 }

@@ -37,7 +37,7 @@ class ApiModel {
 //    data class PutBookMark(val starred: Boolean)
 //    data class RefreshToken(val refresh: String)
 
-    data class GetRealTime(
+    data class RealTimeData(
         @SerializedName("base")
         val base: LocalDateTime,
         @SerializedName("forecast")
@@ -74,5 +74,173 @@ class ApiModel {
         val windSpeed: Double,
         @SerializedName("thunder")
         val thunder: Double
+    )
+
+    data class WeeklyMidData(
+        @SerializedName("date")
+        val date: LocalDateTime,
+        @SerializedName("rnSt1Am")
+        val rnSt1Am: Double,
+        @SerializedName("rnSt1Pm")
+        val rnSt1Pm: Double,
+        @SerializedName("rnSt2Am")
+        val rnSt2Am: Double,
+        @SerializedName("rnSt2Pm")
+        val rnSt2Pm: Double,
+        @SerializedName("rnSt3Am")
+        val rnSt3Am: Double,
+        @SerializedName("rnSt3Pm")
+        val rnSt3Pm: Double,
+        @SerializedName("rnSt4Am")
+        val rnSt4Am: Double,
+        @SerializedName("rnSt4Pm")
+        val rnSt4Pm: Double,
+        @SerializedName("rnSt5Am")
+        val rnSt5Am: Double,
+        @SerializedName("rnSt5Pm")
+        val rnSt5Pm: Double,
+        @SerializedName("rnSt6Am")
+        val rnSt6Am: Double,
+        @SerializedName("rnSt6Pm")
+        val rnSt6Pm: Double,
+        @SerializedName("rnSt7Am")
+        val rnSt7Am: Double,
+        @SerializedName("wf1Am")
+        val wf1Am: String,
+        @SerializedName("wf1Pm")
+        val wf1Pm: String,
+        @SerializedName("wf2Am")
+        val wf2Am: String,
+        @SerializedName("wf2Pm")
+        val wf2Pm: String,
+        @SerializedName("wf3Am")
+        val wf3Am: String,
+        @SerializedName("wf3Pm")
+        val wf3Pm: String,
+        @SerializedName("wf4Am")
+        val wf4Am: String,
+        @SerializedName("wf4Pm")
+        val wf4Pm: String,
+        @SerializedName("wf5Am")
+        val wf5Am: String,
+        @SerializedName("wf5Pm")
+        val wf5Pm: String,
+        @SerializedName("wf6Am")
+        val wf6Am: String,
+        @SerializedName("wf6Pm")
+        val wf6Pm: String,
+        @SerializedName("wf7Am")
+        val wf7Am: String,
+        @SerializedName("wf7Pm")
+        val wf7Pm: String
+        )
+
+    data class WeeklyTempData(
+        @SerializedName("taMin1")
+        val taMin1: Double,
+        @SerializedName("taMax1")
+        val taMax1: Double,
+        @SerializedName("taMin2")
+        val taMin2: Double,
+        @SerializedName("taMax2")
+        val taMax2: Double,
+        @SerializedName("taMin3")
+        val taMin3: Double,
+        @SerializedName("taMax3")
+        val taMax3: Double,
+        @SerializedName("taMin4")
+        val taMin4: Double,
+        @SerializedName("taMax4")
+        val taMax4: Double,
+        @SerializedName("taMin5")
+        val taMin5: Double,
+        @SerializedName("taMax5")
+        val taMax5: Double,
+        @SerializedName("taMin6")
+        val taMin6: Double,
+        @SerializedName("taMax6")
+        val taMax6: Double,
+        @SerializedName("taMin7")
+        val taMin7: Double,
+        @SerializedName("taMax7")
+        val taMax7: Double,
+    )
+
+    data class AirQualityData(
+        @SerializedName("pm25Grade1h")
+        val pm25Grade1h: Int,
+        @SerializedName("pm10Value24")
+        val pm10Value24: Double,
+        @SerializedName("pm10Grade1h")
+        val pm10Grade1h: Int,
+        @SerializedName("pm25Value24")
+        val pm25Value24: Int,
+        @SerializedName("dataTime")
+        val dateTime: LocalDateTime,
+        @SerializedName("so2Grade")
+        val so2Grade: Int,
+        @SerializedName("so2Value")
+        val so2Value: Double,
+        @SerializedName("coGrade")
+        val coGrade: Int,
+        @SerializedName("khaiGrade")
+        val khaiGrade: Int,
+        @SerializedName("mangName")
+        val mangName: String,
+        @SerializedName("no2Value")
+        val no2Value: Double,
+        @SerializedName("o3Grade")
+        val o3Grade: Int,
+        @SerializedName("o3Value")
+        val o3Value: Double,
+        @SerializedName("pm10Grade")
+        val pm10Grade: Int,
+        @SerializedName("pm10Value")
+        val pm10Value: Double,
+        @SerializedName("pm25Grade")
+        val pm25Grade: Int,
+        @SerializedName("pm25Value")
+        val pm25Value: Int,
+        @SerializedName("sidoName")
+        val sidoName: String,
+        @SerializedName("stationName")
+        val stationName: String,
+        @SerializedName("stationDetail")
+        val stationDetail: StationDetailInner
+    )
+
+    data class StationDetailInner(
+        @SerializedName("item")
+        val stationDetailItem: List<String>,
+        @SerializedName("year")
+        val stationDetailYear: String,
+        @SerializedName("addr")
+        val stationDetailAddr: Double
+    )
+
+    data class SunData(
+        @SerializedName("locdate")
+        val locdate: String,
+        @SerializedName("moonrise")
+        val moonrise: String,
+        @SerializedName("moonset")
+        val moonset: String,
+        @SerializedName("sunrise")
+        val sunrise: String,
+        @SerializedName("sunset")
+        val sunset: String,
+    )
+
+    data class GetEntireData(
+        @SerializedName("realtime")
+        val realtime: RealTimeData,
+        @SerializedName("mid")
+        val mid: WeeklyMidData,
+        @SerializedName("temp")
+        val temp: WeeklyTempData,
+        @SerializedName("quality")
+        val quality: AirQualityData,
+        @SerializedName("sun")
+        val sun: SunData
     )
 }

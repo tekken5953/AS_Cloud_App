@@ -13,7 +13,7 @@ import timber.log.Timber
 
 class SubFCM : FirebaseMessagingService() {
 
-    // 메시지 받았을 때
+    /** 메시지 받았을 때 **/
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
@@ -22,10 +22,15 @@ class SubFCM : FirebaseMessagingService() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP and Intent.FLAG_ACTIVITY_NEW_TASK)
         // 포그라운드 노티피케이션 발생
-        NotificationBuilder().sendNotification(this,intent,message,"AS-Cloud FCM Test Msg", System.currentTimeMillis())
+        NotificationBuilder().sendNotification(
+            this,
+            intent,
+            message,
+            "AS-Cloud FCM Test Msg",
+            System.currentTimeMillis())
     }
 
-    // 토픽 구독 설정
+    /** 토픽 구독 설정 **/
     fun subTopic(s: String) {
         FirebaseMessaging.getInstance().subscribeToTopic(s)
             .addOnCompleteListener { task ->

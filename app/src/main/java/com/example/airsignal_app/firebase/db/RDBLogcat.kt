@@ -1,9 +1,9 @@
 package com.example.airsignal_app.firebase.db
 
 import android.app.Activity
-import com.example.airsignal_app.dao.ConvertDataType.formatEmailToRDB
-import com.example.airsignal_app.dao.ConvertDataType.getCurrentTime
-import com.example.airsignal_app.dao.ConvertDataType.millsToString
+import com.example.airsignal_app.util.ConvertDataType.formatEmailToRDB
+import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
+import com.example.airsignal_app.util.ConvertDataType.millsToString
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.google.firebase.database.ktx.database
