@@ -73,6 +73,7 @@
                     android:fontFamily="@font/spoqa_hansansneo_bold"
                     android:lines="1"
                     android:text="18˚"
+                    android:textColor="@color/main_blue_color"
                     android:textSize="32sp" />
 
                 <TextView
@@ -89,6 +90,7 @@
                     android:fontFamily="@font/spoqa_hansansneo_bold"
                     android:lines="1"
                     android:text="23˚"
+                    android:textColor="@color/red"
                     android:textSize="32sp" />
             </TableRow>
 
@@ -154,7 +156,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="36dp"
             android:layout_marginEnd="24dp"
-            android:background="@drawable/time_weather_box_bg"
+            android:background="@drawable/daily_box_bg"
             android:backgroundTint="@color/view_pager_box"
             android:orientation="horizontal"
             android:weightSum="1"
@@ -294,7 +296,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_weight="0.25"
                 android:fontFamily="@font/spoqa_hansansneo_regular"
-                android:text="@string/progress_verybad"
+                android:text="@string/progress_worst"
                 android:textColor="@color/progressWorst"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -349,7 +351,6 @@
             android:layout_marginTop="12dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="30dp"
-            android:background="@drawable/time_weather_recycler_bg"
             android:clipToPadding="false"
             android:nestedScrollingEnabled="false"
             android:orientation="horizontal"
@@ -379,7 +380,7 @@
             android:layout_marginTop="12dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="50dp"
-            android:background="@drawable/time_weather_recycler_bg"
+            android:background="@drawable/daily_recycler_bg"
             android:clipToPadding="false"
             android:nestedScrollingEnabled="false"
             android:paddingTop="18dp"

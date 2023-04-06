@@ -79,10 +79,8 @@ class RequestPermissionsUtil(private val context: Context) {
     /** 알림 권한 요청 **/
     fun requestNotification() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    permissionNotification[0]
-                ) != PackageManager.PERMISSION_GRANTED
+            if (ActivityCompat.checkSelfPermission(context, permissionNotification[0])
+                != PackageManager.PERMISSION_GRANTED
             ) {
                 ActivityCompat.requestPermissions(
                     context as Activity,
@@ -97,20 +95,16 @@ class RequestPermissionsUtil(private val context: Context) {
     fun isLocationPermitted(): Boolean {
         if (Build.VERSION.SDK_INT >= 29) {
             for (perm in permissionsLocationUpApi29Impl) {
-                if (ContextCompat.checkSelfPermission(
-                        context,
-                        perm
-                    ) != PackageManager.PERMISSION_GRANTED
+                if (ContextCompat.checkSelfPermission(context, perm)
+                    != PackageManager.PERMISSION_GRANTED
                 ) {
                     return false
                 }
             }
         } else {
             for (perm in permissionsLocationDownApi29Impl) {
-                if (ContextCompat.checkSelfPermission(
-                        context,
-                        perm
-                    ) != PackageManager.PERMISSION_GRANTED
+                if (ContextCompat.checkSelfPermission(context, perm)
+                    != PackageManager.PERMISSION_GRANTED
                 ) {
                     return false
                 }

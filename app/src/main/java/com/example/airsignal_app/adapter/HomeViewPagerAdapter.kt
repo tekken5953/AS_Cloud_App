@@ -10,8 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.content.res.ResourcesCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2.ScrollState
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
 import kotlin.random.Random
@@ -101,11 +101,11 @@ class HomeViewPagerAdapter(private val context : Context, list: ArrayList<Adapte
     // 등급에 따른 색상 변환
     private fun getDataColor(grade: Int) : Int {
         return when (grade) {
-            0 -> ResourcesCompat.getColor(context.resources, R.color.progressGood, null)
-            1 -> ResourcesCompat.getColor(context.resources, R.color.progressNormal, null)
-            2 -> ResourcesCompat.getColor(context.resources, R.color.progressBad, null)
-            3 -> ResourcesCompat.getColor(context.resources, R.color.progressWorst, null)
-            else -> ResourcesCompat.getColor(context.resources, R.color.progressError, null)
+            0 -> getColor(context.resources, R.color.progressGood, null)
+            1 -> getColor(context.resources, R.color.progressNormal, null)
+            2 -> getColor(context.resources, R.color.progressBad, null)
+            3 -> getColor(context.resources, R.color.progressWorst, null)
+            else -> getColor(context.resources, R.color.progressError, null)
         }
     }
 
@@ -115,7 +115,7 @@ class HomeViewPagerAdapter(private val context : Context, list: ArrayList<Adapte
             0 -> context.getString(R.string.progress_good)
             1 -> context.getString(R.string.progress_normal)
             2 -> context.getString(R.string.progress_bad)
-            3 -> context.getString(R.string.progress_verybad)
+            3 -> context.getString(R.string.progress_worst)
             else -> ""
         }
     }

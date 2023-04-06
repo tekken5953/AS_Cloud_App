@@ -47,7 +47,13 @@ class WeeklyWeatherAdapter(private val context: Context, list: ArrayList<Adapter
                 minImg.setImageDrawable(dao.minImg)
                 maxImg.setImageDrawable(dao.maxImg)
                 minText.text = dao.minText
+                minText.setTextColor(context.getColor(R.color.main_blue_color))
                 maxText.text = dao.maxText
+                maxText.setTextColor(context.getColor(R.color.red))
+
+                if (adapterPosition == 0) {
+                    day.setTextColor(context.getColor(R.color.main_blue_color))
+                }
             }
         }
 }

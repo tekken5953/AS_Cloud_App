@@ -1,6 +1,8 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientId
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientName
@@ -14,6 +16,7 @@ import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
 import com.example.airsignal_app.util.EnterPage
+import com.example.airsignal_app.util.RefreshUtils
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
@@ -49,21 +52,24 @@ class NaverLogin(private val activity: Activity) {
         NaverIdLoginSDK.authenticate(activity, oauthLoginCallback)
     }
 
+    fun silentLogin() {
+        NaverIdLoginSDK.authenticate(activity, oauthLoginCallback)
+    }
+
     /** 로그아웃 + 기록 저장 */
+    @RequiresApi(Build.VERSION_CODES.O)
     fun logout(email: String) {
-        if (getAccessToken() != null) {
-            NaverIdLoginSDK.logout()
-            Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")
-            sendLogOutWithEmail(email ,"로그아웃 성공","네이버")
-            EnterPage(activity).toMain(null)
-        }
+        NaverIdLoginSDK.logout()
+        Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")
+        sendLogOutWithEmail(email, "로그아웃 성공", "네이버")
+        RefreshUtils(activity).refreshActivityAfterSecond(sec = 1)
     }
 
     /** 엑세스 토큰 불러오기
      *
      * @return String?
      * **/
-    private fun getAccessToken(): String? {
+    fun getAccessToken(): String? {
         return NaverIdLoginSDK.getAccessToken()
     }
 
@@ -84,9 +90,8 @@ class NaverLogin(private val activity: Activity) {
                     .setString(userEmail, it.email.toString())
 
                 sendLogInWithEmail("로그인 성공", it.email.toString(), "네이버", "수동")
+                EnterPage(activity).toMain("naver")
             }
-
-            enterMainPage()
         }
 
         override fun onFailure(httpStatus: Int, message: String) {
@@ -129,14 +134,13 @@ class NaverLogin(private val activity: Activity) {
         }
     }
 
-    // 메인 페이지로 이동
-    private fun enterMainPage() {
-        EnterPage(activity).toMain("naver")
-    }
-
     // 로그인 페이지로 이동
     private fun enterLoginPage() {
         EnterPage(activity).toLogin()
+    }
+
+    fun isLogin() : Boolean {
+       return NidOAuthLogin().callProfileApi(profileCallback).isCompleted
     }
 
     /** 네이버 클라이언트와 연동 해제 **/

@@ -77,7 +77,10 @@ class MyDeviceActivity : AppCompatActivity() {
                         start: Int,
                         count: Int,
                         after: Int
-                    ) { setNextButton(nextBtn, false, R.color.main_gray_color) }
+                    ) {
+                        setNextButton(nextBtn, false, R.color.main_gray_color)
+                    }
+
                     override fun onTextChanged(
                         s: CharSequence?,
                         start: Int,
@@ -88,6 +91,7 @@ class MyDeviceActivity : AppCompatActivity() {
                             setNextButton(nextBtn, true, R.color.mode_color_view)
                         }
                     }
+
                     override fun afterTextChanged(s: Editable?) {}
                 })
 
@@ -108,7 +112,7 @@ class MyDeviceActivity : AppCompatActivity() {
                         val handler = Handler(Looper.getMainLooper())
                         handler.postDelayed({
                             // 2초뒤에 완료 레이아웃 출력
-                            sp  .setBackPress(findViewById(R.id.myDeviceBack))
+                            sp.setBackPressed(findViewById(R.id.myDeviceBack))
                                 .show(viewComplete, false)
                             val viewCompleteOkBtn: AppCompatButton =    // 완료 버튼
                                 viewComplete.findViewById(R.id.compAddOkBtn)
@@ -123,7 +127,7 @@ class MyDeviceActivity : AppCompatActivity() {
         }
     }
 
-    private fun setNextButton(button: AppCompatButton,isEnable: Boolean, color: Int) {
+    private fun setNextButton(button: AppCompatButton, isEnable: Boolean, color: Int) {
         button.apply {
             isEnabled = isEnable
             setTextColor(

@@ -2,6 +2,8 @@ package com.example.airsignal_app.login
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.result.ActivityResultLauncher
 import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
@@ -13,7 +15,7 @@ import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
 import com.example.airsignal_app.util.EnterPage
-import com.example.airsignal_app.view.activity.LoginActivity
+import com.example.airsignal_app.util.RefreshUtils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -46,13 +48,17 @@ class GoogleLogin(private val activity: Activity) {
         mBtn.isEnabled = false
     }
 
+    fun isValidToken() : Boolean {
+        return lastLogin?.idToken != null
+    }
+
     /** 로그아웃 진행 + 로그아웃 로그 저장 **/
     fun logout() {
         client.signOut()
             .addOnCompleteListener {
                 Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
-                    saveLogoutStatus()
-                    EnterPage(activity).toMain(null)
+                saveLogoutStatus()
+                RefreshUtils(activity).refreshActivityAfterSecond(sec = 1)
             }
             .addOnCanceledListener {
                 Logger.t(TAG_LOGIN).e("로그아웃에 실패했습니다")
@@ -127,19 +133,14 @@ class GoogleLogin(private val activity: Activity) {
                 """.trimIndent()
             )
 
-            sp  .setString(userId, displayName.toString())
+            sp.setString(userId, displayName.toString())
                 .setString(userProfile, photo)
                 .setString(userEmail, email)
 
             saveLoginStatus(email, "수동")
-            enterMainPage()
+            EnterPage(activity).toMain("google")
         } catch (e: ApiException) {
             e.printStackTrace()
         }
-    }
-
-    /** 메인 페이지로 이동 **/
-    private fun enterMainPage() {
-        EnterPage(activity).toMain("google")
     }
 }

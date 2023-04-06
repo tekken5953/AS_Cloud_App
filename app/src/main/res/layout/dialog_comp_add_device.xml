@@ -13,7 +13,7 @@
         android:textStyle="bold"
         android:textSize="24sp"
         android:gravity="center"
-        android:textColor="@color/dummy_gray_dark"
+        android:textColor="@color/main_gray_color"
         android:layout_marginTop="120dp"
         app:drawableTopCompat="@drawable/check"
         android:drawablePadding="4dp"/>

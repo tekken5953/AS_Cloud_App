@@ -26,11 +26,15 @@ import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
+import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsWorker
+import com.example.airsignal_app.login.GoogleLogin
+import com.example.airsignal_app.login.KakaoLogin
+import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.util.*
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayoutMediator
@@ -64,7 +68,6 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this@MainActivity, R.layout.activity_main)
 
         initializing()
-
         setUpSideMenu()
 
         binding.mainSearchAddressIv.setOnClickListener {
@@ -73,7 +76,7 @@ class MainActivity : AppCompatActivity() {
                 LayoutInflater.from(this).inflate(R.layout.dialog_search_address, null)
             ShowDialogClass()
                 .getInstance(this)
-                .setBackPress(searchLayout.findViewById(R.id.searchBack))
+                .setBackPressed(searchLayout.findViewById(R.id.searchBack))
                 .show(searchLayout, true)
 
             val searchListView: ListView = searchLayout.findViewById(R.id.searchAddressListView)
@@ -130,6 +133,7 @@ class MainActivity : AppCompatActivity() {
 
     // 사이드 메뉴 열기
     private fun openMenu(menu: DrawerLayout) {
+        setUpSideMenu()
         menu.openDrawer(GravityCompat.START)
     }
 
@@ -177,16 +181,8 @@ class MainActivity : AppCompatActivity() {
         // Add Item
         addressList.clear()
         addViewPagerLayout(
-            SharedPreferenceManager(this).getString(lastAddress),
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-            0,
-            2
+            SharedPreferenceManager(this).getString(lastAddress), "0", "0", "0", "0",
+            "0", "0", "0", 0, 2
         )
         addViewPagerLayout("address2", "0", "0", "0", "0", "0", "0", "0", 3, 1)
         addViewPagerLayout("address3", "0", "0", "0", "0", "0", "0", "0", 1, 3)
@@ -241,7 +237,7 @@ class MainActivity : AppCompatActivity() {
                 binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
             }
 
-        binding.mainNavView.getHeaderView(0).findViewById<TextView>(R.id.navHeaderUserId)
+        binding.mainNavView.getHeaderView(0).findViewById<TableRow>(R.id.headerTr)
             .setOnClickListener {
                 if (sp.getString(lastLoginPlatform) == "")
                     EnterPage(this).toLogin()
@@ -249,14 +245,15 @@ class MainActivity : AppCompatActivity() {
 
         // 로그인 이력이 없을 시 기본 메시지로 설정
         binding.mainNavView.getHeaderView(0).apply {
-            findViewById<TextView>(R.id.navHeaderUserId).text =
-                if (sp.getString(userEmail) != "") {
-                    sp.getString(userEmail)
-                } else getString(R.string.please_login)
-
             Glide.with(context)
-                .load(Uri.parse(SharedPreferenceManager(context).getString("user_profile")))
+                .load(Uri.parse(SharedPreferenceManager(context).getString(userProfile)))
                 .into(findViewById(R.id.navHeaderProfileImg))
+
+            if (sp.getString(userEmail) != "") {
+                silentLogin()
+                findViewById<TextView>(R.id.navHeaderUserId).text = sp.getString(userEmail)
+            } else findViewById<TextView>(R.id.navHeaderUserId).text =
+                getString(R.string.please_login)
 
             // 사이드 메뉴 생성 소멸에 따른 처리
             binding.mainDrawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
@@ -329,6 +326,34 @@ class MainActivity : AppCompatActivity() {
                 }, 2000)
             } else {
                 binding.mainViewPager.currentItem = 0
+            }
+        }
+    }
+
+    // 플랫폼 별 자동로그인
+    private fun silentLogin() {
+        when (SharedPreferenceManager(this).getString(lastLoginPlatform)) {
+            "google" -> {
+                // 구글 자동 로그인
+                val googleLogin = GoogleLogin(this)
+                if (!googleLogin.isValidToken())
+                    googleLogin.checkSilenceLogin()
+            }
+            "kakao" -> {
+                // 카카오 자동 로그인
+                val kakaoLogin = KakaoLogin(this).initialize()
+                if (!kakaoLogin.getAccessToken())
+                    kakaoLogin.isValidToken(binding.mainPb)
+            }
+            "naver" -> {
+                // 네이버 자동 로그인
+                val naverLogin = NaverLogin(this).initialize()
+                if (naverLogin.getAccessToken() == null)
+                    naverLogin.silentLogin()
+            }
+
+            "email" -> {
+                //TODO 이메일 자동 로그인
             }
         }
     }

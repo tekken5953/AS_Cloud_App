@@ -52,7 +52,7 @@
     <string name="daily_weather">Hourly Weather</string>
     <string name="weekly_weather">Weekly Weather</string>
     <string name="progress_good">Good</string>
-    <string name="progress_verybad">Worst</string>
+    <string name="progress_worst">Worst</string>
     <string name="progress_normal">Normal</string>
     <string name="progress_bad">Bad</string>
     <string name="sun_rise_time">Sunrise</string>

@@ -18,12 +18,12 @@ import com.google.android.material.snackbar.Snackbar
  * @author : Lee Jae Young
  * @since : 2023-03-30 오후 1:22
  **/
-class CustomSnackBar(view: View, private val message: String, private val drawable: Drawable) {
+class SnackBarCustom(view: View, private val message: String, private val drawable: Drawable) {
 
     /**Constructor**/
     companion object {
         fun make(view: View, message: String, drawable: Drawable) =
-            CustomSnackBar(view, message, drawable)
+            SnackBarCustom(view, message, drawable)
     }
 
     private val context = view.context

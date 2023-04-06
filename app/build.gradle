@@ -61,6 +61,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging' // FCM
     implementation 'com.google.firebase:firebase-messaging-directboot:23.1.2' // FCM
     implementation 'com.google.firebase:firebase-database-ktx' // RDB
+    implementation 'com.google.firebase:firebase-auth-ktx' // 이메일 로그인
+    implementation 'com.google.android.gms:play-services-auth:20.4.1' // 구글 어스
 
     // logger
     implementation "com.orhanobut:logger:2.2.0"

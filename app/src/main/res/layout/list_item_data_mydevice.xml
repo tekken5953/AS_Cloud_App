@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:padding="5dp"
     android:layout_margin="10dp"
-    android:background="@drawable/time_weather_box_bg">
+    android:background="@drawable/daily_box_bg">
 
     <TextView
         android:id="@+id/dataListItemSort"

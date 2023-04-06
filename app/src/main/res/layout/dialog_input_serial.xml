@@ -6,8 +6,9 @@
 
     <ImageView
         android:id="@+id/inputSerialBack"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="4dp"
         android:src="@drawable/back_arrow"
         android:layout_alignTop="@+id/inputSerialCancel"
         android:layout_alignBottom="@+id/inputSerialCancel"

@@ -28,6 +28,7 @@ class EnterPage(private val activity: Activity) {
             SharedPreferenceManager(activity).setString(lastLoginPlatform, it)
         }
         val intent = Intent(activity, MainActivity::class.java)
+        System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
         activity.startActivity(intent)
         activity.finish()
     }

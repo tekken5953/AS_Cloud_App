@@ -10,11 +10,12 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmailForKakao
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
 import com.example.airsignal_app.util.EnterPage
-import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.util.RefreshUtils
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider
 import com.kakao.sdk.auth.model.OAuthToken
@@ -29,7 +30,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 /**
  * @author : Lee Jae Young
@@ -45,7 +45,7 @@ class KakaoLogin(private val activity: Activity) {
     }
 
     /** 앱 히시키 받아오기 **/
-    private fun getKeyHash(): String {
+    fun getKeyHash(): String {
         return Utility.getKeyHash(activity)
     }
 
@@ -107,8 +107,12 @@ class KakaoLogin(private val activity: Activity) {
         }
     }
 
+    fun getAccessToken() : Boolean {
+        return AuthApiClient.instance.hasToken()
+    }
+
     /** 자동 로그인 **/
-    fun isValidToken(pb: LinearLayout) {
+    fun isValidToken(pb: ProgressBar) {
         pb.visibility = View.VISIBLE
         pb.bringToFront()
         if (AuthApiClient.instance.hasToken()) {
@@ -122,7 +126,7 @@ class KakaoLogin(private val activity: Activity) {
                     }
                 } else {
                     //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
-                    enterMainPage()
+                    RefreshUtils(activity).refreshActivity()
                     tokenInfo?.let {
                         Logger.t(TAG_LOGIN)
                             .d(
@@ -196,7 +200,7 @@ class KakaoLogin(private val activity: Activity) {
                 } else {
                     Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
                     sendLogOutWithEmail(email,"로그아웃 성공", "카카오")
-                    EnterPage(activity).toMain(null)
+                    RefreshUtils(activity).refreshActivityAfterSecond(sec = 1)
                 }
             }
         } catch (e: UninitializedPropertyAccessException) {

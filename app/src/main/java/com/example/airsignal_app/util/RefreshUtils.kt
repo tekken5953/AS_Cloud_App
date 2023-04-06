@@ -3,6 +3,8 @@ package com.example.airsignal_app.util
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Handler
+import android.os.Looper
 import kotlin.system.exitProcess
 
 class RefreshUtils(private val activity: Activity) {
@@ -16,6 +18,12 @@ class RefreshUtils(private val activity: Activity) {
             it.startActivity(intent) //액티비티 열기
             it.overridePendingTransition(0, 0) //인텐트 효과 없애기
         }
+    }
+
+    fun refreshActivityAfterSecond(sec: Int) {
+        Handler(Looper.getMainLooper()).postDelayed ({
+           this.refreshActivity()
+        }, (sec * 1000).toLong())
     }
 
     /** 어플리케이션 재시작 **/

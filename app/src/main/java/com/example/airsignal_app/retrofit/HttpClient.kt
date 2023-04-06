@@ -1,11 +1,12 @@
 package com.example.airsignal_app.retrofit
 
 import android.annotation.SuppressLint
-import com.example.airsignal_app.util.LoggerUtil
 import com.example.airsignal_app.dao.URLConnectionData.springServerURL
+import com.example.airsignal_app.util.LoggerUtil
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.orhanobut.logger.Logger
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -16,7 +17,7 @@ import timber.log.Timber
 @SuppressLint("SetTextI18n")
 object HttpClient {
     /** API Interface 생성 **/
-    lateinit var mMyAPI: MyApi
+    lateinit var mMyAPIImpl: MyApiImpl
 
     /** 인스턴스가 메인 메모리를 바로 참조 -> 중복생성 방지 **/
     @Volatile
@@ -52,6 +53,7 @@ object HttpClient {
             }).apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
+            addNetworkInterceptor(networkInterceptors() as Interceptor)
         }
 
         /** Gson Converter 생성**/
@@ -66,6 +68,6 @@ object HttpClient {
                 .build()
         }
 
-        mMyAPI = retrofit.create(MyApi::class.java) // API 인터페이스 형태로 레트로핏 클라이언트 생성
+        mMyAPIImpl = retrofit.create(MyApiImpl::class.java) // API 인터페이스 형태로 레트로핏 클라이언트 생성
     }
 }

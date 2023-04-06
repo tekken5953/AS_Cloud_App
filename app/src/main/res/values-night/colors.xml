@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="dummy_gray_dark">#A7A7A7</color>
-    <color name="dummy_gray_medium">#88ffffff</color>
-    <color name="dummy_gray_line">#79ffffff</color>
-    <color name="dummy_gray_light">#66ffffff</color>
-
     <color name="mode_color_text">#FFFFFFFF</color>
     <color name="mode_color_view">#FF000000</color>
+
     <color name="view_pager_box">#88ffffff</color>
     <color name="background_color">#99000000</color>
     <color name="option_title_color">#90ffffff</color>
