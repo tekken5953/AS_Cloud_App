@@ -11,13 +11,13 @@ interface GpsRepository {
     @Query("SELECT * FROM DBModel.GetGPS")
     fun findGps(): GpsModel
 
-    @Query("SELECT * FROM DBModel.GetGPS WHERE `index`=`index`")
+    @Query("SELECT * FROM DBModel.GetGPS WHERE id=id")
     fun findGpsByIndex(index: Int)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertGps(gps: GpsModel.GetGPS)
 
-    @Query("DELETE FROM DBModel.GetGPS WHERE `index` = `index`")
+    @Query("DELETE FROM DBModel.GetGPS WHERE id = id")
     suspend fun deleteFromIndex(index: Int)
 
     @Query("DELETE FROM DBModel.GetGPS")

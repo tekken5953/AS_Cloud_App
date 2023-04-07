@@ -1,7 +1,7 @@
 package com.example.airsignal_app.retrofit
 
 import android.annotation.SuppressLint
-import com.example.airsignal_app.dao.URLConnectionData.springServerURL
+import com.example.airsignal_app.dao.IgnoredKeyFile.springServerURL
 import com.example.airsignal_app.util.LoggerUtil
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
@@ -13,7 +13,6 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 
-//https://velog.io/@suev72/AndroidRetrofit-Call-adapter  GSON -> kotlinx-serialization
 @SuppressLint("SetTextI18n")
 object HttpClient {
     /** API Interface 생성 **/
@@ -24,7 +23,7 @@ object HttpClient {
     private var instance: HttpClient? = null
 
     /** API Instance Singleton **/
-    fun getInstance() {
+    fun getInstance(token: String) {
         instance ?: synchronized(HttpClient::class.java) {   // 멀티스레드에서 동시생성하는 것을 막음
             instance ?: HttpClient.also {
                 instance = it
@@ -54,6 +53,13 @@ object HttpClient {
                 level = HttpLoggingInterceptor.Level.BODY
             })
             addNetworkInterceptor(networkInterceptors() as Interceptor)
+            addInterceptor {
+                val request = it.request().newBuilder()
+                    .addHeader("Authorization", "Bearer $token")
+                    .build()
+
+                it.proceed(request)
+            }.build()
         }
 
         /** Gson Converter 생성**/

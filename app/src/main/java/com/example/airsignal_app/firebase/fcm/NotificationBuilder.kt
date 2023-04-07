@@ -17,7 +17,7 @@ import com.google.firebase.messaging.RemoteMessage
 
 
 class NotificationBuilder {
-    // foreground 상태에서 해드업 알림
+    /** foreground 상태에서 해드업 알림 **/
     @RequiresApi(Build.VERSION_CODES.O)
     fun sendNotification(context: Context, intent: Intent, data: RemoteMessage, title : String, time: Long) {
         val notificationManager =
