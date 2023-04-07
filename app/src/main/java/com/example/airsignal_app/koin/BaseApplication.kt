@@ -23,6 +23,5 @@ class BaseApplication : Application() {
     /* factory : 호출될 때마다 객체 생성 */
     /* viewModel : 뷰모델 의존성 제거 객체 생성 */
 
-    val weatherDataModule = module { viewModel { GetWeatherViewModel() } }
-
+    private val weatherDataModule = module { viewModel { GetWeatherViewModel() } }
 }
