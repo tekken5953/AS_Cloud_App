@@ -1,7 +1,6 @@
 package com.example.airsignal_app.retrofit
 
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDateTime
 
 class ApiModel {
 //    // 회원가입 시 Body에 넣어서 POST 할 데이터 모델
@@ -39,9 +38,9 @@ class ApiModel {
 
     data class RealTimeData(
         @SerializedName("base")
-        val base: LocalDateTime,
+        val base: String,
         @SerializedName("forecast")
-        val forecast: LocalDateTime,
+        val forecast: String,
         @SerializedName("x")
         val gridX: Int,
         @SerializedName("y")
@@ -58,10 +57,6 @@ class ApiModel {
         val sky: String,
         @SerializedName("temperature")
         val temp: Double,
-        @SerializedName("temperatureMin")
-        val tempMin: Double,
-        @SerializedName("temperatureMax")
-        val tempMax: Double,
         @SerializedName("windSpeedEW")
         val windSpeedEW: Double,
         @SerializedName("windSpeedSN")
@@ -76,9 +71,9 @@ class ApiModel {
         val thunder: Double
     )
 
-    data class WeeklyMidData(
-        @SerializedName("date")
-        val date: LocalDateTime,
+    data class WeeklyData(
+        @SerializedName("rainDate")
+        val rainDate: String,
         @SerializedName("rnSt1Am")
         val rnSt1Am: Double,
         @SerializedName("rnSt1Pm")
@@ -105,6 +100,10 @@ class ApiModel {
         val rnSt6Pm: Double,
         @SerializedName("rnSt7Am")
         val rnSt7Am: Double,
+        @SerializedName("wf0Am")
+        val wf0Am: Double,
+        @SerializedName("wf0Pm")
+        val wf0Pm: Double,
         @SerializedName("wf1Am")
         val wf1Am: String,
         @SerializedName("wf1Pm")
@@ -132,10 +131,9 @@ class ApiModel {
         @SerializedName("wf7Am")
         val wf7Am: String,
         @SerializedName("wf7Pm")
-        val wf7Pm: String
-        )
-
-    data class WeeklyTempData(
+        val wf7Pm: String,
+        @SerializedName("tempDate")
+        val tempDate: String,
         @SerializedName("taMin1")
         val taMin1: Double,
         @SerializedName("taMax1")
@@ -163,7 +161,7 @@ class ApiModel {
         @SerializedName("taMin7")
         val taMin7: Double,
         @SerializedName("taMax7")
-        val taMax7: Double,
+        val taMax7: Double
     )
 
     data class AirQualityData(
@@ -176,7 +174,7 @@ class ApiModel {
         @SerializedName("pm25Value24")
         val pm25Value24: Int,
         @SerializedName("dataTime")
-        val dateTime: LocalDateTime,
+        val dateTime: String,
         @SerializedName("so2Grade")
         val so2Grade: Int,
         @SerializedName("so2Value")
@@ -211,11 +209,11 @@ class ApiModel {
 
     data class StationDetailInner(
         @SerializedName("item")
-        val stationDetailItem: List<String>,
+        val stationDetailItem: String,
         @SerializedName("year")
         val stationDetailYear: String,
         @SerializedName("addr")
-        val stationDetailAddr: Double
+        val stationDetailAddr: String
     )
 
     data class SunData(
@@ -233,11 +231,9 @@ class ApiModel {
 
     data class GetEntireData(
         @SerializedName("realtime")
-        val realtime: RealTimeData,
-        @SerializedName("mid")
-        val mid: WeeklyMidData,
-        @SerializedName("temp")
-        val temp: WeeklyTempData,
+        val realtime: List<RealTimeData>,
+        @SerializedName("week")
+        val week: WeeklyData,
         @SerializedName("quality")
         val quality: AirQualityData,
         @SerializedName("sun")

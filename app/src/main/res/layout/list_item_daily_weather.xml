@@ -8,12 +8,23 @@
     android:id="@+id/itemDailyLayout">
 
     <TextView
+        android:id="@+id/itemDailyDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="04.05"
+        android:textSize="12sp"
+        android:fontFamily="@font/spoqa_hansansneo_regular"/>
+
+    <TextView
         android:id="@+id/itemDailyTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="26.5dp"
+        android:layout_below="@+id/itemDailyDate"
         android:text="@string/hour_12"
+        android:layout_marginTop="2dp"
         android:fontFamily="@font/spoqa_hansansneo_bold"
         android:textColor="@color/mode_color_text"
         android:textSize="14sp" />

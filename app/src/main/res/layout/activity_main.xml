@@ -1,105 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-    <data></data>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="dataVM"
+            type="com.example.airsignal_app.vmodel.GetWeatherViewModel" />
+    </data>
 
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background_color">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:id="@+id/mainPb"
-            android:visibility="gone"/>
-
-        <androidx.drawerlayout.widget.DrawerLayout
-            android:id="@+id/mainDrawerLayout"
+        android:id="@+id/mainSwipeLayout">
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:openDrawer="start">
+            android:background="@color/background_color">
 
-            <com.google.android.material.navigation.NavigationView
-                android:id="@+id/mainNavView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="start"
-                android:fitsSystemWindows="true"
-                app:headerLayout="@layout/nav_header"
-                app:itemTextAppearance="@style/TextAppearance.AppCompat.Small"
-                app:itemTextColor="@color/mode_color_text"
-                app:menu="@menu/nav_menu" />
-
-        </androidx.drawerlayout.widget.DrawerLayout>
-
-        <RelativeLayout
-            android:id="@+id/viewPagerLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/mainSideMenuIv"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
-                android:padding="5dp"
-                android:layout_marginStart="21dp"
-                android:layout_marginTop="25dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/options_menu"
-                app:tint="@color/mode_color_text" />
-
-            <TextView
-                android:id="@+id/mainGpsTitleTv"
+            <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/mainSideMenuIv"
-                android:layout_alignBottom="@+id/mainSideMenuIv"
-                android:layout_centerHorizontal="true"
-                android:drawablePadding="7dp"
-                android:fontFamily="@font/spoqa_hansansneo_regular"
-                android:gravity="center"
-                android:text="@string/main_gps_title"
-                android:textColor="@color/mode_color_text"
-                android:textSize="16sp"
-                app:drawableStartCompat="@drawable/gps"
-                app:drawableTint="@color/mode_color_text"/>
+                android:layout_centerInParent="true"
+                android:id="@+id/mainPb"
+                android:visibility="gone"/>
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/mainTabLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:layout_below="@+id/mainGpsTitleTv"
-                android:layout_centerHorizontal="true"
-                android:background="@android:color/transparent"
-                app:tabBackground="@drawable/tab_selector"
-                app:tabGravity="center"
-                app:tabIndicatorGravity="top"
-                app:tabIndicatorHeight="0dp" />
-
-            <ImageView
-                android:id="@+id/mainSearchAddressIv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:padding="4dp"
-                android:layout_alignTop="@+id/mainSideMenuIv"
-                android:layout_alignBottom="@+id/mainSideMenuIv"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="21dp"
-                android:src="@drawable/search"
-                app:tint="@color/mode_color_text" />
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/mainViewPager"
+            <androidx.drawerlayout.widget.DrawerLayout
+                android:id="@+id/mainDrawerLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/mainSideMenuIv"
-                android:layout_marginTop="47dp"
-                android:overScrollMode="never"
-                android:clipToPadding="false"/>
+                tools:openDrawer="start">
+
+                <com.google.android.material.navigation.NavigationView
+                    android:id="@+id/mainNavView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start"
+                    android:fitsSystemWindows="true"
+                    app:headerLayout="@layout/nav_header"
+                    app:itemTextAppearance="@style/TextAppearance.AppCompat.Small"
+                    app:itemTextColor="@color/mode_color_text"
+                    app:menu="@menu/nav_menu" />
+
+            </androidx.drawerlayout.widget.DrawerLayout>
+
+            <RelativeLayout
+                android:id="@+id/viewPagerLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/mainSideMenuIv"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:padding="5dp"
+                    android:layout_marginStart="21dp"
+                    android:layout_marginTop="25dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/options_menu"
+                    app:tint="@color/mode_color_text" />
+
+                <TextView
+                    android:id="@+id/mainGpsTitleTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/mainSideMenuIv"
+                    android:layout_alignBottom="@+id/mainSideMenuIv"
+                    android:layout_centerHorizontal="true"
+                    android:drawablePadding="7dp"
+                    android:fontFamily="@font/spoqa_hansansneo_regular"
+                    android:gravity="center"
+                    android:text="@string/main_gps_title"
+                    android:textColor="@color/mode_color_text"
+                    android:textSize="16sp"
+                    app:drawableStartCompat="@drawable/gps"
+                    app:drawableTint="@color/mode_color_text"/>
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/mainTabLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_below="@+id/mainGpsTitleTv"
+                    android:layout_centerHorizontal="true"
+                    android:background="@android:color/transparent"
+                    app:tabBackground="@drawable/tab_selector"
+                    app:tabGravity="center"
+                    app:tabIndicatorGravity="top"
+                    app:tabIndicatorHeight="0dp" />
+
+                <ImageView
+                    android:id="@+id/mainSearchAddressIv"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:padding="4dp"
+                    android:layout_alignTop="@+id/mainSideMenuIv"
+                    android:layout_alignBottom="@+id/mainSideMenuIv"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="21dp"
+                    android:src="@drawable/search"
+                    app:tint="@color/mode_color_text" />
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/mainViewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/mainSideMenuIv"
+                    android:layout_marginTop="47dp"
+                    android:overScrollMode="never"
+                    android:clipToPadding="false"/>
+            </RelativeLayout>
         </RelativeLayout>
-    </RelativeLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

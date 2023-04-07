@@ -23,7 +23,7 @@ object HttpClient {
     private var instance: HttpClient? = null
 
     /** API Instance Singleton **/
-    fun getInstance(token: String) {
+    fun getInstance() {
         instance ?: synchronized(HttpClient::class.java) {   // 멀티스레드에서 동시생성하는 것을 막음
             instance ?: HttpClient.also {
                 instance = it
@@ -52,14 +52,13 @@ object HttpClient {
             }).apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
-            addNetworkInterceptor(networkInterceptors() as Interceptor)
-            addInterceptor {
-                val request = it.request().newBuilder()
-                    .addHeader("Authorization", "Bearer $token")
-                    .build()
-
-                it.proceed(request)
-            }.build()
+//            addInterceptor {
+//                val request = it.request().newBuilder()
+//                    .addHeader("Authorization", "Bearer $token")
+//                    .build()
+//
+//                it.proceed(request)
+//            }.build()
         }
 
         /** Gson Converter 생성**/

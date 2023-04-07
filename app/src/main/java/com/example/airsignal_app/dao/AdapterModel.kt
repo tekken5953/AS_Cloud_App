@@ -30,12 +30,15 @@ object AdapterModel {
         val rainPer: String,
         val pm2p5Grade: Int,
         val pm10Grade: Int,
+        @SerializedName("temperatureMin") val minTemp: String,
+        @SerializedName("temperatureMax") val maxTemp: String
     )
 
     data class DailyWeatherItem(
         val time: String,
         val img: Drawable,
-        val value: String
+        val value: String,
+        val date: String
     )
 
     data class WeeklyWeatherItem(

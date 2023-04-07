@@ -6,14 +6,17 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
+import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.ToastUtils
+import com.example.airsignal_app.view.activity.MainActivity
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.*
 
@@ -25,24 +28,13 @@ class GetLocation(private val context: Context) : GetLocationListener {
     @SuppressLint("MissingPermission")
     fun getLocation() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        LocationServices.getFusedLocationProviderClient(context)
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     onGetLocal(it)
-                    val testLocal = Location("testPoint")
-                    testLocal.apply {
-                        latitude = 35.0
-                        longitude = 120.0
-                    }
-
-                    Logger.t("Location")
-                        .i(
-                            ConvertDataType.millsToString(
-                                ConvertDataType.getCurrentTime(),
-                                "HH:mm"
-                            ) +
-                                    " - ${it.distanceTo(testLocal)}"
-                        )
+                    sp.setString("lat", it.latitude.toString())
+                        .setString("lng", it.longitude.toString())
                 }
             }
             .addOnFailureListener {
@@ -72,8 +64,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
                             it.getAddressLine(0)
                         }"
                     )
-                    Logger.t("Location")
-                        .d("${it.latitude},${it.longitude}\n${it.getAddressLine(0)}")
+
                     sp.setString(lastAddress, "${it.locality} ${it.thoroughfare}")
                 }
             } else {

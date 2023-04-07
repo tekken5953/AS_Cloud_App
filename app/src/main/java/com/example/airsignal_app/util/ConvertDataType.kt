@@ -4,7 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
+import android.graphics.drawable.Drawable
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
+import com.example.airsignal_app.R
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -62,5 +65,32 @@ object ConvertDataType {
     /** Email을 RealtimeDB의 child 형식에 맞게 변환**/
     fun formatEmailToRDB(email: String) : String {
         return email.replace(".", "_")
+    }
+
+
+    fun getSkyImg(context: Context, sky: String?) : Drawable? {
+        when(sky) {
+            "맑음" -> {
+                return ResourcesCompat.getDrawable(context.resources, R.drawable.sunny_test,null)
+            }
+            "구름많음" -> {
+                return ResourcesCompat.getDrawable(context.resources, R.drawable.cloud2_test,null)
+            }
+            "흐림" -> {
+                return ResourcesCompat.getDrawable(context.resources, R.drawable.cloud_test,null)
+            }
+            "비" -> {
+                return ResourcesCompat.getDrawable(context.resources, R.drawable.rain_per,null)
+            }
+            "눈" -> {
+                return ResourcesCompat.getDrawable(context.resources, R.drawable.snow_test,null)
+            }
+            "흐리고 비" -> {
+                return ResourcesCompat.getDrawable(context.resources, R.drawable.rainy_test,null)
+            }
+            else -> {
+                return ResourcesCompat.getDrawable(context.resources, R.drawable.cancel,null)
+            }
+        }
     }
 }
