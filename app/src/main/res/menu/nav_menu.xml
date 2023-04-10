@@ -5,9 +5,9 @@
         android:id="@+id/side_menu_weather"
         android:title="@string/weather" />
 
-    <item
-        android:id="@+id/side_menu_device"
-        android:title="@string/my_device_title"/>
+<!--    <item-->
+<!--        android:id="@+id/side_menu_device"-->
+<!--        android:title="@string/my_device_title"/>-->
 
     <item
         android:id="@+id/side_menu_setting"

@@ -41,16 +41,18 @@ class DailyWeatherAdapter(private val context: Context, list: ArrayList<AdapterM
         private val time: TextView = itemView.findViewById(R.id.itemDailyTime)
         private val image: ImageView = itemView.findViewById(R.id.itemDailySky)
         private val value: TextView = itemView.findViewById(R.id.itemDailyValue)
+        private val date: TextView = itemView.findViewById(R.id.itemDailyDate)
         private val layout: RelativeLayout = itemView.findViewById(R.id.itemDailyLayout)
 
         fun bind(dao: AdapterModel.DailyWeatherItem) {
             time.text = dao.time
             image.setImageDrawable(dao.img)
             value.text = dao.value
+            date.text = dao.date
 
-            if (adapterPosition == 0) {
-                layout.background = ResourcesCompat.getDrawable(context.resources, R.drawable.daily_selected_bg, null)
-            }
+//            if (adapterPosition == 0) {
+//                layout.background = ResourcesCompat.getDrawable(context.resources, R.drawable.daily_selected_bg, null)
+//            }
         }
     }
 }

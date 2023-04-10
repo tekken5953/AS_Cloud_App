@@ -15,9 +15,9 @@
             android:id="@+id/viewPagerLiveTempFrame"
             android:layout_width="wrap_content"
             android:layout_height="150dp"
-            android:layout_marginStart="52dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/viewPagerSunTable"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
@@ -50,26 +50,28 @@
         </FrameLayout>
 
         <TableLayout
-            android:layout_width="0dp"
+            android:id="@+id/viewPagerSunTable"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="36dp"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="14dp"
-            android:layout_marginEnd="50dp"
+            android:gravity="center"
             app:layout_constraintBottom_toBottomOf="@+id/viewPagerLiveTempFrame"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/viewPagerLiveTempFrame"
             app:layout_constraintTop_toTopOf="@+id/viewPagerLiveTempFrame">
 
             <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_height="39dp"
                 android:layout_marginBottom="14dp"
                 android:gravity="center"
                 android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/viewPagerMinTemp"
                     style="@style/basicTextView"
-                    android:layout_gravity="end"
+                    android:layout_weight="0.5"
                     android:fontFamily="@font/spoqa_hansansneo_bold"
                     android:lines="1"
                     android:text="18˚"
@@ -77,16 +79,11 @@
                     android:textSize="32sp" />
 
                 <TextView
-                    style="@style/basicTextView"
-                    android:fontFamily="@font/spoqa_hansansneo_bold"
-                    android:gravity="center"
-                    android:text="/"
-                    android:textSize="24sp" />
-
-                <TextView
+                    android:id="@+id/viewPagerMaxTemp"
                     style="@style/basicTextView"
                     android:layout_height="match_parent"
-                    android:layout_gravity="start"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="0.5"
                     android:fontFamily="@font/spoqa_hansansneo_bold"
                     android:lines="1"
                     android:text="23˚"
@@ -95,11 +92,11 @@
             </TableRow>
 
             <TableRow
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp">
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp">
 
                 <TextView
                     style="@style/basicTextView"
@@ -121,13 +118,13 @@
             </TableRow>
 
             <TableRow
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:fontFamily="@font/spoqa_hansansneo_regular"
                 android:orientation="horizontal"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp">
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp">
 
                 <TextView
                     style="@style/basicTextView"

@@ -1,7 +1,5 @@
 package com.example.airsignal_app.retrofit;
 
-import androidx.annotation.Nullable;
-
 import java.util.List;
 
 import retrofit2.Call;
@@ -59,33 +57,28 @@ public interface MyApiImpl {
 //    @POST("authenticate/mobile/")
 //    Call<ApiModel.LoginToken> refreshToken(@Header("Authorization") String access, @Body ApiModel.RefreshToken item);
 
-    @GET("api/forecast")
+    @GET("forecast")
     Call<ApiModel.GetEntireData> getForecast(
-            @Nullable @Query("lat") Double lat,
-            @Nullable @Query("lng") Double lng);
+            @Query("lat") Double lat,
+            @Query("lng") Double lng);
 
-    @GET("api/forecast/realtime")
+    @GET("forecast/realtime")
     Call<List<ApiModel.RealTimeData>> getRealTime(
-            @Nullable @Query("lat")Double lat,
-            @Nullable @Query("lng")Double lng);
+            @Query("lat")Double lat,
+            @Query("lng")Double lng);
 
-    @GET("api/forecast/mid")
-    Call<List<ApiModel.WeeklyMidData>> getWeeklyMid(
-            @Nullable @Query("lat")Double lat,
-            @Nullable @Query("lng")Double lng);
+    @GET("forecast/week")
+    Call<ApiModel.WeeklyData> getWeeklyData(
+            @Query("lat")Double lat,
+            @Query("lng")Double lng);
 
-    @GET("api/forecast/temp")
-    Call<List<ApiModel.WeeklyTempData>> getWeeklyTemp(
-            @Nullable @Query("lat")Double lat,
-            @Nullable @Query("lng")Double lng);
+    @GET("forecast/quality")
+    Call<ApiModel.AirQualityData> getAirQuality(
+            @Query("lat")Double lat,
+            @Query("lng")Double lng);
 
-    @GET("api/forecast/quality")
-    Call<List<ApiModel.AirQualityData>> getAirQuality(
-            @Nullable @Query("lat")Double lat,
-            @Nullable @Query("lng")Double lng);
-
-    @GET("api/forecast/sun")
-    Call<List<ApiModel.SunData>> getSun(
-            @Nullable @Query("lat")Double lat,
-            @Nullable @Query("lng")Double lng);
+    @GET("forecast/sun")
+    Call<ApiModel.SunData> getSun(
+            @Query("lat")Double lat,
+            @Query("lng")Double lng);
 }

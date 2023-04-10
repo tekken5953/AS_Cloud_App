@@ -1,6 +1,7 @@
 package com.example.airsignal_app.vmodel
 
 import androidx.lifecycle.LiveData
+import com.example.airsignal_app.gps.GetApiDataListener
 import com.example.airsignal_app.repo.GetWeatherRepo
 import com.example.airsignal_app.retrofit.ApiModel
 import kotlinx.coroutines.CoroutineScope

@@ -40,18 +40,20 @@ android {
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.android.material:material:1.8.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    // Swipe Refresh Layout
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     // Splash Screen
     implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
 
     // Google Login
-    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
     // Kakao Login
     implementation 'com.kakao.sdk:v2-user:2.10.0'
     // Naver Login - JDK 11 이상
@@ -65,7 +67,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-directboot:23.1.2' // FCM
     implementation 'com.google.firebase:firebase-database-ktx' // RDB
     implementation 'com.google.firebase:firebase-auth-ktx' // 이메일 로그인
-    implementation 'com.google.android.gms:play-services-auth:20.4.1' // 구글 어스
+    implementation 'com.google.android.gms:play-services-auth:20.5.0' // 구글 어스
 
     // logger
     implementation "com.orhanobut:logger:2.2.0"

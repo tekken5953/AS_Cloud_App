@@ -1,87 +1,100 @@
 package com.example.airsignal_app.view.activity
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
-import android.view.ViewTreeObserver
-import android.view.animation.AnticipateInterpolator
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
-import androidx.core.animation.doOnEnd
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
-import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
-import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
+import com.example.airsignal_app.adapter.DailyWeatherAdapter
 import com.example.airsignal_app.adapter.HomeViewPagerAdapter
+import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
-import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
-import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
-import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.gps.GetApiDataListener
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsWorker
-import com.example.airsignal_app.login.GoogleLogin
-import com.example.airsignal_app.login.KakaoLogin
-import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.util.*
-import com.google.android.material.navigation.NavigationView
+import com.example.airsignal_app.util.ConvertDataType.getSkyImg
+import com.example.airsignal_app.view.SideMenuClass
+import com.example.airsignal_app.view.SplashScreenClass
+import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.time.Duration
-import java.time.Instant
+import kotlinx.coroutines.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.time.LocalDateTime
+import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.concurrent.thread
+import kotlin.collections.ArrayList
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(){
 
     private lateinit var binding: ActivityMainBinding
 
     val addressList = ArrayList<AdapterModel.WeatherItem>()
+    private val sp by lazy { SharedPreferenceManager(this) }
     private val viewPagerAdapter = HomeViewPagerAdapter(this, addressList)
     private var isBackPressed = false
-    private val sp by lazy { SharedPreferenceManager(this) }
-    private var isReady = false
+    private val contentView: View by lazy { findViewById(android.R.id.content) }
+    private var lastRefresh: Long = 0L
+    private val getDataViewModel by viewModel<GetWeatherViewModel>()
+    private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
+    private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
+    private val dailyWeatherAdapter by lazy {DailyWeatherAdapter(this,dailyWeatherList)}
+    private val weeklyWeatherAdapter by lazy {WeeklyWeatherAdapter(this, weeklyWeatherList)}
 
     override fun onStart() {
         super.onStart()
-        GetLocation(this).getLocation()
+        CoroutineScope(Dispatchers.IO).launch {
+            GetLocation(this@MainActivity).getLocation()
+            delay(100)
+            getDataViewModel.loadDataResult(sp.getString("lat").toDouble() , sp.getString("lng").toDouble())
+            runOnUiThread{
+                binding.mainGpsTitleTv.text = sp.getString(lastAddress)
+            }
+        }
     }
 
-    override fun onResume() {
-        super.onResume()
-        addViewPagerItem()
-    }
-
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this@MainActivity, R.layout.activity_main)
+        binding = DataBindingUtil.setContentView<ActivityMainBinding?>(
+            this@MainActivity,
+            R.layout.activity_main
+        )
+            .apply {
+                lifecycleOwner = this@MainActivity
+                dataVM = getDataViewModel
+                // 뷰모델 생성
+                applyGetDataViewModel()
+            }
 
-        setInitialSetting().setSplashScreen()
+        SplashScreenClass(this).setInitialSetting().setContentView(contentView)
 
         initializing()
-        setUpSideMenu()
+
+        // 사이드 메뉴 세팅
+        SideMenuClass(this, binding.mainDrawerLayout, binding.mainNavView, binding.viewPagerLayout)
+            .setUpSideMenu(binding.mainSideMenuIv, binding.mainPb)
 
         binding.mainSearchAddressIv.setOnClickListener {
             @SuppressLint("InflateParams")
@@ -137,19 +150,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 사이드 메뉴 닫기
-    fun closeDrawerMenu() {
-        if (binding.mainDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
-        }
-    }
-
-    // 사이드 메뉴 열기
-    private fun openMenu(menu: DrawerLayout) {
-        setUpSideMenu()
-        menu.openDrawer(GravityCompat.START)
-    }
-
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
         // 위치 권한 요청
@@ -176,6 +177,11 @@ class MainActivity : AppCompatActivity() {
                 }
             })
 
+            setPageTransformer { page, position ->
+                page.findViewById<RecyclerView>(R.id.viewPagerDailyWeatherRv).adapter = dailyWeatherAdapter
+                page.findViewById<RecyclerView>(R.id.viewPagerWeeklyWeatherRv).adapter = weeklyWeatherAdapter
+            }
+
             // 탭레이아웃 연동
             TabLayoutMediator(binding.mainTabLayout, this@apply) { tab, position ->
                 // 페이지가 1개이면 인디케이터 숨김
@@ -186,22 +192,25 @@ class MainActivity : AppCompatActivity() {
                 }
             }.attach()
         }
-    }
 
-    // 뷰페이저 화면 생성
-    @SuppressLint("NotifyDataSetChanged")
-    private fun addViewPagerItem() {
-        // Add Item
-        addressList.clear()
-        addViewPagerLayout(
-            SharedPreferenceManager(this).getString(lastAddress), "0", "0", "0", "0",
-            "0", "0", "0", 0, 2
-        )
-        addViewPagerLayout("address2", "0", "0", "0", "0", "0", "0", "0", 3, 1)
-        addViewPagerLayout("address3", "0", "0", "0", "0", "0", "0", "0", 1, 3)
-//        addViewPagerLayout("address4","0","0","0","0","0","0","0",3,1)
-//        addViewPagerLayout("address5","0","0","0","0","0","0","0",3,1)
-        viewPagerAdapter.notifyDataSetChanged()
+        // 위로 스와이프 시 화면 갱신 -> GPS 새로 갱신 + 사이드 메뉴 갱신 + 데이터 갱신
+        binding.mainSwipeLayout.setOnRefreshListener {
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastRefresh > 1000 * 10) {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    lastRefresh = currentTime
+                    onStart()
+                    if (binding.mainSwipeLayout.isRefreshing) {
+                        binding.mainSwipeLayout.isRefreshing = false
+                    }
+                }, 1500)
+            } else {
+                Toast.makeText(this, "마지막 갱신 후 10초가 지나야 합니다.", Toast.LENGTH_SHORT).show()
+                if (binding.mainSwipeLayout.isRefreshing) {
+                    binding.mainSwipeLayout.isRefreshing = false
+                }
+            }
+        }
     }
 
     // 뷰 페이저 아이템 추가
@@ -216,6 +225,8 @@ class MainActivity : AppCompatActivity() {
         rainPer: String,
         pm2p5Grade: Int,
         pm10Grade: Int,
+        minTemp: String,
+        maxTemp: String
     ) {
         val item = AdapterModel.WeatherItem(
             address = address,
@@ -228,86 +239,10 @@ class MainActivity : AppCompatActivity() {
             rainPer = rainPer,
             pm2p5Grade = pm2p5Grade,
             pm10Grade = pm10Grade,
+            minTemp = minTemp,
+            maxTemp = maxTemp
         )
         addressList.add(item)
-    }
-
-    // 사이드 메뉴 세팅
-    private fun setUpSideMenu() {
-        // 사이드 메뉴 아이콘
-        binding.mainSideMenuIv.setOnClickListener {
-            binding.mainDrawerLayout.apply {
-                // 사이드 메뉴 열림
-                openMenu(this)
-                clipToPadding = false
-                bringToFront()
-            }
-        }
-
-        // 사이드메뉴 헤더에 있는 닫기 아이콘 이벤트처리
-        binding.mainNavView.getHeaderView(0).findViewById<ImageView>(R.id.headerCancel)
-            .setOnClickListener {
-                binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
-            }
-
-        binding.mainNavView.getHeaderView(0).findViewById<TableRow>(R.id.headerTr)
-            .setOnClickListener {
-                if (sp.getString(lastLoginPlatform) == "")
-                    EnterPage(this).toLogin()
-            }
-
-        // 로그인 이력이 없을 시 기본 메시지로 설정
-        binding.mainNavView.getHeaderView(0).apply {
-            Glide.with(context)
-                .load(Uri.parse(SharedPreferenceManager(context).getString(userProfile)))
-                .into(findViewById(R.id.navHeaderProfileImg))
-
-            if (sp.getString(userEmail) != "") {
-                silentLogin()
-                findViewById<TextView>(R.id.navHeaderUserId).text = sp.getString(userEmail)
-            } else findViewById<TextView>(R.id.navHeaderUserId).text =
-                getString(R.string.please_login)
-
-            // 사이드 메뉴 생성 소멸에 따른 처리
-            binding.mainDrawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
-                override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
-                override fun onDrawerOpened(drawerView: View) {}
-                override fun onDrawerClosed(drawerView: View) {
-                    binding.viewPagerLayout.bringToFront()
-                }
-
-                override fun onDrawerStateChanged(newState: Int) {}
-            })
-
-            // 사이드 메뉴 아이템 클릭 리스너
-            binding.mainNavView.setNavigationItemSelectedListener(object :
-                NavigationView.OnNavigationItemSelectedListener {
-                override fun onNavigationItemSelected(item: MenuItem): Boolean {
-                    closeDrawerMenu()
-                    when (item.itemId) {
-                        // 날씨정보
-                        R.id.side_menu_weather -> {
-                            return true
-                        }
-                        // 내 기기
-                        R.id.side_menu_device -> {
-                            val intent = Intent(this@MainActivity, MyDeviceActivity::class.java)
-                            startActivity(intent)
-                            return true
-                        }
-                        // 설정
-                        R.id.side_menu_setting -> {
-                            val intent = Intent(this@MainActivity, SettingActivity::class.java)
-                            startActivity(intent)
-                            return true
-                        }
-                        else -> {
-                            return false
-                        }
-                    }
-                }
-            })
-        }
     }
 
     // 백그라운드에서 GPS 를 불러오기 위한 WorkManager
@@ -343,109 +278,90 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // 플랫폼 별 자동로그인
-    private fun silentLogin() {
-        when (SharedPreferenceManager(this).getString(lastLoginPlatform)) {
-            "google" -> {
-                // 구글 자동 로그인
-                val googleLogin = GoogleLogin(this)
-                if (!googleLogin.isValidToken())
-                    googleLogin.checkSilenceLogin()
-            }
-            "kakao" -> {
-                // 카카오 자동 로그인
-                val kakaoLogin = KakaoLogin(this).initialize()
-                if (!kakaoLogin.getAccessToken())
-                    kakaoLogin.isValidToken(binding.mainPb)
-            }
-            "naver" -> {
-                // 네이버 자동 로그인
-                val naverLogin = NaverLogin(this).initialize()
-                if (naverLogin.getAccessToken() == null)
-                    naverLogin.silentLogin()
-            }
+    @RequiresApi(Build.VERSION_CODES.O)
+    @SuppressLint("NotifyDataSetChanged")
+    private fun applyGetDataViewModel() {
+        getDataViewModel.getDataResult().observe(this) { result ->
+            result?.let {
+                val realtime = it.realtime[0]
+                val sun = it.sun
+                val air = it.quality
+                val week = it.week
+                val tempDate = LocalDateTime.parse(week.tempDate)
+                val wfMin = listOf(week.wf1Am,week.wf2Am,week.wf3Am, week.wf4Am,week.wf5Am,week.wf6Am,week.wf7Am)
+                val wfMax = listOf(week.wf1Pm,week.wf2Pm,week.wf3Pm,week.wf4Pm,week.wf5Pm,week.wf6Pm,week.wf7Pm)
+                val taMin = listOf(week.taMin1,week.taMin2,week.taMin3, week.taMin4,week.taMin5,week.taMin6,week.taMin7)
+                val taMax = listOf(week.taMax1,week.taMax2,week.taMax3,week.taMax4,week.taMax5,week.taMax6,week.taMax7)
 
-            "email" -> {
-                //TODO 이메일 자동 로그인
-            }
-        }
-    }
+                // 뷰페이저 아이템 추가
+                addressList.clear()
+                dailyWeatherList.clear()
+                weeklyWeatherList.clear()
 
-    private fun setInitialSetting() : MainActivity {
-        // 설정된 테마 정보 불러오기
-        when(sp.getString("theme")) {
-            "dark" -> {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }
-            "light" -> {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-            else -> {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-            }
-        }
-
-        // 설정된 언어정보 불러오기
-        when(sp.getString("lang")) {
-            "korean" -> {
-                ConvertDataType.setLocaleToKorea(this)
-            }
-            "english" -> {
-                ConvertDataType.setLocaleToEnglish(this)
-            }
-            else -> {
-                ConvertDataType.setLocaleToSystem(this)
-            }
-        }
-        return this
-    }
-
-    private fun setSplashScreen() {
-        thread(start=true) {
-            for (i in 1..1) {
-                Thread.sleep(1000)
-            }
-            isReady = true
-        }
-
-        // Set up an OnPreDrawListener to the root view.
-        val content: View = findViewById(android.R.id.content)
-        content.viewTreeObserver.addOnPreDrawListener(
-            object : ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    // Check if the initial data is ready.
-                    return if (isReady) {
-                        // The content is ready; start drawing.
-                        content.viewTreeObserver.removeOnPreDrawListener(this)
-                        true
-                    } else {
-                        // The content is not ready; suspend.
-                        false
-                    }
-                }
-            }
-        )
-
-        // Add a callback that's called when the splash screen is animating to
-        // the app content.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            splashScreen.setOnExitAnimationListener { splashScreenView ->
-                // Create your custom animation.
-                val slideUp = ObjectAnimator.ofFloat(
-                    splashScreenView,
-                    View.TRANSLATION_Y,
-                    0f,
-                    -splashScreenView.height.toFloat()
+                addViewPagerLayout(
+                    SharedPreferenceManager(this).getString(lastAddress),
+                    realtime.temp.toInt().toString() + "˚",
+                    sun.sunrise.substring(0, 2) + ":" + sun.sunrise.substring(
+                        2,
+                        sun.sunrise.length
+                    ),
+                    sun.sunset.substring(0, 2) + ":" + sun.sunset.substring(2, sun.sunset.length),
+                    realtime.sky,
+                    realtime.humid.toInt().toString() + "%",
+                    realtime.windSpeed.toString() + "m/s",
+                    realtime.rainP.toInt().toString() + "%",
+                    air.pm25Grade,
+                    air.pm10Grade,
+                    "${filteringNullData(week.wf0Am).toInt()}˚",
+                    "${filteringNullData(week.wf0Pm).toInt()}˚"
                 )
-                slideUp.interpolator = AnticipateInterpolator()
-                slideUp.duration = 600L
 
-                // Call SplashScreenView.remove at the end of your custom animation.
-                slideUp.doOnEnd { splashScreenView.remove() }
+                for (i: Int in 0 until (10)) {
+                    val data = it.realtime[i]
+                    val forecastTime = LocalDateTime.parse(data.forecast)
+                    addDailyWeatherItem(
+                        forecastTime.hour.toString() + "시",
+                        getSkyImg(this, data.sky)!!,
+                        "${data.temp.toInt()}˚",
+                        "${forecastTime.monthValue}.${forecastTime.dayOfMonth}"
+                    )
+                }
 
-                // Run your animation.
-                slideUp.start()
+                for (i: Int in 0 until(6)) {
+                    addWeeklyWeatherItem(
+                        "${tempDate.month.value}.${tempDate.dayOfMonth + i}",
+                        getSkyImg(this, wfMin[i])!!,
+                        getSkyImg(this, wfMax[i])!!,
+                        "${taMin[i].toInt()}˚",
+                        "${taMax[i].toInt()}˚"
+                        )
+                }
+
+                weeklyWeatherAdapter.notifyDataSetChanged()
+                dailyWeatherAdapter.notifyDataSetChanged()
+                viewPagerAdapter.notifyDataSetChanged()
             }
         }
+    }
+
+    private fun filteringNullData(data: Double) : Double {
+        return if (data != -100.0) data else 0.0
+    }
+
+    // 시간별 날씨 리사이클러뷰 아이템 추가
+    private fun addDailyWeatherItem(time: String, img: Drawable, value: String, date: String) {
+        val item = AdapterModel.DailyWeatherItem(time, img, value,date)
+
+        this.dailyWeatherList.add(item)
+    }
+
+    // 시간별 날씨 리사이클러뷰 아이템 추가
+    private fun addWeeklyWeatherItem(
+        day: String, minImg: Drawable,
+        maxImg: Drawable, minText: String, maxText: String
+    ) {
+        val item = AdapterModel.WeeklyWeatherItem(day, minImg, maxImg, minText, maxText)
+
+        this.weeklyWeatherList.add(item)
     }
 }

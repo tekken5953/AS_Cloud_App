@@ -17,6 +17,7 @@
             android:layout_weight="0.25"
             android:layout_marginStart="24dp"
             android:textSize="14sp"
+            android:gravity="center"
             android:fontFamily="@font/spoqa_hansansneo_medium"
             android:textColor="@color/mode_color_text"/>
 
@@ -43,7 +44,7 @@
             style="@style/basicTextView"
             android:text="20˚"
             android:layout_weight="0.07"
-            android:gravity="end"
+            android:gravity="start"
             android:lines="1"
             android:textSize="14sp"
             android:fontFamily="@font/spoqa_hansansneo_regular"/>
@@ -63,7 +64,7 @@
             android:id="@+id/weeklyMaxText"
             style="@style/basicTextView"
             android:text="23˚"
-            android:gravity="start"
+            android:gravity="end"
             android:lines="1"
             android:layout_weight="0.07"
             android:textSize="14sp"

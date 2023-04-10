@@ -9,6 +9,11 @@ import com.orhanobut.logger.Logger
 import retrofit2.Response
 
 open class BaseRepository {
+    val httpClient = HttpClient
+
+    init {
+        httpClient.getInstance()
+    }
 
     inline fun <reified T> loadSuccessStringData(
         data: MutableLiveData<String>,
