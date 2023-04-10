@@ -31,6 +31,7 @@ public class ToastUtils {
             toast.show();
         };
 
+        mContext.runOnUiThread(r);
     }
 
     /** 토스트메시지가 보여지고 있으면 취소시킨다 **/

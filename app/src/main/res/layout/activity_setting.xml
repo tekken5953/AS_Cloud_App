@@ -132,24 +132,14 @@
 
                 <TextView
                     android:id="@+id/settingThemeThemeLeft"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:gravity="center_vertical|start"
-                    android:text="@string/setting_theme_left"
-                    android:fontFamily="@font/spoqa_hansansneo_regular"
-                    android:textColor="@color/mode_color_text"
-                    android:textSize="16sp" />
+                    style="@style/settingMultiTextView"
+                    android:text="@string/setting_theme_left" />
 
                 <TextView
                     android:id="@+id/settingThemeThemeRight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
+                    style="@style/settingMultiTextView"
                     android:gravity="center_vertical|end"
-                    android:fontFamily="@font/spoqa_hansansneo_regular"
-                    android:textColor="@color/main_blue_color"
-                    android:textSize="16sp" />
+                    android:textColor="@color/main_blue_color"/>
             </TableRow>
 
             <TableRow
@@ -166,30 +156,19 @@
 
                 <TextView
                     android:id="@+id/settingThemeLangLeft"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:gravity="center_vertical|start"
-                    android:text="@string/setting_lang"
-                    android:fontFamily="@font/spoqa_hansansneo_regular"
-                    android:textColor="@color/mode_color_text"
-                    android:textSize="16sp" />
+                    style="@style/settingMultiTextView"
+                    android:text="@string/setting_lang"/>
 
                 <TextView
                     android:id="@+id/settingThemeLangRight"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5"
-                    android:fontFamily="@font/spoqa_hansansneo_regular"
+                    style="@style/settingMultiTextView"
                     android:gravity="center_vertical|end"
-                    android:textColor="@color/main_blue_color"
-                    android:textSize="16sp" />
+                    android:textColor="@color/main_blue_color" />
             </TableRow>
 
             <TextView
                 android:id="@+id/settingNotiTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/basicTextView"
                 android:layout_marginTop="25dp"
                 android:text="@string/setting_notify"
                 android:textColor="@color/option_title_color"
@@ -221,15 +200,10 @@
 
                 <TextView
                     android:id="@+id/settingNotiPMLeft"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    style="@style/settingMultiTextView"
                     android:layout_weight="0.95"
                     android:background="?selectableItemBackground"
-                    android:gravity="center_vertical|start"
-                    android:text="@string/setting_notify_pm"
-                    android:fontFamily="@font/spoqa_hansansneo_regular"
-                    android:textColor="@color/mode_color_text"
-                    android:textSize="16sp" />
+                    android:text="@string/setting_notify_pm" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/settingNotiPMRight"
@@ -256,15 +230,10 @@
 
                 <TextView
                     android:id="@+id/settingNotiEventLeft"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    style="@style/settingMultiTextView"
                     android:layout_weight="0.95"
                     android:background="?selectableItemBackground"
-                    android:gravity="center_vertical|start"
-                    android:text="@string/setting_notify_event"
-                    android:fontFamily="@font/spoqa_hansansneo_regular"
-                    android:textColor="@color/mode_color_text"
-                    android:textSize="16sp" />
+                    android:text="@string/setting_notify_event" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/settingNotiEventRight"
@@ -291,15 +260,11 @@
 
                 <TextView
                     android:id="@+id/settingNotiNightLeft"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    style="@style/settingMultiTextView"
                     android:layout_weight="0.95"
                     android:background="?selectableItemBackground"
-                    android:gravity="center_vertical|start"
                     android:text="@string/setting_notify_night"
-                    android:fontFamily="@font/spoqa_hansansneo_regular"
-                    android:textColor="@color/mode_color_text"
-                    android:textSize="16sp" />
+                    android:lineSpacingExtra="5dp"/>
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/settingNotiNightRight"
@@ -315,8 +280,7 @@
 
             <TextView
                 android:id="@+id/settingCustomerTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/basicTextView"
                 android:layout_marginTop="25dp"
                 android:text="@string/setting_customer_service"
                 android:textColor="@color/option_title_color"
@@ -338,79 +302,48 @@
             <TextView
                 android:id="@+id/settingNotice"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="5dp"
-                android:background="?selectableItemBackground"
-                android:gravity="center_vertical"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
+                style="@style/settingSingleTextView"
                 android:text="@string/setting_notice"
-                android:fontFamily="@font/spoqa_hansansneo_regular"
-                android:textColor="@color/mode_color_text"
-                android:textSize="16sp"
                 app:layout_constraintTop_toBottomOf="@+id/settingLine4" />
 
             <TextView
                 android:id="@+id/settingEvent"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="5dp"
-                android:background="?selectableItemBackground"
-                android:gravity="center_vertical"
+                style="@style/settingSingleTextView"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
                 android:text="@string/event"
-                android:fontFamily="@font/spoqa_hansansneo_regular"
-                android:textColor="@color/mode_color_text"
-                android:textSize="16sp"
                 app:layout_constraintTop_toBottomOf="@+id/settingNotice" />
 
             <TextView
                 android:id="@+id/settingFaq"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="5dp"
+                style="@style/settingSingleTextView"
                 android:layout_marginBottom="30dp"
-                android:background="?selectableItemBackground"
-                android:gravity="center_vertical"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
                 android:text="@string/setting_faq"
-                android:fontFamily="@font/spoqa_hansansneo_regular"
-                android:textColor="@color/mode_color_text"
-                android:textSize="16sp"
                 app:layout_constraintTop_toBottomOf="@+id/settingEvent" />
 
             <TextView
                 android:id="@+id/settingAppInfo"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="30dp"
-                android:background="?selectableItemBackground"
-                android:gravity="center_vertical"
+                style="@style/settingSingleTextView"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
                 android:text="@string/setting_app_data"
-                android:fontFamily="@font/spoqa_hansansneo_regular"
-                android:textColor="@color/mode_color_text"
-                android:textSize="16sp"
                 app:layout_constraintTop_toBottomOf="@+id/settingFaq" />
 
             <TextView
                 android:id="@+id/settingTest"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="5dp"
+                style="@style/settingSingleTextView"
                 android:layout_marginBottom="30dp"
-                android:background="?selectableItemBackground"
-                android:gravity="center_vertical"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
                 android:text="Test"
-                android:fontFamily="@font/spoqa_hansansneo_regular"
-                android:textColor="@color/mode_color_text"
-                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/settingAppInfo" />
 

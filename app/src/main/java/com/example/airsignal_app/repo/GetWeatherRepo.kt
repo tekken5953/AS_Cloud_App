@@ -27,7 +27,7 @@ class GetWeatherRepo : BaseRepository() {
                 loadSuccessMapData(_getDataResult, response)
             }
             override fun onFailure(call: Call<ApiModel.GetEntireData>, t: Throwable) {
-                Logger.e("날씨 데이터 호출 실패 : " + t.localizedMessage)
+                Logger.e("날씨 데이터 호출 실패 : " + t.stackTraceToString())
             }
         })
     }

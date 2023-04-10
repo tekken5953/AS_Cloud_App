@@ -62,4 +62,11 @@
     <string name="yes">예</string>
     <string name="no">아니오</string>
     <string name="apply">적용</string>
+    <string name="mon">월</string>
+    <string name="tue">화</string>
+    <string name="wen">수</string>
+    <string name="thr">목</string>
+    <string name="fir">금</string>
+    <string name="sat">토</string>
+    <string name="sun">일</string>
 </resources>

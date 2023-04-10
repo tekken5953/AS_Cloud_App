@@ -31,12 +31,7 @@
         <item name="fullscreenTextColor">@color/light_blue_A200</item>
     </style>
 
-    <style name="Theme.AirSignal_App.Starting" tools:targetApi="s">
-        <!-- Customize SplashScreen here. -->
-        <item name="android:windowSplashScreenBackground">@color/main_blue_color</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@drawable/loading_gif</item>
-        <item name="android:windowSplashScreenAnimationDuration">1000</item>
-        <item name="android:windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
-        <item name="android:windowSplashScreenBrandingImage">@drawable/airsignal_logo_color</item>
+    <style name="Theme.AirSignal_App.Starting" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="S">@android:color/transparent</item>
     </style>
 </resources>

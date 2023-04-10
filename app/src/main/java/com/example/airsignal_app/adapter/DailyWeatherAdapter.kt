@@ -34,6 +34,11 @@ class DailyWeatherAdapter(private val context: Context, list: ArrayList<AdapterM
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(mList[position])
+        if (position > 0 && mList[position-1].date == mList[position].date) {
+            holder.date.visibility = View.INVISIBLE
+        } else {
+            holder.date.visibility = View.VISIBLE
+        }
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
@@ -41,8 +46,7 @@ class DailyWeatherAdapter(private val context: Context, list: ArrayList<AdapterM
         private val time: TextView = itemView.findViewById(R.id.itemDailyTime)
         private val image: ImageView = itemView.findViewById(R.id.itemDailySky)
         private val value: TextView = itemView.findViewById(R.id.itemDailyValue)
-        private val date: TextView = itemView.findViewById(R.id.itemDailyDate)
-        private val layout: RelativeLayout = itemView.findViewById(R.id.itemDailyLayout)
+        val date: TextView = itemView.findViewById(R.id.itemDailyDate)
 
         fun bind(dao: AdapterModel.DailyWeatherItem) {
             time.text = dao.time

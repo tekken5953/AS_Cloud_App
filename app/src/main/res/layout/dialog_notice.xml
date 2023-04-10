@@ -17,8 +17,7 @@
 
     <TextView
         android:id="@+id/noticeTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/basicTextView"
         android:layout_alignTop="@+id/noticeBack"
         android:layout_alignBottom="@+id/noticeBack"
         android:layout_centerHorizontal="true"

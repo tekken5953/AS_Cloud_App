@@ -19,8 +19,7 @@
 
     <TextView
         android:id="@+id/changeThemeTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/basicTextView"
         android:text="@string/setting_theme_left"
         android:textSize="16sp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
@@ -42,6 +41,7 @@
             android:id="@+id/systemThemeRb"
             android:layout_width="match_parent"
             android:layout_height="65dp"
+            android:letterSpacing="-0.04"
             android:background="?selectableItemBackground"
             android:button="@null"
             android:fontFamily="@font/spoqa_hansansneo_regular"
@@ -60,6 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:text="@string/theme_light"
+            android:letterSpacing="-0.04"
             android:textSize="16sp"
             android:background="?selectableItemBackground"
             android:paddingTop="5dp"
@@ -78,6 +79,7 @@
             android:layout_height="65dp"
             android:text="@string/theme_dark"
             android:textSize="16sp"
+            android:letterSpacing="-0.04"
             android:background="?selectableItemBackground"
             android:paddingTop="5dp"
             android:button="@null"

@@ -19,8 +19,7 @@
 
     <TextView
         android:id="@+id/appInfoTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/basicTextView"
         android:text="@string/setting_app_data"
         android:textSize="16sp"
         android:fontFamily="@font/spoqa_hansansneo_regular"

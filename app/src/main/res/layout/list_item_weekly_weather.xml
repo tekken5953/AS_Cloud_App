@@ -12,7 +12,6 @@
         <TextView
             android:id="@+id/weeklyDayText"
             style="@style/basicTextView"
-            android:text="@string/monday"
             android:lines="1"
             android:layout_weight="0.25"
             android:layout_marginStart="24dp"
@@ -26,14 +25,12 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="40dp"
-            android:layout_weight="0.2"
-            android:src="@drawable/cloud_test" />
+            android:layout_weight="0.2"/>
 
         <ImageView
             android:id="@+id/weeklyMaxIv"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/sunny_test"
             android:layout_weight="0.2"
             android:layout_marginEnd="40dp"
             android:layout_gravity="center"
@@ -42,7 +39,6 @@
         <TextView
             android:id="@+id/weeklyMinText"
             style="@style/basicTextView"
-            android:text="20˚"
             android:layout_weight="0.07"
             android:gravity="start"
             android:lines="1"
@@ -63,7 +59,6 @@
         <TextView
             android:id="@+id/weeklyMaxText"
             style="@style/basicTextView"
-            android:text="23˚"
             android:gravity="end"
             android:lines="1"
             android:layout_weight="0.07"

@@ -8,7 +8,6 @@
         style="@style/basicTextView"
         android:layout_marginStart="24dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:text="01.13"
         android:layout_centerVertical="true"
         android:textColor="@color/main_gray_color"
         android:textSize="12sp" />
@@ -21,12 +20,11 @@
         android:layout_marginEnd="35dp"
         android:layout_toEndOf="@+id/itemNoticeDate"
         android:ellipsize="end"
+        android:lineSpacingExtra="5dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
         android:gravity="start"
         android:maxLines="2"
         android:layout_centerVertical="true"
-        android:text="가나다 라마 바사아자 차카 타파 하
-가나다 라마 바사아자 차카 타파 하"
         android:textColor="@color/mode_color_text"
         android:textSize="14sp" />
 
