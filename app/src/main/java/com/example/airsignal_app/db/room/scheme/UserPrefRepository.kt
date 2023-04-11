@@ -3,6 +3,7 @@ package com.example.airsignal_app.db.room.scheme
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.example.airsignal_app.db.room.model.PreferenceModel
 
 /**

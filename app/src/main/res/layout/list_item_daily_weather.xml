@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/itemDailyLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_marginEnd="8dp"
-    android:background="@drawable/daily_box_bg"
-    android:id="@+id/itemDailyLayout">
+    android:background="@drawable/daily_box_bg">
 
     <TextView
         android:id="@+id/itemDailyDate"
         style="@style/basicTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
-        android:textSize="12sp"
-        android:fontFamily="@font/spoqa_hansansneo_regular"/>
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/itemDailyTime"
         style="@style/basicTextView"
-        android:layout_centerHorizontal="true"
         android:layout_below="@+id/itemDailyDate"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/spoqa_hansansneo_bold"
         android:textColor="@color/mode_color_text"
@@ -38,12 +38,12 @@
     <TextView
         android:id="@+id/itemDailyValue"
         style="@style/basicTextView"
-        android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:layout_marginBottom="20dp"
-        android:textColor="@color/mode_color_text"
-        android:layout_marginTop="10dp"
+        android:layout_below="@+id/itemDailySky"
         android:layout_centerHorizontal="true"
-        android:textSize="14sp"
-        android:layout_below="@+id/itemDailySky"/>
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:textColor="@color/mode_color_text"
+        android:textSize="14sp" />
 
 </RelativeLayout>

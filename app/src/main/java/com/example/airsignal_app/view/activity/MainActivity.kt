@@ -31,8 +31,10 @@ import com.example.airsignal_app.util.*
 import com.example.airsignal_app.util.ConvertDataType.convertDayOfWeekToKorean
 import com.example.airsignal_app.util.ConvertDataType.getSkyImg
 import com.example.airsignal_app.util.ConvertDataType.settingSpan
+import com.example.airsignal_app.view.SearchDialog
 import com.example.airsignal_app.view.SideMenuClass
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -53,6 +55,7 @@ class MainActivity : AppCompatActivity() {
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(this, dailyWeatherList) }
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
+    private var isCalled = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,6 +69,7 @@ class MainActivity : AppCompatActivity() {
                 dataVM = getDataViewModel
                 // 뷰모델 생성
                 applyGetDataViewModel()
+                GetLocation(this@MainActivity).getLocation()
             }
 
         initializing()
@@ -75,56 +79,8 @@ class MainActivity : AppCompatActivity() {
             .setUpSideMenu(binding.mainSideMenuIv, binding.mainPb)
 
         binding.mainGpsTitleTv.setOnClickListener {
-            @SuppressLint("InflateParams")
-            val searchLayout: View =
-                LayoutInflater.from(this).inflate(R.layout.dialog_search_address, null)
-            ShowDialogClass()
-                .getInstance(this)
-                .setBackPressed(searchLayout.findViewById(R.id.searchBack))
-                .show(searchLayout, true)
-
-            val searchListView: ListView = searchLayout.findViewById(R.id.searchAddressListView)
-            val searchItem = ArrayList<String>()
-            val allTextArray = resources.getStringArray(R.array.address)
-            val adapter =
-                ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, searchItem)
-            val searchView: androidx.appcompat.widget.SearchView =
-                searchLayout.findViewById(R.id.searchAddressView)
-            searchListView.adapter = adapter
-            searchView.requestFocus()
-
-            // 서치 뷰 텍스트 변환 콜벡
-            searchView.setOnQueryTextListener(object : OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return false
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    if (newText!!.isNotEmpty()) {
-                        searchItem.clear()
-                        allTextArray.forEach { allList ->
-                            if (allList.contains(newText)) {
-                                searchItem.add(allList)
-                            }
-                        }
-
-                    } else {
-                        searchItem.clear()
-                    }
-                    adapter.notifyDataSetChanged()
-                    return true
-                }
-            })
-
-            // 검색주소 리스트
-            searchListView.onItemClickListener =
-                AdapterView.OnItemClickListener { parent, view, position, id ->
-                    Logger.t("searchView").d("$position : ${searchItem[position]}")
-                    ToastUtils(this).customDurationMessage(
-                        "$position : ${searchItem[position]}",
-                        500
-                    )
-                }
+            val bottomSheet = SearchDialog(0,supportFragmentManager, BottomSheetDialogFragment().tag)
+            bottomSheet.show(0)
         }
 
         // 위로 스와이프 시 화면 갱신 -> GPS 새로 갱신 + 사이드 메뉴 갱신 + 데이터 갱신
@@ -148,15 +104,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getDataSingleTime() {
-        CoroutineScope(Dispatchers.IO).launch {
-            GetLocation(this@MainActivity).getLocation()
-            delay(100)
+        if (!isCalled) {
+            isCalled = true
             getDataViewModel.loadDataResult(
                 sp.getString("lat").toDouble(),
                 sp.getString("lng").toDouble()
             )
+            binding.mainGpsTitleTv.text = sp.getString(lastAddress)
         }
-        binding.mainGpsTitleTv.text = sp.getString(lastAddress)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

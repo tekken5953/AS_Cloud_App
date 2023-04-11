@@ -35,6 +35,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
                     onGetLocal(it)
                     sp.setString("lat", it.latitude.toString())
                         .setString("lng", it.longitude.toString())
+                    Logger.t("Location").d("${it.latitude},${it.longitude}")
                 }
             }
             .addOnFailureListener {

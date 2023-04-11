@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="dataVM"
             type="com.example.airsignal_app.vmodel.GetWeatherViewModel" />
     </data>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/mainSwipeLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/mainSwipeLayout">
+        android:layout_height="match_parent">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -65,10 +67,10 @@
                     android:id="@+id/mainSideMenuIv"
                     android:layout_width="34dp"
                     android:layout_height="34dp"
-                    android:padding="5dp"
                     android:layout_marginStart="21dp"
                     android:layout_marginTop="25dp"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:padding="5dp"
                     android:src="@drawable/options_menu"
                     app:tint="@color/mode_color_text" />
 
@@ -85,17 +87,17 @@
                     android:paddingEnd="2dp"
                     android:textColor="@color/mode_color_text"
                     android:textSize="16sp"
+                    app:drawableEndCompat="@drawable/bottom_arrow"
                     app:drawableStartCompat="@drawable/gps"
-                    app:drawableTint="@color/mode_color_text"
-                    app:drawableEndCompat="@drawable/bottom_arrow" />
+                    app:drawableTint="@color/mode_color_text" />
 
                 <androidx.core.widget.NestedScrollView
                     android:id="@+id/mainMainScroll"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:overScrollMode="never"
+                    android:layout_below="@+id/mainGpsTitleTv"
                     android:layout_marginTop="15dp"
-                    android:layout_below="@+id/mainGpsTitleTv">
+                    android:overScrollMode="never">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -106,15 +108,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="150dp"
                             android:layout_marginTop="20dp"
-                            app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/mainSunTable"
+                            app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 
                             <ImageView
                                 android:id="@+id/mainSkyImg"
                                 android:layout_width="111dp"
                                 android:layout_height="84dp"
-                                android:layout_gravity="top|center_horizontal"/>
+                                android:layout_gravity="top|center_horizontal" />
 
                             <TextView
                                 android:id="@+id/mainLiveTempValue"
@@ -123,10 +125,10 @@
                                 android:layout_gravity="center"
                                 android:layout_marginStart="10dp"
                                 android:layout_marginTop="5dp"
-                                android:paddingEnd="5dp"
-                                android:paddingStart="5dp"
                                 android:fontFamily="@font/spoqa_hansansneo_bold"
                                 android:letterSpacing="-0.04"
+                                android:paddingStart="5dp"
+                                android:paddingEnd="5dp"
                                 android:textColor="@color/mode_color_text"
                                 android:textSize="80sp" />
 
@@ -163,8 +165,8 @@
                                     style="@style/basicTextView"
                                     android:layout_weight="0.5"
                                     android:fontFamily="@font/spoqa_hansansneo_bold"
-                                    android:lines="1"
                                     android:letterSpacing="-0.04"
+                                    android:lines="1"
                                     android:textColor="@color/main_blue_color"
                                     android:textSize="32sp" />
 
@@ -175,8 +177,8 @@
                                     android:layout_marginStart="5dp"
                                     android:layout_weight="0.5"
                                     android:fontFamily="@font/spoqa_hansansneo_bold"
-                                    android:lines="1"
                                     android:letterSpacing="-0.04"
+                                    android:lines="1"
                                     android:textColor="@color/red"
                                     android:textSize="32sp" />
                             </TableRow>
@@ -416,8 +418,8 @@
                             android:layout_marginStart="24dp"
                             android:layout_marginTop="36dp"
                             android:fontFamily="@font/spoqa_hansansneo_bold"
-                            android:text="@string/daily_weather"
                             android:letterSpacing="-0.04"
+                            android:text="@string/daily_weather"
                             android:textColor="@color/mode_color_text"
                             android:textSize="16sp"
                             android:textStyle="bold"
