@@ -15,13 +15,13 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="20dp"
+        android:lineSpacingExtra="5dp"
         android:layout_toStartOf="@+id/itemfaqArrow"
         android:ellipsize="end"
         android:fontFamily="@font/spoqa_hansansneo_regular"
         android:gravity="center_vertical"
         android:maxEms="18"
-        android:maxLines="2"
-        android:text="가나다 라마바사아 자차카타 파하가 나다라 마바사 아자차 카타파하" />
+        android:maxLines="2"/>
 
     <ImageView
         android:id="@+id/itemfaqArrow"

@@ -12,7 +12,7 @@ import com.example.airsignal_app.login.NaverLogin
  * @author : Lee Jae Young
  * @since : 2023-04-06 오후 5:21
  **/
-class SilentLogin {
+class SilentLoginClass {
     // 플랫폼 별 자동로그인
     fun login(activity: Activity, pb: ProgressBar) {
         when (SharedPreferenceManager(activity).getString(IgnoredKeyFile.lastLoginPlatform)) {

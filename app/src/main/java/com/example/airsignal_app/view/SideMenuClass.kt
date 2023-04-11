@@ -17,7 +17,6 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.EnterPage
-import com.example.airsignal_app.view.activity.MyDeviceActivity
 import com.example.airsignal_app.view.activity.SettingActivity
 import com.google.android.material.navigation.NavigationView
 
@@ -76,7 +75,7 @@ class SideMenuClass(
                 .into(findViewById(R.id.navHeaderProfileImg))
 
             if (sp.getString(IgnoredKeyFile.userEmail) != "") {
-                SilentLogin().login(mContext, pb)
+                SilentLoginClass().login(mContext, pb)
                 findViewById<TextView>(R.id.navHeaderUserId).text = sp.getString(IgnoredKeyFile.userEmail)
             } else findViewById<TextView>(R.id.navHeaderUserId).text =
                 mContext.getString(R.string.please_login)

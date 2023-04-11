@@ -36,15 +36,15 @@ object AdapterModel {
 
     data class DailyWeatherItem(
         val time: String,
-        val img: Drawable,
+        val img: Drawable?,
         val value: String,
         val date: String
     )
 
     data class WeeklyWeatherItem(
         val day: String,
-        val minImg: Drawable,
-        val maxImg: Drawable,
+        val minImg: Drawable?,
+        val maxImg: Drawable?,
         val minText: String,
         val maxText: String
     )

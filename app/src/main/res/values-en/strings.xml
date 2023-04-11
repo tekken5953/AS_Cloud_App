@@ -63,4 +63,11 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="apply">Apply</string>
+    <string name="mon">Mon</string>
+    <string name="tue">Tue</string>
+    <string name="wen">Wen</string>
+    <string name="thr">Thr</string>
+    <string name="fir">Fri</string>
+    <string name="sat">Sat</string>
+    <string name="sun">Sun</string>
 </resources>

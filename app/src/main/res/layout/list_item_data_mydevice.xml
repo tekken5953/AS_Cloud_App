@@ -9,11 +9,9 @@
 
     <TextView
         android:id="@+id/dataListItemSort"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/basicTextView"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
-        android:text="PM2.5"
         android:textSize="16sp" />
 
     <ImageView
@@ -22,24 +20,19 @@
         android:layout_height="50dp"
         android:layout_below="@+id/dataListItemSort"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/sunny_test" />
+        android:layout_marginTop="10dp"/>
 
     <TextView
         android:id="@+id/dataListItemGrade"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/very_bad"
+        style="@style/basicTextView"
         android:textSize="16sp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/dataListItemIv"
         android:layout_marginTop="10dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/basicTextView"
         android:id="@+id/dataListItemValue"
-        android:text="6000 ㎍/㎡"
         android:layout_below="@+id/dataListItemGrade"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"

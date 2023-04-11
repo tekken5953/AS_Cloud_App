@@ -101,9 +101,9 @@ class ApiModel {
         @SerializedName("rnSt7Am")
         val rnSt7Am: Double,
         @SerializedName("wf0Am")
-        val wf0Am: Double,
+        val wf0Am: String,
         @SerializedName("wf0Pm")
-        val wf0Pm: Double,
+        val wf0Pm: String,
         @SerializedName("wf1Am")
         val wf1Am: String,
         @SerializedName("wf1Pm")
@@ -134,6 +134,10 @@ class ApiModel {
         val wf7Pm: String,
         @SerializedName("tempDate")
         val tempDate: String,
+        @SerializedName("taMin0")
+        val taMin0: Double,
+        @SerializedName("taMax0")
+        val taMax0: Double,
         @SerializedName("taMin1")
         val taMin1: Double,
         @SerializedName("taMax1")

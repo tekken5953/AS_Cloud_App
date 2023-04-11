@@ -70,13 +70,17 @@
             android:src="@drawable/kakao_login_large_wide"
             app:layout_constraintTop_toBottomOf="@+id/googleLoginButton" />
 
-        <com.navercorp.nid.oauth.view.NidOAuthLoginButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/naverLoginButton"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="30dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="30dp"
+            android:background="@drawable/pm_box_bg"
+            android:drawableStart="@drawable/naver_icon_small"
+            android:text="네이버 로그인"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
             app:layout_constraintTop_toBottomOf="@+id/kakakoLoginButton" />
 
         <androidx.appcompat.widget.AppCompatButton
