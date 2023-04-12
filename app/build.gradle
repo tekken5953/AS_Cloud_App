@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -48,6 +49,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     // Swipe Refresh Layout
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    // Smart Refresh Layout
+    implementation  'io.github.scwang90:refresh-layout-kernel:2.0.5'      //核心必须依赖
+    implementation  'io.github.scwang90:refresh-header-radar:2.0.5'       //雷达刷新头
+    implementation  'io.github.scwang90:refresh-footer-classics:2.0.5'    //经典加载
 
     // Google Login
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
@@ -87,9 +92,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     // Room
-    def room_version = "2.4.1"
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-runtime:2.5.1"
+    kapt "androidx.room:room-compiler:2.5.1"
 
     // 구글 지도
     implementation 'com.google.android.gms:play-services-maps:18.1.0' // 구글지도 라이브러리
@@ -110,4 +114,7 @@ dependencies {
     testImplementation "io.insert-koin:koin-test-junit4:$koin_android_version"
     // Koin for JUnit 5
     testImplementation "io.insert-koin:koin-test-junit5:$koin_android_version"
+
+    //AS Custom TextView
+    implementation 'com.github.tekken5953:ASCustomText:2.1.1'
 }

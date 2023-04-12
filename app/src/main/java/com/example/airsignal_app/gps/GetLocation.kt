@@ -6,17 +6,17 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
+import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
+import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.db.room.GpsRepository
+import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
-import com.example.airsignal_app.util.ConvertDataType
+import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
 import com.example.airsignal_app.util.ToastUtils
-import com.example.airsignal_app.view.activity.MainActivity
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.*
 
@@ -33,9 +33,10 @@ class GetLocation(private val context: Context) : GetLocationListener {
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     onGetLocal(it)
-                    sp.setString("lat", it.latitude.toString())
-                        .setString("lng", it.longitude.toString())
                     Logger.t("Location").d("${it.latitude},${it.longitude}")
+
+                    //TODO 백그라운드에서 토픽 교체
+
                 }
             }
             .addOnFailureListener {
@@ -66,7 +67,8 @@ class GetLocation(private val context: Context) : GetLocationListener {
                         }"
                     )
 
-                    sp.setString(lastAddress, "${it.locality} ${it.thoroughfare}")
+                    updateCurrentAddress(lat, lng,
+                        "${it.locality} ${it.thoroughfare}", getCurrentTime())
                 }
             } else {
                 writeLogCause(
@@ -82,6 +84,18 @@ class GetLocation(private val context: Context) : GetLocationListener {
                 "Background Location",
                 "Error : ${e.printStackTrace()}"
             )
+        }
+    }
+
+    private fun updateCurrentAddress(lat: Double, lng: Double, addr: String, time: Long) {
+        val roomDB = GpsRepository(context)
+        val model = GpsEntity(CURRENT_GPS_ID, lat, lng, addr, time)
+        if (roomDB.findAll().isNotEmpty()) {
+            roomDB.update(model)
+            Logger.t(TAG_D).d("Update GPS In GetLocation")
+        } else {
+            roomDB.insert(model)
+            Logger.t(TAG_D).d("Insert GPS In GetLocation")
         }
     }
 }

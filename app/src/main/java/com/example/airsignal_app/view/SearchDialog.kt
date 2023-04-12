@@ -3,30 +3,37 @@ package com.example.airsignal_app.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
-import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
+import android.os.Message
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnKeyListener
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import android.widget.PopupMenu.OnDismissListener
 import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.AppCompatEditText
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
-import com.example.airsignal_app.adapter.CurrentAddressAdapter
-import com.example.airsignal_app.util.ToastUtils
+import com.example.airsignal_app.adapter.AddressListAdapter
+import com.example.airsignal_app.adapter.AirQualityAdapter
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
+import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.db.room.GpsRepository
+import com.example.airsignal_app.db.room.model.GpsEntity
+import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
+import com.example.airsignal_app.util.RefreshUtils
+import com.example.airsignal_app.view.activity.MainActivity
+import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * @author : Lee Jae Young
@@ -35,7 +42,7 @@ import com.orhanobut.logger.Logger
 class SearchDialog(lId: Int, private val fm: FragmentManager, private val tagId: String?) : BottomSheetDialogFragment() {
     private val layoutId = lId
     private val currentList = ArrayList<String>()
-    private val currentAdapter by lazy { CurrentAddressAdapter(requireContext(),currentList) }
+    private val currentAdapter by lazy { AddressListAdapter(requireContext(),currentList) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,14 +63,16 @@ class SearchDialog(lId: Int, private val fm: FragmentManager, private val tagId:
         if (layoutId == 0) {
             val changeAddressView: TextView = view.findViewById(R.id.changeAddressView)
             changeAddressView.setOnClickListener {
+                dismissNow()
                 SearchDialog(1,fm,tagId).showNow(fm,tagId)
             }
 
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
-            addCurrentItem("경기도 성남시중원구 성남동")
-                .addCurrentItem("서울특별시 종로구 이화동")
-                .addCurrentItem("경상북도 김천시 봉산면")
+            val db = GpsRepository(requireContext())
+            db.findAll().reversed().forEach {
+                addCurrentItem(it.addr.toString())
+            }
 
             currentAdapter.notifyDataSetChanged()
         } else {
@@ -73,6 +82,7 @@ class SearchDialog(lId: Int, private val fm: FragmentManager, private val tagId:
             val searchBack: ImageView = view.findViewById(R.id.searchBack)
             searchBack.setOnClickListener {
                 dismissNow()
+                show(0)
             }
             val listView: ListView = view.findViewById(R.id.searchAddressListView)
 
@@ -117,23 +127,30 @@ class SearchDialog(lId: Int, private val fm: FragmentManager, private val tagId:
         listView.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
                 Logger.t("searchView").d("$position : ${searchItem[position]}")
-                ToastUtils(requireActivity()).customDurationMessage(
-                    "$position : ${searchItem[position]}",
-                    500
-                )
+                val db = GpsRepository(requireContext())
+                val model = GpsEntity(db.findAll().size, null, null, searchItem[position], getCurrentTime())
+                db.insert(model)
+                this.dismissNow()
+                show(0)
             }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
+        dialog.setCanceledOnTouchOutside(true)
         dialog.setOnShowListener { dialogInterface ->
             val bottomSheetDialog = dialogInterface as BottomSheetDialog
             setupRatio(bottomSheetDialog)
         }
+
         if (layoutId == 1)
             dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationSide
-        else
+        else {
             dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationUp
+
+            dialog.setDismissMessage(msg)
+        }
+
         return dialog
     }
 
@@ -149,6 +166,13 @@ class SearchDialog(lId: Int, private val fm: FragmentManager, private val tagId:
 
     private fun addCurrentItem(address: String) : SearchDialog {
         currentList.add(address)
+        currentAdapter.setOnItemClickListener(object : AddressListAdapter.OnItemClickListener {
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onItemClick(v: View, position: Int) {
+                dismissNow()
+                SharedPreferenceManager(v.context).setString(lastAddress, currentList[position])
+            }
+        })
         return this
     }
 
@@ -169,7 +193,7 @@ class SearchDialog(lId: Int, private val fm: FragmentManager, private val tagId:
     private fun getWindowHeight(): Int {
         // Calculate window height for fullscreen use
         val displayMetrics = DisplayMetrics()
-        (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        @Suppress("DEPRECATION") (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
         return displayMetrics.heightPixels
     }
 }

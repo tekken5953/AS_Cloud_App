@@ -143,14 +143,14 @@ object ConvertDataType {
     // 요일 변환
     @RequiresApi(Build.VERSION_CODES.O)
     fun convertDayOfWeekToKorean(context: Context, datOfWeek: Int) : String {
-        return when(datOfWeek) {
-            1 -> context.getString(R.string.mon)
+        return when(datOfWeek % 7) {
+            1-> context.getString(R.string.mon)
             2 -> context.getString(R.string.tue)
             3 -> context.getString(R.string.wen)
             4 -> context.getString(R.string.thr)
             5 -> context.getString(R.string.fir)
             6 -> context.getString(R.string.sat)
-            7 -> context.getString(R.string.sun)
+            0 -> context.getString(R.string.sun)
             else -> ""
         }
     }

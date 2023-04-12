@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AirSignal_App</string>
+    <string name="app__name">AirSignal_App</string>
     <string name="main_gps_title">분당구 야탑동</string>
     <string name="main_today_weather">오늘의 날씨</string>
     <string name="my_device_title">내 기기</string>

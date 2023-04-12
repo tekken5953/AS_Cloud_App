@@ -185,8 +185,12 @@ class ApiModel {
         val so2Value: Double,
         @SerializedName("coGrade")
         val coGrade: Int,
+        @SerializedName("coValue")
+        val coValue: Double,
         @SerializedName("khaiGrade")
         val khaiGrade: Int,
+        @SerializedName("khaiValue")
+        val khaiValue: Int,
         @SerializedName("mangName")
         val mangName: String,
         @SerializedName("no2Value")

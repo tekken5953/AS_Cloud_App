@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.kakao.sdk.common.util.Utility
 import com.orhanobut.logger.AndroidLogAdapter
@@ -33,7 +34,7 @@ class LoggerUtil {
     fun logJsonTimberDebug(tag: String, json: String) {
         Timber.tag(tag).d(
             GsonBuilder().setPrettyPrinting().create().toJson(
-                Gson().fromJson(json, JsonArray::class.java)
+                Gson().fromJson(json, JsonObject::class.java)
             )
         )
     }

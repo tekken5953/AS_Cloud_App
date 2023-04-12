@@ -8,6 +8,8 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 
@@ -31,8 +33,8 @@ class SubFCM : FirebaseMessagingService() {
     }
 
     /** 토픽 구독 설정 **/
-    fun subTopic(s: String) {
-        FirebaseMessaging.getInstance().subscribeToTopic(s)
+    fun subTopic(topic: String) {
+        FirebaseMessaging.getInstance().subscribeToTopic(topic)
             .addOnCompleteListener { task ->
                 var msg = "Subscribed"
                 if (!task.isSuccessful) {
@@ -43,8 +45,8 @@ class SubFCM : FirebaseMessagingService() {
     }
 
     // 토픽 구독 해제
-    fun unSubTopic(s: String) {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(s)
+    fun unSubTopic(topic: String) {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic)
             .addOnCompleteListener { task ->
                 var msg = "UnSubscribed"
                 if (!task.isSuccessful) {
@@ -55,16 +57,19 @@ class SubFCM : FirebaseMessagingService() {
     }
 
     // 현재 토큰정보 불러오기
-    fun getToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Timber.tag("Notification").w("Fetching FCM registration token failed by $task.exception")
-                return@OnCompleteListener
-            }
+    suspend fun getToken(): String? {
+        val token = withContext(Dispatchers.IO) {
+            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Timber.tag("Notification").w("Fetching FCM registration token failed by $task.exception")
+                    return@OnCompleteListener
+                }
 
-            val token = task.result
-            Timber.tag("Notification").d("FCM 토큰 : $token")
-        })
+                val token = task.result
+                Timber.tag("Notification").d("FCM 토큰 : $token")
+            }).result
+        }
+        return token
     }
 
     // 새로운 토큰 발행
