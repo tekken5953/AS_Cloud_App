@@ -19,11 +19,8 @@ class GetWeatherViewModel : BaseViewModel("날씨 데이터 호출") {
     fun loadDataResult(lat: Double, lng: Double) {
         if (!isLoaded) {
             job = CoroutineScope(Dispatchers.IO).launch {
-                withContext(coroutineContext) {
-                    repo.loadDataResult(lat,lng)
-                }
+                repo.loadDataResult(lat,lng)
                 isLoaded = true
-                onCleared()
             }
         }
     }

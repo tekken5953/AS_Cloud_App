@@ -65,7 +65,7 @@ class SideMenuClass(
         navView.getHeaderView(0).findViewById<TableRow>(R.id.headerTr)
             .setOnClickListener {
                 if (sp.getString(IgnoredKeyFile.lastLoginPlatform) == "")
-                    EnterPage(mContext as Activity).toLogin()
+                    EnterPage(mContext).toLogin()
             }
 
         // 로그인 이력이 없을 시 기본 메시지로 설정

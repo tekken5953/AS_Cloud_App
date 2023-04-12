@@ -49,9 +49,6 @@ dependencies {
     // Swipe Refresh Layout
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    // Splash Screen
-    implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
-
     // Google Login
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
     // Kakao Login
@@ -113,5 +110,4 @@ dependencies {
     testImplementation "io.insert-koin:koin-test-junit4:$koin_android_version"
     // Koin for JUnit 5
     testImplementation "io.insert-koin:koin-test-junit5:$koin_android_version"
-
 }

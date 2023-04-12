@@ -1,25 +1,22 @@
 package com.example.airsignal_app.db.room.scheme
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.example.airsignal_app.db.room.model.GpsModel
 
 @Dao
 interface GpsRepository {
-    @Query("SELECT * FROM DBModel.GetGPS")
-    fun findGps(): GpsModel
-
-    @Query("SELECT * FROM DBModel.GetGPS WHERE id=id")
-    fun findGpsByIndex(index: Int)
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertGps(gps: GpsModel.GetGPS)
+    fun insertNewGPS(gps: GpsModel.GpsEntity)
 
-    @Query("DELETE FROM DBModel.GetGPS WHERE id = id")
-    suspend fun deleteFromIndex(index: Int)
+    @Update
+    fun updateGPS(gps: GpsModel.GpsEntity)
 
-    @Query("DELETE FROM DBModel.GetGPS")
-    suspend fun deleteAll()
+    @Query("SELECT * FROM GpsModel.GpsEntity")
+    fun findAll(): List<GpsModel.GpsEntity>
+
+    @Query("SELECT * FROM GpsModel.GpsEntity WHERE id = id")
+    fun findById(id: Int)
+
+    @Query("DELETE FROM GpsModel.GpsEntity WHERE addr = addr")
+    fun deleteFromAddr(addr: String)
 }

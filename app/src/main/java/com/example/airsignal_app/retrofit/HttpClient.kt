@@ -1,13 +1,12 @@
 package com.example.airsignal_app.retrofit
 
 import android.annotation.SuppressLint
-import com.example.airsignal_app.dao.IgnoredKeyFile.springServerURL
+import com.example.airsignal_app.dao.IgnoredKeyFile.localServerURL
 import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.util.LoggerUtil
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.orhanobut.logger.Logger
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -31,7 +30,6 @@ object HttpClient {
                 Logger.t(TAG_R).d("API Instance 생성")
             }
         }
-
         /** OkHttp 빌드
          *
          * 클라이언트 빌더 Interceptor 구분 **/
@@ -69,7 +67,7 @@ object HttpClient {
         /** 서버 URL 주소에 연결, GSON Convert 활성화**/
         val retrofit: Retrofit by lazy {
             Retrofit.Builder()
-                .baseUrl(springServerURL)
+                .baseUrl(localServerURL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(clientBuilder.build())
                 .build()

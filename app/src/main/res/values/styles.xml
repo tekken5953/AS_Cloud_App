@@ -10,7 +10,7 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
-    <style name="DialogAnimation">
+    <style name="DialogAnimationUp">
         <item name="android:windowEnterAnimation">@anim/trans_bottom_to_top</item>
         <item name="android:windowExitAnimation">@anim/trans_top_to_bottom</item>
     </style>
@@ -67,6 +67,11 @@
     <declare-styleable name="Common">
         <attr name="android:src" />
     </declare-styleable>
+
+    <style name="DialogAnimationSide">
+        <item name="android:windowEnterAnimation">@anim/trans_right_to_left</item>
+        <item name="android:windowExitAnimation">@anim/trans_left_to_right</item>
+    </style>
 
 
 </resources>
