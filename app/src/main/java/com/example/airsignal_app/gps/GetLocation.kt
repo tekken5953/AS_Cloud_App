@@ -35,7 +35,6 @@ class GetLocation(private val context: Context) : GetLocationListener {
                 location?.let {
                     onGetLocal(it)
                     Logger.t(TAG_L).d("${it.latitude},${it.longitude}")
-
                     //TODO 백그라운드에서 토픽 교체
 
                 }
@@ -68,8 +67,10 @@ class GetLocation(private val context: Context) : GetLocationListener {
                         }"
                     )
 
-                    updateCurrentAddress(lat, lng,
-                        "${it.adminArea} ${it.locality} ${it.thoroughfare}", getCurrentTime())
+                    updateCurrentAddress(
+                        lat, lng,
+                        "${it.locality} ${it.thoroughfare}", getCurrentTime()
+                    )
                 }
             } else {
                 writeLogCause(

@@ -1,7 +1,6 @@
 package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
-import android.content.DialogInterface
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
@@ -17,12 +16,10 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.example.airsignal_app.R
-import com.example.airsignal_app.adapter.AddressListAdapter
 import com.example.airsignal_app.adapter.AirQualityAdapter
 import com.example.airsignal_app.adapter.DailyWeatherAdapter
 import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
 import com.example.airsignal_app.dao.AdapterModel
-import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
@@ -47,7 +44,6 @@ import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
 import java.util.*
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
@@ -60,7 +56,7 @@ class MainActivity : AppCompatActivity() {
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
     private val airQualityList = ArrayList<AdapterModel.AirQualityItem>()
-    private val airQualityAdapter by lazy { AirQualityAdapter(this, airQualityList)}
+    private val airQualityAdapter by lazy { AirQualityAdapter(this, airQualityList) }
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(this, dailyWeatherList) }
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
 
@@ -92,22 +88,18 @@ class MainActivity : AppCompatActivity() {
             .setUpSideMenu(binding.mainSideMenuIv, binding.mainPb)
 
         binding.mainGpsTitleTv.setOnClickListener {
-            val bottomSheet = SearchDialog(this,0 ,supportFragmentManager, BottomSheetDialogFragment().tag)
+            val bottomSheet =
+                SearchDialog(this, 0, supportFragmentManager, BottomSheetDialogFragment().tag)
             bottomSheet.show(0)
-//            bottomSheet.currentAdapter.let { adapter ->
-//                bottomSheet.currentList.let { list ->
-//                    adapter.setOnItemClickListener(object : AddressListAdapter.OnItemClickListener {
-//                        @RequiresApi(Build.VERSION_CODES.O)
-//                        override fun onItemClick(v: View, position: Int) {
-//                            bottomSheet.dismissNow()
-//                            SharedPreferenceManager(v.context).setString(lastAddress, list[position])
-//                            Handler(Looper.getMainLooper()).postDelayed( {
-//                                RefreshUtils(this@MainActivity).refreshActivity()
-//                            },1000)
-//                        }
-//                    })
-//                }
-//            }
+        }
+
+        binding.mainGpsFix.setOnClickListener {
+            showPB()
+            GetLocation(this).getLocation()
+            Handler(Looper.getMainLooper()).postDelayed({
+                loadCurrentAddr(GpsRepository(this))
+                hidePB()
+            }, 1500)
         }
 
         val refreshLayout = findViewById<View>(R.id.mainSwipeLayout) as RefreshLayout
@@ -117,37 +109,56 @@ class MainActivity : AppCompatActivity() {
             setFinishOnTouchOutside(false)
             setOnRefreshListener {
                 it.finishRefresh(2000)
-                Handler(Looper.getMainLooper()).postDelayed ({
+                Handler(Looper.getMainLooper()).postDelayed({
                     getDataSingleTime()
-                },2000)
+                }, 2000)
             }
         }
     }
 
     private fun getDataSingleTime() {
         val db = GpsRepository(this)
-        println(db.findById(CURRENT_GPS_ID))
         if (SharedPreferenceManager(this).getString(lastAddress) == db.findById(CURRENT_GPS_ID).addr
             || SharedPreferenceManager(this).getString(lastAddress) == ""
         ) {
-            getDataViewModel.loadDataResult(
-                db.findById(CURRENT_GPS_ID).lat!!,
-                db.findById(CURRENT_GPS_ID).lng!!,
-                null
-            )
-            Logger.t(TAG_D)
-                .d("${db.findById(CURRENT_GPS_ID).lat},${db.findById(CURRENT_GPS_ID).lng}")
-
-            binding.mainGpsTitleTv.text = db.findById(CURRENT_GPS_ID).addr
+            loadCurrentAddr(db)
         } else {
-            getDataViewModel.loadDataResult(
-                null,
-                null,
-                SharedPreferenceManager(this).getString(lastAddress)
-            )
-            Logger.t(TAG_D).d(SharedPreferenceManager(this).getString(lastAddress))
-            binding.mainGpsTitleTv.text = SharedPreferenceManager(this).getString(lastAddress)
+            loadSavedAddr()
         }
+    }
+
+    private fun loadCurrentAddr(db: GpsRepository): GpsRepository {
+        SharedPreferenceManager(this).setString(lastAddress, db.findById(CURRENT_GPS_ID).addr!!)
+        getDataViewModel.loadDataResult(
+            db.findById(CURRENT_GPS_ID).lat!!,
+            db.findById(CURRENT_GPS_ID).lng!!,
+            null
+        )
+        Logger.t(TAG_D)
+            .d("${db.findById(CURRENT_GPS_ID).lat},${db.findById(CURRENT_GPS_ID).lng}")
+
+        binding.mainGpsTitleTv.text = db.findById(CURRENT_GPS_ID).addr
+        return db
+    }
+
+    private fun loadSavedAddr() {
+        getDataViewModel.loadDataResult(
+            null,
+            null,
+            SharedPreferenceManager(this).getString(lastAddress)
+        )
+        Logger.t(TAG_D).d(SharedPreferenceManager(this).getString(lastAddress))
+        binding.mainGpsTitleTv.text = SharedPreferenceManager(this).getString(lastAddress)
+    }
+
+    private fun showPB() {
+        binding.mainPbLayout.visibility = View.VISIBLE
+        binding.mainPbLayout.bringToFront()
+    }
+
+    private fun hidePB() {
+        binding.mainPbLayout.visibility = View.GONE
+        binding.mainSwipeLayout.bringToFront()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -199,7 +210,7 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
-    fun applyGetDataViewModel() : MainActivity {
+    fun applyGetDataViewModel(): MainActivity {
         getDataViewModel.getDataResult().observe(this) {
             it?.let { result ->
                 val realtime = result.realtime[0]
@@ -232,16 +243,17 @@ class MainActivity : AppCompatActivity() {
 
                 binding.mainLiveTempValue.text = realtime.temp.roundToInt().toString() + "˚"
                 binding.mainSunRiseValue.text =
-                    sun.sunrise.substring(0, 2)+ ":" + sun.sunrise.substring(2, sun.sunrise.length)
+                    sun.sunrise.substring(0, 2) + ":" + sun.sunrise.substring(2, sun.sunrise.length)
                 binding.mainSunSetValue.text =
                     sun.sunset.substring(0, 2) + ":" + sun.sunset.substring(2, sun.sunset.length)
                 binding.mainSkyImg.setImageDrawable(getSkyImg(this, realtime.sky))
                 binding.mainSkyValue.text = realtime.sky
                 binding.mainHumidValue.text = realtime.humid.roundToInt().toString() + "%"
-                binding.mainWindValue.text = realtime.windSpeed.roundToInt().toString() + "m/s, " + realtime.vector
+                binding.mainWindValue.text =
+                    realtime.windSpeed.roundToInt().toString() + "m/s, " + realtime.vector
                 binding.mainRainPerValue.text = realtime.rainP.roundToInt().toString() + "%"
-                binding.mainPm10Grade.setGradeText((air.pm10Grade-1).toString())
-                binding.mainPm2p5Grade.setGradeText((air.pm25Grade-1).toString())
+                binding.mainPm10Grade.setGradeText((air.pm10Grade - 1).toString())
+                binding.mainPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
                 binding.mainMinTemp.text = "${filteringNullData(week.taMin0)}˚"
                 binding.mainMaxTemp.text = "${filteringNullData(week.taMax0)}˚"
 
@@ -268,12 +280,12 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
 
-                addAirQualityItem("통합 대기\n환경수치",air.khaiValue.toString())
-                addAirQualityItem("미세먼지",air.pm10Value.toInt().toString())
-                addAirQualityItem("초미세먼지",air.pm25Value.toString())
-                addAirQualityItem("일산화탄소",air.coValue.toString())
-                addAirQualityItem("오존",air.o3Value.toString())
-                addAirQualityItem("이산화황",air.so2Value.toString())
+                addAirQualityItem("통합 대기\n환경수치", air.khaiValue.toString())
+                addAirQualityItem("미세먼지", air.pm10Value.toInt().toString())
+                addAirQualityItem("초미세먼지", air.pm25Value.toString())
+                addAirQualityItem("일산화탄소", air.coValue.toString())
+                addAirQualityItem("오존", air.o3Value.toString())
+                addAirQualityItem("이산화황", air.so2Value.toString())
 
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
@@ -310,7 +322,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addSkeletonItem() {
-        val itemDaily = AdapterModel.DailyWeatherItem("",null,"","")
+        val itemDaily = AdapterModel.DailyWeatherItem("", null, "", "")
         val itemWeekly = AdapterModel.WeeklyWeatherItem("", null, null, "", "")
 
         for (i: Int in 0..7) {

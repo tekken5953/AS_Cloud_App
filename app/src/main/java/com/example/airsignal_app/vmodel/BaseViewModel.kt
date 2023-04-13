@@ -8,8 +8,6 @@ open class BaseViewModel(msg: String?) : ViewModel() {
     var message = msg
     var job: Job? = null
 
-    var isLoaded = false
-
     override fun onCleared() {
         super.onCleared()
         if (job != null)

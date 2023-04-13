@@ -42,8 +42,7 @@ class FaqAdapter(private val context: Context, list: ArrayList<String>) :
         holder.bind(mList[position])
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
-    {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val headLine: TextView = itemView.findViewById(R.id.itemFaqText)
 
         fun bind(dao: String) {

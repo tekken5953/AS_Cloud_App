@@ -54,6 +54,7 @@ class GpsRepository(private val context: Context) {
     }
 
     fun clearDB() {
+        Logger.t(TAG_D).d("ClearDB Model")
         getInstance().clearDB()
     }
 }

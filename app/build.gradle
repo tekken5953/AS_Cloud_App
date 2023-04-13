@@ -102,7 +102,7 @@ dependencies {
     // Work Manager
     implementation "androidx.work:work-runtime-ktx:2.7.0"
 
-    //View Pager2
+    // View Pager2
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
 
     def koin_android_version = "3.3.2"

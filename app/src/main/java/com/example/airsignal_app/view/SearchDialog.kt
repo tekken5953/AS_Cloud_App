@@ -89,9 +89,7 @@ class SearchDialog(mActivity: Activity,
                 override fun onItemClick(v: View, position: Int) {
                     dismissNow()
                     SharedPreferenceManager(activity).setString(lastAddress, currentList[position])
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        RefreshUtils(activity).refreshActivity()
-                    }, 1000)
+                    RefreshUtils(activity).refreshActivityAfterSecond(1)
                 }
             })
 
@@ -136,7 +134,6 @@ class SearchDialog(mActivity: Activity,
                             searchItem.add(allList)
                         }
                     }
-
                 } else {
                     searchItem.clear()
                 }
