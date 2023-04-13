@@ -4,16 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="dataVM"
             type="com.example.airsignal_app.vmodel.GetWeatherViewModel" />
     </data>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
         android:id="@+id/mainSwipeLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:srlPrimaryColor="@color/main_blue_color"
+        app:srlAccentColor="@android:color/white"
+        app:srlEnablePreviewInEditMode="false">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -374,9 +376,10 @@
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <com.aslib.AsTextView
                                 android:id="@+id/mainPm10Grade"
                                 style="@style/basicTextView"
+                                app:sort="grade"
                                 android:layout_marginStart="10dp"
                                 android:layout_weight="0.25"
                                 android:fontFamily="@font/spoqa_hansansneo_regular"
@@ -401,9 +404,10 @@
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
 
-                            <TextView
+                            <com.aslib.AsTextView
                                 android:id="@+id/mainPm2p5Grade"
                                 style="@style/basicTextView"
+                                app:sort="grade"
                                 android:layout_marginStart="10dp"
                                 android:layout_weight="0.25"
                                 android:fontFamily="@font/spoqa_hansansneo_regular"
@@ -462,21 +466,46 @@
                             android:layout_marginStart="24dp"
                             android:layout_marginTop="12dp"
                             android:layout_marginEnd="24dp"
-                            android:layout_marginBottom="50dp"
                             android:background="@drawable/daily_recycler_bg"
                             android:clipToPadding="false"
                             android:nestedScrollingEnabled="false"
                             android:paddingTop="18dp"
                             android:paddingBottom="18dp"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/mainWeeklyWeatherTitle"
-                            tools:itemCount="7"
                             tools:listitem="@layout/list_item_weekly_weather" />
+
+                        <TextView
+                            android:id="@+id/mainAirQualityTitle"
+                            style="@style/basicTextView"
+                            android:layout_marginTop="36dp"
+                            android:fontFamily="@font/spoqa_hansansneo_bold"
+                            android:text="외부 공기질 데이터"
+                            android:textColor="@color/mode_color_text"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="@+id/mainDailyWeatherTitle"
+                            app:layout_constraintTop_toBottomOf="@+id/mainWeeklyWeatherRv" />
+
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/mainAirQualityRv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:listitem="@layout/list_item_quality"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginEnd="24dp"
+                            android:layout_marginBottom="50dp"
+                            android:background="@drawable/daily_recycler_bg"
+                            android:orientation="horizontal"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/mainAirQualityTitle"/>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.core.widget.NestedScrollView>
             </RelativeLayout>
         </RelativeLayout>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 </layout>

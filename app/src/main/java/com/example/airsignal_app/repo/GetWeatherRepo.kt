@@ -17,8 +17,8 @@ class GetWeatherRepo : BaseRepository() {
     var _getDataResult =
         MutableLiveData<ApiModel.GetEntireData>()
 
-    fun loadDataResult(lat: Double, lng: Double) {
-        val getDataMap: Call<ApiModel.GetEntireData> = mMyAPIImpl.getForecast(lat,lng)
+    fun loadDataResult(lat: Double?, lng: Double?, addr: String?) {
+        val getDataMap: Call<ApiModel.GetEntireData> = mMyAPIImpl.getForecast(lat,lng,addr)
         getDataMap.enqueue(object : Callback<ApiModel.GetEntireData> {
             override fun onResponse(
                 call: Call<ApiModel.GetEntireData>,

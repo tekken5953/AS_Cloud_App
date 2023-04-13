@@ -77,4 +77,13 @@ object AdapterModel {
         val title: String,
         val content: Any?
     )
+
+    data class AirQualityItem(
+        val title: String,
+        val data: String?
+    )
+
+    data class AddressListItem(
+        val addr: String
+    )
 }

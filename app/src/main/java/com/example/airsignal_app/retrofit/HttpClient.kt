@@ -2,6 +2,7 @@ package com.example.airsignal_app.retrofit
 
 import android.annotation.SuppressLint
 import com.example.airsignal_app.dao.IgnoredKeyFile.localServerURL
+import com.example.airsignal_app.dao.IgnoredKeyFile.springServerURL
 import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.util.LoggerUtil
 import com.google.gson.GsonBuilder
@@ -45,6 +46,7 @@ object HttpClient {
                         // Timber 와 Gson setPrettyPrinting 를 이용해 json 을 보기 편하게 표시해준다.
                         LoggerUtil().getInstance().logJsonTimberDebug("Timber", message)
                     } catch (m: JsonSyntaxException) {
+                        Timber.tag("Timber").e(m.localizedMessage!!.toString())
                         Timber.tag("Timber").e(message)
                     }
                 }
@@ -67,7 +69,7 @@ object HttpClient {
         /** 서버 URL 주소에 연결, GSON Convert 활성화**/
         val retrofit: Retrofit by lazy {
             Retrofit.Builder()
-                .baseUrl(localServerURL)
+                .baseUrl(springServerURL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(clientBuilder.build())
                 .build()

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">AirSignal_App</string>
+    <string name="app__name">AirSignal_App</string>
     <string name="main_gps_title">Yatap-dong, Bundang-gu</string>
     <string name="main_today_weather">today\'s weather</string>
     <string name="my_device_title">My Product</string>

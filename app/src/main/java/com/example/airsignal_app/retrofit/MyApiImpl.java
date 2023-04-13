@@ -60,7 +60,8 @@ public interface MyApiImpl {
     @GET("forecast")
     Call<ApiModel.GetEntireData> getForecast(
             @Query("lat") Double lat,
-            @Query("lng") Double lng);
+            @Query("lng") Double lng,
+            @Query("addr") String addr);
 
     @GET("forecast/realtime")
     Call<List<ApiModel.RealTimeData>> getRealTime(
