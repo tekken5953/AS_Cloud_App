@@ -66,8 +66,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        getDataSingleTime()
         Logger.t(TAG_L).d("onResume")
+        GetLocation(this@MainActivity).getLocation()
+        getDataSingleTime()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -84,19 +85,29 @@ class MainActivity : AppCompatActivity() {
                 applyGetDataViewModel()
             }
 
-        CompletableFuture.supplyAsync {
-            GetLocation(this@MainActivity).getLocation()
-        }.thenAccept {
-            initializing()
-        }
+        initializing()
 
         // 사이드 메뉴 세팅
         SideMenuClass(this, binding.mainDrawerLayout, binding.mainNavView, binding.mainLayout)
             .setUpSideMenu(binding.mainSideMenuIv, binding.mainPb)
 
         binding.mainGpsTitleTv.setOnClickListener {
-            val bottomSheet = SearchDialog(0,supportFragmentManager, BottomSheetDialogFragment().tag)
+            val bottomSheet = SearchDialog(this,0 ,supportFragmentManager, BottomSheetDialogFragment().tag)
             bottomSheet.show(0)
+//            bottomSheet.currentAdapter.let { adapter ->
+//                bottomSheet.currentList.let { list ->
+//                    adapter.setOnItemClickListener(object : AddressListAdapter.OnItemClickListener {
+//                        @RequiresApi(Build.VERSION_CODES.O)
+//                        override fun onItemClick(v: View, position: Int) {
+//                            bottomSheet.dismissNow()
+//                            SharedPreferenceManager(v.context).setString(lastAddress, list[position])
+//                            Handler(Looper.getMainLooper()).postDelayed( {
+//                                RefreshUtils(this@MainActivity).refreshActivity()
+//                            },1000)
+//                        }
+//                    })
+//                }
+//            }
         }
 
         val refreshLayout = findViewById<View>(R.id.mainSwipeLayout) as RefreshLayout
@@ -117,7 +128,8 @@ class MainActivity : AppCompatActivity() {
         val db = GpsRepository(this)
         println(db.findById(CURRENT_GPS_ID))
         if (SharedPreferenceManager(this).getString(lastAddress) == db.findById(CURRENT_GPS_ID).addr
-            || SharedPreferenceManager(this).getString(lastAddress) == "") {
+            || SharedPreferenceManager(this).getString(lastAddress) == ""
+        ) {
             getDataViewModel.loadDataResult(
                 db.findById(CURRENT_GPS_ID).lat!!,
                 db.findById(CURRENT_GPS_ID).lng!!,
@@ -127,7 +139,6 @@ class MainActivity : AppCompatActivity() {
                 .d("${db.findById(CURRENT_GPS_ID).lat},${db.findById(CURRENT_GPS_ID).lng}")
 
             binding.mainGpsTitleTv.text = db.findById(CURRENT_GPS_ID).addr
-
         } else {
             getDataViewModel.loadDataResult(
                 null,

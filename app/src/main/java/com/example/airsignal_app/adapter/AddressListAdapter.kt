@@ -1,16 +1,24 @@
 package com.example.airsignal_app.adapter
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
+import android.telephony.CarrierConfigManager.Gps
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
+import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.db.room.GpsRepository
 
 /**
  * @author : Lee Jae Young
@@ -19,6 +27,7 @@ import com.example.airsignal_app.db.SharedPreferenceManager
 class AddressListAdapter(private val context: Context, list: ArrayList<String>) :
     RecyclerView.Adapter<AddressListAdapter.ViewHolder>() {
     private val mList = list
+    private var visible = false
 
     private lateinit var onClickListener: OnItemClickListener
 
@@ -51,8 +60,11 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
         private val address: TextView = itemView.findViewById(R.id.listCurrentAddressText)
         private val checked: ImageView = itemView.findViewById(R.id.listCurrentAddressChecked)
         private val gpsImg: ImageView = itemView.findViewById(R.id.listCurrentAddressImg)
+        private val delete: TextView = itemView.findViewById(R.id.listCurrentAddressDelete)
 
         fun bind(dao: String) {
+            val db = GpsRepository(context)
+
             address.text = dao
             if (dao == SharedPreferenceManager(context).getString(lastAddress)) {
                 checked.visibility = View.VISIBLE
@@ -60,8 +72,29 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
                 checked.visibility = View.GONE
             }
 
-            if (adapterPosition == 0) {
+            if (mList[adapterPosition] == db.findById(CURRENT_GPS_ID).addr) {
                 gpsImg.setImageDrawable(ResourcesCompat.getDrawable(context.resources, R.drawable.fixed_gps, null))
+            }
+
+            if (adapterPosition != 0 && visible) {
+                delete.visibility = View.VISIBLE
+            } else {
+                delete.visibility = View.GONE
+            }
+
+            delete.setOnClickListener {
+                AlertDialog.Builder(context).apply {
+                    setMessage("${address.text}를 삭제하시겠습니까?")
+                    setPositiveButton("예") { _, _ ->
+                        db.deleteFromAddress(address.text.toString())
+                        mList.removeAt(adapterPosition)
+                        notifyItemRemoved(adapterPosition)
+                        updateCheckBoxVisible(false)
+                    }
+
+                    setNegativeButton("아니오"
+                    ) { p0, _ -> p0!!.dismiss() }
+                }.show()
             }
 
             itemView.setOnClickListener {
@@ -76,5 +109,15 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
                 }
             }
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateCheckBoxVisible(b: Boolean) {
+        visible = b
+        notifyDataSetChanged()
+    }
+
+    fun getCheckBoxVisible(): Boolean {
+        return visible
     }
 }

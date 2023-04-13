@@ -15,8 +15,14 @@ interface GpsScheme {
     fun findAll(): List<GpsEntity>
 
     @Query("SELECT * FROM GpsEntity WHERE id = :itemIndex")
-    fun findById(itemIndex: Int) : GpsEntity
+    fun findById(itemIndex: String) : GpsEntity
 
     @Query("DELETE FROM GpsEntity WHERE addr = :addr")
     fun deleteFromAddr(addr: String)
+
+    @Query("SELECT * FROM GpsEntity WHERE addr = :addr")
+    fun findByAddress(addr: String) : GpsEntity
+
+    @Query("DELETE FROM GpsEntity")
+    fun clearDB()
 }

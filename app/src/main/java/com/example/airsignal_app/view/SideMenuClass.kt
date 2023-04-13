@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.db.room.GpsRepository
 import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.view.activity.SettingActivity
 import com.google.android.material.navigation.NavigationView

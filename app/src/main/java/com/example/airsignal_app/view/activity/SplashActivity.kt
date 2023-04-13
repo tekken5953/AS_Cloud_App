@@ -12,6 +12,8 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.db.room.GpsRepository
+import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.util.ConvertDataType.setFullScreenMode
 import com.example.airsignal_app.util.ConvertDataType.setLocaleToEnglish
 import com.example.airsignal_app.util.ConvertDataType.setLocaleToKorea
@@ -28,6 +30,7 @@ class SplashActivity : AppCompatActivity() {
         Glide.with(this).asGif().load(R.drawable.loading_gif).override(100,100).into(loadingGif)
 
         val sp = SharedPreferenceManager(this)
+        GetLocation(this@SplashActivity).getLocation()
 
         // 설정된 테마 정보 불러오기
         when(sp.getString("theme")) {

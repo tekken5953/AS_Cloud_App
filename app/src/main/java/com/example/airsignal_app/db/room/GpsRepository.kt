@@ -38,7 +38,7 @@ class GpsRepository(private val context: Context) {
         return getInstance().findAll()
     }
 
-    fun findById(id: Int) : GpsEntity {
+    fun findById(id: String) : GpsEntity {
         Logger.t(TAG_D).d("findById Model")
         return getInstance().findById(id)
     }
@@ -46,5 +46,14 @@ class GpsRepository(private val context: Context) {
     fun deleteFromAddress(addr: String) {
         getInstance().deleteFromAddr(addr)
         Logger.t(TAG_D).d("deleteFromAddress Model")
+    }
+
+    fun findByAddress(addr: String): GpsEntity {
+        Logger.t(TAG_D).d("findByAddr Model")
+        return getInstance().findByAddress(addr)
+    }
+
+    fun clearDB() {
+        getInstance().clearDB()
     }
 }
