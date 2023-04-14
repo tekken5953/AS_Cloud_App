@@ -5,9 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
@@ -16,7 +14,10 @@ import com.example.airsignal_app.dao.AdapterModel
  * @author : Lee Jae Young
  * @since : 2023-03-23 오후 4:00
  **/
-class DailyWeatherAdapter(private val context: Context, list: ArrayList<AdapterModel.DailyWeatherItem>) :
+class DailyWeatherAdapter(
+    private val context: Context,
+    list: ArrayList<AdapterModel.DailyWeatherItem>
+) :
     RecyclerView.Adapter<DailyWeatherAdapter.ViewHolder>() {
     private val mList = list
 
@@ -26,7 +27,7 @@ class DailyWeatherAdapter(private val context: Context, list: ArrayList<AdapterM
     ): DailyWeatherAdapter.ViewHolder {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.list_item_daily_weather, parent, false)
-        
+
         return ViewHolder(view)
     }
 
@@ -34,15 +35,14 @@ class DailyWeatherAdapter(private val context: Context, list: ArrayList<AdapterM
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(mList[position])
-        if (position > 0 && mList[position-1].date == mList[position].date) {
+        if (position > 0 && mList[position - 1].date == mList[position].date) {
             holder.date.visibility = View.INVISIBLE
         } else {
             holder.date.visibility = View.VISIBLE
         }
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
-    {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val time: TextView = itemView.findViewById(R.id.itemDailyTime)
         private val image: ImageView = itemView.findViewById(R.id.itemDailySky)
         private val value: TextView = itemView.findViewById(R.id.itemDailyValue)

@@ -13,7 +13,10 @@ import com.example.airsignal_app.dao.AdapterModel
  * @author : Lee Jae Young
  * @since : 2023-04-12 오후 15:41
  **/
-class AirQualityAdapter(private val context: Context, list: ArrayList<AdapterModel.AirQualityItem>) :
+class AirQualityAdapter(
+    private val context: Context,
+    list: ArrayList<AdapterModel.AirQualityItem>
+) :
     RecyclerView.Adapter<AirQualityAdapter.ViewHolder>() {
     private val mList = list
 
@@ -43,8 +46,7 @@ class AirQualityAdapter(private val context: Context, list: ArrayList<AdapterMod
         holder.bind(mList[position])
     }
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
-    {
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val title: TextView = itemView.findViewById(R.id.airItemTitle)
         private val data: TextView = itemView.findViewById(R.id.airItemData)
         private val line: View = itemView.findViewById(R.id.airItemLine)
@@ -63,7 +65,7 @@ class AirQualityAdapter(private val context: Context, list: ArrayList<AdapterMod
                 if (position != RecyclerView.NO_POSITION) {
                     try {
                         onClickListener.onItemClick(it, position)
-                    } catch(e: UninitializedPropertyAccessException) {
+                    } catch (e: UninitializedPropertyAccessException) {
                         e.printStackTrace()
                     }
                 }

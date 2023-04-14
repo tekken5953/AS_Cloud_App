@@ -18,7 +18,7 @@
     <TextView
         android:id="@+id/changeAddressView"
         android:layout_width="match_parent"
-        android:layout_height="43dp"
+        android:layout_height="45dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="24dp"
@@ -38,6 +38,8 @@
         android:id="@+id/changeAddressEdit"
         style="@style/basicTextView"
         android:text="편집"
+        android:padding="5dp"
+        android:background="?android:attr/selectableItemBackground"
         android:layout_below="@+id/changeAddressView"
         android:layout_alignParentEnd="true"
         android:textSize="14sp"

@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
-import android.os.Build
-import android.os.Bundle
-import android.os.Message
+import android.os.*
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
@@ -22,6 +20,7 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.AddressListAdapter
 import com.example.airsignal_app.adapter.AirQualityAdapter
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
+import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.GpsRepository
 import com.example.airsignal_app.db.room.model.GpsEntity
@@ -39,10 +38,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  * @author : Lee Jae Young
  * @since : 2023-04-11 오전 11:53
  **/
-class SearchDialog(lId: Int, private val fm: FragmentManager, private val tagId: String?) : BottomSheetDialogFragment() {
+class SearchDialog(mActivity: Activity,
+                   lId: Int, private val fm: FragmentManager, private val tagId: String?) : BottomSheetDialogFragment() {
+    private val activity = mActivity
     private val layoutId = lId
-    private val currentList = ArrayList<String>()
-    private val currentAdapter by lazy { AddressListAdapter(requireContext(),currentList) }
+    val currentList = ArrayList<String>()
+    private val currentAdapter = AddressListAdapter(activity,currentList)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,15 +65,33 @@ class SearchDialog(lId: Int, private val fm: FragmentManager, private val tagId:
             val changeAddressView: TextView = view.findViewById(R.id.changeAddressView)
             changeAddressView.setOnClickListener {
                 dismissNow()
-                SearchDialog(1,fm,tagId).showNow(fm,tagId)
+                SearchDialog(activity,1,fm,tagId).showNow(fm,tagId)
+            }
+
+            val editList: TextView = view.findViewById(R.id.changeAddressEdit)
+            editList.setOnClickListener {
+               if (!currentAdapter.getCheckBoxVisible()) {
+                   currentAdapter.updateCheckBoxVisible(true)
+               } else {
+                   currentAdapter.updateCheckBoxVisible(false)
+               }
             }
 
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
             val db = GpsRepository(requireContext())
-            db.findAll().reversed().forEach {
+            db.findAll().forEach {
                 addCurrentItem(it.addr.toString())
             }
+
+            currentAdapter.setOnItemClickListener(object : AddressListAdapter.OnItemClickListener {
+                @RequiresApi(Build.VERSION_CODES.O)
+                override fun onItemClick(v: View, position: Int) {
+                    dismissNow()
+                    SharedPreferenceManager(activity).setString(lastAddress, currentList[position])
+                    RefreshUtils(activity).refreshActivityAfterSecond(1)
+                }
+            })
 
             currentAdapter.notifyDataSetChanged()
         } else {
@@ -115,7 +134,6 @@ class SearchDialog(lId: Int, private val fm: FragmentManager, private val tagId:
                             searchItem.add(allList)
                         }
                     }
-
                 } else {
                     searchItem.clear()
                 }
@@ -126,9 +144,8 @@ class SearchDialog(lId: Int, private val fm: FragmentManager, private val tagId:
         // 검색주소 리스트
         listView.onItemClickListener =
             AdapterView.OnItemClickListener { parent, view, position, id ->
-                Logger.t("searchView").d("$position : ${searchItem[position]}")
                 val db = GpsRepository(requireContext())
-                val model = GpsEntity(db.findAll().size, null, null, searchItem[position], getCurrentTime())
+                val model = GpsEntity(searchItem[position], null, null, searchItem[position], getCurrentTime())
                 db.insert(model)
                 this.dismissNow()
                 show(0)
@@ -147,32 +164,17 @@ class SearchDialog(lId: Int, private val fm: FragmentManager, private val tagId:
             dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationSide
         else {
             dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationUp
-
-            dialog.setDismissMessage(msg)
         }
 
         return dialog
     }
 
     fun show(layoutId: Int) {
-        if (layoutId == 1) {
-            SearchDialog(layoutId,fm,tagId).apply {
-                showNow(fm,tagId)
-            }
-        } else {
-            SearchDialog(layoutId,fm,tagId).showNow(fm, tagId)
-        }
+        SearchDialog(activity,layoutId, fm, tagId).showNow(fm, tagId)
     }
 
     private fun addCurrentItem(address: String) : SearchDialog {
         currentList.add(address)
-        currentAdapter.setOnItemClickListener(object : AddressListAdapter.OnItemClickListener {
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onItemClick(v: View, position: Int) {
-                dismissNow()
-                SharedPreferenceManager(v.context).setString(lastAddress, currentList[position])
-            }
-        })
         return this
     }
 

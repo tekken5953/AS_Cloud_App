@@ -13,7 +13,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class GpsEntity(
     @PrimaryKey(autoGenerate = false)
-    val id: Int,
+    val id: String,
     val lat: Double?,
     val lng: Double?,
     val addr: String?,

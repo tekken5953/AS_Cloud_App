@@ -93,6 +93,18 @@
                     app:drawableStartCompat="@drawable/gps"
                     app:drawableTint="@color/mode_color_text" />
 
+                <ImageView
+                    android:id="@+id/mainGpsFix"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/fixed_gps"
+                    android:layout_alignParentEnd="true"
+                    android:padding="5dp"
+                    android:layout_alignTop="@+id/mainSideMenuIv"
+                    android:layout_alignBottom="@+id/mainSideMenuIv"
+                    android:layout_marginEnd="24dp"/>
+
                 <androidx.core.widget.NestedScrollView
                     android:id="@+id/mainMainScroll"
                     android:layout_width="match_parent"

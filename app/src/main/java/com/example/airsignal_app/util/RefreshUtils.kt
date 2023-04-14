@@ -20,6 +20,7 @@ class RefreshUtils(private val activity: Activity) {
         }
     }
 
+    /** sec 초 이후에 액티비티 갱신 **/
     fun refreshActivityAfterSecond(sec: Int) {
         Handler(Looper.getMainLooper()).postDelayed ({
            this.refreshActivity()

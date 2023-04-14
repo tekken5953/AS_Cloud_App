@@ -17,5 +17,5 @@ object StaticDataObject {
     const val NOTIFICATION_CHANNEL_ID = "500"             // FCM 채널 ID
     const val NOTIFICATION_CHANNEL_NAME = "AIRSIGNAL"     // FCM 채널 NAME
     const val CHECK_GPS_BACKGROUND = "GPS_OK"             // GPS WorkManager ID 값
-    const val CURRENT_GPS_ID = 99999
+    const val CURRENT_GPS_ID = "Current"
 }

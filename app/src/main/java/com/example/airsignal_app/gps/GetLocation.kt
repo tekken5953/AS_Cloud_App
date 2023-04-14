@@ -9,6 +9,7 @@ import android.location.Location
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
+import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.GpsRepository
 import com.example.airsignal_app.db.room.model.GpsEntity
@@ -33,15 +34,14 @@ class GetLocation(private val context: Context) : GetLocationListener {
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     onGetLocal(it)
-                    Logger.t("Location").d("${it.latitude},${it.longitude}")
-
+                    Logger.t(TAG_L).d("${it.latitude},${it.longitude}")
                     //TODO 백그라운드에서 토픽 교체
 
                 }
             }
             .addOnFailureListener {
                 it.printStackTrace()
-                Logger.t("Location").e("Fail to Get Location")
+                Logger.t(TAG_L).e("Fail to Get Location")
             }
     }
 
@@ -67,8 +67,10 @@ class GetLocation(private val context: Context) : GetLocationListener {
                         }"
                     )
 
-                    updateCurrentAddress(lat, lng,
-                        "${it.locality} ${it.thoroughfare}", getCurrentTime())
+                    updateCurrentAddress(
+                        lat, lng,
+                        "${it.locality} ${it.thoroughfare}", getCurrentTime()
+                    )
                 }
             } else {
                 writeLogCause(
@@ -90,10 +92,12 @@ class GetLocation(private val context: Context) : GetLocationListener {
     private fun updateCurrentAddress(lat: Double, lng: Double, addr: String, time: Long) {
         val roomDB = GpsRepository(context)
         val model = GpsEntity(CURRENT_GPS_ID, lat, lng, addr, time)
-        if (roomDB.findAll().isNotEmpty()) {
-            roomDB.update(model)
-            Logger.t(TAG_D).d("Update GPS In GetLocation")
-        } else {
+        try {
+            if (roomDB.findById(CURRENT_GPS_ID).addr != null) {
+                roomDB.update(model)
+                Logger.t(TAG_D).d("Update GPS In GetLocation")
+            }
+        } catch (e: java.lang.NullPointerException) {
             roomDB.insert(model)
             Logger.t(TAG_D).d("Insert GPS In GetLocation")
         }
