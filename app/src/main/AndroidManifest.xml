@@ -64,6 +64,19 @@
         <activity
             android:name=".view.activity.LoginActivity"
             android:exported="true" />
+
+        <receiver
+            android:name=".view.widget.WidgetProvider"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_provider" />
+        </receiver>
     </application>
 
 </manifest>

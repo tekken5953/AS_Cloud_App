@@ -6,6 +6,7 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
