@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widgetMainLayout"
+    android:layout_width="290dp"
+    android:layout_height="140dp"
+    android:background="@drawable/widget_bg_290_140">
+
+    <ImageView
+        android:id="@+id/widgetSkyImg"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:src="@drawable/sunny_test" />
+
+    <TextView
+        android:id="@+id/widgetAddress"
+        style="@style/basicTextView"
+        android:layout_alignTop="@+id/widgetSkyImg"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/widgetSkyImg"
+        android:text="성남시 수정구"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/widgetRefresh"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignTop="@+id/widgetSkyImg"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:padding="5dp"
+        android:src="@drawable/refresh" />
+
+    <TextView
+        android:id="@+id/widgetDate"
+        style="@style/basicTextView"
+        android:layout_alignBottom="@+id/widgetLiveTemp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@+id/widgetLiveTemp"
+        android:text="2023/04/14/금"
+        android:textSize="12sp" />
+
+
+    <TextView
+        android:id="@+id/widgetLiveTemp"
+        style="@style/basicTextView"
+        android:layout_below="@+id/widgetAddress"
+        android:layout_alignStart="@+id/widgetAddress"
+        android:layout_alignBottom="@+id/widgetSkyImg"
+        android:fontFamily="@font/spoqa_hansansneo_bold"
+        android:gravity="center_vertical|bottom"
+        android:text="15˚"
+        android:textSize="40sp" />
+
+    <TextView
+        android:id="@+id/widgetMinTemp"
+        style="@style/basicTextView"
+        android:layout_below="@+id/widgetSkyImg"
+        android:layout_alignStart="@+id/widgetSkyImg"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="5dp"
+        android:text="10˚"
+        android:textColor="@color/red"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/widgetMaxTemp"
+        style="@style/basicTextView"
+        android:layout_below="@+id/widgetSkyImg"
+        android:layout_alignEnd="@+id/widgetSkyImg"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="3dp"
+        android:text="21˚"
+        android:textColor="@color/main_blue_color"
+        android:textSize="15sp" />
+
+    <ImageView
+        android:id="@+id/widgetMinMaxView"
+        android:layout_width="wrap_content"
+        android:layout_height="4dp"
+        android:layout_below="@+id/widgetMaxTemp"
+        android:layout_alignStart="@+id/widgetSkyImg"
+        android:layout_alignEnd="@+id/widgetSkyImg"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/widget_min_max_view" />
+
+    <TextView
+        style="@style/basicTextView"
+        android:layout_alignBottom="@+id/widgetMinMaxView"
+        android:layout_toEndOf="@+id/widgetLiveTemp"
+        android:drawableLeft="@drawable/pm"
+        android:drawablePadding="5dp"
+        android:gravity="center"
+        android:text="매우나쁨"
+        android:textColor="@color/progressWorst"
+        android:textSize="16sp" />
+
+</RelativeLayout>

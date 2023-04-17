@@ -1,6 +1,8 @@
 package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
+import android.content.ComponentName
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
@@ -20,7 +22,9 @@ import com.example.airsignal_app.adapter.AirQualityAdapter
 import com.example.airsignal_app.adapter.DailyWeatherAdapter
 import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
+import com.example.airsignal_app.dao.StaticDataObject
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
@@ -35,6 +39,7 @@ import com.example.airsignal_app.util.ConvertDataType.convertDayOfWeekToKorean
 import com.example.airsignal_app.util.ConvertDataType.getSkyImg
 import com.example.airsignal_app.view.SearchDialog
 import com.example.airsignal_app.view.SideMenuClass
+import com.example.airsignal_app.view.widget.WidgetProvider
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
@@ -59,11 +64,13 @@ class MainActivity : AppCompatActivity() {
     private val airQualityAdapter by lazy { AirQualityAdapter(this, airQualityList) }
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(this, dailyWeatherList) }
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
+    private val sp by lazy { SharedPreferenceManager(this) }
 
     override fun onResume() {
         super.onResume()
         Logger.t(TAG_L).d("onResume")
         GetLocation(this@MainActivity).getLocation()
+        Thread.sleep(100)
         getDataSingleTime()
     }
 
@@ -118,8 +125,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun getDataSingleTime() {
         val db = GpsRepository(this)
-        if (SharedPreferenceManager(this).getString(lastAddress) == db.findById(CURRENT_GPS_ID).addr
-            || SharedPreferenceManager(this).getString(lastAddress) == ""
+        if (sp.getString(lastAddress) == db.findById(CURRENT_GPS_ID).addr
+            || sp.getString(lastAddress) == ""
         ) {
             loadCurrentAddr(db)
         } else {
@@ -128,16 +135,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadCurrentAddr(db: GpsRepository): GpsRepository {
-        SharedPreferenceManager(this).setString(lastAddress, db.findById(CURRENT_GPS_ID).addr!!)
         getDataViewModel.loadDataResult(
             db.findById(CURRENT_GPS_ID).lat!!,
             db.findById(CURRENT_GPS_ID).lng!!,
             null
         )
+        val formatAddress = db.findById(CURRENT_GPS_ID).addr!!.replace("null","")
+        sp.setString(lastAddress, formatAddress)
         Logger.t(TAG_D)
             .d("${db.findById(CURRENT_GPS_ID).lat},${db.findById(CURRENT_GPS_ID).lng}")
-
-        binding.mainGpsTitleTv.text = db.findById(CURRENT_GPS_ID).addr
         return db
     }
 
@@ -145,10 +151,10 @@ class MainActivity : AppCompatActivity() {
         getDataViewModel.loadDataResult(
             null,
             null,
-            SharedPreferenceManager(this).getString(lastAddress)
+            sp.getString(lastAddress)
         )
-        Logger.t(TAG_D).d(SharedPreferenceManager(this).getString(lastAddress))
-        binding.mainGpsTitleTv.text = SharedPreferenceManager(this).getString(lastAddress)
+        Logger.t(TAG_D).d(sp.getString(lastAddress))
+        binding.mainGpsTitleTv.text = sp.getString(lastAddress)
     }
 
     private fun showPB() {
@@ -199,7 +205,7 @@ class MainActivity : AppCompatActivity() {
                 ToastUtils(this).customDurationMessage("버튼을 한번 더 누르면 앱이 종료됩니다", 2)
                 isBackPressed = true
             } else {
-                SharedPreferenceManager(this).removeKey(lastAddress)
+                sp.removeKey(lastAddress)
                 EnterPage(this).fullyExit()
             }
             Handler(Looper.getMainLooper()).postDelayed({
@@ -256,6 +262,7 @@ class MainActivity : AppCompatActivity() {
                 binding.mainPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
                 binding.mainMinTemp.text = "${filteringNullData(week.taMin0)}˚"
                 binding.mainMaxTemp.text = "${filteringNullData(week.taMax0)}˚"
+                binding.mainGpsTitleTv.text = sp.getString(lastAddress)
 
                 for (i: Int in 0 until (10)) {
                     val today = result.realtime[i]
@@ -334,5 +341,12 @@ class MainActivity : AppCompatActivity() {
     private fun addAirQualityItem(title: String, data: String) {
         val item = AdapterModel.AirQualityItem(title, data)
         this.airQualityList.add(item)
+    }
+
+    private fun onUpdateWidgetData() {
+        val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
+        sendBroadcast(Intent(UPDATE_TIME).apply {
+            component = ComponentName(this@MainActivity, WidgetProvider::class.java)
+        })
     }
 }

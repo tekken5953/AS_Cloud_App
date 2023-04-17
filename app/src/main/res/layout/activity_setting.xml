@@ -304,6 +304,7 @@
                 android:layout_width="match_parent"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
+                android:background="?android:attr/selectableItemBackground"
                 style="@style/settingSingleTextView"
                 android:text="@string/setting_notice"
                 app:layout_constraintTop_toBottomOf="@+id/settingLine4" />
@@ -313,6 +314,7 @@
                 android:layout_width="match_parent"
                 style="@style/settingSingleTextView"
                 android:paddingStart="24dp"
+                android:background="?android:attr/selectableItemBackground"
                 android:paddingEnd="24dp"
                 android:text="@string/event"
                 app:layout_constraintTop_toBottomOf="@+id/settingNotice" />
@@ -324,6 +326,7 @@
                 android:layout_marginBottom="30dp"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
+                android:background="?android:attr/selectableItemBackground"
                 android:text="@string/setting_faq"
                 app:layout_constraintTop_toBottomOf="@+id/settingEvent" />
 
@@ -334,6 +337,7 @@
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
                 android:text="@string/setting_app_data"
+                android:background="?android:attr/selectableItemBackground"
                 app:layout_constraintTop_toBottomOf="@+id/settingFaq" />
 
             <TextView
@@ -344,6 +348,7 @@
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
                 android:text="Test"
+                android:background="?android:attr/selectableItemBackground"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/settingAppInfo" />
 

@@ -14,6 +14,9 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.IgnoredKeyFile
+import com.example.airsignal_app.dao.StaticDataObject
+import com.example.airsignal_app.db.room.GpsRepository
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
@@ -61,6 +64,13 @@ object ConvertDataType {
     /** 현재시간 불러오기 **/
     fun getCurrentTime(): Long {
         return System.currentTimeMillis()
+    }
+
+    fun currentDateTimeString() : String {
+        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat("MM월 dd일 HH시 mm분")
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis()
+        return format.format(calendar.time)
     }
 
     /** 데이터 포멧에 맞춰서 시간변환 **/
