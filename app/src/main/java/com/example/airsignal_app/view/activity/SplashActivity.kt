@@ -18,6 +18,7 @@ import com.example.airsignal_app.util.ConvertDataType.setFullScreenMode
 import com.example.airsignal_app.util.ConvertDataType.setLocaleToEnglish
 import com.example.airsignal_app.util.ConvertDataType.setLocaleToKorea
 import com.example.airsignal_app.util.ConvertDataType.setLocaleToSystem
+import com.example.airsignal_app.util.SensibleTempFormula
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {

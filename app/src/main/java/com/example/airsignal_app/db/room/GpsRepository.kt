@@ -14,13 +14,11 @@ import com.orhanobut.logger.Logger
 class GpsRepository(private val context: Context) {
 
     fun getInstance(): GpsScheme {
-        Logger.t(TAG_D).d("Create DB Instance")
-        val db = Room.databaseBuilder(context.applicationContext, AppDataBase::class.java, "room-gps")
+        return Room.databaseBuilder(context.applicationContext, AppDataBase::class.java, "room-gps")
             .fallbackToDestructiveMigration()
             .allowMainThreadQueries()
             .build()
-
-        return db.gpsRepository()
+            .gpsRepository()
     }
 
     fun update(model: GpsEntity) {
