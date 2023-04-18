@@ -1,4 +1,4 @@
-package com.example.airsignal_app.util
+package com.example.airsignal_app.view
 
 import android.graphics.drawable.Drawable
 import android.os.Handler
@@ -12,18 +12,19 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.example.airsignal_app.R
 import com.example.airsignal_app.databinding.CustomViewSnackbarBinding
+import com.example.airsignal_app.util.MakeVibrator
 import com.google.android.material.snackbar.Snackbar
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-03-30 오후 1:22
  **/
-class SnackBarCustom(view: View, private val message: String, private val drawable: Drawable) {
+class SnackBarUtils(view: View, private val message: String, private val drawable: Drawable) {
 
     /**Constructor**/
     companion object {
         fun make(view: View, message: String, drawable: Drawable) =
-            SnackBarCustom(view, message, drawable)
+            SnackBarUtils(view, message, drawable)
     }
 
     private val context = view.context
@@ -44,7 +45,6 @@ class SnackBarCustom(view: View, private val message: String, private val drawab
     private fun initView() {
         with(snackBarLayout) {
             val layoutParams = layoutParams as FrameLayout.LayoutParams
-
             val snackBarShowAnim = AnimationUtils.loadAnimation(context, R.anim.snackbar_fade_in)
             val snackBarHideAnim = AnimationUtils.loadAnimation(context, R.anim.snackbar_fade_out)
             this.startAnimation(snackBarShowAnim) // 시작할때 애니메이션
@@ -59,7 +59,6 @@ class SnackBarCustom(view: View, private val message: String, private val drawab
             setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
             addView(snackBarBinding.root, 0)
         }
-
     }
 
     /** 스낵바 텍스트, 이미지 할당**/

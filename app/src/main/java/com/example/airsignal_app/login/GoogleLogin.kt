@@ -69,15 +69,8 @@ class GoogleLogin(private val activity: Activity) {
     fun checkSilenceLogin() {
         client.silentSignIn()
             .addOnCompleteListener {
-                handleSignInResult(it)
+                handleSignInResult(it,"자동")
                 Logger.t(TAG_LOGIN).d("자동 로그인 됨")
-                try {
-                    saveLoginStatus(it.result.email.toString(), "자동")
-                } catch (e: RuntimeExecutionException) {
-                    e.printStackTrace()
-                } catch (e: ApiException) {
-                    e.printStackTrace()
-                }
             }
             .addOnFailureListener {
                 Logger.t(TAG_LOGIN).w("마지막 로그인 세션을 찾을 수 없습니다")
@@ -114,7 +107,7 @@ class GoogleLogin(private val activity: Activity) {
     }
 
     /** 로그인 이벤트 성공 **/
-    fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+    fun handleSignInResult(completedTask: Task<GoogleSignInAccount>, isAuto: String) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             val email = account.email!!.lowercase()
@@ -137,8 +130,7 @@ class GoogleLogin(private val activity: Activity) {
                 .setString(userProfile, photo)
                 .setString(userEmail, email)
 
-            saveLoginStatus(email, "수동")
-            EnterPage(activity).toMain("google")
+            saveLoginStatus(email,isAuto)
         } catch (e: ApiException) {
             e.printStackTrace()
         }

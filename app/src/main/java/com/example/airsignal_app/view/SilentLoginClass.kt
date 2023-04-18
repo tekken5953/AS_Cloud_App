@@ -1,9 +1,11 @@
 package com.example.airsignal_app.view
 
 import android.app.Activity
-import android.widget.ProgressBar
+import android.widget.LinearLayout
 import com.example.airsignal_app.dao.IgnoredKeyFile
+import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
@@ -14,29 +16,36 @@ import com.example.airsignal_app.login.NaverLogin
  **/
 class SilentLoginClass {
     // 플랫폼 별 자동로그인
-    fun login(activity: Activity, pb: ProgressBar) {
+    fun login(activity: Activity, pb: LinearLayout) {
         when (SharedPreferenceManager(activity).getString(IgnoredKeyFile.lastLoginPlatform)) {
             "google" -> {
                 // 구글 자동 로그인
                 val googleLogin = GoogleLogin(activity)
-                if (!googleLogin.isValidToken())
+                if (!googleLogin.isValidToken()) {
                     googleLogin.checkSilenceLogin()
+                }
             }
             "kakao" -> {
                 // 카카오 자동 로그인
-                val kakaoLogin = KakaoLogin(activity).initialize()
-                if (!kakaoLogin.getAccessToken())
+                val kakaoLogin = KakaoLogin(activity)
+                if (!kakaoLogin.getAccessToken()) {
+                    sendLogInWithEmail("로그인 성공",
+                        SharedPreferenceManager(activity).getString(userEmail),
+                        "카카오",
+                        "자동")
                     kakaoLogin.isValidToken(pb)
+                }
             }
             "naver" -> {
                 // 네이버 자동 로그인
-                val naverLogin = NaverLogin(activity).initialize()
-                if (naverLogin.getAccessToken() == null)
+                val naverLogin = NaverLogin(activity)
+                if (naverLogin.getAccessToken() == null) {
+                    sendLogInWithEmail("로그인 성공",
+                        SharedPreferenceManager(activity).getString(userEmail),
+                        "네이버",
+                        "자동")
                     naverLogin.silentLogin()
-            }
-
-            "email" -> {
-                //TODO 이메일 자동 로그인
+                }
             }
         }
     }

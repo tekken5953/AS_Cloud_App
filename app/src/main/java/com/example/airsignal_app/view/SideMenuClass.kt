@@ -5,18 +5,14 @@ import android.content.Intent
 import android.net.Uri
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
-import android.widget.TableRow
-import android.widget.TextView
+import android.widget.*
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile
+import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.db.room.GpsRepository
 import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.view.activity.SettingActivity
 import com.google.android.material.navigation.NavigationView
@@ -29,7 +25,7 @@ class SideMenuClass(
     private val mContext: Activity,
     private val drawerLayout: DrawerLayout,
     private val navView: NavigationView,
-    private val viewPagerLayout: RelativeLayout
+    private val viewPagerLayout: RelativeLayout,
 ) {
     private val sp by lazy { SharedPreferenceManager(mContext) }
 
@@ -41,7 +37,7 @@ class SideMenuClass(
     }
 
     // 사이드 메뉴 열기
-    fun openMenu() {
+    private fun openMenu() {
         drawerLayout.openDrawer(GravityCompat.START)
         drawerLayout.bringToFront()
     }
@@ -75,21 +71,19 @@ class SideMenuClass(
                 .load(Uri.parse(SharedPreferenceManager(mContext).getString(IgnoredKeyFile.userProfile)))
                 .into(findViewById(R.id.navHeaderProfileImg))
 
-            if (sp.getString(IgnoredKeyFile.userEmail) != "") {
-                SilentLoginClass().login(mContext, pb)
-                findViewById<TextView>(R.id.navHeaderUserId).text = sp.getString(IgnoredKeyFile.userEmail)
+            if (sp.getString(userEmail) != "") {
+                findViewById<TextView>(R.id.navHeaderUserId).text =
+                    sp.getString(userEmail)
             } else findViewById<TextView>(R.id.navHeaderUserId).text =
                 mContext.getString(R.string.please_login)
 
             // 사이드 메뉴 생성 소멸에 따른 처리
             drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
                 override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
-                override fun onDrawerOpened(drawerView: View) {
-                }
+                override fun onDrawerOpened(drawerView: View) {}
                 override fun onDrawerClosed(drawerView: View) {
                     viewPagerLayout.bringToFront()
                 }
-
                 override fun onDrawerStateChanged(newState: Int) {}
             })
 

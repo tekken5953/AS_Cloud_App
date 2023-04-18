@@ -6,7 +6,6 @@ import okio.ByteString.Companion.decodeBase64
 import org.json.JSONObject
 import java.util.*
 
-
 /*
  * JWT Payload 명세
  * KAKAO

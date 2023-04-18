@@ -3,7 +3,6 @@ package com.example.airsignal_app
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.airsignal_app.util.SensibleTempFormula
 import org.junit.Test
-
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.runner.RunWith
@@ -24,20 +23,20 @@ class ExampleUnitTest {
     @Before
     fun setUp() {
         sensibleTemp = SensibleTempFormula()
-        temp = 15.0
-        humid = 40.0
+        temp = 18.0
+        humid = 29.0
         wind = 2.0
     }
 
     @Test
     fun get_sens_temp_in_summer() {
         val result = sensibleTemp.getInSummer(temp, humid)
-        assertEquals(result,16.0,2.0)
+        assertEquals(16.0, result,0.0)
     }
 
     @Test
     fun get_sens_temp_in_winter() {
         val result = sensibleTemp.getInWinter(temp,wind)
-        assertEquals(result, 6.0, 2.0)
+        assertEquals(18.0, result, 0.0)
     }
 }

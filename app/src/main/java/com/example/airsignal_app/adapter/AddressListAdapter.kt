@@ -77,8 +77,6 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
                 )
             }
 
-
-
             if (adapterPosition != 0 && visible) {
                 delete.animate().alpha(1f).duration = 500
                 delete.visibility = View.VISIBLE
@@ -117,12 +115,14 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
         }
     }
 
+    // 삭제버튼 보이기/숨기기
     @SuppressLint("NotifyDataSetChanged")
     fun updateCheckBoxVisible(b: Boolean) {
         visible = b
         notifyDataSetChanged()
     }
 
+    // 삭제버튼 현재 상태 불러오기
     fun getCheckBoxVisible(): Boolean {
         return visible
     }

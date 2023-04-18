@@ -32,7 +32,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
  **/
 class SearchDialog(
     mActivity: Activity,
-    lId: Int, private val fm: FragmentManager, private val tagId: String?
+    lId: Int, private val fm: FragmentManager, private val tagId: String?,
 ) : BottomSheetDialogFragment() {
     private val activity = mActivity
     private val layoutId = lId
@@ -42,7 +42,7 @@ class SearchDialog(
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         return if (layoutId == 0) {
             inflater.inflate(R.layout.dialog_address_change, container, false)
@@ -181,7 +181,7 @@ class SearchDialog(
 
     // 리스트 아이템 추가
     private fun addCurrentItem(address: String): SearchDialog {
-        currentList.add(address)
+        currentList.add(address.replace("null", ""))
         return this
     }
 
