@@ -77,9 +77,13 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
                 )
             }
 
+
+
             if (adapterPosition != 0 && visible) {
+                delete.animate().alpha(1f).duration = 500
                 delete.visibility = View.VISIBLE
             } else {
+                delete.animate().alpha(0f).duration = 500
                 delete.visibility = View.GONE
             }
 

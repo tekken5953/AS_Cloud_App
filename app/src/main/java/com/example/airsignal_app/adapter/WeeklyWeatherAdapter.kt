@@ -1,14 +1,19 @@
 package com.example.airsignal_app.adapter
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.util.ConvertDataType
+import java.time.LocalDateTime
+import java.util.*
 
 /**
  * @author : Lee Jae Young
@@ -33,6 +38,7 @@ class WeeklyWeatherAdapter(
 
     override fun getItemCount(): Int = mList.size
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(mList[position])
     }
@@ -45,6 +51,7 @@ class WeeklyWeatherAdapter(
         private val maxText: TextView = itemView.findViewById(R.id.weeklyMaxText)
         private val line: View = itemView.findViewById(R.id.weeklyBottomLine)
 
+        @RequiresApi(Build.VERSION_CODES.O)
         fun bind(dao: AdapterModel.WeeklyWeatherItem) {
             day.text = dao.day
             minImg.setImageDrawable(dao.minImg)
@@ -54,9 +61,18 @@ class WeeklyWeatherAdapter(
             maxText.text = dao.maxText
             maxText.setTextColor(context.getColor(R.color.red))
 
-            if (adapterPosition == 0) {
+            val currentDate = LocalDateTime.now()
+            if (mList[adapterPosition].day == "${currentDate.month.value}.${currentDate.dayOfMonth}" +
+                "(${
+                    ConvertDataType.convertDayOfWeekToKorean(
+                        context,
+                        currentDate.dayOfWeek.value
+                    )
+                })"
+            ) {
                 day.setTextColor(context.getColor(R.color.main_blue_color))
             }
+
             if (adapterPosition == itemCount - 1) {
                 line.visibility = View.GONE
             }

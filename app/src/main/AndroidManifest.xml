@@ -17,6 +17,7 @@
         android:name=".koin.BaseApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app__name"
+        android:hardwareAccelerated="true"
         android:networkSecurityConfig="@xml/network_security_work"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -77,6 +78,10 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_provider" />
         </receiver>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/adMobId"/>
     </application>
 
 </manifest>

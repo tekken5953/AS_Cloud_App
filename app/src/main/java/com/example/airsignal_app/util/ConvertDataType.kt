@@ -133,28 +133,16 @@ object ConvertDataType {
         }
     }
 
-    /** 미세먼지 & 초미세먼지 글자 색 설정 **/
-    fun settingSpan(context: Context, view: TextView, grade: Int) {
-        val span = SpannableStringBuilder(getDataString(context,grade))
-        span.setSpan(
-            ForegroundColorSpan(getDataColor(context,grade)),
-            0,
-            span.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        view.text = span
-    }
-
     /** Double을 지정 자릿수에서 반올림 **/
     fun convertDoubleToDecimal(double: Double, digit: Int) : String {
         return String.format("%.${digit}f",double)
     }
 
-    // 요일 변환
+    /** 요일 변환 **/
     @RequiresApi(Build.VERSION_CODES.O)
     fun convertDayOfWeekToKorean(context: Context, datOfWeek: Int) : String {
         return when(datOfWeek % 7) {
-            1-> context.getString(R.string.mon)
+            1 -> context.getString(R.string.mon)
             2 -> context.getString(R.string.tue)
             3 -> context.getString(R.string.wen)
             4 -> context.getString(R.string.thr)

@@ -114,7 +114,16 @@ dependencies {
     testImplementation "io.insert-koin:koin-test-junit4:$koin_android_version"
     // Koin for JUnit 5
     testImplementation "io.insert-koin:koin-test-junit5:$koin_android_version"
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation "androidx.arch.core:core-testing:2.2.0"
+    testImplementation "com.google.truth:truth:1.0.1"
+    testImplementation 'androidx.test.ext:junit:1.1.5'
+    testImplementation "org.robolectric:robolectric:4.4"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 
     //AS Custom TextView
     implementation 'com.github.tekken5953:ASCustomText:2.1.1'
+
+    // Firebase Admob
+    implementation 'com.google.android.gms:play-services-ads:22.0.0'
 }

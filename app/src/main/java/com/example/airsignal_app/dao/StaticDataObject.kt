@@ -10,6 +10,7 @@ object StaticDataObject {
     const val TAG_L = "Tag_LifeCycle"                     // 생명주기 기본 태그 Key
     const val TAG_G = "Tag_Geo"                           // 생명주기 기본 태그 Key
     const val TAG_N = "Tag_Notification"                  // FCM 기본 태그 Key
+    const val TAG_AD = "TAG_AddMob"                       // 애드몹 기본 태그 Key
     const val TAG_D = "TAG_DB"                            // Room DB
     const val TAG_LOGIN = "TAG_LOGIN"                     // Logger 태그 키값
     const val REQUEST_LOCATION = 1                        // 위치권한 요청 Result Code

@@ -34,6 +34,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/faqBack"
         android:clipToPadding="false"
+        android:overScrollMode="never"
         tools:listitem="@layout/list_item_faq"
         android:layout_marginTop="30dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>

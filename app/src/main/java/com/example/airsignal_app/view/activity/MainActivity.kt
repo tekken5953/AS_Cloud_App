@@ -22,9 +22,7 @@ import com.example.airsignal_app.adapter.AirQualityAdapter
 import com.example.airsignal_app.adapter.DailyWeatherAdapter
 import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
 import com.example.airsignal_app.dao.AdapterModel
-import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
-import com.example.airsignal_app.dao.StaticDataObject
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
@@ -32,6 +30,8 @@ import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.GpsRepository
+import com.example.airsignal_app.db.room.model.GpsEntity
+import com.example.airsignal_app.firebase.admob.AdViewClass
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsWorker
 import com.example.airsignal_app.util.*
@@ -52,7 +52,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
-
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
@@ -72,6 +71,17 @@ class MainActivity : AppCompatActivity() {
         GetLocation(this@MainActivity).getLocation()
         Thread.sleep(100)
         getDataSingleTime()
+        binding.mainBottomAdView.resume()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.mainBottomAdView.destroy()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.mainBottomAdView.pause()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -104,7 +114,7 @@ class MainActivity : AppCompatActivity() {
             showPB()
             GetLocation(this).getLocation()
             Handler(Looper.getMainLooper()).postDelayed({
-                loadCurrentAddr(GpsRepository(this))
+                loadCurrentAddr(GpsRepository(this).findById(CURRENT_GPS_ID))
                 hidePB()
             }, 1500)
         }
@@ -124,26 +134,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getDataSingleTime() {
-        val db = GpsRepository(this)
-        if (sp.getString(lastAddress) == db.findById(CURRENT_GPS_ID).addr
-            || sp.getString(lastAddress) == ""
-        ) {
-            loadCurrentAddr(db)
-        } else {
+        val db = GpsRepository(this).findById(CURRENT_GPS_ID)
+        val addrArray = resources.getStringArray(R.array.address)
+        if (addrArray.contains(sp.getString(lastAddress))) {
             loadSavedAddr()
+        } else {
+            loadCurrentAddr(db)
         }
     }
 
-    private fun loadCurrentAddr(db: GpsRepository): GpsRepository {
+    private fun loadCurrentAddr(db: GpsEntity): GpsEntity {
         getDataViewModel.loadDataResult(
-            db.findById(CURRENT_GPS_ID).lat!!,
-            db.findById(CURRENT_GPS_ID).lng!!,
+            db.lat!!,
+            db.lng!!,
             null
         )
-        val formatAddress = db.findById(CURRENT_GPS_ID).addr!!.replace("null","")
+        val formatAddress = db.addr!!.replace("null", "")
         sp.setString(lastAddress, formatAddress)
         Logger.t(TAG_D)
-            .d("${db.findById(CURRENT_GPS_ID).lat},${db.findById(CURRENT_GPS_ID).lng}")
+            .d("${db.lat},${db.lng}")
         return db
     }
 
@@ -183,6 +192,8 @@ class MainActivity : AppCompatActivity() {
         binding.mainDailyWeatherRv.adapter = dailyWeatherAdapter
         binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter
         binding.mainAirQualityRv.adapter = airQualityAdapter
+
+        AdViewClass(this).loadAdView(binding.mainBottomAdView)
     }
 
     // 백그라운드에서 GPS 를 불러오기 위한 WorkManager

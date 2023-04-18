@@ -106,6 +106,7 @@ class SearchDialog(
         }
     }
 
+    // 검색창 리스너
     private fun searchEditListener(listView: ListView, editText: EditText) {
         @SuppressLint("InflateParams")
         val searchItem = java.util.ArrayList<String>()
@@ -155,6 +156,7 @@ class SearchDialog(
             }
     }
 
+    // 다이얼로그 생성
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
         dialog.setCanceledOnTouchOutside(false)
@@ -172,15 +174,18 @@ class SearchDialog(
         return dialog
     }
 
+    // 레이아웃 노출
     fun show(layoutId: Int) {
         SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId)
     }
 
+    // 리스트 아이템 추가
     private fun addCurrentItem(address: String): SearchDialog {
         currentList.add(address)
         return this
     }
 
+    // 바텀 다이얼로그 세팅
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
         val bottomSheet =
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
@@ -191,10 +196,12 @@ class SearchDialog(
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
+    // 바텀 다이얼로그 비율설정
     private fun getBottomSheetDialogDefaultHeight(per: Int): Int {
         return getWindowHeight() * per / 100
     }
 
+    // 디바이스 높이 구하기
     private fun getWindowHeight(): Int {
         // Calculate window height for fullscreen use
         val displayMetrics = DisplayMetrics()

@@ -72,5 +72,4 @@
         <item name="android:windowEnterAnimation">@anim/trans_right_to_left</item>
         <item name="android:windowExitAnimation">@anim/trans_left_to_right</item>
     </style>
-
 </resources>

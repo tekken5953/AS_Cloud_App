@@ -90,6 +90,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
         }
     }
 
+    /** 현재 주소 DB에 업데이트 **/
     private fun updateCurrentAddress(lat: Double, lng: Double, addr: String, time: Long) {
         val roomDB = GpsRepository(context)
         val model = GpsEntity(CURRENT_GPS_ID, lat, lng, addr, time)
