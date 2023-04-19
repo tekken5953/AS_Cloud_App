@@ -66,7 +66,8 @@ object ConvertDataType {
         return System.currentTimeMillis()
     }
 
-    fun currentDateTimeString() : String {
+    /** 위젯용 현재시간 타임포멧 **/
+    fun currentDateTimeString(): String {
         @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat("MM월 dd일 HH시 mm분")
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
@@ -80,33 +81,57 @@ object ConvertDataType {
     }
 
     /** Email을 RealtimeDB의 child 형식에 맞게 변환**/
-    fun formatEmailToRDB(email: String) : String {
+    fun formatEmailToRDB(email: String): String {
         return email.replace(".", "_")
     }
 
-    /** sky value에 따른 이미지 설정 **/
-    fun getSkyImg(context: Context, sky: String?) : Drawable? {
-        when(sky) {
-            "맑음" -> {
-                return ResourcesCompat.getDrawable(context.resources, R.drawable.sunny_test,null)
-            }
-            "구름많음" -> {
-                return ResourcesCompat.getDrawable(context.resources, R.drawable.cloud2_test,null)
-            }
-            "흐림" -> {
-                return ResourcesCompat.getDrawable(context.resources, R.drawable.cloud_test,null)
-            }
+    /** rain type에 따른 이미지 설정 **/
+    fun getRainType(context: Context, rain: String?): Drawable? {
+        return when (rain) {
             "비" -> {
-                return ResourcesCompat.getDrawable(context.resources, R.drawable.rain_per,null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.rainy_test, null)
             }
             "눈" -> {
-                return ResourcesCompat.getDrawable(context.resources, R.drawable.snow_test,null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.snow_test, null)
             }
-            "흐리고 비" -> {
-                return ResourcesCompat.getDrawable(context.resources, R.drawable.rainy_test,null)
+            "비/눈" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_snow, null)
+            }
+            "소나기" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_per, null)
             }
             else -> {
-                return ResourcesCompat.getDrawable(context.resources, R.drawable.cancel,null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
+            }
+        }
+    }
+
+    /** sky value에 따른 이미지 설정 **/
+    fun getSkyImg(context: Context, sky: String?): Drawable? {
+        return when (sky) {
+            "맑음" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.sunny_test, null)
+            }
+            "구름많음" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.cloud2_test, null)
+            }
+            "흐림" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.cloud_test, null)
+            }
+            "소나기", "비" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_per, null)
+            }
+            "구름많고 눈", "눈", "흐리고 눈" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.snow_test, null)
+            }
+            "구름많고 소나기","흐리고 비","구름많고 비","흐리고 소나기" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.rainy_test, null)
+            }
+            "구름많고 비/눈", "흐리고 비/눈","비/눈"-> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_snow, null)
+            }
+            else -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
             }
         }
     }
@@ -134,14 +159,14 @@ object ConvertDataType {
     }
 
     /** Double을 지정 자릿수에서 반올림 **/
-    fun convertDoubleToDecimal(double: Double, digit: Int) : String {
-        return String.format("%.${digit}f",double)
+    fun convertDoubleToDecimal(double: Double, digit: Int): String {
+        return String.format("%.${digit}f", double)
     }
 
     /** 요일 변환 **/
     @RequiresApi(Build.VERSION_CODES.O)
-    fun convertDayOfWeekToKorean(context: Context, datOfWeek: Int) : String {
-        return when(datOfWeek % 7) {
+    fun convertDayOfWeekToKorean(context: Context, datOfWeek: Int): String {
+        return when (datOfWeek % 7) {
             1 -> context.getString(R.string.mon)
             2 -> context.getString(R.string.tue)
             3 -> context.getString(R.string.wen)

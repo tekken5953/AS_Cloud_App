@@ -17,23 +17,7 @@ object AdapterModel {
         var starred: Boolean, val owned: Boolean
     )
 
-    data class GridItem(val img: Drawable, val text: String)
-
-    data class WeatherItem(
-        val address: String,
-        val temp: String,
-        val sunRise: String,
-        val sunSet: String,
-        val sky: String,
-        val humid: String,
-        val wind: String,
-        val rainPer: String,
-        val pm2p5Grade: Int,
-        val pm10Grade: Int,
-        @SerializedName("temperatureMin") val minTemp: String,
-        @SerializedName("temperatureMax") val maxTemp: String
-    )
-
+    // 시간별 날씨
     data class DailyWeatherItem(
         val time: String,
         val img: Drawable?,
@@ -41,6 +25,7 @@ object AdapterModel {
         val date: String
     )
 
+    // 주간별 날씨
     data class WeeklyWeatherItem(
         val day: String,
         val minImg: Drawable?,
@@ -49,17 +34,20 @@ object AdapterModel {
         val maxText: String
     )
 
+    // 공지사항 리스트
     data class NoticeItem(
         val date: String,
         val title: String
     )
 
+    // 공지사항 내용
     data class DetailItem(
         val title: String,
         val content: String,
         val isNotice: Boolean
     )
 
+    // 디자인 테스트 - 설정
     data class TestItem(
         val font: String,
         val size: String,
@@ -67,10 +55,12 @@ object AdapterModel {
         val value: String
     )
 
+    // 앱 버전
     data class AppVersionItem(
         val version: String
     )
 
+    // 이벤트 리스트
     data class EventItem(
         @PrimaryKey(autoGenerate = true) val id: Int,
         val date: String,
@@ -78,12 +68,9 @@ object AdapterModel {
         val content: Any?
     )
 
+    // 공기질 데이터
     data class AirQualityItem(
         val title: String,
         val data: String?
-    )
-
-    data class AddressListItem(
-        val addr: String
     )
 }

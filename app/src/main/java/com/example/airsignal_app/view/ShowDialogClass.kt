@@ -1,10 +1,11 @@
-package com.example.airsignal_app.util
+package com.example.airsignal_app.view
 
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.example.airsignal_app.R
+import com.example.airsignal_app.util.RefreshUtils
 import javax.inject.Singleton
 
 /**
@@ -18,7 +19,7 @@ class ShowDialogClass {
     private lateinit var alertDialog: androidx.appcompat.app.AlertDialog
 
     @Singleton
-    fun getInstance(mActivity: Activity) : ShowDialogClass {
+    fun getInstance(mActivity: Activity): ShowDialogClass {
         activity = mActivity
         builder = androidx.appcompat.app.AlertDialog.Builder(activity, R.style.AlertDialog)
         return this

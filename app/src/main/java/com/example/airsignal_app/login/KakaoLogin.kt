@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
@@ -11,6 +12,8 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.firebase.db.RDBLogcat
+import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmailForKakao
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
@@ -39,9 +42,8 @@ import kotlinx.coroutines.launch
 class KakaoLogin(private val activity: Activity) {
     private var sp: SharedPreferenceManager = SharedPreferenceManager(activity)
 
-    fun initialize() : KakaoLogin {
+    init {
         KakaoSdk.init(activity, KAKAO_NATIVE_APP_KEY)
-        return this
     }
 
     /** 앱 히시키 받아오기 **/
@@ -112,7 +114,7 @@ class KakaoLogin(private val activity: Activity) {
     }
 
     /** 자동 로그인 **/
-    fun isValidToken(pb: ProgressBar) {
+    fun isValidToken(pb: LinearLayout) {
         pb.visibility = View.VISIBLE
         pb.bringToFront()
         if (AuthApiClient.instance.hasToken()) {
@@ -134,7 +136,6 @@ class KakaoLogin(private val activity: Activity) {
                                         "user code is ${it}\n"
                             )
                     }
-                    sendLogInWithEmailForKakao(activity, "로그인 성공", "카카오", "자동")
                 }
             }
         } else {

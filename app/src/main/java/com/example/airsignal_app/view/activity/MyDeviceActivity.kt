@@ -15,7 +15,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
 import com.example.airsignal_app.util.RefreshUtils
-import com.example.airsignal_app.util.ShowDialogClass
+import com.example.airsignal_app.view.ShowDialogClass
 
 class MyDeviceActivity : AppCompatActivity() {
 

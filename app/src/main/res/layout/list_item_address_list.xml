@@ -19,8 +19,7 @@
         style="@style/basicTextView"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/listCurrentAddressImg"
-        android:text="경기도 성남시 분당구 야탑2동" />
+        android:layout_toEndOf="@+id/listCurrentAddressImg" />
 
     <TextView
         android:id="@+id/listCurrentAddressDelete"
@@ -28,6 +27,7 @@
         android:layout_alignTop="@+id/listCurrentAddressText"
         android:layout_alignBottom="@+id/listCurrentAddressText"
         android:layout_marginStart="10dp"
+        android:visibility="gone"
         android:layout_toEndOf="@+id/listCurrentAddressText"
         android:background="@drawable/edit_delete_btn_bg"
         android:text="삭제"
@@ -41,7 +41,7 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="24dp"
         android:src="@drawable/check_small"
-        android:visibility="visible"
+        android:visibility="gone"
         app:tint="@color/mode_color_text" />
 
     <View

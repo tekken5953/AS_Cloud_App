@@ -36,9 +36,12 @@ import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsWorker
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.util.ConvertDataType.convertDayOfWeekToKorean
+import com.example.airsignal_app.util.ConvertDataType.getRainType
 import com.example.airsignal_app.util.ConvertDataType.getSkyImg
 import com.example.airsignal_app.view.SearchDialog
 import com.example.airsignal_app.view.SideMenuClass
+import com.example.airsignal_app.view.SilentLoginClass
+import com.example.airsignal_app.view.ToastUtils
 import com.example.airsignal_app.view.widget.WidgetProvider
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -68,8 +71,6 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         Logger.t(TAG_L).d("onResume")
-        GetLocation(this@MainActivity).getLocation()
-        Thread.sleep(100)
         getDataSingleTime()
         binding.mainBottomAdView.resume()
     }
@@ -99,6 +100,8 @@ class MainActivity : AppCompatActivity() {
             }
 
         initializing()
+
+        SilentLoginClass().login(this, binding.mainPbLayout)
 
         // 사이드 메뉴 세팅
         SideMenuClass(this, binding.mainDrawerLayout, binding.mainNavView, binding.mainLayout)
@@ -213,7 +216,8 @@ class MainActivity : AppCompatActivity() {
             binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
         } else {
             if (!isBackPressed) {
-                ToastUtils(this).customDurationMessage("버튼을 한번 더 누르면 앱이 종료됩니다", 2)
+                ToastUtils(this)
+                    .customDurationMessage("버튼을 한번 더 누르면 앱이 종료됩니다", 2)
                 isBackPressed = true
             } else {
                 sp.removeKey(lastAddress)
@@ -263,8 +267,8 @@ class MainActivity : AppCompatActivity() {
                     sun.sunrise.substring(0, 2) + ":" + sun.sunrise.substring(2, sun.sunrise.length)
                 binding.mainSunSetValue.text =
                     sun.sunset.substring(0, 2) + ":" + sun.sunset.substring(2, sun.sunset.length)
-                binding.mainSkyImg.setImageDrawable(getSkyImg(this, realtime.sky))
-                binding.mainSkyValue.text = realtime.sky
+                binding.mainSkyImg.setImageDrawable(applySkyImg(realtime.rainType,realtime.sky))
+                binding.mainSkyValue.text = applySkyText(realtime.rainType,realtime.sky)
                 binding.mainHumidValue.text = realtime.humid.roundToInt().toString() + "%"
                 binding.mainWindValue.text =
                     realtime.windSpeed.roundToInt().toString() + "m/s, " + realtime.vector
@@ -280,7 +284,7 @@ class MainActivity : AppCompatActivity() {
                     val forecastToday = LocalDateTime.parse(today.forecast)
                     addDailyWeatherItem(
                         forecastToday.hour.toString() + "시",
-                        getSkyImg(this, today.sky)!!,
+                        applySkyImg(today.rainType,today.sky),
                         "${today.temp.roundToInt()}˚",
                         "${forecastToday.monthValue}.${forecastToday.dayOfMonth}"
                     )
@@ -339,6 +343,7 @@ class MainActivity : AppCompatActivity() {
         this.weeklyWeatherList.add(item)
     }
 
+    // 로딩시 빈 아이템 보여줌
     private fun addSkeletonItem() {
         val itemDaily = AdapterModel.DailyWeatherItem("", null, "", "")
         val itemWeekly = AdapterModel.WeeklyWeatherItem("", null, null, "", "")
@@ -349,15 +354,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // 공기질 데이터 아이템 추가
     private fun addAirQualityItem(title: String, data: String) {
         val item = AdapterModel.AirQualityItem(title, data)
         this.airQualityList.add(item)
     }
 
+    // 위젯 데이터 갱신
     private fun onUpdateWidgetData() {
         val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
         sendBroadcast(Intent(UPDATE_TIME).apply {
             component = ComponentName(this@MainActivity, WidgetProvider::class.java)
         })
+    }
+
+    // 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트
+    private fun applySkyText(rain: String?, sky: String?): String {
+        return if (rain != "없음") {
+            rain!!
+        } else {
+            sky!!
+        }
+    }
+
+    // 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지
+    private fun applySkyImg(rain: String?, sky: String?) : Drawable {
+        return if (rain != "없음") {
+            getRainType(this, rain!!)!!
+        } else {
+            getSkyImg(this, sky!!)!!
+        }
     }
 }

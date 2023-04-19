@@ -30,15 +30,18 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.notiNight
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiPM
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userId
+import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.databinding.ActivitySettingBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.login.EmailLogin
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.util.*
+import com.example.airsignal_app.view.ShowDialogClass
+import com.example.airsignal_app.view.SnackBarUtils
 import com.example.airsignal_app.view.test.TestDesignActivity
+import com.firebase.ui.auth.AuthUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -77,7 +80,7 @@ class SettingActivity : AppCompatActivity() {
         }
 
         // 설정 페이지 언어 항목이름 바꾸기
-        when (sp.getString("lang")) {
+        when (sp.getString(userLocation)) {
             "english" -> {
                 binding.settingThemeLangRight.text = getString(R.string.english)
             }
@@ -132,16 +135,16 @@ class SettingActivity : AppCompatActivity() {
         // 로그인 플랫폼 아이콘 설정
         when (lastLogin) {
             "google" -> {
-                setImageDrawable(binding.settingUserIcon,R.drawable.google_icon)
+                setImageDrawable(binding.settingUserIcon, R.drawable.google_icon)
             }
             "kakao" -> {
-                setImageDrawable(binding.settingUserIcon,R.drawable.kakao_icon)
+                setImageDrawable(binding.settingUserIcon, R.drawable.kakao_icon)
             }
             "naver" -> {
-                setImageDrawable(binding.settingUserIcon,R.drawable.naver_icon)
+                setImageDrawable(binding.settingUserIcon, R.drawable.naver_icon)
             }
             "email" -> {
-                setImageDrawable(binding.settingUserIcon,R.drawable.email_icon)
+                setImageDrawable(binding.settingUserIcon, R.drawable.email_icon)
             }
         }
 
@@ -172,7 +175,13 @@ class SettingActivity : AppCompatActivity() {
                                     GoogleLogin(this@SettingActivity).logout()
                                 }
                                 "email" -> {
-                                    EmailLogin(this@SettingActivity).initialize().logoutEmail()
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        AuthUI.getInstance()
+                                            .signOut(this@SettingActivity)
+                                            .addOnCompleteListener {
+                                                RefreshUtils(this@SettingActivity).refreshActivityAfterSecond(sec = 1)
+                                            }
+                                    }
                                 }
                             }
                             delay(100)
@@ -278,12 +287,12 @@ class SettingActivity : AppCompatActivity() {
                 .show(langView, true)
 
             // 기존에 저장 된 언어로 라디오 버튼 체크
-            when (sp.getString("lang")) {
-                "korean" -> {
+            when (sp.getString(userLocation)) {
+                getString(R.string.korean) -> {
                     radioGroup.check(koreanLang.id)
                     changeCheckIcon(koreanLang, englishLang, systemLang)
                 }
-                "english" -> {
+                getString(R.string.english) -> {
                     radioGroup.check(englishLang.id)
                     changeCheckIcon(englishLang, koreanLang, systemLang)
                 }
@@ -433,7 +442,7 @@ class SettingActivity : AppCompatActivity() {
         mode: Int,
         dbData: String,
         radioGroup: RadioGroup,
-        radioButton: RadioButton
+        radioButton: RadioButton,
     ) {
         // 테마모드 변경
         AppCompatDelegate.setDefaultNightMode(mode)
@@ -518,11 +527,11 @@ class SettingActivity : AppCompatActivity() {
         alertOff.setTint(getColor(R.color.mode_color_view))
         if (isAllow) {
             if (!isInit) {
-                SnackBarCustom.make(binding.root, "$title 알림을 허용하였습니다", alertOn).show()
+                SnackBarUtils.make(binding.root, "$title 알림을 허용하였습니다", alertOn).show()
             }
         } else {
             if (!isInit) {
-                SnackBarCustom.make(binding.root, "$title 알림을 거부하였습니다", alertOff).show()
+                SnackBarUtils.make(binding.root, "$title 알림을 거부하였습니다", alertOff).show()
             }
         }
     }

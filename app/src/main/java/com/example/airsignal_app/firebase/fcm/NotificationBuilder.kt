@@ -15,7 +15,6 @@ import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_CHANNEL_ID
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_CHANNEL_NAME
 import com.google.firebase.messaging.RemoteMessage
 
-
 class NotificationBuilder {
     /** foreground 상태에서 해드업 알림 **/
     @RequiresApi(Build.VERSION_CODES.O)

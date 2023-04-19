@@ -33,15 +33,13 @@ import com.orhanobut.logger.Logger
 class NaverLogin(private val activity: Activity) {
     private val sp by lazy { SharedPreferenceManager(activity) }
 
-    fun initialize() : NaverLogin {
-        //TODO 정식버전이 되면 동적할당
+    init {
         NaverIdLoginSDK.initialize(
             activity,
             naverDefaultClientId,
             naverDefaultClientSecret,
             naverDefaultClientName
         )
-        return this
     }
 
     /** 로그인
@@ -57,7 +55,6 @@ class NaverLogin(private val activity: Activity) {
     }
 
     /** 로그아웃 + 기록 저장 */
-    @RequiresApi(Build.VERSION_CODES.O)
     fun logout(email: String) {
         NaverIdLoginSDK.logout()
         Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")

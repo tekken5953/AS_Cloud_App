@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/widgetMainLayout"
     android:layout_width="290dp"
     android:layout_height="140dp"
@@ -94,11 +95,11 @@
         style="@style/basicTextView"
         android:layout_alignBottom="@+id/widgetMinMaxView"
         android:layout_toEndOf="@+id/widgetLiveTemp"
-        android:drawableLeft="@drawable/pm"
         android:drawablePadding="5dp"
         android:gravity="center"
         android:text="매우나쁨"
         android:textColor="@color/progressWorst"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        app:drawableLeftCompat="@drawable/pm" />
 
 </RelativeLayout>

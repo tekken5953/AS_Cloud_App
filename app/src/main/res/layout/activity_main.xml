@@ -23,6 +23,17 @@
             ads:adSize="FULL_BANNER"
             ads:adUnitId="@string/adTestUnitId" />
 
+<!--        <ImageView-->
+<!--            android:id="@+id/mainBottomAdCancel"-->
+<!--            android:layout_width="20sp"-->
+<!--            android:layout_height="20sp"-->
+<!--            android:src="@drawable/cancel"-->
+<!--            app:tint="@color/mode_color_text"-->
+<!--            android:layout_toEndOf="@+id/mainBottomAdView"-->
+<!--            android:layout_alignTop="@+id/mainBottomAdView"-->
+<!--            android:layout_marginStart="3dp"-->
+<!--            android:background="?android:attr/selectableItemBackgroundBorderless"/>-->
+
         <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:id="@+id/mainSwipeLayout"
             android:layout_width="match_parent"

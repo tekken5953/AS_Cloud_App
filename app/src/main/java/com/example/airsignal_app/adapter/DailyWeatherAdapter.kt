@@ -53,10 +53,6 @@ class DailyWeatherAdapter(
             image.setImageDrawable(dao.img)
             value.text = dao.value
             date.text = dao.date
-
-//            if (adapterPosition == 0) {
-//                layout.background = ResourcesCompat.getDrawable(context.resources, R.drawable.daily_selected_bg, null)
-//            }
         }
     }
 }

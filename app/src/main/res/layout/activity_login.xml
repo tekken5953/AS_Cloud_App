@@ -54,7 +54,7 @@
         <com.google.android.gms.common.SignInButton
             android:id="@+id/googleLoginButton"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="55dp"
             android:layout_margin="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/loginMainTitleText" />
@@ -83,7 +83,7 @@
             app:layout_constraintTop_toBottomOf="@+id/kakakoLoginButton" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/emailLoginButton"
+            android:id="@+id/phoneLoginButton"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="30dp"
@@ -92,7 +92,7 @@
             android:background="@drawable/pm_box_bg"
             android:drawableStart="@drawable/email_icon_small"
             android:fontFamily="@font/spoqa_hansansneo_medium"
-            android:text="이메일 로그인"
+            android:text="전화번호 로그인"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/naverLoginButton" />
 

@@ -18,7 +18,7 @@ class SensibleTempFormula {
      */
     fun getInSummer(ta: Double, rh: Double) : Double {
         val tw = getTw(ta, rh)
-        return -0.2442 + 0.55399 * tw + 0.45535 * ta - 0.0022 * tw.pow(2) + 0.00278 * tw * ta + 3.0
+        return -0.2442 + 0.55399 * tw + 0.45535 * ta - 0.0022 * tw.pow(2.0) + 0.00278 * tw * ta + 3.0
     }
 
     /**
@@ -38,8 +38,8 @@ class SensibleTempFormula {
      * @param rh 상대습도
      */
     private fun getTw(ta: Double, rh: Double) : Double {
-        return ta * atan(0.151977 * rh + 8.313659.pow(1/2)) +
+        return ta * atan(0.151977 * (rh + 8.313659).pow(0.5)) +
                 atan(ta+rh) - atan(rh-1.67633) +
-                0.00391838 * rh.pow(3/2) * atan(0.023101 * rh) - 4.686035
+                0.00391838 * rh.pow(1.5) * atan(0.023101 * rh) - 4.686035
     }
 }
