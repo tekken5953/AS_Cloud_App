@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.activity.result.ActivityResultLauncher
 import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
@@ -48,6 +49,7 @@ class GoogleLogin(private val activity: Activity) {
         mBtn.isEnabled = false
     }
 
+    /** 토큰 유효성 검사 **/
     fun isValidToken() : Boolean {
         return lastLogin?.idToken != null
     }
@@ -58,7 +60,7 @@ class GoogleLogin(private val activity: Activity) {
             .addOnCompleteListener {
                 Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
                 saveLogoutStatus()
-                RefreshUtils(activity).refreshActivityAfterSecond(sec = 1)
+                RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = null)
             }
             .addOnCanceledListener {
                 Logger.t(TAG_LOGIN).e("로그아웃에 실패했습니다")

@@ -37,6 +37,7 @@ import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
+import com.example.airsignal_app.login.PhoneLogin
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.view.ShowDialogClass
 import com.example.airsignal_app.view.SnackBarUtils
@@ -143,8 +144,8 @@ class SettingActivity : AppCompatActivity() {
             "naver" -> {
                 setImageDrawable(binding.settingUserIcon, R.drawable.naver_icon)
             }
-            "email" -> {
-                setImageDrawable(binding.settingUserIcon, R.drawable.email_icon)
+            "phone" -> {
+                setImageDrawable(binding.settingUserIcon, R.drawable.phone_icon)
             }
         }
 
@@ -174,14 +175,8 @@ class SettingActivity : AppCompatActivity() {
                                 "google" -> {
                                     GoogleLogin(this@SettingActivity).logout()
                                 }
-                                "email" -> {
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        AuthUI.getInstance()
-                                            .signOut(this@SettingActivity)
-                                            .addOnCompleteListener {
-                                                RefreshUtils(this@SettingActivity).refreshActivityAfterSecond(sec = 1)
-                                            }
-                                    }
+                                "phone" -> {
+                                    PhoneLogin(this@SettingActivity, null, null)
                                 }
                             }
                             delay(100)
@@ -408,6 +403,7 @@ class SettingActivity : AppCompatActivity() {
         }
     }
 
+    /** 이미지 드로어블 할당 **/
     private fun setImageDrawable(imageView: ImageView, src: Int) {
         imageView.setImageDrawable(
             ResourcesCompat.getDrawable(
@@ -519,7 +515,7 @@ class SettingActivity : AppCompatActivity() {
         textView.text = span
     }
 
-    // 알림 커스텀 스낵바 세팅
+    /** 알림 커스텀 스낵바 세팅 **/
     private fun showSnackBar(isAllow: Boolean, title: String) {
         val alertOn = ContextCompat.getDrawable(this@SettingActivity, R.drawable.alert_on)!!
         val alertOff = ContextCompat.getDrawable(this@SettingActivity, R.drawable.alert_off)!!

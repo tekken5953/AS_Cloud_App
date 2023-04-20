@@ -30,19 +30,17 @@ class SnackBarUtils(view: View, private val message: String, private val drawabl
     private val context = view.context
     private val snackBar = Snackbar.make(view, "", 2000)
     private val snackBarLayout = snackBar.view as Snackbar.SnackbarLayout
-
     private val inflater = LayoutInflater.from(context)
     private val snackBarBinding =
         DataBindingUtil.inflate(inflater, R.layout.custom_view_snackbar, null, false)
                 as CustomViewSnackbarBinding
 
     init {
-        initView()
-        initData()
+        initView().initData()
     }
 
     /** 뷰 세팅 **/
-    private fun initView() {
+    private fun initView() : SnackBarUtils {
         with(snackBarLayout) {
             val layoutParams = layoutParams as FrameLayout.LayoutParams
             val snackBarShowAnim = AnimationUtils.loadAnimation(context, R.anim.snackbar_fade_in)
@@ -59,6 +57,7 @@ class SnackBarUtils(view: View, private val message: String, private val drawabl
             setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent))
             addView(snackBarBinding.root, 0)
         }
+        return this
     }
 
     /** 스낵바 텍스트, 이미지 할당**/

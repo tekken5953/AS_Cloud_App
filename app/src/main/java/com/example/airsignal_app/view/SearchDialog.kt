@@ -86,7 +86,7 @@ class SearchDialog(
                         lastAddress,
                         currentList[position].replace("null", "")
                     )
-                    RefreshUtils(activity).refreshActivityAfterSecond(1)
+                    RefreshUtils(activity).refreshActivityAfterSecond(1, null)
                 }
             })
 

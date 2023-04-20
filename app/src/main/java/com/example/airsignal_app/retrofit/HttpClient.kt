@@ -1,7 +1,6 @@
 package com.example.airsignal_app.retrofit
 
 import android.annotation.SuppressLint
-import com.example.airsignal_app.dao.IgnoredKeyFile.localServerURL
 import com.example.airsignal_app.dao.IgnoredKeyFile.springServerURL
 import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.util.LoggerUtil
@@ -13,7 +12,9 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
+import javax.inject.Singleton
 
+@Singleton
 @SuppressLint("SetTextI18n")
 object HttpClient {
     /** API Interface 생성 **/
@@ -50,7 +51,6 @@ object HttpClient {
                         Timber.tag("Timber").e(message)
                     }
                 }
-
             }).apply {
                 level = HttpLoggingInterceptor.Level.BODY
             })
@@ -76,6 +76,6 @@ object HttpClient {
         }
 
         if (instance != null)
-           mMyAPIImpl = retrofit.create(MyApiImpl::class.java) // API 인터페이스 형태로 레트로핏 클라이언트 생성
+            mMyAPIImpl = retrofit.create(MyApiImpl::class.java) // API 인터페이스 형태로 레트로핏 클라이언트 생성
     }
 }

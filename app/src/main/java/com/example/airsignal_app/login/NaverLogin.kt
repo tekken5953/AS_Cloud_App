@@ -59,7 +59,7 @@ class NaverLogin(private val activity: Activity) {
         NaverIdLoginSDK.logout()
         Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")
         sendLogOutWithEmail(email, "로그아웃 성공", "네이버")
-        RefreshUtils(activity).refreshActivityAfterSecond(sec = 1)
+        RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = null)
     }
 
     /** 엑세스 토큰 불러오기
@@ -109,7 +109,7 @@ class NaverLogin(private val activity: Activity) {
         }
     }
 
-    // 로그인 콜벡 메서드
+    /** 로그인 콜벡 메서드 **/
     private val oauthLoginCallback = object : OAuthLoginCallback {
         override fun onSuccess() {
             // 네이버 로그인 인증이 성공했을 때 수행할 코드 추가
@@ -131,11 +131,12 @@ class NaverLogin(private val activity: Activity) {
         }
     }
 
-    // 로그인 페이지로 이동
+    /** 로그인 페이지로 이동 **/
     private fun enterLoginPage() {
         EnterPage(activity).toLogin()
     }
 
+    /** 로그인 세션 유지 확인 **/
     fun isLogin() : Boolean {
        return NidOAuthLogin().callProfileApi(profileCallback).isCompleted
     }
