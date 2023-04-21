@@ -34,13 +34,13 @@ import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.firebase.admob.AdViewClass
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsWorker
+import com.example.airsignal_app.login.SilentLoginClass
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.util.ConvertDataType.convertDayOfWeekToKorean
 import com.example.airsignal_app.util.ConvertDataType.getRainType
 import com.example.airsignal_app.util.ConvertDataType.getSkyImg
 import com.example.airsignal_app.view.SearchDialog
 import com.example.airsignal_app.view.SideMenuClass
-import com.example.airsignal_app.view.SilentLoginClass
 import com.example.airsignal_app.view.ToastUtils
 import com.example.airsignal_app.view.widget.WidgetProvider
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
@@ -238,7 +238,14 @@ class MainActivity : AppCompatActivity() {
                 val sun = result.sun
                 val air = result.quality
                 val week = result.week
-                val tempDate = LocalDateTime.parse(week.tempDate)
+                var tempDate: LocalDateTime
+                val dateNow: LocalDateTime = LocalDateTime.now()
+                try {
+                    tempDate = LocalDateTime.parse(week.tempDate)
+                } catch (e: java.lang.NullPointerException) {
+                    tempDate = LocalDateTime.now()
+                    e.printStackTrace()
+                }
 //                val tempDate = week.tempDate
                 val wfMin = listOf(
                     week.wf1Am, week.wf2Am, week.wf3Am,
@@ -249,10 +256,12 @@ class MainActivity : AppCompatActivity() {
                     week.wf4Pm, week.wf5Pm, week.wf6Pm, week.wf7Pm
                 )
                 val taMin = listOf(
+                    week.taMin0,
                     week.taMin1, week.taMin2, week.taMin3,
                     week.taMin4, week.taMin5, week.taMin6, week.taMin7
                 )
                 val taMax = listOf(
+                    week.taMax0,
                     week.taMax1, week.taMax2, week.taMax3, week.taMax4,
                     week.taMax5, week.taMax6, week.taMax7
                 )
@@ -267,8 +276,8 @@ class MainActivity : AppCompatActivity() {
                     sun.sunrise.substring(0, 2) + ":" + sun.sunrise.substring(2, sun.sunrise.length)
                 binding.mainSunSetValue.text =
                     sun.sunset.substring(0, 2) + ":" + sun.sunset.substring(2, sun.sunset.length)
-                binding.mainSkyImg.setImageDrawable(applySkyImg(realtime.rainType,realtime.sky))
-                binding.mainSkyValue.text = applySkyText(realtime.rainType,realtime.sky)
+                binding.mainSkyImg.setImageDrawable(applySkyImg(realtime.rainType, realtime.sky))
+                binding.mainSkyValue.text = applySkyText(realtime.rainType, realtime.sky)
                 binding.mainHumidValue.text = realtime.humid.roundToInt().toString() + "%"
                 binding.mainWindValue.text =
                     realtime.windSpeed.roundToInt().toString() + "m/s, " + realtime.vector
@@ -284,7 +293,7 @@ class MainActivity : AppCompatActivity() {
                     val forecastToday = LocalDateTime.parse(today.forecast)
                     addDailyWeatherItem(
                         forecastToday.hour.toString() + "시",
-                        applySkyImg(today.rainType,today.sky),
+                        applySkyImg(today.rainType, today.sky),
                         "${today.temp.roundToInt()}˚",
                         "${forecastToday.monthValue}.${forecastToday.dayOfMonth}"
                     )
@@ -292,9 +301,8 @@ class MainActivity : AppCompatActivity() {
 
                 for (i: Int in 0 until (7)) {
                     addWeeklyWeatherItem(
-//                        tempDate
-                        "${tempDate.month.value}.${tempDate.dayOfMonth + i}" +
-                                "(${convertDayOfWeekToKorean(this, tempDate.dayOfWeek.value + i)})",
+                        "${dateNow.month.value}.${dateNow.dayOfMonth + i}" +
+                                "(${convertDayOfWeekToKorean(this, dateNow.dayOfWeek.value + i)})",
                         getSkyImg(this, wfMin[i])!!,
                         getSkyImg(this, wfMax[i])!!,
                         "${taMin[i].roundToInt()}˚",
@@ -314,7 +322,7 @@ class MainActivity : AppCompatActivity() {
                 airQualityAdapter.notifyDataSetChanged()
 
                 runOnUiThread {
-                    binding.mainPbLayout.visibility = View.GONE
+                    hidePB()
                 }
             }
         }
@@ -336,7 +344,7 @@ class MainActivity : AppCompatActivity() {
     // 시간별 날씨 리사이클러뷰 아이템 추가
     private fun addWeeklyWeatherItem(
         day: String, minImg: Drawable,
-        maxImg: Drawable, minText: String, maxText: String
+        maxImg: Drawable, minText: String, maxText: String,
     ) {
         val item = AdapterModel.WeeklyWeatherItem(day, minImg, maxImg, minText, maxText)
 
@@ -378,7 +386,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지
-    private fun applySkyImg(rain: String?, sky: String?) : Drawable {
+    private fun applySkyImg(rain: String?, sky: String?): Drawable {
         return if (rain != "없음") {
             getRainType(this, rain!!)!!
         } else {

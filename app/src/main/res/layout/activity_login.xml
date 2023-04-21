@@ -5,7 +5,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/mainConstLayout"
+        android:id="@+id/loginMainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -28,73 +28,82 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/loginMainBack"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="45dp"
-            android:src="@drawable/back_arrow"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/loginMainTitleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:fontFamily="@font/spoqa_hansansneo_medium"
-            android:text="@string/login_title"
-            android:textColor="@color/mode_color_text"
-            android:textSize="23sp"
-            app:layout_constraintBottom_toBottomOf="@+id/loginMainBack"
-            app:layout_constraintStart_toEndOf="@+id/loginMainBack"
-            app:layout_constraintTop_toTopOf="@+id/loginMainBack" />
-
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/googleLoginButton"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_margin="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/loginMainTitleText" />
+            android:layout_height="match_parent"
+            android:id="@+id/viewGroupLayout">
+            <ImageView
+                android:id="@+id/loginMainBack"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="45dp"
+                android:src="@drawable/back_arrow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/kakakoLoginButton"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="30dp"
-            android:src="@drawable/kakao_login_large_wide"
-            app:layout_constraintTop_toBottomOf="@+id/googleLoginButton" />
+            <TextView
+                android:id="@+id/loginMainTitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:fontFamily="@font/spoqa_hansansneo_medium"
+                android:text="@string/login_title"
+                android:textColor="@color/mode_color_text"
+                android:textSize="23sp"
+                app:layout_constraintBottom_toBottomOf="@+id/loginMainBack"
+                app:layout_constraintStart_toEndOf="@+id/loginMainBack"
+                app:layout_constraintTop_toTopOf="@+id/loginMainBack" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/naverLoginButton"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="30dp"
-            android:background="@drawable/pm_box_bg"
-            android:drawableStart="@drawable/naver_icon_small"
-            android:fontFamily="@font/spoqa_hansansneo_medium"
-            android:text="네이버 로그인"
-            app:layout_constraintTop_toBottomOf="@+id/kakakoLoginButton" />
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/googleLoginButton"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_margin="30dp"
+                app:layout_constraintBottom_toTopOf="@+id/kakakoLoginButton" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/phoneLoginButton"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="30dp"
-            android:background="@drawable/pm_box_bg"
-            android:drawableStart="@drawable/email_icon_small"
-            android:fontFamily="@font/spoqa_hansansneo_medium"
-            android:text="전화번호 로그인"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/naverLoginButton" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/kakakoLoginButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:elevation="12dp"
+                android:translationZ="12dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/kakao_login_large_wide"
+                app:layout_constraintBottom_toTopOf="@+id/naverLoginButton" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/naverLoginButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="30dp"
+                android:background="@drawable/pm_box_bg"
+                android:drawableStart="@drawable/naver_icon_small"
+                android:fontFamily="@font/spoqa_hansansneo_medium"
+                android:text="네이버 로그인"
+                android:elevation="12dp"
+                android:translationZ="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/phoneLoginButton" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/phoneLoginButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="50dp"
+                android:elevation="12dp"
+                android:translationZ="8dp"
+                android:background="@drawable/pm_box_bg"
+                android:drawableStart="@drawable/email_icon_small"
+                android:fontFamily="@font/spoqa_hansansneo_medium"
+                android:text="전화번호로 로그인"
+                app:layout_constraintBottom_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

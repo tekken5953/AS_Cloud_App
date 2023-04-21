@@ -201,7 +201,7 @@ class KakaoLogin(private val activity: Activity) {
                 } else {
                     Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
                     sendLogOutWithEmail(email,"로그아웃 성공", "카카오")
-                    RefreshUtils(activity).refreshActivityAfterSecond(sec = 1)
+                    RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = null)
                 }
             }
         } catch (e: UninitializedPropertyAccessException) {

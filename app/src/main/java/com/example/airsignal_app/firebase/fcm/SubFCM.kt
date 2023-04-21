@@ -44,7 +44,7 @@ class SubFCM : FirebaseMessagingService() {
             }
     }
 
-    // 토픽 구독 해제
+    /** 토픽 구독 해제 **/
     fun unSubTopic(topic: String) {
         FirebaseMessaging.getInstance().unsubscribeFromTopic(topic)
             .addOnCompleteListener { task ->
@@ -56,7 +56,7 @@ class SubFCM : FirebaseMessagingService() {
             }
     }
 
-    // 현재 토큰정보 불러오기
+    /** 현재 토큰정보 불러오기 **/
     suspend fun getToken(): String? {
         val token = withContext(Dispatchers.IO) {
             FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
@@ -72,7 +72,7 @@ class SubFCM : FirebaseMessagingService() {
         return token
     }
 
-    // 새로운 토큰 발행
+    /** 새로운 토큰 발행 **/
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         //TODO 서버에 바뀐 토큰 보내기

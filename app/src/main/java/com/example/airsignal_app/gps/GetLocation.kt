@@ -6,6 +6,7 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.util.Log
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
@@ -55,25 +56,25 @@ class GetLocation(private val context: Context) : GetLocationListener {
         lateinit var address: List<Address>
         try {
             @Suppress("DEPRECATION")
-            address = geocoder.getFromLocation(lat, lng, 2) as List<Address>
+            address = geocoder.getFromLocation(lat, lng, 10) as List<Address>
             if (address.isNotEmpty()) {
                 for (i: Int in 0 until (address.size)) {
                     val it = address[i]
-                    Logger.t("Location").w("${it.locality} ${it.thoroughfare}")
-                    address[i].locality.let { locality ->
-                        address[i].thoroughfare.let { thoroughfare ->
-                            writeLogCause(
-                                email = email,
-                                isSuccess = "Background Location",
-                                log = "${address[i].latitude.toInt()} , ${address[i].longitude.toInt()}\t " +
-                                        "$locality $thoroughfare"
-                            )
+                    if (it.locality != null && it.thoroughfare != null) {
+                        Log.w("Location", "${it.locality} ${it.thoroughfare}")
+                        writeLogCause(
+                            email = email,
+                            isSuccess = "Background Location",
+                            log = "${it.latitude.toInt()} , ${it.longitude.toInt()}\t " +
+                                    "${it.locality} ${it.thoroughfare}"
+                        )
 
-                            updateCurrentAddress(
-                                lat, lng,
-                                "$locality $thoroughfare", getCurrentTime()
-                            )
-                        }
+                        updateCurrentAddress(
+                            lat, lng,
+                            "${it.locality} ${it.thoroughfare}", getCurrentTime()
+                        )
+                    } else {
+                        Log.e("Location", "Address is Null : ${it.getAddressLine(i)}")
                     }
                 }
             } else {

@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
+import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.view.activity.SettingActivity
@@ -29,20 +30,20 @@ class SideMenuClass(
 ) {
     private val sp by lazy { SharedPreferenceManager(mContext) }
 
-    // 사이드 메뉴 닫기
+    /** 사이드 메뉴 닫기 **/
     fun closeDrawerMenu() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         }
     }
 
-    // 사이드 메뉴 열기
+    /** 사이드 메뉴 열기 **/
     private fun openMenu() {
         drawerLayout.openDrawer(GravityCompat.START)
         drawerLayout.bringToFront()
     }
 
-    // 사이드 메뉴 세팅
+    /** 사이드 메뉴 세팅 **/
     fun setUpSideMenu(menuIcon: ImageView, pb: ProgressBar) {
         // 사이드 메뉴 아이콘
         menuIcon.setOnClickListener {
@@ -68,7 +69,7 @@ class SideMenuClass(
         // 로그인 이력이 없을 시 기본 메시지로 설정
         navView.getHeaderView(0).apply {
             Glide.with(mContext)
-                .load(Uri.parse(SharedPreferenceManager(mContext).getString(IgnoredKeyFile.userProfile)))
+                .load(Uri.parse(SharedPreferenceManager(mContext).getString(userProfile)))
                 .into(findViewById(R.id.navHeaderProfileImg))
 
             if (sp.getString(userEmail) != "") {

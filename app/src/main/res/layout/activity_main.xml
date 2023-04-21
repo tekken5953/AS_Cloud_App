@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="dataVM"
             type="com.example.airsignal_app.vmodel.GetWeatherViewModel" />
@@ -23,16 +24,16 @@
             ads:adSize="FULL_BANNER"
             ads:adUnitId="@string/adTestUnitId" />
 
-<!--        <ImageView-->
-<!--            android:id="@+id/mainBottomAdCancel"-->
-<!--            android:layout_width="20sp"-->
-<!--            android:layout_height="20sp"-->
-<!--            android:src="@drawable/cancel"-->
-<!--            app:tint="@color/mode_color_text"-->
-<!--            android:layout_toEndOf="@+id/mainBottomAdView"-->
-<!--            android:layout_alignTop="@+id/mainBottomAdView"-->
-<!--            android:layout_marginStart="3dp"-->
-<!--            android:background="?android:attr/selectableItemBackgroundBorderless"/>-->
+        <!--                <ImageView-->
+        <!--                    android:id="@+id/mainBottomAdCancel"-->
+        <!--                    android:layout_width="20sp"-->
+        <!--                    android:layout_height="20sp"-->
+        <!--                    android:src="@drawable/cancel"-->
+        <!--                    app:tint="@color/mode_color_text"-->
+        <!--                    android:layout_toEndOf="@+id/mainBottomAdView"-->
+        <!--                    android:layout_alignTop="@+id/mainBottomAdView"-->
+        <!--                    android:layout_marginStart="3dp"-->
+        <!--                    android:background="?android:attr/selectableItemBackgroundBorderless"/>-->
 
         <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:id="@+id/mainSwipeLayout"
@@ -520,7 +521,7 @@
                                 style="@style/basicTextView"
                                 android:layout_marginTop="36dp"
                                 android:fontFamily="@font/spoqa_hansansneo_bold"
-                                android:text="외부 공기질 데이터"
+                                android:text="외부 공기질"
                                 android:textColor="@color/mode_color_text"
                                 android:textSize="16sp"
                                 android:textStyle="bold"

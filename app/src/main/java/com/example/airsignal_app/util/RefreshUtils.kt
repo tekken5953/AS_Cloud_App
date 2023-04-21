@@ -3,8 +3,11 @@ package com.example.airsignal_app.util
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.opengl.Visibility
 import android.os.Handler
 import android.os.Looper
+import android.view.View
+import android.widget.LinearLayout
 import kotlin.system.exitProcess
 
 class RefreshUtils(private val activity: Activity) {
@@ -21,9 +24,15 @@ class RefreshUtils(private val activity: Activity) {
     }
 
     /** sec 초 이후에 액티비티 갱신 **/
-    fun refreshActivityAfterSecond(sec: Int) {
+    fun refreshActivityAfterSecond(sec: Int, pbLayout: LinearLayout?) {
+        pbLayout?.let {
+            it.visibility = View.VISIBLE
+        }
         Handler(Looper.getMainLooper()).postDelayed ({
            this.refreshActivity()
+            pbLayout?.let {
+                it.visibility = View.GONE
+            }
         }, (sec * 1000).toLong())
     }
 
