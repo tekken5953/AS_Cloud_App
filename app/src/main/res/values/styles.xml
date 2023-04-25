@@ -29,11 +29,6 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
-    <style name="Widget.Theme.AirSignal_App.ButtonBar.Fullscreen" parent="">
-        <item name="android:background">@color/black_overlay</item>
-        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
-    </style>
-
     <style name="basicTextView">
         <item name="android:letterSpacing">-0.04</item>
         <item name="android:textColor">@color/mode_color_text</item>
@@ -63,10 +58,6 @@
         <item name="background">?selectableItemBackground</item>
         <item name="android:layout_marginTop">5dp</item>
     </style>
-
-    <declare-styleable name="Common">
-        <attr name="android:src" />
-    </declare-styleable>
 
     <style name="DialogAnimationSide">
         <item name="android:windowEnterAnimation">@anim/trans_right_to_left</item>

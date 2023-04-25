@@ -3,9 +3,7 @@
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
     <data>
-
         <variable
             name="dataVM"
             type="com.example.airsignal_app.vmodel.GetWeatherViewModel" />
@@ -174,10 +172,11 @@
                                     android:textSize="80sp" />
 
                                 <TextView
-                                    android:id="@+id/mainSkyValue"
+                                    android:id="@+id/mainSensibleValue"
                                     style="@style/basicTextView"
                                     android:layout_gravity="bottom|center_horizontal"
-                                    android:layout_marginTop="10dp"
+                                    android:layout_marginStart="3dp"
+                                    android:layout_marginTop="8dp"
                                     android:fontFamily="@font/spoqa_hansansneo_regular"
                                     android:textSize="14sp" />
                             </FrameLayout>

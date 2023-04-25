@@ -33,6 +33,7 @@ class PhoneLogin(
     private val auth = FirebaseAuth.getInstance()
     private val sp by lazy { SharedPreferenceManager(activity) }
 
+    /** 로그인 **/
     fun login(phoneNumber: String) {
         val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber)       // Phone number to verify

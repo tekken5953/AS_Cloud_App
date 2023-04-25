@@ -67,8 +67,8 @@ object ConvertDataType {
     }
 
     /** 위젯용 현재시간 타임포멧 **/
-    fun currentDateTimeString(): String {
-        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat("MM월 dd일 HH시 mm분")
+    fun currentDateTimeString(context: Context): String {
+        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(context.getString(R.string.widget_time_format))
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
         return format.format(calendar.time)
@@ -164,9 +164,8 @@ object ConvertDataType {
     }
 
     /** 요일 변환 **/
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun convertDayOfWeekToKorean(context: Context, datOfWeek: Int): String {
-        return when (datOfWeek % 7) {
+    fun convertDayOfWeekToKorean(context: Context, dayOfWeek: Int): String? {
+        return when (dayOfWeek % 7) {
             1 -> context.getString(R.string.mon)
             2 -> context.getString(R.string.tue)
             3 -> context.getString(R.string.wen)

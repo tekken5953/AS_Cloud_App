@@ -112,9 +112,9 @@ class SettingActivity : AppCompatActivity() {
         setNightAlertsSpan(binding.settingNotiNightLeft)
 
         // 알림 스위치 이벤트 리스너
-        checkNotification(binding.settingNotiPMRight, notiPM, "미세먼지")
-        checkNotification(binding.settingNotiEventRight, notiEvent, "이벤트")
-        checkNotification(binding.settingNotiNightRight, notiNight, "야간")
+        checkNotification(binding.settingNotiPMRight, notiPM, getString(R.string.pm_10))
+        checkNotification(binding.settingNotiEventRight, notiEvent, getString(R.string.event))
+        checkNotification(binding.settingNotiNightRight, notiNight, getString(R.string.night))
     }
 
     @SuppressLint("InflateParams")
@@ -167,7 +167,6 @@ class SettingActivity : AppCompatActivity() {
                             when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
                                 "kakao" -> {
                                     KakaoLogin(this@SettingActivity).logout(email)
-//                            KakaoLogin(this).disconnectFromKakao()
                                 }
                                 "naver" -> {
                                     NaverLogin(this@SettingActivity).logout(email)
@@ -523,11 +522,11 @@ class SettingActivity : AppCompatActivity() {
         alertOff.setTint(getColor(R.color.mode_color_view))
         if (isAllow) {
             if (!isInit) {
-                SnackBarUtils.make(binding.root, "$title 알림을 허용하였습니다", alertOn).show()
+                SnackBarUtils.make(binding.root, "$title ${getString(R.string.allowed_noti)}", alertOn).show()
             }
         } else {
             if (!isInit) {
-                SnackBarUtils.make(binding.root, "$title 알림을 거부하였습니다", alertOff).show()
+                SnackBarUtils.make(binding.root, "$title ${getString(R.string.denied_noti)}", alertOff).show()
             }
         }
     }

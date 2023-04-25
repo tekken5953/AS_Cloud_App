@@ -237,6 +237,13 @@ class ApiModel {
         val sunset: String,
     )
 
+    data class TodayTemp(
+        @SerializedName("min")
+        val min: Double,
+        @SerializedName("max")
+        val max: Double
+    )
+
     data class GetEntireData(
         @SerializedName("realtime")
         val realtime: List<RealTimeData>,
@@ -245,6 +252,8 @@ class ApiModel {
         @SerializedName("quality")
         val quality: AirQualityData,
         @SerializedName("sun")
-        val sun: SunData
+        val sun: SunData,
+        @SerializedName("today")
+        val today: TodayTemp
     )
 }

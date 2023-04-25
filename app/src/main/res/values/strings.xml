@@ -1,7 +1,5 @@
 <resources>
     <string name="app__name">AirSignal_App</string>
-    <string name="main_gps_title">분당구 야탑동</string>
-    <string name="main_today_weather">오늘의 날씨</string>
     <string name="my_device_title">내 기기</string>
     <string name="as_eye">AS_Eye</string>
     <string name="aqi">공기질 통합지수</string>
@@ -31,8 +29,6 @@
     <string name="serial_number">제품 시리얼 번호</string>
     <string name="next">다음</string>
     <string name="progress_server">서버에 등록 중입니다.\n잠시만 기다려주세요.</string>
-    <string name="very_bad">매우나쁨</string>
-    <string name="hour_12">12시</string>
     <string name="please_login">로그인 해주세요</string>
     <string name="english">English</string>
     <string name="korean">한국어</string>
@@ -69,4 +65,16 @@
     <string name="fir">금</string>
     <string name="sat">토</string>
     <string name="sun">일</string>
+    <string name="cqi">통합 대기\n환경수치</string>
+    <string name="co">일산화탄소</string>
+    <string name="o3">오존</string>
+    <string name="so2">이산화황</string>
+    <string name="sens_temp">체감온도</string>
+    <string name="back_press">버튼을 한번 더 누르면 앱이 종료됩니다</string>
+    <string name="night">야간</string>
+    <string name="allowed_noti">알림을 허용하였습니다</string>
+    <string name="denied_noti">알림을 거부하였습니다</string>
+    <string name="hour">시</string>
+    <string name="widget_time_format">MM월 dd일 HH시 mm분</string>
+    <string name="delete_item">를 삭제하시겠습니까?</string>
 </resources>

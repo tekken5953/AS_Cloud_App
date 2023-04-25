@@ -217,7 +217,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             if (!isBackPressed) {
                 ToastUtils(this)
-                    .customDurationMessage("버튼을 한번 더 누르면 앱이 종료됩니다", 2)
+                    .customDurationMessage(getString(R.string.back_press), 2)
                 isBackPressed = true
             } else {
                 sp.removeKey(lastAddress)
@@ -238,15 +238,15 @@ class MainActivity : AppCompatActivity() {
                 val sun = result.sun
                 val air = result.quality
                 val week = result.week
-                var tempDate: LocalDateTime
+                val today = result.today
                 val dateNow: LocalDateTime = LocalDateTime.now()
-                try {
-                    tempDate = LocalDateTime.parse(week.tempDate)
-                } catch (e: java.lang.NullPointerException) {
-                    tempDate = LocalDateTime.now()
-                    e.printStackTrace()
-                }
-//                val tempDate = week.tempDate
+//                var tempDate: LocalDateTime
+//                try {
+//                    tempDate = LocalDateTime.parse(week.tempDate)
+//                } catch (e: java.lang.NullPointerException) {
+//                    tempDate = LocalDateTime.now()
+//                    e.printStackTrace()
+//                }
                 val wfMin = listOf(
                     week.wf1Am, week.wf2Am, week.wf3Am,
                     week.wf4Am, week.wf5Am, week.wf6Am, week.wf7Am
@@ -277,24 +277,25 @@ class MainActivity : AppCompatActivity() {
                 binding.mainSunSetValue.text =
                     sun.sunset.substring(0, 2) + ":" + sun.sunset.substring(2, sun.sunset.length)
                 binding.mainSkyImg.setImageDrawable(applySkyImg(realtime.rainType, realtime.sky))
-                binding.mainSkyValue.text = applySkyText(realtime.rainType, realtime.sky)
+                binding.mainSensibleValue.text =
+                    "${getString(R.string.sens_temp)} : ${SensibleTempFormula().getSensibleTemp(realtime.temp, realtime.humid, realtime.windSpeed).toInt()}˚"
                 binding.mainHumidValue.text = realtime.humid.roundToInt().toString() + "%"
                 binding.mainWindValue.text =
                     realtime.windSpeed.roundToInt().toString() + "m/s, " + realtime.vector
                 binding.mainRainPerValue.text = realtime.rainP.roundToInt().toString() + "%"
                 binding.mainPm10Grade.setGradeText((air.pm10Grade - 1).toString())
                 binding.mainPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
-                binding.mainMinTemp.text = "${filteringNullData(week.taMin0)}˚"
-                binding.mainMaxTemp.text = "${filteringNullData(week.taMax0)}˚"
+                binding.mainMinTemp.text = "${filteringNullData(today.min)}˚"
+                binding.mainMaxTemp.text = "${filteringNullData(today.max)}˚"
                 binding.mainGpsTitleTv.text = sp.getString(lastAddress)
 
                 for (i: Int in 0 until (10)) {
-                    val today = result.realtime[i]
-                    val forecastToday = LocalDateTime.parse(today.forecast)
+                    val dailyIndex = result.realtime[i]
+                    val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
                     addDailyWeatherItem(
-                        forecastToday.hour.toString() + "시",
-                        applySkyImg(today.rainType, today.sky),
-                        "${today.temp.roundToInt()}˚",
+                        "${forecastToday.hour}${getString(R.string.hour)}",
+                        applySkyImg(dailyIndex.rainType, dailyIndex.sky),
+                        "${dailyIndex.temp.roundToInt()}˚",
                         "${forecastToday.monthValue}.${forecastToday.dayOfMonth}"
                     )
                 }
@@ -310,12 +311,12 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
 
-                addAirQualityItem("통합 대기\n환경수치", air.khaiValue.toString())
-                addAirQualityItem("미세먼지", air.pm10Value.toInt().toString())
-                addAirQualityItem("초미세먼지", air.pm25Value.toString())
-                addAirQualityItem("일산화탄소", air.coValue.toString())
-                addAirQualityItem("오존", air.o3Value.toString())
-                addAirQualityItem("이산화황", air.so2Value.toString())
+                addAirQualityItem(getString(R.string.cqi), air.khaiValue.toString())
+                addAirQualityItem(getString(R.string.pm_10), air.pm10Value.toInt().toString())
+                addAirQualityItem(getString(R.string.pm_2p5), air.pm25Value.toString())
+                addAirQualityItem(getString(R.string.co), air.coValue.toString())
+                addAirQualityItem(getString(R.string.o3), air.o3Value.toString())
+                addAirQualityItem(getString(R.string.so2), air.so2Value.toString())
 
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
@@ -342,7 +343,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // 시간별 날씨 리사이클러뷰 아이템 추가
-    private fun addWeeklyWeatherItem(
+    private fun addWeeklyWeatherItem (
         day: String, minImg: Drawable,
         maxImg: Drawable, minText: String, maxText: String,
     ) {

@@ -15,6 +15,7 @@ import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.GpsRepository
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
+import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
 import com.example.airsignal_app.view.ToastUtils
 import com.google.android.gms.location.LocationServices
@@ -35,8 +36,8 @@ class GetLocation(private val context: Context) : GetLocationListener {
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     onGetLocal(it)
-//                    Logger.t(TAG_L).d("${it.latitude},${it.longitude}")
                     //TODO 백그라운드에서 토픽 교체
+//                    SubFCM().unSubTopic("prevTopic").subTopic("topic")
                 }
             }
             .addOnFailureListener {
@@ -52,7 +53,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
     /** 현재 주소를 불러옵니다 **/
     private fun getAddress(lat: Double, lng: Double) {
         val email = sp.getString(userEmail)
-        val nowAddress = "현재 위치를 확인 할 수 없습니다."
+        val nowAddress = "현재 위치를 확인 할 수 없습니다"
         lateinit var address: List<Address>
         try {
             @Suppress("DEPRECATION")
@@ -65,7 +66,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
                         writeLogCause(
                             email = email,
                             isSuccess = "Background Location",
-                            log = "${it.latitude.toInt()} , ${it.longitude.toInt()}\t " +
+                            log = "${it.latitude} , ${it.longitude}\t " +
                                     "${it.locality} ${it.thoroughfare}"
                         )
 
@@ -85,7 +86,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
                 )
             }
         } catch (e: IOException) {
-            ToastUtils(context as Activity).shortMessage("주소를 가져오는 도중 오류가 발생했습니다")
+            Log.e("Location","주소를 가져오는 도중 오류가 발생했습니다")
             writeLogCause(
                 email,
                 "Background Location",

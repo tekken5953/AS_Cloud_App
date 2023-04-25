@@ -47,7 +47,7 @@ open class WidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        Timber.tag("TAG_WIDGET").i("onUpdate : ${currentDateTimeString()}")
+        Timber.tag("TAG_WIDGET").i("onUpdate : ${currentDateTimeString(context)}")
         appWidgetIds.forEach { appWidgetId ->
             // Get the layout for the App Widget and attach an on-click listener
             // to the button
@@ -106,7 +106,7 @@ open class WidgetProvider : AppWidgetProvider() {
     @SuppressLint("UnsafeProtectedBroadcastReceiver")
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        Timber.tag("TAG_WIDGET").i("onReceive : ${currentDateTimeString()}")
+        Timber.tag("TAG_WIDGET").i("onReceive : ${currentDateTimeString(context)}")
         try {
             val ids = AppWidgetManager.getInstance(context)
                 .getAppWidgetIds(ComponentName(context, WidgetProvider::class.java))

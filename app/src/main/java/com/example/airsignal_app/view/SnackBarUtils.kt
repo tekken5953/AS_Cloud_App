@@ -21,8 +21,13 @@ import com.google.android.material.snackbar.Snackbar
  **/
 class SnackBarUtils(view: View, private val message: String, private val drawable: Drawable) {
 
+    init {
+        initView().initData()
+    }
+
     /**Constructor**/
     companion object {
+        @JvmStatic
         fun make(view: View, message: String, drawable: Drawable) =
             SnackBarUtils(view, message, drawable)
     }
@@ -34,10 +39,6 @@ class SnackBarUtils(view: View, private val message: String, private val drawabl
     private val snackBarBinding =
         DataBindingUtil.inflate(inflater, R.layout.custom_view_snackbar, null, false)
                 as CustomViewSnackbarBinding
-
-    init {
-        initView().initData()
-    }
 
     /** 뷰 세팅 **/
     private fun initView() : SnackBarUtils {
