@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.activity.SplashActivity"
-    android:background="@color/mode_color_view">
+    tools:context=".view.activity.SplashActivity">
 
     <TextView
         android:id="@+id/splashTitle"
@@ -29,6 +28,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="10dp"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

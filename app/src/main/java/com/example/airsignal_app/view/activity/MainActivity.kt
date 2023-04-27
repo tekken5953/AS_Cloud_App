@@ -3,15 +3,19 @@ package com.example.airsignal_app.view.activity
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Spannable
+import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.toSpannable
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -32,11 +36,13 @@ import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.GpsRepository
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.firebase.admob.AdViewClass
+import com.example.airsignal_app.firebase.fcm.NotificationBuilder
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsWorker
 import com.example.airsignal_app.login.SilentLoginClass
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.util.ConvertDataType.convertDayOfWeekToKorean
+import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
 import com.example.airsignal_app.util.ConvertDataType.getRainType
 import com.example.airsignal_app.util.ConvertDataType.getSkyImg
 import com.example.airsignal_app.view.SearchDialog
@@ -99,13 +105,33 @@ class MainActivity : AppCompatActivity() {
                 applyGetDataViewModel()
             }
 
+        // TEST NOTIFICATION
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        val pmString = "미세먼지 나쁨"
+        pmString.toSpannable().setSpan(
+            ForegroundColorSpan(Color.RED),
+            5, pmString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE
+        )
+        val location = GpsRepository(this).getInstance().findById(CURRENT_GPS_ID).addr.toString()
+        location.toSpannable().setSpan(
+            android.text.style.AbsoluteSizeSpan(18),
+            0,
+            location.length,
+            Spannable.SPAN_INCLUSIVE_INCLUSIVE
+        )
+        val data = "최고: 24˚ 최저 : 10˚"
+        NotificationBuilder().sendNotification(
+            this, intent,
+            data, location, getCurrentTime()
+        )
+
         initializing()
 
         SilentLoginClass().login(this, binding.mainPbLayout)
 
         // 사이드 메뉴 세팅
         SideMenuClass(this, binding.mainDrawerLayout, binding.mainNavView, binding.mainLayout)
-            .setUpSideMenu(binding.mainSideMenuIv, binding.mainPb)
+            .setUpSideMenu(binding.mainSideMenuIv)
 
         binding.mainGpsTitleTv.setOnClickListener {
             val bottomSheet =
@@ -278,7 +304,13 @@ class MainActivity : AppCompatActivity() {
                     sun.sunset.substring(0, 2) + ":" + sun.sunset.substring(2, sun.sunset.length)
                 binding.mainSkyImg.setImageDrawable(applySkyImg(realtime.rainType, realtime.sky))
                 binding.mainSensibleValue.text =
-                    "${getString(R.string.sens_temp)} : ${SensibleTempFormula().getSensibleTemp(realtime.temp, realtime.humid, realtime.windSpeed).toInt()}˚"
+                    "${getString(R.string.sens_temp)} : ${
+                        SensibleTempFormula().getSensibleTemp(
+                            realtime.temp,
+                            realtime.humid,
+                            realtime.windSpeed
+                        ).toInt()
+                    }˚"
                 binding.mainHumidValue.text = realtime.humid.roundToInt().toString() + "%"
                 binding.mainWindValue.text =
                     realtime.windSpeed.roundToInt().toString() + "m/s, " + realtime.vector
@@ -343,7 +375,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // 시간별 날씨 리사이클러뷰 아이템 추가
-    private fun addWeeklyWeatherItem (
+    private fun addWeeklyWeatherItem(
         day: String, minImg: Drawable,
         maxImg: Drawable, minText: String, maxText: String,
     ) {

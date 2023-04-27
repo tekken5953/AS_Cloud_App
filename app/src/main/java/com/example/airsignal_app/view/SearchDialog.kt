@@ -141,7 +141,7 @@ class SearchDialog(
 
         // 검색주소 리스트
         listView.onItemClickListener =
-            AdapterView.OnItemClickListener { parent, view, position, id ->
+            AdapterView.OnItemClickListener { _, _, position, _ ->
                 val db = GpsRepository(requireContext())
                 val model = GpsEntity(
                     searchItem[position],

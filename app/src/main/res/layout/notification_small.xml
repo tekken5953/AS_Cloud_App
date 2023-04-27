@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="256dp"
+    android:layout_height="55dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/notiSmallTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextAppearance.Compat.Notification.Title"
+        android:text="미세먼지"
+        android:textSize="15sp"
+        android:layout_marginStart="15dp"/>
+    <TextView
+        android:id="@+id/notiSmallPm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextAppearance.Compat.Notification.Title"
+        android:text="나쁨"
+        android:layout_alignBottom="@+id/notiSmallTitle"
+        android:textSize="15sp"
+        android:layout_toEndOf="@+id/notiSmallTitle"/>
+    <TextView
+        android:id="@+id/notiSmallAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextAppearance.Compat.Notification.Title"
+        android:text="성남시 시흥동"
+        android:textSize="12sp"
+        android:textColor="@color/main_gray_color"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@+id/notiSmallPm"
+        android:layout_alignBottom="@+id/notiSmallTitle"/>
+
+    <TextView
+        android:id="@+id/notiSmallTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/TextAppearance.Compat.Notification.Time"
+        android:text="오전 9:35"
+        android:textColor="@color/main_gray_color"
+        android:textSize="12sp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_alignBottom="@+id/notiSmallTitle"
+        android:layout_toEndOf="@+id/notiSmallAddress" />
+
+    <TextView
+        android:id="@+id/notiSmallContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="최고: 24 최저: 10"
+        android:layout_below="@+id/notiSmallPm"
+        android:layout_alignStart="@+id/notiSmallTitle"
+        android:layout_marginTop="5dp"
+        android:textSize="14sp"
+        android:layout_marginEnd="10dp"
+        style="@style/TextAppearance.Compat.Notification.Title"/>
+
+</RelativeLayout>

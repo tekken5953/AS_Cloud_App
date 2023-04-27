@@ -27,9 +27,10 @@ class SubFCM : FirebaseMessagingService() {
         NotificationBuilder().sendNotification(
             this,
             intent,
-            message,
+            message.data.toString(),
             "AS-Cloud FCM Test Msg",
-            System.currentTimeMillis())
+            System.currentTimeMillis()
+        )
     }
 
     /** 토픽 구독 설정 **/
@@ -66,7 +67,6 @@ class SubFCM : FirebaseMessagingService() {
                     Timber.tag("Notification").w("Fetching FCM registration token failed by $task.exception")
                     return@OnCompleteListener
                 }
-
                 val token = task.result
                 Timber.tag("Notification").d("FCM 토큰 : $token")
             }).result

@@ -125,7 +125,7 @@ class PhoneLogin(
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("phone_tag", "signInWithCredential:complete")
                     Log.d("phone_tag", "complete : ${task.result.user?.phoneNumber}")
-                    val user = task.result?.user
+//                    val user = task.result?.user
                 } else {
                     // Sign in failed, display a message and update the UI
                     Log.w("phone_tag", "signInWithCredential:failure", task.exception)

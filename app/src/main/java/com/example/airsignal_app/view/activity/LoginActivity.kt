@@ -17,6 +17,7 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.databinding.ActivityLoginBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.firebase.fcm.NotificationBuilder
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
@@ -24,6 +25,7 @@ import com.example.airsignal_app.login.PhoneLogin
 import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.view.ShowDialogClass
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.firebase.messaging.RemoteMessage
 import com.orhanobut.logger.Logger
 
 class LoginActivity : AppCompatActivity() {

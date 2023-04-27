@@ -1,7 +1,6 @@
 package com.example.airsignal_app.gps
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
@@ -15,11 +14,10 @@ import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.GpsRepository
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
-import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
-import com.example.airsignal_app.view.ToastUtils
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
+import timber.log.Timber
 import java.io.IOException
 import java.util.*
 
@@ -62,7 +60,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
                 for (i: Int in 0 until (address.size)) {
                     val it = address[i]
                     if (it.locality != null && it.thoroughfare != null) {
-                        Log.w("Location", "${it.locality} ${it.thoroughfare}")
+                        Timber.tag("Location").w("${it.locality} ${it.thoroughfare}")
                         writeLogCause(
                             email = email,
                             isSuccess = "Background Location",
@@ -75,7 +73,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
                             "${it.locality} ${it.thoroughfare}", getCurrentTime()
                         )
                     } else {
-                        Log.e("Location", "Address is Null : ${it.getAddressLine(i)}")
+                        Timber.tag("Location").e("Address is Null : %s", it.getAddressLine(i))
                     }
                 }
             } else {
@@ -86,7 +84,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
                 )
             }
         } catch (e: IOException) {
-            Log.e("Location","주소를 가져오는 도중 오류가 발생했습니다")
+            Timber.tag("Location").e("주소를 가져오는 도중 오류가 발생했습니다")
             writeLogCause(
                 email,
                 "Background Location",

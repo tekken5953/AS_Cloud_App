@@ -44,7 +44,7 @@ class SideMenuClass(
     }
 
     /** 사이드 메뉴 세팅 **/
-    fun setUpSideMenu(menuIcon: ImageView, pb: ProgressBar) {
+    fun setUpSideMenu(menuIcon: ImageView) {
         // 사이드 메뉴 아이콘
         menuIcon.setOnClickListener {
             drawerLayout.apply {

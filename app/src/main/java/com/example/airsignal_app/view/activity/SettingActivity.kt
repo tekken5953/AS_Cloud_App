@@ -32,8 +32,12 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
+import com.example.airsignal_app.dao.StaticDataObject
+import com.example.airsignal_app.dao.StaticDataObject.EVENT_ALL_NOTI
+import com.example.airsignal_app.dao.StaticDataObject.NIGHT_EVENT_NOTI
 import com.example.airsignal_app.databinding.ActivitySettingBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
@@ -112,9 +116,9 @@ class SettingActivity : AppCompatActivity() {
         setNightAlertsSpan(binding.settingNotiNightLeft)
 
         // 알림 스위치 이벤트 리스너
-        checkNotification(binding.settingNotiPMRight, notiPM, getString(R.string.pm_10))
-        checkNotification(binding.settingNotiEventRight, notiEvent, getString(R.string.event))
-        checkNotification(binding.settingNotiNightRight, notiNight, getString(R.string.night))
+        checkNotification(binding.settingNotiPMRight, notiPM, getString(R.string.pm_10),sp.getString(userLocation))
+        checkNotification(binding.settingNotiEventRight, notiEvent, getString(R.string.event),EVENT_ALL_NOTI)
+        checkNotification(binding.settingNotiNightRight, notiNight, getString(R.string.night),NIGHT_EVENT_NOTI)
     }
 
     @SuppressLint("InflateParams")
@@ -465,7 +469,7 @@ class SettingActivity : AppCompatActivity() {
     }
 
     /** 알림 권한을 체크하고 상태저장 **/
-    private fun checkNotification(switch: SwitchCompat, tag: String, title: String) {
+    private fun checkNotification(switch: SwitchCompat, tag: String, title: String, topic: String) {
         switch.setOnCheckedChangeListener { _, isChecked ->
             val permission = RequestPermissionsUtil(this@SettingActivity)
             if (!permission.isNotificationPermitted()) {
@@ -475,6 +479,12 @@ class SettingActivity : AppCompatActivity() {
             } else {
                 showSnackBar(isChecked, title)
                 sp.setBoolean(tag, isChecked)
+            }
+
+            if (isChecked) {
+                SubFCM().subTopic(topic)
+            } else {
+                SubFCM().unSubTopic(topic)
             }
         }
     }

@@ -17,6 +17,9 @@ object StaticDataObject {
     const val REQUEST_NOTIFICATION = 2                    // 알림권한 요청 Result Code
     const val NOTIFICATION_CHANNEL_ID = "500"             // FCM 채널 ID
     const val NOTIFICATION_CHANNEL_NAME = "AIRSIGNAL"     // FCM 채널 NAME
-    const val CHECK_GPS_BACKGROUND = "GPS_OK"             // GPS WorkManager ID 값
+    const val CHECK_GPS_BACKGROUND = "BACKGROUND_GPS_OK"  // GPS WorkManager ID 값
     const val CURRENT_GPS_ID = "Current"                  // 현재 주소 아이디
+    const val NIGHT_EVENT_NOTI = "NIGHT_ALL_USERS"        // FCM 야간 이벤트 알림 토픽
+    const val WEATHER_ALL_NOTI = "WEATHER_ALL_USERS"      // FCM 전체 날씨 알림 토픽
+    const val EVENT_ALL_NOTI = "EVENT_ALL_USERS"          // FCM 주간 이벤트 알림 토픽
 }
