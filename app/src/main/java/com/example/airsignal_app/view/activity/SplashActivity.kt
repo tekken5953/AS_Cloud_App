@@ -1,6 +1,7 @@
 package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,6 +19,7 @@ import com.example.airsignal_app.util.ConvertDataType.setLocaleToEnglish
 import com.example.airsignal_app.util.ConvertDataType.setLocaleToKorea
 import com.example.airsignal_app.util.ConvertDataType.setLocaleToSystem
 import com.example.airsignal_app.util.EnterPage
+import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.google.firebase.database.FirebaseDatabase
 
 @SuppressLint("CustomSplashScreen")
@@ -65,11 +67,9 @@ class SplashActivity : AppCompatActivity() {
 
         // 2초 뒤 이동
         Handler(Looper.getMainLooper()).postDelayed({
-            if (sp.getString(lastLoginPlatform) != "") {
-                EnterPage(this).toMain(sp.getString(lastLoginPlatform))
-            } else {
-                EnterPage(this).toMain(null)
-            }
+            val intent = Intent(this, RedirectPermissionActivity::class.java)
+            startActivity(intent)
+            finish()
         },2000)
     }
 }

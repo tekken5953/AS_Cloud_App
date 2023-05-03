@@ -5,15 +5,16 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.util.Log
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.db.room.GpsRepository
+import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
+import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
@@ -34,8 +35,6 @@ class GetLocation(private val context: Context) : GetLocationListener {
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     onGetLocal(it)
-                    //TODO 백그라운드에서 토픽 교체
-//                    SubFCM().unSubTopic("prevTopic").subTopic("topic")
                 }
             }
             .addOnFailureListener {
@@ -72,6 +71,9 @@ class GetLocation(private val context: Context) : GetLocationListener {
                             lat, lng,
                             "${it.locality} ${it.thoroughfare}", getCurrentTime()
                         )
+
+                        renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)
+
                     } else {
                         Timber.tag("Location").e("Address is Null : %s", it.getAddressLine(i))
                     }
@@ -106,6 +108,12 @@ class GetLocation(private val context: Context) : GetLocationListener {
             roomDB.insert(model)
             Logger.t(TAG_D).d("Insert GPS In GetLocation")
         }
+    }
+
+    private fun renewTopic(old: String, new: String) {
+        SubFCM().unSubTopic(old).subTopic(new)
+        Thread.sleep(100)
+        sp.setString("WEATHER_CURRENT",new)
     }
 }
 

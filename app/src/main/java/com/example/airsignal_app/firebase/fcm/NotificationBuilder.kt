@@ -13,7 +13,6 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.view.View
-import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.res.ResourcesCompat
@@ -21,7 +20,7 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_CHANNEL_ID
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_CHANNEL_NAME
-import com.example.airsignal_app.db.room.GpsRepository
+import com.example.airsignal_app.db.room.repository.GpsRepository
 
 class NotificationBuilder {
 

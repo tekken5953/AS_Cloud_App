@@ -3,6 +3,7 @@ package com.example.airsignal_app.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.*
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,6 +11,7 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentManager
@@ -18,13 +20,14 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.AddressListAdapter
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.db.room.GpsRepository
 import com.example.airsignal_app.db.room.model.GpsEntity
+import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
 import com.example.airsignal_app.util.RefreshUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+
 
 /**
  * @author : Lee Jae Young
@@ -58,6 +61,7 @@ class SearchDialog(
         if (layoutId == 0) {
             val changeAddressView: TextView = view.findViewById(R.id.changeAddressView)
             changeAddressView.setOnClickListener {
+                changeAddressView.clearFocus()
                 dismissNow()
                 SearchDialog(activity, 1, fm, tagId).showNow(fm, tagId)
             }
@@ -93,8 +97,6 @@ class SearchDialog(
             currentAdapter.notifyDataSetChanged()
         } else {
             val searchView: EditText = view.findViewById(R.id.searchAddressView)
-            searchView.requestFocus()
-
             val searchBack: ImageView = view.findViewById(R.id.searchBack)
             searchBack.setOnClickListener {
                 dismissNow()
@@ -103,6 +105,8 @@ class SearchDialog(
             val listView: ListView = view.findViewById(R.id.searchAddressListView)
 
             searchEditListener(listView, searchView)
+
+            onKeyboardUp(searchView)
         }
     }
 
@@ -114,7 +118,6 @@ class SearchDialog(
         val adapter =
             ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, searchItem)
         listView.adapter = adapter
-        editText.requestFocus()
 
         // 서치 뷰 텍스트 변환 콜벡
         editText.addTextChangedListener(object : TextWatcher {
@@ -159,14 +162,15 @@ class SearchDialog(
     // 다이얼로그 생성
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setCanceledOnTouchOutside(false)
-        dialog.setOnShowListener { dialogInterface ->
-            val bottomSheetDialog = dialogInterface as BottomSheetDialog
-            setupRatio(bottomSheetDialog)
-        }
+        dialog.setCanceledOnTouchOutside(true)
 
-        if (layoutId == 1)
+        if (layoutId == 1) {
+            dialog.setOnShowListener { dialogInterface ->
+                val bottomSheetDialog = dialogInterface as BottomSheetDialog
+                setupRatio(bottomSheetDialog)
+            }
             dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationSide
+        }
         else {
             dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationUp
         }
@@ -209,5 +213,20 @@ class SearchDialog(
             displayMetrics
         )
         return displayMetrics.heightPixels
+    }
+
+    // 키보드 올리기
+    private fun onKeyboardUp(et: EditText) {
+        Handler(Looper.getMainLooper()).postDelayed({
+            val inputMethodManager = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            et.requestFocus()
+            inputMethodManager.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT)
+        },300)
+    }
+
+    // 키보드 내리기
+    private fun onKeyboardDown(et: EditText) {
+        val inputMethodManager = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(et.windowToken, InputMethodManager.SHOW_IMPLICIT)
     }
 }

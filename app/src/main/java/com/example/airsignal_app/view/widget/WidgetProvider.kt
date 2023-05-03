@@ -48,9 +48,7 @@ open class WidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         Timber.tag("TAG_WIDGET").i("onUpdate : ${currentDateTimeString(context)}")
-        appWidgetIds.forEach { appWidgetId ->
-            // Get the layout for the App Widget and attach an on-click listener
-            // to the button
+        appWidgetIds.forEach { _ ->
             val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
                 .let {
                     PendingIntent.getActivity(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
@@ -62,7 +60,6 @@ open class WidgetProvider : AppWidgetProvider() {
 
             val views = RemoteViews(context.packageName, R.layout.widget_layout).apply {
                 setOnClickPendingIntent(R.id.widgetMainLayout, pendingIntent)
-
                 setOnClickPendingIntent(R.id.widgetRefresh, pendingRefresh)
 
 //                setTextViewText(R.id.widgetContentPM, Random.nextInt(100).toString())
@@ -83,8 +80,12 @@ open class WidgetProvider : AppWidgetProvider() {
 //
 //                setTextViewText(R.id.widgetCurrentTime, currentDateTimeString())
             }
-            // Tell the AppWidgetManager to perform an update on the current app widget
-            appWidgetManager.updateAppWidget(appWidgetId, views)
+
+            val widgetCount = appWidgetIds.size
+            for (i: Int in 0 until(widgetCount)) {
+                val id = appWidgetIds[i]
+                appWidgetManager.updateAppWidget(id, views)
+            }
         }
     }
 

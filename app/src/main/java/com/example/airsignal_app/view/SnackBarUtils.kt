@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.example.airsignal_app.R
@@ -20,10 +21,6 @@ import com.google.android.material.snackbar.Snackbar
  * @since : 2023-03-30 오후 1:22
  **/
 class SnackBarUtils(view: View, private val message: String, private val drawable: Drawable) {
-
-    init {
-        initView().initData()
-    }
 
     /**Constructor**/
     companion object {
@@ -69,6 +66,7 @@ class SnackBarUtils(view: View, private val message: String, private val drawabl
 
     /** 진동, 스낵바 Show**/
     fun show() {
+        initView().initData()
         vibrate()
         snackBar.show()
     }

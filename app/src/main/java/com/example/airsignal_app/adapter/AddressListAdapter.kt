@@ -14,8 +14,7 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.db.room.GpsRepository
-import org.koin.core.component.getScopeId
+import com.example.airsignal_app.db.room.repository.GpsRepository
 
 /**
  * @author : Lee Jae Young
@@ -95,7 +94,6 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
                         notifyItemRemoved(adapterPosition)
                         updateCheckBoxVisible(false)
                     }
-
                     setNegativeButton(
                         context.getString(R.string.no)
                     ) { p0, _ -> p0!!.dismiss() }

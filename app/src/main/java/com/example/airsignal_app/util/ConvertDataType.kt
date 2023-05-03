@@ -5,20 +5,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
-import android.os.Build
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.view.View
-import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.IgnoredKeyFile
-import com.example.airsignal_app.dao.StaticDataObject
-import com.example.airsignal_app.db.room.GpsRepository
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.*
 
 /**

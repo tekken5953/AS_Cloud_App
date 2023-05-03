@@ -1,21 +1,18 @@
 package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
+import android.app.ActionBar.LayoutParams
 import android.content.ComponentName
 import android.content.Intent
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Spannable
-import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.text.toSpannable
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -33,16 +30,14 @@ import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.db.room.GpsRepository
 import com.example.airsignal_app.db.room.model.GpsEntity
+import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.admob.AdViewClass
-import com.example.airsignal_app.firebase.fcm.NotificationBuilder
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsWorker
 import com.example.airsignal_app.login.SilentLoginClass
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.util.ConvertDataType.convertDayOfWeekToKorean
-import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
 import com.example.airsignal_app.util.ConvertDataType.getRainType
 import com.example.airsignal_app.util.ConvertDataType.getSkyImg
 import com.example.airsignal_app.view.SearchDialog
@@ -105,25 +100,27 @@ class MainActivity : AppCompatActivity() {
                 applyGetDataViewModel()
             }
 
-        // TEST NOTIFICATION
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        val pmString = "미세먼지 나쁨"
-        pmString.toSpannable().setSpan(
-            ForegroundColorSpan(Color.RED),
-            5, pmString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE
-        )
-        val location = GpsRepository(this).getInstance().findById(CURRENT_GPS_ID).addr.toString()
-        location.toSpannable().setSpan(
-            android.text.style.AbsoluteSizeSpan(18),
-            0,
-            location.length,
-            Spannable.SPAN_INCLUSIVE_INCLUSIVE
-        )
-        val data = "최고: 24˚ 최저 : 10˚"
-        NotificationBuilder().sendNotification(
-            this, intent,
-            data, location, getCurrentTime()
-        )
+//        // TEST NOTIFICATION
+//        /////////////////////////////////////////////////////////////////
+//        val intent = Intent(applicationContext, MainActivity::class.java)
+//        val pmString = "미세먼지 나쁨"
+//        pmString.toSpannable().setSpan(
+//            ForegroundColorSpan(Color.RED),
+//            5, pmString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE
+//        )
+//        val location = GpsRepository(this).getInstance().findById(CURRENT_GPS_ID).addr.toString()
+//        location.toSpannable().setSpan(
+//            android.text.style.AbsoluteSizeSpan(18),
+//            0,
+//            location.length,
+//            Spannable.SPAN_INCLUSIVE_INCLUSIVE
+//        )
+//        val data = "최고: 24˚ 최저 : 10˚"
+//        NotificationBuilder().sendNotification(
+//            this, intent,
+//            data, location, getCurrentTime()
+//        )
+//        ///////////////////////////////////////////////////////////////
 
         initializing()
 
@@ -150,7 +147,7 @@ class MainActivity : AppCompatActivity() {
 
         val refreshLayout = findViewById<View>(R.id.mainSwipeLayout) as RefreshLayout
         refreshLayout.apply {
-            setRefreshHeader(BezierRadarHeader(this@MainActivity))
+            setRefreshHeader(BezierRadarHeader(this@MainActivity), LayoutParams.MATCH_PARENT, 80)
 //            setRefreshFooter(ClassicsFooter(this@MainActivity))
             setFinishOnTouchOutside(false)
             setOnRefreshListener {
@@ -163,12 +160,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getDataSingleTime() {
-        val db = GpsRepository(this).findById(CURRENT_GPS_ID)
-        val addrArray = resources.getStringArray(R.array.address)
-        if (addrArray.contains(sp.getString(lastAddress))) {
-            loadSavedAddr()
-        } else {
-            loadCurrentAddr(db)
+        if (RequestPermissionsUtil(this).isLocationPermitted()) {
+            val db = GpsRepository(this).findById(CURRENT_GPS_ID)
+            val addrArray = resources.getStringArray(R.array.address)
+            try {
+                if (addrArray.contains(sp.getString(lastAddress))) {
+                    loadSavedAddr()
+                } else {
+                    loadCurrentAddr(db)
+                }
+            } catch (e: NullPointerException) {
+                e.printStackTrace()
+                Thread.sleep(500)
+                RefreshUtils(this).refreshActivity()
+            }
         }
     }
 
@@ -210,11 +215,6 @@ class MainActivity : AppCompatActivity() {
     private fun initializing() {
         addSkeletonItem()
 
-        // 위치 권한 요청
-        if (!RequestPermissionsUtil(this).isLocationPermitted()) {
-            RequestPermissionsUtil(this).requestLocation()
-        }
-
         // 워크 매니저 생성
         CoroutineScope(Dispatchers.Default).launch { createWorkManager() }
 
@@ -243,7 +243,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             if (!isBackPressed) {
                 ToastUtils(this)
-                    .customDurationMessage(getString(R.string.back_press), 2)
+                    .showMessage(getString(R.string.back_press), 2)
                 isBackPressed = true
             } else {
                 sp.removeKey(lastAddress)

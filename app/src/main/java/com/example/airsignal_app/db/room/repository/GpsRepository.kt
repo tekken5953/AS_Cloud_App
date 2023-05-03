@@ -1,8 +1,9 @@
-package com.example.airsignal_app.db.room
+package com.example.airsignal_app.db.room.repository
 
 import android.content.Context
 import androidx.room.Room
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
+import com.example.airsignal_app.db.room.AppDataBase
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.scheme.GpsScheme
 import com.orhanobut.logger.Logger

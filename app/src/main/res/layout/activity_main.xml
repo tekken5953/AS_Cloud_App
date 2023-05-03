@@ -3,7 +3,9 @@
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="dataVM"
             type="com.example.airsignal_app.vmodel.GetWeatherViewModel" />
