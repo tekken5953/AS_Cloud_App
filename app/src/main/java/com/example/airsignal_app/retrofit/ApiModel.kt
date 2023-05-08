@@ -244,6 +244,11 @@ class ApiModel {
         val max: Double
     )
 
+    data class YesterdayTemp(
+        @SerializedName("temperature")
+        val temp: Double
+    )
+
     data class GetEntireData(
         @SerializedName("realtime")
         val realtime: List<RealTimeData>,
@@ -254,6 +259,8 @@ class ApiModel {
         @SerializedName("sun")
         val sun: SunData,
         @SerializedName("today")
-        val today: TodayTemp
+        val today: TodayTemp,
+        @SerializedName("yesterday")
+        val yesterday: YesterdayTemp
     )
 }

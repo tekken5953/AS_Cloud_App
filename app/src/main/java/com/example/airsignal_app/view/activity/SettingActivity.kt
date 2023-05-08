@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
@@ -12,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
@@ -32,7 +32,6 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
-import com.example.airsignal_app.dao.StaticDataObject
 import com.example.airsignal_app.dao.StaticDataObject.EVENT_ALL_NOTI
 import com.example.airsignal_app.dao.StaticDataObject.NIGHT_EVENT_NOTI
 import com.example.airsignal_app.databinding.ActivitySettingBinding
@@ -46,13 +45,13 @@ import com.example.airsignal_app.util.*
 import com.example.airsignal_app.view.ShowDialogClass
 import com.example.airsignal_app.view.SnackBarUtils
 import com.example.airsignal_app.view.test.TestDesignActivity
-import com.firebase.ui.auth.AuthUI
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 
-class SettingActivity : AppCompatActivity() {
+class SettingActivity : BaseActivity() {
     private lateinit var binding: ActivitySettingBinding
     private val sp by lazy { SharedPreferenceManager(this) }
     private val faqItem = arrayListOf<String>()
@@ -86,10 +85,10 @@ class SettingActivity : AppCompatActivity() {
 
         // 설정 페이지 언어 항목이름 바꾸기
         when (sp.getString(userLocation)) {
-            "english" -> {
+            getString(R.string.english) -> {
                 binding.settingThemeLangRight.text = getString(R.string.english)
             }
-            "korean" -> {
+            getString(R.string.korean) -> {
                 binding.settingThemeLangRight.text = getString(R.string.korean)
             }
             else -> {
@@ -121,9 +120,9 @@ class SettingActivity : AppCompatActivity() {
         checkNotification(binding.settingNotiNightRight, notiNight, getString(R.string.night),NIGHT_EVENT_NOTI)
     }
 
-    @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = DataBindingUtil.setContentView(this@SettingActivity, R.layout.activity_setting)
 
         // 마지막 로그인 플랫폼 종류
@@ -304,7 +303,7 @@ class SettingActivity : AppCompatActivity() {
                 when (checkedId) {
                     systemLang.id -> {
                         changedLangRadio(
-                            lang = "system",
+                            lang = getString(R.string.system_lang),
                             radioGroup = radioGroup,
                             radioButton = systemLang
                         )
@@ -312,7 +311,7 @@ class SettingActivity : AppCompatActivity() {
                     }
                     koreanLang.id -> {
                         changedLangRadio(
-                            lang = "korean",
+                            lang = getString(R.string.korean),
                             radioGroup = radioGroup,
                             radioButton = koreanLang
                         )
@@ -320,7 +319,7 @@ class SettingActivity : AppCompatActivity() {
                     }
                     englishLang.id -> {
                         changedLangRadio(
-                            lang = "english",
+                            lang = getString(R.string.english),
                             radioGroup = radioGroup,
                             radioButton = englishLang
                         )
@@ -403,8 +402,7 @@ class SettingActivity : AppCompatActivity() {
 
             dialog.setBackPressed(viewAppInfo.findViewById(R.id.appInfoBack))
                 .show(viewAppInfo, true)
-        }
-    }
+        }}
 
     /** 이미지 드로어블 할당 **/
     private fun setImageDrawable(imageView: ImageView, src: Int) {
@@ -429,8 +427,8 @@ class SettingActivity : AppCompatActivity() {
 
     /** 언어 라디오 버튼 클릭 시 이벤트 처리 **/
     private fun changedLangRadio(lang: String, radioGroup: RadioGroup, radioButton: RadioButton) {
-        if (sp.getString("lang") != lang) { // 현재 설정된 언어인지 필터링
-            sp.setString("lang", lang)  // 다른 언어라면 db 값 변경
+        if (sp.getString(userLocation) != lang) { // 현재 설정된 언어인지 필터링
+            sp.setString(userLocation, lang)  // 다른 언어라면 db 값 변경
             radioGroup.check(radioButton.id) // 라디오 버튼 체크
             saveLanguageChange() // 언어 설정 변경 후 어플리케이션 재시작
         }

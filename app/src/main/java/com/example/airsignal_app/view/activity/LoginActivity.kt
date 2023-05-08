@@ -1,5 +1,6 @@
 package com.example.airsignal_app.view.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -17,7 +18,6 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.databinding.ActivityLoginBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.firebase.fcm.NotificationBuilder
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
@@ -25,10 +25,9 @@ import com.example.airsignal_app.login.PhoneLogin
 import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.view.ShowDialogClass
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.firebase.messaging.RemoteMessage
 import com.orhanobut.logger.Logger
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val googleLogin by lazy { GoogleLogin(this) }   // 구글 로그인
     private val kakaoLogin by lazy { KakaoLogin(this) }     // 카카오 로그인
@@ -36,6 +35,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
 
         binding.googleLoginButton.setOnClickListener {

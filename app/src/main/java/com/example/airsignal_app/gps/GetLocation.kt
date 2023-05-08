@@ -5,8 +5,10 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.widget.Toast
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
+import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.dao.StaticDataObject.TAG_L
@@ -15,6 +17,7 @@ import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.firebase.fcm.SubFCM
+import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
@@ -23,8 +26,7 @@ import java.io.IOException
 import java.util.*
 
 class GetLocation(private val context: Context) : GetLocationListener {
-    private val geocoder by lazy { Geocoder(context, Locale.KOREA) }
-    private val sp by lazy { SharedPreferenceManager(context) }
+    private val sp by lazy { SharedPreferenceManager(context)}
 
     /** GPS 의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
     @SuppressLint("MissingPermission")
@@ -53,6 +55,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
         val nowAddress = "현재 위치를 확인 할 수 없습니다"
         lateinit var address: List<Address>
         try {
+            val geocoder = Geocoder(context, ConvertDataType.getLocale(context))
             @Suppress("DEPRECATION")
             address = geocoder.getFromLocation(lat, lng, 10) as List<Address>
             if (address.isNotEmpty()) {
@@ -73,7 +76,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
                         )
 
                         renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)
-
+                        break
                     } else {
                         Timber.tag("Location").e("Address is Null : %s", it.getAddressLine(i))
                     }

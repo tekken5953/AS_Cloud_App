@@ -4,15 +4,12 @@ import android.annotation.SuppressLint
 import android.app.ActionBar.LayoutParams
 import android.content.ComponentName
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.*
 import android.view.View
 import android.widget.*
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -56,7 +53,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private var isBackPressed = false
@@ -68,6 +65,7 @@ class MainActivity : AppCompatActivity() {
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(this, dailyWeatherList) }
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
     private val sp by lazy { SharedPreferenceManager(this) }
+    private val db by lazy { GpsRepository(this).getInstance() }
 
     override fun onResume() {
         super.onResume()
@@ -140,20 +138,21 @@ class MainActivity : AppCompatActivity() {
             showPB()
             GetLocation(this).getLocation()
             Handler(Looper.getMainLooper()).postDelayed({
-                loadCurrentAddr(GpsRepository(this).findById(CURRENT_GPS_ID))
+                loadCurrentAddr()
                 hidePB()
             }, 1500)
         }
 
         val refreshLayout = findViewById<View>(R.id.mainSwipeLayout) as RefreshLayout
         refreshLayout.apply {
-            setRefreshHeader(BezierRadarHeader(this@MainActivity), LayoutParams.MATCH_PARENT, 80)
+            setRefreshHeader(BezierRadarHeader(this@MainActivity), LayoutParams.MATCH_PARENT, 170)
+            setPrimaryColors(Color.TRANSPARENT)
 //            setRefreshFooter(ClassicsFooter(this@MainActivity))
             setFinishOnTouchOutside(false)
             setOnRefreshListener {
-                it.finishRefresh(2000)
                 Handler(Looper.getMainLooper()).postDelayed({
                     getDataSingleTime()
+                    it.finishRefresh()
                 }, 2000)
             }
         }
@@ -161,33 +160,34 @@ class MainActivity : AppCompatActivity() {
 
     private fun getDataSingleTime() {
         if (RequestPermissionsUtil(this).isLocationPermitted()) {
-            val db = GpsRepository(this).findById(CURRENT_GPS_ID)
             val addrArray = resources.getStringArray(R.array.address)
-            try {
-                if (addrArray.contains(sp.getString(lastAddress))) {
-                    loadSavedAddr()
-                } else {
-                    loadCurrentAddr(db)
-                }
-            } catch (e: NullPointerException) {
-                e.printStackTrace()
-                Thread.sleep(500)
-                RefreshUtils(this).refreshActivity()
+            if (addrArray.contains(sp.getString(lastAddress))) {
+                loadSavedAddr()
+            } else {
+                loadCurrentAddr()
             }
         }
     }
 
-    private fun loadCurrentAddr(db: GpsEntity): GpsEntity {
-        getDataViewModel.loadDataResult(
-            db.lat!!,
-            db.lng!!,
-            null
-        )
-        val formatAddress = db.addr!!.replace("null", "")
-        sp.setString(lastAddress, formatAddress)
-        Logger.t(TAG_D)
-            .d("${db.lat},${db.lng}")
-        return db
+    private fun loadCurrentAddr(): GpsEntity {
+        val dbCurrent = db.findById(CURRENT_GPS_ID)
+        try {
+            getDataViewModel.loadDataResult(
+                dbCurrent.lat,
+                dbCurrent.lng,
+                null
+            )
+            val formatAddress = dbCurrent.addr!!.replace("null", "")
+            sp.setString(lastAddress, formatAddress)
+            Logger.t(TAG_D)
+                .d("${dbCurrent.lat},${dbCurrent.lng}")
+        } catch(e: Exception) {
+            GetLocation(this).getLocation()
+            Thread.sleep(1000)
+            e.printStackTrace()
+        }
+        binding.mainGpsTitleTv.text = db.findById(CURRENT_GPS_ID).addr
+        return dbCurrent
     }
 
     private fun loadSavedAddr() {
@@ -214,6 +214,7 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
         addSkeletonItem()
+        GetLocation(this).getLocation()
 
         // 워크 매니저 생성
         CoroutineScope(Dispatchers.Default).launch { createWorkManager() }
@@ -265,6 +266,7 @@ class MainActivity : AppCompatActivity() {
                 val air = result.quality
                 val week = result.week
                 val today = result.today
+                val yesterday = result.yesterday
                 val dateNow: LocalDateTime = LocalDateTime.now()
 //                var tempDate: LocalDateTime
 //                try {
@@ -274,11 +276,11 @@ class MainActivity : AppCompatActivity() {
 //                    e.printStackTrace()
 //                }
                 val wfMin = listOf(
-                    week.wf1Am, week.wf2Am, week.wf3Am,
+                    week.wf0Am,week.wf1Am, week.wf2Am, week.wf3Am,
                     week.wf4Am, week.wf5Am, week.wf6Am, week.wf7Am
                 )
                 val wfMax = listOf(
-                    week.wf1Pm, week.wf2Pm, week.wf3Pm,
+                    week.wf0Pm,week.wf1Pm, week.wf2Pm, week.wf3Pm,
                     week.wf4Pm, week.wf5Pm, week.wf6Pm, week.wf7Pm
                 )
                 val taMin = listOf(
@@ -319,7 +321,13 @@ class MainActivity : AppCompatActivity() {
                 binding.mainPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
                 binding.mainMinTemp.text = "${filteringNullData(today.min)}˚"
                 binding.mainMaxTemp.text = "${filteringNullData(today.max)}˚"
-                binding.mainGpsTitleTv.text = sp.getString(lastAddress)
+                if (getCompareTemp(yesterday.temp, realtime.temp) != "") {
+                    binding.mainCompareTempValue.text = getCompareTemp(yesterday.temp, realtime.temp)
+                    binding.mainCompareTempValue.visibility = View.VISIBLE
+                } else {
+                    binding.mainCompareTempValue.visibility = View.GONE
+                }
+
 
                 for (i: Int in 0 until (10)) {
                     val dailyIndex = result.realtime[i]
@@ -332,7 +340,7 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
 
-                for (i: Int in 0 until (7)) {
+                for (i: Int in 0 until (8)) {
                     addWeeklyWeatherItem(
                         "${dateNow.month.value}.${dateNow.dayOfMonth + i}" +
                                 "(${convertDayOfWeekToKorean(this, dateNow.dayOfWeek.value + i)})",
@@ -424,6 +432,18 @@ class MainActivity : AppCompatActivity() {
             getRainType(this, rain!!)!!
         } else {
             getSkyImg(this, sky!!)!!
+        }
+    }
+
+    private fun getCompareTemp(yesterday: Double, today: Double): String {
+        return if (yesterday > today) {
+            "어제보다 ${(yesterday - today).roundToInt()}˚ 낮습니다"
+        } else if (today > yesterday) {
+            "어제보다 ${(today-yesterday).roundToInt()}˚ 높습니다"
+        } else if (today == yesterday) {
+            "어제와 기온이 동일합니다"
+        } else {
+            ""
         }
     }
 }

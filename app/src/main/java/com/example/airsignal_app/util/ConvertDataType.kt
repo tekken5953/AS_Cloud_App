@@ -8,6 +8,9 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.IgnoredKeyFile
+import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
+import com.example.airsignal_app.db.SharedPreferenceManager
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -18,7 +21,7 @@ import java.util.*
 object ConvertDataType {
     /** 국가를 대한민국으로 설정합니다 **/
     fun setLocaleToKorea(context: Context) {
-        val configuration = Configuration()
+        val configuration = context.resources.configuration
         configuration.setLocale(Locale.KOREA)
         @Suppress("DEPRECATION")
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
@@ -26,7 +29,7 @@ object ConvertDataType {
 
     /** 국가를 영어권으로 설정합니다 **/
     fun setLocaleToEnglish(context: Context) {
-        val configuration = Configuration()
+        val configuration = context.resources.configuration
         configuration.setLocale(Locale.ENGLISH)
         @Suppress("DEPRECATION")
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
@@ -34,7 +37,7 @@ object ConvertDataType {
 
     /** 국가를 시스템으로 설정합니다 **/
     fun setLocaleToSystem(context: Context) {
-        val configuration = Configuration()
+        val configuration = context.resources.configuration
         configuration.setLocale(Locale.getDefault())
         @Suppress("DEPRECATION")
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
@@ -164,6 +167,20 @@ object ConvertDataType {
             6 -> context.getString(R.string.sat)
             0 -> context.getString(R.string.sun)
             else -> ""
+        }
+    }
+
+    fun convertAddress(addr: String): String {
+        return addr.replace("특별시","시").replace("광역시","시").replace("제주특별자치도","제주도")
+    }
+
+    fun getLocale(context: Context) : Locale {
+        return if (SharedPreferenceManager(context).getString(userLocation) == context.getString(R.string.korean)) {
+            Locale.KOREA
+        } else if (SharedPreferenceManager(context).getString(userLocation) == context.getString(R.string.english)) {
+            Locale.ENGLISH
+        } else {
+            Locale.getDefault()
         }
     }
 }

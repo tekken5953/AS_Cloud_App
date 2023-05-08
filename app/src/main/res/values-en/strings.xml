@@ -78,4 +78,5 @@
     <string name="hour">H</string>
     <string name="widget_time_format">HH:mm MM.dd</string>
     <string name="delete_item">will be deleted</string>
+    <string name="outdoor_air">Outdoor</string>
 </resources>

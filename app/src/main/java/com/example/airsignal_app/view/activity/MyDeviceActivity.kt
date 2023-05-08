@@ -1,6 +1,5 @@
 package com.example.airsignal_app.view.activity
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -8,8 +7,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
@@ -17,13 +18,13 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.view.ShowDialogClass
 
-class MyDeviceActivity : AppCompatActivity() {
+class MyDeviceActivity : BaseActivity() {
 
     private val sp by lazy { ShowDialogClass().getInstance(this) }
 
-    @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_my_device)
         val refreshUtils = RefreshUtils(this)
 

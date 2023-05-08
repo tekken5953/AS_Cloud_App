@@ -40,14 +40,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/mainBottomAdView"
-            app:srlAccentColor="@android:color/white"
-            app:srlEnablePreviewInEditMode="false"
-            app:srlPrimaryColor="@color/main_blue_color">
+            android:background="@drawable/main_bg"
+            ads:srlAccentColor="@color/main_blue_color"
+            app:srlEnablePreviewInEditMode="false">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/main_bg">
+                android:layout_height="match_parent">
 
                 <LinearLayout
                     android:id="@+id/mainPbLayout"
@@ -180,8 +179,18 @@
                                     android:layout_marginStart="3dp"
                                     android:layout_marginTop="8dp"
                                     android:fontFamily="@font/spoqa_hansansneo_regular"
-                                    android:textSize="14sp" />
+                                    android:textSize="14sp"/>
                             </FrameLayout>
+
+                            <TextView
+                                android:id="@+id/mainCompareTempValue"
+                                style="@style/basicTextView"
+                                ads:layout_constraintTop_toBottomOf="@+id/mainLiveTempFrame"
+                                ads:layout_constraintStart_toStartOf="@+id/mainLiveTempFrame"
+                                ads:layout_constraintEnd_toEndOf="@+id/mainLiveTempFrame"
+                                android:layout_marginTop="5dp"
+                                android:fontFamily="@font/spoqa_hansansneo_regular"
+                                android:textSize="14sp" />
 
                             <TableLayout
                                 android:id="@+id/mainSunTable"
@@ -283,13 +292,13 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="24dp"
-                                android:layout_marginTop="36dp"
+                                android:layout_marginTop="20dp"
                                 android:layout_marginEnd="24dp"
                                 android:background="@drawable/daily_box_bg"
                                 android:backgroundTint="@color/view_pager_box"
                                 android:orientation="horizontal"
                                 android:weightSum="1"
-                                app:layout_constraintTop_toBottomOf="@+id/mainLiveTempFrame">
+                                app:layout_constraintTop_toBottomOf="@+id/mainCompareTempValue">
 
                                 <LinearLayout
                                     android:layout_width="60dp"
@@ -522,7 +531,7 @@
                                 style="@style/basicTextView"
                                 android:layout_marginTop="36dp"
                                 android:fontFamily="@font/spoqa_hansansneo_bold"
-                                android:text="외부 공기질"
+                                android:text="@string/outdoor_air"
                                 android:textColor="@color/mode_color_text"
                                 android:textSize="16sp"
                                 android:textStyle="bold"

@@ -22,6 +22,7 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
+import com.example.airsignal_app.util.ConvertDataType.convertAddress
 import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
 import com.example.airsignal_app.util.RefreshUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -130,8 +131,11 @@ class SearchDialog(
             override fun afterTextChanged(p0: Editable?) {
                 if (p0!!.isNotEmpty()) {
                     searchItem.clear()
+
                     allTextArray.forEach { allList ->
-                        if (allList.contains(p0)) {
+                        val nonSpacing = p0.toString().replace(" ","").lowercase()
+                        if (allList.replace(" ","").lowercase().contains(nonSpacing) ||
+                                convertAddress(allList).replace(" ","").lowercase().contains(nonSpacing)) {
                             searchItem.add(allList)
                         }
                     }
@@ -167,11 +171,17 @@ class SearchDialog(
         if (layoutId == 1) {
             dialog.setOnShowListener { dialogInterface ->
                 val bottomSheetDialog = dialogInterface as BottomSheetDialog
-                setupRatio(bottomSheetDialog)
+                bottomSheetDialog.behavior.isDraggable = false
+                setupRatio(bottomSheetDialog,100)
             }
             dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationSide
         }
         else {
+            dialog.setOnShowListener { dialogInterface ->
+                val bottomSheetDialog = dialogInterface as BottomSheetDialog
+                setupRatio(bottomSheetDialog,90)
+                bottomSheetDialog.behavior.isDraggable = true
+            }
             dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationUp
         }
 
@@ -190,12 +200,12 @@ class SearchDialog(
     }
 
     // 바텀 다이얼로그 세팅
-    private fun setupRatio(bottomSheetDialog: BottomSheetDialog) {
+    private fun setupRatio(bottomSheetDialog: BottomSheetDialog, ratio: Int) {
         val bottomSheet =
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
         val behavior = BottomSheetBehavior.from(bottomSheet)
         val layoutParams = bottomSheet.layoutParams
-        layoutParams.height = getBottomSheetDialogDefaultHeight(90)
+        layoutParams.height = getBottomSheetDialogDefaultHeight(ratio)
         bottomSheet.layoutParams = layoutParams
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
     }
