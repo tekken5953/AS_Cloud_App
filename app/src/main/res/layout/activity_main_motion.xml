@@ -11,507 +11,553 @@
             type="com.example.airsignal_app.vmodel.GetWeatherViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/motionLayout"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/mainSideMenuIv"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="30dp"
-            ads:layout_constraintStart_toStartOf="parent"
-            ads:layout_constraintTop_toTopOf="parent"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="5dp"
-            android:src="@drawable/options_menu"
-            app:tint="@color/mode_color_text" />
-
-        <TextView
-            android:id="@+id/mainGpsTitleTv"
-            style="@style/basicTextView"
-            android:drawablePadding="5dp"
-            ads:layout_constraintStart_toStartOf="parent"
-            ads:layout_constraintEnd_toEndOf="parent"
-            ads:layout_constraintTop_toTopOf="@+id/mainSideMenuIv"
-            ads:layout_constraintBottom_toBottomOf="@+id/mainSideMenuIv"
-            android:fontFamily="@font/spoqa_hansansneo_regular"
-            android:gravity="center"
-            android:paddingStart="10dp"
-            android:paddingEnd="2dp"
-            android:textColor="@color/mode_color_text"
-            android:textSize="16sp"
-            app:drawableEndCompat="@drawable/bottom_arrow"
-            app:drawableStartCompat="@drawable/gps"
-            app:drawableTint="@color/mode_color_text" />
-
-        <ImageView
-            android:id="@+id/mainGpsFix"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            ads:layout_constraintEnd_toEndOf="parent"
-            ads:layout_constraintTop_toTopOf="@+id/mainSideMenuIv"
-            ads:layout_constraintBottom_toBottomOf="@+id/mainSideMenuIv"
-            android:layout_marginEnd="24dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="5dp"
-            android:src="@drawable/fixed_gps" />
-
-        <LinearLayout
-            android:id="@+id/linearlayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"/>
-
-        <ImageView
-            android:id="@+id/mainSkyImg"
-            android:layout_width="150dp"
-            android:layout_height="120dp"
-            android:layout_marginBottom="19dp"
-            ads:layout_constraintBottom_toTopOf="@+id/mainSkyText"
-            app:layout_constraintStart_toStartOf="@+id/linearlayout"
-            app:layout_constraintEnd_toEndOf="@+id/linearlayout"
-            android:src="@drawable/sunny_test"/>
-
-        <TextView
-            android:id="@+id/mainSkyText"
-            style="@style/basicTextView"
-            android:text="구름 많음"
-            android:textSize="16sp"
-            android:layout_marginBottom="21dp"
-            ads:layout_constraintBottom_toTopOf="@+id/mainLiveTempValue"
-            app:layout_constraintStart_toStartOf="@+id/linearlayout"
-            app:layout_constraintEnd_toEndOf="@+id/linearlayout"/>
-
-        <TextView
-            android:id="@+id/mainLiveTempValue"
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/mainBottomAdView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@+id/linearlayout"
-            app:layout_constraintEnd_toEndOf="@+id/linearlayout"
-            ads:layout_constraintTop_toTopOf="@+id/linearlayout"
-            ads:layout_constraintBottom_toBottomOf="@+id/linearlayout"
-            android:fontFamily="@font/spoqa_hansansneo_bold"
-            android:text="23˚"
-            android:letterSpacing="-0.04"
-            android:textColor="@color/mode_color_text"
-            android:textSize="60sp" />
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            ads:adSize="FULL_BANNER"
+            ads:adUnitId="@string/adTestUnitId" />
 
-<!--        <TextView-->
-<!--            android:id="@+id/mainSensibleValue"-->
-<!--            style="@style/basicTextView"-->
-<!--            android:layout_gravity="bottom|center_horizontal"-->
-<!--            android:layout_marginStart="3dp"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:fontFamily="@font/spoqa_hansansneo_regular"-->
-<!--            android:textSize="14sp"/>-->
+        <!--                <ImageView-->
+        <!--                    android:id="@+id/mainBottomAdCancel"-->
+        <!--                    android:layout_width="20sp"-->
+        <!--                    android:layout_height="20sp"-->
+        <!--                    android:src="@drawable/cancel"-->
+        <!--                    app:tint="@color/mode_color_text"-->
+        <!--                    android:layout_toEndOf="@+id/mainBottomAdView"-->
+        <!--                    android:layout_alignTop="@+id/mainBottomAdView"-->
+        <!--                    android:layout_marginStart="3dp"-->
+        <!--                    android:background="?android:attr/selectableItemBackgroundBorderless"/>-->
 
-        <ScrollView
-            android:id="@+id/motion_scroll"
-            ads:layout_constraintTop_toBottomOf="@+id/linearlayout"
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/mainSwipeLayout"
             android:layout_width="match_parent"
-            android:layout_height="0dp">
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/mainBottomAdView"
+            android:background="@drawable/main_bg"
+            ads:srlAccentColor="@color/main_blue_color"
+            app:srlEnablePreviewInEditMode="false">
 
-            <!--        <com.google.android.gms.ads.AdView-->
-            <!--            android:id="@+id/mainBottomAdView"-->
-            <!--            android:layout_width="wrap_content"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_gravity="bottom"-->
-            <!--            ads:adSize="FULL_BANNER"-->
-            <!--            ads:adUnitId="@string/adTestUnitId" />-->
             <RelativeLayout
-                android:id="@+id/mainLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
-                <androidx.core.widget.NestedScrollView
-                    android:id="@+id/mainMainScroll"
+                <LinearLayout
+                    android:id="@+id/mainPbLayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:overScrollMode="never">
+                    android:background="#66ffffff"
+                    android:clickable="false"
+                    android:gravity="center"
+                    android:visibility="gone">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <ProgressBar
+                        android:id="@+id/mainPb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </LinearLayout>
+
+                <androidx.drawerlayout.widget.DrawerLayout
+                    android:id="@+id/mainDrawerLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:openDrawer="start">
+
+                    <com.google.android.material.navigation.NavigationView
+                        android:id="@+id/mainNavView"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:layout_gravity="start"
+                        android:fitsSystemWindows="true"
+                        app:headerLayout="@layout/nav_header"
+                        app:itemTextAppearance="@style/TextAppearance.AppCompat.Small"
+                        app:itemTextColor="@color/mode_color_text"
+                        app:menu="@menu/nav_menu" />
 
+                </androidx.drawerlayout.widget.DrawerLayout>
 
-                        <TextView
-                            android:id="@+id/mainCompareTempValue"
-                            style="@style/basicTextView"
-                            ads:layout_constraintTop_toBottomOf="@+id/mainLiveTempFrame"
-                            ads:layout_constraintStart_toStartOf="@+id/mainLiveTempFrame"
-                            ads:layout_constraintEnd_toEndOf="@+id/mainLiveTempFrame"
-                            android:layout_marginTop="5dp"
-                            android:fontFamily="@font/spoqa_hansansneo_regular"
-                            android:textSize="14sp" />
+                <RelativeLayout
+                    android:id="@+id/mainLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                        <TableLayout
-                            android:id="@+id/mainSunTable"
-                            android:layout_width="130dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="30dp"
-                            android:layout_marginTop="14dp"
-                            android:gravity="center"
-                            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempFrame"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/mainLiveTempFrame"
-                            app:layout_constraintTop_toTopOf="@+id/mainLiveTempFrame">
+                    <ImageView
+                        android:id="@+id/mainSideMenuIv"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
+                        android:layout_marginStart="21dp"
+                        android:layout_marginTop="25dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:padding="5dp"
+                        android:src="@drawable/options_menu"
+                        app:tint="@color/mode_color_text" />
 
-                            <TableRow
+                    <TextView
+                        android:id="@+id/mainGpsTitleTv"
+                        style="@style/basicTextView"
+                        android:layout_alignTop="@+id/mainSideMenuIv"
+                        android:layout_alignBottom="@+id/mainSideMenuIv"
+                        android:layout_centerHorizontal="true"
+                        android:drawablePadding="5dp"
+                        android:fontFamily="@font/spoqa_hansansneo_regular"
+                        android:gravity="center"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="2dp"
+                        android:textColor="@color/mode_color_text"
+                        android:textSize="16sp"
+                        app:drawableEndCompat="@drawable/bottom_arrow"
+                        app:drawableStartCompat="@drawable/gps"
+                        app:drawableTint="@color/mode_color_text" />
+
+                    <ImageView
+                        android:id="@+id/mainGpsFix"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_alignTop="@+id/mainSideMenuIv"
+                        android:layout_alignBottom="@+id/mainSideMenuIv"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="24dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:padding="5dp"
+                        android:src="@drawable/fixed_gps" />
+
+                    <androidx.core.widget.NestedScrollView
+                        android:id="@+id/mainMainScroll"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/mainGpsTitleTv"
+                        android:layout_marginTop="15dp"
+                        android:overScrollMode="never">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <FrameLayout
+                                android:id="@+id/mainLiveTempFrame"
                                 android:layout_width="wrap_content"
-                                android:layout_height="39dp"
-                                android:layout_marginBottom="14dp"
-                                android:gravity="center"
-                                android:orientation="horizontal">
+                                android:layout_height="150dp"
+                                android:layout_marginTop="20dp"
+                                app:layout_constraintEnd_toStartOf="@+id/mainSunTable"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent">
+
+                                <ImageView
+                                    android:id="@+id/mainSkyImg"
+                                    android:layout_width="111dp"
+                                    android:layout_height="84dp"
+                                    android:layout_gravity="top|center_horizontal" />
 
                                 <TextView
-                                    android:id="@+id/mainMinTemp"
-                                    style="@style/basicTextView"
-                                    android:layout_weight="0.5"
+                                    android:id="@+id/mainLiveTempValue"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="113dp"
+                                    android:layout_gravity="center"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="5dp"
                                     android:fontFamily="@font/spoqa_hansansneo_bold"
                                     android:letterSpacing="-0.04"
-                                    android:lines="1"
-                                    android:textColor="@color/main_blue_color"
-                                    android:textSize="32sp" />
+                                    android:paddingStart="5dp"
+                                    android:paddingEnd="5dp"
+                                    android:textColor="@color/mode_color_text"
+                                    android:textSize="80sp" />
 
                                 <TextView
-                                    android:id="@+id/mainMaxTemp"
+                                    android:id="@+id/mainSensibleValue"
                                     style="@style/basicTextView"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginStart="5dp"
-                                    android:layout_weight="0.5"
-                                    android:fontFamily="@font/spoqa_hansansneo_bold"
-                                    android:letterSpacing="-0.04"
-                                    android:lines="1"
-                                    android:textColor="@color/red"
-                                    android:textSize="32sp" />
-                            </TableRow>
-
-                            <TableRow
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:paddingStart="5dp"
-                                android:paddingEnd="5dp">
-
-                                <TextView
-                                    style="@style/basicTextView"
-                                    android:layout_weight="0.5"
+                                    android:layout_gravity="bottom|center_horizontal"
+                                    android:layout_marginStart="3dp"
+                                    android:layout_marginTop="8dp"
                                     android:fontFamily="@font/spoqa_hansansneo_regular"
-                                    android:gravity="start"
-                                    android:text="@string/sun_rise_time"
-                                    android:textColor="@color/main_gray_color"
-                                    android:textSize="14sp" />
+                                    android:textSize="14sp"/>
+                            </FrameLayout>
 
-                                <TextView
-                                    android:id="@+id/mainSunRiseValue"
-                                    style="@style/basicTextView"
-                                    android:layout_weight="0.5"
-                                    android:fontFamily="@font/spoqa_hansansneo_regular"
-                                    android:gravity="end"
-                                    android:textSize="14sp" />
-                            </TableRow>
-
-                            <TableRow
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                            <TextView
+                                android:id="@+id/mainCompareTempValue"
+                                style="@style/basicTextView"
+                                ads:layout_constraintTop_toBottomOf="@+id/mainLiveTempFrame"
+                                ads:layout_constraintStart_toStartOf="@+id/mainLiveTempFrame"
+                                ads:layout_constraintEnd_toEndOf="@+id/mainLiveTempFrame"
                                 android:layout_marginTop="5dp"
                                 android:fontFamily="@font/spoqa_hansansneo_regular"
+                                android:textSize="14sp" />
+
+                            <TableLayout
+                                android:id="@+id/mainSunTable"
+                                android:layout_width="130dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="30dp"
+                                android:layout_marginTop="14dp"
+                                android:gravity="center"
+                                app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempFrame"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/mainLiveTempFrame"
+                                app:layout_constraintTop_toTopOf="@+id/mainLiveTempFrame">
+
+                                <TableRow
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="39dp"
+                                    android:layout_marginBottom="14dp"
+                                    android:gravity="center"
+                                    android:orientation="horizontal">
+
+                                    <TextView
+                                        android:id="@+id/mainMinTemp"
+                                        style="@style/basicTextView"
+                                        android:layout_weight="0.5"
+                                        android:fontFamily="@font/spoqa_hansansneo_bold"
+                                        android:letterSpacing="-0.04"
+                                        android:lines="1"
+                                        android:textColor="@color/main_blue_color"
+                                        android:textSize="32sp" />
+
+                                    <TextView
+                                        android:id="@+id/mainMaxTemp"
+                                        style="@style/basicTextView"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginStart="5dp"
+                                        android:layout_weight="0.5"
+                                        android:fontFamily="@font/spoqa_hansansneo_bold"
+                                        android:letterSpacing="-0.04"
+                                        android:lines="1"
+                                        android:textColor="@color/red"
+                                        android:textSize="32sp" />
+                                </TableRow>
+
+                                <TableRow
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:paddingStart="5dp"
+                                    android:paddingEnd="5dp">
+
+                                    <TextView
+                                        style="@style/basicTextView"
+                                        android:layout_weight="0.5"
+                                        android:fontFamily="@font/spoqa_hansansneo_regular"
+                                        android:gravity="start"
+                                        android:text="@string/sun_rise_time"
+                                        android:textColor="@color/main_gray_color"
+                                        android:textSize="14sp" />
+
+                                    <TextView
+                                        android:id="@+id/mainSunRiseValue"
+                                        style="@style/basicTextView"
+                                        android:layout_weight="0.5"
+                                        android:fontFamily="@font/spoqa_hansansneo_regular"
+                                        android:gravity="end"
+                                        android:textSize="14sp" />
+                                </TableRow>
+
+                                <TableRow
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="5dp"
+                                    android:fontFamily="@font/spoqa_hansansneo_regular"
+                                    android:orientation="horizontal"
+                                    android:paddingStart="5dp"
+                                    android:paddingEnd="5dp">
+
+                                    <TextView
+                                        style="@style/basicTextView"
+                                        android:layout_weight="0.5"
+                                        android:fontFamily="@font/spoqa_hansansneo_regular"
+                                        android:gravity="start"
+                                        android:text="@string/sun_set_time"
+                                        android:textColor="@color/main_gray_color"
+                                        android:textSize="14sp" />
+
+                                    <TextView
+                                        android:id="@+id/mainSunSetValue"
+                                        style="@style/basicTextView"
+                                        android:layout_weight="0.5"
+                                        android:fontFamily="@font/spoqa_hansansneo_regular"
+                                        android:gravity="end"
+                                        android:textSize="14sp" />
+                                </TableRow>
+                            </TableLayout>
+
+                            <TableRow
+                                android:id="@+id/mainHumidBoxTr"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="24dp"
+                                android:layout_marginTop="20dp"
+                                android:layout_marginEnd="24dp"
+                                android:background="@drawable/daily_box_bg"
+                                android:backgroundTint="@color/view_pager_box"
                                 android:orientation="horizontal"
-                                android:paddingStart="5dp"
-                                android:paddingEnd="5dp">
+                                android:weightSum="1"
+                                app:layout_constraintTop_toBottomOf="@+id/mainCompareTempValue">
 
-                                <TextView
-                                    style="@style/basicTextView"
-                                    android:layout_weight="0.5"
-                                    android:fontFamily="@font/spoqa_hansansneo_regular"
-                                    android:gravity="start"
-                                    android:text="@string/sun_set_time"
-                                    android:textColor="@color/main_gray_color"
-                                    android:textSize="14sp" />
+                                <LinearLayout
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.33"
+                                    android:gravity="center"
+                                    android:orientation="vertical">
 
-                                <TextView
-                                    android:id="@+id/mainSunSetValue"
-                                    style="@style/basicTextView"
-                                    android:layout_weight="0.5"
-                                    android:fontFamily="@font/spoqa_hansansneo_regular"
-                                    android:gravity="end"
-                                    android:textSize="14sp" />
+                                    <ImageView
+                                        android:id="@+id/mainHumidImg"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="20dp"
+                                        android:src="@drawable/humid" />
+
+                                    <TextView
+                                        android:id="@+id/mainHumidValue"
+                                        style="@style/basicTextView"
+                                        android:layout_marginTop="7dp"
+                                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                                        android:textSize="16sp" />
+
+                                    <TextView
+                                        style="@style/basicTextView"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_marginBottom="17dp"
+                                        android:fontFamily="@font/spoqa_hansansneo_regular"
+                                        android:text="@string/humid"
+                                        android:textColor="@color/main_gray_color"
+                                        android:textSize="14sp" />
+                                </LinearLayout>
+
+                                <View
+                                    android:layout_width="1dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/view_line_color"
+                                    android:scaleY="0.75" />
+
+                                <LinearLayout
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.33"
+                                    android:gravity="center"
+                                    android:orientation="vertical">
+
+                                    <ImageView
+                                        android:id="@+id/mainWindImg"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="20dp"
+                                        android:src="@drawable/wind" />
+
+                                    <TextView
+                                        android:id="@+id/mainWindValue"
+                                        style="@style/basicTextView"
+                                        android:layout_marginTop="7dp"
+                                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                                        android:textSize="16sp" />
+
+                                    <TextView
+                                        style="@style/basicTextView"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_marginBottom="17dp"
+                                        android:fontFamily="@font/spoqa_hansansneo_regular"
+                                        android:text="@string/wind"
+                                        android:textColor="@color/main_gray_color"
+                                        android:textSize="14sp" />
+                                </LinearLayout>
+
+                                <View
+                                    android:layout_width="1dp"
+                                    android:layout_height="match_parent"
+                                    android:background="@color/view_line_color"
+                                    android:scaleY="0.75" />
+
+                                <LinearLayout
+                                    android:layout_width="60dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.33"
+                                    android:gravity="center"
+                                    android:orientation="vertical">
+
+                                    <ImageView
+                                        android:id="@+id/mainRainPerImg"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="20dp"
+                                        android:src="@drawable/rain_per" />
+
+                                    <TextView
+                                        android:id="@+id/mainRainPerValue"
+                                        style="@style/basicTextView"
+                                        android:layout_marginTop="7dp"
+                                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                                        android:textSize="16sp" />
+
+                                    <TextView
+                                        style="@style/basicTextView"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_marginBottom="17dp"
+                                        android:fontFamily="@font/spoqa_hansansneo_regular"
+                                        android:text="@string/rain_per"
+                                        android:textColor="@color/main_gray_color"
+                                        android:textSize="14sp" />
+                                </LinearLayout>
                             </TableRow>
-                        </TableLayout>
 
-                        <TableRow
-                            android:id="@+id/mainHumidBoxTr"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="24dp"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginEnd="24dp"
-                            android:background="@drawable/daily_box_bg"
-                            android:backgroundTint="@color/view_pager_box"
-                            android:orientation="horizontal"
-                            android:weightSum="1"
-                            app:layout_constraintTop_toBottomOf="@+id/mainCompareTempValue">
-
-                            <LinearLayout
-                                android:layout_width="60dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.33"
-                                android:gravity="center"
-                                android:orientation="vertical">
-
-                                <ImageView
-                                    android:id="@+id/mainHumidImg"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="20dp"
-                                    android:src="@drawable/humid" />
-
-                                <TextView
-                                    android:id="@+id/mainHumidValue"
-                                    style="@style/basicTextView"
-                                    android:layout_marginTop="7dp"
-                                    android:fontFamily="@font/spoqa_hansansneo_medium"
-                                    android:textSize="16sp" />
+                            <TableRow
+                                android:id="@+id/mainPmBoxTr"
+                                android:layout_width="match_parent"
+                                android:layout_height="56dp"
+                                android:layout_marginStart="24dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginEnd="24dp"
+                                android:background="@drawable/pm_box_bg"
+                                android:gravity="center_vertical"
+                                app:layout_constraintTop_toBottomOf="@+id/mainHumidBoxTr">
 
                                 <TextView
                                     style="@style/basicTextView"
-                                    android:layout_marginTop="8dp"
-                                    android:layout_marginBottom="17dp"
+                                    android:layout_weight="0.25"
+                                    android:fontFamily="@font/spoqa_hansansneo_bold"
+                                    android:text="@string/pm_10"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold" />
+
+                                <com.aslib.AsTextView
+                                    android:id="@+id/mainPm10Grade"
+                                    style="@style/basicTextView"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_weight="0.25"
                                     android:fontFamily="@font/spoqa_hansansneo_regular"
-                                    android:text="@string/humid"
-                                    android:textColor="@color/main_gray_color"
-                                    android:textSize="14sp" />
-                            </LinearLayout>
+                                    android:textColor="@color/progressWorst"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    app:sort="grade" />
 
-                            <View
-                                android:layout_width="1dp"
-                                android:layout_height="match_parent"
-                                android:background="@color/view_line_color"
-                                android:scaleY="0.75" />
-
-                            <LinearLayout
-                                android:layout_width="60dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.33"
-                                android:gravity="center"
-                                android:orientation="vertical">
-
-                                <ImageView
-                                    android:id="@+id/mainWindImg"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="20dp"
-                                    android:src="@drawable/wind" />
-
-                                <TextView
-                                    android:id="@+id/mainWindValue"
-                                    style="@style/basicTextView"
-                                    android:layout_marginTop="7dp"
-                                    android:fontFamily="@font/spoqa_hansansneo_medium"
-                                    android:textSize="16sp" />
+                                <View
+                                    android:layout_width="1dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:background="@color/view_line_color"
+                                    android:scaleY="0.75" />
 
                                 <TextView
                                     style="@style/basicTextView"
-                                    android:layout_marginTop="8dp"
-                                    android:layout_marginBottom="17dp"
+                                    android:layout_weight="0.25"
+                                    android:fontFamily="@font/spoqa_hansansneo_bold"
+                                    android:text="@string/pm_2p5"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold" />
+
+                                <com.aslib.AsTextView
+                                    android:id="@+id/mainPm2p5Grade"
+                                    style="@style/basicTextView"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_weight="0.25"
                                     android:fontFamily="@font/spoqa_hansansneo_regular"
-                                    android:text="@string/wind"
-                                    android:textColor="@color/main_gray_color"
-                                    android:textSize="14sp" />
-                            </LinearLayout>
-
-                            <View
-                                android:layout_width="1dp"
-                                android:layout_height="match_parent"
-                                android:background="@color/view_line_color"
-                                android:scaleY="0.75" />
-
-                            <LinearLayout
-                                android:layout_width="60dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.33"
-                                android:gravity="center"
-                                android:orientation="vertical">
-
-                                <ImageView
-                                    android:id="@+id/mainRainPerImg"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="20dp"
-                                    android:src="@drawable/rain_per" />
-
-                                <TextView
-                                    android:id="@+id/mainRainPerValue"
-                                    style="@style/basicTextView"
-                                    android:layout_marginTop="7dp"
-                                    android:fontFamily="@font/spoqa_hansansneo_medium"
-                                    android:textSize="16sp" />
-
-                                <TextView
-                                    style="@style/basicTextView"
-                                    android:layout_marginTop="8dp"
-                                    android:layout_marginBottom="17dp"
-                                    android:fontFamily="@font/spoqa_hansansneo_regular"
-                                    android:text="@string/rain_per"
-                                    android:textColor="@color/main_gray_color"
-                                    android:textSize="14sp" />
-                            </LinearLayout>
-                        </TableRow>
-
-                        <TableRow
-                            android:id="@+id/mainPmBoxTr"
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:layout_marginStart="24dp"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginEnd="24dp"
-                            android:background="@drawable/pm_box_bg"
-                            android:gravity="center_vertical"
-                            app:layout_constraintTop_toBottomOf="@+id/mainHumidBoxTr">
+                                    android:textColor="@color/progressGood"
+                                    android:textSize="15sp"
+                                    android:textStyle="bold"
+                                    app:sort="grade" />
+                            </TableRow>
 
                             <TextView
+                                android:id="@+id/mainDailyWeatherTitle"
                                 style="@style/basicTextView"
-                                android:layout_weight="0.25"
+                                android:layout_marginStart="24dp"
+                                android:layout_marginTop="36dp"
                                 android:fontFamily="@font/spoqa_hansansneo_bold"
-                                android:text="@string/pm_10"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <com.aslib.AsTextView
-                                android:id="@+id/mainPm10Grade"
-                                style="@style/basicTextView"
-                                android:layout_marginStart="10dp"
-                                android:layout_weight="0.25"
-                                android:fontFamily="@font/spoqa_hansansneo_regular"
-                                android:textColor="@color/progressWorst"
-                                android:textSize="15sp"
+                                android:letterSpacing="-0.04"
+                                android:text="@string/daily_weather"
+                                android:textColor="@color/mode_color_text"
+                                android:textSize="16sp"
                                 android:textStyle="bold"
-                                app:sort="grade" />
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/mainPmBoxTr" />
 
-                            <View
-                                android:layout_width="1dp"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center"
-                                android:layout_marginStart="10dp"
-                                android:layout_marginEnd="10dp"
-                                android:background="@color/view_line_color"
-                                android:scaleY="0.75" />
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/mainDailyWeatherRv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="24dp"
+                                android:layout_marginTop="12dp"
+                                android:layout_marginEnd="24dp"
+                                android:layout_marginBottom="30dp"
+                                android:clipToPadding="false"
+                                android:nestedScrollingEnabled="false"
+                                android:orientation="horizontal"
+                                android:overScrollMode="never"
+                                android:paddingStart="5dp"
+                                android:paddingEnd="5dp"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                app:layout_constraintTop_toBottomOf="@+id/mainDailyWeatherTitle"
+                                tools:listitem="@layout/list_item_daily_weather" />
 
                             <TextView
+                                android:id="@+id/mainWeeklyWeatherTitle"
                                 style="@style/basicTextView"
-                                android:layout_weight="0.25"
+                                android:layout_marginTop="36dp"
                                 android:fontFamily="@font/spoqa_hansansneo_bold"
-                                android:text="@string/pm_2p5"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <com.aslib.AsTextView
-                                android:id="@+id/mainPm2p5Grade"
-                                style="@style/basicTextView"
-                                android:layout_marginStart="10dp"
-                                android:layout_weight="0.25"
-                                android:fontFamily="@font/spoqa_hansansneo_regular"
-                                android:textColor="@color/progressGood"
-                                android:textSize="15sp"
+                                android:text="@string/weekly_weather"
+                                android:textColor="@color/mode_color_text"
+                                android:textSize="16sp"
                                 android:textStyle="bold"
-                                app:sort="grade" />
-                        </TableRow>
+                                app:layout_constraintStart_toStartOf="@+id/mainDailyWeatherTitle"
+                                app:layout_constraintTop_toBottomOf="@+id/mainDailyWeatherRv" />
 
-                        <TextView
-                            android:id="@+id/mainDailyWeatherTitle"
-                            style="@style/basicTextView"
-                            android:layout_marginStart="24dp"
-                            android:layout_marginTop="36dp"
-                            android:fontFamily="@font/spoqa_hansansneo_bold"
-                            android:letterSpacing="-0.04"
-                            android:text="@string/daily_weather"
-                            android:textColor="@color/mode_color_text"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/mainPmBoxTr" />
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/mainWeeklyWeatherRv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="24dp"
+                                android:layout_marginTop="12dp"
+                                android:layout_marginEnd="24dp"
+                                android:background="@drawable/daily_recycler_bg"
+                                android:clipToPadding="false"
+                                android:nestedScrollingEnabled="false"
+                                android:overScrollMode="never"
+                                android:paddingTop="18dp"
+                                android:paddingBottom="18dp"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                app:layout_constraintTop_toBottomOf="@+id/mainWeeklyWeatherTitle"
+                                tools:listitem="@layout/list_item_weekly_weather" />
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/mainDailyWeatherRv"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="24dp"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginEnd="24dp"
-                            android:layout_marginBottom="30dp"
-                            android:clipToPadding="false"
-                            android:nestedScrollingEnabled="false"
-                            android:orientation="horizontal"
-                            android:overScrollMode="never"
-                            android:paddingStart="5dp"
-                            android:paddingEnd="5dp"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            app:layout_constraintTop_toBottomOf="@+id/mainDailyWeatherTitle"
-                            tools:listitem="@layout/list_item_daily_weather" />
-
-                        <TextView
-                            android:id="@+id/mainWeeklyWeatherTitle"
-                            style="@style/basicTextView"
-                            android:layout_marginTop="36dp"
-                            android:fontFamily="@font/spoqa_hansansneo_bold"
-                            android:text="@string/weekly_weather"
-                            android:textColor="@color/mode_color_text"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            app:layout_constraintStart_toStartOf="@+id/mainDailyWeatherTitle"
-                            app:layout_constraintTop_toBottomOf="@+id/mainDailyWeatherRv" />
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/mainWeeklyWeatherRv"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="24dp"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginEnd="24dp"
-                            android:background="@drawable/daily_recycler_bg"
-                            android:clipToPadding="false"
-                            android:nestedScrollingEnabled="false"
-                            android:overScrollMode="never"
-                            android:paddingTop="18dp"
-                            android:paddingBottom="18dp"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            app:layout_constraintTop_toBottomOf="@+id/mainWeeklyWeatherTitle"
-                            tools:listitem="@layout/list_item_weekly_weather" />
-
-                        <TextView
-                            android:id="@+id/mainAirQualityTitle"
-                            style="@style/basicTextView"
-                            android:layout_marginTop="36dp"
-                            android:fontFamily="@font/spoqa_hansansneo_bold"
-                            android:text="@string/outdoor_air"
-                            android:textColor="@color/mode_color_text"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            app:layout_constraintStart_toStartOf="@+id/mainDailyWeatherTitle"
-                            app:layout_constraintTop_toBottomOf="@+id/mainWeeklyWeatherRv" />
+                            <TextView
+                                android:id="@+id/mainAirQualityTitle"
+                                style="@style/basicTextView"
+                                android:layout_marginTop="36dp"
+                                android:fontFamily="@font/spoqa_hansansneo_bold"
+                                android:text="@string/outdoor_air"
+                                android:textColor="@color/mode_color_text"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                app:layout_constraintStart_toStartOf="@+id/mainDailyWeatherTitle"
+                                app:layout_constraintTop_toBottomOf="@+id/mainWeeklyWeatherRv" />
 
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/mainAirQualityRv"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="24dp"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginEnd="24dp"
-                            android:layout_marginBottom="50dp"
-                            android:background="@drawable/daily_recycler_bg"
-                            android:orientation="horizontal"
-                            android:overScrollMode="never"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/mainAirQualityTitle"
-                            tools:listitem="@layout/list_item_quality" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </androidx.core.widget.NestedScrollView>
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/mainAirQualityRv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="24dp"
+                                android:layout_marginTop="12dp"
+                                android:layout_marginEnd="24dp"
+                                android:layout_marginBottom="50dp"
+                                android:background="@drawable/daily_recycler_bg"
+                                android:orientation="horizontal"
+                                android:overScrollMode="never"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/mainAirQualityTitle"
+                                tools:listitem="@layout/list_item_quality" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.core.widget.NestedScrollView>
+                </RelativeLayout>
             </RelativeLayout>
-        </ScrollView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+    </RelativeLayout>
 </layout>

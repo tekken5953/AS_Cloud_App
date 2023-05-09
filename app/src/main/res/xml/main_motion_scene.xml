@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="1000">
+
+        <OnSwipe
+            motion:dragDirection="dragUp"
+            motion:dragScale="2"
+            motion:touchAnchorId="@id/nested_scrollview"
+            motion:touchAnchorSide="top" />
+
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+        <Constraint
+            android:id="@+id/mainMotionLinear"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <Constraint
+            android:id="@+id/mainSideMenuIv"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="24dp"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="30dp" />
+        <Constraint
+            android:id="@+id/mainGpsTitleTv"
+            style="@style/basicTextView"
+            android:drawablePadding="5dp"
+            android:fontFamily="@font/spoqa_hansansneo_regular"
+            android:paddingStart="10dp"
+            android:paddingEnd="2dp"
+            android:textColor="@color/white"
+            android:text="분당구 야탑동"
+            android:textSize="16sp"
+            android:drawableEnd="@drawable/bottom_arrow"
+            android:drawableStart="@drawable/gps"
+            motion:drawableTint="@color/white"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainSideMenuIv"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
+            motion:layout_constraintTop_toTopOf="@+id/mainSideMenuIv" />
+        <Constraint
+            android:id="@+id/mainGpsFix"
+            motion:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainSideMenuIv"
+            android:layout_marginEnd="24dp"
+            motion:layout_constraintTop_toTopOf="@+id/mainSideMenuIv" />
+        <Constraint
+            android:id="@+id/mainSkyImg"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            android:layout_width="150dp"
+            android:layout_height="120dp"
+            android:layout_marginBottom="19dp"
+            motion:layout_constraintBottom_toTopOf="@+id/mainSkyText"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
+        <Constraint
+            android:id="@+id/mainSkyText"
+            style="@style/basicTextView"
+            android:layout_marginBottom="21dp"
+            android:text="구름 많음"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            motion:layout_constraintBottom_toTopOf="@+id/mainLiveTempValue"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"  />
+        <Constraint
+            android:id="@+id/mainLiveTempValue"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
+            motion:layout_constraintTop_toTopOf="@+id/mainMotionLinear"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
+        <Constraint
+            android:id="@+id/mainLiveTempUnit"
+            motion:layout_constraintStart_toEndOf="@+id/mainLiveTempValue"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            motion:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
+        <Constraint
+            android:id="@+id/mainCompareTemp"
+            style="@style/basicTextView"
+            android:drawablePadding="2dp"
+            android:paddingBottom="10dp"
+            android:gravity="top"
+            android:text="5˚"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            motion:layout_constraintStart_toEndOf="@+id/mainLiveTempUnit"
+            motion:drawableStartCompat="@drawable/arrow_down" />
+        <Constraint
+            android:id="@+id/mainMinMaxTr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"
+            android:layout_marginStart="3dp" />
+        <Constraint
+            android:id="@+id/mainPmBoxTr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center"
+            android:background="@drawable/pm_motion_box_bg"
+            motion:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
+        <Constraint
+            android:id="@+id/mainMotionSlideGuide"
+            style="@style/basicTextView"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
+            android:text="날씨 정보 더보기"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:layout_marginBottom="15dp"
+            android:drawableBottom="@drawable/drop_down_bottom" />
+        <Constraint
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:alpha="0"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLayout"/>
+    </ConstraintSet>
+
+
+
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint
+            android:id="@+id/mainMotionLinear"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"/>
+        <Constraint
+            android:id="@+id/mainSideMenuIv"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="24dp"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="30dp" />
+        <Constraint
+            android:id="@+id/mainGpsTitleTv"
+            style="@style/basicTextView"
+            android:drawablePadding="5dp"
+            android:fontFamily="@font/spoqa_hansansneo_regular"
+            android:paddingStart="10dp"
+            android:paddingEnd="2dp"
+            android:textColor="@color/white"
+            android:text="분당구 야탑동"
+            android:textSize="16sp"
+            android:drawableEnd="@drawable/bottom_arrow"
+            android:drawableStart="@drawable/gps"
+            motion:drawableTint="@color/white"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainSideMenuIv"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
+            motion:layout_constraintTop_toTopOf="@+id/mainSideMenuIv" />
+        <Constraint
+            android:id="@+id/mainGpsFix"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="24dp"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainSideMenuIv"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="@+id/mainSideMenuIv" />
+        <Constraint
+            android:id="@+id/mainSkyImg"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="30dp"
+            motion:layout_constraintStart_toStartOf="@+id/mainSideMenuIv"
+            motion:layout_constraintTop_toBottomOf="@+id/mainSideMenuIv"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"/>
+        <Constraint
+            android:id="@+id/mainSkyText"
+            style="@style/basicTextView"
+            android:text="구름 많음"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            motion:layout_constraintStart_toStartOf="@+id/mainSkyImg"
+            motion:layout_constraintEnd_toEndOf="@+id/mainSkyImg"
+            motion:layout_constraintTop_toBottomOf="@+id/mainSkyImg"/>
+        <Constraint
+            android:id="@+id/mainLiveTempValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            motion:layout_constraintTop_toTopOf="@+id/mainSkyImg"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainSkyImg"/>
+        <Constraint
+            android:id="@+id/mainLiveTempUnit"
+            motion:layout_constraintStart_toEndOf="@+id/mainLiveTempValue"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            motion:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
+        <Constraint
+            android:id="@+id/mainCompareTemp"
+            style="@style/basicTextView"
+            android:drawablePadding="2dp"
+            android:paddingBottom="10dp"
+            android:gravity="top"
+            android:text="5˚"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            motion:layout_constraintStart_toEndOf="@+id/mainLiveTempUnit"
+            motion:drawableStartCompat="@drawable/arrow_down" />
+        <Constraint
+            android:id="@+id/mainMinMaxTr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toTopOf="@+id/mainSkyText"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainSkyText"
+            android:layout_marginStart="50dp" />
+        <Constraint
+            android:id="@+id/mainPmBoxTr"
+            android:alpha="0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center"
+            android:background="@drawable/pm_motion_box_bg"
+            motion:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr"/>
+        <Constraint
+            android:id="@+id/mainMotionSlideGuide"
+            style="@style/basicTextView"
+            android:alpha="0"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
+            android:text="날씨 정보 더보기"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:layout_marginBottom="15dp"
+            android:drawableBottom="@drawable/drop_down_bottom" />
+
+        <Constraint
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:alpha="1"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLayout" />
+    </ConstraintSet>
+</MotionScene>
