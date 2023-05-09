@@ -66,6 +66,7 @@ class MainActivity : BaseActivity() {
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
     private val sp by lazy { SharedPreferenceManager(this) }
     private val db by lazy { GpsRepository(this).getInstance() }
+    val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
 
     override fun onResume() {
         super.onResume()
@@ -121,6 +122,8 @@ class MainActivity : BaseActivity() {
 //        ///////////////////////////////////////////////////////////////
 
         initializing()
+
+        onUpdateWidgetData()
 
         SilentLoginClass().login(this, binding.mainPbLayout)
 
@@ -181,12 +184,12 @@ class MainActivity : BaseActivity() {
             sp.setString(lastAddress, formatAddress)
             Logger.t(TAG_D)
                 .d("${dbCurrent.lat},${dbCurrent.lng}")
+            binding.mainGpsTitleTv.text = db.findById(CURRENT_GPS_ID).addr
         } catch(e: Exception) {
             GetLocation(this).getLocation()
             Thread.sleep(1000)
             e.printStackTrace()
         }
-        binding.mainGpsTitleTv.text = db.findById(CURRENT_GPS_ID).addr
         return dbCurrent
     }
 
@@ -411,7 +414,6 @@ class MainActivity : BaseActivity() {
 
     // 위젯 데이터 갱신
     private fun onUpdateWidgetData() {
-        val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
         sendBroadcast(Intent(UPDATE_TIME).apply {
             component = ComponentName(this@MainActivity, WidgetProvider::class.java)
         })

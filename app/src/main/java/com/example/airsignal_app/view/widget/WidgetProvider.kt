@@ -7,14 +7,32 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.os.Bundle
 import android.widget.RemoteViews
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.StaticDataObject
+import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
+import com.example.airsignal_app.db.room.repository.GpsRepository
+import com.example.airsignal_app.gps.GetLocation
+import com.example.airsignal_app.retrofit.ApiModel
+import com.example.airsignal_app.retrofit.HttpClient
+import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.ConvertDataType.currentDateTimeString
 import com.example.airsignal_app.view.activity.MainActivity
+import com.example.airsignal_app.vmodel.GetWeatherViewModel
+import com.orhanobut.logger.Logger
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import timber.log.Timber
+import java.util.concurrent.CompletableFuture
 
 open class WidgetProvider : AppWidgetProvider() {
+    private var responseData: Response<ApiModel.GetEntireData>? = null
 
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
     override fun onEnabled(context: Context) {
@@ -48,45 +66,59 @@ open class WidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         Timber.tag("TAG_WIDGET").i("onUpdate : ${currentDateTimeString(context)}")
-        appWidgetIds.forEach { _ ->
-            val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
-                .let {
-                    PendingIntent.getActivity(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
+        val db = GpsRepository(context).getInstance().findById(CURRENT_GPS_ID)
+
+        val getDataMap: Call<ApiModel.GetEntireData> =
+            HttpClient.mMyAPIImpl.getForecast(db.lat, db.lng, db.lng.toString())
+        getDataMap.enqueue(object : Callback<ApiModel.GetEntireData> {
+            override fun onResponse(
+                call: Call<ApiModel.GetEntireData>,
+                response: Response<ApiModel.GetEntireData>
+            ) {
+                val future = CompletableFuture.runAsync {
+                    responseData = response
                 }
 
-            val pendingRefresh: PendingIntent = Intent(context, WidgetProvider::class.java).let {
-                PendingIntent.getBroadcast(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
-            }
+                future.get()
+                appWidgetIds.forEach { _ ->
+                    val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
+                        .let {
+                            PendingIntent.getActivity(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
+                        }
 
-            val views = RemoteViews(context.packageName, R.layout.widget_layout).apply {
-                setOnClickPendingIntent(R.id.widgetMainLayout, pendingIntent)
-                setOnClickPendingIntent(R.id.widgetRefresh, pendingRefresh)
+                    val pendingRefresh: PendingIntent = Intent(context, WidgetProvider::class.java).let {
+                        GetLocation(context).getLocation()
+                        PendingIntent.getBroadcast(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
+                    }
 
-//                setTextViewText(R.id.widgetContentPM, Random.nextInt(100).toString())
+                    val views = RemoteViews(context.packageName, R.layout.widget_layout).apply {
+                        setOnClickPendingIntent(R.id.widgetMainLayout, pendingIntent)
+                        setOnClickPendingIntent(R.id.widgetRefresh, pendingRefresh)
+
+                        setTextViewText(R.id.widgetTempValue, "${responseData!!.body()!!.realtime[0].temp.toInt()}˚")
+                        setTextViewText(R.id.widgetPmValue, responseData!!.body()!!.quality.pm10Value.toInt().toString())
+                        setImageViewBitmap(R.id.widgetSkyImg,(ConvertDataType.getSkyImg(context,responseData!!.body()!!.realtime[0].sky) as BitmapDrawable).bitmap)
+                        setTextViewText(R.id.widgetTimeStamp, ConvertDataType.millsToString(db.timeStamp,"HH시 mm분"))
+                        setTextViewText(R.id.widgetAddress," · ${db.addr!!.split(" ").last()}")
+
 //                setTextColor(R.id.widgetContentPM,ResourcesCompat.getColor(context.resources,
 //                    R.color.progressGood, null))
-//
-//                setTextViewText(R.id.widgetContentCO2, Random.nextInt(2000).toString())
-//                setTextColor(R.id.widgetContentCO2,ResourcesCompat.getColor(context.resources,
-//                    R.color.progressWorst, null))
-//
-//                setTextViewText(R.id.widgetContentCO, Random.nextInt(50).toString())
-//                setTextColor(R.id.widgetContentCO,ResourcesCompat.getColor(context.resources,
-//                    R.color.progressNormal, null))
-//
-//                setTextViewText(R.id.widgetContentTVOC, (((Random.nextFloat() * 100).roundToInt()) / 100.0).toString())
-//                setTextColor(R.id.widgetContentTVOC,ResourcesCompat.getColor(context.resources,
-//                    R.color.progressBad, null))
-//
-//                setTextViewText(R.id.widgetCurrentTime, currentDateTimeString())
+                    }
+
+//            val widgetCount = appWidgetIds.size
+//            for (i: Int in 0 until(widgetCount)) {
+//                val id = appWidgetIds[i]
+//                appWidgetManager.updateAppWidget(id, views)
+//            }
+                    appWidgetManager.updateAppWidget(appWidgetIds, views)
+                }
             }
 
-            val widgetCount = appWidgetIds.size
-            for (i: Int in 0 until(widgetCount)) {
-                val id = appWidgetIds[i]
-                appWidgetManager.updateAppWidget(id, views)
+            override fun onFailure(call: Call<ApiModel.GetEntireData>, t: Throwable) {
+                Logger.e("날씨 데이터 호출 실패 : " + t.stackTraceToString())
+                Toast.makeText(context, "데이터 호출 실패:(", Toast.LENGTH_SHORT).show()
             }
-        }
+        })
     }
 
     // 이 메소드는 앱 데이터가 구글 시스템에 백업 된 이후 복원 될 때 만약 위젯 데이터가 있다면 데이터가 복구 된 이후 호출 됩니다.
@@ -104,16 +136,13 @@ open class WidgetProvider : AppWidgetProvider() {
     }
 
     // 앱의 브로드캐스트를 수신하며 해당 메서드를 통해 각 브로드캐스트에 맞게 메서드를 호출한다.
-    @SuppressLint("UnsafeProtectedBroadcastReceiver")
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         Timber.tag("TAG_WIDGET").i("onReceive : ${currentDateTimeString(context)}")
-        try {
-            val ids = AppWidgetManager.getInstance(context)
+        val ids = AppWidgetManager.getInstance(context)
                 .getAppWidgetIds(ComponentName(context, WidgetProvider::class.java))
-            onUpdate(context, AppWidgetManager.getInstance(context), ids)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+
+
+        onUpdate(context, AppWidgetManager.getInstance(context), ids)
     }
 }

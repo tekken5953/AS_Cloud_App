@@ -79,7 +79,7 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.DATE_CHANGED" />
-                <action android:name="com.example.airsignal_app.view.widget.RE_GPS" />
+<!--                <action android:name="com.example.airsignal_app.view.widget.RE_GPS" />-->
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

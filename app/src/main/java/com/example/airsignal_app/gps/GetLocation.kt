@@ -75,7 +75,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
                             "${it.locality} ${it.thoroughfare}", getCurrentTime()
                         )
 
-                        renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)
+//                        renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)
                         break
                     } else {
                         Timber.tag("Location").e("Address is Null : %s", it.getAddressLine(i))
