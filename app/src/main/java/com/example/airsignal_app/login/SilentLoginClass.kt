@@ -2,6 +2,7 @@ package com.example.airsignal_app.login
 
 import android.app.Activity
 import android.widget.LinearLayout
+import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.db.SharedPreferenceManager
@@ -15,7 +16,7 @@ import com.example.airsignal_app.util.EnterPage
 class SilentLoginClass {
 
     /** 플랫폼 별 자동로그인 **/
-    fun login(activity: Activity, pbLayout: LinearLayout) {
+    fun login(activity: Activity, pbLayout: MotionLayout) {
         val sp = SharedPreferenceManager(activity)
 
         when (sp.getString(IgnoredKeyFile.lastLoginPlatform)) {

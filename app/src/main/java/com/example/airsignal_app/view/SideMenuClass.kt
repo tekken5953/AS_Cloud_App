@@ -6,6 +6,7 @@ import android.net.Uri
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
@@ -26,7 +27,7 @@ class SideMenuClass(
     private val mContext: Activity,
     private val drawerLayout: DrawerLayout,
     private val navView: NavigationView,
-    private val viewPagerLayout: RelativeLayout,
+    private val mainRelative: MotionLayout,
 ) {
     private val sp by lazy { SharedPreferenceManager(mContext) }
 
@@ -83,7 +84,7 @@ class SideMenuClass(
                 override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
                 override fun onDrawerOpened(drawerView: View) {}
                 override fun onDrawerClosed(drawerView: View) {
-                    viewPagerLayout.bringToFront()
+                    mainRelative.bringToFront()
                 }
                 override fun onDrawerStateChanged(newState: Int) {}
             })

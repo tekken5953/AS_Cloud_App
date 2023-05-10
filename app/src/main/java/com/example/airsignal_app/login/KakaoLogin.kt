@@ -4,6 +4,7 @@ import android.app.Activity
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
@@ -114,7 +115,7 @@ class KakaoLogin(private val activity: Activity) {
     }
 
     /** 자동 로그인 **/
-    fun isValidToken(pb: LinearLayout) {
+    fun isValidToken(pb: MotionLayout) {
         pb.visibility = View.VISIBLE
         pb.bringToFront()
         if (AuthApiClient.instance.hasToken()) {

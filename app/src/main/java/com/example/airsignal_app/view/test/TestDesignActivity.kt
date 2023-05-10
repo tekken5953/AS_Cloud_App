@@ -1,6 +1,7 @@
 package com.example.airsignal_app.view.test
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.view.SegmentedProgressBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,6 +24,7 @@ class TestDesignActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test_design)
+
 
         val createBtn: Button = findViewById(R.id.testCreateBtn)
         val textSizeEt: EditText = findViewById(R.id.testTextSize)

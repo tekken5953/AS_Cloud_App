@@ -407,7 +407,7 @@
                             </TableRow>
 
                             <TableRow
-                                android:id="@+id/mainPmBoxTr"
+                                android:id="@+id/mainPmBoxTL"
                                 android:layout_width="match_parent"
                                 android:layout_height="56dp"
                                 android:layout_marginStart="24dp"
@@ -477,7 +477,7 @@
                                 android:textSize="16sp"
                                 android:textStyle="bold"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/mainPmBoxTr" />
+                                app:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL" />
 
                             <androidx.recyclerview.widget.RecyclerView
                                 android:id="@+id/mainDailyWeatherRv"
