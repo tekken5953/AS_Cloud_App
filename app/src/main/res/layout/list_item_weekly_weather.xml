@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
 
     <TableRow
         android:layout_width="match_parent"
@@ -18,7 +19,7 @@
             android:textSize="14sp"
             android:gravity="center"
             android:fontFamily="@font/spoqa_hansansneo_medium"
-            android:textColor="@color/mode_color_text"/>
+            android:textColor="#2D3436"/>
 
         <ImageView
             android:id="@+id/weeklyMinIv"
@@ -43,7 +44,7 @@
             android:gravity="center"
             android:lines="1"
             android:textSize="14sp"
-            android:fontFamily="@font/spoqa_hansansneo_regular"/>
+            android:textColor="#68C9FF"/>
 
         <TextView
             android:id="@+id/weeklySlash"
@@ -53,20 +54,19 @@
             android:layout_weight="0.05"
             android:lines="1"
             android:textSize="14sp"
-            android:textColor="@color/main_gray_color"
-            android:layout_marginStart="5dp"
-            android:fontFamily="@font/spoqa_hansansneo_regular"/>
+            android:textColor="#444444"
+            android:layout_marginStart="2dp"/>
 
         <TextView
             android:id="@+id/weeklyMaxText"
             style="@style/basicTextView"
             android:gravity="center"
             android:lines="1"
+            android:textColor="#FF6868"
             android:layout_weight="0.08"
             android:textSize="14sp"
             android:layout_marginEnd="24dp"
-            android:layout_marginStart="5dp"
-            android:fontFamily="@font/spoqa_hansansneo_regular"/>
+            android:layout_marginStart="2dp"/>
     </TableRow>
 
     <View
@@ -77,5 +77,4 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginTop="3dp"/>
-
 </LinearLayout>

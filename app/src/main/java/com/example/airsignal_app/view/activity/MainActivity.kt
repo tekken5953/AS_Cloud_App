@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.ActionBar.LayoutParams
 import android.content.ComponentName
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.*
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -53,6 +55,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 class MainActivity : BaseActivity() {
@@ -68,7 +71,7 @@ class MainActivity : BaseActivity() {
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
     private val sp by lazy { SharedPreferenceManager(this) }
     private val db by lazy { GpsRepository(this).getInstance() }
-    val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
+    private val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
 
     override fun onResume() {
         super.onResume()
@@ -105,27 +108,38 @@ class MainActivity : BaseActivity() {
         binding.mainMotionSLideImg.startAnimation(anim)
 
         //findViewById or Binding for your SegmentedProgressBar
-        binding.segmentProgressBar.apply {
+        binding.segmentProgress2p5Bar.apply {
             setContexts(
                 barContexts = listOf(
                     SegmentedProgressBar.BarContext(
-                        Color.parseColor("#ffffff"), //gradient start
-                        Color.parseColor("#FF8E95"), //gradient stop
                         0.35f //percentage for segment
                     ),
                     SegmentedProgressBar.BarContext(
-                        Color.parseColor("#FFBF74"),
-                        Color.parseColor("#FFDA58"),
                         0.19f
                     ),
                     SegmentedProgressBar.BarContext(
-                        Color.parseColor("#C4AEFC"),
-                        Color.parseColor("#F29DDA"),
                         0.16f
                     ),
                     SegmentedProgressBar.BarContext(
-                        Color.parseColor("#49C6FC"),
-                        Color.parseColor("#5AE1FF"),
+                        0.30f
+                    )
+                )
+            )
+        }
+        //findViewById or Binding for your SegmentedProgressBar
+        binding.segmentProgress10Bar.apply {
+            setContexts(
+                barContexts = listOf(
+                    SegmentedProgressBar.BarContext(
+                        0.35f //percentage for segment
+                    ),
+                    SegmentedProgressBar.BarContext(
+                        0.19f
+                    ),
+                    SegmentedProgressBar.BarContext(
+                        0.16f
+                    ),
+                    SegmentedProgressBar.BarContext(
                         0.30f
                     )
                 )
@@ -178,7 +192,7 @@ class MainActivity : BaseActivity() {
                     hidePB()
                 }, 1500)
             }
-//
+
 //        val refreshLayout = findViewById<View>(R.id.mainSwipeLayout) as RefreshLayout
 //        refreshLayout.apply {
 //            setRefreshHeader(BezierRadarHeader(this@MainActivity), LayoutParams.MATCH_PARENT, 170)
@@ -253,8 +267,8 @@ class MainActivity : BaseActivity() {
         // 워크 매니저 생성
         CoroutineScope(Dispatchers.Default).launch { createWorkManager() }
 
-//        binding.mainDailyWeatherRv.adapter = dailyWeatherAdapter
-//        binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter
+        binding.mainDailyWeatherRv.adapter = dailyWeatherAdapter
+        binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter
 //        binding.mainAirQualityRv.adapter = airQualityAdapter
 //
 //        AdViewClass(this).loadAdView(binding.mainBottomAdView)
@@ -330,7 +344,7 @@ class MainActivity : BaseActivity() {
 
 //                // 뷰페이저 아이템 추가
 //                dailyWeatherList.clear()
-//                weeklyWeatherList.clear()
+                weeklyWeatherList.clear()
 //                airQualityList.clear()
 
                 binding.mainLiveTempValue.text = realtime.temp.roundToInt().toString()
@@ -356,35 +370,39 @@ class MainActivity : BaseActivity() {
                 binding.mainPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
                 binding.mainMinMaxMin.text = "${filteringNullData(today.min)}˚"
                 binding.mainMinMaxMax.text = "${filteringNullData(today.max)}˚"
+                binding.nestedPm10Grade.setGradeText((air.pm10Grade - 1).toString())
+                binding.nestedPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
+                binding.nestedPm10Value.setIndexTextAsInt(air.pm10Value.toFloat())
+                binding.nestedPm2p5Value.setIndexTextAsInt(air.pm25Value.toFloat())
+                getCompareTemp(yesterday.temp, realtime.temp, binding.mainCompareTempIv, binding.mainCompareTempTv)
 //                if (getCompareTemp(yesterday.temp, realtime.temp) != "") {
 //                    binding.mainCompareTempValue.text = getCompareTemp(yesterday.temp, realtime.temp)
 //                    binding.mainCompareTempValue.visibility = View.VISIBLE
 //                } else {
 //                    binding.mainCompareTempValue.visibility = View.GONE
 //                }
-//
-//
-//                for (i: Int in 0 until (10)) {
-//                    val dailyIndex = result.realtime[i]
-//                    val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
-//                    addDailyWeatherItem(
-//                        "${forecastToday.hour}${getString(R.string.hour)}",
-//                        applySkyImg(dailyIndex.rainType, dailyIndex.sky),
-//                        "${dailyIndex.temp.roundToInt()}˚",
-//                        "${forecastToday.monthValue}.${forecastToday.dayOfMonth}"
-//                    )
-//                }
-//
-//                for (i: Int in 0 until (8)) {
-//                    addWeeklyWeatherItem(
-//                        "${dateNow.month.value}.${dateNow.dayOfMonth + i}" +
-//                                "(${convertDayOfWeekToKorean(this, dateNow.dayOfWeek.value + i)})",
-//                        getSkyImg(this, wfMin[i])!!,
-//                        getSkyImg(this, wfMax[i])!!,
-//                        "${taMin[i].roundToInt()}˚",
-//                        "${taMax[i].roundToInt()}˚"
-//                    )
-//                }
+
+                for (i: Int in 0 until (10)) {
+                    val dailyIndex = result.realtime[i]
+                    val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
+                    addDailyWeatherItem(
+                        "${forecastToday.hour}${getString(R.string.hour)}",
+                        applySkyImg(dailyIndex.rainType, dailyIndex.sky),
+                        "${dailyIndex.temp.roundToInt()}˚",
+                        "${forecastToday.monthValue}.${forecastToday.dayOfMonth}"
+                    )
+                }
+
+                for (i: Int in 0 until (8)) {
+                    addWeeklyWeatherItem(
+                        "${dateNow.month.value}.${dateNow.dayOfMonth + i}" +
+                                "(${convertDayOfWeekToKorean(this, dateNow.dayOfWeek.value + i)})",
+                        getSkyImg(this, wfMin[i])!!,
+                        getSkyImg(this, wfMax[i])!!,
+                        "${taMin[i].roundToInt()}˚",
+                        "${taMax[i].roundToInt()}˚"
+                    )
+                }
 //
 //                addAirQualityItem(getString(R.string.cqi), air.khaiValue.toString())
 //                addAirQualityItem(getString(R.string.pm_10), air.pm10Value.toInt().toString())
@@ -393,8 +411,8 @@ class MainActivity : BaseActivity() {
 //                addAirQualityItem(getString(R.string.o3), air.o3Value.toString())
 //                addAirQualityItem(getString(R.string.so2), air.so2Value.toString())
 
-//                weeklyWeatherAdapter.notifyDataSetChanged()
-//                dailyWeatherAdapter.notifyDataSetChanged()
+                weeklyWeatherAdapter.notifyDataSetChanged()
+                dailyWeatherAdapter.notifyDataSetChanged()
 //                airQualityAdapter.notifyDataSetChanged()
 
                 runOnUiThread {
@@ -469,15 +487,23 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun getCompareTemp(yesterday: Double, today: Double): String {
-        return if (yesterday > today) {
-            "어제보다 ${(yesterday - today).roundToInt()}˚ 낮습니다"
+    //어제와 기온 비교
+    private fun getCompareTemp(yesterday: Double, today: Double, iv: ImageView, tv: TextView) {
+        if (yesterday > today) {
+            tv.visibility = View.VISIBLE
+            iv.visibility = View.VISIBLE
+            tv.setTextColor(ResourcesCompat.getColor(resources,R.color.red,null))
+            iv.setImageDrawable(ResourcesCompat.getDrawable(resources,R.drawable.arrow_down,null))
+            tv.text = "${(yesterday - today).roundToInt().absoluteValue}˚"
         } else if (today > yesterday) {
-            "어제보다 ${(today-yesterday).roundToInt()}˚ 높습니다"
-        } else if (today == yesterday) {
-            "어제와 기온이 동일합니다"
+            tv.visibility = View.VISIBLE
+            iv.visibility = View.VISIBLE
+            iv.setImageDrawable(ResourcesCompat.getDrawable(resources,R.drawable.arrow_up,null))
+            tv.text = "${(today-yesterday).roundToInt().absoluteValue}˚"
+            tv.setTextColor(Color.parseColor("#61FF00"))
         } else {
-            ""
+            iv.visibility = View.GONE
+            tv.visibility = View.GONE
         }
     }
 }

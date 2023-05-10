@@ -2,7 +2,9 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="dataVM"
             type="com.example.airsignal_app.vmodel.GetWeatherViewModel" />
@@ -14,138 +16,324 @@
         android:layout_height="match_parent"
         android:background="@drawable/main_bg"
         app:layoutDescription="@xml/main_motion_scene"
-        app:layout_scrollFlags="scroll|exitUntilCollapsed">
+        app:layout_scrollFlags="scroll">
 
-<!--        <RelativeLayout-->
-<!--            android:id="@+id/side_menu_relative"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:background="@drawable/main_bg">-->
+        <!--        <RelativeLayout-->
+        <!--            android:id="@+id/side_menu_relative"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:background="@drawable/main_bg">-->
 
-<!--            &lt;!&ndash;                <LinearLayout&ndash;&gt;-->
-<!--            &lt;!&ndash;                    android:id="@+id/mainPbLayout"&ndash;&gt;-->
-<!--            &lt;!&ndash;                    android:layout_width="match_parent"&ndash;&gt;-->
-<!--            &lt;!&ndash;                    android:layout_height="match_parent"&ndash;&gt;-->
-<!--            &lt;!&ndash;                    android:background="#66ffffff"&ndash;&gt;-->
-<!--            &lt;!&ndash;                    android:clickable="false"&ndash;&gt;-->
-<!--            &lt;!&ndash;                    android:gravity="center"&ndash;&gt;-->
-<!--            &lt;!&ndash;                    android:visibility="gone">&ndash;&gt;-->
+        <!--            &lt;!&ndash;                <LinearLayout&ndash;&gt;-->
+        <!--            &lt;!&ndash;                    android:id="@+id/mainPbLayout"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                    android:layout_width="match_parent"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                    android:layout_height="match_parent"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                    android:background="#66ffffff"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                    android:clickable="false"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                    android:gravity="center"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                    android:visibility="gone">&ndash;&gt;-->
 
-<!--            &lt;!&ndash;                    <ProgressBar&ndash;&gt;-->
-<!--            &lt;!&ndash;                        android:id="@+id/mainPb"&ndash;&gt;-->
-<!--            &lt;!&ndash;                        android:layout_width="wrap_content"&ndash;&gt;-->
-<!--            &lt;!&ndash;                        android:layout_height="wrap_content"&ndash;&gt;-->
-<!--            &lt;!&ndash;                        app:layout_constraintBottom_toBottomOf="parent"&ndash;&gt;-->
-<!--            &lt;!&ndash;                        app:layout_constraintEnd_toEndOf="parent"&ndash;&gt;-->
-<!--            &lt;!&ndash;                        app:layout_constraintStart_toStartOf="parent"&ndash;&gt;-->
-<!--            &lt;!&ndash;                        app:layout_constraintTop_toTopOf="parent" />&ndash;&gt;-->
-<!--            &lt;!&ndash;                </LinearLayout>&ndash;&gt;-->
+        <!--            &lt;!&ndash;                    <ProgressBar&ndash;&gt;-->
+        <!--            &lt;!&ndash;                        android:id="@+id/mainPb"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                        android:layout_width="wrap_content"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                        android:layout_height="wrap_content"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                        app:layout_constraintBottom_toBottomOf="parent"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                        app:layout_constraintEnd_toEndOf="parent"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                        app:layout_constraintStart_toStartOf="parent"&ndash;&gt;-->
+        <!--            &lt;!&ndash;                        app:layout_constraintTop_toTopOf="parent" />&ndash;&gt;-->
+        <!--            &lt;!&ndash;                </LinearLayout>&ndash;&gt;-->
 
-<!--            <androidx.drawerlayout.widget.DrawerLayout-->
-<!--                android:id="@+id/mainDrawerLayout"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                tools:openDrawer="start">-->
+        <!--            <androidx.drawerlayout.widget.DrawerLayout-->
+        <!--                android:id="@+id/mainDrawerLayout"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="match_parent"-->
+        <!--                tools:openDrawer="start">-->
 
-<!--                <com.google.android.material.navigation.NavigationView-->
-<!--                    android:id="@+id/mainNavView"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_gravity="start"-->
-<!--                    android:fitsSystemWindows="true"-->
-<!--                    app:headerLayout="@layout/nav_header"-->
-<!--                    app:itemTextAppearance="@style/TextAppearance.AppCompat.Small"-->
-<!--                    app:itemTextColor="@color/mode_color_text"-->
-<!--                    app:menu="@menu/nav_menu" />-->
+        <!--                <com.google.android.material.navigation.NavigationView-->
+        <!--                    android:id="@+id/mainNavView"-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="match_parent"-->
+        <!--                    android:layout_gravity="start"-->
+        <!--                    android:fitsSystemWindows="true"-->
+        <!--                    app:headerLayout="@layout/nav_header"-->
+        <!--                    app:itemTextAppearance="@style/TextAppearance.AppCompat.Small"-->
+        <!--                    app:itemTextColor="@color/mode_color_text"-->
+        <!--                    app:menu="@menu/nav_menu" />-->
 
-<!--            </androidx.drawerlayout.widget.DrawerLayout>-->
-<!--        </RelativeLayout>-->
+        <!--            </androidx.drawerlayout.widget.DrawerLayout>-->
+        <!--        </RelativeLayout>-->
+
+        <RelativeLayout
+            android:id="@+id/topBarLinear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            app:layout_constraintTop_toTopOf="@id/mainMotionLayout">
+
+            <ImageView
+                android:id="@+id/mainSideMenuIv"
+                android:layout_width="33dp"
+                android:layout_height="33dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="24dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/options_menu"
+                app:tint="@color/white" />
+
+            <TextView
+                android:id="@+id/mainGpsTitleTv"
+                style="@style/basicTextView"
+                android:layout_centerInParent="true"
+                android:drawablePadding="5dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:drawableStartCompat="@drawable/location_fill"
+                app:drawableTint="@color/white" />
+
+            <ImageView
+                android:id="@+id/mainGpsFix"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="24dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="5dp"
+                android:src="@drawable/gps_refresh"
+                app:tint="@color/white" />
+        </RelativeLayout>
 
         <ScrollView
             android:id="@+id/nested_scrollview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@color/white"
+            android:clipToPadding="false"
             android:orientation="vertical"
             android:overScrollMode="never"
             android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/mainMotionLinear">
 
-            <TextView
-                android:id="@+id/nested_text"
+            <RelativeLayout
+                android:id="@+id/nested_main_linear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:text="@string/large_text"
-                android:textColor="@color/black" />
+                android:background="@color/view_line_color">
 
+                <RelativeLayout
+                    android:id="@+id/nested_daily_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/scrolled_box_bg"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp">
+
+                    <TextView
+                        android:id="@+id/mainDailyWeatherTitle"
+                        style="@style/basicTextView"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="24dp"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:text="시간별 날씨"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/mainDailyWeatherRv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/mainDailyWeatherTitle"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="30dp"
+                        android:clipToPadding="false"
+                        android:orientation="horizontal"
+                        android:overScrollMode="never"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/list_item_daily_weather" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/nested_weekly_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/nested_daily_box"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/scrolled_box_bg">
+
+                    <TextView
+                        android:id="@+id/mainWeeklyWeatherTitle"
+                        style="@style/basicTextView"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="24dp"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:text="주간별 날씨"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/mainWeeklyWeatherRv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/mainWeeklyWeatherTitle"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="30dp"
+                        android:clipToPadding="false"
+                        android:orientation="vertical"
+                        android:overScrollMode="never"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/list_item_weekly_weather" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/nested_pm_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/nested_weekly_box"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="35dp"
+                    android:background="@drawable/scrolled_box_bg"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp">
+
+                    <TextView
+                        android:id="@+id/nested_pm_title"
+                        style="@style/basicTextView"
+                        android:layout_marginTop="24dp"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:text="실시간 공기질"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/nested_pm_2p5_title"
+                        style="@style/basicTextView"
+                        android:layout_below="@+id/nested_pm_title"
+                        android:layout_marginTop="25dp"
+                        android:text="PM2.5(초미세먼지)"
+                        android:textColor="#7C7C7C"
+                        android:textSize="14sp" />
+
+                    <com.aslib.AsTextView
+                        android:id="@+id/nested_pm_2p5_grade"
+                        style="@style/basicTextView"
+                        android:layout_below="@+id/nested_pm_2p5_title"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="7dp"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:textSize="24sp"
+                        app:sort="grade" />
+
+                    <com.aslib.AsTextView
+                        android:id="@+id/nested_pm_2p5_value"
+                        style="@style/basicTextView"
+                        android:layout_alignBottom="@+id/nested_pm_2p5_grade"
+                        android:layout_marginEnd="10dp"
+                        android:layout_toStartOf="@+id/nested_pm_2p5_unit"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:textSize="24sp"
+                        app:sort="pm" />
+
+                    <TextView
+                        android:id="@+id/nested_pm_2p5_unit"
+                        style="@style/basicTextView"
+                        android:layout_alignBottom="@+id/nested_pm_2p5_grade"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="4dp"
+                        android:text="㎍/㎥"
+                        android:textColor="#7C7C7C"
+                        android:textSize="12sp" />
+
+                    <com.example.airsignal_app.view.SegmentedProgressBar
+                        android:id="@+id/segment_progress_2p5_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="6dp"
+                        android:layout_below="@+id/nested_pm_2p5_value"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="30dp" />
+
+                    <TextView
+                        android:id="@+id/nested_pm_10_title"
+                        style="@style/basicTextView"
+                        android:layout_below="@+id/segment_progress_2p5_bar"
+                        android:layout_marginTop="25dp"
+                        android:text="PM10(미세먼지)"
+                        android:textColor="#7C7C7C"
+                        android:textSize="14sp" />
+
+                    <com.aslib.AsTextView
+                        android:id="@+id/nested_pm_10_grade"
+                        style="@style/basicTextView"
+                        android:layout_below="@+id/nested_pm_10_title"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="7dp"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:textSize="24sp"
+                        app:sort="grade" />
+
+                    <com.aslib.AsTextView
+                        android:id="@+id/nested_pm_10_value"
+                        style="@style/basicTextView"
+                        android:layout_alignBottom="@+id/nested_pm_10_grade"
+                        android:layout_marginEnd="10dp"
+                        android:layout_toStartOf="@+id/nested_pm_2p5_unit"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:textSize="24sp"
+                        app:sort="pm" />
+
+                    <TextView
+                        android:id="@+id/nested_pm_10_unit"
+                        style="@style/basicTextView"
+                        android:layout_alignBottom="@+id/nested_pm_10_grade"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="4dp"
+                        android:text="㎍/㎥"
+                        android:textColor="#7C7C7C"
+                        android:textSize="12sp" />
+
+                    <com.example.airsignal_app.view.SegmentedProgressBar
+                        android:id="@+id/segment_progress_10_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="6dp"
+                        android:layout_below="@+id/nested_pm_10_value"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="30dp" />
+                </RelativeLayout>
+            </RelativeLayout>
         </ScrollView>
 
         <LinearLayout
             android:id="@+id/mainMotionLinear"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" />
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@id/mainMotionLayout"
+            app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNav"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:alpha="0"
-            app:itemIconTint="@color/main_blue_color"
-            app:itemTextColor="@color/main_blue_color"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:menu="@menu/bottom_nav" />
-
-        <ImageView
-            android:id="@+id/mainSideMenuIv"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="30dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="5dp"
-            android:src="@drawable/options_menu"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/white" />
-
-        <TextView
-            android:id="@+id/mainGpsTitleTv"
-            style="@style/basicTextView"
-            android:drawablePadding="5dp"
-            android:fontFamily="@font/spoqa_hansansneo_regular"
-            android:paddingStart="10dp"
-            android:paddingEnd="2dp"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:drawableEndCompat="@drawable/bottom_arrow"
-            app:drawableStartCompat="@drawable/gps"
-            app:drawableTint="@color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/mainSideMenuIv"
-            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            app:layout_constraintTop_toTopOf="@+id/mainSideMenuIv" />
-
-        <ImageView
-            android:id="@+id/mainGpsFix"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginEnd="24dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="5dp"
-            android:src="@drawable/fixed_gps"
-            app:layout_constraintBottom_toBottomOf="@+id/mainSideMenuIv"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/mainSideMenuIv"
-            app:tint="@color/white" />
+        <!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
+        <!--            android:id="@+id/bottomNav"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="55dp"-->
+        <!--            android:alpha="0"-->
+        <!--            app:itemIconTint="@color/main_blue_color"-->
+        <!--            app:itemTextColor="@color/main_blue_color"-->
+        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--            app:menu="@menu/bottom_nav" />-->
 
         <ImageView
             android:id="@+id/mainSkyImg"
-            android:layout_width="150dp"
-            android:layout_height="120dp"
+            android:layout_width="170dp"
+            android:layout_height="140dp"
             android:layout_marginBottom="19dp"
-            android:src="@drawable/sunny_test"
             app:layout_constraintBottom_toTopOf="@+id/mainSkyText"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
@@ -183,26 +371,35 @@
             app:layout_constraintStart_toEndOf="@+id/mainLiveTempValue"
             app:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
 
-        <TextView
-            android:id="@+id/mainCompareTemp"
-            style="@style/basicTextView"
-            android:drawablePadding="2dp"
-            android:gravity="top"
-            android:paddingBottom="10dp"
-            android:text="5˚"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:drawableStartCompat="@drawable/arrow_down"
+        <ImageView
+            android:id="@+id/mainCompareTempIv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="13dp"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             app:layout_constraintStart_toEndOf="@+id/mainLiveTempUnit" />
 
+        <TextView
+            android:id="@+id/mainCompareTempTv"
+            style="@style/basicTextView"
+            android:layout_marginStart="1dp"
+            android:fontFamily="@font/spoqa_hansansneo_bold"
+            android:gravity="top"
+            android:paddingBottom="12dp"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toEndOf="@+id/mainCompareTempIv" />
+
         <TableRow
             android:id="@+id/mainMinMaxTr"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="3dp"
+            android:layout_marginStart="5dp"
             android:gravity="center"
             android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
             app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue">
 
             <TextView
@@ -213,6 +410,7 @@
 
             <TextView
                 style="@style/basicTextView"
+                android:fontFamily="@font/spoqa_hansansneo_bold"
                 android:text="  ─  "
                 android:textColor="@color/white"
                 android:textSize="16sp" />
@@ -285,23 +483,15 @@
                     android:textStyle="bold"
                     app:sort="grade" />
             </TableRow>
-
-            <com.example.airsignal_app.view.SegmentedProgressBar
-                android:id="@+id/segment_progress_bar"
-                android:layout_width="match_parent"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:layout_marginTop="5dp"
-                android:layout_height="10dp" />
         </TableLayout>
 
         <TextView
             android:id="@+id/mainMotionSlideGuide"
             style="@style/basicTextView"
+            android:layout_marginBottom="5dp"
             android:text="날씨 정보 더보기"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
@@ -314,6 +504,6 @@
             android:src="@drawable/drop_down_bottom"
             app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             app:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLayout"/>
+            app:layout_constraintStart_toStartOf="@+id/mainMotionLayout" />
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

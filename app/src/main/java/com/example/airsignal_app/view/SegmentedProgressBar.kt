@@ -27,7 +27,7 @@ class SegmentedProgressBar(context: Context?, attributeSet: AttributeSet? = null
     @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         var filling = 0f
-        cornerRadius = 15f
+        cornerRadius = 12f
         val barContextsLastIndex = barContexts.lastIndex
         barContexts.forEachIndexed { i, bar ->
 
@@ -35,7 +35,7 @@ class SegmentedProgressBar(context: Context?, attributeSet: AttributeSet? = null
                 Color.parseColor("#33E430"),
                 Color.parseColor("#DADE20"),
                 Color.parseColor("#FF2929"))
-            val pos = floatArrayOf(0.1f,0.4f,0.8f,1f)
+            val pos = floatArrayOf(0.0f,0.2f,0.5f,1f)
             val shader: Shader = LinearGradient(
                 0f, 0f, width.toFloat(), height.toFloat(),
                 colors, pos, Shader.TileMode.CLAMP
@@ -187,6 +187,6 @@ class SegmentedProgressBar(context: Context?, attributeSet: AttributeSet? = null
         }
     }
 
-    class BarContext(val colorFrom: Int, val colorTo: Int, val percentage: Float)
+    class BarContext(val percentage: Float)
     
 }

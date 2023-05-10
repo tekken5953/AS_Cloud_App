@@ -249,6 +249,13 @@ class ApiModel {
         val temp: Double
     )
 
+    data class UV(
+        @SerializedName("value")
+        val value: Int,
+        @SerializedName("falg")
+        val grade: String
+    )
+
     data class GetEntireData(
         @SerializedName("realtime")
         val realtime: List<RealTimeData>,
@@ -261,6 +268,8 @@ class ApiModel {
         @SerializedName("today")
         val today: TodayTemp,
         @SerializedName("yesterday")
-        val yesterday: YesterdayTemp
+        val yesterday: YesterdayTemp,
+        @SerializedName("uv")
+        val uv: UV
     )
 }
