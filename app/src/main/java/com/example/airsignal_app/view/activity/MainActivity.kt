@@ -359,18 +359,16 @@ class MainActivity : BaseActivity() {
                     week.wf4Pm, week.wf5Pm, week.wf6Pm, week.wf7Pm
                 )
                 val taMin = listOf(
-                    week.taMin0,
-                    week.taMin1, week.taMin2, week.taMin3,
+                    week.taMin0, week.taMin1, week.taMin2, week.taMin3,
                     week.taMin4, week.taMin5, week.taMin6, week.taMin7
                 )
                 val taMax = listOf(
-                    week.taMax0,
-                    week.taMax1, week.taMax2, week.taMax3, week.taMax4,
+                    week.taMax0, week.taMax1, week.taMax2, week.taMax3, week.taMax4,
                     week.taMax5, week.taMax6, week.taMax7
                 )
 
 //                // 뷰페이저 아이템 추가
-//                dailyWeatherList.clear()
+                dailyWeatherList.clear()
                 weeklyWeatherList.clear()
 //                airQualityList.clear()
 
@@ -404,14 +402,8 @@ class MainActivity : BaseActivity() {
                 binding.nestedPm2p5Value.setTextColor(getDataColor(this,air.pm25Grade - 1))
                 binding.nestedPm2p5Value.text = air.pm25Value.toString()
                 getCompareTemp(yesterday.temp, realtime.temp, binding.mainCompareTempIv, binding.mainCompareTempTv)
-//                if (getCompareTemp(yesterday.temp, realtime.temp) != "") {
-//                    binding.mainCompareTempValue.text = getCompareTemp(yesterday.temp, realtime.temp)
-//                    binding.mainCompareTempValue.visibility = View.VISIBLE
-//                } else {
-//                    binding.mainCompareTempValue.visibility = View.GONE
-//                }
 
-                for (i: Int in 0 until (10)) {
+                for (i: Int in 0 until result.realtime.size) {
                     try {
                         if (i == result.realtime.lastIndex + 1) {
                             break
