@@ -15,20 +15,28 @@
 
     <application
         android:name=".koin.BaseApplication"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app__name"
         android:hardwareAccelerated="true"
+        android:icon="@drawable/app_icon"
+        android:label="@string/app__name"
         android:networkSecurityConfig="@xml/network_security_work"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/app_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.AirSignal_App"
         android:windowSoftInputMode="adjustNothing">
+        <activity
+            android:name=".view.activity.RedirectPermissionActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".view.activity.SplashActivity"
             android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,8 +54,7 @@
             android:exported="false" />
         <activity
             android:name=".view.activity.MainActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false"/>
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
@@ -72,6 +79,9 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.DATE_CHANGED" />
+<!--                <action android:name="com.example.airsignal_app.view.widget.RE_GPS" />-->
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <meta-data
@@ -81,6 +91,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/adMobId"/>
+            android:value="@string/adMobId" />
     </application>
+
 </manifest>

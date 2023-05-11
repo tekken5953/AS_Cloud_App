@@ -1,5 +1,6 @@
 package com.example.airsignal_app.view.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -26,14 +27,15 @@ import com.example.airsignal_app.view.ShowDialogClass
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.orhanobut.logger.Logger
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private val googleLogin by lazy { GoogleLogin(this) } // 구글 로그인
-    private val kakaoLogin by lazy { KakaoLogin(this) } // 카카오 로그인
-    private val naverLogin by lazy { NaverLogin(this) } // 네이버 로그인
+    private val googleLogin by lazy { GoogleLogin(this) }   // 구글 로그인
+    private val kakaoLogin by lazy { KakaoLogin(this) }     // 카카오 로그인
+    private val naverLogin by lazy { NaverLogin(this) }     // 네이버 로그인
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
 
         binding.googleLoginButton.setOnClickListener {
@@ -53,21 +55,21 @@ class LoginActivity : AppCompatActivity() {
                 LayoutInflater.from(this).inflate(R.layout.dialog_phone_input, null)
             val dialog = ShowDialogClass().getInstance(this)
             dialog.show(viewEmailLogin, true)
-            val phoneInputEt: EditText = viewEmailLogin.findViewById(R.id.phoneInputEt)
-            val phoneInputSendBtn: Button = viewEmailLogin.findViewById(R.id.phoneInputSendBtn)
-            val phoneInputVerifyEt: EditText = viewEmailLogin.findViewById(R.id.phoneInputVerifyEt)
-            val phoneInputErrorText: TextView =
-                viewEmailLogin.findViewById(R.id.phoneInputResultText)
+            val inputEt: EditText = viewEmailLogin.findViewById(R.id.inputEt)
+            val inputSendBtn: Button = viewEmailLogin.findViewById(R.id.inputSendBtn)
+            val inputVerifyEt: EditText = viewEmailLogin.findViewById(R.id.inputNumberEt)
+            val inputErrorText: TextView =
+                viewEmailLogin.findViewById(R.id.inputResultText)
 
-            phoneInputSendBtn.setOnClickListener {
-                if (phoneInputSendBtn.isEnabled) {
-                    if (phoneInputSendBtn.text == "Send") {
-                        phoneInputVerifyEt.visibility = View.VISIBLE
-                        phoneInputSendBtn.text = "Verify"
-                        PhoneLogin(this, phoneInputSendBtn, phoneInputErrorText)
-                            .login(phoneInputEt.text.toString().replaceFirst("0", "+82"))
-                    } else if (phoneInputSendBtn.text == "Verify") {
-                        if (phoneInputVerifyEt.text.toString() ==
+            inputSendBtn.setOnClickListener {
+                if (inputSendBtn.isEnabled) {
+                    if (inputSendBtn.text == "Send") {
+                        inputVerifyEt.visibility = View.VISIBLE
+                        inputSendBtn.text = "Verify"
+                        PhoneLogin(this, inputSendBtn, inputErrorText)
+                            .login(inputEt.text.toString().replaceFirst("0", "+82"))
+                    } else if (inputSendBtn.text == "Verify") {
+                        if (inputVerifyEt.text.toString() ==
                             SharedPreferenceManager(this).getString("verificationCode")
                         ) {
                             dialog.dismiss()
@@ -78,8 +80,8 @@ class LoginActivity : AppCompatActivity() {
                                 binding.pbLayout.visibility = View.GONE
                             }, 2000)
                         } else {
-                            phoneInputErrorText.visibility = View.VISIBLE
-                            phoneInputErrorText.text = "인증번호가 다릅니다"
+                            inputErrorText.visibility = View.VISIBLE
+                            inputErrorText.text = "인증번호가 일치하지 않습니다"
                         }
                     }
                 }

@@ -27,13 +27,14 @@ class SubFCM : FirebaseMessagingService() {
         NotificationBuilder().sendNotification(
             this,
             intent,
-            message,
+            message.data.toString(),
             "AS-Cloud FCM Test Msg",
-            System.currentTimeMillis())
+            System.currentTimeMillis()
+        )
     }
 
     /** 토픽 구독 설정 **/
-    fun subTopic(topic: String) {
+    fun subTopic(topic: String): SubFCM {
         FirebaseMessaging.getInstance().subscribeToTopic(topic)
             .addOnCompleteListener { task ->
                 var msg = "Subscribed"
@@ -42,10 +43,11 @@ class SubFCM : FirebaseMessagingService() {
                 }
                 Timber.tag("Notification").d(msg)
             }
+        return this
     }
 
     /** 토픽 구독 해제 **/
-    fun unSubTopic(topic: String) {
+    fun unSubTopic(topic: String): SubFCM {
         FirebaseMessaging.getInstance().unsubscribeFromTopic(topic)
             .addOnCompleteListener { task ->
                 var msg = "UnSubscribed"
@@ -54,6 +56,7 @@ class SubFCM : FirebaseMessagingService() {
                 }
                 Timber.tag("Notification").w(msg)
             }
+        return this
     }
 
     /** 현재 토큰정보 불러오기 **/
@@ -64,7 +67,6 @@ class SubFCM : FirebaseMessagingService() {
                     Timber.tag("Notification").w("Fetching FCM registration token failed by $task.exception")
                     return@OnCompleteListener
                 }
-
                 val token = task.result
                 Timber.tag("Notification").d("FCM 토큰 : $token")
             }).result

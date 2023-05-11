@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="1000">
+
+        <OnSwipe
+            motion:dragDirection="dragUp"
+            motion:touchRegionId="@id/mainMotionLinear"
+            motion:touchAnchorSide="top" />
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+        <Constraint
+            android:id="@+id/mainMotionLinear"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            motion:layout_constraintBottom_toBottomOf="@id/mainMotionLayout"
+            motion:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
+        <Constraint
+            android:id="@+id/mainSkyImg"
+            android:layout_width="170dp"
+            android:layout_height="140dp"
+            android:layout_marginBottom="19dp"
+            motion:layout_constraintBottom_toTopOf="@+id/mainSkyText"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
+        <Constraint
+            android:id="@+id/mainSkyText"
+            style="@style/basicTextView"
+            android:layout_marginBottom="21dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            motion:layout_constraintBottom_toTopOf="@+id/mainLiveTempValue"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
+        <Constraint
+            android:id="@+id/mainLiveTempValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
+            motion:layout_constraintTop_toTopOf="@+id/mainMotionLinear" />
+        <Constraint
+            android:id="@+id/mainLiveTempUnit"
+            style="@style/basicTextView"
+            android:text="˚"
+            android:textColor="@color/white"
+            android:textSize="60sp"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            motion:layout_constraintStart_toEndOf="@+id/mainLiveTempValue"
+            motion:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
+        <Constraint
+            android:id="@+id/mainCompareTemp"
+            style="@style/basicTextView"
+            android:drawablePadding="2dp"
+            android:fontFamily="@font/spoqa_hansansneo_bold"
+            android:gravity="top"
+            android:paddingBottom="10dp"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            motion:drawableStartCompat="@drawable/arrow_down"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            motion:layout_constraintStart_toEndOf="@+id/mainLiveTempUnit" />
+        <Constraint
+            android:id="@+id/mainMinMaxTr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            motion:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
+            motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
+            motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue" />
+        <Constraint
+            android:id="@+id/mainPmBoxTL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/pm_motion_box_bg"
+            android:gravity="center"
+            motion:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
+<!--        <Constraint-->
+<!--            android:id="@+id/bottomNav"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="0.1dp"-->
+<!--            android:layout_marginBottom="3dp"-->
+<!--            android:alpha="0"-->
+<!--            motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLayout" />-->
+        <Constraint
+            android:id="@+id/mainMotionSlideGuide"
+            style="@style/basicTextView"
+            android:layout_marginBottom="5dp"
+            android:alpha="1"
+            android:text="날씨 정보 더보기"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            motion:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
+        <Constraint
+            android:id="@+id/mainMotionSLideImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="1"
+            android:paddingBottom="15dp"
+            android:src="@drawable/drop_down_bottom"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
+            motion:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLayout" />
+        <Constraint
+            android:id="@+id/mainSwipeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:srlAccentColor="@color/main_blue_color"
+            motion:srlEnablePreviewInEditMode="false"/>
+    </ConstraintSet>
+
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint
+            android:id="@+id/mainMotionLinear"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:orientation="vertical"
+            motion:layout_constraintTop_toBottomOf="@+id/topBarLinear"/>
+        <Constraint
+            android:id="@+id/mainSkyImg"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginStart="60dp"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
+            motion:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
+        <Constraint
+            android:id="@+id/mainSkyText"
+            style="@style/basicTextView"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            motion:layout_constraintEnd_toEndOf="@+id/mainSkyImg"
+            motion:layout_constraintStart_toStartOf="@+id/mainSkyImg"
+            motion:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
+        <Constraint
+            android:id="@+id/mainLiveTempValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainSkyImg"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            motion:layout_constraintStart_toEndOf="@+id/mainSkyText"
+            motion:layout_constraintTop_toTopOf="@+id/mainSkyImg" />
+        <Constraint
+            android:id="@+id/mainLiveTempUnit"
+            style="@style/basicTextView"
+            android:text="˚"
+            android:textColor="@color/white"
+            android:textSize="60sp"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            motion:layout_constraintStart_toEndOf="@+id/mainLiveTempValue"
+            motion:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
+        <Constraint
+            android:id="@+id/mainCompareTemp"
+            style="@style/basicTextView"
+            android:drawablePadding="2dp"
+            android:fontFamily="@font/spoqa_hansansneo_bold"
+            android:gravity="top"
+            android:paddingBottom="12dp"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            motion:drawableStartCompat="@drawable/arrow_down"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            motion:layout_constraintStart_toEndOf="@+id/mainLiveTempUnit" />
+        <Constraint
+            android:id="@+id/mainMinMaxTr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="3dp"
+            motion:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
+            motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
+            motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"/>
+        <Constraint
+            android:id="@+id/mainPmBoxTL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:alpha="0"
+            android:background="@drawable/pm_motion_box_bg"
+            android:gravity="center"
+            motion:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
+
+<!--        <Constraint-->
+<!--            android:id="@+id/bottomNav"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="55dp"-->
+<!--            android:alpha="1"-->
+<!--            motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLayout" />-->
+
+        <Constraint
+            android:id="@+id/mainMotionSlideGuide"
+            style="@style/basicTextView"
+            android:layout_marginBottom="5dp"
+            android:alpha="0"
+            android:text="날씨 정보 더보기"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            motion:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
+
+        <Constraint
+            android:id="@+id/mainMotionSLideImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0"
+            android:paddingBottom="15dp"
+            android:src="@drawable/drop_down_bottom"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
+            motion:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLayout" />
+        <Constraint
+            android:id="@+id/mainSwipeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:srlAccentColor="@color/main_blue_color"
+            motion:srlEnablePreviewInEditMode="false"/>
+    </ConstraintSet>
+</MotionScene>

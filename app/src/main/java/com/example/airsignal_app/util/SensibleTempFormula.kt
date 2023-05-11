@@ -1,5 +1,9 @@
 package com.example.airsignal_app.util
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import java.time.LocalDateTime
+import java.util.*
 import kotlin.math.atan
 import kotlin.math.pow
 
@@ -18,7 +22,7 @@ class SensibleTempFormula {
      */
     fun getInSummer(ta: Double, rh: Double) : Double {
         val tw = getTw(ta, rh)
-        return -0.2442 + 0.55399 * tw + 0.45535 * ta - 0.0022 * tw.pow(2.0) + 0.00278 * tw * ta + 3.0
+        return -0.2442 + (0.55399 * tw) + (0.45535 * ta) - (0.0022 * tw.pow(2.0)) + (0.00278 * tw * ta) + 3.0
     }
 
     /**
@@ -28,7 +32,13 @@ class SensibleTempFormula {
      * @param v 10분 평균 풍속
      */
     fun getInWinter(ta: Double, v: Double) : Double {
-        return 13.12 + 0.6215 * ta - 11.37 * v.pow(0.16) + 0.3965 * v.pow(0.16) * ta
+        return 13.12 + (0.6215 * ta) - (11.37 * v.pow(0.16)) + (0.3965 * v.pow(0.16) * ta)
+    }
+
+    /** 지금이 몇월인지에 따라 여름 및 겨울 계산공식 적용 **/
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getSensibleTemp(ta: Double, rh: Double, v: Double) : Double {
+        return if (getCurrentSeason() in 5..9) getInSummer(ta, rh) else getInWinter(ta, v)
     }
 
     /**
@@ -40,6 +50,15 @@ class SensibleTempFormula {
     private fun getTw(ta: Double, rh: Double) : Double {
         return ta * atan(0.151977 * (rh + 8.313659).pow(0.5)) +
                 atan(ta+rh) - atan(rh-1.67633) +
-                0.00391838 * rh.pow(1.5) * atan(0.023101 * rh) - 4.686035
+                (0.00391838 * rh.pow(1.5) * atan(0.023101 * rh)) - 4.686035
+    }
+
+    /** 현재 월수 출력 **/
+    fun getCurrentSeason() : Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            LocalDateTime.now().monthValue
+        } else {
+            Calendar.getInstance().get(Calendar.MONTH) + 1  // Calendar는 1월이 0부터 시작해 +1 해줌
+        }
     }
 }

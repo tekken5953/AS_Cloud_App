@@ -33,6 +33,7 @@ class PhoneLogin(
     private val auth = FirebaseAuth.getInstance()
     private val sp by lazy { SharedPreferenceManager(activity) }
 
+    /** 로그인 **/
     fun login(phoneNumber: String) {
         val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber)       // Phone number to verify
@@ -124,7 +125,7 @@ class PhoneLogin(
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("phone_tag", "signInWithCredential:complete")
                     Log.d("phone_tag", "complete : ${task.result.user?.phoneNumber}")
-                    val user = task.result?.user
+//                    val user = task.result?.user
                 } else {
                     // Sign in failed, display a message and update the UI
                     Log.w("phone_tag", "signInWithCredential:failure", task.exception)

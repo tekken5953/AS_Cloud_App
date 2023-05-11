@@ -12,7 +12,7 @@
             android:layout_width="310dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            app:cardBackgroundColor="@color/mode_color_text"
+            app:cardBackgroundColor="@color/black"
             app:cardCornerRadius="10dp"
             app:cardElevation="0dp">
 
@@ -27,7 +27,7 @@
                     android:id="@+id/image"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    app:tint="@color/mode_color_view"
+                    app:tint="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -40,7 +40,7 @@
                     android:layout_marginStart="30dp"
                     android:letterSpacing="-0.04"
                     android:layout_marginEnd="7dp"
-                    android:textColor="@color/mode_color_view"
+                    android:textColor="@color/white"
                     android:textSize="15sp"
                     android:gravity="center"
                     android:fontFamily="@font/spoqa_hansansneo_medium"

@@ -14,7 +14,7 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.db.room.GpsRepository
+import com.example.airsignal_app.db.room.repository.GpsRepository
 
 /**
  * @author : Lee Jae Young
@@ -87,16 +87,15 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
 
             delete.setOnClickListener {
                 AlertDialog.Builder(context).apply {
-                    setMessage("${address.text}를 삭제하시겠습니까?")
-                    setPositiveButton("예") { _, _ ->
+                    setMessage("${address.text}${context.getString(R.string.delete_item)}")
+                    setPositiveButton(context.getString(R.string.ok)) { _, _ ->
                         db.deleteFromAddress(address.text.toString())
                         mList.removeAt(adapterPosition)
                         notifyItemRemoved(adapterPosition)
                         updateCheckBoxVisible(false)
                     }
-
                     setNegativeButton(
-                        "아니오"
+                        context.getString(R.string.no)
                     ) { p0, _ -> p0!!.dismiss() }
                 }.show()
             }

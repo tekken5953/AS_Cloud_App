@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app__name">AirSignal_App</string>
-    <string name="main_gps_title">Yatap-dong, Bundang-gu</string>
-    <string name="main_today_weather">today\'s weather</string>
     <string name="my_device_title">My Product</string>
     <string name="as_eye">AS_Eye</string>
     <string name="aqi">Air Quality Index</string>
@@ -32,15 +30,13 @@
     <string name="serial_number">Product Serial Number</string>
     <string name="next">Next</string>
     <string name="progress_server">Registering with server\nPlease wait a moment</string>
-    <string name="very_bad">Very Bad</string>
-    <string name="hour_12">12pm</string>
     <string name="please_login">Please log in</string>
     <string name="english">English</string>
     <string name="korean">한국어</string>
     <string name="system_lang">System Language</string>
     <string name="weather">Weather</string>
     <string name="save_change">Settings have been saved successfully.\nRestart the app</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="theme_system">System Theme</string>
     <string name="monday">Mon</string>
     <string name="sun_set_time">Sunset</string>
@@ -70,4 +66,17 @@
     <string name="fir">Fri</string>
     <string name="sat">Sat</string>
     <string name="sun">Sun</string>
+    <string name="cqi">CQI</string>
+    <string name="co">CO</string>
+    <string name="o3">O3</string>
+    <string name="so2">SO2</string>
+    <string name="sens_temp">Sensible Temp</string>
+    <string name="back_press">Press the button one more time to exit the app</string>
+    <string name="night">Night</string>
+    <string name="allowed_noti">Notification allowed</string>
+    <string name="denied_noti">Notification denied</string>
+    <string name="hour">H</string>
+    <string name="widget_time_format">HH:mm MM.dd</string>
+    <string name="delete_item">will be deleted</string>
+    <string name="outdoor_air">Outdoor</string>
 </resources>

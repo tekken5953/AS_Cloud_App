@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.example.airsignal_app.R
@@ -23,6 +24,7 @@ class SnackBarUtils(view: View, private val message: String, private val drawabl
 
     /**Constructor**/
     companion object {
+        @JvmStatic
         fun make(view: View, message: String, drawable: Drawable) =
             SnackBarUtils(view, message, drawable)
     }
@@ -34,10 +36,6 @@ class SnackBarUtils(view: View, private val message: String, private val drawabl
     private val snackBarBinding =
         DataBindingUtil.inflate(inflater, R.layout.custom_view_snackbar, null, false)
                 as CustomViewSnackbarBinding
-
-    init {
-        initView().initData()
-    }
 
     /** 뷰 세팅 **/
     private fun initView() : SnackBarUtils {
@@ -68,6 +66,7 @@ class SnackBarUtils(view: View, private val message: String, private val drawabl
 
     /** 진동, 스낵바 Show**/
     fun show() {
+        initView().initData()
         vibrate()
         snackBar.show()
     }

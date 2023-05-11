@@ -5,20 +5,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
-import android.os.Build
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.view.View
-import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile
-import com.example.airsignal_app.dao.StaticDataObject
-import com.example.airsignal_app.db.room.GpsRepository
+import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
+import com.example.airsignal_app.db.SharedPreferenceManager
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.*
 
 /**
@@ -28,7 +21,7 @@ import java.util.*
 object ConvertDataType {
     /** 국가를 대한민국으로 설정합니다 **/
     fun setLocaleToKorea(context: Context) {
-        val configuration = Configuration()
+        val configuration = context.resources.configuration
         configuration.setLocale(Locale.KOREA)
         @Suppress("DEPRECATION")
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
@@ -36,7 +29,7 @@ object ConvertDataType {
 
     /** 국가를 영어권으로 설정합니다 **/
     fun setLocaleToEnglish(context: Context) {
-        val configuration = Configuration()
+        val configuration = context.resources.configuration
         configuration.setLocale(Locale.ENGLISH)
         @Suppress("DEPRECATION")
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
@@ -44,7 +37,7 @@ object ConvertDataType {
 
     /** 국가를 시스템으로 설정합니다 **/
     fun setLocaleToSystem(context: Context) {
-        val configuration = Configuration()
+        val configuration = context.resources.configuration
         configuration.setLocale(Locale.getDefault())
         @Suppress("DEPRECATION")
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
@@ -67,8 +60,8 @@ object ConvertDataType {
     }
 
     /** 위젯용 현재시간 타임포멧 **/
-    fun currentDateTimeString(): String {
-        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat("MM월 dd일 HH시 mm분")
+    fun currentDateTimeString(context: Context): String {
+        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(context.getString(R.string.widget_time_format))
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
         return format.format(calendar.time)
@@ -113,7 +106,7 @@ object ConvertDataType {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.sunny_test, null)
             }
             "구름많음" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.cloud2_test, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.cloudy, null)
             }
             "흐림" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.cloud_test, null)
@@ -122,10 +115,10 @@ object ConvertDataType {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.rain_per, null)
             }
             "구름많고 눈", "눈", "흐리고 눈" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.snow_test, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.snow, null)
             }
             "구름많고 소나기","흐리고 비","구름많고 비","흐리고 소나기" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.rainy_test, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy , null)
             }
             "구름많고 비/눈", "흐리고 비/눈","비/눈"-> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.rain_snow, null)
@@ -148,7 +141,7 @@ object ConvertDataType {
     }
 
     /** 등급에 따른 색상 변환 **/
-    private fun getDataColor(context: Context, grade: Int): Int {
+    fun getDataColor(context: Context, grade: Int): Int {
         return when (grade) {
             0 -> ResourcesCompat.getColor(context.resources, R.color.progressGood, null)
             1 -> ResourcesCompat.getColor(context.resources, R.color.progressNormal, null)
@@ -164,9 +157,8 @@ object ConvertDataType {
     }
 
     /** 요일 변환 **/
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun convertDayOfWeekToKorean(context: Context, datOfWeek: Int): String {
-        return when (datOfWeek % 7) {
+    fun convertDayOfWeekToKorean(context: Context, dayOfWeek: Int): String? {
+        return when (dayOfWeek % 7) {
             1 -> context.getString(R.string.mon)
             2 -> context.getString(R.string.tue)
             3 -> context.getString(R.string.wen)
@@ -175,6 +167,20 @@ object ConvertDataType {
             6 -> context.getString(R.string.sat)
             0 -> context.getString(R.string.sun)
             else -> ""
+        }
+    }
+
+    fun convertAddress(addr: String): String {
+        return addr.replace("특별시","시").replace("광역시","시").replace("제주특별자치도","제주도")
+    }
+
+    fun getLocale(context: Context) : Locale {
+        return if (SharedPreferenceManager(context).getString(userLocation) == context.getString(R.string.korean)) {
+            Locale.KOREA
+        } else if (SharedPreferenceManager(context).getString(userLocation) == context.getString(R.string.english)) {
+            Locale.ENGLISH
+        } else {
+            Locale.getDefault()
         }
     }
 }

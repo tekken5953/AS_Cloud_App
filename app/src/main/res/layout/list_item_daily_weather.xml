@@ -12,6 +12,7 @@
         style="@style/basicTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
+        android:textColor="#7C7C7C"
         android:fontFamily="@font/spoqa_hansansneo_regular"
         android:textSize="12sp" />
 
@@ -31,9 +32,9 @@
         android:layout_height="40dp"
         android:layout_below="@+id/itemDailyTime"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="15dp"
         android:layout_marginBottom="10dp" />
 
     <TextView
@@ -44,7 +45,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:textColor="@color/mode_color_text"
+        android:textColor="@color/black"
         android:textSize="14sp" />
 
 </RelativeLayout>

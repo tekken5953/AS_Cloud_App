@@ -16,10 +16,11 @@ class GetWeatherViewModel : BaseViewModel("날씨 데이터 호출") {
     private val repo = GetWeatherRepo()
 
     // MutableLiveData 값을 갱신하기 위한 함수
-    fun loadDataResult(lat: Double?, lng: Double?, addr: String?) {
+    fun loadDataResult(lat: Double?, lng: Double?, addr: String?) : GetWeatherViewModel {
         job = CoroutineScope(Dispatchers.IO).launch {
             repo.loadDataResult(lat, lng, addr)
         }
+        return this
     }
 
     // LiveData 에 MutableLiveData 값 적용 후 View 에 전달

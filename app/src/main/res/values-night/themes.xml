@@ -10,10 +10,9 @@
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/background_color</item>
+        <item name="android:windowBackground">@drawable/main_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">false</item>
-        <!-- Customize your theme here. -->
-        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
 
         <!-- 상태바까지 view를 보여줄 수 있다-->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
@@ -22,9 +21,5 @@
     <style name="ThemeOverlay.AirSignal_App.FullscreenContainer" parent="">
         <item name="fullscreenBackgroundColor">@color/light_blue_900</item>
         <item name="fullscreenTextColor">@color/light_blue_A400</item>
-    </style>
-
-    <style name="Theme.AirSignal_App.Starting" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="S">@android:color/transparent</item>
     </style>
 </resources>

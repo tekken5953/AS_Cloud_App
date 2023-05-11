@@ -3,39 +3,83 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/widgetMainLayout"
-    android:layout_width="290dp"
-    android:layout_height="160dp"
+    android:layout_width="150dp"
+    android:layout_height="70dp"
     android:background="@drawable/widget_bg_290_160"
     android:padding="@dimen/widget_margin">
 
-    <ImageView
-        android:id="@+id/widgetLogoImg"
-        android:layout_width="70dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:src="@drawable/airsignal_logo_color" />
+<!--    <ImageView-->
+<!--        android:id="@+id/widgetLogoImg"-->
+<!--        android:layout_width="30dp"-->
+<!--        android:layout_height="20dp"-->
+<!--        android:layout_marginStart="5dp"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:src="@drawable/airsignal_logo_color" />-->
+
+    <TextView
+        android:id="@+id/widgetAddress"
+        style="@style/basicTextView"
+        android:layout_toEndOf="@+id/widgetTimeStamp"
+        android:textSize="11sp"
+        android:gravity="center_vertical"/>
 
     <TextView
         android:id="@+id/widgetTimeStamp"
         style="@style/basicTextView"
-        android:layout_alignTop="@+id/widgetLogoImg"
-        android:layout_alignBottom="@+id/widgetLogoImg"
-        android:layout_marginStart="10dp"
-        android:layout_toEndOf="@+id/widgetLogoImg"
-        android:textSize="12sp"
-        tools:text="@tools:sample/date/hhmm" />
+        android:layout_alignTop="@+id/widgetAddress"
+        android:layout_alignBottom="@+id/widgetAddress"
+        android:textSize="11sp" />
 
     <ImageView
         android:id="@+id/widgetRefresh"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="5dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:padding="5dp"
         android:src="@drawable/refresh"
         app:tint="@color/mode_color_text" />
 
+    <TextView
+        android:id="@+id/widgetTempIndex"
+        style="@style/basicTextView"
+        android:textSize="12sp"
+        android:layout_below="@+id/widgetAddress"
+        android:layout_marginTop="3dp"
+        android:text="기온 : "/>
+
+    <TextView
+        android:id="@+id/widgetTempValue"
+        style="@style/basicTextView"
+        android:textSize="12sp"
+        android:layout_toEndOf="@+id/widgetTempIndex"
+        android:layout_alignTop="@+id/widgetTempIndex"
+        android:layout_marginStart="5dp"/>
+
+    <TextView
+        android:id="@+id/widgetPmIndex"
+        style="@style/basicTextView"
+        android:textSize="12sp"
+        android:layout_below="@+id/widgetTempIndex"
+        android:layout_marginTop="5dp"
+        android:text="미세먼지 : "/>
+
+    <TextView
+        android:id="@+id/widgetPmValue"
+        style="@style/basicTextView"
+        android:textSize="12sp"
+        android:layout_below="@+id/widgetTempIndex"
+        android:layout_toEndOf="@+id/widgetPmIndex"
+        android:layout_alignTop="@+id/widgetPmIndex"
+        android:layout_marginStart="5dp"/>
+
+    <ImageView
+        android:id="@+id/widgetSkyImg"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/widgetRefresh"
+        android:layout_alignEnd="@+id/widgetRefresh"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginEnd="5dp"/>
 </RelativeLayout>

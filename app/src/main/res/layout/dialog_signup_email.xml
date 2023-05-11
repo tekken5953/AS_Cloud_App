@@ -11,32 +11,32 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"
         android:text="회원가입"
-        android:textSize="30sp"/>
+        android:textSize="30sp" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/sign_up_email_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/main_text"
-        app:boxBackgroundColor="@color/mode_color_view"
-        android:hint="이메일"
-        android:textColorHint="@color/black"
-        app:boxStrokeColor="@color/main_blue_color"
-        app:hintTextColor="@color/main_blue_color"
         android:layout_marginStart="30dp"
         android:layout_marginTop="35dp"
-        android:layout_marginEnd="30dp">
+        android:layout_marginEnd="30dp"
+        android:hint="이메일"
+        android:textColorHint="@color/black"
+        app:boxBackgroundColor="@color/mode_color_view"
+        app:boxStrokeColor="@color/main_blue_color"
+        app:hintTextColor="@color/main_blue_color">
 
         <EditText
             android:id="@+id/sign_up_email"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:gravity="start"
-            android:textColor="@color/black"
             android:background="@drawable/signup_edit"
+            android:gravity="start"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/black"
             android:textCursorDrawable="@drawable/et_cursor"
-            android:textIsSelectable="true"
-            android:inputType="textEmailAddress" />
+            android:textIsSelectable="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -49,11 +49,11 @@
         android:layout_marginEnd="30dp"
         android:hint="패스워드"
         android:textColorHint="@color/black"
-        app:boxStrokeColor="@color/main_blue_color"
         app:boxBackgroundColor="@color/mode_color_view"
-        app:hintTextColor="@color/main_blue_color"
+        app:boxStrokeColor="@color/main_blue_color"
         app:counterMaxLength="20"
         app:errorEnabled="true"
+        app:hintTextColor="@color/main_blue_color"
         app:passwordToggleEnabled="true"
         app:passwordToggleTint="@color/black">
 
@@ -63,10 +63,10 @@
             android:layout_height="55dp"
             android:background="@drawable/signup_edit"
             android:gravity="start"
+            android:inputType="textPassword"
             android:textColor="@color/black"
             android:textCursorDrawable="@drawable/et_cursor"
-            android:textIsSelectable="true"
-            android:inputType="textPassword" />
+            android:textIsSelectable="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -79,13 +79,13 @@
         android:layout_marginEnd="30dp"
         android:hint="비밀번호 확인"
         android:textColorHint="@color/black"
-        app:boxStrokeColor="@color/main_blue_color"
         app:boxBackgroundColor="@color/mode_color_view"
-        app:hintTextColor="@color/main_blue_color"
+        app:boxStrokeColor="@color/main_blue_color"
         app:counterMaxLength="20"
         app:errorEnabled="true"
-        app:passwordToggleTint="@color/black"
-        app:passwordToggleEnabled="true">
+        app:hintTextColor="@color/main_blue_color"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/black">
 
         <EditText
             android:id="@+id/sign_up_repwd"
@@ -93,10 +93,10 @@
             android:layout_height="55dp"
             android:background="@drawable/signup_edit"
             android:gravity="start"
+            android:inputType="textPassword"
             android:textColor="@color/black"
             android:textCursorDrawable="@drawable/et_cursor"
-            android:textIsSelectable="true"
-            android:inputType="textPassword" />
+            android:textIsSelectable="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TableRow
@@ -111,8 +111,8 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/sign_up_cancel"
-            android:layout_height="60dp"
             android:layout_width="match_parent"
+            android:layout_height="60dp"
             android:layout_marginStart="50dp"
             android:layout_marginEnd="25dp"
             android:layout_weight="1"
@@ -120,13 +120,13 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/sign_up_ok"
-            android:layout_height="60dp"
             android:layout_width="match_parent"
+            android:layout_height="60dp"
             android:layout_marginEnd="50dp"
             android:layout_weight="1"
+            android:backgroundTint="@color/main_blue_color"
             android:text="가입"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/main_blue_color"/>
+            android:textColor="@color/white" />
     </TableRow>
 
 </RelativeLayout>

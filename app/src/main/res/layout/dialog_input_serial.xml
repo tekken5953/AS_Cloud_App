@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/inputSerialBack"
@@ -10,10 +11,8 @@
         android:layout_height="30dp"
         android:padding="4dp"
         android:src="@drawable/back_arrow"
-        android:layout_alignTop="@+id/inputSerialCancel"
-        android:layout_alignBottom="@+id/inputSerialCancel"
+        android:layout_marginTop="18dp"
         android:layout_marginStart="20dp"/>
-
 
     <TextView
         android:id="@+id/inputSerialTitle"
@@ -27,13 +26,13 @@
 
     <ImageView
         android:id="@+id/inputSerialCancel"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:padding="4dp"
         app:tint="@color/mode_color_text"
-        android:layout_alignTop="@+id/inputSerialTitle"
-        android:layout_alignBottom="@+id/inputSerialTitle"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="19dp"
+        android:layout_marginTop="18dp"
         android:background="?selectableItemBackgroundBorderless"
         android:src="@drawable/cancel" />
 

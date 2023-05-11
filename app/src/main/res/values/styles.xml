@@ -1,15 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/AppModalStyle</item>
-    </style>
-
-    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/add_device_dialog_bottom_radius</item>
-        <item name="android:windowFullscreen">true</item>
-    </style>
-
     <style name="DialogAnimationUp">
         <item name="android:windowEnterAnimation">@anim/trans_bottom_to_top</item>
         <item name="android:windowExitAnimation">@anim/trans_top_to_bottom</item>
@@ -29,17 +19,13 @@
         <item name="android:background">@color/black_overlay</item>
     </style>
 
-    <style name="Widget.Theme.AirSignal_App.ButtonBar.Fullscreen" parent="">
-        <item name="android:background">@color/black_overlay</item>
-        <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
-    </style>
-
     <style name="basicTextView">
         <item name="android:letterSpacing">-0.04</item>
         <item name="android:textColor">@color/mode_color_text</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_regular</item>
     </style>
 
     <style name="settingMultiTextView">
@@ -64,12 +50,23 @@
         <item name="android:layout_marginTop">5dp</item>
     </style>
 
-    <declare-styleable name="Common">
-        <attr name="android:src" />
-    </declare-styleable>
-
     <style name="DialogAnimationSide">
         <item name="android:windowEnterAnimation">@anim/trans_right_to_left</item>
         <item name="android:windowExitAnimation">@anim/trans_left_to_right</item>
+    </style>
+
+    <style name="DialogAnimationMenu">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@color/black</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="DialogAnimationMenuAnim">
+        <item name="android:windowEnterAnimation">@anim/sidebar_show</item>
+        <item name="android:windowExitAnimation">@anim/sidebar_hidden</item>
     </style>
 </resources>

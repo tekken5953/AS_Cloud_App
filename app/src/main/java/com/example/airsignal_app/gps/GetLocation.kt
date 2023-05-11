@@ -1,30 +1,32 @@
 package com.example.airsignal_app.gps
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.util.Log
+import android.widget.Toast
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
+import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.db.room.GpsRepository
+import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
+import com.example.airsignal_app.firebase.fcm.SubFCM
+import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
-import com.example.airsignal_app.view.ToastUtils
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
+import timber.log.Timber
 import java.io.IOException
 import java.util.*
 
 class GetLocation(private val context: Context) : GetLocationListener {
-    private val geocoder by lazy { Geocoder(context, Locale.KOREA) }
-    private val sp by lazy { SharedPreferenceManager(context) }
+    private val sp by lazy { SharedPreferenceManager(context)}
 
     /** GPS 의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
     @SuppressLint("MissingPermission")
@@ -35,8 +37,6 @@ class GetLocation(private val context: Context) : GetLocationListener {
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     onGetLocal(it)
-//                    Logger.t(TAG_L).d("${it.latitude},${it.longitude}")
-                    //TODO 백그라운드에서 토픽 교체
                 }
             }
             .addOnFailureListener {
@@ -52,29 +52,34 @@ class GetLocation(private val context: Context) : GetLocationListener {
     /** 현재 주소를 불러옵니다 **/
     private fun getAddress(lat: Double, lng: Double) {
         val email = sp.getString(userEmail)
-        val nowAddress = "현재 위치를 확인 할 수 없습니다."
+        val nowAddress = "현재 위치를 확인 할 수 없습니다"
         lateinit var address: List<Address>
         try {
+            val geocoder = Geocoder(context, ConvertDataType.getLocale(context))
             @Suppress("DEPRECATION")
             address = geocoder.getFromLocation(lat, lng, 10) as List<Address>
             if (address.isNotEmpty()) {
                 for (i: Int in 0 until (address.size)) {
                     val it = address[i]
                     if (it.locality != null && it.thoroughfare != null) {
-                        Log.w("Location", "${it.locality} ${it.thoroughfare}")
+                        Timber.tag("Location").w("${it.locality} ${it.thoroughfare}")
                         writeLogCause(
                             email = email,
                             isSuccess = "Background Location",
-                            log = "${it.latitude.toInt()} , ${it.longitude.toInt()}\t " +
+                            log = "${it.latitude} , ${it.longitude}\t " +
                                     "${it.locality} ${it.thoroughfare}"
                         )
 
                         updateCurrentAddress(
                             lat, lng,
-                            "${it.locality} ${it.thoroughfare}", getCurrentTime()
+                            "${it.locality} ${it.thoroughfare}",
+                            getCurrentTime()
                         )
+
+//                        renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)
+                        break
                     } else {
-                        Log.e("Location", "Address is Null : ${it.getAddressLine(i)}")
+                        Timber.tag("Location").e("Address is Null : %s", it.getAddressLine(i))
                     }
                 }
             } else {
@@ -85,7 +90,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
                 )
             }
         } catch (e: IOException) {
-            ToastUtils(context as Activity).shortMessage("주소를 가져오는 도중 오류가 발생했습니다")
+            Timber.tag("Location").e("주소를 가져오는 도중 오류가 발생했습니다")
             writeLogCause(
                 email,
                 "Background Location",
@@ -107,6 +112,12 @@ class GetLocation(private val context: Context) : GetLocationListener {
             roomDB.insert(model)
             Logger.t(TAG_D).d("Insert GPS In GetLocation")
         }
+    }
+
+    private fun renewTopic(old: String, new: String) {
+        SubFCM().unSubTopic(old).subTopic(new)
+        Thread.sleep(100)
+        sp.setString("WEATHER_CURRENT",new)
     }
 }
 
