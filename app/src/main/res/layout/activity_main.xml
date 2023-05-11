@@ -15,52 +15,52 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/main_bg"
+        android:fitsSystemWindows="true"
         app:layoutDescription="@xml/main_motion_scene"
         app:layout_scrollFlags="scroll">
 
-        <!--        <RelativeLayout-->
-        <!--            android:id="@+id/side_menu_relative"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="match_parent"-->
-        <!--            android:background="@drawable/main_bg">-->
+<!--        <RelativeLayout-->
+<!--            android:id="@+id/side_menu_relative"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:background="@drawable/main_bg">-->
 
-        <!--            &lt;!&ndash;                <LinearLayout&ndash;&gt;-->
-        <!--            &lt;!&ndash;                    android:id="@+id/mainPbLayout"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                    android:layout_width="match_parent"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                    android:layout_height="match_parent"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                    android:background="#66ffffff"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                    android:clickable="false"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                    android:gravity="center"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                    android:visibility="gone">&ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:id="@+id/mainPbLayout"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:background="#66ffffff"-->
+<!--                android:clickable="false"-->
+<!--                android:gravity="center"-->
+<!--                android:visibility="gone">-->
 
-        <!--            &lt;!&ndash;                    <ProgressBar&ndash;&gt;-->
-        <!--            &lt;!&ndash;                        android:id="@+id/mainPb"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                        android:layout_width="wrap_content"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                        android:layout_height="wrap_content"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                        app:layout_constraintBottom_toBottomOf="parent"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                        app:layout_constraintEnd_toEndOf="parent"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                        app:layout_constraintStart_toStartOf="parent"&ndash;&gt;-->
-        <!--            &lt;!&ndash;                        app:layout_constraintTop_toTopOf="parent" />&ndash;&gt;-->
-        <!--            &lt;!&ndash;                </LinearLayout>&ndash;&gt;-->
+<!--                <ProgressBar-->
+<!--                    android:id="@+id/mainPb"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent" />-->
+<!--            </LinearLayout>-->
 
-        <!--            <androidx.drawerlayout.widget.DrawerLayout-->
-        <!--                android:id="@+id/mainDrawerLayout"-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="match_parent"-->
-        <!--                tools:openDrawer="start">-->
+<!--            <androidx.drawerlayout.widget.DrawerLayout-->
+<!--                android:id="@+id/mainDrawerLayout"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:fitsSystemWindows="true"-->
+<!--                tools:openDrawer="start">-->
 
-        <!--                <com.google.android.material.navigation.NavigationView-->
-        <!--                    android:id="@+id/mainNavView"-->
-        <!--                    android:layout_width="match_parent"-->
-        <!--                    android:layout_height="match_parent"-->
-        <!--                    android:layout_gravity="start"-->
-        <!--                    android:fitsSystemWindows="true"-->
-        <!--                    app:headerLayout="@layout/nav_header"-->
-        <!--                    app:itemTextAppearance="@style/TextAppearance.AppCompat.Small"-->
-        <!--                    app:itemTextColor="@color/mode_color_text"-->
-        <!--                    app:menu="@menu/nav_menu" />-->
-
-        <!--            </androidx.drawerlayout.widget.DrawerLayout>-->
+<!--                <com.google.android.material.navigation.NavigationView-->
+<!--                    android:id="@+id/mainNavView"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent"-->
+<!--                    android:layout_gravity="start"-->
+<!--                    app:headerLayout="@layout/nav_header"-->
+<!--                    app:itemTextAppearance="@style/TextAppearance.AppCompat.Small"-->
+<!--                    app:itemTextColor="@color/mode_color_text"-->
+<!--                    app:menu="@menu/nav_menu" />-->
+<!--            </androidx.drawerlayout.widget.DrawerLayout>-->
         <!--        </RelativeLayout>-->
 
         <RelativeLayout
@@ -102,7 +102,6 @@
                 android:src="@drawable/gps_refresh"
                 app:tint="@color/white" />
         </RelativeLayout>
-
         <ScrollView
             android:id="@+id/nested_scrollview"
             android:layout_width="match_parent"
@@ -231,7 +230,7 @@
                         android:textSize="24sp"
                         app:sort="grade" />
 
-                    <com.aslib.AsTextView
+                    <TextView
                         android:id="@+id/nested_pm_2p5_value"
                         style="@style/basicTextView"
                         android:layout_alignBottom="@+id/nested_pm_2p5_grade"
@@ -279,7 +278,7 @@
                         android:textSize="24sp"
                         app:sort="grade" />
 
-                    <com.aslib.AsTextView
+                    <TextView
                         android:id="@+id/nested_pm_10_value"
                         style="@style/basicTextView"
                         android:layout_alignBottom="@+id/nested_pm_10_grade"
@@ -310,6 +309,14 @@
                 </RelativeLayout>
             </RelativeLayout>
         </ScrollView>
+
+<!--        <com.scwang.smart.refresh.layout.SmartRefreshLayout-->
+<!--            android:id="@+id/mainSwipeLayout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="0dp"-->
+<!--            app:srlAccentColor="@color/main_blue_color"-->
+<!--            app:srlEnablePreviewInEditMode="false">-->
+<!--        </com.scwang.smart.refresh.layout.SmartRefreshLayout>-->
 
         <LinearLayout
             android:id="@+id/mainMotionLinear"

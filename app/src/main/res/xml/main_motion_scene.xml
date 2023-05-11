@@ -113,6 +113,12 @@
             motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             motion:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
             motion:layout_constraintStart_toStartOf="@+id/mainMotionLayout" />
+        <Constraint
+            android:id="@+id/mainSwipeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:srlAccentColor="@color/main_blue_color"
+            motion:srlEnablePreviewInEditMode="false"/>
     </ConstraintSet>
 
 
@@ -218,6 +224,11 @@
             motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             motion:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
             motion:layout_constraintStart_toStartOf="@+id/mainMotionLayout" />
-
+        <Constraint
+            android:id="@+id/mainSwipeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            motion:srlAccentColor="@color/main_blue_color"
+            motion:srlEnablePreviewInEditMode="false"/>
     </ConstraintSet>
 </MotionScene>

@@ -31,6 +31,6 @@ class SplashActivity : BaseActivity() {
             val intent = Intent(this, RedirectPermissionActivity::class.java)
             startActivity(intent)
             finish()
-        },2000)
+        },1000)
     }
 }

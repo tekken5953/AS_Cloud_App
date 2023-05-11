@@ -72,7 +72,8 @@ class GetLocation(private val context: Context) : GetLocationListener {
 
                         updateCurrentAddress(
                             lat, lng,
-                            "${it.locality} ${it.thoroughfare}", getCurrentTime()
+                            "${it.locality} ${it.thoroughfare}",
+                            getCurrentTime()
                         )
 
 //                        renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.test.TestDesignActivity">
+    tools:context=".view.test.TestDesignActivity"
+    android:background="@color/white">
 
     <EditText
         android:id="@+id/testTextSize"

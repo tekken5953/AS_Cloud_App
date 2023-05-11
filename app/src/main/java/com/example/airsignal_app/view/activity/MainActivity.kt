@@ -1,13 +1,13 @@
 package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
-import android.app.ActionBar.LayoutParams
 import android.content.ComponentName
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.*
+import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.*
@@ -18,11 +18,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.AirQualityAdapter
 import com.example.airsignal_app.adapter.DailyWeatherAdapter
 import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
@@ -32,26 +34,22 @@ import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
-import com.example.airsignal_app.firebase.admob.AdViewClass
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsWorker
 import com.example.airsignal_app.login.SilentLoginClass
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.util.ConvertDataType.convertDayOfWeekToKorean
+import com.example.airsignal_app.util.ConvertDataType.getDataColor
 import com.example.airsignal_app.util.ConvertDataType.getRainType
 import com.example.airsignal_app.util.ConvertDataType.getSkyImg
-import com.example.airsignal_app.view.SearchDialog
-import com.example.airsignal_app.view.SegmentedProgressBar
-import com.example.airsignal_app.view.SideMenuClass
-import com.example.airsignal_app.view.ToastUtils
+import com.example.airsignal_app.view.*
 import com.example.airsignal_app.view.widget.WidgetProvider
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
-import com.scwang.smart.refresh.header.BezierRadarHeader
-import com.scwang.smart.refresh.layout.api.RefreshLayout
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.w3c.dom.Text
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -173,15 +171,14 @@ class MainActivity : BaseActivity() {
 //        onUpdateWidgetData()
 //
             SilentLoginClass().login(this, binding.mainMotionLayout)
-//
-//        // 사이드 메뉴 세팅
-//        SideMenuClass(this, binding.mainDrawerLayout, binding.mainNavView, binding.mainMotionLayout)
-//            .setUpSideMenu(binding.mainSideMenuIv)
-//
+
             binding.mainGpsTitleTv.setOnClickListener {
                 val bottomSheet =
                     SearchDialog(this, 0, supportFragmentManager, BottomSheetDialogFragment().tag)
                 bottomSheet.show(0)
+
+//                val intent = Intent(this@MainActivity, SettingActivity::class.java)
+//                startActivity(intent)
             }
 //
             binding.mainGpsFix.setOnClickListener {
@@ -192,6 +189,36 @@ class MainActivity : BaseActivity() {
                     hidePB()
                 }, 1500)
             }
+
+        binding.mainSideMenuIv.setOnClickListener {
+            val menu: View =
+                LayoutInflater.from(this).inflate(R.layout.side_menu, null)
+            val cancel = menu.findViewById<ImageView>(R.id.headerCancel)
+            val profile = menu.findViewById<ImageView>(R.id.navHeaderProfileImg)
+            val id = menu.findViewById<TextView>(R.id.navHeaderUserId)
+            val weather = menu.findViewById<TextView>(R.id.navMenuWeather)
+            val setting = menu.findViewById<TextView>(R.id.navMenuSetting)
+            val headerTr = menu.findViewById<TableRow>(R.id.headerTr)
+
+            val dialog = SideMenuBuilder().getInstance(this)
+            dialog.apply {
+                setBackPressed(cancel)
+                setUserData(profile, id)
+                show(menu, true)
+            }
+
+            headerTr.setOnClickListener {
+                if (sp.getString(IgnoredKeyFile.lastLoginPlatform) == "")
+                    EnterPage(this).toLogin()
+            }
+            weather.setOnClickListener {
+                dialog.dismiss()
+            }
+            setting.setOnClickListener {
+                val intent = Intent(this@MainActivity, SettingActivity::class.java)
+                startActivity(intent)
+            }
+        }
 
 //        val refreshLayout = findViewById<View>(R.id.mainSwipeLayout) as RefreshLayout
 //        refreshLayout.apply {
@@ -372,8 +399,10 @@ class MainActivity : BaseActivity() {
                 binding.mainMinMaxMax.text = "${filteringNullData(today.max)}˚"
                 binding.nestedPm10Grade.setGradeText((air.pm10Grade - 1).toString())
                 binding.nestedPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
-                binding.nestedPm10Value.setIndexTextAsInt(air.pm10Value.toFloat())
-                binding.nestedPm2p5Value.setIndexTextAsInt(air.pm25Value.toFloat())
+                binding.nestedPm10Value.setTextColor(getDataColor(this,air.pm10Grade - 1))
+                binding.nestedPm10Value.text = air.pm10Value.toInt().toString()
+                binding.nestedPm2p5Value.setTextColor(getDataColor(this,air.pm25Grade - 1))
+                binding.nestedPm2p5Value.text = air.pm25Value.toString()
                 getCompareTemp(yesterday.temp, realtime.temp, binding.mainCompareTempIv, binding.mainCompareTempTv)
 //                if (getCompareTemp(yesterday.temp, realtime.temp) != "") {
 //                    binding.mainCompareTempValue.text = getCompareTemp(yesterday.temp, realtime.temp)
@@ -383,25 +412,37 @@ class MainActivity : BaseActivity() {
 //                }
 
                 for (i: Int in 0 until (10)) {
-                    val dailyIndex = result.realtime[i]
-                    val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
-                    addDailyWeatherItem(
-                        "${forecastToday.hour}${getString(R.string.hour)}",
-                        applySkyImg(dailyIndex.rainType, dailyIndex.sky),
-                        "${dailyIndex.temp.roundToInt()}˚",
-                        "${forecastToday.monthValue}.${forecastToday.dayOfMonth}"
-                    )
+                    try {
+                        if (i == result.realtime.lastIndex + 1) {
+                            break
+                        } else {
+                            val dailyIndex = result.realtime[i]
+                            val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
+                            addDailyWeatherItem(
+                                "${forecastToday.hour}${getString(R.string.hour)}",
+                                applySkyImg(dailyIndex.rainType, dailyIndex.sky),
+                                "${dailyIndex.temp.roundToInt()}˚",
+                                "${forecastToday.monthValue}.${forecastToday.dayOfMonth}"
+                            )
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
 
                 for (i: Int in 0 until (8)) {
-                    addWeeklyWeatherItem(
-                        "${dateNow.month.value}.${dateNow.dayOfMonth + i}" +
-                                "(${convertDayOfWeekToKorean(this, dateNow.dayOfWeek.value + i)})",
-                        getSkyImg(this, wfMin[i])!!,
-                        getSkyImg(this, wfMax[i])!!,
-                        "${taMin[i].roundToInt()}˚",
-                        "${taMax[i].roundToInt()}˚"
-                    )
+                    try {
+                        addWeeklyWeatherItem(
+                            "${dateNow.month.value}.${dateNow.dayOfMonth + i}" +
+                                    "(${convertDayOfWeekToKorean(this, dateNow.dayOfWeek.value + i)})",
+                            getSkyImg(this, wfMin[i])!!,
+                            getSkyImg(this, wfMax[i])!!,
+                            "${taMin[i].roundToInt()}˚",
+                            "${taMax[i].roundToInt()}˚"
+                        )
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
 //
 //                addAirQualityItem(getString(R.string.cqi), air.khaiValue.toString())
