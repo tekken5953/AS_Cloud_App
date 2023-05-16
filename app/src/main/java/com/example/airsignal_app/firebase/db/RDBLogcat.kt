@@ -92,4 +92,13 @@ object RDBLogcat {
                 .child(millsToString(getCurrentTime(), "HH:mm:ss"))
                 .setValue(log)
         }
+
+    fun writeLogNotLogin(email: String,androidId: String, isSuccess: String, log: String) {
+        myRef.child(formatEmailToRDB(email))
+            .child(androidId)
+            .child(isSuccess)
+            .child(millsToString(getCurrentTime(), "yyyy-MM-dd"))
+            .child(millsToString(getCurrentTime(), "HH:mm:ss"))
+            .setValue(log)
+    }
 }

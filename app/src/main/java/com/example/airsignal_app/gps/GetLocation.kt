@@ -5,27 +5,27 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.widget.Toast
-import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
-import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
+import com.example.airsignal_app.dao.StaticDataObject
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
-import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.db.room.model.GpsEntity
+import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
+import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogNotLogin
 import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
+import com.example.airsignal_app.util.GetDeviceInfo
 import com.google.android.gms.location.LocationServices
 import com.orhanobut.logger.Logger
 import timber.log.Timber
 import java.io.IOException
 import java.util.*
 
-class GetLocation(private val context: Context) : GetLocationListener {
+
+class GetLocation(private val context: Context) {
     private val sp by lazy { SharedPreferenceManager(context)}
 
     /** GPS 의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
@@ -36,17 +36,13 @@ class GetLocation(private val context: Context) : GetLocationListener {
         fusedLocationClient.lastLocation
             .addOnSuccessListener { location: Location? ->
                 location?.let {
-                    onGetLocal(it)
+                    getAddress(it.latitude,it.longitude)
                 }
             }
             .addOnFailureListener {
                 it.printStackTrace()
-                Logger.t(TAG_L).e("Fail to Get Location")
+                Logger.t(StaticDataObject.TAG_L).e("Fail to Get Location")
             }
-    }
-
-    override fun onGetLocal(location: Location) {
-        getAddress(location.latitude, location.longitude)
     }
 
     /** 현재 주소를 불러옵니다 **/
@@ -61,31 +57,44 @@ class GetLocation(private val context: Context) : GetLocationListener {
             if (address.isNotEmpty()) {
                 for (i: Int in 0 until (address.size)) {
                     val it = address[i]
-                    if (it.locality != null && it.thoroughfare != null) {
+                    try {
                         Timber.tag("Location").w("${it.locality} ${it.thoroughfare}")
-                        writeLogCause(
-                            email = email,
-                            isSuccess = "Background Location",
-                            log = "${it.latitude} , ${it.longitude}\t " +
-                                    "${it.locality} ${it.thoroughfare}"
-                        )
+                        if (!it.locality.contains("null") && !it.thoroughfare.contains("null")) {
+                            if (email != "") {
+                                writeLogCause(
+                                    email = email,
+                                    isSuccess = "Background Location",
+                                    log = "${it.latitude} , ${it.longitude}\t " +
+                                            "${it.locality} ${it.thoroughfare}"
+                                )
+                            } else {
+                                writeLogNotLogin(
+                                    "비로그인",
+                                    GetDeviceInfo().androidID(context),
+                                    isSuccess = "Background Location",
+                                    log = "${it.latitude} , ${it.longitude}\t " +
+                                            "${it.locality} ${it.thoroughfare}"
+                                )
+                            }
 
-                        updateCurrentAddress(
-                            lat, lng,
-                            "${it.locality} ${it.thoroughfare}",
-                            getCurrentTime()
-                        )
-
-//                        renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)
+                            updateCurrentAddress(
+                                lat, lng,
+                                "${it.locality} ${it.thoroughfare}",
+                                getCurrentTime()
+                            )
+//                            renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)
                         break
-                    } else {
-                        Timber.tag("Location").e("Address is Null : %s", it.getAddressLine(i))
+                        } else {
+                            Timber.tag("Location").e("Address is Null : %s", it.getAddressLine(i))
+                        }
+                    } catch(e: java.lang.NullPointerException) {
+                        Timber.tag("Location").e("Location Contains null")
                     }
                 }
             } else {
                 writeLogCause(
                     email,
-                    "Background Location",
+                    "Background Location Empty",
                     "Address is Empty : $nowAddress"
                 )
             }
@@ -93,7 +102,7 @@ class GetLocation(private val context: Context) : GetLocationListener {
             Timber.tag("Location").e("주소를 가져오는 도중 오류가 발생했습니다")
             writeLogCause(
                 email,
-                "Background Location",
+                "Background Location Exception",
                 "Error : ${e.printStackTrace()}"
             )
         }

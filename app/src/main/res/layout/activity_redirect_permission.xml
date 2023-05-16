@@ -11,7 +11,7 @@
         android:id="@+id/permissionBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="권한 허용을 항상 허용으로 설정해주세요"
+        android:text="위치 권한을 항상 허용으로 설정해주세요"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

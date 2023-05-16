@@ -1,6 +1,5 @@
 package com.example.airsignal_app.view.activity
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -12,7 +11,6 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN

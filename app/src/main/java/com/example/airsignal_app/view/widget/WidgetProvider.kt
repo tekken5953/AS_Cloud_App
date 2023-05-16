@@ -1,6 +1,5 @@
 package com.example.airsignal_app.view.widget
 
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -8,13 +7,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
-import android.os.Build
 import android.os.Bundle
 import android.widget.RemoteViews
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.StaticDataObject
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.gps.GetLocation
@@ -23,7 +19,6 @@ import com.example.airsignal_app.retrofit.HttpClient
 import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.ConvertDataType.currentDateTimeString
 import com.example.airsignal_app.view.activity.MainActivity
-import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.orhanobut.logger.Logger
 import retrofit2.Call
 import retrofit2.Callback
