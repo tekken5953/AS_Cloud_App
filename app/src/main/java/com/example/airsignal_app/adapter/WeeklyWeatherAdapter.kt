@@ -51,7 +51,6 @@ class WeeklyWeatherAdapter(
         private val maxText: TextView = itemView.findViewById(R.id.weeklyMaxText)
         private val line: View = itemView.findViewById(R.id.weeklyBottomLine)
 
-        @RequiresApi(Build.VERSION_CODES.O)
         fun bind(dao: AdapterModel.WeeklyWeatherItem) {
             day.text = dao.day
             minImg.setImageDrawable(dao.minImg)

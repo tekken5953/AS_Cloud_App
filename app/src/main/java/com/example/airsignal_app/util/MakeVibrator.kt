@@ -25,7 +25,6 @@ class MakeVibrator {
     }
 
     /** 진동 발생 메서드 **/
-    @TargetApi(Build.VERSION_CODES.O)
     fun make(time: Long) {
         vib.vibrate(
             VibrationEffect.createOneShot(

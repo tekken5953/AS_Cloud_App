@@ -17,58 +17,33 @@
         android:background="@drawable/main_bg"
         android:fitsSystemWindows="true"
         app:layoutDescription="@xml/main_motion_scene"
-        app:layout_scrollFlags="scroll">
+        app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-<!--        <RelativeLayout-->
-<!--            android:id="@+id/side_menu_relative"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:background="@drawable/main_bg">-->
+        <!--        <LinearLayout-->
+        <!--            android:id="@+id/mainPbLayout"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:background="#66ffffff"-->
+        <!--            android:clickable="false"-->
+        <!--            android:gravity="center"-->
+        <!--            android:visibility="gone">-->
 
-<!--            <LinearLayout-->
-<!--                android:id="@+id/mainPbLayout"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:background="#66ffffff"-->
-<!--                android:clickable="false"-->
-<!--                android:gravity="center"-->
-<!--                android:visibility="gone">-->
-
-<!--                <ProgressBar-->
-<!--                    android:id="@+id/mainPb"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    app:layout_constraintBottom_toBottomOf="parent"-->
-<!--                    app:layout_constraintEnd_toEndOf="parent"-->
-<!--                    app:layout_constraintStart_toStartOf="parent"-->
-<!--                    app:layout_constraintTop_toTopOf="parent" />-->
-<!--            </LinearLayout>-->
-
-<!--            <androidx.drawerlayout.widget.DrawerLayout-->
-<!--                android:id="@+id/mainDrawerLayout"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:fitsSystemWindows="true"-->
-<!--                tools:openDrawer="start">-->
-
-<!--                <com.google.android.material.navigation.NavigationView-->
-<!--                    android:id="@+id/mainNavView"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:layout_gravity="start"-->
-<!--                    app:headerLayout="@layout/nav_header"-->
-<!--                    app:itemTextAppearance="@style/TextAppearance.AppCompat.Small"-->
-<!--                    app:itemTextColor="@color/mode_color_text"-->
-<!--                    app:menu="@menu/nav_menu" />-->
-<!--            </androidx.drawerlayout.widget.DrawerLayout>-->
-        <!--        </RelativeLayout>-->
+        <!--            <ProgressBar-->
+        <!--                android:id="@+id/mainPb"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                app:layout_constraintStart_toStartOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent" />-->
+        <!--        </LinearLayout>-->
 
         <RelativeLayout
             android:id="@+id/topBarLinear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            app:layout_constraintTop_toTopOf="@id/mainMotionLayout">
+            app:layout_constraintTop_toTopOf="@+id/mainMotionLayout">
 
             <ImageView
                 android:id="@+id/mainSideMenuIv"
@@ -102,7 +77,8 @@
                 android:src="@drawable/gps_refresh"
                 app:tint="@color/white" />
         </RelativeLayout>
-        <ScrollView
+
+        <androidx.core.widget.NestedScrollView
             android:id="@+id/nested_scrollview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -118,6 +94,7 @@
                 android:id="@+id/nested_main_linear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="55dp"
                 android:background="@color/view_line_color">
 
                 <RelativeLayout
@@ -308,15 +285,15 @@
                         android:layout_marginBottom="30dp" />
                 </RelativeLayout>
             </RelativeLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
-<!--        <com.scwang.smart.refresh.layout.SmartRefreshLayout-->
-<!--            android:id="@+id/mainSwipeLayout"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="0dp"-->
-<!--            app:srlAccentColor="@color/main_blue_color"-->
-<!--            app:srlEnablePreviewInEditMode="false">-->
-<!--        </com.scwang.smart.refresh.layout.SmartRefreshLayout>-->
+        <!--        <com.scwang.smart.refresh.layout.SmartRefreshLayout-->
+        <!--            android:id="@+id/mainSwipeLayout"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="0dp"-->
+        <!--            app:srlAccentColor="@color/main_blue_color"-->
+        <!--            app:srlEnablePreviewInEditMode="false">-->
+        <!--        </com.scwang.smart.refresh.layout.SmartRefreshLayout>-->
 
         <LinearLayout
             android:id="@+id/mainMotionLinear"
@@ -326,15 +303,15 @@
             app:layout_constraintBottom_toBottomOf="@id/mainMotionLayout"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 
-        <!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
-        <!--            android:id="@+id/bottomNav"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="55dp"-->
-        <!--            android:alpha="0"-->
-        <!--            app:itemIconTint="@color/main_blue_color"-->
-        <!--            app:itemTextColor="@color/main_blue_color"-->
-        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--            app:menu="@menu/bottom_nav" />-->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:alpha="0"
+            app:itemIconTint="@color/main_blue_color"
+            app:itemTextColor="@color/main_blue_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:menu="@menu/bottom_nav" />
 
         <ImageView
             android:id="@+id/mainSkyImg"
@@ -357,9 +334,20 @@
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
 
         <TextView
+            android:id="@+id/mainLiveTempMinus"
+            style="@style/basicTextView"
+            android:fontFamily="@font/spoqa_hansansneo_bold"
+            android:textColor="@color/white"
+            android:textSize="55sp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="@+id/mainLiveTempValue"
+            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
+            android:text="-" />
+
+        <TextView
             android:id="@+id/mainLiveTempValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/basicTextView"
             android:fontFamily="@font/spoqa_hansansneo_bold"
             android:textColor="@color/white"
             android:textSize="60sp"
@@ -382,7 +370,7 @@
             android:id="@+id/mainCompareTempIv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="13dp"
+            android:paddingBottom="12dp"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             app:layout_constraintStart_toEndOf="@+id/mainLiveTempUnit" />
 
@@ -491,6 +479,83 @@
                     app:sort="grade" />
             </TableRow>
         </TableLayout>
+
+        <TableLayout
+            android:id="@+id/mainSubWeatherTL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL"
+            android:layout_marginTop="22dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:gravity="center">
+
+            <TableRow
+                android:id="@+id/mainSubWeatherValueTr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/subHumidValue"
+                    style="@style/basicTextView"
+                    android:layout_weight="0.4"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/subWindValue"
+                    style="@style/basicTextView"
+                    android:layout_weight="0.2"
+                    android:textSize="20sp"
+                    android:drawablePadding="-8dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    app:drawableTint="@color/white" />
+
+                <TextView
+                    android:id="@+id/subRainPerValue"
+                    style="@style/basicTextView"
+                    android:layout_weight="0.4"
+                    android:textSize="20sp"
+                    android:textColor="@color/white" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/mainSubWeatherTr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="5dp"
+                android:weightSum="1">
+
+                <TextView
+                    style="@style/basicTextView"
+                    android:text="습도"
+                    android:textSize="14sp"
+                    android:textColor="#C2E1F2"
+                    android:layout_weight="0.4" />
+
+                <TextView
+                    style="@style/basicTextView"
+                    android:text="바람"
+                    android:textSize="14sp"
+                    android:textColor="#C2E1F2"
+                    android:layout_weight="0.2"/>
+
+                <TextView
+                    style="@style/basicTextView"
+                    android:text="강수확률"
+                    android:textColor="#C2E1F2"
+                    android:textSize="14sp"
+                    android:layout_weight="0.4" />
+
+
+            </TableRow>
+        </TableLayout>
+
 
         <TextView
             android:id="@+id/mainMotionSlideGuide"

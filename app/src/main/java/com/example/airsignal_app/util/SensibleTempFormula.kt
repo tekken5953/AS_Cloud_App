@@ -36,7 +36,6 @@ class SensibleTempFormula {
     }
 
     /** 지금이 몇월인지에 따라 여름 및 겨울 계산공식 적용 **/
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getSensibleTemp(ta: Double, rh: Double, v: Double) : Double {
         return if (getCurrentSeason() in 5..9) getInSummer(ta, rh) else getInWinter(ta, v)
     }
@@ -55,10 +54,6 @@ class SensibleTempFormula {
 
     /** 현재 월수 출력 **/
     fun getCurrentSeason() : Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            LocalDateTime.now().monthValue
-        } else {
-            Calendar.getInstance().get(Calendar.MONTH) + 1  // Calendar는 1월이 0부터 시작해 +1 해줌
-        }
+        return LocalDateTime.now().monthValue
     }
 }

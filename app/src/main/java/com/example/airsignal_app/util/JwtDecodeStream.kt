@@ -35,7 +35,6 @@ class JwtDecodeStream {
      * @param type Payload Json Key
      * @return JWT Token의 Decoded Data중 하나의 Value
      */
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getSingleData(jwt: String, type: String): String {
         val jwtPayload =
             String(Base64.getUrlDecoder().decode(jwt.split(".")[1]))
@@ -49,7 +48,6 @@ class JwtDecodeStream {
      * @param jwt JWT Token
      * @return JWT Token의 Decoded Data 전체
      */
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getAllData(jwt: String) : String {
         val jwtPayload = String(Base64.getUrlDecoder().decode(jwt.split(".")[1]))
         return JSONObject(jwtPayload).toString()

@@ -1,24 +1,29 @@
 package com.example.airsignal_app.view.activity
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.*
+import android.provider.Settings
+import android.telephony.TelephonyManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.view.animation.AnimationUtils
 import android.widget.*
-import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.GravityCompat
+import androidx.core.os.postDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
-import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.AirQualityAdapter
 import com.example.airsignal_app.adapter.DailyWeatherAdapter
@@ -28,7 +33,6 @@ import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
-import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
@@ -49,7 +53,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.w3c.dom.Text
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -64,7 +67,6 @@ class MainActivity : BaseActivity() {
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
     private val airQualityList = ArrayList<AdapterModel.AirQualityItem>()
-    private val airQualityAdapter by lazy { AirQualityAdapter(this, airQualityList) }
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(this, dailyWeatherList) }
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
     private val sp by lazy { SharedPreferenceManager(this) }
@@ -74,7 +76,13 @@ class MainActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         Logger.t(TAG_L).d("onResume")
-        getDataSingleTime()
+        showPB()
+        GetLocation(this).getLocation()
+        Handler(Looper.getMainLooper()).postDelayed({
+            getDataSingleTime()
+            hidePB()
+        },1500)
+        Thread.sleep(100)
 //        binding.mainBottomAdView.resume()
     }
 
@@ -88,7 +96,6 @@ class MainActivity : BaseActivity() {
 //        binding.mainBottomAdView.pause()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView<ActivityMainBinding?>(
@@ -102,7 +109,7 @@ class MainActivity : BaseActivity() {
                 applyGetDataViewModel()
             }
 
-        val anim = AnimationUtils.loadAnimation(this,R.anim.bottom_arrow_anim)
+        val anim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
         binding.mainMotionSLideImg.startAnimation(anim)
 
         //findViewById or Binding for your SegmentedProgressBar
@@ -166,29 +173,30 @@ class MainActivity : BaseActivity() {
 //        )
 //        ///////////////////////////////////////////////////////////////
 
-            initializing()
+        initializing()
 //
 //        onUpdateWidgetData()
 //
-            SilentLoginClass().login(this, binding.mainMotionLayout)
+        SilentLoginClass().login(this, binding.mainMotionLayout)
 
-            binding.mainGpsTitleTv.setOnClickListener {
-                val bottomSheet =
-                    SearchDialog(this, 0, supportFragmentManager, BottomSheetDialogFragment().tag)
-                bottomSheet.show(0)
-
-//                val intent = Intent(this@MainActivity, SettingActivity::class.java)
-//                startActivity(intent)
-            }
+        binding.mainGpsTitleTv.setOnClickListener {
+            val bottomSheet =
+                SearchDialog(this, 0, supportFragmentManager, BottomSheetDialogFragment().tag)
+            bottomSheet.show(0)
+        }
 //
-            binding.mainGpsFix.setOnClickListener {
+        binding.mainGpsFix.setOnClickListener {
+            if (RequestPermissionsUtil(this).isLocationPermitted()) {
                 showPB()
                 GetLocation(this).getLocation()
                 Handler(Looper.getMainLooper()).postDelayed({
                     loadCurrentAddr()
                     hidePB()
                 }, 1500)
+            } else {
+                RequestPermissionsUtil(this).requestLocation()
             }
+        }
 
         binding.mainSideMenuIv.setOnClickListener {
             val menu: View =
@@ -220,9 +228,9 @@ class MainActivity : BaseActivity() {
             }
         }
 
-//        val refreshLayout = findViewById<View>(R.id.mainSwipeLayout) as RefreshLayout
+//        val refreshLayout = binding.mainSwipeLayout as RefreshLayout
 //        refreshLayout.apply {
-//            setRefreshHeader(BezierRadarHeader(this@MainActivity), LayoutParams.MATCH_PARENT, 170)
+//            setRefreshHeader(BezierRadarHeader(this@MainActivity), LinearLayout.LayoutParams.MATCH_PARENT, 170)
 //            setPrimaryColors(Color.TRANSPARENT)
 ////            setRefreshFooter(ClassicsFooter(this@MainActivity))
 //            setFinishOnTouchOutside(false)
@@ -239,8 +247,10 @@ class MainActivity : BaseActivity() {
         if (RequestPermissionsUtil(this).isLocationPermitted()) {
             val addrArray = resources.getStringArray(R.array.address)
             if (addrArray.contains(sp.getString(lastAddress))) {
+                Log.d("Location","메인 엑티비티에서 저장된 주소로 데이터 호출")
                 loadSavedAddr()
             } else {
+                Log.d("Location","메인 엑티비티에서 현재 주소로 데이터 호출")
                 loadCurrentAddr()
             }
         }
@@ -249,19 +259,17 @@ class MainActivity : BaseActivity() {
     private fun loadCurrentAddr(): GpsEntity {
         val dbCurrent = db.findById(CURRENT_GPS_ID)
         try {
+            val formatAddress = dbCurrent.addr!!.replace("null", "")
+            sp.setString(lastAddress, formatAddress)
+
             getDataViewModel.loadDataResult(
                 dbCurrent.lat,
                 dbCurrent.lng,
                 null
             )
-            val formatAddress = dbCurrent.addr!!.replace("null", "")
-            sp.setString(lastAddress, formatAddress)
-            Logger.t(TAG_D)
-                .d("${dbCurrent.lat},${dbCurrent.lng}")
+
             binding.mainGpsTitleTv.text = db.findById(CURRENT_GPS_ID).addr
-        } catch(e: Exception) {
-            GetLocation(this).getLocation()
-            Thread.sleep(1000)
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         return dbCurrent
@@ -273,23 +281,22 @@ class MainActivity : BaseActivity() {
             null,
             sp.getString(lastAddress)
         )
-        Logger.t(TAG_D).d(sp.getString(lastAddress))
         binding.mainGpsTitleTv.text = sp.getString(lastAddress)
     }
 
     private fun showPB() {
-        binding.mainMotionLayout.alpha = 0.7f
+        binding.mainMotionLayout.alpha = 0.5f
+        binding.mainMotionLayout.isEnabled = false
     }
 
     private fun hidePB() {
         binding.mainMotionLayout.alpha = 1f
+        binding.mainMotionLayout.isEnabled = true
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
 //        addSkeletonItem()
-        GetLocation(this).getLocation()
 
         // 워크 매니저 생성
         CoroutineScope(Dispatchers.Default).launch { createWorkManager() }
@@ -300,7 +307,8 @@ class MainActivity : BaseActivity() {
 //
 //        AdViewClass(this).loadAdView(binding.mainBottomAdView)
     }
-//
+
+    //
     // 백그라운드에서 GPS 를 불러오기 위한 WorkManager
     private fun createWorkManager() {
         val workManager = WorkManager.getInstance(this)
@@ -314,24 +322,20 @@ class MainActivity : BaseActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-//        if (binding.mainDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-//            binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
-//        } else {
-            if (!isBackPressed) {
-                ToastUtils(this)
-                    .showMessage(getString(R.string.back_press), 2)
-                isBackPressed = true
-            } else {
-                sp.removeKey(lastAddress)
-                EnterPage(this).fullyExit()
-            }
-            Handler(Looper.getMainLooper()).postDelayed({
-                isBackPressed = false
-            }, 2000)
+        if (!isBackPressed) {
+            ToastUtils(this)
+                .showMessage(getString(R.string.back_press), 2)
+            isBackPressed = true
+        } else {
+            sp.removeKey(lastAddress)
+            EnterPage(this).fullyExit()
+        }
+        Handler(Looper.getMainLooper()).postDelayed({
+            isBackPressed = false
+        }, 2000)
 //        }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel(): MainActivity {
         getDataViewModel.getDataResult().observe(this) {
@@ -343,19 +347,13 @@ class MainActivity : BaseActivity() {
                 val today = result.today
                 val yesterday = result.yesterday
                 val dateNow: LocalDateTime = LocalDateTime.now()
-                var tempDate: LocalDateTime
-//                try {
-//                    tempDate = LocalDateTime.parse(week.tempDate)
-//                } catch (e: java.lang.NullPointerException) {
-//                    tempDate = LocalDateTime.now()
-//                    e.printStackTrace()
-//                }
+
                 val wfMin = listOf(
-                    week.wf0Am,week.wf1Am, week.wf2Am, week.wf3Am,
+                    week.wf0Am, week.wf1Am, week.wf2Am, week.wf3Am,
                     week.wf4Am, week.wf5Am, week.wf6Am, week.wf7Am
                 )
                 val wfMax = listOf(
-                    week.wf0Pm,week.wf1Pm, week.wf2Pm, week.wf3Pm,
+                    week.wf0Pm, week.wf1Pm, week.wf2Pm, week.wf3Pm,
                     week.wf4Pm, week.wf5Pm, week.wf6Pm, week.wf7Pm
                 )
                 val taMin = listOf(
@@ -370,9 +368,14 @@ class MainActivity : BaseActivity() {
 //                // 뷰페이저 아이템 추가
                 dailyWeatherList.clear()
                 weeklyWeatherList.clear()
-//                airQualityList.clear()
 
-                binding.mainLiveTempValue.text = realtime.temp.roundToInt().toString()
+                binding.mainLiveTempValue.text = realtime.temp.roundToInt().absoluteValue.toString()
+
+                if (realtime.temp.roundToInt() < 0) {
+                    binding.mainLiveTempMinus.visibility = VISIBLE
+                } else {
+                    binding.mainLiveTempMinus.visibility = GONE
+                }
 //                binding.mainSunRiseValue.text =
 //                    sun.sunrise.substring(0, 2) + ":" + sun.sunrise.substring(2, sun.sunrise.length)
 //                binding.mainSunSetValue.text =
@@ -387,21 +390,29 @@ class MainActivity : BaseActivity() {
 //                            realtime.windSpeed
 //                        ).toInt()
 //                    }˚"
-//                binding.mainHumidValue.text = realtime.humid.roundToInt().toString() + "%"
-//                binding.mainWindValue.text =
-//                    realtime.windSpeed.roundToInt().toString() + "m/s, " + realtime.vector
-//                binding.mainRainPerValue.text = realtime.rainP.roundToInt().toString() + "%"
+                binding.subHumidValue.text = realtime.humid.roundToInt().toString() + " %"
+                binding.subWindValue.text =
+                    realtime.windSpeed.roundToInt().toString() + " m/s"
+                binding.subWindValue.setCompoundDrawablesWithIntrinsicBounds(
+                    ResourcesCompat.getDrawable(resources,R.drawable.gps,null)
+                    ,null,null,null)
+                binding.subRainPerValue.text = realtime.rainP.roundToInt().toString() + " %"
                 binding.mainPm10Grade.setGradeText((air.pm10Grade - 1).toString())
                 binding.mainPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
                 binding.mainMinMaxMin.text = "${filteringNullData(today.min)}˚"
                 binding.mainMinMaxMax.text = "${filteringNullData(today.max)}˚"
                 binding.nestedPm10Grade.setGradeText((air.pm10Grade - 1).toString())
                 binding.nestedPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
-                binding.nestedPm10Value.setTextColor(getDataColor(this,air.pm10Grade - 1))
+                binding.nestedPm10Value.setTextColor(getDataColor(this, air.pm10Grade - 1))
                 binding.nestedPm10Value.text = air.pm10Value.toInt().toString()
-                binding.nestedPm2p5Value.setTextColor(getDataColor(this,air.pm25Grade - 1))
+                binding.nestedPm2p5Value.setTextColor(getDataColor(this, air.pm25Grade - 1))
                 binding.nestedPm2p5Value.text = air.pm25Value.toString()
-                getCompareTemp(yesterday.temp, realtime.temp, binding.mainCompareTempIv, binding.mainCompareTempTv)
+                getCompareTemp(
+                    yesterday.temp,
+                    realtime.temp,
+                    binding.mainCompareTempIv,
+                    binding.mainCompareTempTv
+                )
 
                 for (i: Int in 0 until result.realtime.size) {
                     try {
@@ -426,7 +437,12 @@ class MainActivity : BaseActivity() {
                     try {
                         addWeeklyWeatherItem(
                             "${dateNow.month.value}.${dateNow.dayOfMonth + i}" +
-                                    "(${convertDayOfWeekToKorean(this, dateNow.dayOfWeek.value + i)})",
+                                    "(${
+                                        convertDayOfWeekToKorean(
+                                            this,
+                                            dateNow.dayOfWeek.value + i
+                                        )
+                                    })",
                             getSkyImg(this, wfMin[i])!!,
                             getSkyImg(this, wfMax[i])!!,
                             "${taMin[i].roundToInt()}˚",
@@ -436,17 +452,8 @@ class MainActivity : BaseActivity() {
                         e.printStackTrace()
                     }
                 }
-//
-//                addAirQualityItem(getString(R.string.cqi), air.khaiValue.toString())
-//                addAirQualityItem(getString(R.string.pm_10), air.pm10Value.toInt().toString())
-//                addAirQualityItem(getString(R.string.pm_2p5), air.pm25Value.toString())
-//                addAirQualityItem(getString(R.string.co), air.coValue.toString())
-//                addAirQualityItem(getString(R.string.o3), air.o3Value.toString())
-//                addAirQualityItem(getString(R.string.so2), air.so2Value.toString())
-
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
-//                airQualityAdapter.notifyDataSetChanged()
 
                 runOnUiThread {
                     hidePB()
@@ -478,23 +485,6 @@ class MainActivity : BaseActivity() {
         this.weeklyWeatherList.add(item)
     }
 
-    // 로딩시 빈 아이템 보여줌
-    private fun addSkeletonItem() {
-        val itemDaily = AdapterModel.DailyWeatherItem("", null, "", "")
-        val itemWeekly = AdapterModel.WeeklyWeatherItem("", null, null, "", "")
-
-        for (i: Int in 0..7) {
-            this.weeklyWeatherList.add(itemWeekly)
-            this.dailyWeatherList.add(itemDaily)
-        }
-    }
-
-    // 공기질 데이터 아이템 추가
-    private fun addAirQualityItem(title: String, data: String) {
-        val item = AdapterModel.AirQualityItem(title, data)
-        this.airQualityList.add(item)
-    }
-
     // 위젯 데이터 갱신
     private fun onUpdateWidgetData() {
         sendBroadcast(Intent(UPDATE_TIME).apply {
@@ -523,20 +513,18 @@ class MainActivity : BaseActivity() {
     //어제와 기온 비교
     private fun getCompareTemp(yesterday: Double, today: Double, iv: ImageView, tv: TextView) {
         if (yesterday > today) {
-            tv.visibility = View.VISIBLE
-            iv.visibility = View.VISIBLE
-            tv.setTextColor(ResourcesCompat.getColor(resources,R.color.red,null))
-            iv.setImageDrawable(ResourcesCompat.getDrawable(resources,R.drawable.arrow_down,null))
+            tv.visibility = VISIBLE
+            iv.visibility = VISIBLE
+            iv.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.arrow_down, null))
             tv.text = "${(yesterday - today).roundToInt().absoluteValue}˚"
         } else if (today > yesterday) {
-            tv.visibility = View.VISIBLE
-            iv.visibility = View.VISIBLE
-            iv.setImageDrawable(ResourcesCompat.getDrawable(resources,R.drawable.arrow_up,null))
-            tv.text = "${(today-yesterday).roundToInt().absoluteValue}˚"
-            tv.setTextColor(Color.parseColor("#61FF00"))
+            tv.visibility = VISIBLE
+            iv.visibility = VISIBLE
+            iv.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.arrow_up, null))
+            tv.text = "${(today - yesterday).roundToInt().absoluteValue} ˚"
         } else {
-            iv.visibility = View.GONE
-            tv.visibility = View.GONE
+            iv.visibility = GONE
+            tv.visibility = GONE
         }
     }
 }
