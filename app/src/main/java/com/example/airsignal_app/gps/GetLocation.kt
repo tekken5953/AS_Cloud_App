@@ -41,7 +41,14 @@ class GetLocation(private val context: Context) {
             }
             .addOnFailureListener {
                 it.printStackTrace()
-                Logger.t(StaticDataObject.TAG_L).e("Fail to Get Location")
+                it.localizedMessage?.let { it1 ->
+                    writeLogCause(
+                        email = "Error",
+                        isSuccess = "주소 불러오기 실패",
+                        log = it1
+                    )
+                }
+                Logger.t(TAG_D).e("Fail to Get Location")
             }
     }
 
