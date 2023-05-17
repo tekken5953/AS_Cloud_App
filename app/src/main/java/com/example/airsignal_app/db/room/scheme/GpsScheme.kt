@@ -5,7 +5,7 @@ import com.example.airsignal_app.db.room.model.GpsEntity
 
 @Dao
 interface GpsScheme {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertNewGPS(gps: GpsEntity)
 
     @Update
@@ -14,13 +14,13 @@ interface GpsScheme {
     @Query("SELECT * FROM GpsEntity")
     fun findAll(): List<GpsEntity>
 
-    @Query("SELECT * FROM GpsEntity WHERE id = :itemIndex")
-    fun findById(itemIndex: String) : GpsEntity
+    @Query("SELECT * FROM GpsEntity WHERE name= :name")
+    fun findById(name: String) : GpsEntity
 
-    @Query("DELETE FROM GpsEntity WHERE addr = :addr")
+    @Query("DELETE FROM GpsEntity WHERE addr= :addr")
     fun deleteFromAddr(addr: String)
 
-    @Query("SELECT * FROM GpsEntity WHERE addr = :addr")
+    @Query("SELECT * FROM GpsEntity WHERE addr= :addr")
     fun findByAddress(addr: String) : GpsEntity
 
     @Query("DELETE FROM GpsEntity")

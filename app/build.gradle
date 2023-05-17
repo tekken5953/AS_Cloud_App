@@ -96,6 +96,7 @@ dependencies {
     // Room
     implementation "androidx.room:room-runtime:2.5.1"
     kapt "androidx.room:room-compiler:2.5.1"
+    implementation "androidx.room:room-ktx:2.5.1"
 
     // 구글 지도
     implementation 'com.google.android.gms:play-services-maps:18.1.0' // 구글지도 라이브러리
@@ -123,7 +124,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 
     //AS Custom TextView
-    implementation 'com.github.tekken5953:ASCustomText:2.1.1'
+    implementation 'com.github.tekken5953:ASCustomText:2.2.1'
 
     // Firebase Admob
     implementation 'com.google.android.gms:play-services-ads:22.0.0'

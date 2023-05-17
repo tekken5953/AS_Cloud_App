@@ -7,9 +7,15 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.*
 import android.provider.Settings
 import android.telephony.TelephonyManager
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -33,9 +39,11 @@ import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
+import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.db.room.AppDataBase
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.gps.GetLocation
@@ -70,7 +78,6 @@ class MainActivity : BaseActivity() {
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(this, dailyWeatherList) }
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
     private val sp by lazy { SharedPreferenceManager(this) }
-    private val db by lazy { GpsRepository(this).getInstance() }
     private val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
 
     override fun onResume() {
@@ -257,9 +264,11 @@ class MainActivity : BaseActivity() {
     }
 
     private fun loadCurrentAddr(): GpsEntity {
-        val dbCurrent = db.findById(CURRENT_GPS_ID)
+        val dbCurrent = GpsRepository(this).findById(CURRENT_GPS_ID)
+        Log.d(TAG_D,dbCurrent.toString())
         try {
-            val formatAddress = dbCurrent.addr!!.replace("null", "")
+            val formatAddress = dbCurrent.addr!!
+                .replace("null", "").replace("대한민국","")
             sp.setString(lastAddress, formatAddress)
 
             getDataViewModel.loadDataResult(
@@ -268,7 +277,7 @@ class MainActivity : BaseActivity() {
                 null
             )
 
-            binding.mainGpsTitleTv.text = db.findById(CURRENT_GPS_ID).addr
+            binding.mainGpsTitleTv.text = formatAddress
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -390,13 +399,13 @@ class MainActivity : BaseActivity() {
 //                            realtime.windSpeed
 //                        ).toInt()
 //                    }˚"
-                binding.subHumidValue.text = realtime.humid.roundToInt().toString() + " %"
-                binding.subWindValue.text =
-                    realtime.windSpeed.roundToInt().toString() + " m/s"
+                spanUnit(binding.subWindValue,realtime.windSpeed.roundToInt().toString() + " ㎧")
+                spanUnit(binding.subRainPerValue,realtime.rainP.roundToInt().toString() + " %")
+                spanUnit(binding.subHumidValue,realtime.humid.roundToInt().toString() + " %")
+
                 binding.subWindValue.setCompoundDrawablesWithIntrinsicBounds(
                     ResourcesCompat.getDrawable(resources,R.drawable.gps,null)
                     ,null,null,null)
-                binding.subRainPerValue.text = realtime.rainP.roundToInt().toString() + " %"
                 binding.mainPm10Grade.setGradeText((air.pm10Grade - 1).toString())
                 binding.mainPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
                 binding.mainMinMaxMin.text = "${filteringNullData(today.min)}˚"
@@ -510,18 +519,35 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    // 마지막 기호 크기 줄이기
+    private fun spanUnit(tv: TextView, s: String) {
+        val span = SpannableStringBuilder(s)
+        span.setSpan(
+            AbsoluteSizeSpan(35),
+            s.length - 1,
+            s.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        tv.text = span
+    }
+
     //어제와 기온 비교
     private fun getCompareTemp(yesterday: Double, today: Double, iv: ImageView, tv: TextView) {
-        if (yesterday > today) {
-            tv.visibility = VISIBLE
-            iv.visibility = VISIBLE
-            iv.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.arrow_down, null))
-            tv.text = "${(yesterday - today).roundToInt().absoluteValue}˚"
-        } else if (today > yesterday) {
-            tv.visibility = VISIBLE
-            iv.visibility = VISIBLE
-            iv.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.arrow_up, null))
-            tv.text = "${(today - yesterday).roundToInt().absoluteValue} ˚"
+        if (yesterday != -100.0 && today != -100.0) {
+            if (yesterday > today) {
+                tv.visibility = VISIBLE
+                iv.visibility = VISIBLE
+                iv.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.arrow_down, null))
+                tv.text = "${(yesterday - today).roundToInt().absoluteValue}˚"
+            } else if (today > yesterday) {
+                tv.visibility = VISIBLE
+                iv.visibility = VISIBLE
+                iv.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.arrow_up, null))
+                tv.text = "${(today - yesterday).roundToInt().absoluteValue} ˚"
+            } else {
+                iv.visibility = GONE
+                tv.visibility = GONE
+            }
         } else {
             iv.visibility = GONE
             tv.visibility = GONE

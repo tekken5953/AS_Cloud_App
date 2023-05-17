@@ -24,8 +24,7 @@ import com.example.airsignal_app.db.room.repository.GpsRepository
 
 class NotificationBuilder {
 
-    /** foreground 상태에서 해드업 알림 **/
-    @RequiresApi(Build.VERSION_CODES.O)
+
     fun sendNotification(context: Context, intent: Intent,data: String, title: String,time: Long) {
 //        // Get the layouts to use in the custom notification
 //        val notificationLayout = RemoteViews(context.packageName, R.layout.notification_small)
@@ -61,7 +60,7 @@ class NotificationBuilder {
         val pmSpan = SpannableStringBuilder(pmString).setSpan(
             ForegroundColorSpan(Color.RED),
             5,pmString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE).toString()
-        val location = GpsRepository(context).getInstance().findById(StaticDataObject.CURRENT_GPS_ID).addr.toString()
+        val location = GpsRepository(context).findById(StaticDataObject.CURRENT_GPS_ID).addr.toString()
         val locationSpan = SpannableStringBuilder(location).setSpan(
             android.text.style.AbsoluteSizeSpan(10),0,location.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE).toString()
         val data = "최고: 24˚ 최저 : 10˚"

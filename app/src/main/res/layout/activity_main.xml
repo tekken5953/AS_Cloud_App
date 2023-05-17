@@ -58,6 +58,8 @@
             <TextView
                 android:id="@+id/mainGpsTitleTv"
                 style="@style/basicTextView"
+                android:maxEms="20"
+                android:ellipsize="start"
                 android:layout_centerInParent="true"
                 android:drawablePadding="5dp"
                 android:textColor="@color/white"
@@ -262,8 +264,7 @@
                         android:layout_marginEnd="10dp"
                         android:layout_toStartOf="@+id/nested_pm_2p5_unit"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:textSize="24sp"
-                        app:sort="pm" />
+                        android:textSize="24sp" />
 
                     <TextView
                         android:id="@+id/nested_pm_10_unit"
@@ -317,19 +318,18 @@
             android:id="@+id/mainSkyImg"
             android:layout_width="170dp"
             android:layout_height="140dp"
-            android:layout_marginBottom="19dp"
-            app:layout_constraintBottom_toTopOf="@+id/mainSkyText"
+            android:layout_marginBottom="12dp"
+            app:layout_constraintBottom_toTopOf="@+id/mainLiveTempValue"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            app:layout_constraintTop_toBottomOf="@+id/mainGpsFix" />
+            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
 
         <TextView
             android:id="@+id/mainSkyText"
             style="@style/basicTextView"
-            android:layout_marginBottom="21dp"
+            android:layout_marginBottom="8dp"
             android:textColor="@color/white"
             android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/mainLiveTempValue"
+            app:layout_constraintBottom_toTopOf="@+id/mainSkyImg"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
 
@@ -351,10 +351,9 @@
             android:fontFamily="@font/spoqa_hansansneo_bold"
             android:textColor="@color/white"
             android:textSize="60sp"
-            app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
+            app:layout_constraintBottom_toTopOf="@+id/mainMinMaxTr"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            app:layout_constraintTop_toTopOf="@+id/mainMotionLinear" />
+            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
 
         <TextView
             android:id="@+id/mainLiveTempUnit"
@@ -393,9 +392,10 @@
             android:layout_marginStart="5dp"
             android:gravity="center"
             android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="@+id/mainMotionLayout"
+            app:layout_constraintBottom_toBottomOf="@id/mainMotionLayout"
             app:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
-            app:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
-            app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue">
+            app:layout_constraintStart_toStartOf="@+id/mainLiveTempValue">
 
             <TextView
                 android:id="@+id/mainMinMaxMin"
@@ -417,16 +417,29 @@
                 android:textSize="16sp" />
         </TableRow>
 
+        <TextView
+            android:id="@+id/mainNotiMsgTv"
+            style="@style/basicTextView"
+            android:layout_width="match_parent"
+            android:textColor="@color/white"
+            android:background="@drawable/main_noti_text"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:text="오후에 비소식이 있어요"
+            android:textSize="14sp"
+            android:layout_marginTop="35dp"
+            app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr"/>
+
         <TableLayout
             android:id="@+id/mainPmBoxTL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/pm_motion_box_bg"
             android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr">
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/mainNotiMsgTv">
 
             <TableRow
                 android:layout_width="match_parent"
