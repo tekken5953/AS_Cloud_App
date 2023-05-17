@@ -1,37 +1,25 @@
 package com.example.airsignal_app.view.activity
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.*
-import android.provider.Settings
-import android.telephony.TelephonyManager
 import android.text.Spannable
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
-import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.animation.AnimationUtils
 import android.widget.*
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.postDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.example.airsignal_app.R
-import com.example.airsignal_app.adapter.AirQualityAdapter
 import com.example.airsignal_app.adapter.DailyWeatherAdapter
 import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
 import com.example.airsignal_app.dao.AdapterModel
@@ -43,7 +31,6 @@ import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.db.room.AppDataBase
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.gps.GetLocation
@@ -79,6 +66,7 @@ class MainActivity : BaseActivity() {
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
     private val sp by lazy { SharedPreferenceManager(this) }
     private val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
+    private var mLastClickTime = 1500L
 
     override fun onResume() {
         super.onResume()
@@ -87,7 +75,6 @@ class MainActivity : BaseActivity() {
         GetLocation(this).getLocation()
         Handler(Looper.getMainLooper()).postDelayed({
             getDataSingleTime()
-            hidePB()
         },1500)
         Thread.sleep(100)
 //        binding.mainBottomAdView.resume()
@@ -186,54 +173,60 @@ class MainActivity : BaseActivity() {
 //
         SilentLoginClass().login(this, binding.mainMotionLayout)
 
-        binding.mainGpsTitleTv.setOnClickListener {
-            val bottomSheet =
-                SearchDialog(this, 0, supportFragmentManager, BottomSheetDialogFragment().tag)
-            bottomSheet.show(0)
-        }
+
+        binding.mainGpsTitleTv.setOnClickListener(object : OnSingleClickListener() {
+            override fun onSingleClick(v: View?) {
+                val bottomSheet =
+                    SearchDialog(this@MainActivity, 0, supportFragmentManager, BottomSheetDialogFragment().tag)
+                bottomSheet.show(0)
+            }
+        })
 //
-        binding.mainGpsFix.setOnClickListener {
-            if (RequestPermissionsUtil(this).isLocationPermitted()) {
-                showPB()
-                GetLocation(this).getLocation()
-                Handler(Looper.getMainLooper()).postDelayed({
-                    loadCurrentAddr()
-                    hidePB()
-                }, 1500)
-            } else {
-                RequestPermissionsUtil(this).requestLocation()
+        binding.mainGpsFix.setOnClickListener(object : OnSingleClickListener() {
+            override fun onSingleClick(v: View?) {
+                if (RequestPermissionsUtil(this@MainActivity).isLocationPermitted()) {
+                    showPB()
+                    GetLocation(this@MainActivity).getLocation()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        loadCurrentAddr()
+                    }, 1500)
+                } else {
+                    RequestPermissionsUtil(this@MainActivity).requestLocation()
+                }
             }
-        }
+        })
 
-        binding.mainSideMenuIv.setOnClickListener {
-            val menu: View =
-                LayoutInflater.from(this).inflate(R.layout.side_menu, null)
-            val cancel = menu.findViewById<ImageView>(R.id.headerCancel)
-            val profile = menu.findViewById<ImageView>(R.id.navHeaderProfileImg)
-            val id = menu.findViewById<TextView>(R.id.navHeaderUserId)
-            val weather = menu.findViewById<TextView>(R.id.navMenuWeather)
-            val setting = menu.findViewById<TextView>(R.id.navMenuSetting)
-            val headerTr = menu.findViewById<TableRow>(R.id.headerTr)
+        binding.mainSideMenuIv.setOnClickListener(object : OnSingleClickListener() {
+            override fun onSingleClick(v: View?) {
+                val menu: View =
+                    LayoutInflater.from(this@MainActivity).inflate(R.layout.side_menu, null)
+                val cancel = menu.findViewById<ImageView>(R.id.headerCancel)
+                val profile = menu.findViewById<ImageView>(R.id.navHeaderProfileImg)
+                val id = menu.findViewById<TextView>(R.id.navHeaderUserId)
+                val weather = menu.findViewById<TextView>(R.id.navMenuWeather)
+                val setting = menu.findViewById<TextView>(R.id.navMenuSetting)
+                val headerTr = menu.findViewById<TableRow>(R.id.headerTr)
 
-            val dialog = SideMenuBuilder().getInstance(this)
-            dialog.apply {
-                setBackPressed(cancel)
-                setUserData(profile, id)
-                show(menu, true)
-            }
+                val dialog = SideMenuBuilder().getInstance(this@MainActivity)
+                dialog.apply {
+                    setBackPressed(cancel)
+                    setUserData(profile, id)
+                    show(menu, true)
+                }
 
-            headerTr.setOnClickListener {
-                if (sp.getString(IgnoredKeyFile.lastLoginPlatform) == "")
-                    EnterPage(this).toLogin()
+                headerTr.setOnClickListener {
+                    if (sp.getString(IgnoredKeyFile.lastLoginPlatform) == "")
+                        EnterPage(this@MainActivity).toLogin()
+                }
+                weather.setOnClickListener {
+                    dialog.dismiss()
+                }
+                setting.setOnClickListener {
+                    val intent = Intent(this@MainActivity, SettingActivity::class.java)
+                    startActivity(intent)
+                }
             }
-            weather.setOnClickListener {
-                dialog.dismiss()
-            }
-            setting.setOnClickListener {
-                val intent = Intent(this@MainActivity, SettingActivity::class.java)
-                startActivity(intent)
-            }
-        }
+        })
 
 //        val refreshLayout = binding.mainSwipeLayout as RefreshLayout
 //        refreshLayout.apply {
@@ -295,12 +288,10 @@ class MainActivity : BaseActivity() {
 
     private fun showPB() {
         binding.mainMotionLayout.alpha = 0.5f
-        binding.mainMotionLayout.isEnabled = false
     }
 
     private fun hidePB() {
         binding.mainMotionLayout.alpha = 1f
-        binding.mainMotionLayout.isEnabled = true
     }
 
     @SuppressLint("NotifyDataSetChanged")

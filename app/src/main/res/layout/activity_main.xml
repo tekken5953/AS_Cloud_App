@@ -19,25 +19,6 @@
         app:layoutDescription="@xml/main_motion_scene"
         app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-        <!--        <LinearLayout-->
-        <!--            android:id="@+id/mainPbLayout"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="match_parent"-->
-        <!--            android:background="#66ffffff"-->
-        <!--            android:clickable="false"-->
-        <!--            android:gravity="center"-->
-        <!--            android:visibility="gone">-->
-
-        <!--            <ProgressBar-->
-        <!--                android:id="@+id/mainPb"-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--                app:layout_constraintEnd_toEndOf="parent"-->
-        <!--                app:layout_constraintStart_toStartOf="parent"-->
-        <!--                app:layout_constraintTop_toTopOf="parent" />-->
-        <!--        </LinearLayout>-->
-
         <RelativeLayout
             android:id="@+id/topBarLinear"
             android:layout_width="match_parent"
