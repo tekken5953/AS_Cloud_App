@@ -35,7 +35,7 @@
         android:inputType="text"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
-        android:textColor="@color/mode_color_view"
+        android:textColor="@color/black"
         android:textSize="14sp"
         app:drawableStartCompat="@drawable/search"
         app:drawableTint="@color/main_gray_color" />
