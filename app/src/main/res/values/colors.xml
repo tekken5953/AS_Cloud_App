@@ -13,6 +13,7 @@
     <color name="mode_color_view">#FFFFFFFF</color>
     <color name="main_blue_color">#00C2FF</color>
     <color name="main_gray_color">#A7A7A7</color>
+    <color name="mode_dark_color">#000000</color>
 
     <color name="background_color">#F9F9F9</color>
     <color name="indicator_default">#D6D6D6</color>

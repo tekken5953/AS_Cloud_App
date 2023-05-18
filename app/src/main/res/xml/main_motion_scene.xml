@@ -13,7 +13,6 @@
             motion:touchAnchorSide="top"/>
     </Transition>
 
-
     <ConstraintSet android:id="@+id/start">
         <Constraint
             android:id="@+id/mainMotionLinear"
@@ -26,17 +25,17 @@
             android:id="@+id/mainSkyImg"
             android:layout_width="170dp"
             android:layout_height="140dp"
-            android:layout_marginBottom="19dp"
-            motion:layout_constraintBottom_toTopOf="@+id/mainSkyText"
+            android:layout_marginBottom="12dp"
+            motion:layout_constraintBottom_toTopOf="@+id/mainLiveTempUnit"
             motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
         <Constraint
             android:id="@+id/mainSkyText"
             style="@style/basicTextView"
-            android:layout_marginBottom="21dp"
+            android:layout_marginBottom="8dp"
             android:textColor="@color/white"
             android:textSize="16sp"
-            motion:layout_constraintBottom_toTopOf="@+id/mainLiveTempValue"
+            motion:layout_constraintBottom_toTopOf="@+id/mainSkyImg"
             motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
         <Constraint
@@ -49,10 +48,9 @@
         <Constraint
             android:id="@+id/mainLiveTempValue"
             style="@style/basicTextView"
-            motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            motion:layout_constraintTop_toTopOf="@+id/mainMotionLinear" />
+            motion:layout_constraintBottom_toTopOf="@+id/mainMinMaxTr"/>
         <Constraint
             android:id="@+id/mainLiveTempUnit"
             style="@style/basicTextView"
@@ -79,20 +77,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
+            android:layout_marginBottom="35dp"
             motion:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
             motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
-            motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue" />
+            motion:layout_constraintTop_toTopOf="@+id/mainMotionLayout"
+            motion:layout_constraintBottom_toBottomOf="@id/mainMotionLayout"/>
         <Constraint
             android:id="@+id/mainPmBoxTL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
             android:background="@drawable/pm_motion_box_bg"
             android:gravity="center"
             android:alpha="1"
-            motion:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
+            android:layout_marginTop="10dp"
+            motion:layout_constraintTop_toBottomOf="@+id/mainNotiMsgTv"/>
 <!--        <Constraint-->
 <!--            android:id="@+id/bottomNav"-->
 <!--            android:layout_width="match_parent"-->
@@ -132,7 +132,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             motion:layout_constraintTop_toTopOf="@+id/mainMotionLayout"
-            android:layout_marginTop="30dp" />
+            android:layout_marginTop="20dp" />
         <Constraint
             android:id="@+id/bottomNav"
             android:layout_width="match_parent"
@@ -148,6 +148,19 @@
             android:layout_marginEnd="50dp"
             android:layout_marginStart="50dp"
             android:layout_marginTop="22dp" />
+        <Constraint
+            android:id="@+id/mainNotiMsgTv"
+            style="@style/basicTextView"
+            android:layout_width="match_parent"
+            android:textColor="@color/white"
+            android:background="@drawable/main_noti_text"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:text="오후에 비소식이 있어요"
+            android:textSize="14sp"
+            android:alpha="1"
+            android:layout_marginTop="35dp"
+            motion:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr"/>
     </ConstraintSet>
 
 
@@ -214,12 +227,9 @@
             motion:layout_constraintStart_toEndOf="@+id/mainCompareTempIv"/>
         <Constraint
             android:id="@+id/mainMinMaxTr"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:layout_marginStart="3dp"
-            motion:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
-            motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
             motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"/>
         <Constraint
             android:id="@+id/mainPmBoxTL"
@@ -288,5 +298,10 @@
             android:layout_marginEnd="50dp"
             android:layout_marginStart="50dp"
             android:layout_marginTop="20dp" />
+        <Constraint
+            android:id="@+id/mainNotiMsgTv"
+            android:layout_width="match_parent"
+            android:alpha="0"
+            motion:layout_constraintBottom_toTopOf="@+id/mainPmBoxTL"/>
     </ConstraintSet>
 </MotionScene>

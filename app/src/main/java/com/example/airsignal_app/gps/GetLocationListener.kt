@@ -9,5 +9,5 @@ import android.location.Location
 interface GetLocationListener {
 
     /** Location 을 파라미터로 같는 인터페이스 메서드 입니다. **/
-    fun onGetLocal(location: Location)
+    fun onGetLocal()
 }

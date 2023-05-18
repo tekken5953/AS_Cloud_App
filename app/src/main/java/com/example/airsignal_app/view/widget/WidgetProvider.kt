@@ -61,7 +61,7 @@ open class WidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         Timber.tag("TAG_WIDGET").i("onUpdate : ${currentDateTimeString(context)}")
-        val db = GpsRepository(context).getInstance().findById(CURRENT_GPS_ID)
+        val db = GpsRepository(context).findById(CURRENT_GPS_ID)
 
         val getDataMap: Call<ApiModel.GetEntireData> =
             HttpClient.mMyAPIImpl.getForecast(db.lat, db.lng, db.lng.toString())

@@ -19,30 +19,11 @@
         app:layoutDescription="@xml/main_motion_scene"
         app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-        <!--        <LinearLayout-->
-        <!--            android:id="@+id/mainPbLayout"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="match_parent"-->
-        <!--            android:background="#66ffffff"-->
-        <!--            android:clickable="false"-->
-        <!--            android:gravity="center"-->
-        <!--            android:visibility="gone">-->
-
-        <!--            <ProgressBar-->
-        <!--                android:id="@+id/mainPb"-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--                app:layout_constraintEnd_toEndOf="parent"-->
-        <!--                app:layout_constraintStart_toStartOf="parent"-->
-        <!--                app:layout_constraintTop_toTopOf="parent" />-->
-        <!--        </LinearLayout>-->
-
         <RelativeLayout
             android:id="@+id/topBarLinear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintTop_toTopOf="@+id/mainMotionLayout">
 
             <ImageView
@@ -60,6 +41,8 @@
                 style="@style/basicTextView"
                 android:layout_centerInParent="true"
                 android:drawablePadding="5dp"
+                android:ellipsize="start"
+                android:maxEms="20"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:drawableStartCompat="@drawable/location_fill"
@@ -94,8 +77,8 @@
                 android:id="@+id/nested_main_linear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="55dp"
-                android:background="@color/view_line_color">
+                android:background="@color/view_line_color"
+                android:paddingBottom="55dp">
 
                 <RelativeLayout
                     android:id="@+id/nested_daily_box"
@@ -232,9 +215,17 @@
                         android:id="@+id/segment_progress_2p5_bar"
                         android:layout_width="match_parent"
                         android:layout_height="6dp"
-                        android:layout_below="@+id/nested_pm_2p5_value"
-                        android:layout_marginTop="20dp"
+                        android:layout_below="@+id/segment_progress_2p5_arrow"
+                        android:layout_marginTop="3dp"
                         android:layout_marginBottom="30dp" />
+
+                    <ImageView
+                        android:id="@+id/segment_progress_2p5_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/nested_pm_2p5_value"
+                        android:layout_marginTop="10dp"
+                        android:src="@drawable/bottom_arrow" />
 
                     <TextView
                         android:id="@+id/nested_pm_10_title"
@@ -262,8 +253,7 @@
                         android:layout_marginEnd="10dp"
                         android:layout_toStartOf="@+id/nested_pm_2p5_unit"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:textSize="24sp"
-                        app:sort="pm" />
+                        android:textSize="24sp" />
 
                     <TextView
                         android:id="@+id/nested_pm_10_unit"
@@ -280,9 +270,17 @@
                         android:id="@+id/segment_progress_10_bar"
                         android:layout_width="match_parent"
                         android:layout_height="6dp"
-                        android:layout_below="@+id/nested_pm_10_value"
-                        android:layout_marginTop="20dp"
+                        android:layout_below="@+id/segment_progress_10_arrow"
+                        android:layout_marginTop="3dp"
                         android:layout_marginBottom="30dp" />
+
+                    <ImageView
+                        android:id="@+id/segment_progress_10_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/nested_pm_10_value"
+                        android:layout_marginTop="10dp"
+                        android:src="@drawable/bottom_arrow" />
                 </RelativeLayout>
             </RelativeLayout>
         </androidx.core.widget.NestedScrollView>
@@ -317,19 +315,18 @@
             android:id="@+id/mainSkyImg"
             android:layout_width="170dp"
             android:layout_height="140dp"
-            android:layout_marginBottom="19dp"
-            app:layout_constraintBottom_toTopOf="@+id/mainSkyText"
+            android:layout_marginBottom="12dp"
+            app:layout_constraintBottom_toTopOf="@+id/mainLiveTempValue"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            app:layout_constraintTop_toBottomOf="@+id/mainGpsFix" />
+            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
 
         <TextView
             android:id="@+id/mainSkyText"
             style="@style/basicTextView"
-            android:layout_marginBottom="21dp"
+            android:layout_marginBottom="8dp"
             android:textColor="@color/white"
             android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/mainLiveTempValue"
+            app:layout_constraintBottom_toTopOf="@+id/mainSkyImg"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
 
@@ -337,13 +334,13 @@
             android:id="@+id/mainLiveTempMinus"
             style="@style/basicTextView"
             android:fontFamily="@font/spoqa_hansansneo_bold"
+            android:text="-"
             android:textColor="@color/white"
             android:textSize="55sp"
             android:visibility="gone"
-            app:layout_constraintTop_toTopOf="@+id/mainLiveTempValue"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
-            android:text="-" />
+            app:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
 
         <TextView
             android:id="@+id/mainLiveTempValue"
@@ -351,10 +348,9 @@
             android:fontFamily="@font/spoqa_hansansneo_bold"
             android:textColor="@color/white"
             android:textSize="60sp"
-            app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
+            app:layout_constraintBottom_toTopOf="@+id/mainMinMaxTr"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            app:layout_constraintTop_toTopOf="@+id/mainMotionLinear" />
+            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
 
         <TextView
             android:id="@+id/mainLiveTempUnit"
@@ -393,9 +389,10 @@
             android:layout_marginStart="5dp"
             android:gravity="center"
             android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@id/mainMotionLayout"
             app:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
             app:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
-            app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue">
+            app:layout_constraintTop_toTopOf="@+id/mainMotionLayout">
 
             <TextView
                 android:id="@+id/mainMinMaxMin"
@@ -417,16 +414,29 @@
                 android:textSize="16sp" />
         </TableRow>
 
+        <TextView
+            android:id="@+id/mainNotiMsgTv"
+            style="@style/basicTextView"
+            android:layout_width="match_parent"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginEnd="50dp"
+            android:background="@drawable/main_noti_text"
+            android:text="도움말 테스트 텍스트"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
+
         <TableLayout
             android:id="@+id/mainPmBoxTL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/pm_motion_box_bg"
             android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr">
+            app:layout_constraintTop_toBottomOf="@+id/mainNotiMsgTv">
 
             <TableRow
                 android:layout_width="match_parent"
@@ -484,11 +494,11 @@
             android:id="@+id/mainSubWeatherTL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL"
-            android:layout_marginTop="22dp"
             android:layout_marginStart="50dp"
+            android:layout_marginTop="22dp"
             android:layout_marginEnd="50dp"
-            android:gravity="center">
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL">
 
             <TableRow
                 android:id="@+id/mainSubWeatherValueTr"
@@ -508,18 +518,18 @@
                     android:id="@+id/subWindValue"
                     style="@style/basicTextView"
                     android:layout_weight="0.2"
-                    android:textSize="20sp"
                     android:drawablePadding="-8dp"
                     android:gravity="center"
                     android:textColor="@color/white"
+                    android:textSize="20sp"
                     app:drawableTint="@color/white" />
 
                 <TextView
                     android:id="@+id/subRainPerValue"
                     style="@style/basicTextView"
                     android:layout_weight="0.4"
-                    android:textSize="20sp"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
 
             </TableRow>
 
@@ -527,30 +537,30 @@
                 android:id="@+id/mainSubWeatherTr"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginTop="5dp"
+                android:gravity="center"
                 android:weightSum="1">
 
                 <TextView
                     style="@style/basicTextView"
+                    android:layout_weight="0.4"
                     android:text="습도"
-                    android:textSize="14sp"
                     android:textColor="#C2E1F2"
-                    android:layout_weight="0.4" />
+                    android:textSize="14sp" />
 
                 <TextView
                     style="@style/basicTextView"
+                    android:layout_weight="0.2"
                     android:text="바람"
-                    android:textSize="14sp"
                     android:textColor="#C2E1F2"
-                    android:layout_weight="0.2"/>
+                    android:textSize="14sp" />
 
                 <TextView
                     style="@style/basicTextView"
+                    android:layout_weight="0.4"
                     android:text="강수확률"
                     android:textColor="#C2E1F2"
-                    android:textSize="14sp"
-                    android:layout_weight="0.4" />
+                    android:textSize="14sp" />
 
 
             </TableRow>

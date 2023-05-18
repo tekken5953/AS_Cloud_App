@@ -22,7 +22,7 @@ class RedirectPermissionActivity : BaseActivity() {
         super.onResume()
         if (RequestPermissionsUtil(this).isLocationPermitted()) {
             runBlocking {
-                getGps().join()
+//                getGps().join()
                 enterMainPage().join()
             }
         }

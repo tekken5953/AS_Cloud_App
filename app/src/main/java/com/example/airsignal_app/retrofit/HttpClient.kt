@@ -1,17 +1,21 @@
 package com.example.airsignal_app.retrofit
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.example.airsignal_app.dao.IgnoredKeyFile.springServerURL
 import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.util.LoggerUtil
+import com.example.airsignal_app.view.activity.MainActivity
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.orhanobut.logger.Logger
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Singleton
@@ -36,24 +40,38 @@ object HttpClient {
          *
          * 클라이언트 빌더 Interceptor 구분 **/
         val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
+            connectTimeout(10,TimeUnit.SECONDS)
+            readTimeout(10,TimeUnit.SECONDS)
             retryOnConnectionFailure(false)
-            addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-                override fun log(message: String) {
-                    if (!message.startsWith("{") && !message.startsWith("[")) {
-                        Timber.tag("Timber").d(message)
-                        return
-                    }
-                    try {
-                        // Timber 와 Gson setPrettyPrinting 를 이용해 json 을 보기 편하게 표시해준다.
-                        LoggerUtil().getInstance().logJsonTimberDebug("Timber", message)
-                    } catch (m: JsonSyntaxException) {
-                        Timber.tag("Timber").e(m.localizedMessage!!.toString())
-                        Timber.tag("Timber").e(message)
-                    }
+//            addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+//                override fun log(message: String) {
+//                    if (!message.startsWith("{") && !message.startsWith("[")) {
+//                        Timber.tag("Timber").i(message)
+//                        return
+//                    }
+//                    try {
+//                        // Timber 와 Gson setPrettyPrinting 를 이용해 json 을 보기 편하게 표시해준다.
+//                        LoggerUtil().getInstance().logJsonTimberDebug("Timber", message)
+//                        return
+//                    } catch (m: JsonSyntaxException) {
+//                        Timber.tag("Timber").e(m.localizedMessage!!.toString())
+//                        Timber.tag("Timber").e(message)
+//                        return
+//                    }
+//                }
+//            }).apply {
+//                level = HttpLoggingInterceptor.Level.BODY
+//            })
+             .build()
+            addInterceptor { chain ->
+                val request = chain.request()
+                val response = try {
+                    chain.proceed(request)
+                } catch (e: MainActivity.CustomTimeOutException) {
+                    e.localizedMessage
                 }
-            }).apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
+                response as Response
+            }.build()
 //            addInterceptor {
 //                val request = it.request().newBuilder()
 //                    .addHeader("Authorization", "Bearer $token")

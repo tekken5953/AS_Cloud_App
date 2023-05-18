@@ -1,12 +1,12 @@
 package com.example.airsignal_app.db.room.repository
 
 import android.content.Context
-import androidx.room.Room
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.room.AppDataBase
+import com.example.airsignal_app.db.room.AppDataBase.Companion.getInstance
 import com.example.airsignal_app.db.room.model.GpsEntity
-import com.example.airsignal_app.db.room.scheme.GpsScheme
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.*
 
 /**
  * @author : Lee Jae Young
@@ -14,46 +14,50 @@ import com.orhanobut.logger.Logger
  **/
 class GpsRepository(private val context: Context) {
 
-    fun getInstance(): GpsScheme {
-        return Room.databaseBuilder(context.applicationContext, AppDataBase::class.java, "room-gps")
-            .fallbackToDestructiveMigration()
-            .allowMainThreadQueries()
-            .build()
-            .gpsRepository()
-    }
+    private val instance: AppDataBase = AppDataBase.getInstance(context)!!
 
     fun update(model: GpsEntity) {
-        getInstance().updateCurrentGPS(model)
-        Logger.t(TAG_D).d("Update Model")
+        val job = Job()
+        CoroutineScope(Dispatchers.IO + job).launch {
+            getInstance(context)!!.gpsRepository().updateCurrentGPS(model)
+            Logger.t(TAG_D).d("Update Model")
+        }
     }
 
     fun insert(model: GpsEntity) {
-        getInstance().insertNewGPS(model)
-        Logger.t(TAG_D).d("insert Model")
+        val job = Job()
+        CoroutineScope(Dispatchers.IO + job).launch {
+            getInstance(context)!!.gpsRepository().insertNewGPS(model)
+            Logger.t(TAG_D).d("insert Model")
+        }
     }
 
-    fun findAll() : List<GpsEntity> {
+    fun findAll(): List<GpsEntity> {
         Logger.t(TAG_D).d("findAll Model")
-        return getInstance().findAll()
+        return getInstance(context)!!.gpsRepository().findAll()
     }
 
-    fun findById(id: String) : GpsEntity {
+    fun findById(name: String): GpsEntity {
         Logger.t(TAG_D).d("findById Model")
-        return getInstance().findById(id)
+        return getInstance(context)!!.gpsRepository().findById(name)
     }
 
     fun deleteFromAddress(addr: String) {
-        getInstance().deleteFromAddr(addr)
+        val job = Job()
+        CoroutineScope(Dispatchers.IO + job).launch {
+
+        }
+        getInstance(context)!!.gpsRepository().deleteFromAddr(addr)
         Logger.t(TAG_D).d("deleteFromAddress Model")
     }
 
     fun findByAddress(addr: String): GpsEntity {
         Logger.t(TAG_D).d("findByAddr Model")
-        return getInstance().findByAddress(addr)
+        return getInstance(context)!!.gpsRepository().findByAddress(addr)
     }
 
     fun clearDB() {
         Logger.t(TAG_D).d("ClearDB Model")
-        getInstance().clearDB()
+        getInstance(context)!!.gpsRepository().clearDB()
     }
 }

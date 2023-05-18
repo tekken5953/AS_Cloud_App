@@ -210,6 +210,7 @@ class SettingActivity : BaseActivity() {
             val lightTheme: RadioButton = themeView.findViewById(R.id.lightThemeRb)
             val darkTheme: RadioButton = themeView.findViewById(R.id.darkThemeRb)
             val radioGroup: RadioGroup = themeView.findViewById(R.id.changeThemeRadioGroup)
+            val cancel: ImageView = themeView.findViewById(R.id.changeThemeBack)
 
             dialog
                 .setBackPressRefresh(themeView.findViewById(R.id.changeThemeBack))
@@ -241,7 +242,8 @@ class SettingActivity : BaseActivity() {
                             mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
                             dbData = "system",
                             radioGroup = radioGroup,
-                            radioButton = systemTheme
+                            radioButton = systemTheme,
+                            cancel
                         )
                         changeCheckIcon(systemTheme, lightTheme, darkTheme)
                     }
@@ -251,7 +253,8 @@ class SettingActivity : BaseActivity() {
                             mode = AppCompatDelegate.MODE_NIGHT_NO,
                             dbData = "light",
                             radioGroup = radioGroup,
-                            radioButton = lightTheme
+                            radioButton = lightTheme,
+                            cancel
                         )
                         changeCheckIcon(lightTheme, systemTheme, darkTheme)
                     }
@@ -261,7 +264,8 @@ class SettingActivity : BaseActivity() {
                             mode = AppCompatDelegate.MODE_NIGHT_YES,
                             dbData = "dark",
                             radioGroup = radioGroup,
-                            radioButton = darkTheme
+                            radioButton = darkTheme,
+                            cancel
                         )
                         changeCheckIcon(darkTheme, systemTheme, lightTheme)
                     }
@@ -278,9 +282,10 @@ class SettingActivity : BaseActivity() {
             val koreanLang: RadioButton = langView.findViewById(R.id.koreanRB)
             val englishLang: RadioButton = langView.findViewById(R.id.englishRB)
             val radioGroup: RadioGroup = langView.findViewById(R.id.changeLangRadioGroup)
+            val cancelBtn: ImageView = langView.findViewById(R.id.changeLangBack)
 
             dialog
-                .setBackPressed(langView.findViewById(R.id.changeLangBack))
+                .setBackPressed(cancelBtn)
                 .show(langView, true)
 
             // 기존에 저장 된 언어로 라디오 버튼 체크
@@ -305,7 +310,8 @@ class SettingActivity : BaseActivity() {
                         changedLangRadio(
                             lang = getString(R.string.system_lang),
                             radioGroup = radioGroup,
-                            radioButton = systemLang
+                            radioButton = systemLang,
+                            cancelBtn
                         )
                         changeCheckIcon(systemLang, koreanLang, englishLang)
                     }
@@ -313,7 +319,8 @@ class SettingActivity : BaseActivity() {
                         changedLangRadio(
                             lang = getString(R.string.korean),
                             radioGroup = radioGroup,
-                            radioButton = koreanLang
+                            radioButton = koreanLang,
+                            cancelBtn
                         )
                         changeCheckIcon(koreanLang, systemLang, englishLang)
                     }
@@ -321,7 +328,8 @@ class SettingActivity : BaseActivity() {
                         changedLangRadio(
                             lang = getString(R.string.english),
                             radioGroup = radioGroup,
-                            radioButton = englishLang
+                            radioButton = englishLang,
+                            cancelBtn
                         )
                         changeCheckIcon(englishLang, koreanLang, systemLang)
                     }
@@ -426,8 +434,9 @@ class SettingActivity : BaseActivity() {
     }
 
     /** 언어 라디오 버튼 클릭 시 이벤트 처리 **/
-    private fun changedLangRadio(lang: String, radioGroup: RadioGroup, radioButton: RadioButton) {
+    private fun changedLangRadio(lang: String, radioGroup: RadioGroup, radioButton: RadioButton, cancel: ImageView) {
         if (sp.getString(userLocation) != lang) { // 현재 설정된 언어인지 필터링
+            cancel.isEnabled = false
             sp.setString(userLocation, lang)  // 다른 언어라면 db 값 변경
             radioGroup.check(radioButton.id) // 라디오 버튼 체크
             saveLanguageChange() // 언어 설정 변경 후 어플리케이션 재시작
@@ -440,9 +449,11 @@ class SettingActivity : BaseActivity() {
         dbData: String,
         radioGroup: RadioGroup,
         radioButton: RadioButton,
+        cancel: ImageView
     ) {
         // 테마모드 변경
         AppCompatDelegate.setDefaultNightMode(mode)
+        cancel.isEnabled = false
         // DB에 바뀐 정보 저장
         sp.setString("theme", dbData)
         // 라디오 버튼 체크

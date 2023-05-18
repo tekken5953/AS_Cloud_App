@@ -4,6 +4,7 @@ object StaticDataObject {
     const val CODE_SERVER_OK: Int = 200                   // 로그인 성공
     const val CODE_SERVER_DOWN: Int = 404                 // 서버 닫힘
     const val CODE_INVALID_TOKEN: Int = 401               // 토큰 만료
+    const val CODE_TIMEOUT_EXCEPTION: Int = 999
     const val RESPONSE_DEFAULT: String = "NULL"           // 통신기본 값 : String(NULL)
     const val RESPONSE_FAIL: String = "FAIL"              // 통신 실패
     const val TAG_R = "Tag_Retrofit"                      // 서버통신 기본 태그 Key

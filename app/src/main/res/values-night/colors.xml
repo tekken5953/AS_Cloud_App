@@ -2,6 +2,7 @@
 <resources>
     <color name="mode_color_text">#000000</color>
     <color name="mode_color_view">#FF000000</color>
+    <color name="mode_dark_color">#FFFFFF</color>
 
     <color name="view_pager_box">#88ffffff</color>
     <color name="background_color">#99000000</color>

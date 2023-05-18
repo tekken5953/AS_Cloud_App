@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.graphics.Color
 import android.os.*
 import android.text.Editable
 import android.text.TextWatcher
@@ -28,6 +29,7 @@ import com.example.airsignal_app.util.RefreshUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.database.collection.LLRBNode
 
 
 /**
@@ -83,7 +85,6 @@ class SearchDialog(
             }
 
             currentAdapter.setOnItemClickListener(object : AddressListAdapter.OnItemClickListener {
-                @RequiresApi(Build.VERSION_CODES.O)
                 override fun onItemClick(v: View, position: Int) {
                     dismissNow()
                     SharedPreferenceManager(activity).setString(
@@ -149,13 +150,9 @@ class SearchDialog(
         listView.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
                 val db = GpsRepository(requireContext())
-                val model = GpsEntity(
-                    searchItem[position],
-                    null,
-                    null,
-                    searchItem[position],
-                    getCurrentTime()
-                )
+                val model = GpsEntity()
+                model.addr = searchItem[position]
+                model.addr = searchItem[position]
                 db.insert(model)
                 this.dismissNow()
                 show(0)

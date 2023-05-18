@@ -4,7 +4,7 @@
     android:id="@+id/searchMainLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/mode_color_view">
 
     <ImageView
         android:id="@+id/searchBack"
@@ -15,7 +15,8 @@
         android:layout_marginStart="15dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:padding="4dp"
-        android:src="@drawable/back_arrow" />
+        android:src="@drawable/back_arrow"
+        app:tint="@color/mode_dark_color" />
 
     <EditText
         android:id="@+id/searchAddressView"
@@ -34,6 +35,7 @@
         android:inputType="text"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
+        android:textColor="@color/mode_color_view"
         android:textSize="14sp"
         app:drawableStartCompat="@drawable/search"
         app:drawableTint="@color/main_gray_color" />

@@ -7,6 +7,7 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.ConvertDataType
+import com.example.airsignal_app.util.OnSingleClickListener
 
 /**
  * @author : Lee Jae Young

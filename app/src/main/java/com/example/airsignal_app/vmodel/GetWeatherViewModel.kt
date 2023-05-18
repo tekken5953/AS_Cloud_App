@@ -1,5 +1,6 @@
 package com.example.airsignal_app.vmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.airsignal_app.repo.GetWeatherRepo
 import com.example.airsignal_app.retrofit.ApiModel
