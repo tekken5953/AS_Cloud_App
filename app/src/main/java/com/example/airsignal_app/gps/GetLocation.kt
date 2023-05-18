@@ -2,25 +2,26 @@ package com.example.airsignal_app.gps
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Address
-import android.location.Geocoder
-import android.location.Location
+import android.location.*
 import android.os.Build.VERSION
+import android.os.Bundle
 import android.util.Log
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.db.room.AppDataBase
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogNotLogin
 import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.ConvertDataType
-import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
 import com.example.airsignal_app.util.GetDeviceInfo
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,6 +30,7 @@ import timber.log.Timber
 import java.io.IOException
 import java.util.*
 
+
 class GetLocation(private val context: Context) {
     private val sp by lazy { SharedPreferenceManager(context) }
 
@@ -36,28 +38,26 @@ class GetLocation(private val context: Context) {
     @SuppressLint("MissingPermission")
     fun getLocation() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        LocationServices.getFusedLocationProviderClient(context)
-        fusedLocationClient.lastLocation
+        fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY,null)
             .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    getAddress(it.latitude, it.longitude)
-                    Log.w(
-                        "TAG_D",
-                        "version:${VERSION.SDK_INT}, ${it.latitude},${it.longitude},accuracy:${it.accuracy}"
-                    )
-                }
+            location?.let {
+                getAddress(it.latitude, it.longitude)
+                Log.w(
+                    "TAG_D",
+                    "version:${VERSION.SDK_INT}, ${it.latitude},${it.longitude},accuracy:${it.accuracy}"
+                )
             }
-            .addOnFailureListener {
-                it.printStackTrace()
-                it.localizedMessage?.let { it1 ->
-                    writeLogCause(
-                        email = "Error",
-                        isSuccess = "주소 불러오기 실패",
-                        log = it1
-                    )
-                }
-                Logger.t(TAG_D).e("Fail to Get Location")
+        }.addOnFailureListener {
+            it.printStackTrace()
+            it.localizedMessage?.let { it1 ->
+                writeLogCause(
+                    email = "Error",
+                    isSuccess = "주소 불러오기 실패",
+                    log = it1
+                )
             }
+            Logger.t(TAG_D).e("Fail to Get Location")
+        }
     }
 
     /** 현재 주소를 불러옵니다 **/
@@ -72,10 +72,10 @@ class GetLocation(private val context: Context) {
             if (address.isNotEmpty()) {
                 val it = address[0]
                 try {
-                    val address =  it.getAddressLine(0).replace("대한민국","")
+                    val newAddress = it.getAddressLine(0).replace("대한민국", "")
 
                     updateCurrentAddress(
-                        lat, lng,address
+                        it.latitude, it.longitude, newAddress
                     )
 
                     if (email != "") {
@@ -83,7 +83,7 @@ class GetLocation(private val context: Context) {
                             email = email,
                             isSuccess = "Background Location",
                             log = "${it.latitude} , ${it.longitude}\t " +
-                                    address
+                                    newAddress
                         )
                     } else {
                         writeLogNotLogin(
@@ -91,7 +91,7 @@ class GetLocation(private val context: Context) {
                             GetDeviceInfo().androidID(context),
                             isSuccess = "Background Location",
                             log = "${it.latitude} , ${it.longitude}\t " +
-                                    address
+                                    newAddress
                         )
 //                            renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)
                     }
@@ -110,7 +110,7 @@ class GetLocation(private val context: Context) {
             writeLogCause(
                 email,
                 "Background Location Exception",
-                "Error : ${e.printStackTrace()}"
+                "Error : ${e.localizedMessage}"
             )
         }
     }
@@ -119,7 +119,7 @@ class GetLocation(private val context: Context) {
     private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
         val roomDB = GpsRepository(context)
         val model = GpsEntity()
-        Log.d(TAG_D,roomDB.findAll().toString())
+        Log.d(TAG_D, roomDB.findAll().toString())
         model.name = CURRENT_GPS_ID
         model.lat = lat
         model.lng = lng
@@ -138,5 +138,41 @@ class GetLocation(private val context: Context) {
         Thread.sleep(100)
         sp.setString("WEATHER_CURRENT", new)
     }
+
+    @SuppressLint("MissingPermission")
+    fun getGpsInBackground() {
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+        val locationListener: LocationListener = object : LocationListener {
+            override fun onLocationChanged(location: Location) {
+                // 위치 업데이트가 발생했을 때 실행되는 코드
+                val latitude = location.latitude
+                val longitude = location.longitude
+                writeLogCause(
+                    email = "Test Background",
+                    isSuccess = GetDeviceInfo().androidID(context),
+                    log = "새로운 위치 : ${latitude},${longitude}"
+                )
+            }
+
+            override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
+                Log.d(TAG_D,"provider is changed : provider : $provider , status : $status")
+            }
+            override fun onProviderEnabled(provider: String) {
+                Log.d(TAG_D,"provider is Enabled")
+            }
+            override fun onProviderDisabled(provider: String) {
+                Log.d(TAG_D,"provider is Disabled")
+            }
+        }
+
+        locationManager!!.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            15 * 60 * 1000,
+            0f,
+            locationListener
+        )
+    }
+
+
 }
 

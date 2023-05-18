@@ -1,12 +1,15 @@
 package com.example.airsignal_app.repo
 
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.example.airsignal_app.dao.StaticDataObject.CODE_INVALID_TOKEN
 import com.example.airsignal_app.dao.StaticDataObject.CODE_SERVER_DOWN
 import com.example.airsignal_app.dao.StaticDataObject.CODE_SERVER_OK
+import com.example.airsignal_app.dao.StaticDataObject.CODE_TIMEOUT_EXCEPTION
 import com.example.airsignal_app.retrofit.HttpClient
 import com.orhanobut.logger.Logger
 import retrofit2.Response
+import java.net.SocketTimeoutException
 
 open class BaseRepository {
     private val httpClient = HttpClient

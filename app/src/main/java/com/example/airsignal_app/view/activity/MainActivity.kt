@@ -2,6 +2,7 @@ package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.*
@@ -15,10 +16,9 @@ import android.view.View.*
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.marginStart
 import androidx.databinding.DataBindingUtil
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
+import androidx.work.*
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.DailyWeatherAdapter
 import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
@@ -26,6 +26,7 @@ import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
+import com.example.airsignal_app.dao.StaticDataObject.CODE_TIMEOUT_EXCEPTION
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.dao.StaticDataObject.TAG_L
@@ -34,8 +35,10 @@ import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.gps.GetLocation
+import com.example.airsignal_app.gps.GetLocationListener
 import com.example.airsignal_app.gps.GpsWorker
 import com.example.airsignal_app.login.SilentLoginClass
+import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.util.ConvertDataType.convertDayOfWeekToKorean
 import com.example.airsignal_app.util.ConvertDataType.getDataColor
@@ -48,6 +51,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -61,21 +65,26 @@ class MainActivity : BaseActivity() {
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
-    private val airQualityList = ArrayList<AdapterModel.AirQualityItem>()
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(this, dailyWeatherList) }
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
     private val sp by lazy { SharedPreferenceManager(this) }
     private val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
-    private var mLastClickTime = 1500L
 
     override fun onResume() {
         super.onResume()
         Logger.t(TAG_L).d("onResume")
         showPB()
-        GetLocation(this).getLocation()
-        Handler(Looper.getMainLooper()).postDelayed({
-            getDataSingleTime()
-        },1500)
+        CoroutineScope(Dispatchers.IO).launch {
+            GetLocation(this@MainActivity).getLocation()
+            delay(100)
+            withContext(Dispatchers.Main) {
+                getDataSingleTime()
+            }
+        }
+//        GetLocation(this).getLocation()
+//        Handler(Looper.getMainLooper()).postDelayed({
+//            getDataSingleTime()
+//        }, 1000)
         Thread.sleep(100)
 //        binding.mainBottomAdView.resume()
     }
@@ -177,7 +186,12 @@ class MainActivity : BaseActivity() {
         binding.mainGpsTitleTv.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 val bottomSheet =
-                    SearchDialog(this@MainActivity, 0, supportFragmentManager, BottomSheetDialogFragment().tag)
+                    SearchDialog(
+                        this@MainActivity,
+                        0,
+                        supportFragmentManager,
+                        BottomSheetDialogFragment().tag
+                    )
                 bottomSheet.show(0)
             }
         })
@@ -186,10 +200,13 @@ class MainActivity : BaseActivity() {
             override fun onSingleClick(v: View?) {
                 if (RequestPermissionsUtil(this@MainActivity).isLocationPermitted()) {
                     showPB()
-                    GetLocation(this@MainActivity).getLocation()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        loadCurrentAddr()
-                    }, 1500)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        GetLocation(this@MainActivity).getLocation()
+                        delay(100)
+                        withContext(Dispatchers.Main) {
+                            getDataSingleTime()
+                        }
+                    }
                 } else {
                     RequestPermissionsUtil(this@MainActivity).requestLocation()
                 }
@@ -247,21 +264,23 @@ class MainActivity : BaseActivity() {
         if (RequestPermissionsUtil(this).isLocationPermitted()) {
             val addrArray = resources.getStringArray(R.array.address)
             if (addrArray.contains(sp.getString(lastAddress))) {
-                Log.d("Location","메인 엑티비티에서 저장된 주소로 데이터 호출")
+                Log.d("Location", "메인 엑티비티에서 저장된 주소로 데이터 호출")
                 loadSavedAddr()
             } else {
-                Log.d("Location","메인 엑티비티에서 현재 주소로 데이터 호출")
+                Log.d("Location", "메인 엑티비티에서 현재 주소로 데이터 호출")
                 loadCurrentAddr()
             }
         }
     }
 
     private fun loadCurrentAddr(): GpsEntity {
+        GetLocation(this@MainActivity).getLocation()
+        Thread.sleep(100)
         val dbCurrent = GpsRepository(this).findById(CURRENT_GPS_ID)
-        Log.d(TAG_D,dbCurrent.toString())
+        Log.d(TAG_D, dbCurrent.toString())
         try {
             val formatAddress = dbCurrent.addr!!
-                .replace("null", "").replace("대한민국","")
+                .replace("null", "").replace("대한민국", "")
             sp.setString(lastAddress, formatAddress)
 
             getDataViewModel.loadDataResult(
@@ -269,8 +288,6 @@ class MainActivity : BaseActivity() {
                 dbCurrent.lng,
                 null
             )
-
-            binding.mainGpsTitleTv.text = formatAddress
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -283,7 +300,6 @@ class MainActivity : BaseActivity() {
             null,
             sp.getString(lastAddress)
         )
-        binding.mainGpsTitleTv.text = sp.getString(lastAddress)
     }
 
     private fun showPB() {
@@ -300,6 +316,7 @@ class MainActivity : BaseActivity() {
 
         // 워크 매니저 생성
         CoroutineScope(Dispatchers.Default).launch { createWorkManager() }
+//        createWorkManager2()
 
         binding.mainDailyWeatherRv.adapter = dailyWeatherAdapter
         binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter
@@ -308,12 +325,17 @@ class MainActivity : BaseActivity() {
 //        AdViewClass(this).loadAdView(binding.mainBottomAdView)
     }
 
-    //
+    private fun createWorkManager2() {
+        GetLocation(this).getGpsInBackground()
+    }
+
     // 백그라운드에서 GPS 를 불러오기 위한 WorkManager
     private fun createWorkManager() {
         val workManager = WorkManager.getInstance(this)
         val workRequest =
-            PeriodicWorkRequest.Builder(GpsWorker::class.java, 15, TimeUnit.MINUTES).build()
+            PeriodicWorkRequest.Builder(GpsWorker::class.java, 15, TimeUnit.MINUTES)
+                .build()
+
         workManager.enqueueUniquePeriodicWork(
             CHECK_GPS_BACKGROUND,
             ExistingPeriodicWorkPolicy.KEEP, workRequest
@@ -390,13 +412,13 @@ class MainActivity : BaseActivity() {
 //                            realtime.windSpeed
 //                        ).toInt()
 //                    }˚"
-                spanUnit(binding.subWindValue,realtime.windSpeed.roundToInt().toString() + " ㎧")
-                spanUnit(binding.subRainPerValue,realtime.rainP.roundToInt().toString() + " %")
-                spanUnit(binding.subHumidValue,realtime.humid.roundToInt().toString() + " %")
+                spanUnit(binding.subWindValue, realtime.windSpeed.roundToInt().toString() + " ㎧")
+                spanUnit(binding.subRainPerValue, realtime.rainP.roundToInt().toString() + " %")
+                spanUnit(binding.subHumidValue, realtime.humid.roundToInt().toString() + " %")
 
                 binding.subWindValue.setCompoundDrawablesWithIntrinsicBounds(
-                    ResourcesCompat.getDrawable(resources,R.drawable.gps,null)
-                    ,null,null,null)
+                    ResourcesCompat.getDrawable(resources, R.drawable.gps, null), null, null, null
+                )
                 binding.mainPm10Grade.setGradeText((air.pm10Grade - 1).toString())
                 binding.mainPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
                 binding.mainMinMaxMin.text = "${filteringNullData(today.min)}˚"
@@ -413,6 +435,10 @@ class MainActivity : BaseActivity() {
                     binding.mainCompareTempIv,
                     binding.mainCompareTempTv
                 )
+
+                binding.mainGpsTitleTv.text = sp.getString(lastAddress)
+                binding.segmentProgress2p5Arrow.setPadding(air.pm25Value,0,0,0)
+                binding.segmentProgress10Arrow.setPadding(air.pm10Value.toInt(),0,0,0)
 
                 for (i: Int in 0 until result.realtime.size) {
                     try {
@@ -454,10 +480,9 @@ class MainActivity : BaseActivity() {
                 }
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
-
-                runOnUiThread {
-                    hidePB()
-                }
+            }
+            runOnUiThread {
+                hidePB()
             }
         }
         return this
@@ -528,12 +553,24 @@ class MainActivity : BaseActivity() {
             if (yesterday > today) {
                 tv.visibility = VISIBLE
                 iv.visibility = VISIBLE
-                iv.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.arrow_down, null))
+                iv.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.arrow_down,
+                        null
+                    )
+                )
                 tv.text = "${(yesterday - today).roundToInt().absoluteValue}˚"
             } else if (today > yesterday) {
                 tv.visibility = VISIBLE
                 iv.visibility = VISIBLE
-                iv.setImageDrawable(ResourcesCompat.getDrawable(resources, R.drawable.arrow_up, null))
+                iv.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.arrow_up,
+                        null
+                    )
+                )
                 tv.text = "${(today - yesterday).roundToInt().absoluteValue} ˚"
             } else {
                 iv.visibility = GONE
@@ -542,6 +579,13 @@ class MainActivity : BaseActivity() {
         } else {
             iv.visibility = GONE
             tv.visibility = GONE
+        }
+    }
+
+    class CustomTimeOutException: SocketTimeoutException() {
+        override fun getLocalizedMessage(): String? {
+            MainActivity().hidePB()
+            return super.getLocalizedMessage()
         }
     }
 }
