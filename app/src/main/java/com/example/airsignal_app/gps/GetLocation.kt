@@ -3,6 +3,7 @@ package com.example.airsignal_app.gps
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.*
+import android.location.LocationListener
 import android.os.Build.VERSION
 import android.os.Bundle
 import android.util.Log
@@ -17,15 +18,9 @@ import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogNotLogin
 import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.GetDeviceInfo
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
-import com.google.android.gms.tasks.CancellationToken
-import com.google.android.gms.tasks.CancellationTokenSource
-import com.google.android.gms.tasks.OnTokenCanceledListener
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.IOException
 import java.util.*
@@ -33,31 +28,37 @@ import java.util.*
 
 class GetLocation(private val context: Context) {
     private val sp by lazy { SharedPreferenceManager(context) }
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
     /** GPS 의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
     @SuppressLint("MissingPermission")
     fun getLocation() {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY,null)
+//        val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+//        val location: Location? = lm!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+//        location?.let {
+//
+//            getAddress(it.latitude, it.longitude)
+//        }
+        fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
             .addOnSuccessListener { location: Location? ->
-            location?.let {
-                getAddress(it.latitude, it.longitude)
-                Log.w(
-                    "TAG_D",
-                    "version:${VERSION.SDK_INT}, ${it.latitude},${it.longitude},accuracy:${it.accuracy}"
-                )
+                location?.let {
+                    getAddress(it.latitude, it.longitude)
+                    Log.w(
+                        "TAG_D",
+                        "version:${VERSION.SDK_INT}, ${it.latitude},${it.longitude},accuracy:${it.accuracy}"
+                    )
+                }
+            }.addOnFailureListener {
+                it.printStackTrace()
+                it.localizedMessage?.let { it1 ->
+                    writeLogCause(
+                        email = "Error",
+                        isSuccess = "주소 불러오기 실패",
+                        log = it1
+                    )
+                }
+                Logger.t(TAG_D).e("Fail to Get Location")
             }
-        }.addOnFailureListener {
-            it.printStackTrace()
-            it.localizedMessage?.let { it1 ->
-                writeLogCause(
-                    email = "Error",
-                    isSuccess = "주소 불러오기 실패",
-                    log = it1
-                )
-            }
-            Logger.t(TAG_D).e("Fail to Get Location")
-        }
     }
 
     /** 현재 주소를 불러옵니다 **/
@@ -155,13 +156,15 @@ class GetLocation(private val context: Context) {
             }
 
             override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
-                Log.d(TAG_D,"provider is changed : provider : $provider , status : $status")
+                Log.d(TAG_D, "provider is changed : provider : $provider , status : $status")
             }
+
             override fun onProviderEnabled(provider: String) {
-                Log.d(TAG_D,"provider is Enabled")
+                Log.d(TAG_D, "provider is Enabled")
             }
+
             override fun onProviderDisabled(provider: String) {
-                Log.d(TAG_D,"provider is Disabled")
+                Log.d(TAG_D, "provider is Disabled")
             }
         }
 
@@ -172,7 +175,5 @@ class GetLocation(private val context: Context) {
             locationListener
         )
     }
-
-
 }
 

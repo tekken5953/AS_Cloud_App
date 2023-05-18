@@ -16,6 +16,7 @@ import android.view.View.*
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.postDelayed
 import androidx.core.view.marginStart
 import androidx.databinding.DataBindingUtil
 import androidx.work.*
@@ -69,6 +70,7 @@ class MainActivity : BaseActivity() {
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
     private val sp by lazy { SharedPreferenceManager(this) }
     private val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
+    private var isInit = true
 
     override fun onResume() {
         super.onResume()
@@ -76,7 +78,7 @@ class MainActivity : BaseActivity() {
         showPB()
         CoroutineScope(Dispatchers.IO).launch {
             GetLocation(this@MainActivity).getLocation()
-            delay(100)
+            delay(1500)
             withContext(Dispatchers.Main) {
                 getDataSingleTime()
             }
@@ -85,6 +87,8 @@ class MainActivity : BaseActivity() {
 //        Handler(Looper.getMainLooper()).postDelayed({
 //            getDataSingleTime()
 //        }, 1000)
+        if (isInit)
+         isInit = false
         Thread.sleep(100)
 //        binding.mainBottomAdView.resume()
     }
@@ -200,13 +204,10 @@ class MainActivity : BaseActivity() {
             override fun onSingleClick(v: View?) {
                 if (RequestPermissionsUtil(this@MainActivity).isLocationPermitted()) {
                     showPB()
-                    CoroutineScope(Dispatchers.IO).launch {
-                        GetLocation(this@MainActivity).getLocation()
-                        delay(100)
-                        withContext(Dispatchers.Main) {
-                            getDataSingleTime()
-                        }
-                    }
+                    GetLocation(this@MainActivity).getLocation()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        loadCurrentAddr()
+                    }, 1500)
                 } else {
                     RequestPermissionsUtil(this@MainActivity).requestLocation()
                 }
@@ -274,10 +275,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun loadCurrentAddr(): GpsEntity {
-        GetLocation(this@MainActivity).getLocation()
-        Thread.sleep(100)
         val dbCurrent = GpsRepository(this).findById(CURRENT_GPS_ID)
-        Log.d(TAG_D, dbCurrent.toString())
         try {
             val formatAddress = dbCurrent.addr!!
                 .replace("null", "").replace("대한민국", "")
@@ -355,7 +353,6 @@ class MainActivity : BaseActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             isBackPressed = false
         }, 2000)
-//        }
     }
 
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
@@ -403,7 +400,7 @@ class MainActivity : BaseActivity() {
 //                binding.mainSunSetValue.text =
 //                    sun.sunset.substring(0, 2) + ":" + sun.sunset.substring(2, sun.sunset.length)
                 binding.mainSkyImg.setImageDrawable(applySkyImg(realtime.rainType, realtime.sky))
-                binding.mainSkyText.text = realtime.sky
+                binding.mainSkyText.text = applySkyText(realtime.rainType,realtime.sky)
 //                binding.mainSensibleValue.text =
 //                    "${getString(R.string.sens_temp)} : ${
 //                        SensibleTempFormula().getSensibleTemp(
@@ -437,8 +434,8 @@ class MainActivity : BaseActivity() {
                 )
 
                 binding.mainGpsTitleTv.text = sp.getString(lastAddress)
-                binding.segmentProgress2p5Arrow.setPadding(air.pm25Value,0,0,0)
-                binding.segmentProgress10Arrow.setPadding(air.pm10Value.toInt(),0,0,0)
+                binding.segmentProgress2p5Arrow.setPadding(air.pm25Value, 0, 0, 0)
+                binding.segmentProgress10Arrow.setPadding(air.pm10Value.toInt(), 0, 0, 0)
 
                 for (i: Int in 0 until result.realtime.size) {
                     try {
@@ -582,7 +579,7 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    class CustomTimeOutException: SocketTimeoutException() {
+    class CustomTimeOutException : SocketTimeoutException() {
         override fun getLocalizedMessage(): String? {
             MainActivity().hidePB()
             return super.getLocalizedMessage()

@@ -1,6 +1,7 @@
 package com.example.airsignal_app.retrofit
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.example.airsignal_app.dao.IgnoredKeyFile.springServerURL
 import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.util.LoggerUtil
@@ -41,24 +42,27 @@ object HttpClient {
         val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
             connectTimeout(10,TimeUnit.SECONDS)
             readTimeout(10,TimeUnit.SECONDS)
-            retryOnConnectionFailure(true)
-            addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-                override fun log(message: String) {
-                    if (!message.startsWith("{") && !message.startsWith("[")) {
-                        Timber.tag("Timber").d(message)
-                        return
-                    }
-                    try {
-                        // Timber 와 Gson setPrettyPrinting 를 이용해 json 을 보기 편하게 표시해준다.
-                        LoggerUtil().getInstance().logJsonTimberDebug("Timber", message)
-                    } catch (m: JsonSyntaxException) {
-                        Timber.tag("Timber").e(m.localizedMessage!!.toString())
-                        Timber.tag("Timber").e(message)
-                    }
-                }
-            }).apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            }).build()
+            retryOnConnectionFailure(false)
+//            addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+//                override fun log(message: String) {
+//                    if (!message.startsWith("{") && !message.startsWith("[")) {
+//                        Timber.tag("Timber").i(message)
+//                        return
+//                    }
+//                    try {
+//                        // Timber 와 Gson setPrettyPrinting 를 이용해 json 을 보기 편하게 표시해준다.
+//                        LoggerUtil().getInstance().logJsonTimberDebug("Timber", message)
+//                        return
+//                    } catch (m: JsonSyntaxException) {
+//                        Timber.tag("Timber").e(m.localizedMessage!!.toString())
+//                        Timber.tag("Timber").e(message)
+//                        return
+//                    }
+//                }
+//            }).apply {
+//                level = HttpLoggingInterceptor.Level.BODY
+//            })
+             .build()
             addInterceptor { chain ->
                 val request = chain.request()
                 val response = try {
