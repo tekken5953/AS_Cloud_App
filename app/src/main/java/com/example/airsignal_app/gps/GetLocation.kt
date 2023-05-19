@@ -7,6 +7,7 @@ import android.location.LocationListener
 import android.os.Build.VERSION
 import android.os.Bundle
 import android.util.Log
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
@@ -28,7 +29,7 @@ import java.util.*
 
 class GetLocation(private val context: Context) {
     private val sp by lazy { SharedPreferenceManager(context) }
-    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
 
     /** GPS 의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
     @SuppressLint("MissingPermission")
@@ -39,6 +40,7 @@ class GetLocation(private val context: Context) {
 //
 //            getAddress(it.latitude, it.longitude)
 //        }
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
             .addOnSuccessListener { location: Location? ->
                 location?.let {
@@ -62,9 +64,8 @@ class GetLocation(private val context: Context) {
     }
 
     /** 현재 주소를 불러옵니다 **/
-    private fun getAddress(lat: Double, lng: Double) {
+    fun getAddress(lat: Double, lng: Double): String {
         val email = sp.getString(userEmail)
-        val nowAddress = "현재 위치를 확인 할 수 없습니다"
         lateinit var address: List<Address>
         try {
             val geocoder = Geocoder(context, ConvertDataType.getLocale(context))
@@ -72,39 +73,18 @@ class GetLocation(private val context: Context) {
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             if (address.isNotEmpty()) {
                 val it = address[0]
+                val newAddress = it.getAddressLine(0).replace("대한민국", "")
                 try {
-                    val newAddress = it.getAddressLine(0).replace("대한민국", "")
-
                     updateCurrentAddress(
                         it.latitude, it.longitude, newAddress
                     )
 
-                    if (email != "") {
-                        writeLogCause(
-                            email = email,
-                            isSuccess = "Background Location",
-                            log = "${it.latitude} , ${it.longitude}\t " +
-                                    newAddress
-                        )
-                    } else {
-                        writeLogNotLogin(
-                            "비로그인",
-                            GetDeviceInfo().androidID(context),
-                            isSuccess = "Background Location",
-                            log = "${it.latitude} , ${it.longitude}\t " +
-                                    newAddress
-                        )
+                    writeRdbLog(it.latitude,it.longitude,newAddress)
 //                            renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)
-                    }
+                    return newAddress
                 } catch (e: Exception) {
                     Timber.tag("Location").e("Location Contains null")
                 }
-            } else {
-                writeLogCause(
-                    email,
-                    "Background Location Empty",
-                    "Address is Empty : $nowAddress"
-                )
             }
         } catch (e: IOException) {
             Timber.tag("Location").e("주소를 가져오는 도중 오류가 발생했습니다")
@@ -114,11 +94,13 @@ class GetLocation(private val context: Context) {
                 "Error : ${e.localizedMessage}"
             )
         }
+        return ""
     }
 
     /** 현재 주소 DB에 업데이트 **/
-    private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
+    fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
         val roomDB = GpsRepository(context)
+        sp.setString(lastAddress,addr)
         val model = GpsEntity()
         Log.d(TAG_D, roomDB.findAll().toString())
         model.name = CURRENT_GPS_ID
@@ -174,6 +156,26 @@ class GetLocation(private val context: Context) {
             0f,
             locationListener
         )
+    }
+
+    fun writeRdbLog(lat: Double, lng: Double, addr: String) {
+        val email = sp.getString(userEmail)
+        if (email != "") {
+            writeLogCause(
+                email = email,
+                isSuccess = "Background Location",
+                log = "$lat , $lng \t " +
+                        addr
+            )
+        } else {
+            writeLogNotLogin(
+                "비로그인",
+                GetDeviceInfo().androidID(context),
+                isSuccess = "Background Location",
+                log = "$lat , $lng \t " +
+                        addr
+            )
+        }
     }
 }
 

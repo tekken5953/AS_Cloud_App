@@ -10,7 +10,9 @@
         <OnSwipe
             motion:dragDirection="dragUp"
             motion:touchAnchorId="@id/nested_scrollview"
-            motion:touchAnchorSide="top"/>
+            motion:touchAnchorSide="top"
+            motion:onTouchUp="autoComplete"
+            motion:dragScale="2"/>
     </Transition>
 
     <ConstraintSet android:id="@+id/start">

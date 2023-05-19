@@ -5,16 +5,19 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.location.Location
 import android.os.*
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.*
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.postDelayed
 import androidx.core.view.marginStart
@@ -35,6 +38,7 @@ import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
+import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GetLocationListener
 import com.example.airsignal_app.gps.GpsWorker
@@ -48,6 +52,8 @@ import com.example.airsignal_app.util.ConvertDataType.getSkyImg
 import com.example.airsignal_app.view.*
 import com.example.airsignal_app.view.widget.WidgetProvider
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
@@ -71,18 +77,13 @@ class MainActivity : BaseActivity() {
     private val sp by lazy { SharedPreferenceManager(this) }
     private val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
     private var isInit = true
+    private var scrollY = 0f
 
     override fun onResume() {
         super.onResume()
         Logger.t(TAG_L).d("onResume")
         showPB()
-        CoroutineScope(Dispatchers.IO).launch {
-            GetLocation(this@MainActivity).getLocation()
-            delay(1500)
-            withContext(Dispatchers.Main) {
-                getDataSingleTime()
-            }
-        }
+        getDataSingleTime()
 //        GetLocation(this).getLocation()
 //        Handler(Looper.getMainLooper()).postDelayed({
 //            getDataSingleTime()
@@ -103,6 +104,7 @@ class MainActivity : BaseActivity() {
 //        binding.mainBottomAdView.pause()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView<ActivityMainBinding?>(
@@ -204,10 +206,7 @@ class MainActivity : BaseActivity() {
             override fun onSingleClick(v: View?) {
                 if (RequestPermissionsUtil(this@MainActivity).isLocationPermitted()) {
                     showPB()
-                    GetLocation(this@MainActivity).getLocation()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        loadCurrentAddr()
-                    }, 1500)
+                    getCurrentLocation()
                 } else {
                     RequestPermissionsUtil(this@MainActivity).requestLocation()
                 }
@@ -269,28 +268,28 @@ class MainActivity : BaseActivity() {
                 loadSavedAddr()
             } else {
                 Log.d("Location", "메인 엑티비티에서 현재 주소로 데이터 호출")
-                loadCurrentAddr()
+                getCurrentLocation()
             }
         }
     }
 
-    private fun loadCurrentAddr(): GpsEntity {
-        val dbCurrent = GpsRepository(this).findById(CURRENT_GPS_ID)
-        try {
-            val formatAddress = dbCurrent.addr!!
-                .replace("null", "").replace("대한민국", "")
-            sp.setString(lastAddress, formatAddress)
-
-            getDataViewModel.loadDataResult(
-                dbCurrent.lat,
-                dbCurrent.lng,
-                null
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return dbCurrent
-    }
+//    private fun loadCurrentAddr(): GpsEntity {
+//        val dbCurrent = GpsRepository(this).findById(CURRENT_GPS_ID)
+//        try {
+//            val formatAddress = dbCurrent.addr!!
+//                .replace("null", "").replace("대한민국", "")
+//            sp.setString(lastAddress, formatAddress)
+//
+//            getDataViewModel.loadDataResult(
+//                dbCurrent.lat,
+//                dbCurrent.lng,
+//                null
+//            )
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//        }
+//        return dbCurrent
+//    }
 
     private fun loadSavedAddr() {
         getDataViewModel.loadDataResult(
@@ -298,6 +297,7 @@ class MainActivity : BaseActivity() {
             null,
             sp.getString(lastAddress)
         )
+        binding.mainGpsTitleTv.text = sp.getString(lastAddress)
     }
 
     private fun showPB() {
@@ -433,7 +433,6 @@ class MainActivity : BaseActivity() {
                     binding.mainCompareTempTv
                 )
 
-                binding.mainGpsTitleTv.text = sp.getString(lastAddress)
                 binding.segmentProgress2p5Arrow.setPadding(air.pm25Value, 0, 0, 0)
                 binding.segmentProgress10Arrow.setPadding(air.pm10Value.toInt(), 0, 0, 0)
 
@@ -584,5 +583,46 @@ class MainActivity : BaseActivity() {
             MainActivity().hidePB()
             return super.getLocalizedMessage()
         }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getCurrentLocation() {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
+            .addOnSuccessListener { location: Location? ->
+                location?.let { gps ->
+                   GetLocation(this@MainActivity).getAddress(gps.latitude, gps.longitude).let { address ->
+                       CoroutineScope(Dispatchers.IO).launch {
+                           getDataViewModel.loadDataResult(gps.latitude,gps.longitude,null)
+                           delay(100)
+                       }
+                       GetLocation(this).writeRdbLog(gps.latitude,gps.longitude, address)
+                       binding.mainGpsTitleTv.text = address
+                       hidePB()
+                   }
+                }
+            }
+    }
+
+    private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
+        val roomDB = GpsRepository(this)
+        sp.setString(lastAddress,addr)
+        val model = GpsEntity()
+        Log.d(TAG_D, roomDB.findAll().toString())
+        model.name = CURRENT_GPS_ID
+        model.lat = lat
+        model.lng = lng
+        model.addr = addr
+        if (dbIsEmpty(roomDB)) {
+            roomDB.insert(model)
+            Logger.t(TAG_D).d("Insert GPS In GetLocation")
+        } else {
+            roomDB.update(model)
+            Logger.t(TAG_D).d("Update GPS In GetLocation")
+        }
+    }
+
+    private fun dbIsEmpty(db: GpsRepository): Boolean {
+        return db.findAll().isEmpty()
     }
 }
