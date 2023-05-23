@@ -75,21 +75,21 @@
             android:name=".view.activity.LoginActivity"
             android:exported="true" />
 
-        <receiver
-            android:name=".view.widget.WidgetProvider"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="android.intent.action.DATE_CHANGED" />
-<!--                <action android:name="com.example.airsignal_app.view.widget.RE_GPS" />-->
+<!--        <receiver-->
+<!--            android:name=".view.widget.WidgetProvider"-->
+<!--            android:exported="false">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
+<!--                <action android:name="android.intent.action.DATE_CHANGED" />-->
+<!--&lt;!&ndash;                <action android:name="com.example.airsignal_app.view.widget.RE_GPS" />&ndash;&gt;-->
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--            </intent-filter>-->
 
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_provider" />
-        </receiver>
+<!--            <meta-data-->
+<!--                android:name="android.appwidget.provider"-->
+<!--                android:resource="@xml/widget_provider" />-->
+<!--        </receiver>-->
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

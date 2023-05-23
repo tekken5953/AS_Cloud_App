@@ -33,22 +33,12 @@ class GetLocation(private val context: Context) {
 
     /** GPS 의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
     @SuppressLint("MissingPermission")
-    fun getLocation() {
-//        val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
-//        val location: Location? = lm!!.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-//        location?.let {
-//
-//            getAddress(it.latitude, it.longitude)
-//        }
+    fun getLocationInBackground() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     getAddress(it.latitude, it.longitude)
-                    Log.w(
-                        "TAG_D",
-                        "version:${VERSION.SDK_INT}, ${it.latitude},${it.longitude},accuracy:${it.accuracy}"
-                    )
                 }
             }.addOnFailureListener {
                 it.printStackTrace()
@@ -72,14 +62,30 @@ class GetLocation(private val context: Context) {
             @Suppress("DEPRECATION")
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             if (address.isNotEmpty()) {
-                val it = address[0]
-                val newAddress = it.getAddressLine(0).replace("대한민국", "")
+                val fullAddress: String = address[0].getAddressLine(0) // 주소 문자열 가져오기
+                var newAddress = ""
+                val addressParts = fullAddress.split(" ").toTypedArray() // 공백을 기준으로 주소 요소 분리
+                var formattedAddress = ""
+                for (i in 0 until addressParts.size - 1) {
+                    formattedAddress += addressParts[i].trim { it <= ' ' } // 건물 주소를 제외한 나머지 요소 추출
+                    if (i < addressParts.size - 2) {
+                        formattedAddress += " " // 요소 사이에 공백 추가
+                    }
+                }
+
+                newAddress = if (formattedAddress.contains("null")) {
+                    formattedAddress.split("null")[0].replace("대한민국","")
+                } else {
+                    formattedAddress.replace("대한민국", "")
+                }
+                Log.i(TAG_D, formattedAddress) // 건물 주소를 제외한 주소 출력
+
                 try {
                     updateCurrentAddress(
-                        it.latitude, it.longitude, newAddress
+                        address[0].latitude, address[0].longitude, newAddress
                     )
 
-                    writeRdbLog(it.latitude,it.longitude,newAddress)
+                    writeRdbLog(address[0].latitude, address[0].longitude, newAddress)
 //                            renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)
                     return newAddress
                 } catch (e: Exception) {
@@ -100,7 +106,7 @@ class GetLocation(private val context: Context) {
     /** 현재 주소 DB에 업데이트 **/
     fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
         val roomDB = GpsRepository(context)
-        sp.setString(lastAddress,addr)
+        sp.setString(lastAddress, addr)
         val model = GpsEntity()
         Log.d(TAG_D, roomDB.findAll().toString())
         model.name = CURRENT_GPS_ID
@@ -130,6 +136,7 @@ class GetLocation(private val context: Context) {
                 // 위치 업데이트가 발생했을 때 실행되는 코드
                 val latitude = location.latitude
                 val longitude = location.longitude
+                updateCurrentAddress(latitude,longitude,getAddress(latitude,longitude))
                 writeLogCause(
                     email = "Test Background",
                     isSuccess = GetDeviceInfo().androidID(context),
@@ -152,8 +159,8 @@ class GetLocation(private val context: Context) {
 
         locationManager!!.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
-            15 * 60 * 1000,
-            0f,
+            0,
+            100f,
             locationListener
         )
     }
