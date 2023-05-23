@@ -24,7 +24,8 @@
         android:roundIcon="@drawable/app_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.AirSignal_App"
-        android:windowSoftInputMode="adjustNothing">
+        android:windowSoftInputMode="adjustNothing"
+        tools:replace="android:icon,android:label">
         <activity
             android:name=".view.activity.RedirectPermissionActivity"
             android:exported="false">

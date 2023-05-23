@@ -71,6 +71,8 @@ class MainActivity : BaseActivity() {
     private val sp by lazy { SharedPreferenceManager(this) }
     private val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
     private var isInit = true
+    private val SHOWING_LOADING_FLOAT = 0.5f
+    private val NOT_SHOWING_LOADING_FLOAT = 1f
 
     override fun onResume() {
         super.onResume()
@@ -111,6 +113,7 @@ class MainActivity : BaseActivity() {
         binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
 
         val geocoder = Geocoder(this, ConvertDataType.getLocale(this))
+
         @Suppress("DEPRECATION")
         val address = geocoder.getFromLocation(37.5497098, 127.0143371, 1) as List<Address>
         if (address.isNotEmpty()) {
@@ -127,9 +130,9 @@ class MainActivity : BaseActivity() {
                     }
                 }
 
-                Log.i(TAG_D,"main : $formattedAddress") // 건물 주소를 제외한 주소 출력
+                Log.i(TAG_D, "main : $formattedAddress") // 건물 주소를 제외한 주소 출력
             } else {
-                Log.i(TAG_D,"main2 : $fullAddress")
+                Log.i(TAG_D, "main2 : $fullAddress")
             }
 
         }
@@ -172,6 +175,8 @@ class MainActivity : BaseActivity() {
                 )
             )
         }
+
+        binding.seekArc.setOnTouchListener { p0, p1 -> true }
 
 //        // TEST NOTIFICATION
 //        /////////////////////////////////////////////////////////////////
@@ -269,9 +274,17 @@ class MainActivity : BaseActivity() {
             if (addrArray.contains(sp.getString(lastAddress))) {
                 Log.d("Location", "메인 엑티비티에서 저장된 주소로 데이터 호출")
                 loadSavedAddr()
+                // TimeOut
+                Handler(Looper.getMainLooper()).postDelayed({
+                    hidePB()
+                }, 1000 * 6)
             } else {
                 Log.d("Location", "메인 엑티비티에서 현재 주소로 데이터 호출")
                 getCurrentLocation()
+                // TimeOut
+                Handler(Looper.getMainLooper()).postDelayed({
+                    hidePB()
+                }, 1000 * 6)
             }
         }
     }
@@ -286,17 +299,19 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showPB() {
-        binding.mainMotionLayout.alpha = 0.5f
+        if (binding.mainMotionLayout.alpha == NOT_SHOWING_LOADING_FLOAT)
+            binding.mainMotionLayout.alpha = SHOWING_LOADING_FLOAT
     }
 
     private fun hidePB() {
-        binding.mainMotionLayout.alpha = 1f
+        if (binding.mainMotionLayout.alpha == SHOWING_LOADING_FLOAT)
+            binding.mainMotionLayout.alpha = NOT_SHOWING_LOADING_FLOAT
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
         // 워크 매니저 생성
-        CoroutineScope(Dispatchers.Default).launch { createWorkManager() }
+        CoroutineScope(Dispatchers.IO).launch { createWorkManager() }
 
         binding.mainDailyWeatherRv.adapter = dailyWeatherAdapter
         binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter

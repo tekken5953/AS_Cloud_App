@@ -78,5 +78,6 @@
     <string name="widget_time_format">MM월 dd일 HH시 mm분</string>
     <string name="delete_item">를 삭제하시겠습니까?</string>
     <string name="outdoor_air">외부 공기질</string>
+    <string name="system">시스템</string>
 
 </resources>

@@ -43,6 +43,27 @@ object ConvertDataType {
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
+    fun setTextSizeSmall(context: Context) {
+        val configuration = context.resources.configuration
+        configuration.fontScale = 0.7f
+        @Suppress("DEPRECATION")
+        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+    }
+
+    fun setTextSizeLarge(context: Context) {
+        val configuration = context.resources.configuration
+        configuration.fontScale = 1.3f
+        @Suppress("DEPRECATION")
+        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+    }
+
+    fun setTextSizeDefault(context: Context) {
+        val configuration = context.resources.configuration
+        configuration.fontScale = 1f
+        @Suppress("DEPRECATION")
+        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+    }
+
     /** 화면을 풀 스크린으로 사용합니다 **/
     @Suppress("DEPRECATION")
     fun setFullScreenMode(activity: Activity) {

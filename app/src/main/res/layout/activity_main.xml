@@ -19,7 +19,6 @@
         app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
 
-
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nested_scrollview"
             android:layout_width="match_parent"
@@ -246,17 +245,32 @@
                     android:id="@+id/mainSunBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
                     android:layout_below="@+id/nested_pm_box"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_horizontal"
+                    android:background="@drawable/scrolled_box_bg"
                     android:layout_marginBottom="35dp">
-                    <com.example.airsignal_app.view.SemiCircularProgressBar
-                        android:id="@+id/semiCircularProgressBar"
+
+                    <com.triggertrap.seekarc.SeekArc
+                        android:id="@+id/seekArc"
                         android:layout_width="200dp"
-                        android:layout_height="100dp"
-                        android:max="100"
-                        android:layout_centerHorizontal="true"
-                        android:progress="50"/>
+                        android:layout_height="200dp"
+                        android:padding="50dp"
+                        android:layout_centerVertical="true"
+                        app:arcWidth="6dp"
+                        app:max="100"
+                        app:progress="50"
+                        app:progressColor="@color/progressBad"
+                        app:progressWidth="6dp"
+                        app:rotation="180"
+                        app:roundEdges="true"
+                        app:startAngle="90"
+                        app:sweepAngle="180"
+                        app:thumb="@drawable/outlet"
+                        app:touchInside="false" />
+
                 </RelativeLayout>
             </RelativeLayout>
         </androidx.core.widget.NestedScrollView>

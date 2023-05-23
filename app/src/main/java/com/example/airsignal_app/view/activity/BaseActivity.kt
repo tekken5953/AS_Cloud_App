@@ -30,6 +30,18 @@ open class BaseActivity : AppCompatActivity() {
             }
         }
 
+        when(sp.getString("scale")) {
+            "small" -> {
+                ConvertDataType.setTextSizeSmall(this)
+            }
+            "big" -> {
+                ConvertDataType.setTextSizeLarge(this)
+            }
+            else -> {
+                ConvertDataType.setTextSizeDefault(this)
+            }
+        }
+
         // 설정된 테마 정보 불러오기
         when(sp.getString("theme")) {
             "dark" -> {

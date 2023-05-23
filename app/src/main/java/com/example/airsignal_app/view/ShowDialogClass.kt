@@ -5,6 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.example.airsignal_app.R
+import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.RefreshUtils
 import javax.inject.Singleton
 
@@ -22,6 +24,17 @@ class ShowDialogClass {
     fun getInstance(mActivity: Activity): ShowDialogClass {
         activity = mActivity
         builder = androidx.appcompat.app.AlertDialog.Builder(activity, R.style.AlertDialog)
+        when(SharedPreferenceManager(activity).getString("scale")) {
+            "small" -> {
+                ConvertDataType.setTextSizeSmall(activity)
+            }
+            "big" -> {
+                ConvertDataType.setTextSizeLarge(activity)
+            }
+            else -> {
+                ConvertDataType.setTextSizeDefault(activity)
+            }
+        }
         return this
     }
 

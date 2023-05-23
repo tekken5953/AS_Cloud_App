@@ -39,7 +39,7 @@
         app:layout_constraintTop_toBottomOf="@+id/changeThemeTitle">
 
         <RadioButton
-            android:id="@+id/systemThemeRb"
+            android:id="@+id/themeSystemRB"
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:letterSpacing="-0.04"
@@ -57,7 +57,7 @@
             android:drawableTint="@android:color/transparent"/>
 
         <RadioButton
-            android:id="@+id/lightThemeRb"
+            android:id="@+id/themeLightRB"
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:text="@string/theme_light"
@@ -75,7 +75,7 @@
             android:drawableTint="@android:color/transparent"/>
 
         <RadioButton
-            android:id="@+id/darkThemeRb"
+            android:id="@+id/themeDarkRB"
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:text="@string/theme_dark"

@@ -52,9 +52,9 @@ dependencies {
     // Swipe Refresh Layout
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     // Smart Refresh Layout
-    implementation  'io.github.scwang90:refresh-layout-kernel:2.0.5'      //核心必须依赖
-    implementation  'io.github.scwang90:refresh-header-radar:2.0.5'       //雷达刷新头
-    implementation  'io.github.scwang90:refresh-footer-classics:2.0.5'    //经典加载
+    implementation 'io.github.scwang90:refresh-layout-kernel:2.0.5'      //核心必须依赖
+    implementation 'io.github.scwang90:refresh-header-radar:2.0.5'       //雷达刷新头
+    implementation 'io.github.scwang90:refresh-footer-classics:2.0.5'    //经典加载
 
     // Google Login
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
@@ -132,6 +132,9 @@ dependencies {
     // Firebase ui auth
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
     implementation 'com.google.firebase:firebase-auth-ktx'
+
+    // SeekArc - Sun Graph
+    implementation 'com.github.Triggertrap:SeekArc:v1.1'
 
 //    def nav_version = "2.5.3"
 //    // Feature module Support

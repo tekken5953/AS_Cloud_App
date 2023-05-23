@@ -23,6 +23,7 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
+import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.ConvertDataType.convertAddress
 import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
 import com.example.airsignal_app.util.RefreshUtils
@@ -60,6 +61,17 @@ class SearchDialog(
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        when(SharedPreferenceManager(activity).getString("scale")) {
+            "small" -> {
+                ConvertDataType.setTextSizeSmall(activity)
+            }
+            "big" -> {
+                ConvertDataType.setTextSizeLarge(activity)
+            }
+            else -> {
+                ConvertDataType.setTextSizeDefault(activity)
+            }
+        }
         if (layoutId == 0) {
             val changeAddressView: TextView = view.findViewById(R.id.changeAddressView)
             changeAddressView.setOnClickListener {
