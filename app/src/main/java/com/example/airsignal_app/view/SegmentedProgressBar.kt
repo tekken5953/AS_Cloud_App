@@ -188,5 +188,5 @@ class SegmentedProgressBar(context: Context?, attributeSet: AttributeSet? = null
     }
 
     class BarContext(val percentage: Float)
-    
+
 }

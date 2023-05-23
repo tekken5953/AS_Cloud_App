@@ -82,7 +82,7 @@ open class WidgetProvider : AppWidgetProvider() {
                         }
 
                     val pendingRefresh: PendingIntent = Intent(context, WidgetProvider::class.java).let {
-                        GetLocation(context).getLocation()
+                        GetLocation(context).getLocationInBackground()
                         PendingIntent.getBroadcast(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
                     }
 

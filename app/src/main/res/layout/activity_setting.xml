@@ -102,7 +102,7 @@
                 android:id="@+id/settingThemeTitle"
                 style="@style/basicTextView"
                 android:layout_marginTop="40dp"
-                android:text="@string/setting_theme"
+                android:text="@string/system"
                 android:textColor="@color/option_title_color"
                 android:textSize="14sp"
                 android:fontFamily="@font/spoqa_hansansneo_bold"
@@ -167,6 +167,31 @@
                     android:textColor="@color/main_blue_color" />
             </TableRow>
 
+            <TableRow
+                android:id="@+id/settingThemeTR3"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:background="?selectableItemBackground"
+                android:orientation="horizontal"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:weightSum="1"
+                app:layout_constraintTop_toBottomOf="@+id/settingThemeTR2">
+
+                <TextView
+                    android:id="@+id/settingScaleTextLeft"
+                    style="@style/settingMultiTextView"
+                    android:text="폰트 크기"/>
+
+                <TextView
+                    android:id="@+id/settingScaleTextRight"
+                    style="@style/settingMultiTextView"
+                    android:gravity="center_vertical|end"
+                    android:textColor="@color/main_blue_color" />
+
+            </TableRow>
+
             <TextView
                 android:id="@+id/settingNotiTitle"
                 style="@style/basicTextView"
@@ -176,7 +201,7 @@
                 android:textSize="14sp"
                 android:fontFamily="@font/spoqa_hansansneo_bold"
                 app:layout_constraintStart_toStartOf="@+id/settingUserTitle"
-                app:layout_constraintTop_toBottomOf="@+id/settingThemeTR2" />
+                app:layout_constraintTop_toBottomOf="@+id/settingThemeTR3" />
 
             <View
                 android:id="@+id/settingLine3"

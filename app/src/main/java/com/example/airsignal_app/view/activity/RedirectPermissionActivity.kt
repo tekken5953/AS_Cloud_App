@@ -8,23 +8,15 @@ import android.widget.Toast
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.util.RequestPermissionsUtil
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlin.coroutines.coroutineContext
 
 
 class RedirectPermissionActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         if (RequestPermissionsUtil(this).isLocationPermitted()) {
-            runBlocking {
-//                getGps().join()
-                enterMainPage().join()
-            }
+            enterMainPage()
         }
     }
 
@@ -58,11 +50,7 @@ class RedirectPermissionActivity : BaseActivity() {
         }
     }
 
-    private suspend fun getGps() = CoroutineScope(coroutineContext).launch {
-        GetLocation(this@RedirectPermissionActivity).getLocation()
-    }
-
-    private suspend fun enterMainPage() = CoroutineScope(coroutineContext).launch {
+    private fun enterMainPage() {
         if (RequestPermissionsUtil(this@RedirectPermissionActivity).isLocationPermitted()) {
             EnterPage(this@RedirectPermissionActivity)
                 .toMain(

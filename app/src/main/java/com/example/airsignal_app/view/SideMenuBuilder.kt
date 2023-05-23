@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.RefreshUtils
 import javax.inject.Singleton
 
@@ -26,6 +27,17 @@ class SideMenuBuilder {
     fun getInstance(mActivity: Activity): SideMenuBuilder {
         activity = mActivity
         builder = AlertDialog.Builder(activity, R.style.DialogAnimationMenu)
+        when(SharedPreferenceManager(activity).getString("scale")) {
+            "small" -> {
+                ConvertDataType.setTextSizeSmall(activity)
+            }
+            "big" -> {
+                ConvertDataType.setTextSizeLarge(activity)
+            }
+            else -> {
+                ConvertDataType.setTextSizeDefault(activity)
+            }
+        }
         return this
     }
     /** 다이얼로그 뒤로가기 버튼 리스너 등록 **/

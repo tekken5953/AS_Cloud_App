@@ -7,7 +7,6 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.ConvertDataType
-import com.example.airsignal_app.util.OnSingleClickListener
 
 /**
  * @author : Lee Jae Young
@@ -28,6 +27,18 @@ open class BaseActivity : AppCompatActivity() {
             }
             else -> {
                 ConvertDataType.setLocaleToSystem(this)
+            }
+        }
+
+        when(sp.getString("scale")) {
+            "small" -> {
+                ConvertDataType.setTextSizeSmall(this)
+            }
+            "big" -> {
+                ConvertDataType.setTextSizeLarge(this)
+            }
+            else -> {
+                ConvertDataType.setTextSizeDefault(this)
             }
         }
 

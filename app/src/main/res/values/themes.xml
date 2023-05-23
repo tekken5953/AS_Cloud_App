@@ -16,17 +16,4 @@
         <!-- 상태바까지 view를 보여줄 수 있다-->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
-
-    <!-- 풀스크린 -->
-    <style name="Theme.AirSignal_App.Fullscreen" parent="Theme.AirSignal_App">
-        <item name="android:actionBarStyle">@style/Widget.Theme.AirSignal_App.ActionBar.Fullscreen
-        </item>
-        <item name="android:windowActionBarOverlay">true</item>
-        <item name="android:windowBackground">@null</item>
-    </style>
-
-    <style name="ThemeOverlay.AirSignal_App.FullscreenContainer" parent="">
-        <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
-        <item name="fullscreenTextColor">@color/light_blue_A200</item>
-    </style>
 </resources>

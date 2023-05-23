@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
@@ -93,6 +92,19 @@ class SettingActivity : BaseActivity() {
             }
             else -> {
                 binding.settingThemeLangRight.text = getString(R.string.system_lang)
+            }
+        }
+
+      // 설정 페이지 폰트크기 항목이름 바꾸기
+        when (sp.getString("scale")) {
+            "small" -> {
+                binding.settingScaleTextRight.text = "작게"
+            }
+            "big" -> {
+                binding.settingScaleTextRight.text = "크게"
+            }
+            else -> {
+                binding.settingScaleTextRight.text = "기본"
             }
         }
 
@@ -206,9 +218,9 @@ class SettingActivity : BaseActivity() {
             // 레이아웃 뷰 생성
             val themeView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_change_theme, null)
-            val systemTheme: RadioButton = themeView.findViewById(R.id.systemThemeRb)
-            val lightTheme: RadioButton = themeView.findViewById(R.id.lightThemeRb)
-            val darkTheme: RadioButton = themeView.findViewById(R.id.darkThemeRb)
+            val systemTheme: RadioButton = themeView.findViewById(R.id.themeSystemRB)
+            val lightTheme: RadioButton = themeView.findViewById(R.id.themeLightRB)
+            val darkTheme: RadioButton = themeView.findViewById(R.id.themeDarkRB)
             val radioGroup: RadioGroup = themeView.findViewById(R.id.changeThemeRadioGroup)
             val cancel: ImageView = themeView.findViewById(R.id.changeThemeBack)
 
@@ -337,6 +349,63 @@ class SettingActivity : BaseActivity() {
             }
         }
 
+        binding.settingThemeTR3.setOnClickListener {
+            val scaleView: View =
+                LayoutInflater.from(this).inflate(R.layout.dialog_change_font_scale, null)
+            val small = scaleView.findViewById<RadioButton>(R.id.scaleSmallRB)
+            val default = scaleView.findViewById<RadioButton>(R.id.scaleDefaultRB)
+            val big = scaleView.findViewById<RadioButton>(R.id.scaleBigRB)
+            val back = scaleView.findViewById<ImageView>(R.id.changeScaleBack)
+            val radioGroup = scaleView.findViewById<RadioGroup>(R.id.changeScaleRadioGroup)
+
+            dialog
+                .setBackPressRefresh(back)
+                .show(scaleView, true)
+
+            // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크
+            when (sp.getString("scale")) {
+                "small" -> {
+                    radioGroup.check(small.id)
+                }
+                "big" -> {
+                    radioGroup.check(big.id)
+                }
+                else -> {
+                    radioGroup.check(default.id)
+                }
+            }
+
+            radioGroup.setOnCheckedChangeListener { radioGroup, i ->
+                when (i) {
+                    small.id -> {
+                        sp.setString("scale", "small")
+                        radioGroup.check(small.id)
+                        val intent = Intent(this@SettingActivity, MainActivity::class.java)
+                        startActivity(intent)
+                        overridePendingTransition(0, 0)
+                        finish()
+                    }
+                    big.id -> {
+                        sp.setString("scale", "big")
+                        radioGroup.check(big.id)
+                        val intent = Intent(this@SettingActivity, MainActivity::class.java)
+                        startActivity(intent)
+                        overridePendingTransition(0, 0)
+                        finish()
+                    }
+                    default.id -> {
+                        sp.setString("scale", "default")
+                        radioGroup.check(default.id)
+                        val intent = Intent(this@SettingActivity, MainActivity::class.java)
+                        startActivity(intent)
+                        overridePendingTransition(0, 0)
+                        finish()
+                    }
+
+                }
+            }
+        }
+
         val detailView: View =
             LayoutInflater.from(this).inflate(R.layout.dialog_detail, null)
         val detailDate: TextView = detailView.findViewById(R.id.detailNoticeDate)
@@ -442,7 +511,6 @@ class SettingActivity : BaseActivity() {
             saveLanguageChange() // 언어 설정 변경 후 어플리케이션 재시작
         }
     }
-
     /** 테마 라디오 버튼 클릭 시 이벤트 처리 **/
     private fun changedThemeRadio(
         mode: Int,
