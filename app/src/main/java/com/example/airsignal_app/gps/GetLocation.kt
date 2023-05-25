@@ -2,11 +2,15 @@ package com.example.airsignal_app.gps
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.location.*
 import android.location.LocationListener
 import android.os.Build.VERSION
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
@@ -183,6 +187,24 @@ class GetLocation(private val context: Context) {
                         addr
             )
         }
+    }
+
+    fun isGPSConnection(): Boolean  {
+        val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
+        Log.i("Location Enable","위치정보 호출 여부 : ${lm.isProviderEnabled(LocationManager.GPS_PROVIDER)}")
+        return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
+    fun isNetWorkConnection(): Boolean {
+        val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
+        Log.i("Location Enable","네트워크 호출 여부 : ${lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)}")
+        return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+    fun requestGPSEnable() {
+        Toast.makeText(context, "핸드폰 GPS를 켜주세요", Toast.LENGTH_SHORT).show()
+        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+        context.startActivity(intent)
     }
 }
 
