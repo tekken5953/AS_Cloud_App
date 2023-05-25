@@ -7,6 +7,7 @@ import com.example.airsignal_app.db.room.AppDataBase.Companion.getInstance
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 /**
  * @author : Lee Jae Young
@@ -14,13 +15,11 @@ import kotlinx.coroutines.*
  **/
 class GpsRepository(private val context: Context) {
 
-    private val instance: AppDataBase = AppDataBase.getInstance(context)!!
-
     fun update(model: GpsEntity) {
         val job = Job()
         CoroutineScope(Dispatchers.IO + job).launch {
             getInstance(context)!!.gpsRepository().updateCurrentGPS(model)
-            Logger.t(TAG_D).d("Update Model")
+            Timber.tag(TAG_D).d("Update Model")
         }
     }
 
@@ -28,17 +27,17 @@ class GpsRepository(private val context: Context) {
         val job = Job()
         CoroutineScope(Dispatchers.IO + job).launch {
             getInstance(context)!!.gpsRepository().insertNewGPS(model)
-            Logger.t(TAG_D).d("insert Model")
+            Timber.tag(TAG_D).d("insert Model")
         }
     }
 
     fun findAll(): List<GpsEntity> {
-        Logger.t(TAG_D).d("findAll Model")
+        Timber.tag(TAG_D).d("findAll Model")
         return getInstance(context)!!.gpsRepository().findAll()
     }
 
     fun findById(name: String): GpsEntity {
-        Logger.t(TAG_D).d("findById Model")
+        Timber.tag(TAG_D).d("findById Model")
         return getInstance(context)!!.gpsRepository().findById(name)
     }
 
@@ -48,16 +47,16 @@ class GpsRepository(private val context: Context) {
 
         }
         getInstance(context)!!.gpsRepository().deleteFromAddr(addr)
-        Logger.t(TAG_D).d("deleteFromAddress Model")
+        Timber.tag(TAG_D).d("deleteFromAddress Model")
     }
 
     fun findByAddress(addr: String): GpsEntity {
-        Logger.t(TAG_D).d("findByAddr Model")
+        Timber.tag(TAG_D).d("findByAddr Model")
         return getInstance(context)!!.gpsRepository().findByAddress(addr)
     }
 
     fun clearDB() {
-        Logger.t(TAG_D).d("ClearDB Model")
+        Timber.tag(TAG_D).d("ClearDB Model")
         getInstance(context)!!.gpsRepository().clearDB()
     }
 }

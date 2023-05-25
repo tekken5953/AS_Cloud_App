@@ -3,6 +3,7 @@ package com.example.airsignal_app.view.activity
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
@@ -18,9 +19,7 @@ import android.view.View
 import android.view.View.*
 import android.view.animation.AnimationUtils
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.location.LocationManagerCompat.getCurrentLocation
 import androidx.databinding.DataBindingUtil
 import androidx.work.*
 import com.example.airsignal_app.R
@@ -31,10 +30,13 @@ import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
+import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.db.room.model.GpsEntity
+import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsWorker
@@ -57,7 +59,6 @@ import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -246,7 +247,7 @@ class MainActivity : BaseActivity() {
                 val setting = menu.findViewById<TextView>(R.id.navMenuSetting)
                 val headerTr = menu.findViewById<TableRow>(R.id.headerTr)
 
-                val dialog = SideMenuBuilder().getInstance(this@MainActivity)
+                val dialog = SideMenuBuilder(this@MainActivity)
                 dialog.apply {
                     setBackPressed(cancel)
                     setUserData(profile, id)
@@ -570,59 +571,100 @@ class MainActivity : BaseActivity() {
                         Log.d(TAG_D, "${location.latitude},${location.longitude}")
                         locationClass.getAddress(gps.latitude, gps.longitude)
                             .let { address ->
+                                updateCurrentAddress(
+                                    gps.latitude, gps.longitude,
+                                    address.replaceFirst(" ", "")
+                                )
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    getDataViewModel.loadDataResult(gps.latitude, gps.longitude, null)
+                                    getDataViewModel.loadDataResult(
+                                        gps.latitude,
+                                        gps.longitude,
+                                        null
+                                    )
                                     delay(100)
                                 }
-                                locationClass.writeRdbLog(gps.latitude, gps.longitude, address)
-                                binding.mainGpsTitleTv.text = address.replaceFirst(" ", "")
+                                locationClass.writeRdbLog(
+                                    gps.latitude,
+                                    gps.longitude,
+                                    locationClass.formattingFullAddress(address)
+                                )
+                                binding.mainGpsTitleTv.text =
+                                    locationClass.formattingFullAddress(address)
+                                        .replaceFirst(" ", "")
                                 hidePB()
                             }
                     }
                 }
 
                 .addOnFailureListener {
-                    RDBLogcat.writeLogCause(sp.getString(userEmail),"GPS 위치정보 갱신실패", it.localizedMessage!!)
+                    RDBLogcat.writeLogCause(
+                        sp.getString(userEmail),
+                        "GPS 위치정보 갱신실패",
+                        it.localizedMessage!!
+                    )
                 }
         } else if (!locationClass.isGPSConnection() && locationClass.isNetWorkConnection()) {
-                val lm = getSystemService(LOCATION_SERVICE) as LocationManager
-                val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                location?.let { loc ->
-                    GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude)
-                        .let { addr ->
-                            CoroutineScope(Dispatchers.IO).launch {
-                                getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
-                                delay(100)
-                            }
-                            locationClass.writeRdbLog(loc.latitude, loc.longitude, addr)
-                            binding.mainGpsTitleTv.text = addr.replaceFirst(" ", "")
-                            hidePB()
-                            Toast.makeText(this, "현재 위치와의 오차가 존재 할 수 있습니다", Toast.LENGTH_SHORT).show()
+            val lm = getSystemService(LOCATION_SERVICE) as LocationManager
+            val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            location?.let { loc ->
+                GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude)
+                    .let { addr ->
+                        updateCurrentAddress(
+                            loc.latitude,
+                            loc.longitude,
+                            addr.replaceFirst(" ", "")
+                        )
+                        CoroutineScope(Dispatchers.IO).launch {
+                            getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
+                            delay(100)
                         }
-                }
-            } else {
+                        locationClass.writeRdbLog(loc.latitude, loc.longitude, addr)
+                        binding.mainGpsTitleTv.text = locationClass.formattingFullAddress(addr)
+                            .replaceFirst(" ", "")
+                        hidePB()
+                        Toast.makeText(this, "현재 위치와의 오차가 존재 할 수 있습니다", Toast.LENGTH_SHORT).show()
+                    }
+            }
+        } else {
             locationClass.requestGPSEnable()
         }
     }
 
-//    private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
-//        val roomDB = GpsRepository(this)
-//        sp.setString(lastAddress, addr)
-//        val model = GpsEntity()
-//        Log.d(TAG_D, roomDB.findAll().toString())
-//        model.name = CURRENT_GPS_ID
-//        model.lat = lat
-//        model.lng = lng
-//        model.addr = addr
-//        if (dbIsEmpty(roomDB)) {
-//            roomDB.insert(model)
-//            Logger.t(TAG_D).d("Insert GPS In GetLocation")
-//        } else {
-//            roomDB.update(model)
-//            Logger.t(TAG_D).d("Update GPS In GetLocation")
-//        }
-//    }
-//    private fun dbIsEmpty(db: GpsRepository): Boolean {
-//        return db.findAll().isEmpty()
-//    }
+    private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
+        val roomDB = GpsRepository(this)
+        sp.setString(lastAddress, addr)
+        val model = GpsEntity()
+
+        model.name = CURRENT_GPS_ID
+        model.lat = lat
+        model.lng = lng
+        model.addr = addr
+        if (dbIsEmpty(roomDB)) {
+            roomDB.insert(model)
+            Log.d(TAG_D, "Insert GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}")
+        } else {
+            roomDB.update(model)
+            Log.d(TAG_D, "Update GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}")
+        }
+    }
+
+    private fun dbIsEmpty(db: GpsRepository): Boolean {
+        return db.findAll().isEmpty()
+    }
+
+    private fun updateAdapterItem() {
+        val newDaily = dailyWeatherList
+        val newWeekly = weeklyWeatherList
+        dailyWeatherList.clear()
+        weeklyWeatherList.clear()
+        dailyWeatherList.addAll(newDaily)
+        weeklyWeatherList.addAll(newWeekly)
+        weeklyWeatherAdapter.notifyDataSetChanged()
+        dailyWeatherAdapter.notifyDataSetChanged()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        updateAdapterItem()
+    }
 }

@@ -9,6 +9,7 @@ import android.os.*
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.AddressListAdapter
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
+import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
+import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
@@ -91,8 +94,8 @@ class SearchDialog(
 
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
-            val db = GpsRepository(requireContext())
-            db.findAll().forEach {
+            GpsRepository(activity).findAll().forEach {
+                Log.d(TAG_D, "검색리스트 아이템 추가 : ${it.id}, ${it.name}, ${it.addr}")
                 addCurrentItem(it.addr.toString())
             }
 
@@ -163,7 +166,7 @@ class SearchDialog(
             AdapterView.OnItemClickListener { _, _, position, _ ->
                 val db = GpsRepository(requireContext())
                 val model = GpsEntity()
-                model.addr = searchItem[position]
+                model.name = searchItem[position]
                 model.addr = searchItem[position]
                 db.insert(model)
                 this.dismissNow()
