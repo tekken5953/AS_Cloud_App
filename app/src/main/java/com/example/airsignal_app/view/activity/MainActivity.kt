@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
+import android.location.LocationManager
 import android.os.*
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -17,7 +18,9 @@ import android.view.View
 import android.view.View.*
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.location.LocationManagerCompat.getCurrentLocation
 import androidx.databinding.DataBindingUtil
 import androidx.work.*
 import com.example.airsignal_app.R
@@ -26,14 +29,13 @@ import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
+import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
-import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.db.room.model.GpsEntity
-import com.example.airsignal_app.db.room.repository.GpsRepository
+import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsWorker
 import com.example.airsignal_app.login.SilentLoginClass
@@ -55,6 +57,7 @@ import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -73,6 +76,7 @@ class MainActivity : BaseActivity() {
     private var isInit = true
     private val SHOWING_LOADING_FLOAT = 0.5f
     private val NOT_SHOWING_LOADING_FLOAT = 1f
+    private val locationClass by lazy { GetLocation(this) }
 
     override fun onResume() {
         super.onResume()
@@ -558,44 +562,67 @@ class MainActivity : BaseActivity() {
 
     @SuppressLint("MissingPermission")
     private fun getCurrentLocation() {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
-            .addOnSuccessListener { location: Location? ->
-                location?.let { gps ->
-                    Log.d(TAG_D, "${location.latitude},${location.longitude}")
-                    GetLocation(this@MainActivity).getAddress(gps.latitude, gps.longitude)
-                        .let { address ->
+        val fusedGPSLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        if (locationClass.isGPSConnection()) {
+            fusedGPSLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
+                .addOnSuccessListener { location: Location? ->
+                    location?.let { gps ->
+                        Log.d(TAG_D, "${location.latitude},${location.longitude}")
+                        locationClass.getAddress(gps.latitude, gps.longitude)
+                            .let { address ->
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    getDataViewModel.loadDataResult(gps.latitude, gps.longitude, null)
+                                    delay(100)
+                                }
+                                locationClass.writeRdbLog(gps.latitude, gps.longitude, address)
+                                binding.mainGpsTitleTv.text = address.replaceFirst(" ", "")
+                                hidePB()
+                            }
+                    }
+                }
+
+                .addOnFailureListener {
+                    RDBLogcat.writeLogCause(sp.getString(userEmail),"GPS 위치정보 갱신실패", it.localizedMessage!!)
+                }
+        } else if (!locationClass.isGPSConnection() && locationClass.isNetWorkConnection()) {
+                val lm = getSystemService(LOCATION_SERVICE) as LocationManager
+                val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                location?.let { loc ->
+                    GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude)
+                        .let { addr ->
                             CoroutineScope(Dispatchers.IO).launch {
-                                getDataViewModel.loadDataResult(gps.latitude, gps.longitude, null)
+                                getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
                                 delay(100)
                             }
-                            GetLocation(this).writeRdbLog(gps.latitude, gps.longitude, address)
-                            binding.mainGpsTitleTv.text = address.replaceFirst(" ", "")
+                            locationClass.writeRdbLog(loc.latitude, loc.longitude, addr)
+                            binding.mainGpsTitleTv.text = addr.replaceFirst(" ", "")
                             hidePB()
+                            Toast.makeText(this, "현재 위치와의 오차가 존재 할 수 있습니다", Toast.LENGTH_SHORT).show()
                         }
                 }
-            }
-    }
-
-    private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
-        val roomDB = GpsRepository(this)
-        sp.setString(lastAddress, addr)
-        val model = GpsEntity()
-        Log.d(TAG_D, roomDB.findAll().toString())
-        model.name = CURRENT_GPS_ID
-        model.lat = lat
-        model.lng = lng
-        model.addr = addr
-        if (dbIsEmpty(roomDB)) {
-            roomDB.insert(model)
-            Logger.t(TAG_D).d("Insert GPS In GetLocation")
-        } else {
-            roomDB.update(model)
-            Logger.t(TAG_D).d("Update GPS In GetLocation")
+            } else {
+            locationClass.requestGPSEnable()
         }
     }
 
-    private fun dbIsEmpty(db: GpsRepository): Boolean {
-        return db.findAll().isEmpty()
-    }
+//    private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
+//        val roomDB = GpsRepository(this)
+//        sp.setString(lastAddress, addr)
+//        val model = GpsEntity()
+//        Log.d(TAG_D, roomDB.findAll().toString())
+//        model.name = CURRENT_GPS_ID
+//        model.lat = lat
+//        model.lng = lng
+//        model.addr = addr
+//        if (dbIsEmpty(roomDB)) {
+//            roomDB.insert(model)
+//            Logger.t(TAG_D).d("Insert GPS In GetLocation")
+//        } else {
+//            roomDB.update(model)
+//            Logger.t(TAG_D).d("Update GPS In GetLocation")
+//        }
+//    }
+//    private fun dbIsEmpty(db: GpsRepository): Boolean {
+//        return db.findAll().isEmpty()
+//    }
 }
