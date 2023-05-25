@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
@@ -46,6 +47,7 @@ import com.example.airsignal_app.util.ConvertDataType.convertDayOfWeekToKorean
 import com.example.airsignal_app.util.ConvertDataType.getDataColor
 import com.example.airsignal_app.util.ConvertDataType.getRainType
 import com.example.airsignal_app.util.ConvertDataType.getSkyImg
+import com.example.airsignal_app.util.ConvertDataType.pixelToDp
 import com.example.airsignal_app.view.*
 import com.example.airsignal_app.view.widget.WidgetProvider
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
@@ -147,17 +149,25 @@ class MainActivity : BaseActivity() {
             setContexts(
                 barContexts = listOf(
                     SegmentedProgressBar.BarContext(
-                        0.35f //percentage for segment
+                        ResourcesCompat.getColor(resources,R.color.progressGood,null), //gradient start
+                        ResourcesCompat.getColor(resources,R.color.progressGood,null), //gradient stop
+                        0.12f //percentage for segment
                     ),
                     SegmentedProgressBar.BarContext(
-                        0.19f
+                        ResourcesCompat.getColor(resources,R.color.progressNormal,null),
+                        ResourcesCompat.getColor(resources,R.color.progressNormal,null),
+                        0.24f
                     ),
                     SegmentedProgressBar.BarContext(
+                        ResourcesCompat.getColor(resources,R.color.progressBad,null),
+                        ResourcesCompat.getColor(resources,R.color.progressBad,null),
+                        0.48f
+                    ),
+                    SegmentedProgressBar.BarContext(
+                        ResourcesCompat.getColor(resources,R.color.progressWorst,null),
+                        ResourcesCompat.getColor(resources,R.color.progressWorst,null),
                         0.16f
                     ),
-                    SegmentedProgressBar.BarContext(
-                        0.30f
-                    )
                 )
             )
         }
@@ -166,17 +176,25 @@ class MainActivity : BaseActivity() {
             setContexts(
                 barContexts = listOf(
                     SegmentedProgressBar.BarContext(
-                        0.35f //percentage for segment
+                        ResourcesCompat.getColor(resources,R.color.progressGood,null), //gradient start
+                        ResourcesCompat.getColor(resources,R.color.progressGood,null), //gradient stop
+                        0.15f //percentage for segment
                     ),
                     SegmentedProgressBar.BarContext(
-                        0.19f
+                        ResourcesCompat.getColor(resources,R.color.progressNormal,null),
+                        ResourcesCompat.getColor(resources,R.color.progressNormal,null),
+                        0.25f
                     ),
                     SegmentedProgressBar.BarContext(
-                        0.16f
+                        ResourcesCompat.getColor(resources,R.color.progressBad,null),
+                        ResourcesCompat.getColor(resources,R.color.progressBad,null),
+                        0.35f
                     ),
                     SegmentedProgressBar.BarContext(
-                        0.30f
-                    )
+                        ResourcesCompat.getColor(resources,R.color.progressWorst,null),
+                        ResourcesCompat.getColor(resources,R.color.progressWorst,null),
+                        0.25f
+                    ),
                 )
             )
         }
@@ -419,14 +437,24 @@ class MainActivity : BaseActivity() {
                 binding.nestedPm10Value.text = air.pm10Value.toInt().toString()
                 binding.nestedPm2p5Value.setTextColor(getDataColor(this, air.pm25Grade - 1))
                 binding.nestedPm2p5Value.text = air.pm25Value.toString()
+
                 getCompareTemp(
                     yesterday.temp,
                     realtime.temp,
                     binding.mainCompareTempTv
                 )
 
-                binding.segmentProgress2p5Arrow.setPadding(air.pm25Value, 0, 0, 0)
-                binding.segmentProgress10Arrow.setPadding(air.pm10Value.toInt(), 0, 0, 0)
+                val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
+                if (air.pm25Value > 125) {
+                    binding.segmentProgress2p5Arrow.setPadding(125 * widthDp / 125, 0, 0, 0)
+                } else {
+                    binding.segmentProgress2p5Arrow.setPadding(air.pm25Value * widthDp / 125, 0, 0, 0)
+                }
+                if (air.pm10Value > 200) {
+                    binding.segmentProgress10Arrow.setPadding(200 * widthDp / 200, 0, 0, 0)
+                } else {
+                    binding.segmentProgress10Arrow.setPadding(air.pm10Value.toInt() * widthDp / 200, 0, 0, 0)
+                }
 
                 for (i: Int in 0 until result.realtime.size) {
                     try {

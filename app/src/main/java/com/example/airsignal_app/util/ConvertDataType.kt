@@ -64,6 +64,10 @@ object ConvertDataType {
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
+    fun pixelToDp(context: Context, px: Int): Int {
+        return px / (context.resources.displayMetrics.densityDpi / 160)
+    }
+
     /** 화면을 풀 스크린으로 사용합니다 **/
     @Suppress("DEPRECATION")
     fun setFullScreenMode(activity: Activity) {
