@@ -73,14 +73,4 @@ object AdapterModel {
         val title: String,
         val data: String?
     )
-
-    data class AirViewPagerItem(
-        val viewType: Int = 0,
-        val title: String
-    )
-
-    data class SunViewPagerItem(
-        val viewType: Int = 1,
-        val title: String
-    )
 }

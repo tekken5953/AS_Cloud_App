@@ -15,6 +15,7 @@ import com.example.airsignal_app.dao.AdapterModel
  * @since : 2023-03-23 오후 4:00
  **/
 class DailyWeatherAdapter(
+    private val context: Context,
     list: ArrayList<AdapterModel.DailyWeatherItem>
 ) :
     RecyclerView.Adapter<DailyWeatherAdapter.ViewHolder>() {
@@ -24,7 +25,7 @@ class DailyWeatherAdapter(
         parent: ViewGroup,
         viewType: Int
     ): DailyWeatherAdapter.ViewHolder {
-        val inflater = parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.list_item_daily_weather, parent, false)
 
         return ViewHolder(view)

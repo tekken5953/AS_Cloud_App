@@ -38,6 +38,7 @@ class WeeklyWeatherAdapter(
 
     override fun getItemCount(): Int = mList.size
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(mList[position])
     }

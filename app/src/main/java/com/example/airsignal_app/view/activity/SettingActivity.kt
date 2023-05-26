@@ -434,7 +434,7 @@ class SettingActivity : BaseActivity() {
         // 자주묻는질문 클릭
         binding.settingFaq.setOnClickListener {
             val faqMainView: View = LayoutInflater.from(this).inflate(R.layout.dialog_faq, null)
-            val faqAdapter = FaqAdapter(faqItem)
+            val faqAdapter = FaqAdapter(this, faqItem)
             val recyclerView = faqMainView.findViewById<RecyclerView>(R.id.faqRv)
             val faqTitle: TextView = faqMainView.findViewById(R.id.faqTitle)
             faqItem.clear()

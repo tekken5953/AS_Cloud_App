@@ -23,12 +23,12 @@
             android:id="@+id/nested_scrollview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="-30dp"
             android:background="@color/white"
             android:clipToPadding="false"
             android:orientation="vertical"
             android:overScrollMode="never"
             android:scrollbars="none"
+            android:layout_marginBottom="-30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/mainMotionLinear">
 
@@ -174,20 +174,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="6dp"
                         android:layout_below="@+id/segment_progress_2p5_arrow"
-                        android:layout_marginStart="12dp"
                         android:layout_marginTop="3dp"
-                        android:layout_marginEnd="12dp"
-                        android:layout_marginBottom="30dp" />
+                        android:layout_marginBottom="30dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp"/>
 
                     <ImageView
                         android:id="@+id/segment_progress_2p5_arrow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_pm_2p5_value"
-                        android:layout_marginStart="12dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="12dp"
-                        android:src="@drawable/bottom_arrow" />
+                        android:src="@drawable/bottom_arrow"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp"/>
 
                     <TextView
                         android:id="@+id/nested_pm_10_title"
@@ -233,40 +233,40 @@
                         android:layout_width="match_parent"
                         android:layout_height="6dp"
                         android:layout_below="@+id/segment_progress_10_arrow"
-                        android:layout_marginStart="12dp"
                         android:layout_marginTop="3dp"
-                        android:layout_marginEnd="12dp"
-                        android:layout_marginBottom="30dp" />
+                        android:layout_marginBottom="30dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp"/>
 
                     <ImageView
                         android:id="@+id/segment_progress_10_arrow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_pm_10_value"
-                        android:layout_marginStart="12dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="12dp"
-                        android:src="@drawable/bottom_arrow" />
+                        android:src="@drawable/bottom_arrow"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp"/>
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/mainSunBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/nested_pm_box"
                     android:layout_marginStart="24dp"
-                    android:layout_marginTop="20dp"
                     android:layout_marginEnd="24dp"
-                    android:layout_marginBottom="35dp"
+                    android:layout_below="@+id/nested_pm_box"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_horizontal"
                     android:background="@drawable/scrolled_box_bg"
-                    android:gravity="center_horizontal">
+                    android:layout_marginBottom="35dp">
 
                     <com.triggertrap.seekarc.SeekArc
                         android:id="@+id/seekArc"
                         android:layout_width="200dp"
                         android:layout_height="200dp"
-                        android:layout_centerVertical="true"
                         android:padding="50dp"
+                        android:layout_centerVertical="true"
                         app:arcWidth="6dp"
                         app:max="100"
                         app:progress="50"
@@ -295,9 +295,9 @@
             android:id="@+id/mainMotionLinear"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:orientation="vertical"
             android:background="@android:color/transparent"
             android:nestedScrollingEnabled="false"
-            android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/nested_scrollview"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 
@@ -330,15 +330,15 @@
 
         </RelativeLayout>
 
-        <!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
-        <!--            android:id="@+id/bottomNav"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="55dp"-->
-        <!--            android:alpha="0"-->
-        <!--            app:itemIconTint="@color/main_blue_color"-->
-        <!--            app:itemTextColor="@color/main_blue_color"-->
-        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--            app:menu="@menu/bottom_nav" />-->
+<!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
+<!--            android:id="@+id/bottomNav"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="55dp"-->
+<!--            android:alpha="0"-->
+<!--            app:itemIconTint="@color/main_blue_color"-->
+<!--            app:itemTextColor="@color/main_blue_color"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:menu="@menu/bottom_nav" />-->
 
         <TextView
             android:id="@+id/mainGpsTitleTv"
@@ -346,8 +346,8 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="40dp"
             android:fontFamily="@font/spoqa_hansansneo_regular"
-            android:gravity="start"
             android:maxEms="5"
+            android:gravity="start"
             android:textColor="@color/mode_black_color"
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="@id/mainMotionLayout"
@@ -357,7 +357,7 @@
             android:id="@+id/mainGpsFix"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginStart="2dp"
+            android:layout_marginStart="4dp"
             android:layout_marginEnd="24dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/gps_refresh"
@@ -372,7 +372,7 @@
             android:layout_marginTop="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTitle" />
+            app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
 
         <TextView
             android:id="@+id/mainSkyText"
@@ -402,7 +402,6 @@
             style="@style/basicTextView"
             android:layout_marginTop="22dp"
             android:fontFamily="@font/spoqa_hansansneo_regular"
-            android:letterSpacing="0"
             android:textColor="@color/mode_black_color"
             android:textSize="72sp"
             android:textStyle="bold"
@@ -430,188 +429,182 @@
             app:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
             app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue" />
 
-        <TextView
-            android:id="@+id/mainMinMaxTitle"
-            style="@style/basicTextView"
-            android:text="최저/최고"
-            android:textColor="@color/mode_black_90"
-            android:textSize="14sp"
-            android:layout_marginEnd="15dp"
-            app:layout_constraintEnd_toStartOf="@id/mainMinMaxValue"
-            app:layout_constraintTop_toTopOf="@+id/mainMinMaxValue"
-            app:layout_constraintBottom_toBottomOf="@id/mainMinMaxValue"/>
+        <TableRow
+            android:id="@+id/mainMinMaxTr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/mainCompareTempTv"
+            app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv">
+
+            <TextView
+                android:id="@+id/mainMinMaxTitle"
+                style="@style/basicTextView"
+                android:layout_width="match_parent"
+                android:text="최저/최고"
+                android:textColor="@color/mode_black_90"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/mainMinMax"
+                style="@style/basicTextView"
+                android:layout_marginStart="15dp"
+                android:textColor="@color/mode_black_90"
+                android:textSize="14sp" />
+        </TableRow>
 
         <TextView
-            android:id="@+id/mainMinMaxValue"
+            android:id="@+id/mainNotiMsgTv"
             style="@style/basicTextView"
-            app:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
-            app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv"
-            android:textColor="@color/mode_black_90"
-            android:textSize="14sp" />
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/mainViewPager"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="50dp"
             android:layout_marginTop="50dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="25dp"
-            app:layout_constraintBottom_toTopOf="@+id/mainMotionSlideGuide"
+            android:layout_marginEnd="50dp"
+            android:background="@drawable/main_noti_text"
+            android:text="도움말 테스트 텍스트"
+            android:textColor="@color/white"
+            android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@+id/mainSkyText" />
 
+        <TableLayout
+            android:id="@+id/mainPmBoxTL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/pm_motion_box_bg"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/mainNotiMsgTv">
 
-<!--        <TextView-->
-<!--            android:id="@+id/mainNotiMsgTv"-->
-<!--            style="@style/basicTextView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_marginStart="50dp"-->
-<!--            android:layout_marginTop="50dp"-->
-<!--            android:layout_marginEnd="50dp"-->
-<!--            android:background="@drawable/main_noti_text"-->
-<!--            android:text="도움말 테스트 텍스트"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:textSize="14sp"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/mainSkyText" />-->
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center">
 
-<!--        <TableLayout-->
-<!--            android:id="@+id/mainPmBoxTL"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="24dp"-->
-<!--            android:layout_marginTop="15dp"-->
-<!--            android:layout_marginEnd="24dp"-->
-<!--            android:background="@drawable/pm_motion_box_bg"-->
-<!--            android:gravity="center"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/mainNotiMsgTv">-->
+                <TextView
+                    style="@style/basicTextView"
+                    android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/spoqa_hansansneo_bold"
+                    android:text="@string/pm_10"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-<!--            <TableRow-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:gravity="center">-->
+                <TextView
+                    style="@style/basicTextView"
+                    android:layout_marginStart="20dp"
+                    android:fontFamily="@font/spoqa_hansansneo_bold"
+                    android:text="@string/pm_2p5"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </TableRow>
 
-<!--                <TextView-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_marginEnd="20dp"-->
-<!--                    android:fontFamily="@font/spoqa_hansansneo_bold"-->
-<!--                    android:text="@string/pm_10"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="16sp"-->
-<!--                    android:textStyle="bold" />-->
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center">
 
-<!--                <TextView-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_marginStart="20dp"-->
-<!--                    android:fontFamily="@font/spoqa_hansansneo_bold"-->
-<!--                    android:text="@string/pm_2p5"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="16sp"-->
-<!--                    android:textStyle="bold" />-->
-<!--            </TableRow>-->
+                <com.aslib.AsTextView
+                    android:id="@+id/mainPm10Grade"
+                    style="@style/basicTextView"
+                    android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/spoqa_hansansneo_regular"
+                    android:textColor="@color/progressWorst"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:sort="grade" />
 
-<!--            <TableRow-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="5dp"-->
-<!--                android:gravity="center">-->
+                <com.aslib.AsTextView
+                    android:id="@+id/mainPm2p5Grade"
+                    style="@style/basicTextView"
+                    android:layout_marginStart="20dp"
+                    android:fontFamily="@font/spoqa_hansansneo_regular"
+                    android:textColor="@color/progressGood"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:sort="grade" />
+            </TableRow>
+        </TableLayout>
 
-<!--                <com.aslib.AsTextView-->
-<!--                    android:id="@+id/mainPm10Grade"-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_marginEnd="20dp"-->
-<!--                    android:fontFamily="@font/spoqa_hansansneo_regular"-->
-<!--                    android:textColor="@color/progressWorst"-->
-<!--                    android:textSize="16sp"-->
-<!--                    android:textStyle="bold"-->
-<!--                    app:sort="grade" />-->
+        <TableLayout
+            android:id="@+id/mainSubWeatherTL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginEnd="50dp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL">
 
-<!--                <com.aslib.AsTextView-->
-<!--                    android:id="@+id/mainPm2p5Grade"-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_marginStart="20dp"-->
-<!--                    android:fontFamily="@font/spoqa_hansansneo_regular"-->
-<!--                    android:textColor="@color/progressGood"-->
-<!--                    android:textSize="16sp"-->
-<!--                    android:textStyle="bold"-->
-<!--                    app:sort="grade" />-->
-<!--            </TableRow>-->
-<!--        </TableLayout>-->
+            <TableRow
+                android:id="@+id/mainSubWeatherValueTr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:weightSum="1">
 
-<!--        <TableLayout-->
-<!--            android:id="@+id/mainSubWeatherTL"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="50dp"-->
-<!--            android:layout_marginTop="22dp"-->
-<!--            android:layout_marginEnd="50dp"-->
-<!--            android:gravity="center"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL">-->
+                <TextView
+                    android:id="@+id/subHumidValue"
+                    style="@style/basicTextView"
+                    android:layout_weight="0.4"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
 
-<!--            <TableRow-->
-<!--                android:id="@+id/mainSubWeatherValueTr"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:gravity="center"-->
-<!--                android:weightSum="1">-->
+                <TextView
+                    android:id="@+id/subWindValue"
+                    style="@style/basicTextView"
+                    android:layout_weight="0.2"
+                    android:drawablePadding="-8dp"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    app:drawableTint="@color/white" />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/subHumidValue"-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_weight="0.4"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="20sp" />-->
+                <TextView
+                    android:id="@+id/subRainPerValue"
+                    style="@style/basicTextView"
+                    android:layout_weight="0.4"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/subWindValue"-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_weight="0.2"-->
-<!--                    android:drawablePadding="-8dp"-->
-<!--                    android:gravity="center"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="20sp"-->
-<!--                    app:drawableTint="@color/white" />-->
+            </TableRow>
 
-<!--                <TextView-->
-<!--                    android:id="@+id/subRainPerValue"-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_weight="0.4"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="20sp" />-->
+            <TableRow
+                android:id="@+id/mainSubWeatherTr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:weightSum="1">
 
-<!--            </TableRow>-->
+                <TextView
+                    style="@style/basicTextView"
+                    android:layout_weight="0.4"
+                    android:text="습도"
+                    android:textColor="#C2E1F2"
+                    android:textSize="14sp" />
 
-<!--            <TableRow-->
-<!--                android:id="@+id/mainSubWeatherTr"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="5dp"-->
-<!--                android:gravity="center"-->
-<!--                android:weightSum="1">-->
+                <TextView
+                    style="@style/basicTextView"
+                    android:layout_weight="0.2"
+                    android:text="바람"
+                    android:textColor="#C2E1F2"
+                    android:textSize="14sp" />
 
-<!--                <TextView-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_weight="0.4"-->
-<!--                    android:text="습도"-->
-<!--                    android:textColor="#C2E1F2"-->
-<!--                    android:textSize="14sp" />-->
-
-<!--                <TextView-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_weight="0.2"-->
-<!--                    android:text="바람"-->
-<!--                    android:textColor="#C2E1F2"-->
-<!--                    android:textSize="14sp" />-->
-
-<!--                <TextView-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_weight="0.4"-->
-<!--                    android:text="강수확률"-->
-<!--                    android:textColor="#C2E1F2"-->
-<!--                    android:textSize="14sp" />-->
+                <TextView
+                    style="@style/basicTextView"
+                    android:layout_weight="0.4"
+                    android:text="강수확률"
+                    android:textColor="#C2E1F2"
+                    android:textSize="14sp" />
 
 
-<!--            </TableRow>-->
-<!--        </TableLayout>-->
+            </TableRow>
+        </TableLayout>
 
 
         <TextView

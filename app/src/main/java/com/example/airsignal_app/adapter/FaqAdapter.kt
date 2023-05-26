@@ -12,7 +12,7 @@ import com.example.airsignal_app.R
  * @author : Lee Jae Young
  * @since : 2023-03-28 오전 11:52
  **/
-class FaqAdapter(list: ArrayList<String>) :
+class FaqAdapter(private val context: Context, list: ArrayList<String>) :
     RecyclerView.Adapter<FaqAdapter.ViewHolder>() {
     private val mList = list
 
@@ -26,7 +26,7 @@ class FaqAdapter(list: ArrayList<String>) :
         parent: ViewGroup,
         viewType: Int
     ): FaqAdapter.ViewHolder {
-        val inflater = parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val view: View = inflater.inflate(R.layout.list_item_faq, parent, false)
         return ViewHolder(view)

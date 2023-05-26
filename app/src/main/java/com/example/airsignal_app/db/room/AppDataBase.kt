@@ -5,13 +5,12 @@ import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.airsignal_app.dao.IgnoredKeyFile.dbVersion
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.scheme.GpsScheme
 import com.orhanobut.logger.Logger
 
-@Database(entities = [GpsEntity::class], version = dbVersion)
+@Database(entities = [GpsEntity::class], version = 12)
 abstract class AppDataBase : RoomDatabase() {
     abstract fun gpsRepository(): GpsScheme
 
