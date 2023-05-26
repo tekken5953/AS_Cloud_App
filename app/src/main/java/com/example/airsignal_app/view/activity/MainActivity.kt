@@ -335,12 +335,17 @@ class MainActivity : BaseActivity() {
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
         // 워크 매니저 생성
-        CoroutineScope(Dispatchers.IO).launch { createWorkManager() }
+//        CoroutineScope(Dispatchers.IO).launch { createWorkManager() }
 
         binding.mainDailyWeatherRv.adapter = dailyWeatherAdapter
         binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter
 
+        createWorkManager2()
 //        AdViewClass(this).loadAdView(binding.mainBottomAdView)
+    }
+
+    private fun createWorkManager2() {
+        GetLocation(this).getGpsInBackground()
     }
 
     // 백그라운드에서 GPS 를 불러오기 위한 WorkManager
@@ -382,6 +387,7 @@ class MainActivity : BaseActivity() {
                 val today = result.today
                 val yesterday = result.yesterday
                 val dateNow: LocalDateTime = LocalDateTime.now()
+                val current = result.current
 
                 val wfMin = listOf(
                     week.wf0Am, week.wf1Am, week.wf2Am, week.wf3Am,
@@ -404,9 +410,9 @@ class MainActivity : BaseActivity() {
                 dailyWeatherList.clear()
                 weeklyWeatherList.clear()
 
-                binding.mainLiveTempValue.text = realtime.temp.roundToInt().absoluteValue.toString()
+                binding.mainLiveTempValue.text = current.temperature.absoluteValue.toString()
 
-                if (realtime.temp.roundToInt() < 0) {
+                if (current.temperature < 0) {
                     binding.mainLiveTempMinus.visibility = VISIBLE
                 } else {
                     binding.mainLiveTempMinus.visibility = GONE
@@ -421,27 +427,25 @@ class MainActivity : BaseActivity() {
 //                            realtime.windSpeed
 //                        ).toInt()
 //                    }˚"
-                spanUnit(binding.subWindValue, realtime.windSpeed.roundToInt().toString() + " ㎧")
+                spanUnit(binding.subWindValue, current.windSpeed.toString() + " ㎧")
                 spanUnit(binding.subRainPerValue, realtime.rainP.roundToInt().toString() + " %")
-                spanUnit(binding.subHumidValue, realtime.humid.roundToInt().toString() + " %")
+                spanUnit(binding.subHumidValue, current.humidity.roundToInt().toString() + " %")
 
                 binding.subWindValue.setCompoundDrawablesWithIntrinsicBounds(
                     ResourcesCompat.getDrawable(resources, R.drawable.gps, null), null, null, null
                 )
-                binding.mainPm10Grade.setGradeText((air.pm10Grade - 1).toString())
-                binding.mainPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
+                binding.mainPm10Grade.getPM10GradeFromValue(air.pm10Value.toInt())
+                binding.mainPm2p5Grade.getPM25GradeFromValue(air.pm25Value)
                 binding.mainMinMaxValue.text =
                     "${filteringNullData(today.min)}˚/${filteringNullData(today.max)}˚"
-                binding.nestedPm10Grade.setGradeText((air.pm10Grade - 1).toString())
-                binding.nestedPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
-                binding.nestedPm10Value.setTextColor(getDataColor(this, air.pm10Grade - 1))
-                binding.nestedPm10Value.text = air.pm10Value.toInt().toString()
-                binding.nestedPm2p5Value.setTextColor(getDataColor(this, air.pm25Grade - 1))
-                binding.nestedPm2p5Value.text = air.pm25Value.toString()
+                binding.nestedPm10Grade.getPM10GradeFromValue(air.pm10Value.toInt())
+                binding.nestedPm2p5Grade.getPM25GradeFromValue(air.pm25Value)
+                binding.nestedPm10Value.setIndexTextAsInt(air.pm10Value.toFloat())
+                binding.nestedPm2p5Value.setIndexTextAsInt(air.pm25Value.toFloat())
 
                 getCompareTemp(
                     yesterday.temp,
-                    realtime.temp,
+                    current.temperature,
                     binding.mainCompareTempTv
                 )
 
@@ -571,10 +575,10 @@ class MainActivity : BaseActivity() {
         if (yesterday != -100.0 && today != -100.0) {
             if (yesterday > today) {
                 tv.visibility = VISIBLE
-                tv.text = "어제보다 ${(yesterday - today).roundToInt().absoluteValue}˚ 낮아요"
+                tv.text = "어제보다 ${((yesterday - today).absoluteValue * 10).roundToInt() / 10.0}˚ 낮아요"
             } else if (today > yesterday) {
                 tv.visibility = VISIBLE
-                tv.text = "어제보다 ${(today - yesterday).roundToInt().absoluteValue} ˚ 높아요"
+                tv.text = "어제보다 ${((today - yesterday).absoluteValue * 10).roundToInt() / 10.0} ˚ 높아요"
             } else {
                 tv.visibility = VISIBLE
                 tv.text = "어제와 기온이 비슷해요"
@@ -652,7 +656,7 @@ class MainActivity : BaseActivity() {
                         binding.mainGpsTitleTv.text = locationClass.formattingFullAddress(addr)
                             .replaceFirst(" ", "")
                         hidePB()
-                        Toast.makeText(this, "현재 위치와의 오차가 존재 할 수 있습니다", Toast.LENGTH_SHORT).show()
+                        ToastUtils(this).showMessage("현재 위치와의 오차가 존재 할 수 있습니다")
                     }
             }
         } else {

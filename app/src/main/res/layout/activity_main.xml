@@ -148,7 +148,7 @@
                         android:textSize="24sp"
                         app:sort="grade" />
 
-                    <TextView
+                    <com.aslib.AsTextView
                         android:id="@+id/nested_pm_2p5_value"
                         style="@style/basicTextView"
                         android:layout_alignBottom="@+id/nested_pm_2p5_grade"
@@ -156,7 +156,7 @@
                         android:layout_toStartOf="@+id/nested_pm_2p5_unit"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:textSize="24sp"
-                        app:sort="pm" />
+                        app:sort="pm2.5" />
 
                     <TextView
                         android:id="@+id/nested_pm_2p5_unit"
@@ -174,9 +174,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="6dp"
                         android:layout_below="@+id/segment_progress_2p5_arrow"
-                        android:layout_marginStart="12dp"
+                        android:paddingStart="12dp"
                         android:layout_marginTop="3dp"
-                        android:layout_marginEnd="12dp"
+                        android:paddingEnd="12dp"
                         android:layout_marginBottom="30dp" />
 
                     <ImageView
@@ -184,9 +184,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_pm_2p5_value"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="12dp"
+                        android:layout_marginEnd="10dp"
                         android:src="@drawable/bottom_arrow" />
 
                     <TextView
@@ -208,14 +208,15 @@
                         android:textSize="24sp"
                         app:sort="grade" />
 
-                    <TextView
+                    <com.aslib.AsTextView
                         android:id="@+id/nested_pm_10_value"
                         style="@style/basicTextView"
                         android:layout_alignBottom="@+id/nested_pm_10_grade"
                         android:layout_marginEnd="10dp"
                         android:layout_toStartOf="@+id/nested_pm_2p5_unit"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:textSize="24sp" />
+                        android:textSize="24sp"
+                        app:sort="pm10"/>
 
                     <TextView
                         android:id="@+id/nested_pm_10_unit"
@@ -233,9 +234,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="6dp"
                         android:layout_below="@+id/segment_progress_10_arrow"
-                        android:layout_marginStart="12dp"
+                        android:paddingStart="12dp"
                         android:layout_marginTop="3dp"
-                        android:layout_marginEnd="12dp"
+                        android:paddingEnd="12dp"
                         android:layout_marginBottom="30dp" />
 
                     <ImageView
@@ -243,9 +244,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_pm_10_value"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="12dp"
+                        android:layout_marginEnd="10dp"
                         android:src="@drawable/bottom_arrow" />
                 </RelativeLayout>
 

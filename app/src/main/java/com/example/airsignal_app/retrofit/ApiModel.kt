@@ -1,6 +1,7 @@
 package com.example.airsignal_app.retrofit
 
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDateTime
 
 class ApiModel {
 //    // 회원가입 시 Body에 넣어서 POST 할 데이터 모델
@@ -256,6 +257,29 @@ class ApiModel {
         val grade: String
     )
 
+    data class Current(
+//        @SerializedName("base")
+//        val baseTime: LocalDateTime,
+//        @SerializedName("forecast")
+//        val forecastTime: LocalDateTime,
+        @SerializedName("rainType")
+        val rainType: String,
+        @SerializedName("rainHourly")
+        val rainHourly: Double,
+        @SerializedName("humidity")
+        val humidity: Double,
+        @SerializedName("temperature")
+        val temperature: Double,
+//        @SerializedName("windSpeedEW")
+//        val windSpeedEW: Double,
+//        @SerializedName("windSpeedSN")
+//        val windSpeedSN: Double,
+        @SerializedName("vector")
+        val vector: String,
+        @SerializedName("windSpeed")
+        val windSpeed: Double,
+    )
+
     data class GetEntireData(
         @SerializedName("realtime")
         val realtime: List<RealTimeData>,
@@ -270,6 +294,8 @@ class ApiModel {
         @SerializedName("yesterday")
         val yesterday: YesterdayTemp,
         @SerializedName("uv")
-        val uv: UV
+        val uv: UV,
+        @SerializedName("current")
+        val current: Current
     )
 }

@@ -124,7 +124,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 
     //AS Custom TextView
-    implementation 'com.github.tekken5953:ASCustomText:2.2.1'
+    implementation 'com.github.tekken5953:ASCustomText:2.2.4'
 
     // Firebase Admob
     implementation 'com.google.android.gms:play-services-ads:22.0.0'

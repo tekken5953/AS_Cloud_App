@@ -25,6 +25,9 @@ import com.example.airsignal_app.util.GetDeviceInfo
 import com.google.android.gms.location.*
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.IOException
 import java.util.*
@@ -144,8 +147,8 @@ class GetLocation(private val context: Context) {
                 val longitude = location.longitude
                 updateCurrentAddress(latitude,longitude,getAddress(latitude,longitude))
                 writeLogCause(
-                    email = "Test Background",
-                    isSuccess = GetDeviceInfo().androidID(context),
+                    email = sp.getString(userEmail),
+                    isSuccess = "WorkManager Location",
                     log = "새로운 위치 : ${latitude},${longitude}"
                 )
             }
@@ -162,7 +165,6 @@ class GetLocation(private val context: Context) {
                 Log.d(TAG_D, "provider is Disabled")
             }
         }
-
         locationManager!!.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
             0,
