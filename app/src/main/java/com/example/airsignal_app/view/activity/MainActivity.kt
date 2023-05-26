@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
@@ -22,9 +21,14 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
+import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import androidx.work.*
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.DailyWeatherAdapter
+import com.example.airsignal_app.adapter.MainViewPagerAdapter
+import com.example.airsignal_app.adapter.MainViewPagerAdapter.Companion.VIEW_TYPE_AIR
+import com.example.airsignal_app.adapter.MainViewPagerAdapter.Companion.VIEW_TYPE_SUN
 import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile
@@ -72,7 +76,7 @@ class MainActivity : BaseActivity() {
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
-    private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(this, dailyWeatherList) }
+    private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(dailyWeatherList) }
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
     private val sp by lazy { SharedPreferenceManager(this) }
     private val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
@@ -118,6 +122,8 @@ class MainActivity : BaseActivity() {
 
         val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
         binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
+
+        setViewPager()
 
         val geocoder = Geocoder(this, ConvertDataType.getLocale(this))
 
@@ -420,16 +426,19 @@ class MainActivity : BaseActivity() {
 //                            realtime.windSpeed
 //                        ).toInt()
 //                    }˚"
-                spanUnit(binding.subWindValue, realtime.windSpeed.roundToInt().toString() + " ㎧")
-                spanUnit(binding.subRainPerValue, realtime.rainP.roundToInt().toString() + " %")
-                spanUnit(binding.subHumidValue, realtime.humid.roundToInt().toString() + " %")
+                //TODO After Design
+//                spanUnit(binding.subWindValue, realtime.windSpeed.roundToInt().toString() + " ㎧")
+//                spanUnit(binding.subRainPerValue, realtime.rainP.roundToInt().toString() + " %")
+//                spanUnit(binding.subHumidValue, realtime.humid.roundToInt().toString() + " %")
+//
+//                binding.subWindValue.setCompoundDrawablesWithIntrinsicBounds(
+//                    ResourcesCompat.getDrawable(resources, R.drawable.gps, null), null, null, null
+//                )
+//                binding.mainPm10Grade.setGradeText((air.pm10Grade - 1).toString())
+//                binding.mainPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
+                //TODO After Design
 
-                binding.subWindValue.setCompoundDrawablesWithIntrinsicBounds(
-                    ResourcesCompat.getDrawable(resources, R.drawable.gps, null), null, null, null
-                )
-                binding.mainPm10Grade.setGradeText((air.pm10Grade - 1).toString())
-                binding.mainPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
-                binding.mainMinMax.text =
+                binding.mainMinMaxValue.text =
                     "${filteringNullData(today.min)}˚/${filteringNullData(today.max)}˚"
                 binding.nestedPm10Grade.setGradeText((air.pm10Grade - 1).toString())
                 binding.nestedPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
@@ -586,6 +595,25 @@ class MainActivity : BaseActivity() {
         override fun getLocalizedMessage(): String? {
             MainActivity().hidePB()
             return super.getLocalizedMessage()
+        }
+    }
+
+    private fun setViewPager() {
+        val vpAdapter = MainViewPagerAdapter()
+        binding.mainViewPager.apply {
+            adapter = vpAdapter
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            offscreenPageLimit = 2
+            canScrollVertically(0)
+            vpAdapter.addItemAir(VIEW_TYPE_AIR,"바뀐 에어")
+            vpAdapter.addItemSun(VIEW_TYPE_SUN,"바뀐 썬")
+
+            registerOnPageChangeCallback(object : OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    Log.d("viewPagerTest","position  : $position")
+                }
+            })
         }
     }
 
