@@ -21,6 +21,7 @@ import android.view.View.*
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.postDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.work.*
 import com.example.airsignal_app.R
@@ -429,7 +430,7 @@ class MainActivity : BaseActivity() {
                 )
                 binding.mainPm10Grade.setGradeText((air.pm10Grade - 1).toString())
                 binding.mainPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
-                binding.mainMinMax.text =
+                binding.mainMinMaxValue.text =
                     "${filteringNullData(today.min)}˚/${filteringNullData(today.max)}˚"
                 binding.nestedPm10Grade.setGradeText((air.pm10Grade - 1).toString())
                 binding.nestedPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
@@ -477,8 +478,9 @@ class MainActivity : BaseActivity() {
 
                 for (i: Int in 0 until (8)) {
                     try {
+                        val formedDate = dateNow.plusDays(i.toLong())
                         addWeeklyWeatherItem(
-                            "${dateNow.month.value}.${dateNow.dayOfMonth + i}" +
+                            "${formedDate.monthValue}.${formedDate.dayOfMonth}" +
                                     "(${
                                         convertDayOfWeekToKorean(
                                             this,
@@ -678,21 +680,5 @@ class MainActivity : BaseActivity() {
 
     private fun dbIsEmpty(db: GpsRepository): Boolean {
         return db.findAll().isEmpty()
-    }
-
-    private fun updateAdapterItem() {
-        val newDaily = dailyWeatherList
-        val newWeekly = weeklyWeatherList
-        dailyWeatherList.clear()
-        weeklyWeatherList.clear()
-        dailyWeatherList.addAll(newDaily)
-        weeklyWeatherList.addAll(newWeekly)
-        weeklyWeatherAdapter.notifyDataSetChanged()
-        dailyWeatherAdapter.notifyDataSetChanged()
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        updateAdapterItem()
     }
 }
