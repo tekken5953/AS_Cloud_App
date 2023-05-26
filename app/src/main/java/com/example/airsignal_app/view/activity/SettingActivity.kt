@@ -356,7 +356,7 @@ class SettingActivity : BaseActivity() {
             val default = scaleView.findViewById<RadioButton>(R.id.scaleDefaultRB)
             val big = scaleView.findViewById<RadioButton>(R.id.scaleBigRB)
             val back = scaleView.findViewById<ImageView>(R.id.changeScaleBack)
-            val radioGroup = scaleView.findViewById<RadioGroup>(R.id.changeScaleRadioGroup)
+            val rg = scaleView.findViewById<RadioGroup>(R.id.changeScaleRadioGroup)
 
             dialog
                 .setBackPressRefresh(back)
@@ -365,43 +365,33 @@ class SettingActivity : BaseActivity() {
             // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크
             when (sp.getString("scale")) {
                 "small" -> {
-                    radioGroup.check(small.id)
+                    rg.check(small.id)
                 }
                 "big" -> {
-                    radioGroup.check(big.id)
+                    rg.check(big.id)
                 }
                 else -> {
-                    radioGroup.check(default.id)
+                    rg.check(default.id)
                 }
             }
 
-            radioGroup.setOnCheckedChangeListener { radioGroup, i ->
+            rg.setOnCheckedChangeListener { radioGroup, i ->
                 when (i) {
                     small.id -> {
                         sp.setString("scale", "small")
                         radioGroup.check(small.id)
-                        val intent = Intent(this@SettingActivity, MainActivity::class.java)
-                        startActivity(intent)
-                        overridePendingTransition(0, 0)
-                        finish()
+                        this.goMain()
                     }
                     big.id -> {
                         sp.setString("scale", "big")
                         radioGroup.check(big.id)
-                        val intent = Intent(this@SettingActivity, MainActivity::class.java)
-                        startActivity(intent)
-                        overridePendingTransition(0, 0)
-                        finish()
+                        this.goMain()
                     }
                     default.id -> {
                         sp.setString("scale", "default")
                         radioGroup.check(default.id)
-                        val intent = Intent(this@SettingActivity, MainActivity::class.java)
-                        startActivity(intent)
-                        overridePendingTransition(0, 0)
-                        finish()
+                        this.goMain()
                     }
-
                 }
             }
         }
@@ -489,6 +479,13 @@ class SettingActivity : BaseActivity() {
                 src, null
             )
         )
+    }
+
+    private fun goMain() {
+        val intent = Intent(this@SettingActivity, MainActivity::class.java)
+        startActivity(intent)
+        overridePendingTransition(0, 0)
+        finish()
     }
 
     /** 라디오 버튼 DrawableEnd Tint 변경 **/

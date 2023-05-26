@@ -4,14 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
+import com.example.airsignal_app.R
 
 
 // 참고 : https://github.com/Komdosh/android-segmented-progressbar
 
 class SegmentedProgressBar(context: Context?, attributeSet: AttributeSet? = null) : View(context, attributeSet) {
-    private var cornerRadius = 0f // set corner radius for your segmented progress bar
+    private var cornerRadius = 12f // set corner radius for your segmented progress bar
 
     private val paint = Paint()
     var strokePaint = Paint()
@@ -24,21 +26,14 @@ class SegmentedProgressBar(context: Context?, attributeSet: AttributeSet? = null
         height.toFloat()
     )
 
-    @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         var filling = 0f
-        cornerRadius = 12f
         val barContextsLastIndex = barContexts.lastIndex
         barContexts.forEachIndexed { i, bar ->
 
-            val colors = intArrayOf(Color.parseColor("#5CC4FF"),
-                Color.parseColor("#33E430"),
-                Color.parseColor("#DADE20"),
-                Color.parseColor("#FF2929"))
-            val pos = floatArrayOf(0.0f,0.2f,0.5f,1f)
             val shader: Shader = LinearGradient(
-                0f, 0f, width.toFloat(), height.toFloat(),
-                colors, pos, Shader.TileMode.CLAMP
+                0f, 0f, 5f, height.toFloat(),
+                intArrayOf(bar.colorTo, bar.colorFrom), null, Shader.TileMode.CLAMP
             )
 
             paint.shader = shader
@@ -187,6 +182,6 @@ class SegmentedProgressBar(context: Context?, attributeSet: AttributeSet? = null
         }
     }
 
-    class BarContext(val percentage: Float)
 
+    class BarContext(val colorFrom: Int, val colorTo: Int, val percentage: Float)
 }

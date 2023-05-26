@@ -3,6 +3,8 @@ package com.example.airsignal_app.view.activity
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
@@ -18,9 +20,8 @@ import android.view.View
 import android.view.View.*
 import android.view.animation.AnimationUtils
 import android.widget.*
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.location.LocationManagerCompat.getCurrentLocation
+import androidx.core.os.postDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.work.*
 import com.example.airsignal_app.R
@@ -31,10 +32,13 @@ import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CHECK_GPS_BACKGROUND
+import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.db.room.model.GpsEntity
+import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsWorker
@@ -44,6 +48,7 @@ import com.example.airsignal_app.util.ConvertDataType.convertDayOfWeekToKorean
 import com.example.airsignal_app.util.ConvertDataType.getDataColor
 import com.example.airsignal_app.util.ConvertDataType.getRainType
 import com.example.airsignal_app.util.ConvertDataType.getSkyImg
+import com.example.airsignal_app.util.ConvertDataType.pixelToDp
 import com.example.airsignal_app.view.*
 import com.example.airsignal_app.view.widget.WidgetProvider
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
@@ -57,7 +62,6 @@ import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -146,17 +150,25 @@ class MainActivity : BaseActivity() {
             setContexts(
                 barContexts = listOf(
                     SegmentedProgressBar.BarContext(
-                        0.35f //percentage for segment
+                        ResourcesCompat.getColor(resources,R.color.progressGood,null), //gradient start
+                        ResourcesCompat.getColor(resources,R.color.progressGood,null), //gradient stop
+                        0.12f //percentage for segment
                     ),
                     SegmentedProgressBar.BarContext(
-                        0.19f
+                        ResourcesCompat.getColor(resources,R.color.progressNormal,null),
+                        ResourcesCompat.getColor(resources,R.color.progressNormal,null),
+                        0.24f
                     ),
                     SegmentedProgressBar.BarContext(
+                        ResourcesCompat.getColor(resources,R.color.progressBad,null),
+                        ResourcesCompat.getColor(resources,R.color.progressBad,null),
+                        0.48f
+                    ),
+                    SegmentedProgressBar.BarContext(
+                        ResourcesCompat.getColor(resources,R.color.progressWorst,null),
+                        ResourcesCompat.getColor(resources,R.color.progressWorst,null),
                         0.16f
                     ),
-                    SegmentedProgressBar.BarContext(
-                        0.30f
-                    )
                 )
             )
         }
@@ -165,17 +177,25 @@ class MainActivity : BaseActivity() {
             setContexts(
                 barContexts = listOf(
                     SegmentedProgressBar.BarContext(
-                        0.35f //percentage for segment
+                        ResourcesCompat.getColor(resources,R.color.progressGood,null), //gradient start
+                        ResourcesCompat.getColor(resources,R.color.progressGood,null), //gradient stop
+                        0.15f //percentage for segment
                     ),
                     SegmentedProgressBar.BarContext(
-                        0.19f
+                        ResourcesCompat.getColor(resources,R.color.progressNormal,null),
+                        ResourcesCompat.getColor(resources,R.color.progressNormal,null),
+                        0.25f
                     ),
                     SegmentedProgressBar.BarContext(
-                        0.16f
+                        ResourcesCompat.getColor(resources,R.color.progressBad,null),
+                        ResourcesCompat.getColor(resources,R.color.progressBad,null),
+                        0.35f
                     ),
                     SegmentedProgressBar.BarContext(
-                        0.30f
-                    )
+                        ResourcesCompat.getColor(resources,R.color.progressWorst,null),
+                        ResourcesCompat.getColor(resources,R.color.progressWorst,null),
+                        0.25f
+                    ),
                 )
             )
         }
@@ -246,7 +266,7 @@ class MainActivity : BaseActivity() {
                 val setting = menu.findViewById<TextView>(R.id.navMenuSetting)
                 val headerTr = menu.findViewById<TableRow>(R.id.headerTr)
 
-                val dialog = SideMenuBuilder().getInstance(this@MainActivity)
+                val dialog = SideMenuBuilder(this@MainActivity)
                 dialog.apply {
                     setBackPressed(cancel)
                     setUserData(profile, id)
@@ -410,7 +430,7 @@ class MainActivity : BaseActivity() {
                 )
                 binding.mainPm10Grade.setGradeText((air.pm10Grade - 1).toString())
                 binding.mainPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
-                binding.mainMinMax.text =
+                binding.mainMinMaxValue.text =
                     "${filteringNullData(today.min)}˚/${filteringNullData(today.max)}˚"
                 binding.nestedPm10Grade.setGradeText((air.pm10Grade - 1).toString())
                 binding.nestedPm2p5Grade.setGradeText((air.pm25Grade - 1).toString())
@@ -418,14 +438,24 @@ class MainActivity : BaseActivity() {
                 binding.nestedPm10Value.text = air.pm10Value.toInt().toString()
                 binding.nestedPm2p5Value.setTextColor(getDataColor(this, air.pm25Grade - 1))
                 binding.nestedPm2p5Value.text = air.pm25Value.toString()
+
                 getCompareTemp(
                     yesterday.temp,
                     realtime.temp,
                     binding.mainCompareTempTv
                 )
 
-                binding.segmentProgress2p5Arrow.setPadding(air.pm25Value, 0, 0, 0)
-                binding.segmentProgress10Arrow.setPadding(air.pm10Value.toInt(), 0, 0, 0)
+                val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
+                if (air.pm25Value > 125) {
+                    binding.segmentProgress2p5Arrow.setPadding(125 * widthDp / 125, 0, 0, 0)
+                } else {
+                    binding.segmentProgress2p5Arrow.setPadding(air.pm25Value * widthDp / 125, 0, 0, 0)
+                }
+                if (air.pm10Value > 200) {
+                    binding.segmentProgress10Arrow.setPadding(200 * widthDp / 200, 0, 0, 0)
+                } else {
+                    binding.segmentProgress10Arrow.setPadding(air.pm10Value.toInt() * widthDp / 200, 0, 0, 0)
+                }
 
                 for (i: Int in 0 until result.realtime.size) {
                     try {
@@ -448,8 +478,9 @@ class MainActivity : BaseActivity() {
 
                 for (i: Int in 0 until (8)) {
                     try {
+                        val formedDate = dateNow.plusDays(i.toLong())
                         addWeeklyWeatherItem(
-                            "${dateNow.month.value}.${dateNow.dayOfMonth + i}" +
+                            "${formedDate.monthValue}.${formedDate.dayOfMonth}" +
                                     "(${
                                         convertDayOfWeekToKorean(
                                             this,
@@ -570,59 +601,84 @@ class MainActivity : BaseActivity() {
                         Log.d(TAG_D, "${location.latitude},${location.longitude}")
                         locationClass.getAddress(gps.latitude, gps.longitude)
                             .let { address ->
+                                updateCurrentAddress(
+                                    gps.latitude, gps.longitude,
+                                    address.replaceFirst(" ", "")
+                                )
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    getDataViewModel.loadDataResult(gps.latitude, gps.longitude, null)
+                                    getDataViewModel.loadDataResult(
+                                        gps.latitude,
+                                        gps.longitude,
+                                        null
+                                    )
                                     delay(100)
                                 }
-                                locationClass.writeRdbLog(gps.latitude, gps.longitude, address)
-                                binding.mainGpsTitleTv.text = address.replaceFirst(" ", "")
+                                locationClass.writeRdbLog(
+                                    gps.latitude,
+                                    gps.longitude,
+                                    locationClass.formattingFullAddress(address)
+                                )
+                                binding.mainGpsTitleTv.text =
+                                    locationClass.formattingFullAddress(address)
+                                        .replaceFirst(" ", "")
                                 hidePB()
                             }
                     }
                 }
 
                 .addOnFailureListener {
-                    RDBLogcat.writeLogCause(sp.getString(userEmail),"GPS 위치정보 갱신실패", it.localizedMessage!!)
+                    RDBLogcat.writeLogCause(
+                        sp.getString(userEmail),
+                        "GPS 위치정보 갱신실패",
+                        it.localizedMessage!!
+                    )
                 }
         } else if (!locationClass.isGPSConnection() && locationClass.isNetWorkConnection()) {
-                val lm = getSystemService(LOCATION_SERVICE) as LocationManager
-                val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                location?.let { loc ->
-                    GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude)
-                        .let { addr ->
-                            CoroutineScope(Dispatchers.IO).launch {
-                                getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
-                                delay(100)
-                            }
-                            locationClass.writeRdbLog(loc.latitude, loc.longitude, addr)
-                            binding.mainGpsTitleTv.text = addr.replaceFirst(" ", "")
-                            hidePB()
-                            Toast.makeText(this, "현재 위치와의 오차가 존재 할 수 있습니다", Toast.LENGTH_SHORT).show()
+            val lm = getSystemService(LOCATION_SERVICE) as LocationManager
+            val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            location?.let { loc ->
+                GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude)
+                    .let { addr ->
+                        updateCurrentAddress(
+                            loc.latitude,
+                            loc.longitude,
+                            addr.replaceFirst(" ", "")
+                        )
+                        CoroutineScope(Dispatchers.IO).launch {
+                            getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
+                            delay(100)
                         }
-                }
-            } else {
+                        locationClass.writeRdbLog(loc.latitude, loc.longitude, addr)
+                        binding.mainGpsTitleTv.text = locationClass.formattingFullAddress(addr)
+                            .replaceFirst(" ", "")
+                        hidePB()
+                        Toast.makeText(this, "현재 위치와의 오차가 존재 할 수 있습니다", Toast.LENGTH_SHORT).show()
+                    }
+            }
+        } else {
             locationClass.requestGPSEnable()
         }
     }
 
-//    private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
-//        val roomDB = GpsRepository(this)
-//        sp.setString(lastAddress, addr)
-//        val model = GpsEntity()
-//        Log.d(TAG_D, roomDB.findAll().toString())
-//        model.name = CURRENT_GPS_ID
-//        model.lat = lat
-//        model.lng = lng
-//        model.addr = addr
-//        if (dbIsEmpty(roomDB)) {
-//            roomDB.insert(model)
-//            Logger.t(TAG_D).d("Insert GPS In GetLocation")
-//        } else {
-//            roomDB.update(model)
-//            Logger.t(TAG_D).d("Update GPS In GetLocation")
-//        }
-//    }
-//    private fun dbIsEmpty(db: GpsRepository): Boolean {
-//        return db.findAll().isEmpty()
-//    }
+    private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
+        val roomDB = GpsRepository(this)
+        sp.setString(lastAddress, addr)
+        val model = GpsEntity()
+
+        model.name = CURRENT_GPS_ID
+        model.lat = lat
+        model.lng = lng
+        model.addr = addr
+        if (dbIsEmpty(roomDB)) {
+            roomDB.insert(model)
+            Log.d(TAG_D, "Insert GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}")
+        } else {
+            roomDB.update(model)
+            Log.d(TAG_D, "Update GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}")
+        }
+    }
+
+    private fun dbIsEmpty(db: GpsRepository): Boolean {
+        return db.findAll().isEmpty()
+    }
 }

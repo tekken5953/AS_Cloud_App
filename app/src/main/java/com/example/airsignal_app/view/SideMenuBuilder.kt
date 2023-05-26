@@ -2,6 +2,7 @@ package com.example.airsignal_app.view
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.net.Uri
 import android.util.DisplayMetrics
 import android.view.*
@@ -12,34 +13,22 @@ import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.RefreshUtils
+import java.util.concurrent.CompletableFuture
 import javax.inject.Singleton
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-05-11 오전 11:55
  **/
-class SideMenuBuilder {
-    private lateinit var activity: Activity
-    private lateinit var builder: AlertDialog.Builder
+class SideMenuBuilder(private val activity: Activity) {
+    private var builder: AlertDialog.Builder =
+        AlertDialog.Builder(activity, R.style.DialogAnimationMenu)
     private lateinit var alertDialog: AlertDialog
 
-    @Singleton
-    fun getInstance(mActivity: Activity): SideMenuBuilder {
-        activity = mActivity
-        builder = AlertDialog.Builder(activity, R.style.DialogAnimationMenu)
-        when(SharedPreferenceManager(activity).getString("scale")) {
-            "small" -> {
-                ConvertDataType.setTextSizeSmall(activity)
-            }
-            "big" -> {
-                ConvertDataType.setTextSizeLarge(activity)
-            }
-            else -> {
-                ConvertDataType.setTextSizeDefault(activity)
-            }
-        }
-        return this
+    init {
+        setFontScale()
     }
+
     /** 다이얼로그 뒤로가기 버튼 리스너 등록 **/
     fun setBackPressed(imageView: View): SideMenuBuilder {
         imageView.setOnClickListener {
@@ -81,7 +70,7 @@ class SideMenuBuilder {
             }
         }
     }
-    
+
     fun setUserData(profile: ImageView, Id: TextView): SideMenuBuilder {
         val sp = SharedPreferenceManager(activity)
         Glide.with(activity)
@@ -94,6 +83,21 @@ class SideMenuBuilder {
         } else Id.text =
             activity.getString(R.string.please_login)
 
+        return this
+    }
+
+    fun setFontScale(): SideMenuBuilder {
+        when (SharedPreferenceManager(builder.context).getString("scale")) {
+            "small" -> {
+                ConvertDataType.setTextSizeSmall(builder.context)
+            }
+            "big" -> {
+                ConvertDataType.setTextSizeLarge(builder.context)
+            }
+            else -> {
+                ConvertDataType.setTextSizeDefault(builder.context)
+            }
+        }
         return this
     }
 

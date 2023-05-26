@@ -17,7 +17,7 @@ import com.example.airsignal_app.util.ConvertDataType
  */
 @Entity
 data class GpsEntity(
-    @PrimaryKey val id: Int? = 0,
+    @PrimaryKey(autoGenerate = true) val id: Int? = 0,
     var name: String = "",
     var lat: Double?,
     var lng: Double?,

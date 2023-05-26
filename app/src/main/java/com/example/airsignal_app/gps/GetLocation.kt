@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.location.*
 import android.location.LocationListener
-import android.os.Build.VERSION
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -66,35 +65,21 @@ class GetLocation(private val context: Context) {
             @Suppress("DEPRECATION")
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             if (address.isNotEmpty()) {
-                val fullAddress: String = address[0].getAddressLine(0) // 주소 문자열 가져오기
-                var newAddress = ""
-                val addressParts = fullAddress.split(" ").toTypedArray() // 공백을 기준으로 주소 요소 분리
-                var formattedAddress = ""
-                for (i in 0 until addressParts.size - 1) {
-                    formattedAddress += addressParts[i].trim { it <= ' ' } // 건물 주소를 제외한 나머지 요소 추출
-                    if (i < addressParts.size - 2) {
-                        formattedAddress += " " // 요소 사이에 공백 추가
-                    }
-                }
+                return address[0].getAddressLine(0)
 
-                newAddress = if (formattedAddress.contains("null")) {
-                    formattedAddress.split("null")[0].replace("대한민국","")
-                } else {
-                    formattedAddress.replace("대한민국", "")
-                }
-                Log.i(TAG_D, formattedAddress) // 건물 주소를 제외한 주소 출력
-
-                try {
-                    updateCurrentAddress(
-                        address[0].latitude, address[0].longitude, newAddress
-                    )
-
-                    writeRdbLog(address[0].latitude, address[0].longitude, newAddress)
-//                            renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)
-                    return newAddress
-                } catch (e: Exception) {
-                    Timber.tag("Location").e("Location Contains null")
-                }
+//                Log.i(TAG_D, newAddress) // 건물 주소를 제외한 주소 출력
+//
+//                try {
+//                    updateCurrentAddress (
+//                        address[0].latitude, address[0].longitude, newAddress
+//                    )
+//
+//                    writeRdbLog(address[0].latitude, address[0].longitude, newAddress)
+////                            renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)
+//                    return newAddress
+//                } catch (e: Exception) {
+//                    Timber.tag("Location").e("Location Contains null")
+//                }
             }
         } catch (e: IOException) {
             Timber.tag("Location").e("주소를 가져오는 도중 오류가 발생했습니다")
@@ -105,6 +90,23 @@ class GetLocation(private val context: Context) {
             )
         }
         return ""
+    }
+
+    fun formattingFullAddress(fullAddr: String): String {
+        val addressParts = fullAddr.split(" ").toTypedArray() // 공백을 기준으로 주소 요소 분리
+        var formattedAddress = ""
+        for (i in 0 until addressParts.size - 1) {
+            formattedAddress += addressParts[i].trim { it <= ' ' } // 건물 주소를 제외한 나머지 요소 추출
+            if (i < addressParts.size - 2) {
+                formattedAddress += " " // 요소 사이에 공백 추가
+            }
+        }
+
+        return  if (formattedAddress.contains("null")) {
+            formattedAddress.split("null")[0].replace("대한민국","")
+        } else {
+            formattedAddress.replace("대한민국", "")
+        }
     }
 
     /** 현재 주소 DB에 업데이트 **/
