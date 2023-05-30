@@ -28,6 +28,7 @@ object AdapterModel {
     // 주간별 날씨
     data class WeeklyWeatherItem(
         val day: String,
+        val date: String,
         val minImg: Drawable?,
         val maxImg: Drawable?,
         val minText: String,

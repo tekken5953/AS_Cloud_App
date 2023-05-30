@@ -69,12 +69,22 @@
     </Transition>
 
     <ConstraintSet android:id="@+id/start">
+<!--        <Constraint-->
+<!--            android:id="@+id/topBarLinear"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            motion:layout_constraintTop_toTopOf="@+id/mainMotionLinear"-->
+<!--            android:layout_marginTop="20dp" />-->
         <Constraint
-            android:id="@+id/topBarLinear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            motion:layout_constraintTop_toTopOf="@+id/mainMotionLinear"
-            android:layout_marginTop="20dp" />
+            android:id="@+id/mainTopBarGpsTitle"
+            style="@style/basicTextView"
+            android:textSize="14sp"
+            android:alpha="0"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="@+id/topBarLinear"
+            motion:layout_constraintBottom_toBottomOf="@id/topBarLinear"
+            motion:drawableStartCompat="@drawable/location_fill" />
         <Constraint
             android:id="@+id/mainMotionLinear"
             android:layout_width="match_parent"
@@ -242,11 +252,24 @@
 
 
     <ConstraintSet android:id="@+id/end">
+<!--        <Constraint-->
+<!--            android:id="@+id/topBarLinear"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            motion:layout_constraintBottom_toTopOf="@+id/mainMotionLayout" />-->
         <Constraint
-            android:id="@+id/topBarLinear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            motion:layout_constraintBottom_toTopOf="@+id/mainMotionLayout" />
+            android:id="@+id/mainTopBarGpsTitle"
+            style="@style/basicTextView"
+            android:textSize="14sp"
+            android:alpha="1"
+            android:maxEms="15"
+            android:ellipsize="start"
+            android:lines="1"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintTop_toTopOf="@+id/topBarLinear"
+            motion:layout_constraintBottom_toBottomOf="@id/topBarLinear"
+            motion:drawableStartCompat="@drawable/location_fill"  />
         <Constraint
             android:id="@+id/mainMotionLinear"
             android:layout_width="match_parent"

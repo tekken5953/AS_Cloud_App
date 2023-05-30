@@ -18,272 +18,6 @@
         app:layoutDescription="@xml/activity_main_xml_mainmotionlayout_scene"
         app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/nested_scrollview"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="-30dp"
-            android:background="@color/white"
-            android:clipToPadding="false"
-            android:orientation="vertical"
-            android:overScrollMode="never"
-            android:scrollbars="none"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/mainMotionLinear">
-
-            <RelativeLayout
-                android:id="@+id/nested_main_linear"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/view_line_color"
-                android:paddingBottom="55dp">
-
-                <RelativeLayout
-                    android:id="@+id/nested_daily_box"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="30dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/scrolled_box_bg"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp">
-
-                    <TextView
-                        android:id="@+id/mainDailyWeatherTitle"
-                        style="@style/basicTextView"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="24dp"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:text="시간별 날씨"
-                        android:textColor="#4F4F4F"
-                        android:textSize="16sp" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/mainDailyWeatherRv"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_below="@+id/mainDailyWeatherTitle"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="30dp"
-                        android:clipToPadding="false"
-                        android:orientation="horizontal"
-                        android:overScrollMode="never"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/list_item_daily_weather" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/nested_weekly_box"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/nested_daily_box"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/scrolled_box_bg">
-
-                    <TextView
-                        android:id="@+id/mainWeeklyWeatherTitle"
-                        style="@style/basicTextView"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="24dp"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:text="주간별 날씨"
-                        android:textColor="#4F4F4F"
-                        android:textSize="16sp" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/mainWeeklyWeatherRv"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_below="@+id/mainWeeklyWeatherTitle"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="30dp"
-                        android:clipToPadding="false"
-                        android:orientation="vertical"
-                        android:overScrollMode="never"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/list_item_weekly_weather" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/nested_pm_box"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/nested_weekly_box"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/scrolled_box_bg"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp">
-
-                    <TextView
-                        android:id="@+id/nested_pm_title"
-                        style="@style/basicTextView"
-                        android:layout_marginTop="24dp"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:text="실시간 공기질"
-                        android:textColor="#4F4F4F"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/nested_pm_2p5_title"
-                        style="@style/basicTextView"
-                        android:layout_below="@+id/nested_pm_title"
-                        android:layout_marginTop="25dp"
-                        android:text="PM2.5(초미세먼지)"
-                        android:textColor="#7C7C7C"
-                        android:textSize="14sp" />
-
-                    <com.aslib.AsTextView
-                        android:id="@+id/nested_pm_2p5_grade"
-                        style="@style/basicTextView"
-                        android:layout_below="@+id/nested_pm_2p5_title"
-                        android:layout_marginStart="2dp"
-                        android:layout_marginTop="7dp"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:textSize="24sp"
-                        app:sort="grade" />
-
-                    <com.aslib.AsTextView
-                        android:id="@+id/nested_pm_2p5_value"
-                        style="@style/basicTextView"
-                        android:layout_alignBottom="@+id/nested_pm_2p5_grade"
-                        android:layout_marginEnd="10dp"
-                        android:layout_toStartOf="@+id/nested_pm_2p5_unit"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:textSize="24sp"
-                        app:sort="pm2.5" />
-
-                    <TextView
-                        android:id="@+id/nested_pm_2p5_unit"
-                        style="@style/basicTextView"
-                        android:layout_alignBottom="@+id/nested_pm_2p5_grade"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginBottom="4dp"
-                        android:text="㎍/㎥"
-                        android:textColor="#7C7C7C"
-                        android:textSize="12sp" />
-
-                    <com.example.airsignal_app.view.SegmentedProgressBar
-                        android:id="@+id/segment_progress_2p5_bar"
-                        android:layout_width="match_parent"
-                        android:layout_height="6dp"
-                        android:layout_below="@+id/segment_progress_2p5_arrow"
-                        android:paddingStart="12dp"
-                        android:layout_marginTop="3dp"
-                        android:paddingEnd="12dp"
-                        android:layout_marginBottom="30dp" />
-
-                    <ImageView
-                        android:id="@+id/segment_progress_2p5_arrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/nested_pm_2p5_value"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:src="@drawable/bottom_arrow" />
-
-                    <TextView
-                        android:id="@+id/nested_pm_10_title"
-                        style="@style/basicTextView"
-                        android:layout_below="@+id/segment_progress_2p5_bar"
-                        android:layout_marginTop="25dp"
-                        android:text="PM10(미세먼지)"
-                        android:textColor="#7C7C7C"
-                        android:textSize="14sp" />
-
-                    <com.aslib.AsTextView
-                        android:id="@+id/nested_pm_10_grade"
-                        style="@style/basicTextView"
-                        android:layout_below="@+id/nested_pm_10_title"
-                        android:layout_marginStart="2dp"
-                        android:layout_marginTop="7dp"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:textSize="24sp"
-                        app:sort="grade" />
-
-                    <com.aslib.AsTextView
-                        android:id="@+id/nested_pm_10_value"
-                        style="@style/basicTextView"
-                        android:layout_alignBottom="@+id/nested_pm_10_grade"
-                        android:layout_marginEnd="10dp"
-                        android:layout_toStartOf="@+id/nested_pm_2p5_unit"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:textSize="24sp"
-                        app:sort="pm10"/>
-
-                    <TextView
-                        android:id="@+id/nested_pm_10_unit"
-                        style="@style/basicTextView"
-                        android:layout_alignBottom="@+id/nested_pm_10_grade"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginBottom="4dp"
-                        android:text="㎍/㎥"
-                        android:textColor="#7C7C7C"
-                        android:textSize="12sp" />
-
-                    <com.example.airsignal_app.view.SegmentedProgressBar
-                        android:id="@+id/segment_progress_10_bar"
-                        android:layout_width="match_parent"
-                        android:layout_height="6dp"
-                        android:layout_below="@+id/segment_progress_10_arrow"
-                        android:paddingStart="12dp"
-                        android:layout_marginTop="3dp"
-                        android:paddingEnd="12dp"
-                        android:layout_marginBottom="30dp" />
-
-                    <ImageView
-                        android:id="@+id/segment_progress_10_arrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/nested_pm_10_value"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:src="@drawable/bottom_arrow" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/mainSunBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/nested_pm_box"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginBottom="35dp"
-                    android:background="@drawable/scrolled_box_bg"
-                    android:gravity="center_horizontal">
-
-                    <com.triggertrap.seekarc.SeekArc
-                        android:id="@+id/seekArc"
-                        android:layout_width="200dp"
-                        android:layout_height="200dp"
-                        android:layout_centerVertical="true"
-                        android:padding="50dp"
-                        app:arcWidth="5dp"
-                        app:max="100"
-                        app:progress="50"
-                        app:progressColor="@color/progressBad"
-                        app:progressWidth="5dp"
-                        app:rotation="180"
-                        app:roundEdges="true"
-                        app:startAngle="90"
-                        app:sweepAngle="180"
-                        app:thumb="@drawable/circle"
-                        app:touchInside="false" />
-
-                </RelativeLayout>
-            </RelativeLayout>
-        </androidx.core.widget.NestedScrollView>
-
         <!--        <com.scwang.smart.refresh.layout.SmartRefreshLayout-->
         <!--            android:id="@+id/mainSwipeLayout"-->
         <!--            android:layout_width="match_parent"-->
@@ -301,6 +35,19 @@
             android:orientation="vertical"
             app:layout_constraintBottom_toTopOf="@+id/nested_scrollview"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
+
+        <TextView
+            android:id="@+id/mainTopBarGpsTitle"
+            style="@style/basicTextView"
+            android:textSize="14sp"
+            android:maxEms="15"
+            android:lines="1"
+            android:ellipsize="start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/topBarLinear"
+            app:layout_constraintBottom_toBottomOf="@id/topBarLinear"
+            app:drawableStartCompat="@drawable/location_fill" />
 
         <RelativeLayout
             android:id="@+id/topBarLinear"
@@ -622,5 +369,271 @@
             app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             app:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLayout" />
+
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nested_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="-30dp"
+            android:background="@color/white"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/mainMotionLinear">
+
+            <RelativeLayout
+                android:id="@+id/nested_main_linear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/view_line_color"
+                android:paddingBottom="55dp">
+
+                <RelativeLayout
+                    android:id="@+id/nested_daily_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/scrolled_box_bg"
+                    android:paddingStart="15dp"
+                    android:paddingEnd="15dp">
+
+                    <TextView
+                        android:id="@+id/mainDailyWeatherTitle"
+                        style="@style/basicTextView"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="24dp"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:text="시간별 날씨"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/mainDailyWeatherRv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/mainDailyWeatherTitle"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="30dp"
+                        android:clipToPadding="false"
+                        android:orientation="horizontal"
+                        android:overScrollMode="never"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/list_item_daily_weather" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/nested_weekly_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/nested_daily_box"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/scrolled_box_bg">
+
+                    <TextView
+                        android:id="@+id/mainWeeklyWeatherTitle"
+                        style="@style/basicTextView"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="24dp"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:text="주간별 날씨"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/mainWeeklyWeatherRv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/mainWeeklyWeatherTitle"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="30dp"
+                        android:clipToPadding="false"
+                        android:orientation="vertical"
+                        android:overScrollMode="never"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/list_item_weekly_weather" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/nested_pm_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/nested_weekly_box"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/scrolled_box_bg"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp">
+
+                    <TextView
+                        android:id="@+id/nested_pm_title"
+                        style="@style/basicTextView"
+                        android:layout_marginTop="24dp"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:text="실시간 공기질"
+                        android:textColor="#4F4F4F"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/nested_pm_2p5_title"
+                        style="@style/basicTextView"
+                        android:layout_below="@+id/nested_pm_title"
+                        android:layout_marginTop="25dp"
+                        android:text="PM2.5(초미세먼지)"
+                        android:textColor="#7C7C7C"
+                        android:textSize="14sp" />
+
+                    <com.aslib.AsTextView
+                        android:id="@+id/nested_pm_2p5_grade"
+                        style="@style/basicTextView"
+                        android:layout_below="@+id/nested_pm_2p5_title"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="7dp"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:textSize="24sp"
+                        app:sort="grade" />
+
+                    <com.aslib.AsTextView
+                        android:id="@+id/nested_pm_2p5_value"
+                        style="@style/basicTextView"
+                        android:layout_alignBottom="@+id/nested_pm_2p5_grade"
+                        android:layout_marginEnd="10dp"
+                        android:layout_toStartOf="@+id/nested_pm_2p5_unit"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:textSize="24sp"
+                        app:sort="pm2.5" />
+
+                    <TextView
+                        android:id="@+id/nested_pm_2p5_unit"
+                        style="@style/basicTextView"
+                        android:layout_alignBottom="@+id/nested_pm_2p5_grade"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="4dp"
+                        android:text="㎍/㎥"
+                        android:textColor="#7C7C7C"
+                        android:textSize="12sp" />
+
+                    <com.example.airsignal_app.view.SegmentedProgressBar
+                        android:id="@+id/segment_progress_2p5_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="6dp"
+                        android:layout_below="@+id/segment_progress_2p5_arrow"
+                        android:paddingStart="12dp"
+                        android:layout_marginTop="3dp"
+                        android:paddingEnd="12dp"
+                        android:layout_marginBottom="30dp" />
+
+                    <ImageView
+                        android:id="@+id/segment_progress_2p5_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/nested_pm_2p5_value"
+                        android:layout_marginStart="7dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="7dp"
+                        android:src="@drawable/bottom_arrow" />
+
+                    <TextView
+                        android:id="@+id/nested_pm_10_title"
+                        style="@style/basicTextView"
+                        android:layout_below="@+id/segment_progress_2p5_bar"
+                        android:layout_marginTop="25dp"
+                        android:text="PM10(미세먼지)"
+                        android:textColor="#7C7C7C"
+                        android:textSize="14sp" />
+
+                    <com.aslib.AsTextView
+                        android:id="@+id/nested_pm_10_grade"
+                        style="@style/basicTextView"
+                        android:layout_below="@+id/nested_pm_10_title"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="7dp"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:textSize="24sp"
+                        app:sort="grade" />
+
+                    <com.aslib.AsTextView
+                        android:id="@+id/nested_pm_10_value"
+                        style="@style/basicTextView"
+                        android:layout_alignBottom="@+id/nested_pm_10_grade"
+                        android:layout_marginEnd="10dp"
+                        android:layout_toStartOf="@+id/nested_pm_2p5_unit"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
+                        android:textSize="24sp"
+                        app:sort="pm10"/>
+
+                    <TextView
+                        android:id="@+id/nested_pm_10_unit"
+                        style="@style/basicTextView"
+                        android:layout_alignBottom="@+id/nested_pm_10_grade"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="4dp"
+                        android:text="㎍/㎥"
+                        android:textColor="#7C7C7C"
+                        android:textSize="12sp" />
+
+                    <com.example.airsignal_app.view.SegmentedProgressBar
+                        android:id="@+id/segment_progress_10_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="6dp"
+                        android:layout_below="@+id/segment_progress_10_arrow"
+                        android:paddingStart="12dp"
+                        android:layout_marginTop="3dp"
+                        android:paddingEnd="12dp"
+                        android:layout_marginBottom="30dp" />
+
+                    <ImageView
+                        android:id="@+id/segment_progress_10_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/nested_pm_10_value"
+                        android:layout_marginStart="7dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="7dp"
+                        android:src="@drawable/bottom_arrow" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/mainSunBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/nested_pm_box"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="35dp"
+                    android:background="@drawable/scrolled_box_bg"
+                    android:gravity="center_horizontal">
+
+                    <com.triggertrap.seekarc.SeekArc
+                        android:id="@+id/seekArc"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_centerVertical="true"
+                        android:padding="50dp"
+                        app:arcWidth="5dp"
+                        app:max="100"
+                        app:progress="50"
+                        app:progressColor="@color/progressBad"
+                        app:progressWidth="5dp"
+                        app:rotation="180"
+                        app:roundEdges="true"
+                        app:startAngle="90"
+                        app:sweepAngle="180"
+                        app:thumb="@drawable/circle"
+                        app:touchInside="false" />
+
+                </RelativeLayout>
+            </RelativeLayout>
+        </androidx.core.widget.NestedScrollView>
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

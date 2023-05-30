@@ -40,7 +40,6 @@ open class BaseActivity : AppCompatActivity() {
 //    }
 
     override fun attachBaseContext(newBase: Context?) {
-        Log.d(TAG_L, "${newBase} attachBaseContext")
         super.attachBaseContext(newBase)
         val sp = SharedPreferenceManager(newBase!!)
         // 설정된 언어정보 불러오기

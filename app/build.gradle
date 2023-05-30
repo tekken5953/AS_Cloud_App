@@ -136,6 +136,9 @@ dependencies {
     // SeekArc - Sun Graph
     implementation 'com.github.Triggertrap:SeekArc:v1.1'
 
+    // MPAndroid
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
 //    def nav_version = "2.5.3"
 //    // Feature module Support
 //    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"

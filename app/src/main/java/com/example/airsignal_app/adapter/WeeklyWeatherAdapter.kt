@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.ConvertDataType
 import java.time.LocalDateTime
 import java.util.*
@@ -33,6 +34,20 @@ class WeeklyWeatherAdapter(
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val view: View = inflater.inflate(R.layout.list_item_weekly_weather, parent, false)
+        when(SharedPreferenceManager(context).getString("scale")) {
+            "small" -> {
+//                ConvertDataType.setTextSizeLarge(view.context)
+                ConvertDataType.setTextSizeSmall(view.context)
+            }
+            "big" -> {
+//                ConvertDataType.setTextSizeSmall(view.context)
+                ConvertDataType.setTextSizeLarge(view.context)
+            }
+            else -> {
+                ConvertDataType.setTextSizeDefault(view.context)
+            }
+        }
+        Thread.sleep(100)
         return ViewHolder(view)
     }
 
@@ -44,6 +59,7 @@ class WeeklyWeatherAdapter(
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val day: TextView = itemView.findViewById(R.id.weeklyDayText)
+        private val date: TextView = itemView.findViewById(R.id.weeklyDayDate)
         private val minImg: ImageView = itemView.findViewById(R.id.weeklyMinIv)
         private val maxImg: ImageView = itemView.findViewById(R.id.weeklyMaxIv)
         private val minText: TextView = itemView.findViewById(R.id.weeklyMinText)
@@ -52,6 +68,7 @@ class WeeklyWeatherAdapter(
 
         fun bind(dao: AdapterModel.WeeklyWeatherItem) {
             day.text = dao.day
+            date.text = dao.date
             minImg.setImageDrawable(dao.minImg)
             maxImg.setImageDrawable(dao.maxImg)
             minText.text = dao.minText

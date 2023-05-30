@@ -320,6 +320,7 @@ class MainActivity : BaseActivity() {
             sp.getString(lastAddress)
         )
         binding.mainGpsTitleTv.text = sp.getString(lastAddress)
+        binding.mainTopBarGpsTitle.text = sp.getString(lastAddress)
     }
 
     private fun showPB() {
@@ -480,17 +481,26 @@ class MainActivity : BaseActivity() {
                     }
                 }
 
-                for (i: Int in 0 until (8)) {
+                for (i: Int in 0 until (7)) {
                     try {
                         val formedDate = dateNow.plusDays(i.toLong())
+                        val date: String = when(i) {
+                            0 -> {
+                                "오늘"
+                            }
+                            1 -> {
+                                "내일"
+                            }
+                            else -> {
+                                "${convertDayOfWeekToKorean(
+                                    this,
+                                    dateNow.dayOfWeek.value + i
+                                )}요일"
+                            }
+                        }
                         addWeeklyWeatherItem(
-                            "${formedDate.monthValue}.${formedDate.dayOfMonth}" +
-                                    "(${
-                                        convertDayOfWeekToKorean(
-                                            this,
-                                            dateNow.dayOfWeek.value + i
-                                        )
-                                    })",
+                            date,
+                            convertDateAppendZero(formedDate),
                             getSkyImg(this, wfMin[i])!!,
                             getSkyImg(this, wfMax[i])!!,
                             "${taMin[i].roundToInt()}˚",
@@ -525,10 +535,10 @@ class MainActivity : BaseActivity() {
 
     // 시간별 날씨 리사이클러뷰 아이템 추가
     private fun addWeeklyWeatherItem(
-        day: String, minImg: Drawable,
+        day: String, date: String, minImg: Drawable,
         maxImg: Drawable, minText: String, maxText: String,
     ) {
-        val item = AdapterModel.WeeklyWeatherItem(day, minImg, maxImg, minText, maxText)
+        val item = AdapterModel.WeeklyWeatherItem(day, date, minImg, maxImg, minText, maxText)
 
         this.weeklyWeatherList.add(item)
     }
@@ -555,6 +565,23 @@ class MainActivity : BaseActivity() {
             getRainType(this, rain!!)!!
         } else {
             getSkyImg(this, sky!!)!!
+        }
+    }
+
+    // 날짜가 한자리일 때 앞에 0 붙이기
+    private fun convertDateAppendZero(dateTime: LocalDateTime): String {
+        return if (dateTime.monthValue / 10 == 0) {
+            if (dateTime.dayOfMonth / 10 == 0) {
+                "0${dateTime.monthValue}.0${dateTime.dayOfMonth}"
+            } else {
+                "0${dateTime.monthValue}.${dateTime.dayOfMonth}"
+            }
+        } else {
+            if (dateTime.dayOfMonth / 10 == 0) {
+                "${dateTime.monthValue}.0${dateTime.dayOfMonth}"
+            } else {
+                "${dateTime.monthValue}.${dateTime.dayOfMonth}"
+            }
         }
     }
 
@@ -625,6 +652,9 @@ class MainActivity : BaseActivity() {
                                 binding.mainGpsTitleTv.text =
                                     locationClass.formattingFullAddress(address)
                                         .replaceFirst(" ", "")
+                                binding.mainTopBarGpsTitle.text =
+                                    locationClass.formattingFullAddress(address)
+                                        .replaceFirst(" ", "")
                                 hidePB()
                             }
                     }
@@ -655,7 +685,9 @@ class MainActivity : BaseActivity() {
                         locationClass.writeRdbLog(loc.latitude, loc.longitude, addr)
                         binding.mainGpsTitleTv.text = locationClass.formattingFullAddress(addr)
                             .replaceFirst(" ", "")
-                        hidePB()
+                        binding.mainTopBarGpsTitle.text = locationClass.formattingFullAddress(addr)
+                            .replaceFirst(" ", "")
+                            hidePB()
                         ToastUtils(this).showMessage("현재 위치와의 오차가 존재 할 수 있습니다")
                     }
             }
