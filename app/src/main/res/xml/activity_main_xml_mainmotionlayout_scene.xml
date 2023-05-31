@@ -107,7 +107,7 @@
             android:alpha="1"
             android:gravity="start"
             android:textColor="@color/mode_black_color"
-            android:textSize="20sp"
+            android:textSize="18sp"
             motion:layout_constraintStart_toStartOf="@id/mainMotionLayout"
             motion:layout_constraintTop_toBottomOf="@+id/topBarLinear"  />
         <Constraint
@@ -150,7 +150,7 @@
             android:fontFamily="@font/spoqa_hansansneo_regular"
             android:letterSpacing="0"
             android:textColor="@color/mode_black_color"
-            android:textSize="72sp"
+            android:textSize="67sp"
             android:textStyle="bold"
             motion:layout_constraintEnd_toStartOf="@+id/mainLiveTempUnit"
             motion:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
@@ -181,6 +181,7 @@
             android:layout_marginEnd="15dp"
             android:textColor="@color/mode_black_90"
             android:textSize="14sp"
+            android:layout_marginTop="3dp"
             motion:layout_constraintEnd_toStartOf="@id/mainMinMaxValue"
             motion:layout_constraintTop_toTopOf="@+id/mainMinMaxValue"
             motion:layout_constraintBottom_toBottomOf="@id/mainMinMaxValue"
@@ -210,9 +211,9 @@
             android:id="@+id/mainPmBoxTL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="50dp"
             android:layout_marginTop="15dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="50dp"
             android:background="@drawable/pm_motion_box_bg"
             android:gravity="center"
             android:alpha="1"
@@ -273,7 +274,7 @@
         <Constraint
             android:id="@+id/mainMotionLinear"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="170dp"
             android:orientation="vertical"
             motion:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 <!--        <Constraint-->

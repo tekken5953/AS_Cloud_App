@@ -194,6 +194,8 @@ class ApiModel {
         val khaiValue: Int,
         @SerializedName("mangName")
         val mangName: String,
+        @SerializedName("no2Grade")
+        val no2Grade: Int,
         @SerializedName("no2Value")
         val no2Value: Double,
         @SerializedName("o3Grade")

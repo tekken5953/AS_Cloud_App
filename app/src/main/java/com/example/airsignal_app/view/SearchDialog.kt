@@ -169,8 +169,9 @@ class SearchDialog(
                 model.name = searchItem[position]
                 model.addr = searchItem[position]
                 db.insert(model)
+                SharedPreferenceManager(activity).setString(lastAddress,model.addr!!)
                 this.dismissNow()
-                show(0)
+                RefreshUtils(activity).refreshActivity()
             }
     }
 

@@ -16,6 +16,7 @@ import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.*
 import android.view.animation.AnimationUtils
@@ -62,6 +63,7 @@ import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -117,6 +119,15 @@ class MainActivity : BaseActivity() {
                 applyGetDataViewModel()
             }
 
+        // 하단 스크롤시 네비게이션 바 색상 하얀색으로 변경
+        binding.nestedScrollview.setOnScrollChangeListener { view, i, i2, i3, i4 ->
+            if (view.scrollY == 0) {
+                window.navigationBarColor = getColor(android.R.color.transparent)
+            } else {
+                window.navigationBarColor = getColor(R.color.white)
+            }
+        }
+
         val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
         binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
 
@@ -150,23 +161,31 @@ class MainActivity : BaseActivity() {
             setContexts(
                 barContexts = listOf(
                     SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources,R.color.progressGood,null), //gradient start
-                        ResourcesCompat.getColor(resources,R.color.progressGood,null), //gradient stop
+                        ResourcesCompat.getColor(
+                            resources,
+                            R.color.progressGood,
+                            null
+                        ), //gradient start
+                        ResourcesCompat.getColor(
+                            resources,
+                            R.color.progressGood,
+                            null
+                        ), //gradient stop
                         0.12f //percentage for segment
                     ),
                     SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources,R.color.progressNormal,null),
-                        ResourcesCompat.getColor(resources,R.color.progressNormal,null),
+                        ResourcesCompat.getColor(resources, R.color.progressNormal, null),
+                        ResourcesCompat.getColor(resources, R.color.progressNormal, null),
                         0.24f
                     ),
                     SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources,R.color.progressBad,null),
-                        ResourcesCompat.getColor(resources,R.color.progressBad,null),
+                        ResourcesCompat.getColor(resources, R.color.progressBad, null),
+                        ResourcesCompat.getColor(resources, R.color.progressBad, null),
                         0.48f
                     ),
                     SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources,R.color.progressWorst,null),
-                        ResourcesCompat.getColor(resources,R.color.progressWorst,null),
+                        ResourcesCompat.getColor(resources, R.color.progressWorst, null),
+                        ResourcesCompat.getColor(resources, R.color.progressWorst, null),
                         0.16f
                     ),
                 )
@@ -177,23 +196,31 @@ class MainActivity : BaseActivity() {
             setContexts(
                 barContexts = listOf(
                     SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources,R.color.progressGood,null), //gradient start
-                        ResourcesCompat.getColor(resources,R.color.progressGood,null), //gradient stop
+                        ResourcesCompat.getColor(
+                            resources,
+                            R.color.progressGood,
+                            null
+                        ), //gradient start
+                        ResourcesCompat.getColor(
+                            resources,
+                            R.color.progressGood,
+                            null
+                        ), //gradient stop
                         0.15f //percentage for segment
                     ),
                     SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources,R.color.progressNormal,null),
-                        ResourcesCompat.getColor(resources,R.color.progressNormal,null),
+                        ResourcesCompat.getColor(resources, R.color.progressNormal, null),
+                        ResourcesCompat.getColor(resources, R.color.progressNormal, null),
                         0.25f
                     ),
                     SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources,R.color.progressBad,null),
-                        ResourcesCompat.getColor(resources,R.color.progressBad,null),
+                        ResourcesCompat.getColor(resources, R.color.progressBad, null),
+                        ResourcesCompat.getColor(resources, R.color.progressBad, null),
                         0.35f
                     ),
                     SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources,R.color.progressWorst,null),
-                        ResourcesCompat.getColor(resources,R.color.progressWorst,null),
+                        ResourcesCompat.getColor(resources, R.color.progressWorst, null),
+                        ResourcesCompat.getColor(resources, R.color.progressWorst, null),
                         0.25f
                     ),
                 )
@@ -319,6 +346,7 @@ class MainActivity : BaseActivity() {
             null,
             sp.getString(lastAddress)
         )
+
         binding.mainGpsTitleTv.text = sp.getString(lastAddress)
         binding.mainTopBarGpsTitle.text = sp.getString(lastAddress)
     }
@@ -341,26 +369,26 @@ class MainActivity : BaseActivity() {
         binding.mainDailyWeatherRv.adapter = dailyWeatherAdapter
         binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter
 
-        createWorkManager2()
+        createWorkManager()
 //        AdViewClass(this).loadAdView(binding.mainBottomAdView)
     }
 
-    private fun createWorkManager2() {
+    private fun createWorkManager() {
         GetLocation(this).getGpsInBackground()
     }
 
-    // 백그라운드에서 GPS 를 불러오기 위한 WorkManager
-    private fun createWorkManager() {
-        val workManager = WorkManager.getInstance(this)
-        val workRequest =
-            PeriodicWorkRequest.Builder(GpsWorker::class.java, 30, TimeUnit.MINUTES)
-                .build()
-
-        workManager.enqueueUniquePeriodicWork(
-            CHECK_GPS_BACKGROUND,
-            ExistingPeriodicWorkPolicy.KEEP, workRequest
-        )
-    }
+//    // 백그라운드에서 GPS 를 불러오기 위한 WorkManager
+//    private fun createWorkManager() {
+//        val workManager = WorkManager.getInstance(this)
+//        val workRequest =
+//            PeriodicWorkRequest.Builder(GpsWorker::class.java, 30, TimeUnit.MINUTES)
+//                .build()
+//
+//        workManager.enqueueUniquePeriodicWork(
+//            CHECK_GPS_BACKGROUND,
+//            ExistingPeriodicWorkPolicy.KEEP, workRequest
+//        )
+//    }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
@@ -444,6 +472,28 @@ class MainActivity : BaseActivity() {
                 binding.nestedPm10Value.setIndexTextAsInt(air.pm10Value.toFloat())
                 binding.nestedPm2p5Value.setIndexTextAsInt(air.pm25Value.toFloat())
 
+                binding.mainAirCOValue.apply {
+                    text = air.coValue.toString()
+                    setTextColor(getDataColor(this@MainActivity, air.coGrade - 1))
+                }
+                binding.mainAirNO2Value.apply {
+                    text = air.no2Value.toString()
+                    setTextColor(getDataColor(this@MainActivity, air.no2Grade - 1))
+                }
+                binding.mainAirO3Value.apply {
+                    text = air.o3Value.toString()
+                    setTextColor(getDataColor(this@MainActivity, air.o3Grade - 1))
+                }
+                binding.mainAirSO2Value.apply {
+                    text = air.so2Value.toString()
+                    setTextColor(getDataColor(this@MainActivity, air.so2Grade - 1))
+                }
+
+                val sbRise = StringBuffer().append(sun.sunrise).insert(2,":")
+                val sbSet = StringBuffer().append(sun.sunset).insert(2,":")
+                binding.mainSunRiseTime.text = sbRise
+                binding.mainSunSetTime.text = sbSet
+
                 getCompareTemp(
                     yesterday.temp,
                     current.temperature,
@@ -452,14 +502,24 @@ class MainActivity : BaseActivity() {
 
                 val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
                 if (air.pm25Value > 125) {
-                    binding.segmentProgress2p5Arrow.setPadding(125 * widthDp / 125, 0, 0, 0)
+                    binding.segmentProgress2p5Arrow.setPadding(125 * (widthDp) / 125, 0, 0, 0)
                 } else {
-                    binding.segmentProgress2p5Arrow.setPadding(air.pm25Value * widthDp / 125, 0, 0, 0)
+                    binding.segmentProgress2p5Arrow.setPadding(
+                        air.pm25Value * (widthDp) / 125,
+                        0,
+                        0,
+                        0
+                    )
                 }
                 if (air.pm10Value > 200) {
                     binding.segmentProgress10Arrow.setPadding(200 * widthDp / 200, 0, 0, 0)
                 } else {
-                    binding.segmentProgress10Arrow.setPadding(air.pm10Value.toInt() * widthDp / 200, 0, 0, 0)
+                    binding.segmentProgress10Arrow.setPadding(
+                        air.pm10Value.toInt() * widthDp / 200,
+                        0,
+                        0,
+                        0
+                    )
                 }
 
                 for (i: Int in 0 until result.realtime.size) {
@@ -484,7 +544,7 @@ class MainActivity : BaseActivity() {
                 for (i: Int in 0 until (7)) {
                     try {
                         val formedDate = dateNow.plusDays(i.toLong())
-                        val date: String = when(i) {
+                        val date: String = when (i) {
                             0 -> {
                                 "오늘"
                             }
@@ -492,10 +552,12 @@ class MainActivity : BaseActivity() {
                                 "내일"
                             }
                             else -> {
-                                "${convertDayOfWeekToKorean(
-                                    this,
-                                    dateNow.dayOfWeek.value + i
-                                )}요일"
+                                "${
+                                    convertDayOfWeekToKorean(
+                                        this,
+                                        dateNow.dayOfWeek.value + i
+                                    )
+                                }요일"
                             }
                         }
                         addWeeklyWeatherItem(
@@ -513,137 +575,140 @@ class MainActivity : BaseActivity() {
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
             }
-            runOnUiThread {
-                hidePB()
-            }
+        runOnUiThread {
+            hidePB()
         }
-        return this
     }
+    return this
+}
 
 
-    // 필드값이 없을 때 -100 출력 됨
-    private fun filteringNullData(data: Double): String {
-        return if (data != -100.0) data.roundToInt().toString() else ""
+// 필드값이 없을 때 -100 출력 됨
+private fun filteringNullData(data: Double): String {
+    return if (data != -100.0) data.roundToInt().toString() else ""
+}
+
+// 시간별 날씨 리사이클러뷰 아이템 추가
+private fun addDailyWeatherItem(time: String, img: Drawable, value: String, date: String) {
+    val item = AdapterModel.DailyWeatherItem(time, img, value, date)
+
+    this.dailyWeatherList.add(item)
+}
+
+// 시간별 날씨 리사이클러뷰 아이템 추가
+private fun addWeeklyWeatherItem(
+    day: String, date: String, minImg: Drawable,
+    maxImg: Drawable, minText: String, maxText: String,
+) {
+    val item = AdapterModel.WeeklyWeatherItem(day, date, minImg, maxImg, minText, maxText)
+
+    this.weeklyWeatherList.add(item)
+}
+
+// 위젯 데이터 갱신
+private fun onUpdateWidgetData() {
+    sendBroadcast(Intent(UPDATE_TIME).apply {
+        component = ComponentName(this@MainActivity, WidgetProvider::class.java)
+    })
+}
+
+// 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트
+private fun applySkyText(rain: String?, sky: String?): String {
+    return if (rain != "없음") {
+        rain!!
+    } else {
+        sky!!
     }
+}
 
-    // 시간별 날씨 리사이클러뷰 아이템 추가
-    private fun addDailyWeatherItem(time: String, img: Drawable, value: String, date: String) {
-        val item = AdapterModel.DailyWeatherItem(time, img, value, date)
-
-        this.dailyWeatherList.add(item)
+// 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지
+private fun applySkyImg(rain: String?, sky: String?): Drawable {
+    return if (rain != "없음") {
+        getRainType(this, rain!!)!!
+    } else {
+        getSkyImg(this, sky!!)!!
     }
+}
 
-    // 시간별 날씨 리사이클러뷰 아이템 추가
-    private fun addWeeklyWeatherItem(
-        day: String, date: String, minImg: Drawable,
-        maxImg: Drawable, minText: String, maxText: String,
-    ) {
-        val item = AdapterModel.WeeklyWeatherItem(day, date, minImg, maxImg, minText, maxText)
-
-        this.weeklyWeatherList.add(item)
-    }
-
-    // 위젯 데이터 갱신
-    private fun onUpdateWidgetData() {
-        sendBroadcast(Intent(UPDATE_TIME).apply {
-            component = ComponentName(this@MainActivity, WidgetProvider::class.java)
-        })
-    }
-
-    // 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트
-    private fun applySkyText(rain: String?, sky: String?): String {
-        return if (rain != "없음") {
-            rain!!
+// 날짜가 한자리일 때 앞에 0 붙이기
+private fun convertDateAppendZero(dateTime: LocalDateTime): String {
+    return if (dateTime.monthValue / 10 == 0) {
+        if (dateTime.dayOfMonth / 10 == 0) {
+            "0${dateTime.monthValue}.0${dateTime.dayOfMonth}"
         } else {
-            sky!!
+            "0${dateTime.monthValue}.${dateTime.dayOfMonth}"
         }
-    }
-
-    // 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지
-    private fun applySkyImg(rain: String?, sky: String?): Drawable {
-        return if (rain != "없음") {
-            getRainType(this, rain!!)!!
+    } else {
+        if (dateTime.dayOfMonth / 10 == 0) {
+            "${dateTime.monthValue}.0${dateTime.dayOfMonth}"
         } else {
-            getSkyImg(this, sky!!)!!
+            "${dateTime.monthValue}.${dateTime.dayOfMonth}"
         }
     }
+}
 
-    // 날짜가 한자리일 때 앞에 0 붙이기
-    private fun convertDateAppendZero(dateTime: LocalDateTime): String {
-        return if (dateTime.monthValue / 10 == 0) {
-            if (dateTime.dayOfMonth / 10 == 0) {
-                "0${dateTime.monthValue}.0${dateTime.dayOfMonth}"
-            } else {
-                "0${dateTime.monthValue}.${dateTime.dayOfMonth}"
-            }
+// 마지막 기호 크기 줄이기
+private fun spanUnit(tv: TextView, s: String) {
+    val span = SpannableStringBuilder(s)
+    span.setSpan(
+        AbsoluteSizeSpan(35),
+        s.length - 1,
+        s.length,
+        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+    )
+    tv.text = span
+}
+
+//어제와 기온 비교
+private fun getCompareTemp(yesterday: Double, today: Double, tv: TextView) {
+    if (yesterday != -100.0 && today != -100.0) {
+        if (yesterday > today) {
+            tv.visibility = VISIBLE
+            tv.text =
+                "어제보다 ${((yesterday - today).absoluteValue * 10).roundToInt() / 10.0}˚ 낮아요"
+        } else if (today > yesterday) {
+            tv.visibility = VISIBLE
+            tv.text =
+                "어제보다 ${((today - yesterday).absoluteValue * 10).roundToInt() / 10.0} ˚ 높아요"
         } else {
-            if (dateTime.dayOfMonth / 10 == 0) {
-                "${dateTime.monthValue}.0${dateTime.dayOfMonth}"
-            } else {
-                "${dateTime.monthValue}.${dateTime.dayOfMonth}"
-            }
+            tv.visibility = VISIBLE
+            tv.text = "어제와 기온이 비슷해요"
         }
+    } else {
+        tv.visibility = GONE
     }
+}
 
-    // 마지막 기호 크기 줄이기
-    private fun spanUnit(tv: TextView, s: String) {
-        val span = SpannableStringBuilder(s)
-        span.setSpan(
-            AbsoluteSizeSpan(35),
-            s.length - 1,
-            s.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        tv.text = span
+// API 호출 TimeOut Exception Class
+class CustomTimeOutException : SocketTimeoutException() {
+    override fun getLocalizedMessage(): String? {
+        MainActivity().hidePB()
+        return super.getLocalizedMessage()
     }
+}
 
-    //어제와 기온 비교
-    private fun getCompareTemp(yesterday: Double, today: Double, tv: TextView) {
-        if (yesterday != -100.0 && today != -100.0) {
-            if (yesterday > today) {
-                tv.visibility = VISIBLE
-                tv.text = "어제보다 ${((yesterday - today).absoluteValue * 10).roundToInt() / 10.0}˚ 낮아요"
-            } else if (today > yesterday) {
-                tv.visibility = VISIBLE
-                tv.text = "어제보다 ${((today - yesterday).absoluteValue * 10).roundToInt() / 10.0} ˚ 높아요"
-            } else {
-                tv.visibility = VISIBLE
-                tv.text = "어제와 기온이 비슷해요"
-            }
-        } else {
-            tv.visibility = GONE
-        }
-    }
-
-    class CustomTimeOutException : SocketTimeoutException() {
-        override fun getLocalizedMessage(): String? {
-            MainActivity().hidePB()
-            return super.getLocalizedMessage()
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun getCurrentLocation() {
-        val fusedGPSLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        if (locationClass.isGPSConnection()) {
-            fusedGPSLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
-                .addOnSuccessListener { location: Location? ->
-                    location?.let { gps ->
-                        Log.d(TAG_D, "${location.latitude},${location.longitude}")
-                        locationClass.getAddress(gps.latitude, gps.longitude)
-                            .let { address ->
+// 현재 위치정보를 받아오고 데이터 갱신
+@SuppressLint("MissingPermission", "SuspiciousIndentation")
+private fun getCurrentLocation() {
+    val fusedGPSLocationClient = LocationServices.getFusedLocationProviderClient(this)
+    if (locationClass.isGPSConnection()) {
+        fusedGPSLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
+            .addOnSuccessListener { location: Location? ->
+                location?.let { gps ->
+                    Log.d(TAG_D, "${location.latitude},${location.longitude}")
+                    locationClass.getAddress(gps.latitude, gps.longitude)
+                        .let { address ->
+                            if (address != "Null Address") {
                                 updateCurrentAddress(
                                     gps.latitude, gps.longitude,
                                     address.replaceFirst(" ", "")
                                 )
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    getDataViewModel.loadDataResult(
-                                        gps.latitude,
-                                        gps.longitude,
-                                        null
-                                    )
-                                    delay(100)
-                                }
+                                getDataViewModel.loadDataResult(
+                                    gps.latitude,
+                                    gps.longitude,
+                                    null
+                                )
+
                                 locationClass.writeRdbLog(
                                     gps.latitude,
                                     gps.longitude,
@@ -655,49 +720,55 @@ class MainActivity : BaseActivity() {
                                 binding.mainTopBarGpsTitle.text =
                                     locationClass.formattingFullAddress(address)
                                         .replaceFirst(" ", "")
-                                hidePB()
+                            } else {
+                                Toast.makeText(this, "위치를 불러올 수 없습니다", Toast.LENGTH_SHORT)
+                                    .show()
+                                showPB()
+                                Thread.sleep(2000)
+                                getCurrentLocation()
                             }
-                    }
-                }
-
-                .addOnFailureListener {
-                    RDBLogcat.writeLogCause(
-                        sp.getString(userEmail),
-                        "GPS 위치정보 갱신실패",
-                        it.localizedMessage!!
-                    )
-                }
-        } else if (!locationClass.isGPSConnection() && locationClass.isNetWorkConnection()) {
-            val lm = getSystemService(LOCATION_SERVICE) as LocationManager
-            val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            location?.let { loc ->
-                GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude)
-                    .let { addr ->
-                        updateCurrentAddress(
-                            loc.latitude,
-                            loc.longitude,
-                            addr.replaceFirst(" ", "")
-                        )
-                        CoroutineScope(Dispatchers.IO).launch {
-                            getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
-                            delay(100)
                         }
-                        locationClass.writeRdbLog(loc.latitude, loc.longitude, addr)
-                        binding.mainGpsTitleTv.text = locationClass.formattingFullAddress(addr)
-                            .replaceFirst(" ", "")
-                        binding.mainTopBarGpsTitle.text = locationClass.formattingFullAddress(addr)
-                            .replaceFirst(" ", "")
-                            hidePB()
-                        ToastUtils(this).showMessage("현재 위치와의 오차가 존재 할 수 있습니다")
-                    }
+                }
             }
-        } else {
-            locationClass.requestGPSEnable()
-        }
-    }
 
-    private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
-        val roomDB = GpsRepository(this)
+            .addOnFailureListener {
+                RDBLogcat.writeLogCause(
+                    sp.getString(userEmail),
+                    "GPS 위치정보 갱신실패",
+                    it.localizedMessage!!
+                )
+            }
+    } else if (!locationClass.isGPSConnection() && locationClass.isNetWorkConnection()) {
+        val lm = getSystemService(LOCATION_SERVICE) as LocationManager
+        val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+        location?.let { loc ->
+            GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude)
+                .let { addr ->
+                    updateCurrentAddress(
+                        loc.latitude,
+                        loc.longitude,
+                        addr.replaceFirst(" ", "")
+                    )
+                    getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
+                    locationClass.writeRdbLog(loc.latitude, loc.longitude, addr)
+                    binding.mainGpsTitleTv.text = locationClass.formattingFullAddress(addr)
+                        .replaceFirst(" ", "")
+                    binding.mainTopBarGpsTitle.text = locationClass.formattingFullAddress(addr)
+                        .replaceFirst(" ", "")
+
+                    hidePB()
+                    ToastUtils(this@MainActivity).showMessage("현재 위치와의 오차가 존재 할 수 있습니다")
+                }
+        }
+    } else {
+        locationClass.requestGPSEnable()
+    }
+}
+
+// 현재 위치정보로 DB 갱신
+private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
+    CoroutineScope(Dispatchers.Default).launch {
+        val roomDB = GpsRepository(this@MainActivity)
         sp.setString(lastAddress, addr)
         val model = GpsEntity()
 
@@ -707,14 +778,22 @@ class MainActivity : BaseActivity() {
         model.addr = addr
         if (dbIsEmpty(roomDB)) {
             roomDB.insert(model)
-            Log.d(TAG_D, "Insert GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}")
+            Log.d(
+                TAG_D,
+                "Insert GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}"
+            )
         } else {
             roomDB.update(model)
-            Log.d(TAG_D, "Update GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}")
+            Log.d(
+                TAG_D,
+                "Update GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}"
+            )
         }
     }
+}
 
-    private fun dbIsEmpty(db: GpsRepository): Boolean {
-        return db.findAll().isEmpty()
-    }
+// DB가 비어있는지 확인
+private fun dbIsEmpty(db: GpsRepository): Boolean {
+    return db.findAll().isEmpty()
+}
 }

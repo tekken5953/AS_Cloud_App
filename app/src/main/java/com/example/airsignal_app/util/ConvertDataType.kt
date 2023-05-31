@@ -43,6 +43,7 @@ object ConvertDataType {
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
+    /** 폰트 크기를 작게 변경 **/
     fun setTextSizeSmall(context: Context) {
         val configuration = context.resources.configuration
         configuration.fontScale = 0.7f
@@ -50,6 +51,7 @@ object ConvertDataType {
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
+    /** 폰트 크기를 크게 변경 **/
     fun setTextSizeLarge(context: Context) {
         val configuration = context.resources.configuration
         configuration.fontScale = 1.3f
@@ -57,6 +59,7 @@ object ConvertDataType {
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
+    /** 폰트 크기를 기본으로 변경 **/
     fun setTextSizeDefault(context: Context) {
         val configuration = context.resources.configuration
         configuration.fontScale = 1f
@@ -64,6 +67,7 @@ object ConvertDataType {
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
+    /** pixel을 DP로 변환 **/
     fun pixelToDp(context: Context, px: Int): Int {
         return px / (context.resources.displayMetrics.densityDpi / 160)
     }
@@ -195,10 +199,12 @@ object ConvertDataType {
         }
     }
 
+    /** 주소 포멧팅 **/
     fun convertAddress(addr: String): String {
         return addr.replace("특별시","시").replace("광역시","시").replace("제주특별자치도","제주도")
     }
 
+    /** 현재 설정된 국가를 반환 **/
     fun getLocale(context: Context) : Locale {
         return if (SharedPreferenceManager(context).getString(userLocation) == context.getString(R.string.korean)) {
             Locale.KOREA

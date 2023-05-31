@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.dao.IgnoredKeyFile.userFontScale
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.ConvertDataType
 import java.time.LocalDateTime
@@ -34,7 +35,7 @@ class WeeklyWeatherAdapter(
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val view: View = inflater.inflate(R.layout.list_item_weekly_weather, parent, false)
-        when(SharedPreferenceManager(context).getString("scale")) {
+        when(SharedPreferenceManager(context).getString(userFontScale)) {
             "small" -> {
 //                ConvertDataType.setTextSizeLarge(view.context)
                 ConvertDataType.setTextSizeSmall(view.context)
@@ -72,20 +73,24 @@ class WeeklyWeatherAdapter(
             minImg.setImageDrawable(dao.minImg)
             maxImg.setImageDrawable(dao.maxImg)
             minText.text = dao.minText
-            minText.setTextColor(context.getColor(R.color.main_blue_color))
+//            minText.setTextColor(context.getColor(R.color.main_blue_color))
             maxText.text = dao.maxText
-            maxText.setTextColor(context.getColor(R.color.red))
+//            maxText.setTextColor(context.getColor(R.color.red))
 
             val currentDate = LocalDateTime.now()
-            if (mList[adapterPosition].day == "${currentDate.month.value}.${currentDate.dayOfMonth}" +
-                "(${
-                    ConvertDataType.convertDayOfWeekToKorean(
-                        context,
-                        currentDate.dayOfWeek.value
-                    )
-                })"
-            ) {
+//            if (mList[adapterPosition].day == "${currentDate.month.value}.${currentDate.dayOfMonth}" +
+//                "(${
+//                    ConvertDataType.convertDayOfWeekToKorean(
+//                        context,
+//                        currentDate.dayOfWeek.value
+//                    )
+//                })"
+//            ) {
+//                day.setTextColor(context.getColor(R.color.main_blue_color))
+//            }
+            if (adapterPosition == 0) {
                 day.setTextColor(context.getColor(R.color.main_blue_color))
+                date.setTextColor(context.getColor(R.color.main_blue_color))
             }
 
             if (adapterPosition == itemCount - 1) {

@@ -33,7 +33,7 @@
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
 
-    <color name="mode_black_color">#3D3D3D</color>
+    <color name="mode_black_color">#FFFFFF</color>
     <color name="mode_black_70">#703D3D3D</color>
     <color name="mode_black_90">#903D3D3D</color>
 

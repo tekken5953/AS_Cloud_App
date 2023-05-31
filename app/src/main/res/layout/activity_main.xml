@@ -39,15 +39,16 @@
         <TextView
             android:id="@+id/mainTopBarGpsTitle"
             style="@style/basicTextView"
-            android:textSize="14sp"
-            android:maxEms="15"
-            android:lines="1"
             android:ellipsize="start"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/topBarLinear"
+            android:lines="1"
+            android:maxEms="15"
+            android:textSize="14sp"
+            android:textColor="@color/mode_black_color"
+            app:drawableStartCompat="@drawable/location_fill"
             app:layout_constraintBottom_toBottomOf="@id/topBarLinear"
-            app:drawableStartCompat="@drawable/location_fill" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/topBarLinear" />
 
         <RelativeLayout
             android:id="@+id/topBarLinear"
@@ -97,7 +98,7 @@
             android:gravity="start"
             android:maxEms="5"
             android:textColor="@color/mode_black_color"
-            android:textSize="20sp"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="@id/mainMotionLayout"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 
@@ -126,7 +127,7 @@
             android:id="@+id/mainSkyText"
             style="@style/basicTextView"
             android:layout_marginTop="5dp"
-            android:textColor="@color/white"
+            android:textColor="@color/mode_black_color"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
@@ -152,7 +153,7 @@
             android:fontFamily="@font/spoqa_hansansneo_regular"
             android:letterSpacing="0"
             android:textColor="@color/mode_black_color"
-            android:textSize="72sp"
+            android:textSize="67sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/mainLiveTempUnit"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
@@ -181,21 +182,22 @@
         <TextView
             android:id="@+id/mainMinMaxTitle"
             style="@style/basicTextView"
+            android:layout_marginEnd="15dp"
             android:text="최저/최고"
             android:textColor="@color/mode_black_90"
             android:textSize="14sp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginTop="3dp"
+            app:layout_constraintBottom_toBottomOf="@id/mainMinMaxValue"
             app:layout_constraintEnd_toStartOf="@id/mainMinMaxValue"
-            app:layout_constraintTop_toTopOf="@+id/mainMinMaxValue"
-            app:layout_constraintBottom_toBottomOf="@id/mainMinMaxValue"/>
+            app:layout_constraintTop_toTopOf="@+id/mainMinMaxValue" />
 
         <TextView
             android:id="@+id/mainMinMaxValue"
             style="@style/basicTextView"
-            app:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
-            app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv"
             android:textColor="@color/mode_black_90"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
+            app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv" />
 
         <TextView
             android:id="@+id/mainNotiMsgTv"
@@ -214,9 +216,9 @@
             android:id="@+id/mainPmBoxTL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="50dp"
             android:layout_marginTop="15dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="50dp"
             android:background="@drawable/pm_motion_box_bg"
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/mainNotiMsgTv">
@@ -256,9 +258,7 @@
                     style="@style/basicTextView"
                     android:layout_marginEnd="20dp"
                     android:fontFamily="@font/spoqa_hansansneo_regular"
-                    android:textColor="@color/progressWorst"
                     android:textSize="16sp"
-                    android:textStyle="bold"
                     app:sort="grade" />
 
                 <com.aslib.AsTextView
@@ -266,9 +266,7 @@
                     style="@style/basicTextView"
                     android:layout_marginStart="20dp"
                     android:fontFamily="@font/spoqa_hansansneo_regular"
-                    android:textColor="@color/progressGood"
                     android:textSize="16sp"
-                    android:textStyle="bold"
                     app:sort="grade" />
             </TableRow>
         </TableLayout>
@@ -288,6 +286,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:layout_marginStart="4dp"
                 android:weightSum="1">
 
                 <TextView
@@ -345,7 +344,6 @@
                     android:textColor="#C2E1F2"
                     android:textSize="14sp" />
 
-
             </TableRow>
         </TableLayout>
 
@@ -396,7 +394,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/scrolled_box_bg"
                     android:paddingStart="15dp"
@@ -526,25 +524,64 @@
                         android:layout_width="match_parent"
                         android:layout_height="6dp"
                         android:layout_below="@+id/segment_progress_2p5_arrow"
-                        android:paddingStart="12dp"
                         android:layout_marginTop="3dp"
-                        android:paddingEnd="12dp"
-                        android:layout_marginBottom="30dp" />
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp" />
+
+                    <TableRow
+                        android:id="@+id/segment_progress_2p5_section"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/segment_progress_2p5_bar"
+                        android:layout_marginTop="8dp">
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_weight="0.1"
+                            android:gravity="start"
+                            android:text="0"
+                            android:textColor="#7C7C7C"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_weight="0.21"
+                            android:gravity="start"
+                            android:text="15"
+                            android:textColor="#7C7C7C"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_weight="0.45"
+                            android:gravity="start"
+                            android:text="35"
+                            android:textColor="#7C7C7C"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_weight="0.14"
+                            android:gravity="start"
+                            android:text="75"
+                            android:textColor="#7C7C7C"
+                            android:textSize="11sp" />
+                    </TableRow>
 
                     <ImageView
                         android:id="@+id/segment_progress_2p5_arrow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_pm_2p5_value"
-                        android:layout_marginStart="7dp"
+                        android:layout_marginStart="2dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="7dp"
+                        android:layout_marginEnd="2dp"
                         android:src="@drawable/bottom_arrow" />
 
                     <TextView
                         android:id="@+id/nested_pm_10_title"
                         style="@style/basicTextView"
-                        android:layout_below="@+id/segment_progress_2p5_bar"
+                        android:layout_below="@+id/segment_progress_2p5_section"
                         android:layout_marginTop="25dp"
                         android:text="PM10(미세먼지)"
                         android:textColor="#7C7C7C"
@@ -568,7 +605,7 @@
                         android:layout_toStartOf="@+id/nested_pm_2p5_unit"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:textSize="24sp"
-                        app:sort="pm10"/>
+                        app:sort="pm10" />
 
                     <TextView
                         android:id="@+id/nested_pm_10_unit"
@@ -586,52 +623,310 @@
                         android:layout_width="match_parent"
                         android:layout_height="6dp"
                         android:layout_below="@+id/segment_progress_10_arrow"
-                        android:paddingStart="12dp"
                         android:layout_marginTop="3dp"
-                        android:paddingEnd="12dp"
-                        android:layout_marginBottom="30dp" />
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp" />
+
+                    <TableRow
+                        android:id="@+id/segment_progress_10_section"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/segment_progress_10_bar"
+                        android:layout_marginTop="8dp">
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_weight="0.15"
+                            android:gravity="start"
+                            android:text="0"
+                            android:textColor="#7C7C7C"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_weight="0.25"
+                            android:gravity="start"
+                            android:text="30"
+                            android:textColor="#7C7C7C"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_weight="0.35"
+                            android:gravity="start"
+                            android:text="80"
+                            android:textColor="#7C7C7C"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_weight="0.25"
+                            android:gravity="start"
+                            android:text="150"
+                            android:textColor="#7C7C7C"
+                            android:textSize="11sp" />
+                    </TableRow>
 
                     <ImageView
                         android:id="@+id/segment_progress_10_arrow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_pm_10_value"
-                        android:layout_marginStart="7dp"
+                        android:layout_marginStart="5dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="7dp"
+                        android:layout_marginEnd="5dp"
                         android:src="@drawable/bottom_arrow" />
+
+                    <View
+                        android:id="@+id/nested_pm_box_view1"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@+id/segment_progress_10_section"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="40dp"
+                        android:layout_marginEnd="20dp"
+                        android:background="#F3F3F3" />
+
+                    <TableRow
+                        android:id="@+id/mainAirTr1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/nested_pm_box_view1"
+                        android:layout_marginTop="20dp"
+                        android:background="@color/white"
+                        android:gravity="center">
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_weight="0.16"
+                            android:gravity="start"
+                            android:text="SO2"
+                            android:textColor="#7C7C7C"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/mainAirSO2Value"
+                            style="@style/basicTextView"
+                            android:layout_width="80dp"
+                            android:layout_weight="0.3"
+                            android:fontFamily="@font/spoqa_hansansneo_medium"
+                            android:gravity="end"
+                            android:letterSpacing="0"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_weight="0.05"
+                            android:gravity="start"
+                            android:text="ppm"
+                            android:textColor="#7C7C7C"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_marginStart="40dp"
+                            android:layout_weight="0.16"
+                            android:gravity="start"
+                            android:text="NO2"
+                            android:textColor="#7C7C7C"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/mainAirNO2Value"
+                            style="@style/basicTextView"
+                            android:layout_width="80dp"
+                            android:layout_weight="0.3"
+                            android:fontFamily="@font/spoqa_hansansneo_medium"
+                            android:gravity="end"
+                            android:letterSpacing="0"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_weight="0.05"
+                            android:gravity="start"
+                            android:text="ppm"
+                            android:textColor="#7C7C7C"
+                            android:textSize="11sp" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/mainAirTr2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/mainAirTr1"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="25dp"
+                        android:background="@color/white"
+                        android:gravity="center">
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_weight="0.16"
+                            android:gravity="start"
+                            android:text="O3 "
+                            android:textColor="#7C7C7C"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/mainAirO3Value"
+                            style="@style/basicTextView"
+                            android:layout_width="80dp"
+                            android:layout_weight="0.3"
+                            android:fontFamily="@font/spoqa_hansansneo_medium"
+                            android:gravity="end"
+                            android:letterSpacing="0"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_weight="0.05"
+                            android:gravity="start"
+                            android:text="ppm"
+                            android:textColor="#7C7C7C"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_marginStart="40dp"
+                            android:layout_weight="0.16"
+                            android:gravity="start"
+                            android:text="CO "
+                            android:textColor="#7C7C7C"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/mainAirCOValue"
+                            style="@style/basicTextView"
+                            android:layout_width="80dp"
+                            android:layout_weight="0.3"
+                            android:fontFamily="@font/spoqa_hansansneo_medium"
+                            android:gravity="end"
+                            android:letterSpacing="0"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_weight="0.05"
+                            android:gravity="start"
+                            android:text="ppm"
+                            android:textColor="#7C7C7C"
+                            android:textSize="11sp" />
+                    </TableRow>
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/mainSunBox"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="210dp"
                     android:layout_below="@+id/nested_pm_box"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginBottom="35dp"
-                    android:background="@drawable/scrolled_box_bg"
-                    android:gravity="center_horizontal">
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@drawable/sun_box_bg">
 
                     <com.triggertrap.seekarc.SeekArc
                         android:id="@+id/seekArc"
-                        android:layout_width="200dp"
-                        android:layout_height="200dp"
-                        android:layout_centerVertical="true"
-                        android:padding="50dp"
-                        app:arcWidth="5dp"
+                        android:layout_width="220dp"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="90dp"
+                        android:scaleX="2.3"
+                        android:scaleY="2.3"
+                        app:arcWidth="2dp"
+                        android:layout_centerHorizontal="true"
+                        android:padding="25dp"
                         app:max="100"
                         app:progress="50"
-                        app:progressColor="@color/progressBad"
-                        app:progressWidth="5dp"
+                        app:progressColor="@color/white"
+                        app:progressWidth="2dp"
                         app:rotation="180"
                         app:roundEdges="true"
+                        app:arcColor="#60FFFFFF"
                         app:startAngle="90"
                         app:sweepAngle="180"
                         app:thumb="@drawable/circle"
                         app:touchInside="false" />
 
+                    <ImageView
+                        android:id="@+id/mainSunRiseImg"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/sunrise"
+                        app:tint="@color/white"
+                        android:layout_toStartOf="@+id/seekArc"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_centerVertical="true" />
+
+                    <ImageView
+                        android:id="@+id/mainSunSetImg"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:src="@drawable/sunset"
+                        app:tint="@color/white"
+                        android:layout_marginBottom="10dp"
+                        android:layout_toEndOf="@+id/seekArc"
+                        android:layout_marginStart="20dp"
+                        android:layout_centerVertical="true"/>
+
+                    <View
+                        android:id="@+id/mainSunLine"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#20FFFFFF"
+                        android:layout_above="@+id/mainSunTr"
+                        android:layout_marginBottom="17dp"/>
+
+                    <TableRow
+                        android:id="@+id/mainSunTr"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="25dp"
+                        android:layout_alignParentBottom="true"
+                        android:gravity="center">
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:text="일출"
+                            android:textColor="@color/white"
+                            android:textSize="13sp"/>
+
+                        <TextView
+                            android:id="@+id/mainSunRiseTime"
+                            style="@style/basicTextView"
+                            android:textSize="18sp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="55dp"
+                            android:textColor="@color/white"/>
+
+                        <TextView
+                            android:id="@+id/mainSunSetTime"
+                            style="@style/basicTextView"
+                            android:layout_marginStart="55dp"
+                            android:layout_marginEnd="16dp"
+                            android:textSize="18sp"
+                            android:textColor="@color/white"/>
+
+                        <TextView
+                            style="@style/basicTextView"
+                            android:text="일몰"
+                            android:textColor="@color/white"
+                            android:textSize="13sp"/>
+                    </TableRow>
                 </RelativeLayout>
             </RelativeLayout>
         </androidx.core.widget.NestedScrollView>

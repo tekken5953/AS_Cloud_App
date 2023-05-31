@@ -55,7 +55,7 @@ open class BaseActivity : AppCompatActivity() {
             }
         }
 
-        when(sp.getString("scale")) {
+        when(sp.getString(IgnoredKeyFile.userFontScale)) {
             "small" -> {
                 ConvertDataType.setTextSizeSmall(this)
             }
