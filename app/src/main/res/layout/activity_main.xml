@@ -42,8 +42,8 @@
             android:ellipsize="start"
             android:lines="1"
             android:maxEms="15"
-            android:textSize="14sp"
             android:textColor="@color/mode_black_color"
+            android:textSize="14sp"
             app:drawableStartCompat="@drawable/location_fill"
             app:layout_constraintBottom_toBottomOf="@id/topBarLinear"
             app:layout_constraintEnd_toEndOf="parent"
@@ -182,11 +182,11 @@
         <TextView
             android:id="@+id/mainMinMaxTitle"
             style="@style/basicTextView"
+            android:layout_marginTop="3dp"
             android:layout_marginEnd="15dp"
             android:text="최저/최고"
-            android:textColor="@color/mode_black_90"
+            android:textColor="#70FFFFFF"
             android:textSize="14sp"
-            android:layout_marginTop="3dp"
             app:layout_constraintBottom_toBottomOf="@id/mainMinMaxValue"
             app:layout_constraintEnd_toStartOf="@id/mainMinMaxValue"
             app:layout_constraintTop_toTopOf="@+id/mainMinMaxValue" />
@@ -194,7 +194,7 @@
         <TextView
             android:id="@+id/mainMinMaxValue"
             style="@style/basicTextView"
-            android:textColor="@color/mode_black_90"
+            android:textColor="#70FFFFFF"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
             app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv" />
@@ -285,8 +285,8 @@
                 android:id="@+id/mainSubWeatherValueTr"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginStart="4dp"
+                android:gravity="center"
                 android:weightSum="1">
 
                 <TextView
@@ -475,7 +475,7 @@
                         style="@style/basicTextView"
                         android:layout_marginTop="24dp"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:text="실시간 공기질"
+                        android:text="@string/live_air_quality"
                         android:textColor="#4F4F4F"
                         android:textSize="16sp" />
 
@@ -484,7 +484,7 @@
                         style="@style/basicTextView"
                         android:layout_below="@+id/nested_pm_title"
                         android:layout_marginTop="25dp"
-                        android:text="PM2.5(초미세먼지)"
+                        android:text="@string/pm2_5_title"
                         android:textColor="#7C7C7C"
                         android:textSize="14sp" />
 
@@ -583,7 +583,7 @@
                         style="@style/basicTextView"
                         android:layout_below="@+id/segment_progress_2p5_section"
                         android:layout_marginTop="25dp"
-                        android:text="PM10(미세먼지)"
+                        android:text="@string/pm10_title"
                         android:textColor="#7C7C7C"
                         android:textSize="14sp" />
 
@@ -672,7 +672,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_pm_10_value"
-                        android:layout_marginStart="5dp"
+                        android:layout_marginStart="3dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="5dp"
                         android:src="@drawable/bottom_arrow" />
@@ -707,7 +707,7 @@
                         <TextView
                             android:id="@+id/mainAirSO2Value"
                             style="@style/basicTextView"
-                            android:layout_width="80dp"
+                            android:layout_width="70dp"
                             android:layout_weight="0.3"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
@@ -737,7 +737,7 @@
                         <TextView
                             android:id="@+id/mainAirNO2Value"
                             style="@style/basicTextView"
-                            android:layout_width="80dp"
+                            android:layout_width="70dp"
                             android:layout_weight="0.3"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
@@ -778,7 +778,7 @@
                         <TextView
                             android:id="@+id/mainAirO3Value"
                             style="@style/basicTextView"
-                            android:layout_width="80dp"
+                            android:layout_width="70dp"
                             android:layout_weight="0.3"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
@@ -808,7 +808,7 @@
                         <TextView
                             android:id="@+id/mainAirCOValue"
                             style="@style/basicTextView"
-                            android:layout_width="80dp"
+                            android:layout_width="70dp"
                             android:layout_weight="0.3"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
@@ -829,10 +829,123 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/mainUVBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/nested_pm_box"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/scrolled_box_bg">
+
+                    <TextView
+                        android:id="@+id/mainUvTitle"
+                        style="@style/basicTextView"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="24dp"
+                        android:drawablePadding="5dp"
+                        android:text="@string/uv_title"
+                        android:textSize="16sp"
+                        app:drawableStartCompat="@drawable/uv_img" />
+
+                    <ImageView
+                        android:id="@+id/mainUvCollapseArrow"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_alignTop="@+id/mainUvTitle"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="20dp"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:padding="5dp"
+                        android:src="@drawable/drop_bottom"
+                        app:tint="@color/black" />
+
+                    <TableLayout
+                        android:id="@+id/mainUvLegendTl"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@id/mainUvGrade"
+                        android:layout_alignBottom="@id/mainUvValue">
+
+                        <TableRow
+                            android:id="@+id/mainUvLegendColorTr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"></TableRow>
+
+                        <TableRow
+                            android:id="@+id/mainUvLegendTitleTr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"></TableRow>
+                    </TableLayout>
+
+                    <TextView
+                        android:id="@+id/mainUvGrade"
+                        style="@style/basicTextView"
+                        android:layout_below="@+id/mainUvCollapseArrow"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="30dp"
+                        android:layout_marginEnd="20dp"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/mainUvValue"
+                        style="@style/basicTextView"
+                        android:layout_below="@+id/mainUvGrade"
+                        android:layout_alignStart="@+id/mainUvGrade"
+                        android:layout_alignEnd="@+id/mainUvGrade"
+                        android:letterSpacing="-0.02"
+                        android:textColor="@color/black"
+                        android:textSize="20sp" />
+
+                    <View
+                        android:id="@+id/mainUvLine"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@+id/mainUvValue"
+                        android:layout_marginStart="18dp"
+                        android:layout_marginEnd="18dp"
+                        android:layout_marginBottom="15dp"
+                        android:background="#F3F3F3" />
+
+                    <RelativeLayout
+                        android:id="@+id/mainUvCollapsedLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/mainUvLine"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/mainUvCollapsedTitle"
+                            style="@style/basicTextView"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="3dp"
+                            android:text="@string/how_to_response_title"
+                            android:textColor="@color/black"
+                            android:textSize="14sp" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/mainUvCollapseRv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginEnd="20dp"
+                            android:layout_marginBottom="30dp"
+                            android:clipToPadding="false"
+                            android:nestedScrollingEnabled="false"
+                            android:overScrollMode="never"
+                            android:scrollbars="none"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/list_item_uv_collapsed" />
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:id="@+id/mainSunBox"
                     android:layout_width="match_parent"
                     android:layout_height="210dp"
-                    android:layout_below="@+id/nested_pm_box"
+                    android:layout_below="@+id/mainUVBox"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="12dp"
@@ -843,89 +956,89 @@
                         android:id="@+id/seekArc"
                         android:layout_width="220dp"
                         android:layout_height="100dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="90dp"
+                        android:padding="25dp"
                         android:scaleX="2.3"
                         android:scaleY="2.3"
+                        app:arcColor="#60FFFFFF"
                         app:arcWidth="2dp"
-                        android:layout_centerHorizontal="true"
-                        android:padding="25dp"
                         app:max="100"
                         app:progress="50"
                         app:progressColor="@color/white"
                         app:progressWidth="2dp"
                         app:rotation="180"
                         app:roundEdges="true"
-                        app:arcColor="#60FFFFFF"
                         app:startAngle="90"
                         app:sweepAngle="180"
-                        app:thumb="@drawable/circle"
+                        app:thumb="@drawable/ico_sun_graph"
                         app:touchInside="false" />
 
                     <ImageView
                         android:id="@+id/mainSunRiseImg"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
-                        android:src="@drawable/sunrise"
-                        app:tint="@color/white"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="7dp"
+                        android:layout_marginBottom="15dp"
                         android:layout_toStartOf="@+id/seekArc"
-                        android:layout_marginEnd="20dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_centerVertical="true" />
+                        android:src="@drawable/ico_sun"
+                        app:tint="@color/white" />
 
                     <ImageView
                         android:id="@+id/mainSunSetImg"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
-                        android:src="@drawable/sunset"
-                        app:tint="@color/white"
-                        android:layout_marginBottom="10dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="7dp"
+                        android:layout_marginBottom="15dp"
                         android:layout_toEndOf="@+id/seekArc"
-                        android:layout_marginStart="20dp"
-                        android:layout_centerVertical="true"/>
+                        android:src="@drawable/ico_moon"
+                        app:tint="@color/white" />
 
                     <View
                         android:id="@+id/mainSunLine"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="#20FFFFFF"
                         android:layout_above="@+id/mainSunTr"
-                        android:layout_marginBottom="17dp"/>
+                        android:layout_marginBottom="17dp"
+                        android:background="#20FFFFFF" />
 
                     <TableRow
                         android:id="@+id/mainSunTr"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="25dp"
                         android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="25dp"
                         android:gravity="center">
 
                         <TextView
                             style="@style/basicTextView"
                             android:text="일출"
                             android:textColor="@color/white"
-                            android:textSize="13sp"/>
+                            android:textSize="13sp" />
 
                         <TextView
                             android:id="@+id/mainSunRiseTime"
                             style="@style/basicTextView"
-                            android:textSize="18sp"
                             android:layout_marginStart="16dp"
                             android:layout_marginEnd="55dp"
-                            android:textColor="@color/white"/>
+                            android:textColor="@color/white"
+                            android:textSize="18sp" />
 
                         <TextView
                             android:id="@+id/mainSunSetTime"
                             style="@style/basicTextView"
                             android:layout_marginStart="55dp"
                             android:layout_marginEnd="16dp"
-                            android:textSize="18sp"
-                            android:textColor="@color/white"/>
+                            android:textColor="@color/white"
+                            android:textSize="18sp" />
 
                         <TextView
                             style="@style/basicTextView"
                             android:text="일몰"
                             android:textColor="@color/white"
-                            android:textSize="13sp"/>
+                            android:textSize="13sp" />
                     </TableRow>
                 </RelativeLayout>
             </RelativeLayout>

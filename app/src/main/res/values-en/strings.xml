@@ -80,4 +80,9 @@
     <string name="delete_item">will be deleted</string>
     <string name="outdoor_air">Outdoor</string>
     <string name="system">System</string>
+    <string name="live_air_quality">실시간 공기질</string>
+    <string name="pm2_5_title">PM2.5(초미세먼지)</string>
+    <string name="pm10_title">PM10(미세먼지)</string>
+    <string name="uv_title">자외선 지수</string>
+    <string name="how_to_response_title">단계별 대응요령</string>
 </resources>

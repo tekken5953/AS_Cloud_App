@@ -240,6 +240,19 @@ class ApiModel {
         val sunset: String,
     )
 
+    data class SunTomorrow(
+        @SerializedName("locdate")
+        val locdate: String,
+        @SerializedName("moonrise")
+        val moonrise: String,
+        @SerializedName("moonset")
+        val moonset: String,
+        @SerializedName("sunrise")
+        val sunrise: String,
+        @SerializedName("sunset")
+        val sunset: String,
+    )
+
     data class TodayTemp(
         @SerializedName("min")
         val min: Double,
@@ -291,6 +304,8 @@ class ApiModel {
         val quality: AirQualityData,
         @SerializedName("sun")
         val sun: SunData,
+        @SerializedName("sun2")
+        val sun_tomorrow: SunTomorrow,
         @SerializedName("today")
         val today: TodayTemp,
         @SerializedName("yesterday")

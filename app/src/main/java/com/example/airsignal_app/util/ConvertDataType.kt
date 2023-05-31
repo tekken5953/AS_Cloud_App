@@ -90,7 +90,8 @@ object ConvertDataType {
 
     /** 위젯용 현재시간 타임포멧 **/
     fun currentDateTimeString(context: Context): String {
-        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(context.getString(R.string.widget_time_format))
+        @SuppressLint("SimpleDateFormat") val format =
+            SimpleDateFormat(context.getString(R.string.widget_time_format))
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
         return format.format(calendar.time)
@@ -98,7 +99,8 @@ object ConvertDataType {
 
     /** 데이터 포멧에 맞춰서 시간변환 **/
     fun millsToString(mills: Long, pattern: String): String {
-        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(pattern, Locale.KOREA)
+        @SuppressLint("SimpleDateFormat") val format =
+            SimpleDateFormat(pattern, Locale.getDefault())
         return format.format(Date(mills))
     }
 
@@ -146,10 +148,10 @@ object ConvertDataType {
             "구름많고 눈", "눈", "흐리고 눈" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.snow, null)
             }
-            "구름많고 소나기","흐리고 비","구름많고 비","흐리고 소나기" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy , null)
+            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy, null)
             }
-            "구름많고 비/눈", "흐리고 비/눈","비/눈"-> {
+            "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.rain_snow, null)
             }
             else -> {
@@ -201,17 +203,30 @@ object ConvertDataType {
 
     /** 주소 포멧팅 **/
     fun convertAddress(addr: String): String {
-        return addr.replace("특별시","시").replace("광역시","시").replace("제주특별자치도","제주도")
+        return addr.replace("특별시", "시").replace("광역시", "시").replace("제주특별자치도", "제주도")
     }
 
     /** 현재 설정된 국가를 반환 **/
-    fun getLocale(context: Context) : Locale {
+    fun getLocale(context: Context): Locale {
         return if (SharedPreferenceManager(context).getString(userLocation) == context.getString(R.string.korean)) {
             Locale.KOREA
         } else if (SharedPreferenceManager(context).getString(userLocation) == context.getString(R.string.english)) {
             Locale.ENGLISH
         } else {
             Locale.getDefault()
+        }
+    }
+
+    /** HH:mm 포맷의 시간을 분으로 변환 **/
+    fun convertTimeToMinutes(time: String): Int {
+        return try {
+            val timeSplit = time.replace(" ", "")
+            val hour = timeSplit.substring(0, 2).toInt()
+            val minutes = timeSplit.substring(2, 4).toInt()
+            hour * 60 + minutes
+        } catch (e: java.lang.NumberFormatException) {
+            e.printStackTrace()
+            0
         }
     }
 }

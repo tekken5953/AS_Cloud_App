@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.location.*
 import android.location.LocationListener
-import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -25,9 +24,6 @@ import com.example.airsignal_app.util.GetDeviceInfo
 import com.google.android.gms.location.*
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.IOException
 import java.util.*
@@ -173,21 +169,21 @@ class GetLocation(private val context: Context) {
     }
 
     /** 디바이스 GPS 센서에 접근이 가능한지 확인 **/
-    fun isGPSConnection(): Boolean  {
+    fun isGPSConnected(): Boolean  {
         val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
         Log.i("Location Enable","위치정보 호출 여부 : ${lm.isProviderEnabled(LocationManager.GPS_PROVIDER)}")
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
     /** 디바이스 네트워크에 접근이 가능한지 확인 **/
-    fun isNetWorkConnection(): Boolean {
+    fun isNetWorkConnected(): Boolean {
         val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
         Log.i("Location Enable","네트워크 호출 여부 : ${lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)}")
         return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
     /** 핸드폰 위치 서비스가 켜져있는지 확인 **/
-    fun requestGPSEnable() {
+    fun requestSystemGPSEnable() {
         Toast.makeText(context, "핸드폰 GPS를 켜주세요", Toast.LENGTH_SHORT).show()
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         context.startActivity(intent)

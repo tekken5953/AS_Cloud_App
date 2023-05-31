@@ -1,10 +1,8 @@
 package com.example.airsignal_app.view.activity
 
-import android.content.Intent
 import android.location.LocationManager
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.db.SharedPreferenceManager
@@ -35,20 +33,9 @@ class RedirectPermissionActivity : BaseActivity() {
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 if (!RequestPermissionsUtil(this).isLocationPermitted()) {
                     RequestPermissionsUtil(this).requestLocation()
-//                    if (VERSION.SDK_INT < 29) {
-//                        RequestPermissionsUtil(this).requestLocation()
-//                    } else {
-//                        val intent = Intent(
-//                            android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-//                            Uri.fromParts("package", packageName, null)
-//                        )
-//                        intent.addCategory(Intent.CATEGORY_DEFAULT)
-////                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//                        startActivity(intent)
-//                    }
                 }
             } else {
-               GetLocation(this).requestGPSEnable()
+               GetLocation(this).requestSystemGPSEnable()
             }
         }
     }

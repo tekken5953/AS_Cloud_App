@@ -191,7 +191,7 @@
             style="@style/basicTextView"
             motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
             motion:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv"
-            android:textColor="@color/mode_black_90"
+            android:textColor="#70FFFFFF"
             android:textSize="14sp"/>
         <Constraint
             android:id="@+id/mainNotiMsgTv"
@@ -319,7 +319,7 @@
         <Constraint
             android:id="@+id/mainMinMaxValue"
             style="@style/basicTextView"
-            android:textColor="@color/mode_black_90"
+            android:textColor="#70FFFFFF"
             android:textSize="18sp"
             motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"
             motion:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
