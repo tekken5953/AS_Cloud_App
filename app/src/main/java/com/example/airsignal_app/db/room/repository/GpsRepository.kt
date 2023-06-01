@@ -2,11 +2,12 @@ package com.example.airsignal_app.db.room.repository
 
 import android.content.Context
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
-import com.example.airsignal_app.db.room.AppDataBase
 import com.example.airsignal_app.db.room.AppDataBase.Companion.getInstance
 import com.example.airsignal_app.db.room.model.GpsEntity
-import com.orhanobut.logger.Logger
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
@@ -44,9 +45,8 @@ class GpsRepository(private val context: Context) {
     fun deleteFromAddress(addr: String) {
         val job = Job()
         CoroutineScope(Dispatchers.IO + job).launch {
-
+            getInstance(context)!!.gpsRepository().deleteFromAddr(addr)
         }
-        getInstance(context)!!.gpsRepository().deleteFromAddr(addr)
         Timber.tag(TAG_D).d("deleteFromAddress Model")
     }
 

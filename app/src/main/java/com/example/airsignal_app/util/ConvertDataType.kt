@@ -3,12 +3,10 @@ package com.example.airsignal_app.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.db.SharedPreferenceManager
 import java.text.SimpleDateFormat
@@ -43,6 +41,7 @@ object ConvertDataType {
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
+    /** 폰트 크기를 작게 변경 **/
     fun setTextSizeSmall(context: Context) {
         val configuration = context.resources.configuration
         configuration.fontScale = 0.7f
@@ -50,6 +49,7 @@ object ConvertDataType {
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
+    /** 폰트 크기를 크게 변경 **/
     fun setTextSizeLarge(context: Context) {
         val configuration = context.resources.configuration
         configuration.fontScale = 1.3f
@@ -57,6 +57,7 @@ object ConvertDataType {
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
+    /** 폰트 크기를 기본으로 변경 **/
     fun setTextSizeDefault(context: Context) {
         val configuration = context.resources.configuration
         configuration.fontScale = 1f
@@ -64,6 +65,7 @@ object ConvertDataType {
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
+    /** pixel을 DP로 변환 **/
     fun pixelToDp(context: Context, px: Int): Int {
         return px / (context.resources.displayMetrics.densityDpi / 160)
     }
@@ -86,7 +88,8 @@ object ConvertDataType {
 
     /** 위젯용 현재시간 타임포멧 **/
     fun currentDateTimeString(context: Context): String {
-        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(context.getString(R.string.widget_time_format))
+        @SuppressLint("SimpleDateFormat") val format =
+            SimpleDateFormat(context.getString(R.string.widget_time_format))
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
         return format.format(calendar.time)
@@ -94,7 +97,8 @@ object ConvertDataType {
 
     /** 데이터 포멧에 맞춰서 시간변환 **/
     fun millsToString(mills: Long, pattern: String): String {
-        @SuppressLint("SimpleDateFormat") val format = SimpleDateFormat(pattern, Locale.KOREA)
+        @SuppressLint("SimpleDateFormat") val format =
+            SimpleDateFormat(pattern, Locale.getDefault())
         return format.format(Date(mills))
     }
 
@@ -142,10 +146,10 @@ object ConvertDataType {
             "구름많고 눈", "눈", "흐리고 눈" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.snow, null)
             }
-            "구름많고 소나기","흐리고 비","구름많고 비","흐리고 소나기" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy , null)
+            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy, null)
             }
-            "구름많고 비/눈", "흐리고 비/눈","비/눈"-> {
+            "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.rain_snow, null)
             }
             else -> {
@@ -154,16 +158,16 @@ object ConvertDataType {
         }
     }
 
-    /** 등급에 따른 텍스트 변환 **/
-    private fun getDataString(context: Context, grade: Int): String {
-        return when (grade) {
-            0 -> context.getString(R.string.progress_good)
-            1 -> context.getString(R.string.progress_normal)
-            2 -> context.getString(R.string.progress_bad)
-            3 -> context.getString(R.string.progress_worst)
-            else -> ""
-        }
-    }
+//    /** 등급에 따른 텍스트 변환 **/
+//    private fun getDataString(context: Context, grade: Int): String {
+//        return when (grade) {
+//            0 -> context.getString(R.string.progress_good)
+//            1 -> context.getString(R.string.progress_normal)
+//            2 -> context.getString(R.string.progress_bad)
+//            3 -> context.getString(R.string.progress_worst)
+//            else -> ""
+//        }
+//    }
 
     /** 등급에 따른 색상 변환 **/
     fun getDataColor(context: Context, grade: Int): Int {
@@ -176,13 +180,13 @@ object ConvertDataType {
         }
     }
 
-    /** Double을 지정 자릿수에서 반올림 **/
-    fun convertDoubleToDecimal(double: Double, digit: Int): String {
-        return String.format("%.${digit}f", double)
-    }
+//    /** Double을 지정 자릿수에서 반올림 **/
+//    fun convertDoubleToDecimal(double: Double, digit: Int): String {
+//        return String.format("%.${digit}f", double)
+//    }
 
     /** 요일 변환 **/
-    fun convertDayOfWeekToKorean(context: Context, dayOfWeek: Int): String? {
+    fun convertDayOfWeekToKorean(context: Context, dayOfWeek: Int): String {
         return when (dayOfWeek % 7) {
             1 -> context.getString(R.string.mon)
             2 -> context.getString(R.string.tue)
@@ -195,17 +199,32 @@ object ConvertDataType {
         }
     }
 
+    /** 주소 포멧팅 **/
     fun convertAddress(addr: String): String {
-        return addr.replace("특별시","시").replace("광역시","시").replace("제주특별자치도","제주도")
+        return addr.replace("특별시", "시").replace("광역시", "시").replace("제주특별자치도", "제주도")
     }
 
-    fun getLocale(context: Context) : Locale {
+    /** 현재 설정된 국가를 반환 **/
+    fun getLocale(context: Context): Locale {
         return if (SharedPreferenceManager(context).getString(userLocation) == context.getString(R.string.korean)) {
             Locale.KOREA
         } else if (SharedPreferenceManager(context).getString(userLocation) == context.getString(R.string.english)) {
             Locale.ENGLISH
         } else {
             Locale.getDefault()
+        }
+    }
+
+    /** HH:mm 포맷의 시간을 분으로 변환 **/
+    fun convertTimeToMinutes(time: String): Int {
+        return try {
+            val timeSplit = time.replace(" ", "")
+            val hour = timeSplit.substring(0, 2).toInt()
+            val minutes = timeSplit.substring(2, 4).toInt()
+            hour * 60 + minutes
+        } catch (e: java.lang.NumberFormatException) {
+            e.printStackTrace()
+            0
         }
     }
 }

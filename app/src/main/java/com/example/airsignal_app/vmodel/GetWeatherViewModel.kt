@@ -1,10 +1,13 @@
 package com.example.airsignal_app.vmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.example.airsignal_app.repo.GetWeatherRepo
 import com.example.airsignal_app.retrofit.ApiModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.Executors
 
 /**
  * @author : Lee Jae Young
@@ -18,8 +21,13 @@ class GetWeatherViewModel : BaseViewModel("날씨 데이터 호출") {
 
     // MutableLiveData 값을 갱신하기 위한 함수
     fun loadDataResult(lat: Double?, lng: Double?, addr: String?) : GetWeatherViewModel {
-        job = CoroutineScope(Dispatchers.IO).launch {
+        val threadPoolDispatcher = Executors.newCachedThreadPool().asCoroutineDispatcher()
+        job = CoroutineScope(threadPoolDispatcher).launch {
             repo.loadDataResult(lat, lng, addr)
+        }
+        runBlocking {
+            job!!.join()
+            threadPoolDispatcher.close()
         }
         return this
     }

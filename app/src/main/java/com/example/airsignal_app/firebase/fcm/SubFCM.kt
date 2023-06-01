@@ -1,8 +1,6 @@
 package com.example.airsignal_app.firebase.fcm
 
 import android.content.Intent
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.example.airsignal_app.view.activity.LoginActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -16,7 +14,6 @@ import timber.log.Timber
 class SubFCM : FirebaseMessagingService() {
 
     /** 메시지 받았을 때 **/
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         Timber.tag("Notification").d("FCM 메시지 수신")

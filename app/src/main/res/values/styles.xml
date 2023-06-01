@@ -15,10 +15,6 @@
         <item name="android:background">@color/white</item>
     </style>
 
-    <style name="Widget.Theme.AirSignal_App.ActionBar.Fullscreen" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">@color/black_overlay</item>
-    </style>
-
     <style name="basicTextView">
         <item name="android:letterSpacing">-0.04</item>
         <item name="android:textColor">@color/mode_color_text</item>

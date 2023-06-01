@@ -1,8 +1,9 @@
 package com.example.airsignal_app.vmodel
 
 import androidx.lifecycle.ViewModel
-import com.orhanobut.logger.Logger
+import com.example.airsignal_app.dao.StaticDataObject
 import kotlinx.coroutines.Job
+import timber.log.Timber
 
 open class BaseViewModel(msg: String?) : ViewModel() {
     var message = msg
@@ -13,6 +14,6 @@ open class BaseViewModel(msg: String?) : ViewModel() {
         if (job != null)
             job?.cancel()
         if (message != null)
-         Logger.i("$message 뷰모델 인스턴스 소멸")
+            Timber.tag(StaticDataObject.TAG_R).i("%s 뷰모델 인스턴스 소멸", message)
     }
 }

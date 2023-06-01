@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.location.*
 import android.location.LocationListener
-import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -32,7 +31,6 @@ import java.util.*
 
 class GetLocation(private val context: Context) {
     private val sp by lazy { SharedPreferenceManager(context) }
-
 
     /** GPS 의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
     @SuppressLint("MissingPermission")
@@ -64,22 +62,10 @@ class GetLocation(private val context: Context) {
             val geocoder = Geocoder(context, ConvertDataType.getLocale(context))
             @Suppress("DEPRECATION")
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
-            if (address.isNotEmpty()) {
-                return address[0].getAddressLine(0)
-
-//                Log.i(TAG_D, newAddress) // 건물 주소를 제외한 주소 출력
-//
-//                try {
-//                    updateCurrentAddress (
-//                        address[0].latitude, address[0].longitude, newAddress
-//                    )
-//
-//                    writeRdbLog(address[0].latitude, address[0].longitude, newAddress)
-////                            renewTopic(sp.getString("WEATHER_CURRENT"), lastAddress)
-//                    return newAddress
-//                } catch (e: Exception) {
-//                    Timber.tag("Location").e("Location Contains null")
-//                }
+            return if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
+                address[0].getAddressLine(0)
+            } else {
+                "Null Address"
             }
         } catch (e: IOException) {
             Timber.tag("Location").e("주소를 가져오는 도중 오류가 발생했습니다")
@@ -114,7 +100,6 @@ class GetLocation(private val context: Context) {
         val roomDB = GpsRepository(context)
         sp.setString(lastAddress, addr)
         val model = GpsEntity()
-        Log.d(TAG_D, roomDB.findAll().toString())
         model.name = CURRENT_GPS_ID
         model.lat = lat
         model.lng = lng
@@ -128,12 +113,14 @@ class GetLocation(private val context: Context) {
         }
     }
 
-    private fun renewTopic(old: String, new: String) {
-        SubFCM().unSubTopic(old).subTopic(new)
-        Thread.sleep(100)
-        sp.setString("WEATHER_CURRENT", new)
-    }
+//    /** 현재 위치 토픽 갱신 **/
+//    private fun renewTopic(old: String, new: String) {
+//        SubFCM().unSubTopic(old).subTopic(new)
+//        Thread.sleep(100)
+//        sp.setString("WEATHER_CURRENT", new)
+//    }
 
+    /** 백그라운드에서 위치 갱신 **/
     @SuppressLint("MissingPermission")
     fun getGpsInBackground() {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
@@ -144,33 +131,23 @@ class GetLocation(private val context: Context) {
                 val longitude = location.longitude
                 updateCurrentAddress(latitude,longitude,getAddress(latitude,longitude))
                 writeLogCause(
-                    email = "Test Background",
-                    isSuccess = GetDeviceInfo().androidID(context),
-                    log = "새로운 위치 : ${latitude},${longitude}"
+                    email = sp.getString(userEmail),
+                    isSuccess = "WorkManager Location",
+                    log = "새로운 위치 : ${latitude},${longitude} : ${getAddress(latitude,longitude)}"
                 )
             }
-
-            override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
-                Log.d(TAG_D, "provider is changed : provider : $provider , status : $status")
-            }
-
-            override fun onProviderEnabled(provider: String) {
-                Log.d(TAG_D, "provider is Enabled")
-            }
-
-            override fun onProviderDisabled(provider: String) {
-                Log.d(TAG_D, "provider is Disabled")
-            }
+            override fun onProviderEnabled(provider: String) {}
+            override fun onProviderDisabled(provider: String) {}
         }
-
         locationManager!!.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
             0,
-            100f,
+            500f,
             locationListener
         )
     }
 
+    /** 파이어베이스 로그 커스텀 **/
     fun writeRdbLog(lat: Double, lng: Double, addr: String) {
         val email = sp.getString(userEmail)
         if (email != "") {
@@ -191,19 +168,22 @@ class GetLocation(private val context: Context) {
         }
     }
 
-    fun isGPSConnection(): Boolean  {
+    /** 디바이스 GPS 센서에 접근이 가능한지 확인 **/
+    fun isGPSConnected(): Boolean  {
         val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
         Log.i("Location Enable","위치정보 호출 여부 : ${lm.isProviderEnabled(LocationManager.GPS_PROVIDER)}")
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
-    fun isNetWorkConnection(): Boolean {
+    /** 디바이스 네트워크에 접근이 가능한지 확인 **/
+    fun isNetWorkConnected(): Boolean {
         val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
         Log.i("Location Enable","네트워크 호출 여부 : ${lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)}")
         return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
-    fun requestGPSEnable() {
+    /** 핸드폰 위치 서비스가 켜져있는지 확인 **/
+    fun requestSystemGPSEnable() {
         Toast.makeText(context, "핸드폰 GPS를 켜주세요", Toast.LENGTH_SHORT).show()
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         context.startActivity(intent)

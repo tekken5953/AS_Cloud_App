@@ -6,11 +6,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.airsignal_app.dao.StaticDataObject.REQUEST_LOCATION
 import com.example.airsignal_app.dao.StaticDataObject.REQUEST_NOTIFICATION
 
 class RequestPermissionsUtil(private val context: Context) {

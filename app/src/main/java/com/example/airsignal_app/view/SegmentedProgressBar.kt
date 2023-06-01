@@ -1,13 +1,9 @@
 package com.example.airsignal_app.view
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import androidx.core.content.res.ResourcesCompat
-import com.example.airsignal_app.R
 
 
 // 참고 : https://github.com/Komdosh/android-segmented-progressbar

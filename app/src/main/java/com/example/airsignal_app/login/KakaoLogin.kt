@@ -3,9 +3,7 @@ package com.example.airsignal_app.login
 import android.app.Activity
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import androidx.constraintlayout.motion.widget.MotionLayout
-import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
@@ -13,8 +11,6 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.firebase.db.RDBLogcat
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmailForKakao
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
@@ -170,10 +166,6 @@ class KakaoLogin(private val activity: Activity) {
         }
     }
 
-    private fun enterLoginPage() {
-        EnterPage(activity).toLogin()
-    }
-
     private fun saveUserSettings() {
         UserApiClient.instance.me { user, _ ->
             user?.kakaoAccount?.let { account ->
@@ -184,10 +176,10 @@ class KakaoLogin(private val activity: Activity) {
             }
         }
     }
-
-    private fun refreshToken() {
-        //TODO 토큰 갱신하기 https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#refresh-token
-    }
+//
+//    private fun refreshToken() {
+//        //TODO 토큰 갱신하기 https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#refresh-token
+//    }
 
     /** 카카오 로그아웃 + 기록 **/
     fun logout(email: String) {

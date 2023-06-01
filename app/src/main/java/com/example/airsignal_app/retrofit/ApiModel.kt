@@ -193,6 +193,8 @@ class ApiModel {
         val khaiValue: Int,
         @SerializedName("mangName")
         val mangName: String,
+        @SerializedName("no2Grade")
+        val no2Grade: Int,
         @SerializedName("no2Value")
         val no2Value: Double,
         @SerializedName("o3Grade")
@@ -237,6 +239,19 @@ class ApiModel {
         val sunset: String,
     )
 
+    data class SunTomorrow(
+        @SerializedName("locdate")
+        val locdate: String,
+        @SerializedName("moonrise")
+        val moonrise: String,
+        @SerializedName("moonset")
+        val moonset: String,
+        @SerializedName("sunrise")
+        val sunrise: String,
+        @SerializedName("sunset")
+        val sunset: String,
+    )
+
     data class TodayTemp(
         @SerializedName("min")
         val min: Double,
@@ -256,6 +271,29 @@ class ApiModel {
         val grade: String
     )
 
+    data class Current(
+//        @SerializedName("base")
+//        val baseTime: LocalDateTime,
+//        @SerializedName("forecast")
+//        val forecastTime: LocalDateTime,
+        @SerializedName("rainType")
+        val rainType: String,
+        @SerializedName("rainHourly")
+        val rainHourly: Double,
+        @SerializedName("humidity")
+        val humidity: Double,
+        @SerializedName("temperature")
+        val temperature: Double,
+//        @SerializedName("windSpeedEW")
+//        val windSpeedEW: Double,
+//        @SerializedName("windSpeedSN")
+//        val windSpeedSN: Double,
+        @SerializedName("vector")
+        val vector: String,
+        @SerializedName("windSpeed")
+        val windSpeed: Double,
+    )
+
     data class GetEntireData(
         @SerializedName("realtime")
         val realtime: List<RealTimeData>,
@@ -265,11 +303,15 @@ class ApiModel {
         val quality: AirQualityData,
         @SerializedName("sun")
         val sun: SunData,
+        @SerializedName("sun2")
+        val sun_tomorrow: SunTomorrow,
         @SerializedName("today")
         val today: TodayTemp,
         @SerializedName("yesterday")
         val yesterday: YesterdayTemp,
         @SerializedName("uv")
-        val uv: UV
+        val uv: UV,
+        @SerializedName("current")
+        val current: Current
     )
 }

@@ -31,7 +31,6 @@
         android:background="@drawable/add_device_field_bg">
 
         <ImageView
-            android:id="@+id/compAddFrameImage"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_gravity="center"

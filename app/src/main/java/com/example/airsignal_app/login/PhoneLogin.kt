@@ -129,9 +129,9 @@ class PhoneLogin(
                 } else {
                     // Sign in failed, display a message and update the UI
                     Log.w("phone_tag", "signInWithCredential:failure", task.exception)
-                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        // The verification code entered was invalid
-                    }
+//                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
+//                        // The verification code entered was invalid
+//                    }
                     // Update UI
                 }
             }

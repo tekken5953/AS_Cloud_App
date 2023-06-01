@@ -26,7 +26,7 @@ class SplashActivity : BaseActivity() {
 
         setFullScreenMode(this) // 풀 스크린
 
-        // 2초 뒤 이동
+        // 1초 뒤 이동
         Handler(Looper.getMainLooper()).postDelayed({
             val intent = Intent(this, RedirectPermissionActivity::class.java)
             startActivity(intent)

@@ -43,7 +43,6 @@ import com.example.airsignal_app.login.PhoneLogin
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.view.ShowDialogClass
 import com.example.airsignal_app.view.SnackBarUtils
-import com.example.airsignal_app.view.test.TestDesignActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -457,10 +456,10 @@ class SettingActivity : BaseActivity() {
             })
         }
 
-        binding.settingTest.setOnClickListener {
-            val intent = Intent(this, TestDesignActivity::class.java)
-            startActivity(intent)
-        }
+//        binding.settingTest.setOnClickListener {
+//            val intent = Intent(this, TestDesignActivity::class.java)
+//            startActivity(intent)
+//        }
 
         // 앱 정보 클릭
         binding.settingAppInfo.setOnClickListener {
@@ -481,6 +480,7 @@ class SettingActivity : BaseActivity() {
         )
     }
 
+    /** 메인 액티비티로 이동 **/
     private fun goMain() {
         val intent = Intent(this@SettingActivity, MainActivity::class.java)
         startActivity(intent)

@@ -9,7 +9,6 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.dbVersion
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.scheme.GpsScheme
-import com.orhanobut.logger.Logger
 
 @Database(entities = [GpsEntity::class], version = dbVersion)
 abstract class AppDataBase : RoomDatabase() {

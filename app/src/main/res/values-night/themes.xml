@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Theme.AirSignal_App" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
@@ -13,6 +13,7 @@
         <item name="android:windowBackground">@drawable/main_bg</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
 
         <!-- 상태바까지 view를 보여줄 수 있다-->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>

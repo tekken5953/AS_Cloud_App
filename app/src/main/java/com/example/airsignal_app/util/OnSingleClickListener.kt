@@ -2,8 +2,6 @@ package com.example.airsignal_app.util
 
 import android.os.SystemClock
 import android.view.View
-import android.widget.Toast
-import com.example.airsignal_app.view.ToastUtils
 
 abstract class OnSingleClickListener : View.OnClickListener {
     private var mLastClickTime: Long = 0

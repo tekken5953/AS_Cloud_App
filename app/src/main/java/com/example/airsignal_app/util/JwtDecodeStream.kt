@@ -1,8 +1,5 @@
 package com.example.airsignal_app.util
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import okio.ByteString.Companion.decodeBase64
 import org.json.JSONObject
 import java.util.*
 

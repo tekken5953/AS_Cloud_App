@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-    <data></data>
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -366,17 +365,17 @@
                 android:background="?android:attr/selectableItemBackground"
                 app:layout_constraintTop_toBottomOf="@+id/settingFaq" />
 
-            <TextView
-                android:id="@+id/settingTest"
-                android:layout_width="match_parent"
-                style="@style/settingSingleTextView"
-                android:layout_marginBottom="30dp"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
-                android:text="Test"
-                android:background="?android:attr/selectableItemBackground"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/settingAppInfo" />
+<!--            <TextView-->
+<!--                android:id="@+id/settingTest"-->
+<!--                android:layout_width="match_parent"-->
+<!--                style="@style/settingSingleTextView"-->
+<!--                android:layout_marginBottom="30dp"-->
+<!--                android:paddingStart="24dp"-->
+<!--                android:paddingEnd="24dp"-->
+<!--                android:text="Test"-->
+<!--                android:background="?android:attr/selectableItemBackground"-->
+<!--                app:layout_constraintBottom_toBottomOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/settingAppInfo" />-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
