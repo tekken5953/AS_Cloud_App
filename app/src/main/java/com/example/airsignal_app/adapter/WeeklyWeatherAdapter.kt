@@ -1,13 +1,11 @@
 package com.example.airsignal_app.adapter
 
 import android.content.Context
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
@@ -15,7 +13,6 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userFontScale
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.ConvertDataType
 import java.time.LocalDateTime
-import java.util.*
 
 /**
  * @author : Lee Jae Young

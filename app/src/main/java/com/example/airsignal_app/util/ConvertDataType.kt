@@ -3,12 +3,10 @@ package com.example.airsignal_app.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.db.SharedPreferenceManager
 import java.text.SimpleDateFormat
@@ -160,16 +158,16 @@ object ConvertDataType {
         }
     }
 
-    /** 등급에 따른 텍스트 변환 **/
-    private fun getDataString(context: Context, grade: Int): String {
-        return when (grade) {
-            0 -> context.getString(R.string.progress_good)
-            1 -> context.getString(R.string.progress_normal)
-            2 -> context.getString(R.string.progress_bad)
-            3 -> context.getString(R.string.progress_worst)
-            else -> ""
-        }
-    }
+//    /** 등급에 따른 텍스트 변환 **/
+//    private fun getDataString(context: Context, grade: Int): String {
+//        return when (grade) {
+//            0 -> context.getString(R.string.progress_good)
+//            1 -> context.getString(R.string.progress_normal)
+//            2 -> context.getString(R.string.progress_bad)
+//            3 -> context.getString(R.string.progress_worst)
+//            else -> ""
+//        }
+//    }
 
     /** 등급에 따른 색상 변환 **/
     fun getDataColor(context: Context, grade: Int): Int {
@@ -182,13 +180,13 @@ object ConvertDataType {
         }
     }
 
-    /** Double을 지정 자릿수에서 반올림 **/
-    fun convertDoubleToDecimal(double: Double, digit: Int): String {
-        return String.format("%.${digit}f", double)
-    }
+//    /** Double을 지정 자릿수에서 반올림 **/
+//    fun convertDoubleToDecimal(double: Double, digit: Int): String {
+//        return String.format("%.${digit}f", double)
+//    }
 
     /** 요일 변환 **/
-    fun convertDayOfWeekToKorean(context: Context, dayOfWeek: Int): String? {
+    fun convertDayOfWeekToKorean(context: Context, dayOfWeek: Int): String {
         return when (dayOfWeek % 7) {
             1 -> context.getString(R.string.mon)
             2 -> context.getString(R.string.tue)

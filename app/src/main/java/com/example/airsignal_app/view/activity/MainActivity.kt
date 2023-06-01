@@ -89,15 +89,15 @@ class MainActivity : BaseActivity() {
 //        binding.mainBottomAdView.resume()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-//        binding.mainBottomAdView.destroy()
-    }
-
-    override fun onPause() {
-        super.onPause()
-//        binding.mainBottomAdView.pause()
-    }
+//    override fun onDestroy() {
+//        super.onDestroy()
+////        binding.mainBottomAdView.destroy()
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+////        binding.mainBottomAdView.pause()
+//    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,7 +114,7 @@ class MainActivity : BaseActivity() {
             }
 
         // 하단 스크롤시 네비게이션 바 색상 하얀색으로 변경
-        binding.nestedScrollview.setOnScrollChangeListener { view, i, i2, i3, i4 ->
+        binding.nestedScrollview.setOnScrollChangeListener { view, _, _, _, _ ->
             if (view.scrollY == 0) {
                 window.navigationBarColor = getColor(android.R.color.transparent)
             } else {
@@ -196,7 +196,7 @@ class MainActivity : BaseActivity() {
             )
         }
 
-        binding.seekArc.setOnTouchListener { p0, p1 -> true }
+        binding.seekArc.setOnTouchListener { _, _ -> true }
 
         val expandAnim =
             TranslateAnimation(0f, 0f, 0f, binding.mainUvCollapsedLayout.height.toFloat())
@@ -280,6 +280,7 @@ class MainActivity : BaseActivity() {
         })
 
         binding.mainSideMenuIv.setOnClickListener(object : OnSingleClickListener() {
+            @SuppressLint("InflateParams")
             override fun onSingleClick(v: View?) {
                 val menu: View =
                     LayoutInflater.from(this@MainActivity).inflate(R.layout.side_menu, null)
@@ -486,6 +487,7 @@ class MainActivity : BaseActivity() {
                     setTextColor(getDataColor(this@MainActivity, air.so2Grade - 1))
                 }
 
+
                 val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
                 val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
                 binding.mainSunRiseTime.text = sbRise
@@ -497,13 +499,22 @@ class MainActivity : BaseActivity() {
                     binding.mainCompareTempTv
                 )
 
-                val entireSun = convertTimeToMinutes(sun.sunset) - convertTimeToMinutes(sun.sunrise)
+
+                val sunsetTime = convertTimeToMinutes(sun.sunset)
+                val sunriseTime = convertTimeToMinutes(sun.sunrise)
+                val entireSun = sunsetTime - sunriseTime
                 val currentTime = millsToString(getCurrentTime(), "HHmm")
                 val currentSun =
                     100 * (convertTimeToMinutes(currentTime) - convertTimeToMinutes(sun.sunrise)) / entireSun
-                binding.seekArc.progress = currentSun
-//                Log.d("SunProgress", "sunset : ${convertTimeToMinutes(sun.sunset)} \nsunrise : ${convertTimeToMinutes(sun.sunrise)} " +
-//                        "\nentireSun : $entireSun \ncurrentTime : ${convertTimeToMinutes(currentTime)} \ncurrentSun : $currentSun")
+
+                if (currentTime.toInt() in (sunriseTime + 1) until sunsetTime) {
+                    binding.seekArc.progress = currentSun
+                } else {
+                    binding.seekArc.progress = 100
+                }
+//                Log.d("SunProgress", "sunset : ${convertTimeToMinutes(sun.sunset)} \n sunrise : ${convertTimeToMinutes(sun.sunrise)} " +
+//                        "\n entireSun : $entireSun \n currentTime : ${convertTimeToMinutes(currentTime)} \n currentSun : $currentSun")
+
 
                 val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
                 if (air.pm25Value > 125) {
@@ -550,19 +561,12 @@ class MainActivity : BaseActivity() {
                     try {
                         val formedDate = dateNow.plusDays(i.toLong())
                         val date: String = when (i) {
-                            0 -> {
-                                "오늘"
-                            }
-                            1 -> {
-                                "내일"
-                            }
+                            0 -> { "오늘" }
+                            1 -> { "내일" }
                             else -> {
-                                "${
-                                    convertDayOfWeekToKorean(
+                                "${convertDayOfWeekToKorean(
                                         this,
-                                        dateNow.dayOfWeek.value + i
-                                    )
-                                }요일"
+                                        dateNow.dayOfWeek.value + i)}요일"
                             }
                         }
                         addWeeklyWeatherItem(
@@ -783,16 +787,10 @@ class MainActivity : BaseActivity() {
             model.addr = addr
             if (dbIsEmpty(roomDB)) {
                 roomDB.insert(model)
-                Log.d(
-                    TAG_D,
-                    "Insert GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}"
-                )
+                Log.d(TAG_D, "Insert GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}")
             } else {
                 roomDB.update(model)
-                Log.d(
-                    TAG_D,
-                    "Update GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}"
-                )
+                Log.d(TAG_D, "Update GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}")
             }
         }
     }

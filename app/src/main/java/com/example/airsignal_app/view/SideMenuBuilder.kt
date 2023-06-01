@@ -2,7 +2,6 @@ package com.example.airsignal_app.view
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.net.Uri
 import android.util.DisplayMetrics
 import android.view.*
@@ -13,8 +12,6 @@ import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.RefreshUtils
-import java.util.concurrent.CompletableFuture
-import javax.inject.Singleton
 
 /**
  * @author : Lee Jae Young
@@ -86,7 +83,7 @@ class SideMenuBuilder(private val activity: Activity) {
         return this
     }
 
-    fun setFontScale(): SideMenuBuilder {
+    private fun setFontScale(): SideMenuBuilder {
         when (SharedPreferenceManager(builder.context).getString("scale")) {
             "small" -> {
                 ConvertDataType.setTextSizeSmall(builder.context)

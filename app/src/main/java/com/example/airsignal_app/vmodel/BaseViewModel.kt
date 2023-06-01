@@ -14,6 +14,6 @@ open class BaseViewModel(msg: String?) : ViewModel() {
         if (job != null)
             job?.cancel()
         if (message != null)
-            Timber.tag(StaticDataObject.TAG_R).i(message + " 뷰모델 인스턴스 소멸")
+            Timber.tag(StaticDataObject.TAG_R).i("%s 뷰모델 인스턴스 소멸", message)
     }
 }

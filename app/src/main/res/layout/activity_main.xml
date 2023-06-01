@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        app:layoutDescription="@xml/activity_main_xml_mainmotionlayout_scene"
+        app:layoutDescription="@xml/main_motion_scene"
         app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
         <!--        <com.scwang.smart.refresh.layout.SmartRefreshLayout-->

@@ -1,20 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string-array name="low" tools:ignore="ExtraTranslation">
-        <item>햇볕에 노출 시 수십 분 이내에도 피부 화상을 입을 수 있어 가장 위험함</item>
-        <item>가능한 실내에서 머물러야 함</item>
-        <item>외출 시 긴 소매 옷, 모자, 선글라스 이용/ 자외선 차단제를 정기적으로 발라야 함</item>
-    </string-array>
 
-    <string-array name="medium" tools:ignore="ExtraTranslation">
-    </string-array>
-
-    <string-array name="high" tools:ignore="ExtraTranslation">
-    </string-array>
-
-    <string-array name="extra_high" tools:ignore="ExtraTranslation">
-    </string-array>
-
-    <string-array name="caution" tools:ignore="ExtraTranslation">
-    </string-array>
 </resources>

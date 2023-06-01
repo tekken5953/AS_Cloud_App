@@ -19,7 +19,6 @@
 
 
     <TextView
-        android:id="@+id/appInfoTitle"
         style="@style/basicTextView"
         android:fontFamily="@font/spoqa_hansansneo_regular"
         android:text="@string/setting_app_data"
@@ -53,7 +52,6 @@
         app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle" />
 
     <TextView
-        android:id="@+id/appInfoUpdatableText"
         style="@style/basicTextView"
         android:layout_marginTop="5dp"
         android:text="최신 소프트웨어입니다."

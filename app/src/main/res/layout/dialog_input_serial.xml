@@ -6,7 +6,6 @@
     android:background="@color/white">
 
     <ImageView
-        android:id="@+id/inputSerialBack"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:padding="4dp"

@@ -64,7 +64,6 @@
             android:textSize="14sp"/>
 
         <TextView
-            android:id="@+id/weeklySlash"
             style="@style/basicTextView"
             android:text="/"
             android:gravity="center"

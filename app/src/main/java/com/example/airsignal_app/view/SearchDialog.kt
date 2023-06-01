@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.graphics.Color
 import android.os.*
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,25 +14,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.AddressListAdapter
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
-import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.ConvertDataType.convertAddress
-import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
+import com.example.airsignal_app.util.KeyboardController
 import com.example.airsignal_app.util.RefreshUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.database.collection.LLRBNode
 
 
 /**
@@ -122,7 +118,7 @@ class SearchDialog(
 
             searchEditListener(listView, searchView)
 
-            onKeyboardUp(searchView)
+            KeyboardController().onKeyboardUp(requireContext(),searchView)
         }
     }
 
@@ -235,20 +231,5 @@ class SearchDialog(
             displayMetrics
         )
         return displayMetrics.heightPixels
-    }
-
-    // 키보드 올리기
-    private fun onKeyboardUp(et: EditText) {
-        Handler(Looper.getMainLooper()).postDelayed({
-            val inputMethodManager = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            et.requestFocus()
-            inputMethodManager.showSoftInput(et, InputMethodManager.SHOW_IMPLICIT)
-        },300)
-    }
-
-    // 키보드 내리기
-    private fun onKeyboardDown(et: EditText) {
-        val inputMethodManager = requireContext().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(et.windowToken, InputMethodManager.SHOW_IMPLICIT)
     }
 }

@@ -1,9 +1,6 @@
 package com.example.airsignal_app.util
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.time.LocalDateTime
-import java.util.*
 import kotlin.math.atan
 import kotlin.math.pow
 
@@ -17,7 +14,6 @@ class SensibleTempFormula {
      * 여름철 체감온도 (5월 ~ 9월)
      *
      * @param ta 기온
-     * @param tw 습구온도
      * @param rh 상대습도
      */
     fun getInSummer(ta: Double, rh: Double) : Double {

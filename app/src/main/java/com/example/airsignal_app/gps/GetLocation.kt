@@ -62,10 +62,10 @@ class GetLocation(private val context: Context) {
             val geocoder = Geocoder(context, ConvertDataType.getLocale(context))
             @Suppress("DEPRECATION")
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
-            if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
-                return address[0].getAddressLine(0)
+            return if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
+                address[0].getAddressLine(0)
             } else {
-                return "Null Address"
+                "Null Address"
             }
         } catch (e: IOException) {
             Timber.tag("Location").e("주소를 가져오는 도중 오류가 발생했습니다")
@@ -113,12 +113,12 @@ class GetLocation(private val context: Context) {
         }
     }
 
-    /** 현재 위치 토픽 갱신 **/
-    private fun renewTopic(old: String, new: String) {
-        SubFCM().unSubTopic(old).subTopic(new)
-        Thread.sleep(100)
-        sp.setString("WEATHER_CURRENT", new)
-    }
+//    /** 현재 위치 토픽 갱신 **/
+//    private fun renewTopic(old: String, new: String) {
+//        SubFCM().unSubTopic(old).subTopic(new)
+//        Thread.sleep(100)
+//        sp.setString("WEATHER_CURRENT", new)
+//    }
 
     /** 백그라운드에서 위치 갱신 **/
     @SuppressLint("MissingPermission")

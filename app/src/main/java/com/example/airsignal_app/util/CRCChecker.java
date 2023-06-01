@@ -28,10 +28,6 @@ public class CRCChecker {
         return checkSum(data.getBytes(),checkCrc.getBytes());
     }
 
-    /**
-     * crc 테이블 생성
-     * @param poly
-     */
     private void crcGenerateTable(short poly) {
         short data;
         short accum;

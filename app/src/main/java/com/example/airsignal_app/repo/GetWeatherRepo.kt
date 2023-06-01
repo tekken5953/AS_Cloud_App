@@ -2,7 +2,6 @@ package com.example.airsignal_app.repo
 
 import androidx.lifecycle.MutableLiveData
 import com.example.airsignal_app.retrofit.ApiModel
-import com.example.airsignal_app.retrofit.HttpClient
 import com.example.airsignal_app.retrofit.HttpClient.mMyAPIImpl
 import com.orhanobut.logger.Logger
 import retrofit2.Call

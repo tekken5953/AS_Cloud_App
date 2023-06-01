@@ -1,7 +1,6 @@
 package com.example.airsignal_app.retrofit
 
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDateTime
 
 class ApiModel {
 //    // 회원가입 시 Body에 넣어서 POST 할 데이터 모델

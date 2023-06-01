@@ -32,7 +32,6 @@
 
     <TextView
         style="@style/basicTextView"
-        android:id="@+id/dataListItemValue"
         android:layout_below="@+id/dataListItemGrade"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"

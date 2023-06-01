@@ -1,6 +1,5 @@
 package com.example.airsignal_app.util
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.content.Context.VIBRATOR_SERVICE
 import android.os.Build

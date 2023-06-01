@@ -1,13 +1,11 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
-import android.widget.LinearLayout
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
-import com.example.airsignal_app.util.EnterPage
 
 /**
  * @author : Lee Jae Young

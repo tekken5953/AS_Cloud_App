@@ -1,8 +1,6 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientId
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientName

@@ -43,7 +43,6 @@ import com.example.airsignal_app.login.PhoneLogin
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.view.ShowDialogClass
 import com.example.airsignal_app.view.SnackBarUtils
-import com.example.airsignal_app.view.test.TestDesignActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

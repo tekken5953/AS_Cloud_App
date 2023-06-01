@@ -16,7 +16,6 @@
 
 
     <TextView
-        android:id="@+id/listItemUVText"
         style="@style/basicTextView"
         android:layout_toEndOf="@+id/listItemUVDot"
         android:gravity="start"

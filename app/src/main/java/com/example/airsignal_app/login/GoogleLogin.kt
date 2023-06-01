@@ -2,9 +2,6 @@ package com.example.airsignal_app.login
 
 import android.app.Activity
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.activity.result.ActivityResultLauncher
 import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
@@ -15,7 +12,6 @@ import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
-import com.example.airsignal_app.util.EnterPage
 import com.example.airsignal_app.util.RefreshUtils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -23,7 +19,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.RuntimeExecutionException
 import com.google.android.gms.tasks.Task
 import com.orhanobut.logger.Logger
 
