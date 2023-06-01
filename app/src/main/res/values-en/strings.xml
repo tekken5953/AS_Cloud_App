@@ -63,4 +63,12 @@
     <string name="pm10_title">PM10(미세먼지)</string>
     <string name="uv_title">자외선 지수</string>
     <string name="how_to_response_title">단계별 대응요령</string>
+    <string name="sunrise">일출</string>
+    <string name="sunset">일몰</string>
+    <string name="tomorrow">내일</string>
+    <string name="rain_per">강수확률</string>
+    <string name="wind">바람</string>
+    <string name="humid">습도</string>
+    <string name="weekly_weather">주간별 날씨</string>
+    <string name="daily_weather">시간별 날씨</string>
 </resources>

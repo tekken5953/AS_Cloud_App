@@ -23,8 +23,7 @@
     <color name="progressWorst">#FF2929</color> // 프로그래스 바 양호도 매우나쁨 컬러
     <color name="progressGood">#5CC4FF</color> // 프로그래스 바 양호도 좋음 컬러
     <color name="progressNormal">#33E430</color> // 프로그래스 바 양호도 보통 컬러
-    <color name="progressError">#A0A0A0</color>
-    // 프로그래스 바 에러 컬러
+    <color name="progressError">#A0A0A0</color> // 프로그래스 바 에러 컬러
 
     <color name="black_overlay">#66000000</color>
 

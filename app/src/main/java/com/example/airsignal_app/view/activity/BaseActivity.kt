@@ -16,6 +16,7 @@ open class BaseActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
+
         val sp = SharedPreferenceManager(newBase!!)
         // 설정된 언어정보 불러오기
         when(sp.getString(IgnoredKeyFile.userLocation)) {

@@ -38,6 +38,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="45dp"
                 android:src="@drawable/back_arrow"
+                app:tint="@color/mode_black_color"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -48,7 +49,7 @@
                 android:layout_marginStart="20dp"
                 android:fontFamily="@font/spoqa_hansansneo_medium"
                 android:text="@string/login_title"
-                android:textColor="@color/mode_color_text"
+                android:textColor="@color/mode_black_color"
                 android:textSize="23sp"
                 app:layout_constraintBottom_toBottomOf="@+id/loginMainBack"
                 app:layout_constraintStart_toEndOf="@+id/loginMainBack"

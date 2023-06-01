@@ -3,6 +3,8 @@ package com.example.airsignal_app.view.activity
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.location.Location
 import android.location.LocationManager
@@ -409,6 +411,7 @@ class MainActivity : BaseActivity() {
             it?.let { result ->
                 val realtime = result.realtime[0]
                 val sun = result.sun
+                val sunTomorrow = result.sun_tomorrow
                 val air = result.quality
                 val week = result.week
                 val today = result.today
@@ -454,15 +457,15 @@ class MainActivity : BaseActivity() {
 //                            realtime.windSpeed
 //                        ).toInt()
 //                    }˚"
-                spanUnit(binding.subWindValue, current.windSpeed.toString() + " ㎧")
-                spanUnit(binding.subRainPerValue, realtime.rainP.roundToInt().toString() + " %")
-                spanUnit(binding.subHumidValue, current.humidity.roundToInt().toString() + " %")
-
-                binding.subWindValue.setCompoundDrawablesWithIntrinsicBounds(
-                    ResourcesCompat.getDrawable(resources, R.drawable.gps, null), null, null, null
-                )
-                binding.mainPm10Grade.getPM10GradeFromValue(air.pm10Value.toInt())
-                binding.mainPm2p5Grade.getPM25GradeFromValue(air.pm25Value)
+//                spanUnit(binding.subWindValue, current.windSpeed.toString() + " ㎧")
+//                spanUnit(binding.subRainPerValue, realtime.rainP.roundToInt().toString() + " %")
+//                spanUnit(binding.subHumidValue, current.humidity.roundToInt().toString() + " %")
+//
+//                binding.subWindValue.setCompoundDrawablesWithIntrinsicBounds(
+//                    ResourcesCompat.getDrawable(resources, R.drawable.gps, null), null, null, null
+//                )
+//                binding.mainPm10Grade.getPM10GradeFromValue(air.pm10Value.toInt())
+//                binding.mainPm2p5Grade.getPM25GradeFromValue(air.pm25Value)
                 binding.mainMinMaxValue.text =
                     "${filteringNullData(today.min)}˚/${filteringNullData(today.max)}˚"
                 binding.nestedPm10Grade.getPM10GradeFromValue(air.pm10Value.toInt())
@@ -488,17 +491,21 @@ class MainActivity : BaseActivity() {
                 }
 
 
+
                 val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
                 val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
+                val sbRiseTom = StringBuffer().append(sunTomorrow.sunrise).insert(2, ":")
+                val sbSetTom = StringBuffer().append(sunTomorrow.sunset).insert(2, ":")
                 binding.mainSunRiseTime.text = sbRise
                 binding.mainSunSetTime.text = sbSet
+                binding.mainSunRiseTom.text = sbRiseTom
+                binding.mainSunSetTom.text = sbSetTom
 
                 getCompareTemp(
                     yesterday.temp,
                     current.temperature,
                     binding.mainCompareTempTv
                 )
-
 
                 val sunsetTime = convertTimeToMinutes(sun.sunset)
                 val sunriseTime = convertTimeToMinutes(sun.sunrise)
@@ -507,13 +514,13 @@ class MainActivity : BaseActivity() {
                 val currentSun =
                     100 * (convertTimeToMinutes(currentTime) - convertTimeToMinutes(sun.sunrise)) / entireSun
 
-                if (currentTime.toInt() in (sunriseTime + 1) until sunsetTime) {
+                if (currentSun in 0..100) {
                     binding.seekArc.progress = currentSun
                 } else {
                     binding.seekArc.progress = 100
                 }
-//                Log.d("SunProgress", "sunset : ${convertTimeToMinutes(sun.sunset)} \n sunrise : ${convertTimeToMinutes(sun.sunrise)} " +
-//                        "\n entireSun : $entireSun \n currentTime : ${convertTimeToMinutes(currentTime)} \n currentSun : $currentSun")
+                Log.d("SunProgress", "sunset : ${convertTimeToMinutes(sun.sunset)} \n sunrise : ${convertTimeToMinutes(sun.sunrise)} " +
+                        "\n entireSun : $entireSun \n currentTime : ${convertTimeToMinutes(currentTime)} \n currentSun : $currentSun")
 
 
                 val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
@@ -549,7 +556,7 @@ class MainActivity : BaseActivity() {
                                 "${forecastToday.hour}${getString(R.string.hour)}",
                                 applySkyImg(dailyIndex.rainType, dailyIndex.sky),
                                 "${dailyIndex.temp.roundToInt()}˚",
-                                "${forecastToday.monthValue}.${forecastToday.dayOfMonth}"
+                                convertDateAppendZero(forecastToday)
                             )
                         }
                     } catch (e: Exception) {
@@ -583,6 +590,7 @@ class MainActivity : BaseActivity() {
                 }
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
+                changeTextColorStyle(applySkyText(realtime.rainType, realtime.sky))
             }
             runOnUiThread {
                 hidePB()
@@ -798,5 +806,29 @@ class MainActivity : BaseActivity() {
     // DB가 비어있는지 확인
     private fun dbIsEmpty(db: GpsRepository): Boolean {
         return db.findAll().isEmpty()
+    }
+
+    // 메인화면 배경에 따라 텍스트의 색상을 변경
+    private fun changeTextColorStyle(sky: String) {
+        val changeColorTextViews = listOf(binding.mainGpsTitleTv, binding.mainLiveTempMinus,
+            binding.mainLiveTempValue, binding.mainLiveTempUnit, binding.mainCompareTempTv,
+        binding.mainTopBarGpsTitle,binding.mainMotionSlideGuide)
+        val changeTintImageViews = listOf(binding.mainSideMenuIv, binding.mainAddAddress,
+        binding.mainGpsFix, binding.mainMotionSLideImg)
+        when(sky) {
+            "맑음" -> {
+                changeColorTextViews.forEach {
+                    it.setTextColor(getColor(R.color.black))
+                }
+
+                changeTintImageViews.forEach {
+                    it.imageTintList = ColorStateList.valueOf(getColor(R.color.black))
+                }
+
+                binding.mainSkyText.setTextColor(Color.parseColor("#FF8A48"))
+                binding.mainMinMaxTitle.setTextColor(Color.parseColor("#3D3D3D"))
+                binding.mainMinMaxValue.setTextColor(Color.parseColor("#3D3D3D"))
+            }
+        }
     }
 }
