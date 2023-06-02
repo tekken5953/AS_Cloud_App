@@ -38,4 +38,6 @@
 
     <color name="bg_black_color">#3D3D3D</color>
 
+    <color name="ripple_white">#B4cccccc</color>
+
 </resources>

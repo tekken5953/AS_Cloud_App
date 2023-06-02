@@ -6,4 +6,5 @@ package com.example.airsignal_app.view.widget
  **/
 object WidgetAction {
     const val WIDGET_REFRESH_LOCATION = "com.example.airsignal_app.view.widget.RE_GPS"
+    const val WIDGET_UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
 }

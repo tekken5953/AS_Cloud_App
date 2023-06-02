@@ -1,7 +1,6 @@
 package com.example.airsignal_app.view.activity
 
-import android.animation.AnimatorSet
-import android.animation.ValueAnimator
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
@@ -33,6 +32,8 @@ import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
+import com.example.airsignal_app.dao.StaticDataObject.NOT_SHOWING_LOADING_FLOAT
+import com.example.airsignal_app.dao.StaticDataObject.SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.databinding.ActivityMainBinding
@@ -52,6 +53,7 @@ import com.example.airsignal_app.util.ConvertDataType.getSkyImg
 import com.example.airsignal_app.util.ConvertDataType.millsToString
 import com.example.airsignal_app.util.ConvertDataType.pixelToDp
 import com.example.airsignal_app.view.*
+import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE_TIME
 import com.example.airsignal_app.view.widget.WidgetProvider
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.gms.location.LocationServices
@@ -78,16 +80,15 @@ class MainActivity : BaseActivity() {
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(this, dailyWeatherList) }
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
-    private val sp by lazy { SharedPreferenceManager(this) }
-    private val UPDATE_TIME = "com.example.airsignal_app.action.UPDATE_DATA"
-    private var isInit = true
-    private val SHOWING_LOADING_FLOAT = 0.5f
-    private val NOT_SHOWING_LOADING_FLOAT = 1f
-    private val locationClass by lazy { GetLocation(this) }
     private val uvLegendList = ArrayList<AdapterModel.UVLegendItem>()
     private val uvLegendAdapter = UVLegendAdapter(this, uvLegendList)
     private val uvResponseList = ArrayList<AdapterModel.UVResponseItem>()
     private val uvResponseAdapter = UVResponseAdapter(this,uvResponseList)
+    private val sp by lazy { SharedPreferenceManager(this) }
+    private var isInit = true
+    private val locationClass by lazy { GetLocation(this) }
+    private var currentSun = 0
+    private var isSunAnimated = false
 
     override fun onResume() {
         super.onResume()
@@ -124,15 +125,6 @@ class MainActivity : BaseActivity() {
                 applyGetDataViewModel()
             }
 
-        // 하단 스크롤시 네비게이션 바 색상 하얀색으로 변경
-        binding.nestedScrollview.setOnScrollChangeListener { view, _, _, _, _ ->
-            if (view.scrollY == 0) {
-                window.navigationBarColor = getColor(android.R.color.transparent)
-            } else {
-                window.navigationBarColor = getColor(R.color.white)
-            }
-        }
-
         val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
         binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
 
@@ -152,10 +144,9 @@ class MainActivity : BaseActivity() {
 
 
         // 자외선 지수 접고 펴기 화살표
-        binding.mainUvCollapseArrow.apply {
+        binding.mainUVBox.apply {
             this.setOnClickListener {
                 if (binding.mainUvCollapsedLayout.visibility == VISIBLE) {
-
                     binding.mainUvCollapseArrow.setImageDrawable(
                         ResourcesCompat.getDrawable(
                             resources,
@@ -180,6 +171,28 @@ class MainActivity : BaseActivity() {
                         this.requestFocus()
                     }
                 }
+            }
+        }
+
+        binding.nestedScrollview.setOnScrollChangeListener { v, _, _, _, _ ->
+            if (!v.canScrollVertically(1)) {
+                if (!isSunAnimated) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        binding.seekArc.progress = 0
+                        delay(100)
+                        val animatorSun = ObjectAnimator.ofInt(binding.seekArc, "progress", currentSun)
+                        animatorSun.duration = 700
+                        animatorSun.start()
+                    }
+                    isSunAnimated = true
+                }
+            }
+
+            // 하단 스크롤시 네비게이션 바 색상 하얀색으로 변경
+            if (v.scrollY == 0) {
+                window.navigationBarColor = getColor(android.R.color.transparent)
+            } else {
+                window.navigationBarColor = getColor(R.color.white)
             }
         }
 
@@ -412,7 +425,7 @@ class MainActivity : BaseActivity() {
                 } else {
                     binding.mainLiveTempMinus.visibility = GONE
                 }
-                binding.mainSkyImg.setImageDrawable(applySkyImg(realtime.rainType, realtime.sky))
+                binding.mainSkyImg.setImageDrawable(applySkyImg(current.rainType, realtime.sky))
                 binding.mainSkyText.text = applySkyText(realtime.rainType, realtime.sky)
 //                binding.mainSensibleValue.text =
 //                    "${getString(R.string.sens_temp)} : ${
@@ -485,15 +498,12 @@ class MainActivity : BaseActivity() {
                 val sunriseTime = convertTimeToMinutes(sun.sunrise)
                 val entireSun = sunsetTime - sunriseTime
                 val currentTime = millsToString(getCurrentTime(), "HHmm")
-                val currentSun =
+                currentSun =
                     100 * (convertTimeToMinutes(currentTime) - convertTimeToMinutes(sun.sunrise)) / entireSun
 
-                if (currentSun in 0..100) {
-                    binding.seekArc.progress = currentSun
-                } else {
-                    binding.seekArc.progress = 100
+                if (currentSun > 100) {
+                    currentSun = 100
                 }
-
 
                 val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
                 if (air.pm25Value > 125) {
@@ -519,11 +529,18 @@ class MainActivity : BaseActivity() {
 
                 for (i: Int in 0 until result.realtime.size) {
                     try {
+                        val dailyIndex = result.realtime[i]
+                        val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
                         if (i == result.realtime.lastIndex + 1) {
                             break
+                        } else if (i == 0) {
+                            addDailyWeatherItem(
+                                "${forecastToday.hour}${getString(R.string.hour)}",
+                                applySkyImg(current.rainType, dailyIndex.sky),
+                                "${current.temperature.roundToInt()}˚",
+                                convertDateAppendZero(forecastToday)
+                            )
                         } else {
-                            val dailyIndex = result.realtime[i]
-                            val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
                             addDailyWeatherItem(
                                 "${forecastToday.hour}${getString(R.string.hour)}",
                                 applySkyImg(dailyIndex.rainType, dailyIndex.sky),
@@ -604,7 +621,7 @@ class MainActivity : BaseActivity() {
 
     // 위젯 데이터 갱신
     private fun onUpdateWidgetData() {
-        sendBroadcast(Intent(UPDATE_TIME).apply {
+        sendBroadcast(Intent(WIDGET_UPDATE_TIME).apply {
             component = ComponentName(this@MainActivity, WidgetProvider::class.java)
         })
     }

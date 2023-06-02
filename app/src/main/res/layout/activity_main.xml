@@ -690,7 +690,8 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
                     android:animateLayoutChanges="true"
-                    android:background="@drawable/scrolled_box_bg">
+                    android:clickable="true"
+                    android:background="@drawable/uv_box_bg">
 
                     <TextView
                         android:id="@+id/mainUvTitle"
@@ -710,7 +711,6 @@
                         android:layout_alignTop="@+id/mainUvTitle"
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="20dp"
-                        android:background="?android:attr/selectableItemBackgroundBorderless"
                         android:padding="5dp"
                         android:src="@drawable/btn_down"
                         app:tint="@color/black" />
@@ -827,7 +827,7 @@
                         app:startAngle="90"
                         app:sweepAngle="180"
                         app:thumb="@drawable/ico_sun_graph"
-                        app:touchInside="false" />
+                        app:touchInside="false"/>
 
                     <ImageView
                         android:id="@+id/mainSunRiseImg"
