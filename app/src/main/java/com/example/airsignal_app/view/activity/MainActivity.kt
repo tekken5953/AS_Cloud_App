@@ -344,7 +344,6 @@ class MainActivity : BaseActivity() {
         binding.mainUvCollapseRv.isClickable = false
 
         createWorkManager()        // 워크 매니저 생성
-        applyUvResponseItem()      // 자외선 단계별 대응요령 추가
 //        AdViewClass(this).loadAdView(binding.mainBottomAdView)
     }
 
@@ -405,6 +404,8 @@ class MainActivity : BaseActivity() {
                 weeklyWeatherList.clear()
 
                 binding.mainLiveTempValue.text = current.temperature.absoluteValue.toString()
+
+                applyUvResponseItem(uv.flag)      // 자외선 단계별 대응요령 추가
 
                 if (current.temperature < 0) {
                     binding.mainLiveTempMinus.visibility = VISIBLE
@@ -803,12 +804,25 @@ class MainActivity : BaseActivity() {
 
         uvResponseList.add(item)
     }
+
+    private fun getUvArray(grade: String): Array<String> {
+        return when(grade) {
+            "위험" -> { resources.getStringArray(R.array.uv_caution) }
+            "매우높음" -> {resources.getStringArray(R.array.uv_very_high)}
+            "높음" -> {resources.getStringArray(R.array.uv_high)}
+            "보통" -> {resources.getStringArray(R.array.uv_normal)}
+            "낮음" -> {resources.getStringArray(R.array.uv_low)}
+            else -> {resources.getStringArray(R.array.uv_none)}
+        }
+    }
+
     // 자외선 단계별 대응요령 필터링
     @SuppressLint("NotifyDataSetChanged")
-    private fun applyUvResponseItem() {
-        addUvResponseItem("햇볕에 노출 시 수십 분 이내에도 피부 화상을 입을 수 있어 가장 위험함.")
-        addUvResponseItem("가능한 실내에 머물러야 함.")
-        addUvResponseItem("외출 시 긴 소매 옷, 모자, 선글라스 이용. 자외선 차단제를 정기적으로 발라야 함.")
+    private fun applyUvResponseItem(grade: String) {
+        val cautionArray = getUvArray(grade)
+        cautionArray.forEach {
+            addUvResponseItem(it)
+        }
         uvResponseAdapter.notifyDataSetChanged()
     }
 
