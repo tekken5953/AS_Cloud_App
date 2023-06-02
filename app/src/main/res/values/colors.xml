@@ -30,4 +30,12 @@
     <color name="mode_black_color">#FFFFFF</color>
     <color name="mode_black_90">#903D3D3D</color>
 
+    <color name="uv_low">#94F532</color>
+    <color name="uv_normal">#FCD53A</color>
+    <color name="uv_high">#E68040</color>
+    <color name="uv_very_high">#FC3A8C</color>
+    <color name="uv_caution">#7D38F2</color>
+
+    <color name="bg_black_color">#3D3D3D</color>
+
 </resources>

@@ -1,5 +1,7 @@
 package com.example.airsignal_app.view.activity
 
+import android.animation.AnimatorSet
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
@@ -17,13 +19,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.animation.AnimationUtils
-import android.view.animation.TranslateAnimation
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.work.*
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.DailyWeatherAdapter
+import com.example.airsignal_app.adapter.UVLegendAdapter
+import com.example.airsignal_app.adapter.UVResponseAdapter
 import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile
@@ -57,12 +60,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
+
 
 class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -79,6 +84,10 @@ class MainActivity : BaseActivity() {
     private val SHOWING_LOADING_FLOAT = 0.5f
     private val NOT_SHOWING_LOADING_FLOAT = 1f
     private val locationClass by lazy { GetLocation(this) }
+    private val uvLegendList = ArrayList<AdapterModel.UVLegendItem>()
+    private val uvLegendAdapter = UVLegendAdapter(this, uvLegendList)
+    private val uvResponseList = ArrayList<AdapterModel.UVResponseItem>()
+    private val uvResponseAdapter = UVResponseAdapter(this,uvResponseList)
 
     override fun onResume() {
         super.onResume()
@@ -128,102 +137,48 @@ class MainActivity : BaseActivity() {
         binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
 
         //findViewById or Binding for your SegmentedProgressBar
-        binding.segmentProgress2p5Bar.apply {
-            setContexts(
-                barContexts = listOf(
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(
-                            resources,
-                            R.color.progressGood,
-                            null
-                        ), //gradient start
-                        ResourcesCompat.getColor(
-                            resources,
-                            R.color.progressGood,
-                            null
-                        ), //gradient stop
-                        0.12f //percentage for segment
-                    ),
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.progressNormal, null),
-                        ResourcesCompat.getColor(resources, R.color.progressNormal, null),
-                        0.24f
-                    ),
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.progressBad, null),
-                        ResourcesCompat.getColor(resources, R.color.progressBad, null),
-                        0.48f
-                    ),
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.progressWorst, null),
-                        ResourcesCompat.getColor(resources, R.color.progressWorst, null),
-                        0.16f
-                    ),
-                )
-            )
-        }
-        //findViewById or Binding for your SegmentedProgressBar
-        binding.segmentProgress10Bar.apply {
-            setContexts(
-                barContexts = listOf(
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(
-                            resources,
-                            R.color.progressGood,
-                            null
-                        ), //gradient start
-                        ResourcesCompat.getColor(
-                            resources,
-                            R.color.progressGood,
-                            null
-                        ), //gradient stop
-                        0.15f //percentage for segment
-                    ),
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.progressNormal, null),
-                        ResourcesCompat.getColor(resources, R.color.progressNormal, null),
-                        0.25f
-                    ),
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.progressBad, null),
-                        ResourcesCompat.getColor(resources, R.color.progressBad, null),
-                        0.35f
-                    ),
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.progressWorst, null),
-                        ResourcesCompat.getColor(resources, R.color.progressWorst, null),
-                        0.25f
-                    ),
-                )
-            )
-        }
+        val array2P5 = floatArrayOf(0.12f,0.24f,0.48f,0.16f)
+        val array10 = floatArrayOf(0.15f,0.25f,0.35f,0.25f)
+        drawingPmGraph(binding.segmentProgress2p5Bar,array2P5)
+        drawingPmGraph(binding.segmentProgress10Bar,array10)
 
-        binding.seekArc.setOnTouchListener { _, _ -> true }
+        addUvLegendItem(0,"0 - 2", getColor(R.color.uv_low),"낮음")
+        addUvLegendItem(1,"3 - 5", getColor(R.color.uv_normal),"보통")
+        addUvLegendItem(2,"6 - 7", getColor(R.color.uv_high),"높음")
+        addUvLegendItem(3,"8 - 10", getColor(R.color.uv_very_high),"매우\n높음")
+        addUvLegendItem(4,"11 - ", getColor(R.color.uv_caution),"위험")
 
-        val expandAnim =
-            TranslateAnimation(0f, 0f, 0f, binding.mainUvCollapsedLayout.height.toFloat())
-        expandAnim.duration = 1000
+        binding.seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지
+
+
+        // 자외선 지수 접고 펴기 화살표
         binding.mainUvCollapseArrow.apply {
             this.setOnClickListener {
                 if (binding.mainUvCollapsedLayout.visibility == VISIBLE) {
+
                     binding.mainUvCollapseArrow.setImageDrawable(
                         ResourcesCompat.getDrawable(
                             resources,
-                            R.drawable.drop_bottom,
+                            R.drawable.btn_down,
                             null
                         )
                     )
-                    binding.mainUvCollapsedLayout.visibility = GONE
+                    binding.mainUvCollapsedLayout.apply {
+                        this.visibility = GONE
+                        this.clearFocus()
+                    }
                 } else {
                     binding.mainUvCollapseArrow.setImageDrawable(
                         ResourcesCompat.getDrawable(
                             resources,
-                            R.drawable.drop_top,
+                            R.drawable.btn_up,
                             null
                         )
                     )
-                    binding.mainUvCollapsedLayout.visibility = VISIBLE
-                    binding.mainUvCollapsedLayout.startAnimation(expandAnim)
+                    binding.mainUvCollapsedLayout.apply {
+                        this.visibility = VISIBLE
+                        this.requestFocus()
+                    }
                 }
             }
         }
@@ -250,13 +205,11 @@ class MainActivity : BaseActivity() {
 //        )
 //        ///////////////////////////////////////////////////////////////
 
-        initializing()
-//
 //        onUpdateWidgetData()
-//
-        SilentLoginClass().login(this@MainActivity, binding.mainMotionLayout)
 
+        initializing()
 
+        // 플러스 모양 추가시 주소등록 다이얼로그
         binding.mainAddAddress.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 val bottomSheet =
@@ -270,6 +223,7 @@ class MainActivity : BaseActivity() {
             }
         })
 
+        // 현재 주소로 갱신
         binding.mainGpsFix.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 if (RequestPermissionsUtil(this@MainActivity).isLocationPermitted()) {
@@ -281,6 +235,7 @@ class MainActivity : BaseActivity() {
             }
         })
 
+        // 사이드 메뉴 세팅
         binding.mainSideMenuIv.setOnClickListener(object : OnSingleClickListener() {
             @SuppressLint("InflateParams")
             override fun onSingleClick(v: View?) {
@@ -319,27 +274,33 @@ class MainActivity : BaseActivity() {
         })
     }
 
+    // 날씨 데이터 API 호출
     private fun getDataSingleTime() {
         if (RequestPermissionsUtil(this).isLocationPermitted()) {
             val addrArray = resources.getStringArray(R.array.address)
             if (addrArray.contains(sp.getString(lastAddress))) {
-                Log.d("Location", "메인 엑티비티에서 저장된 주소로 데이터 호출")
                 loadSavedAddr()
                 // TimeOut
                 Handler(Looper.getMainLooper()).postDelayed({
-                    hidePB()
-                }, 1000 * 6)
+                    if (isProgressed()) {
+                        hidePB()
+                        Toast.makeText(this, "통신에 실패했습니다", Toast.LENGTH_SHORT).show()
+                    }
+                }, 1000 * 5)
             } else {
-                Log.d("Location", "메인 엑티비티에서 현재 주소로 데이터 호출")
                 getCurrentLocation()
                 // TimeOut
                 Handler(Looper.getMainLooper()).postDelayed({
-                    hidePB()
-                }, 1000 * 6)
+                    if (isProgressed()) {
+                        hidePB()
+                        Toast.makeText(this, "통신에 실패했습니다", Toast.LENGTH_SHORT).show()
+                    }
+                }, 1000 * 5)
             }
         }
     }
 
+    // 저장된 주소로 데이터 호출
     private fun loadSavedAddr() {
         getDataViewModel.loadDataResult(
             null,
@@ -352,43 +313,44 @@ class MainActivity : BaseActivity() {
     }
 
     private fun showPB() {
-        if (binding.mainMotionLayout.alpha == NOT_SHOWING_LOADING_FLOAT)
+        if (binding.mainMotionLayout.alpha == NOT_SHOWING_LOADING_FLOAT) {
             binding.mainMotionLayout.alpha = SHOWING_LOADING_FLOAT
+            binding.mainMotionLayout.isEnabled = false
+        }
     }
 
     private fun hidePB() {
-        if (binding.mainMotionLayout.alpha == SHOWING_LOADING_FLOAT)
+        if (binding.mainMotionLayout.alpha == SHOWING_LOADING_FLOAT) {
             binding.mainMotionLayout.alpha = NOT_SHOWING_LOADING_FLOAT
+            binding.mainMotionLayout.isEnabled = true
+        }
+    }
+
+    private fun isProgressed(): Boolean {
+        return binding.mainMotionLayout.alpha == SHOWING_LOADING_FLOAT
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
-        // 워크 매니저 생성
-//        CoroutineScope(Dispatchers.IO).launch { createWorkManager() }
+        // 자동 로그인
+        SilentLoginClass().login(this@MainActivity, binding.mainMotionLayout)
 
         binding.mainDailyWeatherRv.adapter = dailyWeatherAdapter
         binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter
+        binding.mainUVLegendRv.adapter = uvLegendAdapter
+        binding.mainUvCollapseRv.adapter = uvResponseAdapter
 
-        createWorkManager()
+        binding.mainUVLegendRv.isClickable = false
+        binding.mainUvCollapseRv.isClickable = false
+
+        createWorkManager()        // 워크 매니저 생성
+        applyUvResponseItem()      // 자외선 단계별 대응요령 추가
 //        AdViewClass(this).loadAdView(binding.mainBottomAdView)
     }
 
     private fun createWorkManager() {
         GetLocation(this).getGpsInBackground()
     }
-
-//    // 백그라운드에서 GPS 를 불러오기 위한 WorkManager
-//    private fun createWorkManager() {
-//        val workManager = WorkManager.getInstance(this)
-//        val workRequest =
-//            PeriodicWorkRequest.Builder(GpsWorker::class.java, 30, TimeUnit.MINUTES)
-//                .build()
-//
-//        workManager.enqueueUniquePeriodicWork(
-//            CHECK_GPS_BACKGROUND,
-//            ExistingPeriodicWorkPolicy.KEEP, workRequest
-//        )
-//    }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
@@ -415,9 +377,12 @@ class MainActivity : BaseActivity() {
                 val air = result.quality
                 val week = result.week
                 val today = result.today
+                val uv = result.uv
                 val yesterday = result.yesterday
                 val dateNow: LocalDateTime = LocalDateTime.now()
                 val current = result.current
+
+                applyWindowBackground(applySkyText(realtime.rainType, realtime.sky))
 
                 val wfMin = listOf(
                     week.wf0Am, week.wf1Am, week.wf2Am, week.wf3Am,
@@ -436,7 +401,6 @@ class MainActivity : BaseActivity() {
                     week.taMax5, week.taMax6, week.taMax7
                 )
 
-//                // 뷰페이저 아이템 추가
                 dailyWeatherList.clear()
                 weeklyWeatherList.clear()
 
@@ -490,6 +454,15 @@ class MainActivity : BaseActivity() {
                     setTextColor(getDataColor(this@MainActivity, air.so2Grade - 1))
                 }
 
+                binding.mainUvGrade.text = uv.flag
+                binding.mainUvValue.text = uv.value.toString()
+                when(uv.flag) {
+                    "낮음" -> binding.mainUvGrade.setTextColor(getColor(R.color.uv_low))
+                    "보통" -> binding.mainUvGrade.setTextColor(getColor(R.color.uv_normal))
+                    "높음" -> binding.mainUvGrade.setTextColor(getColor(R.color.uv_high))
+                    "매우높음" -> binding.mainUvGrade.setTextColor(getColor(R.color.uv_very_high))
+                    "위험" -> binding.mainUvGrade.setTextColor(getColor(R.color.uv_caution))
+                }
 
 
                 val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
@@ -519,13 +492,11 @@ class MainActivity : BaseActivity() {
                 } else {
                     binding.seekArc.progress = 100
                 }
-                Log.d("SunProgress", "sunset : ${convertTimeToMinutes(sun.sunset)} \n sunrise : ${convertTimeToMinutes(sun.sunrise)} " +
-                        "\n entireSun : $entireSun \n currentTime : ${convertTimeToMinutes(currentTime)} \n currentSun : $currentSun")
 
 
                 val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
                 if (air.pm25Value > 125) {
-                    binding.segmentProgress2p5Arrow.setPadding(125 * (widthDp) / 125, 0, 0, 0)
+                    binding.segmentProgress2p5Arrow.setPadding(widthDp, 0, 0, 0)
                 } else {
                     binding.segmentProgress2p5Arrow.setPadding(
                         air.pm25Value * (widthDp) / 125,
@@ -599,6 +570,14 @@ class MainActivity : BaseActivity() {
         return this
     }
 
+    // 하늘상태에 따라 윈도우 배경 변경
+    private fun applyWindowBackground(sky: String?) {
+        if (sky == "맑음") {
+            window.setBackgroundDrawableResource(R.drawable.main_bg_clear)
+        } else {
+            window.setBackgroundDrawableResource(R.drawable.main_bg_night)
+        }
+    }
 
     // 필드값이 없을 때 -100 출력 됨
     private fun filteringNullData(data: Double): String {
@@ -795,10 +774,12 @@ class MainActivity : BaseActivity() {
             model.addr = addr
             if (dbIsEmpty(roomDB)) {
                 roomDB.insert(model)
-                Log.d(TAG_D, "Insert GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}")
+                Timber.tag(TAG_D)
+                    .d("Insert GPS In GetLocation : " + model.id + ", " + model.name + ", " + model.addr)
             } else {
                 roomDB.update(model)
-                Log.d(TAG_D, "Update GPS In GetLocation : ${model.id}, ${model.name}, ${model.addr}")
+                Timber.tag(TAG_D)
+                    .d("Update GPS In GetLocation : " + model.id + ", " + model.name + ", " + model.addr)
             }
         }
     }
@@ -806,6 +787,29 @@ class MainActivity : BaseActivity() {
     // DB가 비어있는지 확인
     private fun dbIsEmpty(db: GpsRepository): Boolean {
         return db.findAll().isEmpty()
+    }
+
+    // 자외선 범주 아이템 추가
+    private fun addUvLegendItem(index: Int, value: String, color: Int, grade: String) {
+        val item = AdapterModel.UVLegendItem(value, color, grade)
+
+        uvLegendList.add(index,item)
+        uvLegendAdapter.notifyItemInserted(index)
+    }
+
+    // 자외선 단계별 대응요령 아이템 추가
+    private fun addUvResponseItem(text: String) {
+        val item = AdapterModel.UVResponseItem(text)
+
+        uvResponseList.add(item)
+    }
+    // 자외선 단계별 대응요령 필터링
+    @SuppressLint("NotifyDataSetChanged")
+    private fun applyUvResponseItem() {
+        addUvResponseItem("햇볕에 노출 시 수십 분 이내에도 피부 화상을 입을 수 있어 가장 위험함.")
+        addUvResponseItem("가능한 실내에 머물러야 함.")
+        addUvResponseItem("외출 시 긴 소매 옷, 모자, 선글라스 이용. 자외선 차단제를 정기적으로 발라야 함.")
+        uvResponseAdapter.notifyDataSetChanged()
     }
 
     // 메인화면 배경에 따라 텍스트의 색상을 변경
@@ -818,17 +822,56 @@ class MainActivity : BaseActivity() {
         when(sky) {
             "맑음" -> {
                 changeColorTextViews.forEach {
-                    it.setTextColor(getColor(R.color.black))
+                    it.setTextColor(getColor(R.color.bg_black_color))
                 }
 
                 changeTintImageViews.forEach {
-                    it.imageTintList = ColorStateList.valueOf(getColor(R.color.black))
+                    it.imageTintList = ColorStateList.valueOf(getColor(R.color.bg_black_color))
                 }
 
                 binding.mainSkyText.setTextColor(Color.parseColor("#FF8A48"))
-                binding.mainMinMaxTitle.setTextColor(Color.parseColor("#3D3D3D"))
-                binding.mainMinMaxValue.setTextColor(Color.parseColor("#3D3D3D"))
+                binding.mainMinMaxTitle.setTextColor(Color.parseColor("#703D3D3D"))
+                binding.mainMinMaxValue.setTextColor(Color.parseColor("#703D3D3D"))
+                binding.mainTopBarGpsTitle.compoundDrawables[0].setTint(getColor(R.color.bg_black_color))
             }
+        }
+    }
+
+    // 미세먼지 그래프 그리기
+    private fun drawingPmGraph(bar: SegmentedProgressBar, array: FloatArray) {
+        if (array.size == 4) {
+            bar.setContexts(
+                barContexts = listOf(
+                    SegmentedProgressBar.BarContext(
+                        ResourcesCompat.getColor(
+                            resources,
+                            R.color.progressGood,
+                            null
+                        ), //gradient start
+                        ResourcesCompat.getColor(
+                            resources,
+                            R.color.progressGood,
+                            null
+                        ), //gradient stop
+                        array[0] //percentage for segment
+                    ),
+                    SegmentedProgressBar.BarContext(
+                        ResourcesCompat.getColor(resources, R.color.progressNormal, null),
+                        ResourcesCompat.getColor(resources, R.color.progressNormal, null),
+                        array[1]
+                    ),
+                    SegmentedProgressBar.BarContext(
+                        ResourcesCompat.getColor(resources, R.color.progressBad, null),
+                        ResourcesCompat.getColor(resources, R.color.progressBad, null),
+                        array[2]
+                    ),
+                    SegmentedProgressBar.BarContext(
+                        ResourcesCompat.getColor(resources, R.color.progressWorst, null),
+                        ResourcesCompat.getColor(resources, R.color.progressWorst, null),
+                        array[3]
+                    )
+                )
+            )
         }
     }
 }

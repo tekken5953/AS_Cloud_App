@@ -31,12 +31,12 @@
         <TextView
             android:id="@+id/mainTopBarGpsTitle"
             style="@style/basicTextView"
+            android:drawablePadding="3dp"
             android:ellipsize="start"
             android:lines="1"
             android:maxEms="15"
             android:textColor="@color/mode_black_color"
             android:textSize="14sp"
-            android:drawablePadding="3dp"
             app:drawableStartCompat="@drawable/location_fill"
             app:layout_constraintBottom_toBottomOf="@id/topBarLinear"
             app:layout_constraintEnd_toEndOf="parent"
@@ -111,10 +111,10 @@
             android:id="@+id/mainSkyImg"
             android:layout_width="230dp"
             android:layout_height="220dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/mainSkyText"
@@ -154,10 +154,10 @@
         <TextView
             android:id="@+id/mainLiveTempUnit"
             style="@style/basicTextView"
+            android:layout_marginStart="2dp"
             android:layout_marginTop="22dp"
             android:layout_marginEnd="24dp"
             android:paddingTop="5dp"
-            android:layout_marginStart="2dp"
             android:text="˚"
             android:textColor="@color/mode_black_color"
             android:textSize="57sp"
@@ -168,6 +168,7 @@
             android:id="@+id/mainCompareTempTv"
             style="@style/basicTextView"
             android:layout_marginTop="15dp"
+            android:layout_marginEnd="5dp"
             android:textColor="@color/mode_black_color"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
@@ -188,158 +189,12 @@
         <TextView
             android:id="@+id/mainMinMaxValue"
             style="@style/basicTextView"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="5dp"
             android:textColor="#70FFFFFF"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
             app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv" />
-
-<!--        <TextView-->
-<!--            android:id="@+id/mainNotiMsgTv"-->
-<!--            style="@style/basicTextView"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_marginStart="50dp"-->
-<!--            android:layout_marginTop="50dp"-->
-<!--            android:layout_marginEnd="50dp"-->
-<!--            android:background="@drawable/main_noti_text"-->
-<!--            android:text="도움말 테스트 텍스트"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:textSize="14sp"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/mainSkyText" />-->
-
-<!--        <TableLayout-->
-<!--            android:id="@+id/mainPmBoxTL"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="50dp"-->
-<!--            android:layout_marginTop="15dp"-->
-<!--            android:layout_marginEnd="50dp"-->
-<!--            android:background="@drawable/pm_motion_box_bg"-->
-<!--            android:gravity="center"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/mainNotiMsgTv">-->
-
-<!--            <TableRow-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:gravity="center">-->
-
-<!--                <TextView-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_marginEnd="20dp"-->
-<!--                    android:fontFamily="@font/spoqa_hansansneo_bold"-->
-<!--                    android:text="@string/pm_10"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="16sp"-->
-<!--                    android:textStyle="bold" />-->
-
-<!--                <TextView-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_marginStart="20dp"-->
-<!--                    android:fontFamily="@font/spoqa_hansansneo_bold"-->
-<!--                    android:text="@string/pm_2p5"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="16sp"-->
-<!--                    android:textStyle="bold" />-->
-<!--            </TableRow>-->
-
-<!--            <TableRow-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="5dp"-->
-<!--                android:gravity="center">-->
-
-<!--                <com.aslib.AsTextView-->
-<!--                    android:id="@+id/mainPm10Grade"-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_marginEnd="20dp"-->
-<!--                    android:fontFamily="@font/spoqa_hansansneo_regular"-->
-<!--                    android:textSize="16sp"-->
-<!--                    app:sort="grade" />-->
-
-<!--                <com.aslib.AsTextView-->
-<!--                    android:id="@+id/mainPm2p5Grade"-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_marginStart="20dp"-->
-<!--                    android:fontFamily="@font/spoqa_hansansneo_regular"-->
-<!--                    android:textSize="16sp"-->
-<!--                    app:sort="grade" />-->
-<!--            </TableRow>-->
-<!--        </TableLayout>-->
-
-<!--        <TableLayout-->
-<!--            android:id="@+id/mainSubWeatherTL"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="50dp"-->
-<!--            android:layout_marginTop="22dp"-->
-<!--            android:layout_marginEnd="50dp"-->
-<!--            android:gravity="center"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL">-->
-
-<!--            <TableRow-->
-<!--                android:id="@+id/mainSubWeatherValueTr"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="4dp"-->
-<!--                android:gravity="center"-->
-<!--                android:weightSum="1">-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/subHumidValue"-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_weight="0.4"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="20sp" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/subWindValue"-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_weight="0.2"-->
-<!--                    android:drawablePadding="-8dp"-->
-<!--                    android:gravity="center"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="20sp"-->
-<!--                    app:drawableTint="@color/white" />-->
-
-<!--                <TextView-->
-<!--                    android:id="@+id/subRainPerValue"-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_weight="0.4"-->
-<!--                    android:textColor="@color/white"-->
-<!--                    android:textSize="20sp" />-->
-
-<!--            </TableRow>-->
-
-<!--            <TableRow-->
-<!--                android:id="@+id/mainSubWeatherTr"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginTop="5dp"-->
-<!--                android:gravity="center"-->
-<!--                android:weightSum="1">-->
-
-<!--                <TextView-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_weight="0.4"-->
-<!--                    android:text="@string/humid"-->
-<!--                    android:textColor="#C2E1F2"-->
-<!--                    android:textSize="14sp" />-->
-
-<!--                <TextView-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_weight="0.2"-->
-<!--                    android:text="@string/wind"-->
-<!--                    android:textColor="#C2E1F2"-->
-<!--                    android:textSize="14sp" />-->
-
-<!--                <TextView-->
-<!--                    style="@style/basicTextView"-->
-<!--                    android:layout_weight="0.4"-->
-<!--                    android:text="@string/rain_per"-->
-<!--                    android:textColor="#C2E1F2"-->
-<!--                    android:textSize="14sp" />-->
-
-<!--            </TableRow>-->
-<!--        </TableLayout>-->
 
         <TextView
             android:id="@+id/mainMotionSlideGuide"
@@ -424,7 +279,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/nested_daily_box"
                     android:layout_marginStart="12dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/scrolled_box_bg">
 
@@ -458,7 +313,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/nested_weekly_box"
                     android:layout_marginStart="12dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/scrolled_box_bg"
                     android:paddingStart="20dp"
@@ -518,16 +373,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="6dp"
                         android:layout_below="@+id/segment_progress_2p5_arrow"
+                        android:layout_marginStart="8dp"
                         android:layout_marginTop="3dp"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp" />
+                        android:layout_marginEnd="8dp" />
 
                     <TableRow
                         android:id="@+id/segment_progress_2p5_section"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/segment_progress_2p5_bar"
-                        android:layout_marginTop="8dp">
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp">
 
                         <TextView
                             style="@style/basicTextView"
@@ -567,9 +424,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_pm_2p5_value"
-                        android:layout_marginStart="2dp"
+                        android:layout_marginStart="22dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="2dp"
+                        android:layout_marginEnd="22dp"
                         android:src="@drawable/bottom_arrow" />
 
                     <TextView
@@ -617,16 +474,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="6dp"
                         android:layout_below="@+id/segment_progress_10_arrow"
+                        android:layout_marginStart="8dp"
                         android:layout_marginTop="3dp"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp" />
+                        android:layout_marginEnd="8dp" />
 
                     <TableRow
                         android:id="@+id/segment_progress_10_section"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/segment_progress_10_bar"
-                        android:layout_marginTop="8dp">
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp">
 
                         <TextView
                             style="@style/basicTextView"
@@ -666,9 +525,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_pm_10_value"
-                        android:layout_marginStart="3dp"
+                        android:layout_marginStart="22dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginEnd="22dp"
                         android:src="@drawable/bottom_arrow" />
 
                     <View
@@ -676,9 +535,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@+id/segment_progress_10_section"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="22dp"
                         android:layout_marginTop="40dp"
-                        android:layout_marginEnd="20dp"
+                        android:layout_marginEnd="22dp"
                         android:background="#F3F3F3" />
 
                     <TableRow
@@ -745,7 +604,7 @@
                             android:layout_marginTop="2dp"
                             android:layout_weight="0.05"
                             android:gravity="start"
-                            android:text="ppm"
+                            android:text="mg/m3"
                             android:textColor="#7C7C7C"
                             android:textSize="11sp" />
 
@@ -786,7 +645,7 @@
                             android:layout_marginTop="2dp"
                             android:layout_weight="0.05"
                             android:gravity="start"
-                            android:text="ppm"
+                            android:text="μg/m3"
                             android:textColor="#7C7C7C"
                             android:textSize="11sp" />
 
@@ -828,8 +687,9 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/nested_pm_box"
                     android:layout_marginStart="12dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
+                    android:animateLayoutChanges="true"
                     android:background="@drawable/scrolled_box_bg">
 
                     <TextView
@@ -838,9 +698,10 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="24dp"
                         android:drawablePadding="5dp"
+                        android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:text="@string/uv_title"
                         android:textSize="18sp"
-                        app:drawableStartCompat="@drawable/uv_img" />
+                        app:drawableStartCompat="@drawable/ico_uv" />
 
                     <ImageView
                         android:id="@+id/mainUvCollapseArrow"
@@ -851,34 +712,32 @@
                         android:layout_marginEnd="20dp"
                         android:background="?android:attr/selectableItemBackgroundBorderless"
                         android:padding="5dp"
-                        android:src="@drawable/drop_bottom"
+                        android:src="@drawable/btn_down"
                         app:tint="@color/black" />
 
-                    <TableLayout
-                        android:id="@+id/mainUvLegendTl"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/mainUVLegendRv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignTop="@id/mainUvGrade"
-                        android:layout_alignBottom="@id/mainUvValue">
-
-                        <TableRow
-                            android:id="@+id/mainUvLegendColorTr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"></TableRow>
-
-                        <TableRow
-                            android:id="@+id/mainUvLegendTitleTr"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"></TableRow>
-                    </TableLayout>
+                        android:layout_below="@+id/mainUvTitle"
+                        android:layout_alignStart="@+id/mainUvTitle"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginBottom="15dp"
+                        android:clipToPadding="false"
+                        android:orientation="horizontal"
+                        android:overScrollMode="never"
+                        android:scrollbars="none"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:itemCount="5"
+                        tools:listitem="@layout/list_item_uv_legend" />
 
                     <TextView
                         android:id="@+id/mainUvGrade"
                         style="@style/basicTextView"
                         android:layout_below="@+id/mainUvCollapseArrow"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginEnd="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_toEndOf="@+id/mainUVLegendRv"
                         android:textSize="20sp" />
 
                     <TextView
@@ -887,32 +746,34 @@
                         android:layout_below="@+id/mainUvGrade"
                         android:layout_alignStart="@+id/mainUvGrade"
                         android:layout_alignEnd="@+id/mainUvGrade"
+                        android:layout_marginTop="4dp"
                         android:letterSpacing="-0.02"
                         android:textColor="@color/black"
                         android:textSize="20sp" />
-
-                    <View
-                        android:id="@+id/mainUvLine"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_below="@+id/mainUvValue"
-                        android:layout_marginStart="18dp"
-                        android:layout_marginEnd="18dp"
-                        android:layout_marginBottom="15dp"
-                        android:background="#F3F3F3" />
 
                     <RelativeLayout
                         android:id="@+id/mainUvCollapsedLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/mainUvLine"
+                        android:layout_below="@id/mainUVLegendRv"
                         android:visibility="gone">
+
+                        <View
+                            android:id="@+id/mainUvLine"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_marginStart="18dp"
+                            android:layout_marginTop="13dp"
+                            android:layout_marginEnd="18dp"
+                            android:background="#F3F3F3" />
 
                         <TextView
                             android:id="@+id/mainUvCollapsedTitle"
                             style="@style/basicTextView"
+                            android:layout_below="@+id/mainUvLine"
                             android:layout_marginStart="20dp"
-                            android:layout_marginTop="3dp"
+                            android:layout_marginTop="16dp"
                             android:text="@string/how_to_response_title"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
@@ -921,10 +782,11 @@
                             android:id="@+id/mainUvCollapseRv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_below="@+id/mainUvCollapsedTitle"
                             android:layout_marginStart="20dp"
                             android:layout_marginTop="12dp"
                             android:layout_marginEnd="20dp"
-                            android:layout_marginBottom="30dp"
+                            android:layout_marginBottom="25dp"
                             android:clipToPadding="false"
                             android:nestedScrollingEnabled="false"
                             android:overScrollMode="never"
@@ -932,7 +794,6 @@
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/list_item_uv_collapsed" />
                     </RelativeLayout>
-
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -940,10 +801,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:layout_below="@+id/mainUVBox"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="12dp"
                     android:layout_marginBottom="20dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="12dp"
                     android:background="@drawable/sun_box_bg">
 
                     <com.triggertrap.seekarc.SeekArc
@@ -973,9 +834,9 @@
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:layout_above="@+id/mainSunRiseTitle"
-                        android:layout_marginBottom="10dp"
                         android:layout_alignStart="@+id/mainSunRiseTitle"
                         android:layout_alignEnd="@+id/mainSunRiseTitle"
+                        android:layout_marginBottom="10dp"
                         android:src="@drawable/ico_sun"
                         app:tint="@color/white" />
 
@@ -985,8 +846,8 @@
                         android:layout_above="@+id/mainSunSetTime"
                         android:layout_alignStart="@+id/mainSunRiseTime"
                         android:layout_alignEnd="@+id/mainSunRiseTime"
-                        android:layout_marginBottom="5dp"
                         android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
                         android:text="@string/sunrise"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
@@ -996,8 +857,8 @@
                         style="@style/basicTextView"
                         android:layout_above="@+id/mainSunLine"
                         android:layout_marginEnd="30dp"
-                        android:layout_toStartOf="@+id/seekArc"
                         android:layout_marginBottom="12dp"
+                        android:layout_toStartOf="@+id/seekArc"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:textColor="@color/white"
                         android:textSize="18sp" />
@@ -1019,8 +880,8 @@
                         android:layout_above="@+id/mainSunSetTime"
                         android:layout_alignStart="@+id/mainSunSetTime"
                         android:layout_alignEnd="@+id/mainSunSetTime"
-                        android:layout_marginBottom="5dp"
                         android:layout_marginEnd="5dp"
+                        android:layout_marginBottom="5dp"
                         android:text="@string/sunset"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
@@ -1056,16 +917,16 @@
 
                         <TextView
                             style="@style/basicTextView"
-                            android:text="@string/tomorrow"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
+                            android:text="@string/tomorrow"
                             android:textColor="@color/white"
                             android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/mainSunRiseTom"
                             style="@style/basicTextView"
-                            android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:layout_marginStart="16dp"
+                            android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:textColor="@color/white"
                             android:textSize="14sp" />
 

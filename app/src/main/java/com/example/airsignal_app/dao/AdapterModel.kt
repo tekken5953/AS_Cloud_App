@@ -1,5 +1,6 @@
 package com.example.airsignal_app.dao
 
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
@@ -58,9 +59,15 @@ object AdapterModel {
 //        val content: Any?
 //    )
 
-    // 공기질 데이터
-    data class AirQualityItem(
-        val title: String,
-        val data: String?
+    // 자외선 지수 범례
+    data class UVLegendItem(
+        val value: String,
+        val color: Int,
+        val grade: String
+        )
+
+    // 자외선 단계별 대응요령
+    data class UVResponseItem(
+        val text: String
     )
 }

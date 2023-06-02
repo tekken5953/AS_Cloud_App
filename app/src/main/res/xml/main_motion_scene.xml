@@ -172,6 +172,7 @@
             android:textColor="@color/mode_black_color"
             android:textSize="16sp"
             android:alpha="1"
+            android:layout_marginEnd="5dp"
             motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
             motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"  />
         <Constraint
@@ -191,6 +192,8 @@
             style="@style/basicTextView"
             motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
             motion:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="5dp"
             android:textColor="#70FFFFFF"
             android:textSize="14sp"/>
         <Constraint

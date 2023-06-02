@@ -267,8 +267,8 @@ class ApiModel {
     data class UV(
         @SerializedName("value")
         val value: Int,
-        @SerializedName("falg")
-        val grade: String
+        @SerializedName("flag")
+        val flag: String
     )
 
     data class Current(
