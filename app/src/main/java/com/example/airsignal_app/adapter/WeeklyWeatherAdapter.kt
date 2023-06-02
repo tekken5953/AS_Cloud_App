@@ -74,7 +74,6 @@ class WeeklyWeatherAdapter(
             maxText.text = dao.maxText
 //            maxText.setTextColor(context.getColor(R.color.red))
 
-            val currentDate = LocalDateTime.now()
 //            if (mList[adapterPosition].day == "${currentDate.month.value}.${currentDate.dayOfMonth}" +
 //                "(${
 //                    ConvertDataType.convertDayOfWeekToKorean(

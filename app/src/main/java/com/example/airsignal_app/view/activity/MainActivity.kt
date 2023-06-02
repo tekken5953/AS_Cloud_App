@@ -83,20 +83,17 @@ class MainActivity : BaseActivity() {
     private val uvLegendList = ArrayList<AdapterModel.UVLegendItem>()
     private val uvLegendAdapter = UVLegendAdapter(this, uvLegendList)
     private val uvResponseList = ArrayList<AdapterModel.UVResponseItem>()
-    private val uvResponseAdapter = UVResponseAdapter(this,uvResponseList)
+    private val uvResponseAdapter = UVResponseAdapter(this, uvResponseList)
     private val sp by lazy { SharedPreferenceManager(this) }
-    private var isInit = true
     private val locationClass by lazy { GetLocation(this) }
     private var currentSun = 0
     private var isSunAnimated = false
 
     override fun onResume() {
         super.onResume()
-        Logger.t(TAG_L).d("onResume")
+        Log.d("LCTAG", "onResume")
         showPB()
         getDataSingleTime()
-        if (isInit)
-            isInit = false
         Thread.sleep(100)
 //        binding.mainBottomAdView.resume()
     }
@@ -105,7 +102,7 @@ class MainActivity : BaseActivity() {
 //        super.onDestroy()
 ////        binding.mainBottomAdView.destroy()
 //    }
-//
+
 //    override fun onPause() {
 //        super.onPause()
 ////        binding.mainBottomAdView.pause()
@@ -129,16 +126,16 @@ class MainActivity : BaseActivity() {
         binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
 
         //findViewById or Binding for your SegmentedProgressBar
-        val array2P5 = floatArrayOf(0.12f,0.24f,0.48f,0.16f)
-        val array10 = floatArrayOf(0.15f,0.25f,0.35f,0.25f)
-        drawingPmGraph(binding.segmentProgress2p5Bar,array2P5)
-        drawingPmGraph(binding.segmentProgress10Bar,array10)
+        val array2P5 = floatArrayOf(0.12f, 0.24f, 0.48f, 0.16f)
+        val array10 = floatArrayOf(0.15f, 0.25f, 0.35f, 0.25f)
+        drawingPmGraph(binding.segmentProgress2p5Bar, array2P5)
+        drawingPmGraph(binding.segmentProgress10Bar, array10)
 
-        addUvLegendItem(0,"0 - 2", getColor(R.color.uv_low),"낮음")
-        addUvLegendItem(1,"3 - 5", getColor(R.color.uv_normal),"보통")
-        addUvLegendItem(2,"6 - 7", getColor(R.color.uv_high),"높음")
-        addUvLegendItem(3,"8 - 10", getColor(R.color.uv_very_high),"매우\n높음")
-        addUvLegendItem(4,"11 - ", getColor(R.color.uv_caution),"위험")
+        addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), "낮음")
+        addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), "보통")
+        addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), "높음")
+        addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), "매우\n높음")
+        addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), "위험")
 
         binding.seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지
 
@@ -148,30 +145,20 @@ class MainActivity : BaseActivity() {
             this.setOnClickListener {
                 if (binding.mainUvCollapsedLayout.visibility == VISIBLE) {
                     binding.mainUvCollapseArrow.setImageDrawable(
-                        ResourcesCompat.getDrawable(
-                            resources,
-                            R.drawable.btn_down,
-                            null
-                        )
+                        ResourcesCompat.getDrawable(resources, R.drawable.btn_down, null)
                     )
-                    binding.mainUvCollapsedLayout.apply {
-                        this.visibility = GONE
-                        this.clearFocus()
-                    }
+                    binding.mainUvCollapsedLayout.apply { this.visibility = GONE }
                 } else {
                     binding.mainUvCollapseArrow.setImageDrawable(
-                        ResourcesCompat.getDrawable(
-                            resources,
-                            R.drawable.btn_up,
-                            null
-                        )
+                        ResourcesCompat.getDrawable(resources, R.drawable.btn_up, null)
                     )
-                    binding.mainUvCollapsedLayout.apply {
-                        this.visibility = VISIBLE
-                        this.requestFocus()
-                    }
+                    binding.mainUvCollapsedLayout.apply { this.visibility = VISIBLE }
                 }
             }
+        }
+
+        binding.nestedFab.setOnClickListener {
+            binding.nestedScrollview.smoothScrollTo(0,0,500)
         }
 
         binding.nestedScrollview.setOnScrollChangeListener { v, _, _, _, _ ->
@@ -180,7 +167,8 @@ class MainActivity : BaseActivity() {
                     CoroutineScope(Dispatchers.Main).launch {
                         binding.seekArc.progress = 0
                         delay(100)
-                        val animatorSun = ObjectAnimator.ofInt(binding.seekArc, "progress", currentSun)
+                        val animatorSun =
+                            ObjectAnimator.ofInt(binding.seekArc, "progress", currentSun)
                         animatorSun.duration = 700
                         animatorSun.start()
                     }
@@ -191,8 +179,14 @@ class MainActivity : BaseActivity() {
             // 하단 스크롤시 네비게이션 바 색상 하얀색으로 변경
             if (v.scrollY == 0) {
                 window.navigationBarColor = getColor(android.R.color.transparent)
+                binding.nestedFab.apply {
+                    alpha = 0f
+                }
             } else {
                 window.navigationBarColor = getColor(R.color.white)
+                binding.nestedFab.apply {
+                    alpha = 1f
+                }
             }
         }
 
@@ -297,7 +291,7 @@ class MainActivity : BaseActivity() {
                 Handler(Looper.getMainLooper()).postDelayed({
                     if (isProgressed()) {
                         hidePB()
-                        Toast.makeText(this, "통신에 실패했습니다", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(this, "통신에 실패했습니다", Toast.LENGTH_SHORT).show()
                     }
                 }, 1000 * 5)
             } else {
@@ -306,7 +300,7 @@ class MainActivity : BaseActivity() {
                 Handler(Looper.getMainLooper()).postDelayed({
                     if (isProgressed()) {
                         hidePB()
-                        Toast.makeText(this, "통신에 실패했습니다", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(this, "통신에 실패했습니다", Toast.LENGTH_SHORT).show()
                     }
                 }, 1000 * 5)
             }
@@ -394,8 +388,6 @@ class MainActivity : BaseActivity() {
                 val dateNow: LocalDateTime = LocalDateTime.now()
                 val current = result.current
 
-                applyWindowBackground(applySkyText(realtime.rainType, realtime.sky))
-
                 val wfMin = listOf(
                     week.wf0Am, week.wf1Am, week.wf2Am, week.wf3Am,
                     week.wf4Am, week.wf5Am, week.wf6Am, week.wf7Am
@@ -470,7 +462,7 @@ class MainActivity : BaseActivity() {
 
                 binding.mainUvGrade.text = uv.flag
                 binding.mainUvValue.text = uv.value.toString()
-                when(uv.flag) {
+                when (uv.flag) {
                     "낮음" -> binding.mainUvGrade.setTextColor(getColor(R.color.uv_low))
                     "보통" -> binding.mainUvGrade.setTextColor(getColor(R.color.uv_normal))
                     "높음" -> binding.mainUvGrade.setTextColor(getColor(R.color.uv_high))
@@ -504,6 +496,8 @@ class MainActivity : BaseActivity() {
                 if (currentSun > 100) {
                     currentSun = 100
                 }
+
+                applyWindowBackground(currentSun, applySkyText(current.rainType, realtime.sky))
 
                 val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
                 if (air.pm25Value > 125) {
@@ -557,12 +551,19 @@ class MainActivity : BaseActivity() {
                     try {
                         val formedDate = dateNow.plusDays(i.toLong())
                         val date: String = when (i) {
-                            0 -> { "오늘" }
-                            1 -> { "내일" }
+                            0 -> {
+                                "오늘"
+                            }
+                            1 -> {
+                                "내일"
+                            }
                             else -> {
-                                "${convertDayOfWeekToKorean(
+                                "${
+                                    convertDayOfWeekToKorean(
                                         this,
-                                        dateNow.dayOfWeek.value + i)}요일"
+                                        dateNow.dayOfWeek.value + i
+                                    )
+                                }요일"
                             }
                         }
                         addWeeklyWeatherItem(
@@ -579,7 +580,10 @@ class MainActivity : BaseActivity() {
                 }
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
-                changeTextColorStyle(applySkyText(realtime.rainType, realtime.sky))
+                changeTextColorStyle(
+                    applySkyText(realtime.rainType, realtime.sky),
+                    isNightTime(currentSun)
+                )
             }
             runOnUiThread {
                 hidePB()
@@ -589,12 +593,26 @@ class MainActivity : BaseActivity() {
     }
 
     // 하늘상태에 따라 윈도우 배경 변경
-    private fun applyWindowBackground(sky: String?) {
-        if (sky == "맑음") {
-            window.setBackgroundDrawableResource(R.drawable.main_bg_clear)
-        } else {
+    private fun applyWindowBackground(progress: Int, sky: String?) {
+        if (isNightTime(progress)) {
             window.setBackgroundDrawableResource(R.drawable.main_bg_night)
+            changeTextColorStyle(sky!!, isNightTime(progress))
+        } else {
+            when (sky) {
+                "맑음" -> window.setBackgroundDrawableResource(R.drawable.main_bg_clear)
+
+                "구름많음", "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
+                "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림" ->
+                    window.setBackgroundDrawableResource(R.drawable.main_bg_cloudy)
+
+                "구름많고 눈", "눈", "흐리고 눈" ->
+                    window.setBackgroundDrawableResource(R.drawable.main_bg_night)
+            }
         }
+    }
+
+    private fun isNightTime(current: Int): Boolean {
+        return current >= 100
     }
 
     // 필드값이 없을 때 -100 출력 됨
@@ -704,67 +722,61 @@ class MainActivity : BaseActivity() {
     // 현재 위치정보를 받아오고 데이터 갱신
     @SuppressLint("MissingPermission", "SuspiciousIndentation")
     private fun getCurrentLocation() {
-        val fusedGPSLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        val lm = getSystemService(LOCATION_SERVICE) as LocationManager
         if (locationClass.isGPSConnected()) {
-            fusedGPSLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
-                .addOnSuccessListener { location: Location? ->
-                    location?.let { gps ->
-                        Log.d(TAG_D, "${location.latitude},${location.longitude}")
-                        locationClass.getAddress(gps.latitude, gps.longitude)
-                            .let { address ->
-                                if (address != "Null Address") {
-                                    updateCurrentAddress(
-                                        gps.latitude, gps.longitude,
-                                        address.replaceFirst(" ", "")
-                                    )
-                                    getDataViewModel.loadDataResult(
-                                        gps.latitude,
-                                        gps.longitude,
-                                        null
-                                    )
+            val location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            location?.let { loc ->
+                Log.d(TAG_D, "${location.latitude},${location.longitude}")
+                GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude).apply {
+                    if (this == null) {
+                        Toast.makeText(this@MainActivity, "위치를 불러오는데 실패했습니다", Toast.LENGTH_SHORT)
+                            .show()
+                        hidePB()
+                    } else {
+                        val addr = this!!
+                        if (addr != "Null Address") {
+                            updateCurrentAddress(
+                                loc.latitude, loc.longitude,
+                                addr.replaceFirst(" ", "")
+                            )
+                            getDataViewModel.loadDataResult(
+                                loc.latitude,
+                                loc.longitude,
+                                null
+                            )
 
-                                    locationClass.writeRdbLog(
-                                        gps.latitude,
-                                        gps.longitude,
-                                        locationClass.formattingFullAddress(address)
-                                    )
-                                    binding.mainGpsTitleTv.text =
-                                        locationClass.formattingFullAddress(address)
-                                            .replaceFirst(" ", "")
-                                    binding.mainTopBarGpsTitle.text =
-                                        locationClass.formattingFullAddress(address)
-                                            .replaceFirst(" ", "")
-                                } else {
-                                    Toast.makeText(this, "위치를 불러올 수 없습니다", Toast.LENGTH_SHORT)
-                                        .show()
-                                    showPB()
-                                    Thread.sleep(2000)
-                                    getCurrentLocation()
-                                }
-                            }
+                            locationClass.writeRdbLog(
+                                loc.latitude,
+                                loc.longitude,
+                                locationClass.formattingFullAddress(addr)
+                            )
+                            binding.mainGpsTitleTv.text =
+                                locationClass.formattingFullAddress(addr)
+                                    .replaceFirst(" ", "")
+                            binding.mainTopBarGpsTitle.text =
+                                locationClass.formattingFullAddress(addr)
+                                    .replaceFirst(" ", "")
+                        }
                     }
                 }
-
-                .addOnFailureListener {
-                    RDBLogcat.writeLogCause(
-                        sp.getString(userEmail),
-                        "GPS 위치정보 갱신실패",
-                        it.localizedMessage!!
-                    )
-                }
+            }
         } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
-            val lm = getSystemService(LOCATION_SERVICE) as LocationManager
             val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
             location?.let { loc ->
-                GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude)
-                    .let { addr ->
+                GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude).apply {
+                    if (this == null) {
+                        Toast.makeText(this@MainActivity, "위치를 불러오는데 실패했습니다", Toast.LENGTH_SHORT)
+                            .show()
+                        hidePB()
+                    } else {
+                        val addr = this!!
                         updateCurrentAddress(
                             loc.latitude,
                             loc.longitude,
                             addr.replaceFirst(" ", "")
                         )
                         getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
-                        locationClass.writeRdbLog(loc.latitude, loc.longitude, addr)
+                        locationClass.writeRdbLog(loc.latitude, loc.longitude, "NetWork - $addr")
                         binding.mainGpsTitleTv.text = locationClass.formattingFullAddress(addr)
                             .replaceFirst(" ", "")
                         binding.mainTopBarGpsTitle.text = locationClass.formattingFullAddress(addr)
@@ -773,6 +785,7 @@ class MainActivity : BaseActivity() {
                         hidePB()
                         ToastUtils(this@MainActivity).showMessage("현재 위치와의 오차가 존재 할 수 있습니다")
                     }
+                }
             }
         } else {
             locationClass.requestSystemGPSEnable()
@@ -811,7 +824,7 @@ class MainActivity : BaseActivity() {
     private fun addUvLegendItem(index: Int, value: String, color: Int, grade: String) {
         val item = AdapterModel.UVLegendItem(value, color, grade)
 
-        uvLegendList.add(index,item)
+        uvLegendList.add(index, item)
         uvLegendAdapter.notifyItemInserted(index)
     }
 
@@ -823,19 +836,32 @@ class MainActivity : BaseActivity() {
     }
 
     private fun getUvArray(grade: String): Array<String> {
-        return when(grade) {
-            "위험" -> { resources.getStringArray(R.array.uv_caution) }
-            "매우높음" -> {resources.getStringArray(R.array.uv_very_high)}
-            "높음" -> {resources.getStringArray(R.array.uv_high)}
-            "보통" -> {resources.getStringArray(R.array.uv_normal)}
-            "낮음" -> {resources.getStringArray(R.array.uv_low)}
-            else -> {resources.getStringArray(R.array.uv_none)}
+        return when (grade) {
+            "위험" -> {
+                resources.getStringArray(R.array.uv_caution)
+            }
+            "매우높음" -> {
+                resources.getStringArray(R.array.uv_very_high)
+            }
+            "높음" -> {
+                resources.getStringArray(R.array.uv_high)
+            }
+            "보통" -> {
+                resources.getStringArray(R.array.uv_normal)
+            }
+            "낮음" -> {
+                resources.getStringArray(R.array.uv_low)
+            }
+            else -> {
+                resources.getStringArray(R.array.uv_none)
+            }
         }
     }
 
     // 자외선 단계별 대응요령 필터링
     @SuppressLint("NotifyDataSetChanged")
     private fun applyUvResponseItem(grade: String) {
+        uvResponseList.clear()
         val cautionArray = getUvArray(grade)
         cautionArray.forEach {
             addUvResponseItem(it)
@@ -844,26 +870,62 @@ class MainActivity : BaseActivity() {
     }
 
     // 메인화면 배경에 따라 텍스트의 색상을 변경
-    private fun changeTextColorStyle(sky: String) {
-        val changeColorTextViews = listOf(binding.mainGpsTitleTv, binding.mainLiveTempMinus,
+    private fun changeTextColorStyle(sky: String, isNight: Boolean) {
+        val changeColorTextViews = listOf(
+            binding.mainGpsTitleTv, binding.mainLiveTempMinus,
             binding.mainLiveTempValue, binding.mainLiveTempUnit, binding.mainCompareTempTv,
-        binding.mainTopBarGpsTitle,binding.mainMotionSlideGuide)
-        val changeTintImageViews = listOf(binding.mainSideMenuIv, binding.mainAddAddress,
-        binding.mainGpsFix, binding.mainMotionSLideImg)
-        when(sky) {
-            "맑음" -> {
-                changeColorTextViews.forEach {
-                    it.setTextColor(getColor(R.color.bg_black_color))
-                }
+            binding.mainTopBarGpsTitle, binding.mainMotionSlideGuide, binding.mainSkyText
+        )
+        val changeTintImageViews = listOf(
+            binding.mainSideMenuIv, binding.mainAddAddress,
+            binding.mainGpsFix, binding.mainMotionSLideImg
+        )
 
-                changeTintImageViews.forEach {
-                    it.imageTintList = ColorStateList.valueOf(getColor(R.color.bg_black_color))
-                }
+        fun white() {
+            changeColorTextViews.forEach {
+                it.setTextColor(getColor(R.color.white))
+            }
 
-                binding.mainSkyText.setTextColor(Color.parseColor("#FF8A48"))
-                binding.mainMinMaxTitle.setTextColor(Color.parseColor("#703D3D3D"))
-                binding.mainMinMaxValue.setTextColor(Color.parseColor("#703D3D3D"))
-                binding.mainTopBarGpsTitle.compoundDrawables[0].setTint(getColor(R.color.bg_black_color))
+            changeTintImageViews.forEach {
+                it.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
+            }
+
+//                binding.mainSkyText.setTextColor(Color.parseColor("#FF8A48"))
+            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#70FFFFFF"))
+            binding.mainMinMaxValue.setTextColor(Color.parseColor("#70FFFFFF"))
+            binding.mainTopBarGpsTitle.compoundDrawables[0]?.setTint(getColor(R.color.white))
+        }
+
+        fun black() {
+            changeColorTextViews.forEach {
+                it.setTextColor(getColor(R.color.bg_black_color))
+            }
+
+            changeTintImageViews.forEach {
+                it.imageTintList = ColorStateList.valueOf(getColor(R.color.bg_black_color))
+            }
+
+//                binding.mainSkyText.setTextColor(Color.parseColor("#FF8A48"))
+            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#703D3D3D"))
+            binding.mainMinMaxValue.setTextColor(Color.parseColor("#703D3D3D"))
+            binding.mainTopBarGpsTitle.compoundDrawables[0]?.setTint(getColor(R.color.bg_black_color))
+        }
+
+        if (!isNight) {
+            when (sky) {
+                "맑음", "구름많고 눈", "눈", "흐리고 눈" -> {
+                    black()
+                }
+                else -> {
+                    white()
+                }
+            }
+        } else {
+            white()
+            if (sky == "맑음") {
+                binding.mainSkyImg.setImageDrawable(
+                    ResourcesCompat.getDrawable(resources, R.drawable.main_moon, null)
+                )
             }
         }
     }

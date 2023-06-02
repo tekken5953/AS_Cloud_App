@@ -516,18 +516,20 @@ class SettingActivity : BaseActivity() {
         radioButton: RadioButton,
         cancel: ImageView
     ) {
-        // 테마모드 변경
-        AppCompatDelegate.setDefaultNightMode(mode)
-        cancel.isEnabled = false
-        // DB에 바뀐 정보 저장
-        sp.setString("theme", dbData)
-        // 라디오 버튼 체크
-        radioGroup.check(radioButton.id)
-
-        val intent = Intent(this@SettingActivity, MainActivity::class.java)
-        startActivity(intent)
-        overridePendingTransition(0, 0)
-        finish()
+        CoroutineScope(Dispatchers.Main).launch {
+            // 테마모드 변경
+            AppCompatDelegate.setDefaultNightMode(mode)
+            cancel.isEnabled = false
+            // DB에 바뀐 정보 저장
+            sp.setString("theme", dbData)
+            // 라디오 버튼 체크
+            radioGroup.check(radioButton.id)
+            delay(300)
+            val intent = Intent(this@SettingActivity, RedirectPermissionActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(0, 0)
+            finish()
+        }
     }
 
     /** 언어 설정 변경 후 어플리케이션 재시작 **/

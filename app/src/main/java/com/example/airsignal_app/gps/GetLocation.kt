@@ -55,7 +55,7 @@ class GetLocation(private val context: Context) {
     }
 
     /** 현재 주소를 불러옵니다 **/
-    fun getAddress(lat: Double, lng: Double): String {
+    fun getAddress(lat: Double, lng: Double): String? {
         val email = sp.getString(userEmail)
         lateinit var address: List<Address>
         try {
@@ -129,7 +129,7 @@ class GetLocation(private val context: Context) {
                 // 위치 업데이트가 발생했을 때 실행되는 코드
                 val latitude = location.latitude
                 val longitude = location.longitude
-                updateCurrentAddress(latitude,longitude,getAddress(latitude,longitude))
+                updateCurrentAddress(latitude,longitude,getAddress(latitude,longitude)!!)
                 writeLogCause(
                     email = sp.getString(userEmail),
                     isSuccess = "WorkManager Location",

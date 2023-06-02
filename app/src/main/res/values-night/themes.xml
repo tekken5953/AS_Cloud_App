@@ -10,9 +10,10 @@
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:windowBackground">@drawable/main_bg</item>
+<!--        <item name="android:windowBackground">@drawable/main_bg</item>-->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowActivityTransitions">true</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
 
         <!-- 상태바까지 view를 보여줄 수 있다-->
