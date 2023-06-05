@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.location.Location
 import android.location.LocationManager
 import android.os.*
 import android.text.Spannable
@@ -32,6 +33,7 @@ import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
+import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.NOT_SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.SHOWING_LOADING_FLOAT
@@ -40,6 +42,7 @@ import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
+import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.login.SilentLoginClass
 import com.example.airsignal_app.util.*
@@ -55,6 +58,8 @@ import com.example.airsignal_app.view.*
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE_TIME
 import com.example.airsignal_app.view.widget.WidgetProvider
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -85,18 +90,21 @@ class MainActivity : BaseActivity() {
     private val locationClass by lazy { GetLocation(this) }
     private var currentSun = 0
     private var isSunAnimated = false
-    private val rotateAnim by lazy { RotateAnimation(0f,360f,
-        Animation.RELATIVE_TO_SELF, 0.5f,Animation.RELATIVE_TO_SELF,0.5f).apply {
+    private val rotateAnim by lazy {
+        RotateAnimation(
+            0f, 360f,
+            Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
+        ).apply {
             duration = 700
-        interpolator = LinearInterpolator()
-        repeatCount = Animation.INFINITE
-        repeatMode = Animation.RESTART
-    }}
+            interpolator = LinearInterpolator()
+            repeatCount = Animation.INFINITE
+            repeatMode = Animation.RESTART
+        }
+    }
     private val gpsFix by lazy { binding.mainGpsFix }
 
     override fun onResume() {
         super.onResume()
-        Log.d("LCTAG", "onResume")
         showPB()
         getDataSingleTime()
         Thread.sleep(100)
@@ -139,11 +147,16 @@ class MainActivity : BaseActivity() {
         drawingPmGraph(binding.segmentProgress2p5Bar, array2P5)
         drawingPmGraph(binding.segmentProgress10Bar, array10)
 
-        addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), "낮음")
-        addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), "보통")
-        addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), "높음")
-        addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), "매우\n높음")
-        addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), "위험")
+        addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
+        addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
+        addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
+        addUvLegendItem(
+            3,
+            "8 - 10",
+            getColor(R.color.uv_very_high),
+            getString(R.string.uv_very_high)
+        )
+        addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
         binding.seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지
 
@@ -166,7 +179,7 @@ class MainActivity : BaseActivity() {
         }
 
         binding.nestedFab.setOnClickListener {
-            binding.nestedScrollview.smoothScrollTo(0,0,500)
+            binding.nestedScrollview.smoothScrollTo(0, 0, 500)
         }
 
         binding.nestedScrollview.setOnScrollChangeListener { v, _, _, _, _ ->
@@ -329,7 +342,7 @@ class MainActivity : BaseActivity() {
 
     private fun guardWordWrap(s: String): String {
         val formS = if (s.first().toString() == " ")
-            s.replaceFirst(" ","") else s
+            s.replaceFirst(" ", "") else s
 
         return WrapTextClass().getFormedText(formS, 7)
     }
@@ -745,47 +758,62 @@ class MainActivity : BaseActivity() {
     // 현재 위치정보를 받아오고 데이터 갱신
     @SuppressLint("MissingPermission", "SuspiciousIndentation")
     private fun getCurrentLocation() {
-        val lm = getSystemService(LOCATION_SERVICE) as LocationManager
         if (locationClass.isGPSConnected()) {
-            val location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            location?.let { loc ->
-                Log.d(TAG_D, "${location.latitude},${location.longitude}")
-                GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude).apply {
-                    if (this == null) {
-                        Toast.makeText(this@MainActivity, "위치를 불러오는데 실패했습니다", Toast.LENGTH_SHORT)
-                            .show()
-                        hidePB()
-                    } else {
-                        val addr = this
-                        if (addr != "Null Address") {
-                            updateCurrentAddress(
-                                loc.latitude, loc.longitude,
-                                addr.replaceFirst(" ", "").replace("대한민국","")
-                            )
-                            getDataViewModel.loadDataResult(
-                                loc.latitude,
-                                loc.longitude,
-                                null
-                            )
+            val fusedGPSLocationClient = LocationServices.getFusedLocationProviderClient(this)
+            fusedGPSLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
+                .addOnSuccessListener { location: Location? ->
+                    location?.let { loc ->
+                        Log.d(TAG_D, "${loc.latitude},${loc.longitude}")
+                        locationClass.getAddress(loc.latitude, loc.longitude)
+                            .let { addr ->
+                                if (addr == null) {
+                                    hidePB()
+                                } else {
+                                    if (addr != "Null Address") {
+                                        updateCurrentAddress(
+                                            loc.latitude, loc.longitude,
+                                            addr.replaceFirst(" ", "").replace("대한민국", "")
+                                        )
+                                        getDataViewModel.loadDataResult(
+                                            loc.latitude,
+                                            loc.longitude,
+                                            null
+                                        )
 
-                            locationClass.writeRdbLog(
-                                loc.latitude,
-                                loc.longitude,
-                                locationClass.formattingFullAddress(addr)
-                            )
-                            Log.d("TESTTEST","guard : ${guardWordWrap(
-                                locationClass.formattingFullAddress(addr))}\naddr : ${locationClass.formattingFullAddress(addr)}")
-                            binding.mainGpsTitleTv.text = guardWordWrap(
-                                locationClass.formattingFullAddress(addr))
+                                        locationClass.writeRdbLog(
+                                            loc.latitude,
+                                            loc.longitude,
+                                            locationClass.formattingFullAddress(addr)
+                                        )
 
-                            binding.mainTopBarGpsTitle.text =
-                                locationClass.formattingFullAddress(addr)
-                                    .replaceFirst(" ", "")
-                        }
+                                        binding.mainGpsTitleTv.text = guardWordWrap(
+                                            locationClass.formattingFullAddress(addr)
+                                        )
+
+                                        binding.mainTopBarGpsTitle.text =
+                                            locationClass.formattingFullAddress(addr)
+                                                .replaceFirst(" ", "")
+                                    } else {
+                                        Toast.makeText(
+                                            this@MainActivity,
+                                            "위치정보 갱신 실패",
+                                            Toast.LENGTH_SHORT
+                                        )
+                                            .show()
+                                    }
+                                }
+                            }
                     }
                 }
-            }
+                .addOnFailureListener {
+                    RDBLogcat.writeLogCause(
+                        sp.getString(userEmail),
+                        "GPS 위치정보 갱신실패",
+                        it.localizedMessage!!
+                    )
+                }
         } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
+            val lm = getSystemService(LOCATION_SERVICE) as LocationManager
             val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
             location?.let { loc ->
                 GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude).apply {
@@ -798,7 +826,7 @@ class MainActivity : BaseActivity() {
                         updateCurrentAddress(
                             loc.latitude,
                             loc.longitude,
-                            addr.replaceFirst(" ", "").replace("대한민국","")
+                            addr.replaceFirst(" ", "").replace("대한민국", "")
                         )
                         getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
                         locationClass.writeRdbLog(loc.latitude, loc.longitude, "NetWork - $addr")

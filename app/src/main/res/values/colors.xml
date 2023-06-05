@@ -27,7 +27,7 @@
 
     <color name="black_overlay">#66000000</color>
 
-    <color name="mode_black_color">#FFFFFF</color>
+    <color name="mode_black_color">#000000</color>
     <color name="mode_black_90">#903D3D3D</color>
 
     <color name="uv_low">#94F532</color>
