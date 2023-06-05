@@ -167,7 +167,7 @@ class SearchDialog(
                 db.insert(model)
                 SharedPreferenceManager(activity).setString(lastAddress,model.addr!!)
                 this.dismissNow()
-                RefreshUtils(activity).refreshActivity()
+                activity.recreate()
             }
     }
 

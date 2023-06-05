@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.location.Location
 import android.location.LocationManager
 import android.os.*
 import android.text.Spannable
@@ -17,7 +16,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.view.animation.LinearInterpolator
+import android.view.animation.RotateAnimation
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
@@ -30,17 +32,14 @@ import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
-import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.NOT_SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
-import com.example.airsignal_app.dao.StaticDataObject.TAG_L
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
-import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.login.SilentLoginClass
 import com.example.airsignal_app.util.*
@@ -56,13 +55,11 @@ import com.example.airsignal_app.view.*
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE_TIME
 import com.example.airsignal_app.view.widget.WidgetProvider
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
+import java.lang.reflect.Modifier
 import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 import java.util.*
@@ -88,6 +85,14 @@ class MainActivity : BaseActivity() {
     private val locationClass by lazy { GetLocation(this) }
     private var currentSun = 0
     private var isSunAnimated = false
+    private val rotateAnim by lazy { RotateAnimation(0f,360f,
+        Animation.RELATIVE_TO_SELF, 0.5f,Animation.RELATIVE_TO_SELF,0.5f).apply {
+            duration = 700
+        interpolator = LinearInterpolator()
+        repeatCount = Animation.INFINITE
+        repeatMode = Animation.RESTART
+    }}
+    private val gpsFix by lazy { binding.mainGpsFix }
 
     override fun onResume() {
         super.onResume()
@@ -111,6 +116,9 @@ class MainActivity : BaseActivity() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            window.setBackgroundDrawableResource(R.drawable.main_bg_snow)
+        }
         binding = DataBindingUtil.setContentView<ActivityMainBinding?>(
             this@MainActivity,
             R.layout.activity_main
@@ -315,8 +323,15 @@ class MainActivity : BaseActivity() {
             sp.getString(lastAddress)
         )
 
-        binding.mainGpsTitleTv.text = sp.getString(lastAddress)
+        binding.mainGpsTitleTv.text = guardWordWrap(sp.getString(lastAddress))
         binding.mainTopBarGpsTitle.text = sp.getString(lastAddress)
+    }
+
+    private fun guardWordWrap(s: String): String {
+        val formS = if (s.first().toString() == " ")
+            s.replaceFirst(" ","") else s
+
+        return WrapTextClass().getFormedText(formS, 7)
     }
 
     private fun showPB() {
@@ -324,12 +339,19 @@ class MainActivity : BaseActivity() {
             binding.mainMotionLayout.alpha = SHOWING_LOADING_FLOAT
             binding.mainMotionLayout.isEnabled = false
         }
+        gpsFix.apply {
+            startAnimation(rotateAnim)
+        }
     }
 
     private fun hidePB() {
         if (binding.mainMotionLayout.alpha == SHOWING_LOADING_FLOAT) {
             binding.mainMotionLayout.alpha = NOT_SHOWING_LOADING_FLOAT
             binding.mainMotionLayout.isEnabled = true
+        }
+        binding.mainGpsFix.apply {
+//            AnimationUtils.loadAnimation(this@MainActivity, R.anim.rotate_infinity)
+            clearAnimation()
         }
     }
 
@@ -715,6 +737,7 @@ class MainActivity : BaseActivity() {
     class CustomTimeOutException : SocketTimeoutException() {
         override fun getLocalizedMessage(): String? {
             MainActivity().hidePB()
+            Toast.makeText(MainActivity(), "TimeOut Exception", Toast.LENGTH_SHORT).show()
             return super.getLocalizedMessage()
         }
     }
@@ -733,11 +756,11 @@ class MainActivity : BaseActivity() {
                             .show()
                         hidePB()
                     } else {
-                        val addr = this!!
+                        val addr = this
                         if (addr != "Null Address") {
                             updateCurrentAddress(
                                 loc.latitude, loc.longitude,
-                                addr.replaceFirst(" ", "")
+                                addr.replaceFirst(" ", "").replace("대한민국","")
                             )
                             getDataViewModel.loadDataResult(
                                 loc.latitude,
@@ -750,9 +773,11 @@ class MainActivity : BaseActivity() {
                                 loc.longitude,
                                 locationClass.formattingFullAddress(addr)
                             )
-                            binding.mainGpsTitleTv.text =
-                                locationClass.formattingFullAddress(addr)
-                                    .replaceFirst(" ", "")
+                            Log.d("TESTTEST","guard : ${guardWordWrap(
+                                locationClass.formattingFullAddress(addr))}\naddr : ${locationClass.formattingFullAddress(addr)}")
+                            binding.mainGpsTitleTv.text = guardWordWrap(
+                                locationClass.formattingFullAddress(addr))
+
                             binding.mainTopBarGpsTitle.text =
                                 locationClass.formattingFullAddress(addr)
                                     .replaceFirst(" ", "")
@@ -769,16 +794,16 @@ class MainActivity : BaseActivity() {
                             .show()
                         hidePB()
                     } else {
-                        val addr = this!!
+                        val addr = this
                         updateCurrentAddress(
                             loc.latitude,
                             loc.longitude,
-                            addr.replaceFirst(" ", "")
+                            addr.replaceFirst(" ", "").replace("대한민국","")
                         )
                         getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
                         locationClass.writeRdbLog(loc.latitude, loc.longitude, "NetWork - $addr")
-                        binding.mainGpsTitleTv.text = locationClass.formattingFullAddress(addr)
-                            .replaceFirst(" ", "")
+                        binding.mainGpsTitleTv.text =
+                            guardWordWrap(locationClass.formattingFullAddress(addr))
                         binding.mainTopBarGpsTitle.text = locationClass.formattingFullAddress(addr)
                             .replaceFirst(" ", "")
 

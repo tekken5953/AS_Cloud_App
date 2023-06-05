@@ -135,10 +135,10 @@ object ConvertDataType {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.sunny_test, null)
             }
             "구름많음" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.cloudy, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.ico_cloud, null)
             }
             "흐림" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.cloud_test, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.ico_cloud, null)
             }
             "소나기", "비" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.rain_per, null)

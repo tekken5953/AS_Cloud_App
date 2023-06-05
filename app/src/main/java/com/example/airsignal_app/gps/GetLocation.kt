@@ -68,16 +68,17 @@ class GetLocation(private val context: Context) {
                 "Null Address"
             }
         } catch (e: IOException) {
-            Timber.tag("Location").e("주소를 가져오는 도중 오류가 발생했습니다")
+            Toast.makeText(context, "주소를 가져오는 도중 오류가 발생했습니다", Toast.LENGTH_SHORT).show()
             writeLogCause(
                 email,
                 "Background Location Exception",
                 "Error : ${e.localizedMessage}"
             )
+            return "주소 갱신필요"
         }
-        return ""
     }
 
+    /** getAddressLine으로 불러온 주소 포멧**/
     fun formattingFullAddress(fullAddr: String): String {
         val addressParts = fullAddr.split(" ").toTypedArray() // 공백을 기준으로 주소 요소 분리
         var formattedAddress = ""

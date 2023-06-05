@@ -70,4 +70,7 @@
     <string name="humid">습도</string>
     <string name="weekly_weather">주간별 날씨</string>
     <string name="daily_weather">시간별 날씨</string>
+    <string name="font_small">작게</string>
+    <string name="font_large">크게</string>
+    <string name="font_normal">기본</string>
 </resources>

@@ -28,6 +28,7 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.notiEvent
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiNight
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiPM
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
+import com.example.airsignal_app.dao.IgnoredKeyFile.userFontScale
 import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
@@ -95,15 +96,15 @@ class SettingActivity : BaseActivity() {
         }
 
       // 설정 페이지 폰트크기 항목이름 바꾸기
-        when (sp.getString("scale")) {
+        when (sp.getString(userFontScale)) {
             "small" -> {
-                binding.settingScaleTextRight.text = "작게"
+                binding.settingScaleTextRight.text = getString(R.string.font_small)
             }
             "big" -> {
-                binding.settingScaleTextRight.text = "크게"
+                binding.settingScaleTextRight.text = getString(R.string.font_large)
             }
             else -> {
-                binding.settingScaleTextRight.text = "기본"
+                binding.settingScaleTextRight.text = getString(R.string.font_normal)
             }
         }
 
@@ -362,7 +363,7 @@ class SettingActivity : BaseActivity() {
                 .show(scaleView, true)
 
             // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크
-            when (sp.getString("scale")) {
+            when (sp.getString(userFontScale)) {
                 "small" -> {
                     rg.check(small.id)
                 }
@@ -377,17 +378,17 @@ class SettingActivity : BaseActivity() {
             rg.setOnCheckedChangeListener { radioGroup, i ->
                 when (i) {
                     small.id -> {
-                        sp.setString("scale", "small")
+                        sp.setString(userFontScale, "small")
                         radioGroup.check(small.id)
                         this.goMain()
                     }
                     big.id -> {
-                        sp.setString("scale", "big")
+                        sp.setString(userFontScale, "big")
                         radioGroup.check(big.id)
                         this.goMain()
                     }
                     default.id -> {
-                        sp.setString("scale", "default")
+                        sp.setString(userFontScale, "default")
                         radioGroup.check(default.id)
                         this.goMain()
                     }
