@@ -25,6 +25,11 @@
     <color name="progressNormal">#33E430</color> // 프로그래스 바 양호도 보통 컬러
     <color name="progressError">#A0A0A0</color> // 프로그래스 바 에러 컬러
 
+    <color name="air_good">#22D3EE</color>
+    <color name="air_normal">#4DCF7D</color>
+    <color name="air_bad">#FACC15</color>
+    <color name="air_very_bad">#F87171</color>
+
     <color name="black_overlay">#66000000</color>
 
     <color name="mode_black_color">#000000</color>

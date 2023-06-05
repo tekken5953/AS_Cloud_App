@@ -199,7 +199,7 @@
             style="@style/basicTextView"
             android:layout_marginBottom="5dp"
             android:text="날씨 정보 더보기"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
@@ -211,6 +211,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="15dp"
             android:src="@drawable/drop_down_bottom"
+            app:tint="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             app:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLayout" />
@@ -255,7 +256,9 @@
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:text="@string/daily_weather"
                         android:textColor="#4F4F4F"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        android:drawablePadding="5dp"
+                        app:drawableStartCompat="@drawable/ico_time"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/mainDailyWeatherRv"
@@ -289,7 +292,9 @@
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:text="@string/weekly_weather"
                         android:textColor="#4F4F4F"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        android:drawablePadding="5dp"
+                        app:drawableStartCompat="@drawable/ico_week" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/mainWeeklyWeatherRv"
@@ -324,7 +329,9 @@
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:text="@string/live_air_quality"
                         android:textColor="#4F4F4F"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        android:drawablePadding="5dp"
+                        app:drawableStartCompat="@drawable/ico_flow" />
 
                     <TextView
                         android:id="@+id/nested_pm_2p5_title"
@@ -717,37 +724,47 @@
                         android:id="@+id/mainUVLegendRv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/mainUvTitle"
-                        android:layout_alignStart="@+id/mainUvTitle"
-                        android:layout_marginTop="25dp"
-                        android:layout_marginBottom="15dp"
                         android:clipToPadding="false"
-                        android:orientation="horizontal"
+                        android:orientation="vertical"
                         android:overScrollMode="never"
                         android:scrollbars="none"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:itemCount="5"
-                        tools:listitem="@layout/list_item_uv_legend" />
+                        android:clickable="true"
+                        android:background="@drawable/uv_legend_ripple_bg"
+                        android:nestedScrollingEnabled="false"
+                        tools:listitem="@layout/list_item_uv_legend"
+                        android:layout_marginEnd="25dp"
+                        android:layout_toEndOf="@+id/mainUVLegendCardView"
+                        android:layout_alignTop="@+id/mainUVLegendCardView"
+                        android:layout_marginStart="33dp"
+                        android:layout_marginBottom="25dp"
+                        android:layout_alignParentEnd="true"/>
 
-                    <TextView
-                        android:id="@+id/mainUvGrade"
-                        style="@style/basicTextView"
-                        android:layout_below="@+id/mainUvCollapseArrow"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginTop="20dp"
-                        android:layout_toEndOf="@+id/mainUVLegendRv"
-                        android:textSize="20sp" />
-
-                    <TextView
-                        android:id="@+id/mainUvValue"
-                        style="@style/basicTextView"
-                        android:layout_below="@+id/mainUvGrade"
-                        android:layout_alignStart="@+id/mainUvGrade"
-                        android:layout_alignEnd="@+id/mainUvGrade"
-                        android:layout_marginTop="4dp"
-                        android:letterSpacing="-0.02"
-                        android:textColor="@color/black"
-                        android:textSize="20sp" />
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/mainUVLegendCardView"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        app:cardElevation="0dp"
+                        android:translationZ="0dp"
+                        app:cardCornerRadius="50dp"
+                        android:paddingTop="5dp"
+                        app:cardBackgroundColor="#4ADE80"
+                        android:layout_below="@+id/mainUvTitle"
+                        android:layout_marginTop="25dp"
+                        android:layout_alignStart="@+id/mainUvTitle"
+                        android:layout_marginStart="18dp">
+                        <TextView
+                            android:id="@+id/mainUvValue"
+                            style="@style/basicTextView"
+                            android:gravity="center"
+                            android:fontFamily="@font/spoqa_hansansneo_medium"
+                            android:layout_gravity="center"
+                            android:letterSpacing="-0.02"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            android:textColorHint="@color/white"/>
+                    </androidx.cardview.widget.CardView>
 
                     <RelativeLayout
                         android:id="@+id/mainUvCollapsedLayout"
@@ -760,9 +777,9 @@
                             android:id="@+id/mainUvLine"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
+                            android:layout_marginTop="13dp"
                             android:layout_alignParentTop="true"
                             android:layout_marginStart="18dp"
-                            android:layout_marginTop="13dp"
                             android:layout_marginEnd="18dp"
                             android:background="#F3F3F3" />
 

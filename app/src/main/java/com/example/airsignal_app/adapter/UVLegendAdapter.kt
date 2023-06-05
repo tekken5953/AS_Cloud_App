@@ -18,12 +18,6 @@ class UVLegendAdapter(private val context: Context, list: ArrayList<AdapterModel
     RecyclerView.Adapter<UVLegendAdapter.ViewHolder>() {
     private val mList = list
 
-    private lateinit var onClickListener: OnItemClickListener
-
-    interface OnItemClickListener {
-        fun onItemClick(v: View, position: Int)
-    }
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -32,10 +26,6 @@ class UVLegendAdapter(private val context: Context, list: ArrayList<AdapterModel
 
         val view: View = inflater.inflate(R.layout.list_item_uv_legend, parent, false)
         return ViewHolder(view)
-    }
-
-    fun setOnItemClickListener(listener: OnItemClickListener) {
-        this.onClickListener = listener
     }
 
     override fun getItemCount(): Int = mList.size

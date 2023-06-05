@@ -172,10 +172,10 @@ object ConvertDataType {
     /** 등급에 따른 색상 변환 **/
     fun getDataColor(context: Context, grade: Int): Int {
         return when (grade) {
-            0 -> ResourcesCompat.getColor(context.resources, R.color.progressGood, null)
-            1 -> ResourcesCompat.getColor(context.resources, R.color.progressNormal, null)
-            2 -> ResourcesCompat.getColor(context.resources, R.color.progressBad, null)
-            3 -> ResourcesCompat.getColor(context.resources, R.color.progressWorst, null)
+            0 -> ResourcesCompat.getColor(context.resources, R.color.air_good, null)
+            1 -> ResourcesCompat.getColor(context.resources, R.color.air_normal, null)
+            2 -> ResourcesCompat.getColor(context.resources, R.color.air_bad, null)
+            3 -> ResourcesCompat.getColor(context.resources, R.color.air_very_bad , null)
             else -> ResourcesCompat.getColor(context.resources, R.color.progressError, null)
         }
     }

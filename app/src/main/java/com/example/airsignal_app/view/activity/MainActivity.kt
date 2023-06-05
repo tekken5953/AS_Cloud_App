@@ -13,7 +13,6 @@ import android.os.*
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -63,8 +62,6 @@ import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
-import java.lang.reflect.Modifier
 import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 import java.util.*
@@ -150,12 +147,7 @@ class MainActivity : BaseActivity() {
         addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
         addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
         addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
-        addUvLegendItem(
-            3,
-            "8 - 10",
-            getColor(R.color.uv_very_high),
-            getString(R.string.uv_very_high)
-        )
+        addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), getString(R.string.uv_very_high))
         addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
         binding.seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지
@@ -312,7 +304,6 @@ class MainActivity : BaseActivity() {
                 Handler(Looper.getMainLooper()).postDelayed({
                     if (isProgressed()) {
                         hidePB()
-//                        Toast.makeText(this, "통신에 실패했습니다", Toast.LENGTH_SHORT).show()
                     }
                 }, 1000 * 5)
             } else {
@@ -321,7 +312,6 @@ class MainActivity : BaseActivity() {
                 Handler(Looper.getMainLooper()).postDelayed({
                     if (isProgressed()) {
                         hidePB()
-//                        Toast.makeText(this, "통신에 실패했습니다", Toast.LENGTH_SHORT).show()
                     }
                 }, 1000 * 5)
             }
@@ -352,9 +342,7 @@ class MainActivity : BaseActivity() {
             binding.mainMotionLayout.alpha = SHOWING_LOADING_FLOAT
             binding.mainMotionLayout.isEnabled = false
         }
-        gpsFix.apply {
-            startAnimation(rotateAnim)
-        }
+        gpsFix.startAnimation(rotateAnim)
     }
 
     private fun hidePB() {
@@ -362,10 +350,7 @@ class MainActivity : BaseActivity() {
             binding.mainMotionLayout.alpha = NOT_SHOWING_LOADING_FLOAT
             binding.mainMotionLayout.isEnabled = true
         }
-        binding.mainGpsFix.apply {
-//            AnimationUtils.loadAnimation(this@MainActivity, R.anim.rotate_infinity)
-            clearAnimation()
-        }
+        binding.mainGpsFix.clearAnimation()
     }
 
     private fun isProgressed(): Boolean {
@@ -382,7 +367,6 @@ class MainActivity : BaseActivity() {
         binding.mainUVLegendRv.adapter = uvLegendAdapter
         binding.mainUvCollapseRv.adapter = uvResponseAdapter
 
-        binding.mainUVLegendRv.isClickable = false
         binding.mainUvCollapseRv.isClickable = false
 
         createWorkManager()        // 워크 매니저 생성
@@ -495,16 +479,15 @@ class MainActivity : BaseActivity() {
                     setTextColor(getDataColor(this@MainActivity, air.so2Grade - 1))
                 }
 
-                binding.mainUvGrade.text = uv.flag
-                binding.mainUvValue.text = uv.value.toString()
+//                binding.mainUvGrade.text = uv.flag
+                binding.mainUvValue.text = uv.flag + "\n" + uv.value.toString()
                 when (uv.flag) {
-                    "낮음" -> binding.mainUvGrade.setTextColor(getColor(R.color.uv_low))
-                    "보통" -> binding.mainUvGrade.setTextColor(getColor(R.color.uv_normal))
-                    "높음" -> binding.mainUvGrade.setTextColor(getColor(R.color.uv_high))
-                    "매우높음" -> binding.mainUvGrade.setTextColor(getColor(R.color.uv_very_high))
-                    "위험" -> binding.mainUvGrade.setTextColor(getColor(R.color.uv_caution))
+                    "낮음" -> binding.mainUVLegendCardView.setCardBackgroundColor(getColor(R.color.uv_low))
+                    "보통" -> binding.mainUVLegendCardView.setCardBackgroundColor(getColor(R.color.uv_normal))
+                    "높음" -> binding.mainUVLegendCardView.setCardBackgroundColor(getColor(R.color.uv_high))
+                    "매우높음" -> binding.mainUVLegendCardView.setCardBackgroundColor(getColor(R.color.uv_very_high))
+                    "위험" -> binding.mainUVLegendCardView.setCardBackgroundColor(getColor(R.color.uv_caution))
                 }
-
 
                 val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
                 val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
@@ -586,19 +569,11 @@ class MainActivity : BaseActivity() {
                     try {
                         val formedDate = dateNow.plusDays(i.toLong())
                         val date: String = when (i) {
-                            0 -> {
-                                "오늘"
-                            }
-                            1 -> {
-                                "내일"
-                            }
+                            0 -> { "오늘" }
+                            1 -> { "내일" }
                             else -> {
-                                "${
-                                    convertDayOfWeekToKorean(
-                                        this,
-                                        dateNow.dayOfWeek.value + i
-                                    )
-                                }요일"
+                                "${convertDayOfWeekToKorean(this, 
+                                    dateNow.dayOfWeek.value + i)}요일"
                             }
                         }
                         addWeeklyWeatherItem(
@@ -641,7 +616,7 @@ class MainActivity : BaseActivity() {
                     window.setBackgroundDrawableResource(R.drawable.main_bg_cloudy)
 
                 "구름많고 눈", "눈", "흐리고 눈" ->
-                    window.setBackgroundDrawableResource(R.drawable.main_bg_night)
+                    window.setBackgroundDrawableResource(R.drawable.main_bg_snow)
             }
         }
     }
@@ -681,20 +656,13 @@ class MainActivity : BaseActivity() {
 
     // 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트
     private fun applySkyText(rain: String?, sky: String?): String {
-        return if (rain != "없음") {
-            rain!!
-        } else {
-            sky!!
-        }
+        return if (rain != "없음") { rain!! } else { sky!! }
     }
 
     // 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지
     private fun applySkyImg(rain: String?, sky: String?): Drawable {
-        return if (rain != "없음") {
-            getRainType(this, rain!!)!!
-        } else {
-            getSkyImg(this, sky!!)!!
-        }
+        return if (rain != "없음") { getRainType(this, rain!!)!! }
+        else { getSkyImg(this, sky!!)!! }
     }
 
     // 날짜가 한자리일 때 앞에 0 붙이기
@@ -763,7 +731,7 @@ class MainActivity : BaseActivity() {
             fusedGPSLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
                 .addOnSuccessListener { location: Location? ->
                     location?.let { loc ->
-                        Log.d(TAG_D, "${loc.latitude},${loc.longitude}")
+                        com.orhanobut.logger.Logger.t(TAG_D).d("${loc.latitude},${loc.longitude}")
                         locationClass.getAddress(loc.latitude, loc.longitude)
                             .let { addr ->
                                 if (addr == null) {
@@ -821,8 +789,9 @@ class MainActivity : BaseActivity() {
                         Toast.makeText(this@MainActivity, "위치를 불러오는데 실패했습니다", Toast.LENGTH_SHORT)
                             .show()
                         hidePB()
-                    } else {
-                        val addr = this
+                    }
+                    this?.let {
+                        addr ->
                         updateCurrentAddress(
                             loc.latitude,
                             loc.longitude,
@@ -858,11 +827,11 @@ class MainActivity : BaseActivity() {
             model.addr = addr
             if (dbIsEmpty(roomDB)) {
                 roomDB.insert(model)
-                Timber.tag(TAG_D)
+                com.orhanobut.logger.Logger.t(TAG_D)
                     .d("Insert GPS In GetLocation : " + model.id + ", " + model.name + ", " + model.addr)
             } else {
                 roomDB.update(model)
-                Timber.tag(TAG_D)
+                com.orhanobut.logger.Logger.t(TAG_D)
                     .d("Update GPS In GetLocation : " + model.id + ", " + model.name + ", " + model.addr)
             }
         }
@@ -991,29 +960,29 @@ class MainActivity : BaseActivity() {
                     SegmentedProgressBar.BarContext(
                         ResourcesCompat.getColor(
                             resources,
-                            R.color.progressGood,
+                            R.color.air_good,
                             null
                         ), //gradient start
                         ResourcesCompat.getColor(
                             resources,
-                            R.color.progressGood,
+                            R.color.air_good,
                             null
                         ), //gradient stop
                         array[0] //percentage for segment
                     ),
                     SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.progressNormal, null),
-                        ResourcesCompat.getColor(resources, R.color.progressNormal, null),
+                        ResourcesCompat.getColor(resources, R.color.air_normal, null),
+                        ResourcesCompat.getColor(resources, R.color.air_normal, null),
                         array[1]
                     ),
                     SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.progressBad, null),
-                        ResourcesCompat.getColor(resources, R.color.progressBad, null),
+                        ResourcesCompat.getColor(resources, R.color.air_bad, null),
+                        ResourcesCompat.getColor(resources, R.color.air_bad, null),
                         array[2]
                     ),
                     SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.progressWorst, null),
-                        ResourcesCompat.getColor(resources, R.color.progressWorst, null),
+                        ResourcesCompat.getColor(resources, R.color.air_very_bad, null),
+                        ResourcesCompat.getColor(resources, R.color.air_very_bad, null),
                         array[3]
                     )
                 )

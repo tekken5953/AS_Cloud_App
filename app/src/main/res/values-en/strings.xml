@@ -77,6 +77,6 @@
     <string name="uv_low">낮음</string>
     <string name="uv_normal">보통</string>
     <string name="uv_high">높음</string>
-    <string name="uv_very_high">매우\n높음</string>
+    <string name="uv_very_high">매우높음</string>
     <string name="uv_caution">위험</string>
 </resources>
