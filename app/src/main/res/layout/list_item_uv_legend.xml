@@ -10,6 +10,8 @@
         android:layout_width="8dp"
         android:layout_height="8dp"
         app:cardCornerRadius="50dp"
+        app:cardElevation="0dp"
+        android:translationZ="0dp"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true">
         <View

@@ -569,9 +569,7 @@
                             android:layout_weight="0.3"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
-                            android:letterSpacing="0"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textSize="20sp"/>
 
                         <TextView
                             style="@style/basicTextView"
@@ -599,9 +597,7 @@
                             android:layout_weight="0.3"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
-                            android:letterSpacing="0"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textSize="20sp" />
 
                         <TextView
                             style="@style/basicTextView"
@@ -640,9 +636,7 @@
                             android:layout_weight="0.3"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
-                            android:letterSpacing="0"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textSize="20sp"/>
 
                         <TextView
                             style="@style/basicTextView"
@@ -670,9 +664,7 @@
                             android:layout_weight="0.3"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
-                            android:letterSpacing="0"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textSize="20sp"/>
 
                         <TextView
                             style="@style/basicTextView"
