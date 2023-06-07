@@ -105,4 +105,6 @@
     <string name="similar_temp">Similar to yesterday</string>
     <string name="font_scale">Font Scale</string>
     <string name="fail_to_get_gps">Fail to get GPS</string>
+    <string name="thunder_sunny">번개,뇌우</string>
+    <string name="thunder_rainy">비/번개</string>
 </resources>

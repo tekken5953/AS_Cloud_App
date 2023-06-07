@@ -246,6 +246,8 @@ object ConvertDataType {
             "구름많고 비/눈" -> {context.getString(R.string.sky_sunny_cloudy_rainy_snowy)}
             "흐리고 비/눈" -> {context.getString(R.string.sky_cloudy_rainy_snowy)}
             "비/눈" -> {context.getString(R.string.sky_rainy_snowy)}
+            context.getString(R.string.thunder_sunny) -> {context.getString(R.string.thunder_sunny)}
+            context.getString(R.string.thunder_rainy) -> {context.getString(R.string.thunder_rainy)}
             else -> {""}
         }
     }

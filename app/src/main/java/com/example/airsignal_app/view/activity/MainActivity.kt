@@ -13,6 +13,7 @@ import android.os.*
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -439,8 +440,17 @@ class MainActivity : BaseActivity() {
                 } else {
                     binding.mainLiveTempMinus.visibility = GONE
                 }
-                binding.mainSkyImg.setImageDrawable(applySkyImg(current.rainType, realtime.sky,null))
-                binding.mainSkyText.text = translateSky(this, applySkyText(realtime.rainType, realtime.sky, null))
+                binding.mainSkyImg.setImageDrawable(
+                    applySkyImg(
+                        current.rainType,
+                        realtime.sky,
+                        realtime.thunder
+                    )
+                )
+                binding.mainSkyText.text = translateSky(
+                    this,
+                    applySkyText(realtime.rainType, realtime.sky, realtime.thunder)
+                )
                 binding.mainMinMaxValue.text =
                     "${filteringNullData(today.min)}˚/${filteringNullData(today.max)}˚"
                 binding.nestedPm10Grade.getPM10GradeFromValue(air.pm10Value.toInt())
@@ -501,7 +511,10 @@ class MainActivity : BaseActivity() {
                     currentSun = 100
                 }
 
-                applyWindowBackground(currentSun, applySkyText(current.rainType, realtime.sky,null))
+                applyWindowBackground(
+                    currentSun,
+                    applySkyText(current.rainType, realtime.sky, realtime.thunder)
+                )
 
                 binding.segmentProgress2p5Arrow.layoutParams = movePmBarChart(air.pm25Value, "25")
                 binding.segmentProgress10Arrow.layoutParams =
@@ -521,14 +534,18 @@ class MainActivity : BaseActivity() {
                         } else if (i == 0) {
                             addDailyWeatherItem(
                                 "${forecastToday.hour}${getString(R.string.hour)}",
-                                applySkyImg(current.rainType, dailyIndex.sky,null)!!,
+                                applySkyImg(current.rainType, dailyIndex.sky, dailyIndex.thunder)!!,
                                 "${current.temperature.roundToInt()}˚",
                                 convertDateAppendZero(forecastToday)
                             )
                         } else {
                             addDailyWeatherItem(
                                 "${forecastToday.hour}${getString(R.string.hour)}",
-                                applySkyImg(dailyIndex.rainType, dailyIndex.sky,null)!!,
+                                applySkyImg(
+                                    dailyIndex.rainType,
+                                    dailyIndex.sky,
+                                    dailyIndex.thunder
+                                )!!,
                                 "${dailyIndex.temp.roundToInt()}˚",
                                 convertDateAppendZero(forecastToday)
                             )
@@ -572,7 +589,7 @@ class MainActivity : BaseActivity() {
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
                 changeTextColorStyle(
-                    applySkyText(realtime.rainType, realtime.sky,null),
+                    applySkyText(realtime.rainType, realtime.sky, realtime.thunder),
                     isNightTime(currentSun)
                 )
             }
@@ -593,11 +610,14 @@ class MainActivity : BaseActivity() {
                 "맑음", "구름많음" -> window.setBackgroundDrawableResource(R.drawable.main_bg_clear)
 
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
-                "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림" ->
+                "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
+                getString(R.string.thunder_sunny), getString(R.string.thunder_rainy) ->
                     window.setBackgroundDrawableResource(R.drawable.main_bg_cloudy)
 
                 "구름많고 눈", "눈", "흐리고 눈" ->
                     window.setBackgroundDrawableResource(R.drawable.main_bg_snow)
+
+                else -> window.setBackgroundDrawableResource(R.drawable.main_bg_snow)
             }
         }
     }
@@ -699,13 +719,13 @@ class MainActivity : BaseActivity() {
             if ((thunder == null) || (thunder < 0.2)) {
                 rain!!
             } else {
-                "번개,뇌우"
+                getString(R.string.thunder_sunny)
             }
         } else {
             if ((thunder == null) || (thunder < 0.2)) {
                 sky!!
             } else {
-                "비/번개"
+                getString(R.string.thunder_rainy)
             }
         }
     }
@@ -714,13 +734,13 @@ class MainActivity : BaseActivity() {
     private fun applySkyImg(rain: String?, sky: String?, thunder: Double?): Drawable? {
         return if (rain != "없음") {
             if ((thunder == null) || (thunder < 0.2)) {
-                getRainType(this, rain!!)!!
+                getRainType(this, rain!!)
             } else {
                 ResourcesCompat.getDrawable(resources, R.drawable.ico_thunder, null)
             }
         } else {
             if ((thunder == null) || (thunder < 0.2)) {
-                getRainType(this, sky!!)!!
+                getSkyImg(this, sky!!)
             } else {
                 ResourcesCompat.getDrawable(resources, R.drawable.ico_thunder_rain, null)
             }
@@ -852,7 +872,8 @@ class MainActivity : BaseActivity() {
                                 if (addr != "Null Address") {
                                     updateCurrentAddress(
                                         loc.latitude, loc.longitude,
-                                        addr.replaceFirst(" ", "").replace(getString(R.string.korea), "")
+                                        addr.replaceFirst(" ", "")
+                                            .replace(getString(R.string.korea), "")
                                     )
                                     getDataViewModel.loadDataResult(
                                         loc.latitude,
@@ -897,7 +918,11 @@ class MainActivity : BaseActivity() {
             location?.let { loc ->
                 GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude).apply {
                     if (this == null) {
-                        Toast.makeText(this@MainActivity, getString(R.string.fail_to_get_gps), Toast.LENGTH_SHORT)
+                        Toast.makeText(
+                            this@MainActivity,
+                            getString(R.string.fail_to_get_gps),
+                            Toast.LENGTH_SHORT
+                        )
                             .show()
                     }
                     this?.let { addr ->
@@ -1043,12 +1068,16 @@ class MainActivity : BaseActivity() {
 
         if (!isNight) {
             when (sky) {
-                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> { black() }
-                else -> { white() }
+                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> {
+                    black()
+                }
+                else -> {
+                    white()
+                }
             }
         } else {
             white()
-            when(sky) {
+            when (sky) {
                 "맑음" -> {
                     binding.mainSkyImg.setImageDrawable(
                         ResourcesCompat.getDrawable(resources, R.drawable.main_moon, null)
