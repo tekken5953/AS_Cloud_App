@@ -135,7 +135,7 @@ object ConvertDataType {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.ico_sunny, null)
             }
             "구름많음" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.ico_cloud, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.cloudy, null)
             }
             "흐림" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.ico_cloud, null)

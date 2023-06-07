@@ -7,7 +7,7 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.gps.GetLocation
-import com.example.airsignal_app.util.EnterPage
+import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.LoggerUtil
 import com.example.airsignal_app.util.RequestPermissionsUtil
 
@@ -46,7 +46,7 @@ class RedirectPermissionActivity : BaseActivity() {
 
     private fun enterMainPage() {
         if (RequestPermissionsUtil(this@RedirectPermissionActivity).isLocationPermitted()) {
-            EnterPage(this@RedirectPermissionActivity)
+            EnterPageUtil(this@RedirectPermissionActivity)
                 .toMain(
                     SharedPreferenceManager(this@RedirectPermissionActivity)
                         .getString(lastLoginPlatform)

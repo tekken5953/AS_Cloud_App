@@ -285,7 +285,7 @@ class MainActivity : BaseActivity() {
 
                 headerTr.setOnClickListener {
                     if (sp.getString(IgnoredKeyFile.lastLoginPlatform) == "")
-                        EnterPage(this@MainActivity).toLogin()
+                        EnterPageUtil(this@MainActivity).toLogin()
                 }
                 weather.setOnClickListener {
                     dialog.dismiss()
@@ -308,21 +308,15 @@ class MainActivity : BaseActivity() {
             val addrArray = resources.getStringArray(R.array.address)
             if (addrArray.contains(sp.getString(lastAddress))) {
                 loadSavedAddr()
-                // TimeOut
-                Handler(Looper.getMainLooper()).postDelayed({
-                    if (isProgressed()) {
-                        hidePB()
-                    }
-                }, 1000 * 5)
             } else {
                 getCurrentLocation()
-                // TimeOut
-                Handler(Looper.getMainLooper()).postDelayed({
-                    if (isProgressed()) {
-                        hidePB()
-                    }
-                }, 1000 * 5)
             }
+            // TimeOut
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (isProgressed()) {
+                    hidePB()
+                }
+            }, 1000 * 5)
         }
     }
 
@@ -393,7 +387,7 @@ class MainActivity : BaseActivity() {
             isBackPressed = true
         } else {
             sp.removeKey(lastAddress)
-            EnterPage(this).fullyExit()
+            EnterPageUtil(this).fullyExit()
         }
         Handler(Looper.getMainLooper()).postDelayed({
             isBackPressed = false
@@ -436,6 +430,7 @@ class MainActivity : BaseActivity() {
                 weeklyWeatherList.clear()
 
                 binding.mainLiveTempValue.text = current.temperature.absoluteValue.toString()
+                binding.mainLiveTempUnit.text = "˚"
 
                 applyUvResponseItem(uv.flag)      // 자외선 단계별 대응요령 추가
 
@@ -444,8 +439,8 @@ class MainActivity : BaseActivity() {
                 } else {
                     binding.mainLiveTempMinus.visibility = GONE
                 }
-                binding.mainSkyImg.setImageDrawable(applySkyImg(current.rainType, realtime.sky))
-                binding.mainSkyText.text = translateSky(this, applySkyText(realtime.rainType, realtime.sky))
+                binding.mainSkyImg.setImageDrawable(applySkyImg(current.rainType, realtime.sky,null))
+                binding.mainSkyText.text = translateSky(this, applySkyText(realtime.rainType, realtime.sky, null))
                 binding.mainMinMaxValue.text =
                     "${filteringNullData(today.min)}˚/${filteringNullData(today.max)}˚"
                 binding.nestedPm10Grade.getPM10GradeFromValue(air.pm10Value.toInt())
@@ -506,7 +501,7 @@ class MainActivity : BaseActivity() {
                     currentSun = 100
                 }
 
-                applyWindowBackground(currentSun, applySkyText(current.rainType, realtime.sky))
+                applyWindowBackground(currentSun, applySkyText(current.rainType, realtime.sky,null))
 
                 binding.segmentProgress2p5Arrow.layoutParams = movePmBarChart(air.pm25Value, "25")
                 binding.segmentProgress10Arrow.layoutParams =
@@ -526,14 +521,14 @@ class MainActivity : BaseActivity() {
                         } else if (i == 0) {
                             addDailyWeatherItem(
                                 "${forecastToday.hour}${getString(R.string.hour)}",
-                                applySkyImg(current.rainType, dailyIndex.sky),
+                                applySkyImg(current.rainType, dailyIndex.sky,null)!!,
                                 "${current.temperature.roundToInt()}˚",
                                 convertDateAppendZero(forecastToday)
                             )
                         } else {
                             addDailyWeatherItem(
                                 "${forecastToday.hour}${getString(R.string.hour)}",
-                                applySkyImg(dailyIndex.rainType, dailyIndex.sky),
+                                applySkyImg(dailyIndex.rainType, dailyIndex.sky,null)!!,
                                 "${dailyIndex.temp.roundToInt()}˚",
                                 convertDateAppendZero(forecastToday)
                             )
@@ -577,7 +572,7 @@ class MainActivity : BaseActivity() {
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
                 changeTextColorStyle(
-                    applySkyText(realtime.rainType, realtime.sky),
+                    applySkyText(realtime.rainType, realtime.sky,null),
                     isNightTime(currentSun)
                 )
             }
@@ -699,20 +694,36 @@ class MainActivity : BaseActivity() {
     }
 
     // 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트
-    private fun applySkyText(rain: String?, sky: String?): String {
+    private fun applySkyText(rain: String?, sky: String?, thunder: Double?): String {
         return if (rain != "없음") {
-            rain!!
+            if ((thunder == null) || (thunder < 0.2)) {
+                rain!!
+            } else {
+                "번개,뇌우"
+            }
         } else {
-            sky!!
+            if ((thunder == null) || (thunder < 0.2)) {
+                sky!!
+            } else {
+                "비/번개"
+            }
         }
     }
 
     // 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지
-    private fun applySkyImg(rain: String?, sky: String?): Drawable {
+    private fun applySkyImg(rain: String?, sky: String?, thunder: Double?): Drawable? {
         return if (rain != "없음") {
-            getRainType(this, rain!!)!!
+            if ((thunder == null) || (thunder < 0.2)) {
+                getRainType(this, rain!!)!!
+            } else {
+                ResourcesCompat.getDrawable(resources, R.drawable.ico_thunder, null)
+            }
         } else {
-            getSkyImg(this, sky!!)!!
+            if ((thunder == null) || (thunder < 0.2)) {
+                getRainType(this, sky!!)!!
+            } else {
+                ResourcesCompat.getDrawable(resources, R.drawable.ico_thunder_rain, null)
+            }
         }
     }
 
@@ -748,16 +759,16 @@ class MainActivity : BaseActivity() {
     // 미세먼지 그래프 화살표 색상 변경
     private fun setPm2p5ArrowTint(value: Int): Int {
         return when (value) {
-            in 0..14 -> {
+            in 0..15 -> {
                 ResourcesCompat.getColor(resources, R.color.air_good, null)
             }
-            in 15..34 -> {
+            in 16..35 -> {
                 ResourcesCompat.getColor(resources, R.color.air_normal, null)
             }
-            in 35..74 -> {
+            in 36..75 -> {
                 ResourcesCompat.getColor(resources, R.color.air_bad, null)
             }
-            in 75..125 -> {
+            in 76..125 -> {
                 ResourcesCompat.getColor(resources, R.color.air_very_bad, null)
             }
             else -> {
@@ -769,16 +780,16 @@ class MainActivity : BaseActivity() {
     // 초미세먼지 그래프 화살표 색상 변경
     private fun setPm10ArrowTint(value: Int): Int {
         return when (value) {
-            in 0..29 -> {
+            in 0..30 -> {
                 ResourcesCompat.getColor(resources, R.color.air_good, null)
             }
-            in 30..79 -> {
+            in 31..79 -> {
                 ResourcesCompat.getColor(resources, R.color.air_normal, null)
             }
-            in 80..149 -> {
+            in 80..150 -> {
                 ResourcesCompat.getColor(resources, R.color.air_bad, null)
             }
-            in 150..200 -> {
+            in 151..200 -> {
                 ResourcesCompat.getColor(resources, R.color.air_very_bad, null)
             }
             else -> {
@@ -841,7 +852,7 @@ class MainActivity : BaseActivity() {
                                 if (addr != "Null Address") {
                                     updateCurrentAddress(
                                         loc.latitude, loc.longitude,
-                                        addr.replaceFirst(" ", "").replace("대한민국", "")
+                                        addr.replaceFirst(" ", "").replace(getString(R.string.korea), "")
                                     )
                                     getDataViewModel.loadDataResult(
                                         loc.latitude,
@@ -870,8 +881,6 @@ class MainActivity : BaseActivity() {
                                     )
                                         .show()
                                 }
-
-                                hidePB()
                             }
                     }
                 }
@@ -888,9 +897,8 @@ class MainActivity : BaseActivity() {
             location?.let { loc ->
                 GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude).apply {
                     if (this == null) {
-                        Toast.makeText(this@MainActivity, "위치를 불러오는데 실패했습니다", Toast.LENGTH_SHORT)
+                        Toast.makeText(this@MainActivity, getString(R.string.fail_to_get_gps), Toast.LENGTH_SHORT)
                             .show()
-                        hidePB()
                     }
                     this?.let { addr ->
                         updateCurrentAddress(
@@ -905,7 +913,6 @@ class MainActivity : BaseActivity() {
                         binding.mainTopBarGpsTitle.text = locationClass.formattingFullAddress(addr)
                             .replaceFirst(" ", "")
 
-                        hidePB()
                         ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
                     }
                 }

@@ -309,9 +309,9 @@
             android:alpha="0" />
         <Constraint
             android:id="@id/mainSkyImg"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:layout_marginStart="40dp"
+            android:layout_width="132dp"
+            android:layout_height="132dp"
+            android:layout_marginStart="37dp"
             motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             motion:layout_constraintTop_toBottomOf="@+id/topBarLinear"/>
@@ -329,6 +329,7 @@
             style="@style/basicTextView"
             android:textColor="#70FFFFFF"
             android:textSize="18sp"
+            android:layout_marginStart="20dp"
             motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"
             motion:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
             motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"/>
@@ -343,6 +344,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="60sp"
+            android:layout_marginStart="20dp"
             motion:layout_constraintBottom_toBottomOf="@+id/mainSkyImg"
             motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             motion:layout_constraintStart_toEndOf="@+id/mainSkyText"

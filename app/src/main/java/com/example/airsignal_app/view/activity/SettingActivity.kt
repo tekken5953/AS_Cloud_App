@@ -209,7 +209,7 @@ class SettingActivity : BaseActivity() {
 
                 builder.create().show()
             } else if (binding.settingLogOut.text == getString(R.string.login_title)) {
-                EnterPage(this).toLogin()
+                EnterPageUtil(this).toLogin()
             }
         }
 

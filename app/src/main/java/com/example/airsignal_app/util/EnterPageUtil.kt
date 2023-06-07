@@ -16,7 +16,7 @@ import kotlin.system.exitProcess
  * 페이지의 이동을 모아놓은 클래스
  **/
 
-class EnterPage(private val activity: Activity) {
+class EnterPageUtil(private val activity: Activity) {
 
     /**
      * 메인 페이지로 이동한다

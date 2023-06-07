@@ -14,7 +14,7 @@ import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmailForKakao
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
-import com.example.airsignal_app.util.EnterPage
+import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.RefreshUtils
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider
@@ -162,7 +162,7 @@ class KakaoLogin(private val activity: Activity) {
         CoroutineScope(Dispatchers.IO).launch {
             saveUserSettings()
             delay(1000)
-            EnterPage(activity).toMain("kakao")
+            EnterPageUtil(activity).toMain("kakao")
         }
     }
 
@@ -208,7 +208,7 @@ class KakaoLogin(private val activity: Activity) {
             if (error != null) {
                 Logger.t(TAG_LOGIN).e("연결 끊기 실패 : $error")
             } else {
-                EnterPage(activity).toLogin()
+                EnterPageUtil(activity).toLogin()
                 Logger.t(TAG_LOGIN).i("연결 끊기 성공. SDK 에서 토큰 삭제 됨")
             }
         }

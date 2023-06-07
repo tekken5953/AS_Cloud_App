@@ -13,7 +13,7 @@ import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
-import com.example.airsignal_app.util.EnterPage
+import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.RefreshUtils
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
@@ -85,7 +85,7 @@ class NaverLogin(private val activity: Activity) {
                     .setString(userEmail, it.email.toString())
 
                 sendLogInWithEmail("로그인 성공", it.email.toString(), "네이버", "수동")
-                EnterPage(activity).toMain("naver")
+                EnterPageUtil(activity).toMain("naver")
             }
         }
 
@@ -131,7 +131,7 @@ class NaverLogin(private val activity: Activity) {
 
     /** 로그인 페이지로 이동 **/
     private fun enterLoginPage() {
-        EnterPage(activity).toLogin()
+        EnterPageUtil(activity).toLogin()
     }
 
     /** 로그인 세션 유지 확인 **/
