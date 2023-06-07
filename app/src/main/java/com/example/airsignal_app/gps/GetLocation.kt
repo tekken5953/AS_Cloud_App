@@ -74,7 +74,7 @@ class GetLocation(private val context: Context) {
                 "Background Location Exception",
                 "Error : ${e.localizedMessage}"
             )
-            return "주소 갱신필요"
+            return "주소"
         }
     }
 

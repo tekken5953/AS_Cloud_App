@@ -107,8 +107,8 @@
 
         <ImageView
             android:id="@+id/mainSkyImg"
-            android:layout_width="230dp"
-            android:layout_height="220dp"
+            android:layout_width="184dp"
+            android:layout_height="184dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -429,10 +429,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_pm_2p5_value"
-                        android:layout_marginStart="22dp"
+                        android:layout_alignStart="@+id/segment_progress_2p5_bar"
+                        android:layout_marginStart="6dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="22dp"
-                        android:src="@drawable/bottom_arrow" />
+                        android:layout_marginEnd="6dp"
+                        android:src="@drawable/ex_arr" />
 
                     <TextView
                         android:id="@+id/nested_pm_10_title"
@@ -530,10 +531,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_pm_10_value"
-                        android:layout_marginStart="22dp"
+                        android:layout_alignStart="@+id/segment_progress_10_bar"
+                        android:layout_marginStart="6dp"
                         android:layout_marginTop="10dp"
-                        android:layout_marginEnd="22dp"
-                        android:src="@drawable/bottom_arrow" />
+                        android:layout_marginEnd="6dp"
+                        android:src="@drawable/ex_arr" />
 
                     <View
                         android:id="@+id/nested_pm_box_view1"

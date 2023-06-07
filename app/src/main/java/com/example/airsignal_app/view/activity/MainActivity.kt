@@ -13,14 +13,17 @@ import android.os.*
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
+import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import android.widget.*
+import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.work.*
@@ -517,27 +520,32 @@ class MainActivity : BaseActivity() {
 
                 applyWindowBackground(currentSun, applySkyText(current.rainType, realtime.sky))
 
-                val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
-                if (air.pm25Value > 125) {
-                    binding.segmentProgress2p5Arrow.setPadding(widthDp, 0, 0, 0)
-                } else {
-                    binding.segmentProgress2p5Arrow.setPadding(
-                        air.pm25Value * (widthDp) / 125,
-                        0,
-                        0,
-                        0
-                    )
-                }
-                if (air.pm10Value > 200) {
-                    binding.segmentProgress10Arrow.setPadding(200 * widthDp / 200, 0, 0, 0)
-                } else {
-                    binding.segmentProgress10Arrow.setPadding(
-                        air.pm10Value.toInt() * widthDp / 200,
-                        0,
-                        0,
-                        0
-                    )
-                }
+//                val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
+//                if (air.pm25Value > 125) {
+//                    binding.segmentProgress2p5Arrow.setPadding(widthDp, 0, 0, 0)
+//                } else {
+//                    binding.segmentProgress2p5Arrow.setPadding(
+//                        air.pm25Value * (widthDp) / 125,
+//                        0,
+//                        0,
+//                        0
+//                    )
+//                }
+//                if (air.pm10Value > 200) {
+//                    binding.segmentProgress10Arrow.setPadding(200 * widthDp / 200, 0, 0, 0)
+//                } else {
+//                    binding.segmentProgress10Arrow.setPadding(
+//                        air.pm10Value.toInt() * widthDp / 200,
+//                        0,
+//                        0,
+//                        0
+//                    )
+//                }
+                binding.segmentProgress2p5Arrow.layoutParams = movePmBarChart(air.pm25Value,"25")
+                binding.segmentProgress10Arrow.layoutParams = movePmBarChart(air.pm10Value.roundToInt(),"10")
+
+                binding.segmentProgress2p5Arrow.imageTintList = ColorStateList.valueOf(setPm2p5ArrowTint(air.pm25Value))
+                binding.segmentProgress10Arrow.imageTintList = ColorStateList.valueOf(setPm10ArrowTint(air.pm10Value.roundToInt()))
 
                 for (i: Int in 0 until result.realtime.size) {
                     try {
@@ -609,9 +617,9 @@ class MainActivity : BaseActivity() {
             changeTextColorStyle(sky!!, isNightTime(progress))
         } else {
             when (sky) {
-                "맑음" -> window.setBackgroundDrawableResource(R.drawable.main_bg_clear)
+                "맑음","구름많음" -> window.setBackgroundDrawableResource(R.drawable.main_bg_clear)
 
-                "구름많음", "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
+                "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
                 "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림" ->
                     window.setBackgroundDrawableResource(R.drawable.main_bg_cloudy)
 
@@ -619,6 +627,62 @@ class MainActivity : BaseActivity() {
                     window.setBackgroundDrawableResource(R.drawable.main_bg_snow)
             }
         }
+    }
+
+    // 미세먼지 그래프 화살표 layoutParams 정의
+    private fun movePmBarChart(value: Int, sort: String): RelativeLayout.LayoutParams {
+        val params = RelativeLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        fun dp(i: Int): Int {
+            return pixelToDp(this,i)
+        }
+
+        val arrowWidth = dp(binding.segmentProgress10Arrow.width) / 2
+
+        if (sort == "25") {
+            val widthDp = pixelToDp(this, binding.segmentProgress2p5Bar.width)
+            params.addRule(RelativeLayout.BELOW, R.id.nested_pm_2p5_value)
+            params.addRule(RelativeLayout.ALIGN_START,R.id.segment_progress_2p5_bar)
+
+            if (value > 125) {
+                params.setMargins(
+                    widthDp - arrowWidth - dp(2),
+                    dp(10),
+                    arrowWidth,
+                    0
+                ) // 왼쪽, 위, 오른쪽, 아래 순서
+            } else {
+                params.setMargins(
+                    value * widthDp / dp(125) - arrowWidth - dp(2),
+                    dp(10),
+                    arrowWidth,
+                    0
+                ) // 왼쪽, 위, 오른쪽, 아래 순서
+            }
+        } else if (sort == "10") {
+            val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
+            params.addRule(RelativeLayout.BELOW, R.id.nested_pm_10_value)
+            params.addRule(RelativeLayout.ALIGN_START,R.id.segment_progress_10_bar)
+
+            if (value > 200) {
+                params.setMargins(
+                    widthDp - arrowWidth,
+                    10,
+                    arrowWidth,
+                    0
+                ) // 왼쪽, 위, 오른쪽, 아래 순서
+            } else {
+                params.setMargins(
+                    value * widthDp / dp(200) - arrowWidth,
+                    dp(10),
+                    arrowWidth,
+                    0
+                ) // 왼쪽, 위, 오른쪽, 아래 순서
+            }
+        }
+        return params
     }
 
     private fun isNightTime(current: Int): Boolean {
@@ -692,6 +756,48 @@ class MainActivity : BaseActivity() {
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         tv.text = span
+    }
+
+    // 미세먼지 그래프 화살표 색상 변경
+    private fun setPm2p5ArrowTint(value: Int): Int {
+        return when(value) {
+            in 0..14 -> {
+                ResourcesCompat.getColor(resources,R.color.air_good,null)
+            }
+            in 15..34 -> {
+                ResourcesCompat.getColor(resources,R.color.air_normal,null)
+            }
+            in 35..74 -> {
+                ResourcesCompat.getColor(resources,R.color.air_bad,null)
+            }
+            in 75..125 -> {
+                ResourcesCompat.getColor(resources,R.color.air_very_bad,null)
+            }
+            else -> {
+                ResourcesCompat.getColor(resources, com.aslib.R.color.progressError,null)
+            }
+        }
+    }
+
+    // 초미세먼지 그래프 화살표 색상 변경
+    private fun setPm10ArrowTint(value: Int): Int {
+        return when(value) {
+            in 0..29 -> {
+                ResourcesCompat.getColor(resources,R.color.air_good,null)
+            }
+            in 30..79 -> {
+                ResourcesCompat.getColor(resources,R.color.air_normal,null)
+            }
+            in 80..149 -> {
+                ResourcesCompat.getColor(resources,R.color.air_bad,null)
+            }
+            in 150..200 -> {
+                ResourcesCompat.getColor(resources,R.color.air_very_bad,null)
+            }
+            else -> {
+                ResourcesCompat.getColor(resources, com.aslib.R.color.progressError,null)
+            }
+        }
     }
 
     //어제와 기온 비교
@@ -935,7 +1041,7 @@ class MainActivity : BaseActivity() {
 
         if (!isNight) {
             when (sky) {
-                "맑음", "구름많고 눈", "눈", "흐리고 눈" -> {
+                "맑음", "구름많고 눈", "눈", "흐리고 눈"   -> {
                     black()
                 }
                 else -> {
@@ -947,6 +1053,14 @@ class MainActivity : BaseActivity() {
             if (sky == "맑음") {
                 binding.mainSkyImg.setImageDrawable(
                     ResourcesCompat.getDrawable(resources, R.drawable.main_moon, null)
+                )
+            } else if (sky == "흐림") {
+                binding.mainSkyImg.setImageDrawable(
+                    ResourcesCompat.getDrawable(resources, R.drawable.ico_cloud, null)
+                )
+            } else if (sky == "구름 많음") {
+                binding.mainSkyImg.setImageDrawable(
+                    ResourcesCompat.getDrawable(resources, R.drawable.cloudy, null)
                 )
             }
         }

@@ -120,8 +120,8 @@
             motion:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv" />
         <Constraint
             android:id="@+id/mainSkyImg"
-            android:layout_width="230dp"
-            android:layout_height="220dp"
+            android:layout_width="184dp"
+            android:layout_height="184dp"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="parent"

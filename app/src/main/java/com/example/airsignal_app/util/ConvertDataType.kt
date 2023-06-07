@@ -132,7 +132,7 @@ object ConvertDataType {
     fun getSkyImg(context: Context, sky: String?): Drawable? {
         return when (sky) {
             "맑음" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.sunny_test, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.ico_sunny, null)
             }
             "구름많음" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.ico_cloud, null)
