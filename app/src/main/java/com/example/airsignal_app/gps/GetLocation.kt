@@ -9,6 +9,7 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
@@ -74,7 +75,7 @@ class GetLocation(private val context: Context) {
                 "Background Location Exception",
                 "Error : ${e.localizedMessage}"
             )
-            return "주소"
+            return context.getString(R.string.address)
         }
     }
 
@@ -90,9 +91,9 @@ class GetLocation(private val context: Context) {
         }
 
         return  if (formattedAddress.contains("null")) {
-            formattedAddress.split("null")[0].replace("대한민국","")
+            formattedAddress.split("null")[0].replace(context.getString(R.string.korea),"")
         } else {
-            formattedAddress.replace("대한민국", "")
+            formattedAddress.replace(context.getString(R.string.korea), "")
         }
     }
 

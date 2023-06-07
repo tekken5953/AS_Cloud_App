@@ -57,7 +57,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="24dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/options_menu"
+                android:src="@drawable/ico_hamb_w"
                 app:tint="@color/mode_black_color" />
 
             <ImageView
@@ -67,7 +67,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="24dp"
-                android:src="@drawable/add"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ico_add_w"
                 app:tint="@color/mode_black_color" />
 
         </RelativeLayout>
@@ -98,7 +99,7 @@
             android:id="@+id/mainGpsFix"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginStart="7dp"
+            android:layout_marginStart="6dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/gps_fix"
             app:layout_constraintStart_toEndOf="@+id/mainGpsTitleTv"
@@ -177,7 +178,7 @@
             style="@style/basicTextView"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="15dp"
-            android:text="최저/최고"
+            android:text="@string/min_max"
             android:textColor="#70FFFFFF"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@id/mainMinMaxValue"
@@ -198,7 +199,7 @@
             android:id="@+id/mainMotionSlideGuide"
             style="@style/basicTextView"
             android:layout_marginBottom="5dp"
-            android:text="날씨 정보 더보기"
+            android:text="@string/slide_more"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg"
@@ -211,10 +212,10 @@
             android:layout_height="wrap_content"
             android:paddingBottom="15dp"
             android:src="@drawable/drop_down_bottom"
-            app:tint="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             app:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLayout" />
+            app:layout_constraintStart_toStartOf="@+id/mainMotionLayout"
+            app:tint="@color/black" />
 
 
         <androidx.core.widget.NestedScrollView
@@ -253,12 +254,12 @@
                         style="@style/basicTextView"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="24dp"
+                        android:drawablePadding="5dp"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:text="@string/daily_weather"
                         android:textColor="#4F4F4F"
                         android:textSize="18sp"
-                        android:drawablePadding="5dp"
-                        app:drawableStartCompat="@drawable/ico_time"/>
+                        app:drawableStartCompat="@drawable/ico_time" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/mainDailyWeatherRv"
@@ -289,11 +290,11 @@
                         style="@style/basicTextView"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="24dp"
+                        android:drawablePadding="5dp"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:text="@string/weekly_weather"
                         android:textColor="#4F4F4F"
                         android:textSize="18sp"
-                        android:drawablePadding="5dp"
                         app:drawableStartCompat="@drawable/ico_week" />
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -326,11 +327,11 @@
                         android:id="@+id/nested_pm_title"
                         style="@style/basicTextView"
                         android:layout_marginTop="24dp"
+                        android:drawablePadding="5dp"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:text="@string/live_air_quality"
                         android:textColor="#4F4F4F"
                         android:textSize="18sp"
-                        android:drawablePadding="5dp"
                         app:drawableStartCompat="@drawable/ico_flow" />
 
                     <TextView
@@ -571,7 +572,7 @@
                             android:layout_weight="0.3"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
-                            android:textSize="20sp"/>
+                            android:textSize="20sp" />
 
                         <TextView
                             style="@style/basicTextView"
@@ -638,7 +639,7 @@
                             android:layout_weight="0.3"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
-                            android:textSize="20sp"/>
+                            android:textSize="20sp" />
 
                         <TextView
                             style="@style/basicTextView"
@@ -666,7 +667,7 @@
                             android:layout_weight="0.3"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
-                            android:textSize="20sp"/>
+                            android:textSize="20sp" />
 
                         <TextView
                             style="@style/basicTextView"
@@ -689,8 +690,8 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
                     android:animateLayoutChanges="true"
-                    android:clickable="true"
-                    android:background="@drawable/uv_box_bg">
+                    android:background="@drawable/uv_box_bg"
+                    android:clickable="true">
 
                     <TextView
                         android:id="@+id/mainUvTitle"
@@ -718,46 +719,47 @@
                         android:id="@+id/mainUVLegendRv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/mainUVLegendCardView"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="33dp"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginBottom="25dp"
+                        android:layout_toEndOf="@+id/mainUVLegendCardView"
+                        android:background="@drawable/uv_legend_ripple_bg"
+                        android:clickable="true"
                         android:clipToPadding="false"
+                        android:nestedScrollingEnabled="false"
                         android:orientation="vertical"
                         android:overScrollMode="never"
                         android:scrollbars="none"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:itemCount="5"
-                        android:clickable="true"
-                        android:background="@drawable/uv_legend_ripple_bg"
-                        android:nestedScrollingEnabled="false"
-                        tools:listitem="@layout/list_item_uv_legend"
-                        android:layout_marginEnd="25dp"
-                        android:layout_toEndOf="@+id/mainUVLegendCardView"
-                        android:layout_alignTop="@+id/mainUVLegendCardView"
-                        android:layout_marginStart="33dp"
-                        android:layout_marginBottom="25dp"
-                        android:layout_alignParentEnd="true"/>
+                        tools:listitem="@layout/list_item_uv_legend" />
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/mainUVLegendCardView"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        app:cardElevation="0dp"
-                        android:translationZ="0dp"
-                        app:cardCornerRadius="50dp"
-                        android:paddingTop="5dp"
-                        app:cardBackgroundColor="#4ADE80"
                         android:layout_below="@+id/mainUvTitle"
-                        android:layout_marginTop="25dp"
                         android:layout_alignStart="@+id/mainUvTitle"
-                        android:layout_marginStart="18dp">
+                        android:layout_marginStart="18dp"
+                        android:layout_marginTop="25dp"
+                        android:paddingTop="5dp"
+                        android:translationZ="0dp"
+                        app:cardBackgroundColor="#4ADE80"
+                        app:cardCornerRadius="50dp"
+                        app:cardElevation="0dp">
+
                         <TextView
                             android:id="@+id/mainUvValue"
                             style="@style/basicTextView"
-                            android:gravity="center"
-                            android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:layout_gravity="center"
+                            android:fontFamily="@font/spoqa_hansansneo_medium"
+                            android:gravity="center"
                             android:letterSpacing="-0.02"
                             android:textColor="@color/white"
-                            android:textSize="20sp"
-                            android:textColorHint="@color/white"/>
+                            android:textColorHint="@color/white"
+                            android:textSize="20sp" />
                     </androidx.cardview.widget.CardView>
 
                     <RelativeLayout
@@ -771,9 +773,9 @@
                             android:id="@+id/mainUvLine"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:layout_marginTop="13dp"
                             android:layout_alignParentTop="true"
                             android:layout_marginStart="18dp"
+                            android:layout_marginTop="13dp"
                             android:layout_marginEnd="18dp"
                             android:background="#F3F3F3" />
 
@@ -810,10 +812,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:layout_below="@+id/mainUVBox"
-                    android:layout_marginBottom="20dp"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="20dp"
                     android:background="@drawable/sun_box_bg">
 
                     <com.triggertrap.seekarc.SeekArc
@@ -836,7 +838,7 @@
                         app:startAngle="90"
                         app:sweepAngle="180"
                         app:thumb="@drawable/ico_sun_graph"
-                        app:touchInside="false"/>
+                        app:touchInside="false" />
 
                     <ImageView
                         android:id="@+id/mainSunRiseImg"
@@ -858,12 +860,15 @@
                         android:layout_marginEnd="5dp"
                         android:layout_marginBottom="5dp"
                         android:text="@string/sunrise"
+                        android:lines="1"
+                        android:ellipsize="end"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/mainSunRiseTime"
                         style="@style/basicTextView"
+                        android:layout_width="60dp"
                         android:layout_above="@+id/mainSunLine"
                         android:layout_marginEnd="30dp"
                         android:layout_marginBottom="12dp"
@@ -892,6 +897,8 @@
                         android:layout_marginEnd="5dp"
                         android:layout_marginBottom="5dp"
                         android:text="@string/sunset"
+                        android:lines="1"
+                        android:ellipsize="end"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
@@ -901,6 +908,7 @@
                         android:layout_above="@+id/mainSunLine"
                         android:layout_marginStart="30dp"
                         android:layout_marginBottom="12dp"
+                        android:layout_width="60dp"
                         android:layout_toEndOf="@+id/seekArc"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:textColor="@color/white"
@@ -955,11 +963,11 @@
             android:id="@+id/nested_fab"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/fab_bg"
-            android:src="@drawable/arrow_top"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:background="@drawable/fab_bg"
+            android:src="@drawable/arrow_top"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.motion.widget.MotionLayout>
 </layout>

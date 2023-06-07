@@ -180,10 +180,10 @@ object ConvertDataType {
         }
     }
 
-//    /** Double을 지정 자릿수에서 반올림 **/
-//    fun convertDoubleToDecimal(double: Double, digit: Int): String {
-//        return String.format("%.${digit}f", double)
-//    }
+    /** Double을 지정 자릿수에서 반올림 **/
+    fun convertDoubleToDecimal(double: Double, digit: Int): String {
+        return String.format("%.${digit}f", double)
+    }
 
     /** 요일 변환 **/
     fun convertDayOfWeekToKorean(context: Context, dayOfWeek: Int): String {
@@ -225,6 +225,40 @@ object ConvertDataType {
         } catch (e: java.lang.NumberFormatException) {
             e.printStackTrace()
             0
+        }
+    }
+
+    /** 하늘상태를 국가에 맞게 변경 **/
+    fun translateSky(context: Context, sky: String): String {
+        return when(sky) {
+            "맑음" -> {context.getString(R.string.sky_sunny)}
+            "구름많음" -> {context.getString(R.string.sky_sunny_cloudy)}
+            "흐림" -> {context.getString(R.string.sky_cloudy)}
+            "소나기" -> {context.getString(R.string.sky_shower)}
+            "비" -> {context.getString(R.string.sky_rainy)}
+            "구름많고 눈" -> {context.getString(R.string.sky_sunny_cloudy_rainy)}
+            "눈" -> {context.getString(R.string.sky_snowy)}
+            "흐리고 눈" -> {context.getString(R.string.sky_cloudy_snowy)}
+            "구름많고 소나기" -> {context.getString(R.string.sky_sunny_cloudy_shower)}
+            "흐리고 비" -> {context.getString(R.string.sky_cloudy_rainy)}
+            "구름많고 비" -> {context.getString(R.string.sky_sunny_cloudy_rainy)}
+            "흐리고 소나기" -> {context.getString(R.string.sky_cloudy_shower)}
+            "구름많고 비/눈" -> {context.getString(R.string.sky_sunny_cloudy_rainy_snowy)}
+            "흐리고 비/눈" -> {context.getString(R.string.sky_cloudy_rainy_snowy)}
+            "비/눈" -> {context.getString(R.string.sky_rainy_snowy)}
+            else -> {""}
+        }
+    }
+
+    /** 자외선 지수 번역 **/
+    fun translateUV(context: Context, uv: String): String {
+        return when(uv) {
+            "낮음" -> {context.getString(R.string.uv_low)}
+            "보통" -> {context.getString(R.string.uv_normal)}
+            "높음" -> {context.getString(R.string.uv_high)}
+            "매우높음" -> {context.getString(R.string.uv_very_high)}
+            "위험" -> {context.getString(R.string.uv_caution)}
+            else -> {""}
         }
     }
 }

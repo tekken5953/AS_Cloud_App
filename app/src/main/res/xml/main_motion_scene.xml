@@ -27,7 +27,7 @@
                 motion:framePosition="0"
                 motion:curveFit="linear"
                 android:scaleX="1.0"
-                android:scaleY="1.0"/>
+                android:scaleY="1.0" />
             <KeyAttribute
                 motion:motionTarget="@id/mainMinMaxValue"
                 motion:framePosition="100"
@@ -116,7 +116,7 @@
             android:layout_height="24dp"
             android:alpha="1"
             android:layout_marginEnd="24dp"
-            android:layout_marginStart="2dp"
+            android:layout_marginStart="6dp"
             motion:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv" />
         <Constraint
             android:id="@+id/mainSkyImg"
@@ -306,9 +306,7 @@
             android:id="@+id/mainGpsFix"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:alpha="0"
-            android:layout_marginEnd="24dp"
-            android:layout_marginStart="7dp" />
+            android:alpha="0" />
         <Constraint
             android:id="@id/mainSkyImg"
             android:layout_width="125dp"

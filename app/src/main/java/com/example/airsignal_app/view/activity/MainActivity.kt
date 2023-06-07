@@ -54,6 +54,8 @@ import com.example.airsignal_app.util.ConvertDataType.getRainType
 import com.example.airsignal_app.util.ConvertDataType.getSkyImg
 import com.example.airsignal_app.util.ConvertDataType.millsToString
 import com.example.airsignal_app.util.ConvertDataType.pixelToDp
+import com.example.airsignal_app.util.ConvertDataType.translateSky
+import com.example.airsignal_app.util.ConvertDataType.translateUV
 import com.example.airsignal_app.view.*
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE_TIME
 import com.example.airsignal_app.view.widget.WidgetProvider
@@ -443,7 +445,7 @@ class MainActivity : BaseActivity() {
                     binding.mainLiveTempMinus.visibility = GONE
                 }
                 binding.mainSkyImg.setImageDrawable(applySkyImg(current.rainType, realtime.sky))
-                binding.mainSkyText.text = applySkyText(realtime.rainType, realtime.sky)
+                binding.mainSkyText.text = translateSky(this, applySkyText(realtime.rainType, realtime.sky))
                 binding.mainMinMaxValue.text =
                     "${filteringNullData(today.min)}˚/${filteringNullData(today.max)}˚"
                 binding.nestedPm10Grade.getPM10GradeFromValue(air.pm10Value.toInt())
@@ -469,7 +471,7 @@ class MainActivity : BaseActivity() {
                 }
 
 //                binding.mainUvGrade.text = uv.flag
-                binding.mainUvValue.text = uv.flag + "\n" + uv.value.toString()
+                binding.mainUvValue.text = translateUV(this, uv.flag) + "\n" + uv.value.toString()
                 when (uv.flag) {
                     "낮음" -> binding.mainUVLegendCardView.setCardBackgroundColor(getColor(R.color.uv_low))
                     "보통" -> binding.mainUVLegendCardView.setCardBackgroundColor(getColor(R.color.uv_normal))
@@ -546,10 +548,10 @@ class MainActivity : BaseActivity() {
                         val formedDate = dateNow.plusDays(i.toLong())
                         val date: String = when (i) {
                             0 -> {
-                                "오늘"
+                                getString(R.string.today)
                             }
                             1 -> {
-                                "내일"
+                                getString(R.string.tomorrow)
                             }
                             else -> {
                                 "${
@@ -557,7 +559,7 @@ class MainActivity : BaseActivity() {
                                         this,
                                         dateNow.dayOfWeek.value + i
                                     )
-                                }요일"
+                                }${getString(R.string.date)}"
                             }
                         }
                         addWeeklyWeatherItem(
@@ -792,14 +794,24 @@ class MainActivity : BaseActivity() {
             if (yesterday > today) {
                 tv.visibility = VISIBLE
                 tv.text =
-                    "어제보다 ${((yesterday - today).absoluteValue * 10).roundToInt() / 10.0}˚ 낮아요"
+                    if (resources.configuration.locales[0] == Locale.KOREA) {
+                        "어제보다 ${((yesterday - today).absoluteValue * 10).roundToInt() / 10.0}˚ 낮아요"
+                    } else {
+                        "${((yesterday - today).absoluteValue * 10).roundToInt() / 10.0}˚ lower than yesterday"
+                    }
+
             } else if (today > yesterday) {
                 tv.visibility = VISIBLE
                 tv.text =
-                    "어제보다 ${((today - yesterday).absoluteValue * 10).roundToInt() / 10.0} ˚ 높아요"
+                    if (resources.configuration.locales[0] == Locale.KOREA) {
+                        "어제보다 ${((today - yesterday).absoluteValue * 10).roundToInt() / 10.0} ˚ 높아요"
+                    } else {
+                        "${((yesterday - today).absoluteValue * 10).roundToInt() / 10.0}˚ upper than yesterday"
+                    }
+
             } else {
                 tv.visibility = VISIBLE
-                tv.text = "어제와 기온이 비슷해요"
+                tv.text = getString(R.string.similar_temp)
             }
         } else {
             tv.visibility = GONE
@@ -884,7 +896,7 @@ class MainActivity : BaseActivity() {
                         updateCurrentAddress(
                             loc.latitude,
                             loc.longitude,
-                            addr.replaceFirst(" ", "").replace("대한민국", "")
+                            addr.replaceFirst(" ", "").replace(getString(R.string.korea), "")
                         )
                         getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
                         locationClass.writeRdbLog(loc.latitude, loc.longitude, "NetWork - $addr")
@@ -894,7 +906,7 @@ class MainActivity : BaseActivity() {
                             .replaceFirst(" ", "")
 
                         hidePB()
-                        ToastUtils(this@MainActivity).showMessage("현재 위치와의 오차가 존재 할 수 있습니다")
+                        ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
                     }
                 }
             }
@@ -1024,27 +1036,27 @@ class MainActivity : BaseActivity() {
 
         if (!isNight) {
             when (sky) {
-                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> {
-                    black()
-                }
-                else -> {
-                    white()
-                }
+                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> { black() }
+                else -> { white() }
             }
         } else {
             white()
-            if (sky == "맑음") {
-                binding.mainSkyImg.setImageDrawable(
-                    ResourcesCompat.getDrawable(resources, R.drawable.main_moon, null)
-                )
-            } else if (sky == "흐림") {
-                binding.mainSkyImg.setImageDrawable(
-                    ResourcesCompat.getDrawable(resources, R.drawable.ico_cloud, null)
-                )
-            } else if (sky == "구름 많음") {
-                binding.mainSkyImg.setImageDrawable(
-                    ResourcesCompat.getDrawable(resources, R.drawable.cloudy, null)
-                )
+            when(sky) {
+                "맑음" -> {
+                    binding.mainSkyImg.setImageDrawable(
+                        ResourcesCompat.getDrawable(resources, R.drawable.main_moon, null)
+                    )
+                }
+                "흐림" -> {
+                    binding.mainSkyImg.setImageDrawable(
+                        ResourcesCompat.getDrawable(resources, R.drawable.ico_cloud, null)
+                    )
+                }
+                "구름 많음" -> {
+                    binding.mainSkyImg.setImageDrawable(
+                        ResourcesCompat.getDrawable(resources, R.drawable.cloudy, null)
+                    )
+                }
             }
         }
     }
