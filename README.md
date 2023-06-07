@@ -34,16 +34,12 @@
 <br/>
 <h2>Licence</h2><br/>
 
-![1](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/e85d065e-4ff7-4910-9871-45108cfb3849)
+![1](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/e85d065e-4ff7-4910-9871-45108cfb3849)&nbsp;&nbsp;![2](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/70c4e802-6213-4752-9d1b-d26a5e3cf214)
 
-AirKorea Open API
-
-<br/>
-
-![2](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/70c4e802-6213-4752-9d1b-d26a5e3cf214)
-
+AirKorea Open API &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 기상청 Open API
 
+<br/>
 
 
 <br/>
