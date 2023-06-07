@@ -23,4 +23,6 @@ object StaticDataObject {
     const val NIGHT_EVENT_NOTI = "NIGHT_ALL_USERS"        // FCM 야간 이벤트 알림 토픽
     const val WEATHER_ALL_NOTI = "WEATHER_ALL_USERS"      // FCM 전체 날씨 알림 토픽
     const val EVENT_ALL_NOTI = "EVENT_ALL_USERS"          // FCM 주간 이벤트 알림 토픽
+    const val SHOWING_LOADING_FLOAT = 0.5f
+    const val NOT_SHOWING_LOADING_FLOAT = 1f
 }

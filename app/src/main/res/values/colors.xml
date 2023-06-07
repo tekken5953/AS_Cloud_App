@@ -25,9 +25,23 @@
     <color name="progressNormal">#33E430</color> // 프로그래스 바 양호도 보통 컬러
     <color name="progressError">#A0A0A0</color> // 프로그래스 바 에러 컬러
 
+    <color name="air_good">#22D3EE</color>
+    <color name="air_normal">#4DCF7D</color>
+    <color name="air_bad">#FACC15</color>
+    <color name="air_very_bad">#F87171</color>
+
     <color name="black_overlay">#66000000</color>
 
-    <color name="mode_black_color">#FFFFFF</color>
+    <color name="mode_black_color">#000000</color>
     <color name="mode_black_90">#903D3D3D</color>
+
+    <color name="uv_low">#94F532</color>
+    <color name="uv_normal">#FCD53A</color>
+    <color name="uv_high">#E68040</color>
+    <color name="uv_very_high">#FC3A8C</color>
+    <color name="uv_caution">#7D38F2</color>
+
+    <color name="bg_black_color">#3D3D3D</color>
+    <color name="ripple_white">#B4cccccc</color>
 
 </resources>

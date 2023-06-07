@@ -27,6 +27,7 @@ import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.ConvertDataType.convertAddress
 import com.example.airsignal_app.util.KeyboardController
 import com.example.airsignal_app.util.RefreshUtils
+import com.example.airsignal_app.view.activity.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -97,12 +98,12 @@ class SearchDialog(
 
             currentAdapter.setOnItemClickListener(object : AddressListAdapter.OnItemClickListener {
                 override fun onItemClick(v: View, position: Int) {
-                    dismissNow()
                     SharedPreferenceManager(activity).setString(
                         lastAddress,
                         currentList[position].replace("null", "")
                     )
-                    RefreshUtils(activity).refreshActivityAfterSecond(1, null)
+                    dismissNow()
+                    activity.recreate()
                 }
             })
 
@@ -117,7 +118,6 @@ class SearchDialog(
             val listView: ListView = view.findViewById(R.id.searchAddressListView)
 
             searchEditListener(listView, searchView)
-
             KeyboardController().onKeyboardUp(requireContext(),searchView)
         }
     }
@@ -167,7 +167,7 @@ class SearchDialog(
                 db.insert(model)
                 SharedPreferenceManager(activity).setString(lastAddress,model.addr!!)
                 this.dismissNow()
-                RefreshUtils(activity).refreshActivity()
+                activity.recreate()
             }
     }
 

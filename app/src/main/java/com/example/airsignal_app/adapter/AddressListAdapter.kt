@@ -71,7 +71,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
                 gpsImg.setImageDrawable(
                     ResourcesCompat.getDrawable(
                         context.resources,
-                        R.drawable.fixed_gps,
+                        R.drawable.gps_fix,
                         null
                     )
                 )

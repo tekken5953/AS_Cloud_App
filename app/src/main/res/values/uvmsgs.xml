@@ -1,4 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
+    <string-array name="uv_caution">
+        <item>햇볕에 노출 시 수십 분 이내에도 피부 화상을 입을 수 있어 가장 위험함</item>
+        <item>가능한 실내에 머물러야 함</item>
+        <item>외출 시 긴 소매 옷, 모자, 선글라스 이용</item>
+        <item>자외선 차단제를 정기적으로 발라야 함</item>
+    </string-array>
+
+    <string-array name="uv_very_high">
+        <item>햇볕에 노출 시 수십 분 이내에도 피부 화상을 입을 수 있어 매우 위험함</item>
+        <item>오전 10시부터 오후 3시까지 외출을 피하고 실내나 그늘에 머물러야 함</item>
+        <item>외출 시 긴 소매 옷, 모자, 선글라스 이용</item>
+        <item>자외선 차단제를 정기적으로 발라야 함</item>
+    </string-array>
+
+    <string-array name="uv_high">
+        <item>햇볕에 노출 시 1～2시간 내에도 피부 화상을 입을 수 있어 위험함</item>
+        <item>한낮에는 그늘에 머물러야 함</item>
+        <item>외출 시 긴 소매 옷, 모자, 선글라스 이용</item>
+        <item>자외선 차단제를 정기적으로 발라야 함</item>
+    </string-array>
+
+    <string-array name="uv_normal">
+        <item>2～3시간 내에도 햇볕에 노출 시에 피부 화상을 입을 수 있음</item>
+        <item>모자, 선글라스 이용</item>
+        <item>자외선 차단제를 발라야 함</item>
+    </string-array>
+
+    <string-array name="uv_low">
+        <item>햇볕 노출에 대한 보호조치가 필요하지 않음</item>
+        <item>그러나 햇볕에 민감한 피부를 가진 분은 자외선 차단제를 발라야 함</item>
+    </string-array>
+
+    <string-array name="uv_none">
+    </string-array>
 
 </resources>

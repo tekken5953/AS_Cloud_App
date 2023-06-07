@@ -9,6 +9,7 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
@@ -55,7 +56,7 @@ class GetLocation(private val context: Context) {
     }
 
     /** 현재 주소를 불러옵니다 **/
-    fun getAddress(lat: Double, lng: Double): String {
+    fun getAddress(lat: Double, lng: Double): String? {
         val email = sp.getString(userEmail)
         lateinit var address: List<Address>
         try {
@@ -68,16 +69,17 @@ class GetLocation(private val context: Context) {
                 "Null Address"
             }
         } catch (e: IOException) {
-            Timber.tag("Location").e("주소를 가져오는 도중 오류가 발생했습니다")
+            Toast.makeText(context, "주소를 가져오는 도중 오류가 발생했습니다", Toast.LENGTH_SHORT).show()
             writeLogCause(
                 email,
                 "Background Location Exception",
                 "Error : ${e.localizedMessage}"
             )
+            return context.getString(R.string.address)
         }
-        return ""
     }
 
+    /** getAddressLine으로 불러온 주소 포멧**/
     fun formattingFullAddress(fullAddr: String): String {
         val addressParts = fullAddr.split(" ").toTypedArray() // 공백을 기준으로 주소 요소 분리
         var formattedAddress = ""
@@ -89,9 +91,9 @@ class GetLocation(private val context: Context) {
         }
 
         return  if (formattedAddress.contains("null")) {
-            formattedAddress.split("null")[0].replace("대한민국","")
+            formattedAddress.split("null")[0].replace(context.getString(R.string.korea),"")
         } else {
-            formattedAddress.replace("대한민국", "")
+            formattedAddress.replace(context.getString(R.string.korea), "")
         }
     }
 
@@ -129,7 +131,7 @@ class GetLocation(private val context: Context) {
                 // 위치 업데이트가 발생했을 때 실행되는 코드
                 val latitude = location.latitude
                 val longitude = location.longitude
-                updateCurrentAddress(latitude,longitude,getAddress(latitude,longitude))
+                updateCurrentAddress(latitude,longitude,getAddress(latitude,longitude)!!)
                 writeLogCause(
                     email = sp.getString(userEmail),
                     isSuccess = "WorkManager Location",
@@ -184,7 +186,7 @@ class GetLocation(private val context: Context) {
 
     /** 핸드폰 위치 서비스가 켜져있는지 확인 **/
     fun requestSystemGPSEnable() {
-        Toast.makeText(context, "핸드폰 GPS를 켜주세요", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "핸드폰 GPS가 켜져있는지 확인해주세요", Toast.LENGTH_SHORT).show()
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         context.startActivity(intent)
     }

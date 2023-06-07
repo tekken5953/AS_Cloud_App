@@ -181,7 +181,7 @@
                 <TextView
                     android:id="@+id/settingScaleTextLeft"
                     style="@style/settingMultiTextView"
-                    android:text="폰트 크기"/>
+                    android:text="@string/font_size"/>
 
                 <TextView
                     android:id="@+id/settingScaleTextRight"
