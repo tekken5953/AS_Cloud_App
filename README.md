@@ -52,13 +52,9 @@ AirKorea Open API &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 <br/>
 <h2>Screen Shot</h2><br/>
 
-![Android Small - 25](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/a2d22e3f-ab11-44a0-8485-ffc0cadc57ca)
+![Android Small - 25](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/a2d22e3f-ab11-44a0-8485-ffc0cadc57ca) &nbsp;&nbsp; ![Android Small - 28](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/393cdd1c-6f2e-46fe-a238-16ed353d5cc4)
 
-![Android Small - 28](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/393cdd1c-6f2e-46fe-a238-16ed353d5cc4)
-
-![Android Small - 32](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/432195f0-f662-4f0e-ad14-e047443ed345)
-
-![Android Small - 33](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/4f1a98c3-89fc-426f-8c7e-dadfc8895508)
+![Android Small - 32](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/432195f0-f662-4f0e-ad14-e047443ed345) &nbsp;&nbsp; ![Android Small - 33](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/4f1a98c3-89fc-426f-8c7e-dadfc8895508)
 
 ![메인](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/63a1e74c-a981-4ccb-9f9f-ba352ac18665)
 
