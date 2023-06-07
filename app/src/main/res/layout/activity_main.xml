@@ -98,9 +98,9 @@
             android:id="@+id/mainGpsFix"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="7dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/gps_refresh"
+            android:src="@drawable/gps_fix"
             app:layout_constraintStart_toEndOf="@+id/mainGpsTitleTv"
             app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv"
             app:tint="@color/mode_black_color" />

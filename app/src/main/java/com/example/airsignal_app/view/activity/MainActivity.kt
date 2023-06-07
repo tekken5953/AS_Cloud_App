@@ -13,7 +13,6 @@ import android.os.*
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -23,7 +22,6 @@ import android.view.animation.AnimationUtils
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import android.widget.*
-import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.work.*
@@ -150,7 +148,12 @@ class MainActivity : BaseActivity() {
         addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
         addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
         addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
-        addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), getString(R.string.uv_very_high))
+        addUvLegendItem(
+            3,
+            "8 - 10",
+            getColor(R.color.uv_very_high),
+            getString(R.string.uv_very_high)
+        )
         addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
         binding.seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지
@@ -441,23 +444,6 @@ class MainActivity : BaseActivity() {
                 }
                 binding.mainSkyImg.setImageDrawable(applySkyImg(current.rainType, realtime.sky))
                 binding.mainSkyText.text = applySkyText(realtime.rainType, realtime.sky)
-//                binding.mainSensibleValue.text =
-//                    "${getString(R.string.sens_temp)} : ${
-//                        SensibleTempFormula().getSensibleTemp(
-//                            realtime.temp,
-//                            realtime.humid,
-//                            realtime.windSpeed
-//                        ).toInt()
-//                    }˚"
-//                spanUnit(binding.subWindValue, current.windSpeed.toString() + " ㎧")
-//                spanUnit(binding.subRainPerValue, realtime.rainP.roundToInt().toString() + " %")
-//                spanUnit(binding.subHumidValue, current.humidity.roundToInt().toString() + " %")
-//
-//                binding.subWindValue.setCompoundDrawablesWithIntrinsicBounds(
-//                    ResourcesCompat.getDrawable(resources, R.drawable.gps, null), null, null, null
-//                )
-//                binding.mainPm10Grade.getPM10GradeFromValue(air.pm10Value.toInt())
-//                binding.mainPm2p5Grade.getPM25GradeFromValue(air.pm25Value)
                 binding.mainMinMaxValue.text =
                     "${filteringNullData(today.min)}˚/${filteringNullData(today.max)}˚"
                 binding.nestedPm10Grade.getPM10GradeFromValue(air.pm10Value.toInt())
@@ -520,32 +506,14 @@ class MainActivity : BaseActivity() {
 
                 applyWindowBackground(currentSun, applySkyText(current.rainType, realtime.sky))
 
-//                val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
-//                if (air.pm25Value > 125) {
-//                    binding.segmentProgress2p5Arrow.setPadding(widthDp, 0, 0, 0)
-//                } else {
-//                    binding.segmentProgress2p5Arrow.setPadding(
-//                        air.pm25Value * (widthDp) / 125,
-//                        0,
-//                        0,
-//                        0
-//                    )
-//                }
-//                if (air.pm10Value > 200) {
-//                    binding.segmentProgress10Arrow.setPadding(200 * widthDp / 200, 0, 0, 0)
-//                } else {
-//                    binding.segmentProgress10Arrow.setPadding(
-//                        air.pm10Value.toInt() * widthDp / 200,
-//                        0,
-//                        0,
-//                        0
-//                    )
-//                }
-                binding.segmentProgress2p5Arrow.layoutParams = movePmBarChart(air.pm25Value,"25")
-                binding.segmentProgress10Arrow.layoutParams = movePmBarChart(air.pm10Value.roundToInt(),"10")
+                binding.segmentProgress2p5Arrow.layoutParams = movePmBarChart(air.pm25Value, "25")
+                binding.segmentProgress10Arrow.layoutParams =
+                    movePmBarChart(air.pm10Value.roundToInt(), "10")
 
-                binding.segmentProgress2p5Arrow.imageTintList = ColorStateList.valueOf(setPm2p5ArrowTint(air.pm25Value))
-                binding.segmentProgress10Arrow.imageTintList = ColorStateList.valueOf(setPm10ArrowTint(air.pm10Value.roundToInt()))
+                binding.segmentProgress2p5Arrow.imageTintList =
+                    ColorStateList.valueOf(setPm2p5ArrowTint(air.pm25Value))
+                binding.segmentProgress10Arrow.imageTintList =
+                    ColorStateList.valueOf(setPm10ArrowTint(air.pm10Value.roundToInt()))
 
                 for (i: Int in 0 until result.realtime.size) {
                     try {
@@ -577,11 +545,19 @@ class MainActivity : BaseActivity() {
                     try {
                         val formedDate = dateNow.plusDays(i.toLong())
                         val date: String = when (i) {
-                            0 -> { "오늘" }
-                            1 -> { "내일" }
+                            0 -> {
+                                "오늘"
+                            }
+                            1 -> {
+                                "내일"
+                            }
                             else -> {
-                                "${convertDayOfWeekToKorean(this, 
-                                    dateNow.dayOfWeek.value + i)}요일"
+                                "${
+                                    convertDayOfWeekToKorean(
+                                        this,
+                                        dateNow.dayOfWeek.value + i
+                                    )
+                                }요일"
                             }
                         }
                         addWeeklyWeatherItem(
@@ -617,7 +593,7 @@ class MainActivity : BaseActivity() {
             changeTextColorStyle(sky!!, isNightTime(progress))
         } else {
             when (sky) {
-                "맑음","구름많음" -> window.setBackgroundDrawableResource(R.drawable.main_bg_clear)
+                "맑음", "구름많음" -> window.setBackgroundDrawableResource(R.drawable.main_bg_clear)
 
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
                 "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림" ->
@@ -635,8 +611,9 @@ class MainActivity : BaseActivity() {
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+
         fun dp(i: Int): Int {
-            return pixelToDp(this,i)
+            return pixelToDp(this, i)
         }
 
         val arrowWidth = dp(binding.segmentProgress10Arrow.width) / 2
@@ -644,19 +621,19 @@ class MainActivity : BaseActivity() {
         if (sort == "25") {
             val widthDp = pixelToDp(this, binding.segmentProgress2p5Bar.width)
             params.addRule(RelativeLayout.BELOW, R.id.nested_pm_2p5_value)
-            params.addRule(RelativeLayout.ALIGN_START,R.id.segment_progress_2p5_bar)
+            params.addRule(RelativeLayout.ALIGN_START, R.id.segment_progress_2p5_bar)
 
             if (value > 125) {
                 params.setMargins(
                     widthDp - arrowWidth - dp(2),
-                    dp(10),
+                    dp(15),
                     arrowWidth,
                     0
                 ) // 왼쪽, 위, 오른쪽, 아래 순서
             } else {
                 params.setMargins(
                     value * widthDp / dp(125) - arrowWidth - dp(2),
-                    dp(10),
+                    dp(15),
                     arrowWidth,
                     0
                 ) // 왼쪽, 위, 오른쪽, 아래 순서
@@ -664,19 +641,19 @@ class MainActivity : BaseActivity() {
         } else if (sort == "10") {
             val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
             params.addRule(RelativeLayout.BELOW, R.id.nested_pm_10_value)
-            params.addRule(RelativeLayout.ALIGN_START,R.id.segment_progress_10_bar)
+            params.addRule(RelativeLayout.ALIGN_START, R.id.segment_progress_10_bar)
 
             if (value > 200) {
                 params.setMargins(
                     widthDp - arrowWidth,
-                    10,
+                    dp(15),
                     arrowWidth,
                     0
                 ) // 왼쪽, 위, 오른쪽, 아래 순서
             } else {
                 params.setMargins(
                     value * widthDp / dp(200) - arrowWidth,
-                    dp(10),
+                    dp(15),
                     arrowWidth,
                     0
                 ) // 왼쪽, 위, 오른쪽, 아래 순서
@@ -685,6 +662,7 @@ class MainActivity : BaseActivity() {
         return params
     }
 
+    // 일몰 이후인지 불러옴
     private fun isNightTime(current: Int): Boolean {
         return current >= 100
     }
@@ -720,13 +698,20 @@ class MainActivity : BaseActivity() {
 
     // 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트
     private fun applySkyText(rain: String?, sky: String?): String {
-        return if (rain != "없음") { rain!! } else { sky!! }
+        return if (rain != "없음") {
+            rain!!
+        } else {
+            sky!!
+        }
     }
 
     // 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지
     private fun applySkyImg(rain: String?, sky: String?): Drawable {
-        return if (rain != "없음") { getRainType(this, rain!!)!! }
-        else { getSkyImg(this, sky!!)!! }
+        return if (rain != "없음") {
+            getRainType(this, rain!!)!!
+        } else {
+            getSkyImg(this, sky!!)!!
+        }
     }
 
     // 날짜가 한자리일 때 앞에 0 붙이기
@@ -760,47 +745,48 @@ class MainActivity : BaseActivity() {
 
     // 미세먼지 그래프 화살표 색상 변경
     private fun setPm2p5ArrowTint(value: Int): Int {
-        return when(value) {
+        return when (value) {
             in 0..14 -> {
-                ResourcesCompat.getColor(resources,R.color.air_good,null)
+                ResourcesCompat.getColor(resources, R.color.air_good, null)
             }
             in 15..34 -> {
-                ResourcesCompat.getColor(resources,R.color.air_normal,null)
+                ResourcesCompat.getColor(resources, R.color.air_normal, null)
             }
             in 35..74 -> {
-                ResourcesCompat.getColor(resources,R.color.air_bad,null)
+                ResourcesCompat.getColor(resources, R.color.air_bad, null)
             }
             in 75..125 -> {
-                ResourcesCompat.getColor(resources,R.color.air_very_bad,null)
+                ResourcesCompat.getColor(resources, R.color.air_very_bad, null)
             }
             else -> {
-                ResourcesCompat.getColor(resources, com.aslib.R.color.progressError,null)
+                ResourcesCompat.getColor(resources, com.aslib.R.color.progressError, null)
             }
         }
     }
 
     // 초미세먼지 그래프 화살표 색상 변경
     private fun setPm10ArrowTint(value: Int): Int {
-        return when(value) {
+        return when (value) {
             in 0..29 -> {
-                ResourcesCompat.getColor(resources,R.color.air_good,null)
+                ResourcesCompat.getColor(resources, R.color.air_good, null)
             }
             in 30..79 -> {
-                ResourcesCompat.getColor(resources,R.color.air_normal,null)
+                ResourcesCompat.getColor(resources, R.color.air_normal, null)
             }
             in 80..149 -> {
-                ResourcesCompat.getColor(resources,R.color.air_bad,null)
+                ResourcesCompat.getColor(resources, R.color.air_bad, null)
             }
             in 150..200 -> {
-                ResourcesCompat.getColor(resources,R.color.air_very_bad,null)
+                ResourcesCompat.getColor(resources, R.color.air_very_bad, null)
             }
             else -> {
-                ResourcesCompat.getColor(resources, com.aslib.R.color.progressError,null)
+                ResourcesCompat.getColor(resources, com.aslib.R.color.progressError, null)
             }
         }
     }
 
     //어제와 기온 비교
+    @SuppressLint("SetTextI18n")
     private fun getCompareTemp(yesterday: Double, today: Double, tv: TextView) {
         if (yesterday != -100.0 && today != -100.0) {
             if (yesterday > today) {
@@ -839,43 +825,41 @@ class MainActivity : BaseActivity() {
                     location?.let { loc ->
                         com.orhanobut.logger.Logger.t(TAG_D).d("${loc.latitude},${loc.longitude}")
                         locationClass.getAddress(loc.latitude, loc.longitude)
-                            .let { addr ->
-                                if (addr == null) {
-                                    hidePB()
+                            ?.let { addr ->
+                                if (addr != "Null Address") {
+                                    updateCurrentAddress(
+                                        loc.latitude, loc.longitude,
+                                        addr.replaceFirst(" ", "").replace("대한민국", "")
+                                    )
+                                    getDataViewModel.loadDataResult(
+                                        loc.latitude,
+                                        loc.longitude,
+                                        null
+                                    )
+
+                                    locationClass.writeRdbLog(
+                                        loc.latitude,
+                                        loc.longitude,
+                                        locationClass.formattingFullAddress(addr)
+                                    )
+
+                                    binding.mainGpsTitleTv.text = guardWordWrap(
+                                        locationClass.formattingFullAddress(addr)
+                                    )
+
+                                    binding.mainTopBarGpsTitle.text =
+                                        locationClass.formattingFullAddress(addr)
+                                            .replaceFirst(" ", "")
                                 } else {
-                                    if (addr != "Null Address") {
-                                        updateCurrentAddress(
-                                            loc.latitude, loc.longitude,
-                                            addr.replaceFirst(" ", "").replace("대한민국", "")
-                                        )
-                                        getDataViewModel.loadDataResult(
-                                            loc.latitude,
-                                            loc.longitude,
-                                            null
-                                        )
-
-                                        locationClass.writeRdbLog(
-                                            loc.latitude,
-                                            loc.longitude,
-                                            locationClass.formattingFullAddress(addr)
-                                        )
-
-                                        binding.mainGpsTitleTv.text = guardWordWrap(
-                                            locationClass.formattingFullAddress(addr)
-                                        )
-
-                                        binding.mainTopBarGpsTitle.text =
-                                            locationClass.formattingFullAddress(addr)
-                                                .replaceFirst(" ", "")
-                                    } else {
-                                        Toast.makeText(
-                                            this@MainActivity,
-                                            "위치정보 갱신 실패",
-                                            Toast.LENGTH_SHORT
-                                        )
-                                            .show()
-                                    }
+                                    Toast.makeText(
+                                        this@MainActivity,
+                                        "위치정보 갱신 실패",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
                                 }
+
+                                hidePB()
                             }
                     }
                 }
@@ -896,8 +880,7 @@ class MainActivity : BaseActivity() {
                             .show()
                         hidePB()
                     }
-                    this?.let {
-                        addr ->
+                    this?.let { addr ->
                         updateCurrentAddress(
                             loc.latitude,
                             loc.longitude,
@@ -1041,7 +1024,7 @@ class MainActivity : BaseActivity() {
 
         if (!isNight) {
             when (sky) {
-                "맑음", "구름많고 눈", "눈", "흐리고 눈"   -> {
+                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> {
                     black()
                 }
                 else -> {
