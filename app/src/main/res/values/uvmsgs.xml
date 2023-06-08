@@ -32,7 +32,6 @@
         <item>그러나 햇볕에 민감한 피부를 가진 분은 자외선 차단제를 발라야 함</item>
     </string-array>
 
-    <string-array name="uv_none">
-    </string-array>
+    <string-array name="uv_none"/>
 
 </resources>

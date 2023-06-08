@@ -44,6 +44,7 @@ import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
+import com.example.airsignal_app.firebase.admob.AdViewClass
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.login.SilentLoginClass
@@ -71,6 +72,7 @@ import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -110,18 +112,18 @@ class MainActivity : BaseActivity() {
         showPB()
         getDataSingleTime()
         Thread.sleep(100)
-//        binding.mainBottomAdView.resume()
+        binding.nestedAdView.resume()
     }
 
-//    override fun onDestroy() {
-//        super.onDestroy()
-////        binding.mainBottomAdView.destroy()
-//    }
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.nestedAdView.destroy()
+    }
 
-//    override fun onPause() {
-//        super.onPause()
-////        binding.mainBottomAdView.pause()
-//    }
+    override fun onPause() {
+        super.onPause()
+        binding.nestedAdView.pause()
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -371,7 +373,11 @@ class MainActivity : BaseActivity() {
         binding.mainUvCollapseRv.isClickable = false
 
         createWorkManager()        // 워크 매니저 생성
-//        AdViewClass(this).loadAdView(binding.mainBottomAdView)
+        AdViewClass(this).loadAdView(binding.nestedAdView)
+
+        binding.adViewCancelIv.setOnClickListener {
+            binding.adViewBox.visibility = GONE
+        }
     }
 
     private fun createWorkManager() {
@@ -856,7 +862,7 @@ class MainActivity : BaseActivity() {
             fusedGPSLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
                 .addOnSuccessListener { location: Location? ->
                     location?.let { loc ->
-                        com.orhanobut.logger.Logger.t(TAG_D).d("${loc.latitude},${loc.longitude}")
+                        Logger.t(TAG_D).d("${loc.latitude},${loc.longitude}")
                         locationClass.getAddress(loc.latitude, loc.longitude)
                             ?.let { addr ->
                                 if (addr != "Null Address") {
@@ -896,6 +902,7 @@ class MainActivity : BaseActivity() {
                     }
                 }
                 .addOnFailureListener {
+                    ToastUtils(this).showMessage(getString(R.string.fail_to_get_gps))
                     RDBLogcat.writeLogCause(
                         sp.getString(userEmail),
                         "GPS 위치정보 갱신실패",
@@ -950,11 +957,11 @@ class MainActivity : BaseActivity() {
             model.addr = addr
             if (dbIsEmpty(roomDB)) {
                 roomDB.insert(model)
-                com.orhanobut.logger.Logger.t(TAG_D)
+                Logger.t(TAG_D)
                     .d("Insert GPS In GetLocation : " + model.id + ", " + model.name + ", " + model.addr)
             } else {
                 roomDB.update(model)
-                com.orhanobut.logger.Logger.t(TAG_D)
+                Logger.t(TAG_D)
                     .d("Update GPS In GetLocation : " + model.id + ", " + model.name + ", " + model.addr)
             }
         }
@@ -1058,12 +1065,8 @@ class MainActivity : BaseActivity() {
 
         if (!isNight) {
             when (sky) {
-                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> {
-                    black()
-                }
-                else -> {
-                    white()
-                }
+                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> { black() }
+                else -> { white() }
             }
         } else {
             white()

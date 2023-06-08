@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:ads="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable
@@ -274,10 +275,44 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/nested_weekly_box"
+                    android:id="@+id/adViewBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/nested_daily_box"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="12dp"
+                    android:animateLayoutChanges="true"
+                    android:background="@drawable/uv_box_bg">
+
+                    <ImageView
+                        android:id="@+id/adViewCancelIv"
+                        android:layout_width="17dp"
+                        android:layout_height="17dp"
+                        android:src="@drawable/cancel"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="5dp"/>
+
+                    <com.google.android.gms.ads.AdView
+                        android:id="@+id/nested_adView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        ads:adSize="FULL_BANNER"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_toStartOf="@+id/adViewCancelIv"
+                        ads:adUnitId="@string/adUnitId"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/nested_weekly_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/adViewBox"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
@@ -336,7 +371,7 @@
                         android:id="@+id/nested_pm_2p5_title"
                         style="@style/basicTextView"
                         android:layout_below="@+id/nested_pm_title"
-                        android:layout_marginTop="25dp"
+                        android:layout_marginTop="30dp"
                         android:text="@string/pm2_5_title"
                         android:textColor="#7C7C7C"
                         android:textSize="14sp" />
@@ -346,7 +381,7 @@
                         style="@style/basicTextView"
                         android:layout_below="@+id/nested_pm_2p5_title"
                         android:layout_marginStart="2dp"
-                        android:layout_marginTop="7dp"
+                        android:layout_marginTop="10dp"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:textSize="24sp"
                         app:sort="grade" />
@@ -448,7 +483,7 @@
                         style="@style/basicTextView"
                         android:layout_below="@+id/nested_pm_10_title"
                         android:layout_marginStart="2dp"
-                        android:layout_marginTop="7dp"
+                        android:layout_marginTop="10dp"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:textSize="24sp"
                         app:sort="grade" />
@@ -541,9 +576,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@+id/segment_progress_10_section"
-                        android:layout_marginStart="22dp"
+                        android:layout_marginStart="14dp"
                         android:layout_marginTop="40dp"
-                        android:layout_marginEnd="22dp"
+                        android:layout_marginEnd="14dp"
                         android:background="#F3F3F3" />
 
                     <TableRow
@@ -707,8 +742,9 @@
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:layout_alignTop="@+id/mainUvTitle"
+                        android:layout_marginBottom="8dp"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="20dp"
+                        android:layout_marginEnd="17dp"
                         android:padding="5dp"
                         android:src="@drawable/btn_down"
                         app:tint="@color/black" />

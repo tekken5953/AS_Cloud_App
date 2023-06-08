@@ -32,7 +32,6 @@
         <item>However, people with sensitive skin should apply sunscreen</item>
     </string-array>
 
-    <string-array name="uv_none">
-    </string-array>
+    <string-array name="uv_none"/>
 
 </resources>

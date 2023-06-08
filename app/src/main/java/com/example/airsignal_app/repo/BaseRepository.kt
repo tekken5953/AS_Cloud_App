@@ -51,7 +51,6 @@ open class BaseRepository {
                 when (response.code()) {
                     CODE_SERVER_OK -> {
                         data.postValue(response.body() as TD)
-                        Logger.t("Timber").d(data.value.toString())
 //                    Log.d("Timber",data.value.toString())
                     }
                     CODE_SERVER_DOWN -> {
