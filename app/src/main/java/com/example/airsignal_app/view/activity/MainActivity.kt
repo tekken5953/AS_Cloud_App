@@ -2,6 +2,7 @@ package com.example.airsignal_app.view.activity
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.ComponentName
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -22,6 +23,7 @@ import android.view.animation.AnimationUtils
 import android.view.animation.LinearInterpolator
 import android.view.animation.RotateAnimation
 import android.widget.*
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.work.*
@@ -45,6 +47,7 @@ import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.admob.AdViewClass
+import com.example.airsignal_app.firebase.admob.NativeAdViewClass
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.login.SilentLoginClass
@@ -63,6 +66,7 @@ import com.example.airsignal_app.view.*
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE_TIME
 import com.example.airsignal_app.view.widget.WidgetProvider
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
+import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -72,7 +76,6 @@ import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import kotlin.collections.HashMap
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -81,6 +84,9 @@ class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private var isBackPressed = false
+    private lateinit var exitDialog: AlertDialog
+    private val sideMenuBuilder by lazy { SideMenuBuilder(this@MainActivity) }
+    private val sideMenu: View by lazy { LayoutInflater.from(this@MainActivity).inflate(R.layout.side_menu, null) }
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
@@ -265,39 +271,41 @@ class MainActivity : BaseActivity() {
         binding.mainSideMenuIv.setOnClickListener(object : OnSingleClickListener() {
             @SuppressLint("InflateParams")
             override fun onSingleClick(v: View?) {
-                val menu: View =
-                    LayoutInflater.from(this@MainActivity).inflate(R.layout.side_menu, null)
-                val cancel = menu.findViewById<ImageView>(R.id.headerCancel)
-                val profile = menu.findViewById<ImageView>(R.id.navHeaderProfileImg)
-                val id = menu.findViewById<TextView>(R.id.navHeaderUserId)
-                val weather = menu.findViewById<TextView>(R.id.navMenuWeather)
-                val setting = menu.findViewById<TextView>(R.id.navMenuSetting)
-                val headerTr = menu.findViewById<TableRow>(R.id.headerTr)
-
-                val dialog = SideMenuBuilder(this@MainActivity)
-                dialog.apply {
-                    setBackPressed(cancel)
-                    setUserData(profile, id)
-                    show(menu, true)
-                }
-
-                headerTr.setOnClickListener {
-                    if (sp.getString(IgnoredKeyFile.lastLoginPlatform) == "")
-                        EnterPageUtil(this@MainActivity).toLogin()
-                }
-                weather.setOnClickListener {
-                    dialog.dismiss()
-                }
-                setting.setOnClickListener {
-                    CompletableFuture.supplyAsync {
-                        dialog.dismiss()
-                    }.thenAccept {
-                        val intent = Intent(this@MainActivity, SettingActivity::class.java)
-                        startActivity(intent)
-                    }
-                }
+                sideMenuBuilder.show(sideMenu, true)
             }
         })
+    }
+
+    private fun addSideMenu() {
+        val cancel = sideMenu.findViewById<ImageView>(R.id.headerCancel)
+        val profile = sideMenu.findViewById<ImageView>(R.id.navHeaderProfileImg)
+        val id = sideMenu.findViewById<TextView>(R.id.navHeaderUserId)
+        val weather = sideMenu.findViewById<TextView>(R.id.navMenuWeather)
+        val setting = sideMenu.findViewById<TextView>(R.id.navMenuSetting)
+        val headerTr = sideMenu.findViewById<TableRow>(R.id.headerTr)
+        val adView = sideMenu.findViewById<AdView>(R.id.navMenuAdview)
+
+        sideMenuBuilder.apply {
+            setBackPressed(cancel)
+            setUserData(profile, id)
+            AdViewClass(this@MainActivity).loadAdView(adView)
+        }
+
+        headerTr.setOnClickListener {
+            if (sp.getString(IgnoredKeyFile.lastLoginPlatform) == "")
+                EnterPageUtil(this@MainActivity).toLogin()
+        }
+        weather.setOnClickListener {
+            sideMenuBuilder.dismiss()
+        }
+        setting.setOnClickListener {
+            CompletableFuture.supplyAsync {
+                sideMenuBuilder.dismiss()
+            }.thenAccept {
+                val intent = Intent(this@MainActivity, SettingActivity::class.java)
+                startActivity(intent)
+            }
+        }
     }
 
     // 날씨 데이터 API 호출
@@ -362,6 +370,8 @@ class MainActivity : BaseActivity() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
+        addSideMenu()
+//        addExitDialog()
         // 자동 로그인
         SilentLoginClass().login(this@MainActivity, binding.mainMotionLayout)
 
@@ -373,10 +383,12 @@ class MainActivity : BaseActivity() {
         binding.mainUvCollapseRv.isClickable = false
 
         createWorkManager()        // 워크 매니저 생성
-        AdViewClass(this).loadAdView(binding.nestedAdView)
+
+        AdViewClass(this).loadAdView(binding.nestedAdView)  // adView 생성
 
         binding.adViewCancelIv.setOnClickListener {
-            binding.adViewBox.visibility = GONE
+            it.visibility = GONE
+            binding.nestedAdView.visibility = GONE
         }
     }
 
@@ -386,17 +398,57 @@ class MainActivity : BaseActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        if (!isBackPressed) {
-            ToastUtils(this)
-                .showMessage(getString(R.string.back_press), 2)
-            isBackPressed = true
-        } else {
+//        if (!isBackPressed) {
+//            ToastUtils(this)
+//                .showMessage(getString(R.string.back_press), 2)
+//            isBackPressed = true
+//        } else {
+//            sp.removeKey(lastAddress)
+//            EnterPageUtil(this).fullyExit()
+//        }
+//        Handler(Looper.getMainLooper()).postDelayed({
+//            isBackPressed = false
+//        }, 2000)
+
+//        if (!sidMenuAlert.isShowing)
+//            sidMenuAlert.show()
+//        else
+//            sidMenuAlert.hide()
+
+
+
+//        exitDialog.show()
+        addExitDialog()
+    }
+
+    private fun addExitDialog() {
+        val builder = AlertDialog.Builder(this)
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_exit_app,null)
+        val nativeAdView: com.google.android.gms.ads.nativead.NativeAdView = view.findViewById(R.id.exitNativeAdView)
+        val yesBtn: AppCompatButton = view.findViewById(R.id.exitYesBtn)
+        val noBtn: AppCompatButton = view.findViewById(R.id.exitNoBtn)
+
+        val title: TextView = view.findViewById(R.id.nativeAdTitle)
+        val description: ImageView = view.findViewById(R.id.nativeAdDescription)
+        builder.setView(view)
+        val alertDialog = builder.create()
+        exitDialog = alertDialog
+
+        CoroutineScope(Dispatchers.Default).launch {
+            NativeAdViewClass(this@MainActivity).load(nativeAdView, title, description)
+        }
+
+        yesBtn.setOnClickListener {
             sp.removeKey(lastAddress)
+            alertDialog.dismiss()
             EnterPageUtil(this).fullyExit()
         }
-        Handler(Looper.getMainLooper()).postDelayed({
-            isBackPressed = false
-        }, 2000)
+
+        noBtn.setOnClickListener {
+            alertDialog.dismiss()
+        }
+
+        alertDialog.show()
     }
 
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
@@ -413,6 +465,7 @@ class MainActivity : BaseActivity() {
                 val yesterday = result.yesterday
                 val dateNow: LocalDateTime = LocalDateTime.now()
                 val current = result.current
+                val thunder = result.thunder!!
 
                 val wfMin = listOf(
                     week.wf0Am, week.wf1Am, week.wf2Am, week.wf3Am,
@@ -448,12 +501,12 @@ class MainActivity : BaseActivity() {
                     applySkyImg(
                         current.rainType,
                         realtime.sky,
-                        realtime.thunder
+                        thunder
                     )
                 )
                 binding.mainSkyText.text = translateSky(
                     this,
-                    applySkyText(realtime.rainType, realtime.sky, realtime.thunder)
+                    applySkyText(realtime.rainType, realtime.sky, thunder)
                 )
                 binding.mainMinMaxValue.text =
                     "${filteringNullData(today.min)}˚/${filteringNullData(today.max)}˚"
@@ -517,7 +570,7 @@ class MainActivity : BaseActivity() {
 
                 applyWindowBackground(
                     currentSun,
-                    applySkyText(current.rainType, realtime.sky, realtime.thunder)
+                    applySkyText(current.rainType, realtime.sky, thunder)
                 )
 
                 binding.segmentProgress2p5Arrow.layoutParams = movePmBarChart(air.pm25Value, "25")
@@ -538,7 +591,7 @@ class MainActivity : BaseActivity() {
                         } else if (i == 0) {
                             addDailyWeatherItem(
                                 "${forecastToday.hour}${getString(R.string.hour)}",
-                                applySkyImg(current.rainType, dailyIndex.sky, dailyIndex.thunder)!!,
+                                applySkyImg(current.rainType, dailyIndex.sky, null)!!,
                                 "${current.temperature.roundToInt()}˚",
                                 convertDateAppendZero(forecastToday)
                             )
@@ -548,7 +601,7 @@ class MainActivity : BaseActivity() {
                                 applySkyImg(
                                     dailyIndex.rainType,
                                     dailyIndex.sky,
-                                    dailyIndex.thunder
+                                    null
                                 )!!,
                                 "${dailyIndex.temp.roundToInt()}˚",
                                 convertDateAppendZero(forecastToday)
@@ -585,7 +638,7 @@ class MainActivity : BaseActivity() {
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
                 changeTextColorStyle(
-                    applySkyText(realtime.rainType, realtime.sky, realtime.thunder),
+                    applySkyText(realtime.rainType, realtime.sky, thunder),
                     isNightTime(currentSun)
                 )
             }

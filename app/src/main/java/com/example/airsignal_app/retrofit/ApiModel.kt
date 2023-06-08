@@ -66,9 +66,7 @@ class ApiModel {
         @SerializedName("vector")
         val vector: String,
         @SerializedName("windSpeed")
-        val windSpeed: Double,
-        @SerializedName("thunder")
-        val thunder: Double
+        val windSpeed: Double
     )
 
     data class WeeklyData(
@@ -312,6 +310,8 @@ class ApiModel {
         @SerializedName("uv")
         val uv: UV,
         @SerializedName("current")
-        val current: Current
+        val current: Current,
+        @SerializedName("thunder")
+        val thunder: Double?
     )
 }

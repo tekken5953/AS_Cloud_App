@@ -283,6 +283,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
                     android:animateLayoutChanges="true"
+                    android:visibility="visible"
                     android:background="@drawable/uv_box_bg">
 
                     <ImageView
@@ -293,19 +294,21 @@
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentTop="true"
                         android:layout_marginEnd="5dp"
-                        android:layout_marginTop="5dp"/>
+                        android:layout_marginTop="5dp"
+                        android:visibility="visible"/>
 
                     <com.google.android.gms.ads.AdView
                         android:id="@+id/nested_adView"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         ads:adSize="FULL_BANNER"
+                        android:visibility="visible"
                         android:layout_marginStart="5dp"
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="2dp"
                         android:layout_toStartOf="@+id/adViewCancelIv"
-                        ads:adUnitId="@string/adUnitId"/>
+                        ads:adUnitId="@string/adUnit_main_Id"/>
                 </RelativeLayout>
 
                 <RelativeLayout

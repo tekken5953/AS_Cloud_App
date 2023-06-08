@@ -32,7 +32,7 @@ class GetWeatherRepo : BaseRepository() {
                 Logger.t("Timber").d(response.body().toString())
             }
             override fun onFailure(call: Call<ApiModel.GetEntireData>, t: Throwable) {
-                Logger.e("날씨 데이터 호출 실패 : " + t.localizedMessage)
+                Logger.e("날씨 데이터 호출 실패 : " + t.localizedMessage + "\n" + t.stackTraceToString())
                 call.timeout()
                 call.cancel()
             }

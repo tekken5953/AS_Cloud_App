@@ -51,7 +51,7 @@ class SideMenuBuilder(private val activity: Activity) {
     }
 
     /** 다이얼로그 뷰 갱신 **/
-    fun show(v: View, cancelable: Boolean) {
+    fun show(v: View, cancelable: Boolean): AlertDialog {
         v.let {
             if (v.parent == null) {
                 builder.setView(v).setCancelable(cancelable)
@@ -66,6 +66,7 @@ class SideMenuBuilder(private val activity: Activity) {
                 alertDialog.show()
             }
         }
+        return alertDialog
     }
 
     fun setUserData(profile: ImageView, Id: TextView): SideMenuBuilder {
