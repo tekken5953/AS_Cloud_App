@@ -19,13 +19,11 @@ import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogNotLogin
-import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.GetDeviceInfo
 import com.google.android.gms.location.*
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.orhanobut.logger.Logger
-import timber.log.Timber
 import java.io.IOException
 import java.util.*
 
@@ -150,7 +148,7 @@ class GetLocation(private val context: Context) {
     }
 
     /** 파이어베이스 로그 커스텀 **/
-    fun writeRdbLog(lat: Double, lng: Double, addr: String) {
+    fun writeRdbCurrentLog(lat: Double?, lng: Double?, addr: String) {
         val email = sp.getString(userEmail)
         if (email != "") {
             writeLogCause(
@@ -166,6 +164,25 @@ class GetLocation(private val context: Context) {
                 isSuccess = "Background Location",
                 log = "$lat , $lng \t " +
                         addr
+            )
+        }
+    }
+
+    /** 파이어베이스 로그 커스텀 - 검색 **/
+    fun writeRdbSearchLog(addr: String) {
+        val email = sp.getString(userEmail)
+        if (email != "") {
+            writeLogCause(
+                email = email,
+                isSuccess = "Searched Location",
+                log = addr
+            )
+        } else {
+            writeLogNotLogin(
+                "비로그인",
+                GetDeviceInfo().androidID(context),
+                isSuccess = "Searched Location",
+                log = addr
             )
         }
     }

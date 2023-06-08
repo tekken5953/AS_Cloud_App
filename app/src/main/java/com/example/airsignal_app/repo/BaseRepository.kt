@@ -1,15 +1,15 @@
 package com.example.airsignal_app.repo
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.airsignal_app.dao.StaticDataObject.CODE_INVALID_TOKEN
 import com.example.airsignal_app.dao.StaticDataObject.CODE_SERVER_DOWN
 import com.example.airsignal_app.dao.StaticDataObject.CODE_SERVER_OK
 import com.example.airsignal_app.retrofit.HttpClient
-import com.example.airsignal_app.util.LoggerUtil
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Response
-import timber.log.Timber
 
 open class BaseRepository {
     private val httpClient = HttpClient
@@ -25,7 +25,7 @@ open class BaseRepository {
         try {
             when (response.code()) {
                 CODE_SERVER_OK -> {
-                    data.value = CODE_SERVER_OK.toString()
+                    data.postValue(CODE_SERVER_OK.toString())
                 }
                 CODE_SERVER_DOWN -> {
                     Logger.e("서버 연결 불가 : ${response.code()}")
@@ -47,20 +47,22 @@ open class BaseRepository {
         response: Response<TR>,
     ) {
         try {
-            when (response.code()) {
-                CODE_SERVER_OK -> {
-                    data.value = response.body() as TD
-                    Logger.t("Timber").d(data.value.toString())
+            CoroutineScope(Dispatchers.Default).launch {
+                when (response.code()) {
+                    CODE_SERVER_OK -> {
+                        data.postValue(response.body() as TD)
+                        Logger.t("Timber").d(data.value.toString())
 //                    Log.d("Timber",data.value.toString())
-                }
-                CODE_SERVER_DOWN -> {
-                    Logger.e("서버 연결 불가 : ${response.code()}")
-                }
-                CODE_INVALID_TOKEN -> {
-                    Logger.w("만료된 토큰 : ${response.code()}")
-                }
-                else -> {
-                    Logger.w("통신 성공 but 예상치 못한 에러 발생: ${response.code()}")
+                    }
+                    CODE_SERVER_DOWN -> {
+                        Logger.e("서버 연결 불가 : ${response.code()}")
+                    }
+                    CODE_INVALID_TOKEN -> {
+                        Logger.w("만료된 토큰 : ${response.code()}")
+                    }
+                    else -> {
+                        Logger.w("통신 성공 but 예상치 못한 에러 발생: ${response.code()}")
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -76,7 +78,7 @@ open class BaseRepository {
             val mList: TR? = response.body()
             when (response.code()) {
                 CODE_SERVER_OK -> {
-                    data.value = mList as TD
+                    data.postValue(mList as TD)
                 }
                 CODE_SERVER_DOWN -> {
                     Logger.e("서버 연결 불가 : ${response.code()}")

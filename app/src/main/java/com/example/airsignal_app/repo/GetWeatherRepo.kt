@@ -5,6 +5,9 @@ import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient.mMyAPIImpl
 import com.example.airsignal_app.view.ToastUtils
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,7 +31,7 @@ class GetWeatherRepo : BaseRepository() {
                 loadSuccessMapData(_getDataResult, response)
             }
             override fun onFailure(call: Call<ApiModel.GetEntireData>, t: Throwable) {
-                Logger.e("날씨 데이터 호출 실패 : " + t.stackTraceToString())
+                Logger.e("날씨 데이터 호출 실패 : " + t.localizedMessage)
                 call.timeout()
                 call.cancel()
             }

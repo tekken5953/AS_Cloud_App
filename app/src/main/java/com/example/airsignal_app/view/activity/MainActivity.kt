@@ -13,7 +13,6 @@ import android.os.*
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -26,6 +25,7 @@ import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.work.*
+import com.orhanobut.logger.Logger
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.DailyWeatherAdapter
 import com.example.airsignal_app.adapter.UVLegendAdapter
@@ -39,6 +39,7 @@ import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.NOT_SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
+import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
@@ -151,16 +152,10 @@ class MainActivity : BaseActivity() {
         addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
         addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
         addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
-        addUvLegendItem(
-            3,
-            "8 - 10",
-            getColor(R.color.uv_very_high),
-            getString(R.string.uv_very_high)
-        )
+        addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), getString(R.string.uv_very_high))
         addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
         binding.seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지
-
 
         // 자외선 지수 접고 펴기 화살표
         binding.mainUVBox.apply {
@@ -328,6 +323,9 @@ class MainActivity : BaseActivity() {
             null,
             sp.getString(lastAddress)
         )
+
+        Logger.t(TAG_R).i(sp.getString(lastAddress))
+        locationClass.writeRdbSearchLog(sp.getString(lastAddress))
 
         binding.mainGpsTitleTv.text = guardWordWrap(sp.getString(lastAddress))
         binding.mainTopBarGpsTitle.text = sp.getString(lastAddress)
@@ -559,19 +557,11 @@ class MainActivity : BaseActivity() {
                     try {
                         val formedDate = dateNow.plusDays(i.toLong())
                         val date: String = when (i) {
-                            0 -> {
-                                getString(R.string.today)
-                            }
-                            1 -> {
-                                getString(R.string.tomorrow)
-                            }
+                            0 -> { getString(R.string.today) }
+                            1 -> { getString(R.string.tomorrow) }
                             else -> {
-                                "${
-                                    convertDayOfWeekToKorean(
-                                        this,
-                                        dateNow.dayOfWeek.value + i
-                                    )
-                                }${getString(R.string.date)}"
+                                "${convertDayOfWeekToKorean(this, 
+                                    dateNow.dayOfWeek.value + i)}${getString(R.string.date)}"
                             }
                         }
                         addWeeklyWeatherItem(
@@ -633,7 +623,7 @@ class MainActivity : BaseActivity() {
             return pixelToDp(this, i)
         }
 
-        val arrowWidth = dp(binding.segmentProgress10Arrow.width) / 2
+        val arrowWidth = dp(binding.segmentProgress10Arrow.width) / 2 - dp(2)
 
         if (sort == "25") {
             val widthDp = pixelToDp(this, binding.segmentProgress2p5Bar.width)
@@ -642,14 +632,14 @@ class MainActivity : BaseActivity() {
 
             if (value > 125) {
                 params.setMargins(
-                    widthDp - arrowWidth - dp(2),
+                    widthDp - arrowWidth,
                     dp(15),
                     arrowWidth,
                     0
                 ) // 왼쪽, 위, 오른쪽, 아래 순서
             } else {
                 params.setMargins(
-                    value * widthDp / dp(125) - arrowWidth - dp(2),
+                    value * widthDp / dp(125) - arrowWidth,
                     dp(15),
                     arrowWidth,
                     0
@@ -734,13 +724,13 @@ class MainActivity : BaseActivity() {
     private fun applySkyImg(rain: String?, sky: String?, thunder: Double?): Drawable? {
         return if (rain != "없음") {
             if ((thunder == null) || (thunder < 0.2)) {
-                getRainType(this, rain!!)
+                getRainType(this, rain!!)!!
             } else {
                 ResourcesCompat.getDrawable(resources, R.drawable.ico_thunder, null)
             }
         } else {
             if ((thunder == null) || (thunder < 0.2)) {
-                getSkyImg(this, sky!!)
+                getSkyImg(this, sky!!)!!
             } else {
                 ResourcesCompat.getDrawable(resources, R.drawable.ico_thunder_rain, null)
             }
@@ -881,7 +871,7 @@ class MainActivity : BaseActivity() {
                                         null
                                     )
 
-                                    locationClass.writeRdbLog(
+                                    locationClass.writeRdbCurrentLog(
                                         loc.latitude,
                                         loc.longitude,
                                         locationClass.formattingFullAddress(addr)
@@ -897,7 +887,7 @@ class MainActivity : BaseActivity() {
                                 } else {
                                     Toast.makeText(
                                         this@MainActivity,
-                                        "위치정보 갱신 실패",
+                                        getString(R.string.fail_to_get_gps),
                                         Toast.LENGTH_SHORT
                                     )
                                         .show()
@@ -932,7 +922,7 @@ class MainActivity : BaseActivity() {
                             addr.replaceFirst(" ", "").replace(getString(R.string.korea), "")
                         )
                         getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
-                        locationClass.writeRdbLog(loc.latitude, loc.longitude, "NetWork - $addr")
+                        locationClass.writeRdbCurrentLog(loc.latitude, loc.longitude, "NetWork - $addr")
                         binding.mainGpsTitleTv.text =
                             guardWordWrap(locationClass.formattingFullAddress(addr))
                         binding.mainTopBarGpsTitle.text = locationClass.formattingFullAddress(addr)

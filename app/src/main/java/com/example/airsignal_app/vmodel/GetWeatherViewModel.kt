@@ -34,6 +34,7 @@ class GetWeatherViewModel : BaseViewModel("날씨 데이터 호출") {
 
     // LiveData 에 MutableLiveData 값 적용 후 View 에 전달
     fun getDataResult(): LiveData<ApiModel.GetEntireData> {
+
         getDataResultData = repo._getDataResult
         return getDataResultData
     }
