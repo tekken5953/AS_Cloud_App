@@ -411,46 +411,39 @@ class MainActivity : BaseActivity() {
             isBackPressed = false
         }, 2000)
 
-//        if (!sidMenuAlert.isShowing)
-//            sidMenuAlert.show()
-//        else
-//            sidMenuAlert.hide()
-
-
-
 //        addExitDialog()
     }
 
-    private fun addExitDialog() {
-        val builder = AlertDialog.Builder(this)
-        val view = LayoutInflater.from(this).inflate(R.layout.dialog_exit_app,null)
-        val nativeAdView: com.google.android.gms.ads.nativead.NativeAdView = view.findViewById(R.id.exitNativeAdView)
-        val yesBtn: AppCompatButton = view.findViewById(R.id.exitYesBtn)
-        val noBtn: AppCompatButton = view.findViewById(R.id.exitNoBtn)
-        val nativeAd = NativeAdViewClass(this@MainActivity)
-
-        val title: TextView = view.findViewById(R.id.nativeAdTitle)
-        val description: ImageView = view.findViewById(R.id.nativeAdDescription)
-        builder.setView(view)
-        val alertDialog = builder.create()
-        exitDialog = alertDialog
-
-        CoroutineScope(Dispatchers.Default).launch {
-            nativeAd.load(nativeAdView, title, description)
-        }
-
-        yesBtn.setOnClickListener {
-            sp.removeKey(lastAddress)
-            alertDialog.dismiss()
-            EnterPageUtil(this).fullyExit()
-        }
-
-        noBtn.setOnClickListener {
-            alertDialog.dismiss()
-        }
-
-        alertDialog.show()
-    }
+//    private fun addExitDialog() {
+//        val builder = AlertDialog.Builder(this)
+//        val view = LayoutInflater.from(this).inflate(R.layout.dialog_exit_app,null)
+//        val nativeAdView: com.google.android.gms.ads.nativead.NativeAdView = view.findViewById(R.id.exitNativeAdView)
+//        val yesBtn: AppCompatButton = view.findViewById(R.id.exitYesBtn)
+//        val noBtn: AppCompatButton = view.findViewById(R.id.exitNoBtn)
+//        val nativeAd = NativeAdViewClass(this@MainActivity)
+//
+//        val title: TextView = view.findViewById(R.id.nativeAdTitle)
+//        val description: ImageView = view.findViewById(R.id.nativeAdDescription)
+//        builder.setView(view)
+//        val alertDialog = builder.create()
+//        exitDialog = alertDialog
+//
+//        CoroutineScope(Dispatchers.Default).launch {
+//            nativeAd.load(nativeAdView, title, description)
+//        }
+//
+//        yesBtn.setOnClickListener {
+//            sp.removeKey(lastAddress)
+//            alertDialog.dismiss()
+//            EnterPageUtil(this).fullyExit()
+//        }
+//
+//        noBtn.setOnClickListener {
+//            alertDialog.dismiss()
+//        }
+//
+//        alertDialog.show()
+//    }
 
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel(): MainActivity {
@@ -592,7 +585,7 @@ class MainActivity : BaseActivity() {
                         } else if (i == 0) {
                             addDailyWeatherItem(
                                 "${forecastToday.hour}${getString(R.string.hour)}",
-                                applySkyImg(current.rainType, dailyIndex.sky, null)!!,
+                                applySkyImg(current.rainType, dailyIndex.sky, thunder)!!,
                                 "${current.temperature.roundToInt()}˚",
                                 convertDateAppendZero(forecastToday)
                             )
@@ -602,7 +595,7 @@ class MainActivity : BaseActivity() {
                                 applySkyImg(
                                     dailyIndex.rainType,
                                     dailyIndex.sky,
-                                    null
+                                    thunder
                                 )!!,
                                 "${dailyIndex.temp.roundToInt()}˚",
                                 convertDateAppendZero(forecastToday)
@@ -899,14 +892,14 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    // API 호출 TimeOut Exception Class
-    class CustomTimeOutException : SocketTimeoutException() {
-        override fun getLocalizedMessage(): String? {
-            MainActivity().hidePB()
-            Toast.makeText(MainActivity(), "TimeOut Exception", Toast.LENGTH_SHORT).show()
-            return super.getLocalizedMessage()
-        }
-    }
+//    // API 호출 TimeOut Exception Class
+//    class CustomTimeOutException : SocketTimeoutException() {
+//        override fun getLocalizedMessage(): String? {
+//            MainActivity().hidePB()
+//            Toast.makeText(MainActivity(), "TimeOut Exception", Toast.LENGTH_SHORT).show()
+//            return super.getLocalizedMessage()
+//        }
+//    }
 
     // 현재 위치정보를 받아오고 데이터 갱신
     @SuppressLint("MissingPermission", "SuspiciousIndentation")

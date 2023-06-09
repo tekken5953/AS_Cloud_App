@@ -120,7 +120,7 @@ object ConvertDataType {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.rain_snow, null)
             }
             "소나기" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_per, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy, null)
             }
             else -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
@@ -135,13 +135,13 @@ object ConvertDataType {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.ico_sunny, null)
             }
             "구름많음" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.cloudy, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.cloud2_test, null)
             }
             "흐림" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.ico_cloud, null)
             }
             "소나기", "비" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_per, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy, null)
             }
             "구름많고 눈", "눈", "흐리고 눈" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.snow, null)

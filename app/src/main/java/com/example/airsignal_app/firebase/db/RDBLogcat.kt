@@ -101,4 +101,13 @@ object RDBLogcat {
             .child(millsToString(getCurrentTime(), "HH:mm:ss"))
             .setValue(log)
     }
+
+    fun writeBadRequest(sort: String, log: String) {
+        myRef.child("Retrofit Error")
+            .child(sort)
+            .child(millsToString(getCurrentTime(), "yyyy-MM-dd"))
+            .child(millsToString(getCurrentTime(), "HH:mm:ss"))
+            .setValue(log)
+    }
+
 }

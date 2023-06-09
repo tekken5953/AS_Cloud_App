@@ -28,11 +28,13 @@ class GetWeatherRepo : BaseRepository() {
                 call: Call<ApiModel.GetEntireData>,
                 response: Response<ApiModel.GetEntireData>
             ) {
-                loadSuccessMapData(_getDataResult, response)
-                Logger.t("Timber").d(response.body().toString())
+                CoroutineScope(Dispatchers.IO).launch {
+                    loadSuccessMapData(_getDataResult, response)
+                    Logger.t("Timber").d(response.body().toString())
+                }
             }
             override fun onFailure(call: Call<ApiModel.GetEntireData>, t: Throwable) {
-                Logger.e("날씨 데이터 호출 실패 : " + t.localizedMessage + "\n" + t.stackTraceToString())
+                Logger.t("Timber").e("날씨 데이터 호출 실패 : " + t.stackTraceToString())
                 call.timeout()
                 call.cancel()
             }
