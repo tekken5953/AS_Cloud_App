@@ -106,4 +106,6 @@
     <string name="fail_to_get_gps">위치를 불러오는데 실패했습니다</string>
     <string name="thunder_sunny">번개,뇌우</string>
     <string name="thunder_rainy">비/번개</string>
+    <string name="cancel">취소</string>
+    <string name="exit">종료</string>
 </resources>

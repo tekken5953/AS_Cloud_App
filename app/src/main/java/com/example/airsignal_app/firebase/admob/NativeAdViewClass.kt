@@ -1,8 +1,6 @@
 package com.example.airsignal_app.firebase.admob
 
 import android.app.Activity
-import android.util.Log
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.airsignal_app.R
@@ -14,6 +12,7 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
+import io.supercharge.shimmerlayout.ShimmerLayout
 import timber.log.Timber
 
 /**

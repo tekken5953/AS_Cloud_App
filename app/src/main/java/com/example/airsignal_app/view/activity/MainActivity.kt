@@ -70,6 +70,7 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import io.supercharge.shimmerlayout.ShimmerLayout
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.net.SocketTimeoutException
@@ -398,17 +399,17 @@ class MainActivity : BaseActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-//        if (!isBackPressed) {
-//            ToastUtils(this)
-//                .showMessage(getString(R.string.back_press), 2)
-//            isBackPressed = true
-//        } else {
-//            sp.removeKey(lastAddress)
-//            EnterPageUtil(this).fullyExit()
-//        }
-//        Handler(Looper.getMainLooper()).postDelayed({
-//            isBackPressed = false
-//        }, 2000)
+        if (!isBackPressed) {
+            ToastUtils(this)
+                .showMessage(getString(R.string.back_press), 2)
+            isBackPressed = true
+        } else {
+            sp.removeKey(lastAddress)
+            EnterPageUtil(this).fullyExit()
+        }
+        Handler(Looper.getMainLooper()).postDelayed({
+            isBackPressed = false
+        }, 2000)
 
 //        if (!sidMenuAlert.isShowing)
 //            sidMenuAlert.show()
@@ -417,8 +418,7 @@ class MainActivity : BaseActivity() {
 
 
 
-//        exitDialog.show()
-        addExitDialog()
+//        addExitDialog()
     }
 
     private fun addExitDialog() {
@@ -427,6 +427,7 @@ class MainActivity : BaseActivity() {
         val nativeAdView: com.google.android.gms.ads.nativead.NativeAdView = view.findViewById(R.id.exitNativeAdView)
         val yesBtn: AppCompatButton = view.findViewById(R.id.exitYesBtn)
         val noBtn: AppCompatButton = view.findViewById(R.id.exitNoBtn)
+        val nativeAd = NativeAdViewClass(this@MainActivity)
 
         val title: TextView = view.findViewById(R.id.nativeAdTitle)
         val description: ImageView = view.findViewById(R.id.nativeAdDescription)
@@ -435,7 +436,7 @@ class MainActivity : BaseActivity() {
         exitDialog = alertDialog
 
         CoroutineScope(Dispatchers.Default).launch {
-            NativeAdViewClass(this@MainActivity).load(nativeAdView, title, description)
+            nativeAd.load(nativeAdView, title, description)
         }
 
         yesBtn.setOnClickListener {
