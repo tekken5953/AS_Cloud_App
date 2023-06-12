@@ -8,10 +8,11 @@ import android.view.*
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.IgnoredKeyFile
-import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.util.ConvertDataType
 import com.example.airsignal_app.util.RefreshUtils
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserProfileImage
+import com.example.airsignal_app.util.`object`.SetSystemInfo
 
 /**
  * @author : Lee Jae Young
@@ -70,30 +71,28 @@ class SideMenuBuilder(private val activity: Activity) {
     }
 
     fun setUserData(profile: ImageView, Id: TextView): SideMenuBuilder {
-        val sp = SharedPreferenceManager(activity)
         Glide.with(activity)
-            .load(Uri.parse(SharedPreferenceManager(activity).getString(IgnoredKeyFile.userProfile)))
+            .load(Uri.parse(getUserProfileImage(activity)))
             .into(profile)
 
-        if (sp.getString(IgnoredKeyFile.userEmail) != "") {
-            Id.text =
-                sp.getString(IgnoredKeyFile.userEmail)
-        } else Id.text =
-            activity.getString(R.string.please_login)
+        val email = getUserEmail(activity)
+        if (email != "") {
+            Id.text = email
+        } else Id.text = activity.getString(R.string.please_login)
 
         return this
     }
 
     private fun setFontScale(): SideMenuBuilder {
-        when (SharedPreferenceManager(builder.context).getString("scale")) {
+        when (getUserFontScale(activity)) {
             "small" -> {
-                ConvertDataType.setTextSizeSmall(builder.context)
+                SetSystemInfo.setTextSizeSmall(builder.context)
             }
             "big" -> {
-                ConvertDataType.setTextSizeLarge(builder.context)
+                SetSystemInfo.setTextSizeLarge(builder.context)
             }
             else -> {
-                ConvertDataType.setTextSizeDefault(builder.context)
+                SetSystemInfo.setTextSizeDefault(builder.context)
             }
         }
         return this

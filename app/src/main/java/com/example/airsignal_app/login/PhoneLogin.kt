@@ -6,9 +6,12 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import com.example.airsignal_app.dao.IgnoredKeyFile
-import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.RefreshUtils
+import com.example.airsignal_app.util.`object`.GetAppInfo.getLoginVerificationCode
+import com.example.airsignal_app.util.`object`.SetAppInfo.setLoginVerificationCode
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserEmail
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLoginPlatform
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserProfile
 import com.firebase.ui.auth.AuthUI
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -31,7 +34,6 @@ class PhoneLogin(
 ) {
 
     private val auth = FirebaseAuth.getInstance()
-    private val sp by lazy { SharedPreferenceManager(activity) }
 
     /** 로그인 **/
     fun login(phoneNumber: String) {
@@ -73,8 +75,8 @@ class PhoneLogin(
             //     user action.
             Log.d("phone_tag", "onVerificationCompleted:${credential.signInMethod}")
 
-            sp.setString("verificationCode", credential.smsCode.toString())
-                .setString(IgnoredKeyFile.lastLoginPlatform, "phone")
+            setLoginVerificationCode(activity,credential.smsCode.toString())
+            setUserLoginPlatform(activity,"phone")
             signInWithPhoneAuthCredential(credential)
             btnEnable()
         }
@@ -110,7 +112,7 @@ class PhoneLogin(
             btnDisable()
             msgDisable()
 
-            PhoneAuthProvider.getCredential(verificationId, sp.getString("verificationCode"))
+            PhoneAuthProvider.getCredential(verificationId, getLoginVerificationCode(activity))
             // Save verification ID and resending token so we can use them later
 //            SharedPreferenceManager(activity).setString("verificationId",verificationId)
 //            SharedPreferenceManager(activity).setString("phoneLoginToken",token.toString())
@@ -139,8 +141,8 @@ class PhoneLogin(
             .addOnSuccessListener { result ->
                 Log.d("phone_tag", "signInWithCredential:success")
                 Log.d("phone_tag", "success : ${result.user?.phoneNumber}")
-                sp.setString(IgnoredKeyFile.userEmail, result.user?.phoneNumber.toString())
-                    .setString(IgnoredKeyFile.userProfile, result.user?.photoUrl.toString())
+                setUserEmail(activity, result.user?.phoneNumber.toString())
+                setUserProfile(activity, result.user?.photoUrl.toString())
                 Toast.makeText(activity, "$result", Toast.LENGTH_SHORT).show()
             }
     }

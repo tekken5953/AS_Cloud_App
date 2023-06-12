@@ -11,7 +11,6 @@ import android.widget.EditText
  * @since : 2023-05-11 오후 1:12
  **/
 class KeyboardController {
-
     // 키보드 올리기
     fun onKeyboardUp(context: Context, et: EditText) {
         Handler(Looper.getMainLooper()).postDelayed({
@@ -24,6 +23,6 @@ class KeyboardController {
     // 키보드 내리기
     fun onKeyboardDown(context: Context, et: EditText) {
         val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(et.windowToken, InputMethodManager.SHOW_IMPLICIT)
+        inputMethodManager.hideSoftInputFromWindow(et.windowToken, InputMethodManager.HIDE_IMPLICIT_ONLY)
     }
 }

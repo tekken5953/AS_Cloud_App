@@ -28,11 +28,16 @@
         tools:replace="android:icon,android:label">
         <activity
             android:name=".view.activity.RedirectPermissionActivity"
-            android:exported="false"
+            android:exported="true"
             android:hardwareAccelerated="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".view.activity.SplashActivity"
@@ -42,11 +47,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".view.activity.SettingActivity"

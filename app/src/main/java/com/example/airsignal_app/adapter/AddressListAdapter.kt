@@ -11,10 +11,9 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
-import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.repository.GpsRepository
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 
 /**
  * @author : Lee Jae Young
@@ -61,7 +60,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
             val db = GpsRepository(context)
 
             address.text = dao
-            if (dao == SharedPreferenceManager(context).getString(lastAddress)) {
+            if (dao == getUserLastAddress(context)) {
                 checked.visibility = View.VISIBLE
             } else {
                 checked.visibility = View.GONE

@@ -1,11 +1,10 @@
 package com.example.airsignal_app.firebase.db
 
 import android.app.Activity
-import com.example.airsignal_app.util.ConvertDataType.formatEmailToRDB
-import com.example.airsignal_app.util.ConvertDataType.getCurrentTime
-import com.example.airsignal_app.util.ConvertDataType.millsToString
-import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
-import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.util.`object`.DataTypeParser.formatEmailToRDB
+import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
+import com.example.airsignal_app.util.`object`.DataTypeParser.millsToString
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserEmail
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.kakao.sdk.user.UserApiClient
@@ -50,7 +49,7 @@ object RDBLogcat {
         fun sendLogInWithEmailForKakao(activity: Activity, isSuccess: String, sort: String, isAuto: String) {
             UserApiClient.instance.me { user, _ ->
                 val email = user!!.kakaoAccount!!.email.toString()
-                SharedPreferenceManager(activity).setString(userEmail, email)
+                setUserEmail(activity, email)
                 writeLog(
                     email,
                     isSuccess,

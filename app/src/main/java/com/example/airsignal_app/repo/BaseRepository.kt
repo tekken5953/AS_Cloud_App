@@ -4,15 +4,10 @@ import androidx.lifecycle.MutableLiveData
 import com.example.airsignal_app.dao.StaticDataObject.CODE_INVALID_TOKEN
 import com.example.airsignal_app.dao.StaticDataObject.CODE_SERVER_DOWN
 import com.example.airsignal_app.dao.StaticDataObject.CODE_SERVER_OK
-import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.retrofit.HttpClient
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import retrofit2.Response
-import java.io.IOException
 
 open class BaseRepository {
     private val httpClient = HttpClient
@@ -64,24 +59,14 @@ open class BaseRepository {
                     Logger.w("통신 성공 but 예상치 못한 에러 발생: ${response.code()}")
                 }
             }
-        } catch (e: java.lang.NumberFormatException) {
-            e.printStackTrace()
-            RDBLogcat.writeBadRequest(
-                "NumberFormatException",
-                "Error body : ${
-                    response.errorBody().toString()
-                }\nStack Trace : ${e.stackTraceToString()}"
-            )
-        } catch (e: java.lang.NullPointerException) {
-            e.printStackTrace()
-            RDBLogcat.writeBadRequest(
-                "NullPointerException",
-                "Error body : ${
-                    response.errorBody().toString()
-                }\nStack Trace : ${e.stackTraceToString()}"
-            )
         } catch (e: Exception) {
             e.printStackTrace()
+            RDBLogcat.writeBadRequest(
+                "Http Error",
+                "Error body : ${
+                    response.errorBody().toString()
+                }\nStack Trace : ${e.stackTraceToString()}"
+            )
         }
     }
 

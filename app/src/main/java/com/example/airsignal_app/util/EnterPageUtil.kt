@@ -2,8 +2,7 @@ package com.example.airsignal_app.util
 
 import android.app.Activity
 import android.content.Intent
-import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
-import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLoginPlatform
 import com.example.airsignal_app.view.activity.LoginActivity
 import com.example.airsignal_app.view.activity.MainActivity
 import kotlin.system.exitProcess
@@ -25,7 +24,7 @@ class EnterPageUtil(private val activity: Activity) {
      */
     fun toMain(sort: String?) {
         sort?.let {
-            SharedPreferenceManager(activity).setString(lastLoginPlatform, it)
+            setUserLoginPlatform(activity, it)
         }
         val intent = Intent(activity, MainActivity::class.java)
         System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료

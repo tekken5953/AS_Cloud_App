@@ -1,84 +1,25 @@
-package com.example.airsignal_app.util
+package com.example.airsignal_app.util.`object`
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.view.View
+import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
-import com.example.airsignal_app.db.SharedPreferenceManager
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-03-20 오후 4:22
  **/
-object ConvertDataType {
-    /** 국가를 대한민국으로 설정합니다 **/
-    fun setLocaleToKorea(context: Context) {
-        val configuration = context.resources.configuration
-        configuration.setLocale(Locale.KOREA)
-        @Suppress("DEPRECATION")
-        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
-    }
-
-    /** 국가를 영어권으로 설정합니다 **/
-    fun setLocaleToEnglish(context: Context) {
-        val configuration = context.resources.configuration
-        configuration.setLocale(Locale.ENGLISH)
-        @Suppress("DEPRECATION")
-        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
-    }
-
-    /** 국가를 시스템으로 설정합니다 **/
-    fun setLocaleToSystem(context: Context) {
-        val configuration = context.resources.configuration
-        configuration.setLocale(Locale.getDefault())
-        @Suppress("DEPRECATION")
-        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
-    }
-
-    /** 폰트 크기를 작게 변경 **/
-    fun setTextSizeSmall(context: Context) {
-        val configuration = context.resources.configuration
-        configuration.fontScale = 0.7f
-        @Suppress("DEPRECATION")
-        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
-    }
-
-    /** 폰트 크기를 크게 변경 **/
-    fun setTextSizeLarge(context: Context) {
-        val configuration = context.resources.configuration
-        configuration.fontScale = 1.3f
-        @Suppress("DEPRECATION")
-        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
-    }
-
-    /** 폰트 크기를 기본으로 변경 **/
-    fun setTextSizeDefault(context: Context) {
-        val configuration = context.resources.configuration
-        configuration.fontScale = 1f
-        @Suppress("DEPRECATION")
-        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
-    }
+object DataTypeParser {
 
     /** pixel을 DP로 변환 **/
     fun pixelToDp(context: Context, px: Int): Int {
         return px / (context.resources.displayMetrics.densityDpi / 160)
-    }
-
-    /** 화면을 풀 스크린으로 사용합니다 **/
-    @Suppress("DEPRECATION")
-    fun setFullScreenMode(activity: Activity) {
-        activity.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
     }
 
     /** 현재시간 불러오기 **/
@@ -108,7 +49,7 @@ object ConvertDataType {
     }
 
     /** rain type에 따른 이미지 설정 **/
-    fun getRainType(context: Context, rain: String?): Drawable? {
+    fun getRainTypeLarge(context: Context, rain: String?): Drawable? {
         return when (rain) {
             "비" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.rainy_test, null)
@@ -129,16 +70,28 @@ object ConvertDataType {
     }
 
     /** sky value에 따른 이미지 설정 **/
-    fun getSkyImg(context: Context, sky: String?): Drawable? {
+    fun getSkyImgLarge(context: Context, sky: String?, isNight: Boolean): Drawable? {
         return when (sky) {
             "맑음" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.ico_sunny, null)
+                if (!isNight) {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.ico_sunny, null)
+                } else {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.main_moon, null)
+                }
             }
             "구름많음" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.cloud2_test, null)
+                if (!isNight) {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.cloud2_test, null)
+                } else {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.cloud2_test, null)
+                }
             }
             "흐림" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.ico_cloud, null)
+                if (!isNight) {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.ico_cloud, null)
+                } else {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.ico_cloud, null)
+                }
             }
             "소나기", "비" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy, null)
@@ -158,16 +111,68 @@ object ConvertDataType {
         }
     }
 
-//    /** 등급에 따른 텍스트 변환 **/
-//    private fun getDataString(context: Context, grade: Int): String {
-//        return when (grade) {
-//            0 -> context.getString(R.string.progress_good)
-//            1 -> context.getString(R.string.progress_normal)
-//            2 -> context.getString(R.string.progress_bad)
-//            3 -> context.getString(R.string.progress_worst)
-//            else -> ""
-//        }
-//    }
+    /** rain type에 따른 이미지 설정 **/
+    fun getRainTypeSmall(context: Context, rain: String?): Drawable? {
+        return when (rain) {
+            "비" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudrain, null)
+            }
+            "눈" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.sm_snow, null)
+            }
+            "비/눈" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudsnow, null)
+            }
+            "소나기" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.sm_rainy, null)
+            }
+            else -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
+            }
+        }
+    }
+
+    /** sky value에 따른 이미지 설정 **/
+    fun getSkyImgSmall(context: Context, sky: String?, isNight: Boolean): Drawable? {
+        return when (sky) {
+            "맑음" -> {
+                if (!isNight) {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.sm_good, null)
+                } else {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.sm_good_n, null)
+                }
+            }
+            "구름많음" -> {
+                if (!isNight) {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudy, null)
+                } else {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudy_n, null)
+                }
+            }
+            "흐림" -> {
+                if (!isNight) {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.sm_more_cloudy, null)
+                } else {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.sm_more_cloudy_n, null)
+                }
+            }
+            "소나기", "비" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.sm_rainy, null)
+            }
+            "구름많고 눈", "눈", "흐리고 눈" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.sm_snow, null)
+            }
+            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudrain, null)
+            }
+            "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudsnow, null)
+            }
+            else -> {
+                ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
+            }
+        }
+    }
 
     /** 등급에 따른 색상 변환 **/
     fun getDataColor(context: Context, grade: Int): Int {
@@ -201,18 +206,8 @@ object ConvertDataType {
 
     /** 주소 포멧팅 **/
     fun convertAddress(addr: String): String {
-        return addr.replace("특별시", "시").replace("광역시", "시").replace("제주특별자치도", "제주도")
-    }
-
-    /** 현재 설정된 국가를 반환 **/
-    fun getLocale(context: Context): Locale {
-        return if (SharedPreferenceManager(context).getString(userLocation) == context.getString(R.string.korean)) {
-            Locale.KOREA
-        } else if (SharedPreferenceManager(context).getString(userLocation) == context.getString(R.string.english)) {
-            Locale.ENGLISH
-        } else {
-            Locale.getDefault()
-        }
+        return addr.replace("특별시", "시").replace("광역시", "시")
+            .replace("제주특별자치도", "제주도")
     }
 
     /** HH:mm 포맷의 시간을 분으로 변환 **/
@@ -262,5 +257,11 @@ object ConvertDataType {
             "위험" -> {context.getString(R.string.uv_caution)}
             else -> {""}
         }
+    }
+
+    /** LocalDateTime을 Long으로 파싱 **/
+    fun convertLocalDateTimeToLong(localDateTime: LocalDateTime): Long {
+        return localDateTime.atZone(
+            ZoneId.systemDefault()).toInstant().toEpochMilli()
     }
 }

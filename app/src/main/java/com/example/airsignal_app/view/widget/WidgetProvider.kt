@@ -16,8 +16,8 @@ import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient
-import com.example.airsignal_app.util.ConvertDataType
-import com.example.airsignal_app.util.ConvertDataType.currentDateTimeString
+import com.example.airsignal_app.util.`object`.DataTypeParser
+import com.example.airsignal_app.util.`object`.DataTypeParser.currentDateTimeString
 import com.example.airsignal_app.view.activity.MainActivity
 import com.orhanobut.logger.Logger
 import retrofit2.Call
@@ -92,8 +92,8 @@ open class WidgetProvider : AppWidgetProvider() {
 
                         setTextViewText(R.id.widgetTempValue, "${responseData!!.body()!!.realtime[0].temp.toInt()}˚")
                         setTextViewText(R.id.widgetPmValue, responseData!!.body()!!.quality.pm10Value.toInt().toString())
-                        setImageViewBitmap(R.id.widgetSkyImg,(ConvertDataType.getSkyImg(context,responseData!!.body()!!.realtime[0].sky) as BitmapDrawable).bitmap)
-                        setTextViewText(R.id.widgetTimeStamp, ConvertDataType.millsToString(db.timeStamp,"HH시 mm분"))
+                        setImageViewBitmap(R.id.widgetSkyImg,(DataTypeParser.getSkyImgLarge(context,responseData!!.body()!!.realtime[0].sky,false) as BitmapDrawable).bitmap)
+                        setTextViewText(R.id.widgetTimeStamp, DataTypeParser.millsToString(db.timeStamp,"HH시 mm분"))
                         setTextViewText(R.id.widgetAddress," · ${db.addr!!.split(" ").last()}")
 
 //                setTextColor(R.id.widgetContentPM,ResourcesCompat.getColor(context.resources,

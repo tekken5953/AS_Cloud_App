@@ -16,6 +16,7 @@ import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
 import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.RefreshUtils
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider
 import com.kakao.sdk.auth.model.OAuthToken
@@ -37,7 +38,6 @@ import kotlinx.coroutines.launch
  **/
 
 class KakaoLogin(private val activity: Activity) {
-    private var sp: SharedPreferenceManager = SharedPreferenceManager(activity)
 
     init {
         KakaoSdk.init(activity, KAKAO_NATIVE_APP_KEY)
@@ -93,7 +93,7 @@ class KakaoLogin(private val activity: Activity) {
         if (error != null) {
             Logger.t(TAG_LOGIN).e("로그인 실패 : Cause is $error")
             sendLogToFail(
-                sp.getString(userEmail),
+                getUserEmail(activity),
                 "로그인 실패",
                 error.toString())
         } else {
@@ -169,7 +169,8 @@ class KakaoLogin(private val activity: Activity) {
     private fun saveUserSettings() {
         UserApiClient.instance.me { user, _ ->
             user?.kakaoAccount?.let { account ->
-                sp .setString(lastLoginPhone, account.phoneNumber.toString())
+                SharedPreferenceManager(activity)
+                    .setString(lastLoginPhone, account.phoneNumber.toString())
                     .setString(userId, account.profile!!.nickname.toString())
                     .setString(userProfile, account.profile!!.profileImageUrl.toString())
                     .setString(userEmail, account.email.toString())
@@ -188,7 +189,7 @@ class KakaoLogin(private val activity: Activity) {
                 if (error != null) {
                     Logger.t(TAG_LOGIN).e("로그아웃에 실패함 : $error")
                     sendLogToFail(
-                        sp.getString(userEmail),
+                        getUserEmail(activity),
                         "카카오 로그아웃 실패",
                         error.toString())
                 } else {

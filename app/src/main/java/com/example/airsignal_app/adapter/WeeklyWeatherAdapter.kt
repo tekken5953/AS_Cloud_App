@@ -9,10 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
-import com.example.airsignal_app.dao.IgnoredKeyFile.userFontScale
-import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.util.ConvertDataType
-import java.time.LocalDateTime
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
+import com.example.airsignal_app.util.`object`.SetSystemInfo
 
 /**
  * @author : Lee Jae Young
@@ -32,17 +30,17 @@ class WeeklyWeatherAdapter(
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val view: View = inflater.inflate(R.layout.list_item_weekly_weather, parent, false)
-        when(SharedPreferenceManager(context).getString(userFontScale)) {
+        when(getUserFontScale(context)) {
             "small" -> {
 //                ConvertDataType.setTextSizeLarge(view.context)
-                ConvertDataType.setTextSizeSmall(view.context)
+                SetSystemInfo.setTextSizeSmall(view.context)
             }
             "big" -> {
 //                ConvertDataType.setTextSizeSmall(view.context)
-                ConvertDataType.setTextSizeLarge(view.context)
+                SetSystemInfo.setTextSizeLarge(view.context)
             }
             else -> {
-                ConvertDataType.setTextSizeDefault(view.context)
+                SetSystemInfo.setTextSizeDefault(view.context)
             }
         }
         Thread.sleep(100)

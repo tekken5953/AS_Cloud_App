@@ -15,6 +15,7 @@ import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
 import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
 import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.RefreshUtils
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
@@ -29,7 +30,6 @@ import com.orhanobut.logger.Logger
  **/
 
 class NaverLogin(private val activity: Activity) {
-    private val sp by lazy { SharedPreferenceManager(activity) }
 
     init {
         NaverIdLoginSDK.initialize(
@@ -79,7 +79,8 @@ class NaverLogin(private val activity: Activity) {
             result.profile?.let {
                 Logger.t(TAG_LOGIN).d("네이버 로그인 성공")
 
-                 sp .setString(lastLoginPhone, it.mobile.toString())
+                SharedPreferenceManager(activity)
+                    .setString(lastLoginPhone, it.mobile.toString())
                     .setString(userId, it.name.toString())
                     .setString(userProfile, it.profileImage!!)
                     .setString(userEmail, it.email.toString())
@@ -97,7 +98,7 @@ class NaverLogin(private val activity: Activity) {
                         "errorDescription: $errorDescription"
             )
             sendLogToFail(
-                sp.getString(userEmail),
+                getUserEmail(activity),
                 "네이버 로그인 실패",
                 "$errorCode - $errorDescription")
         }
