@@ -53,8 +53,8 @@
 
             <ImageView
                 android:id="@+id/mainSideMenuIv"
-                android:layout_width="31dp"
-                android:layout_height="31dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="24dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -63,8 +63,8 @@
 
             <ImageView
                 android:id="@+id/mainAddAddress"
-                android:layout_width="31dp"
-                android:layout_height="31dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="24dp"
@@ -255,7 +255,7 @@
                         android:text="@string/daily_weather"
                         android:textColor="#4F4F4F"
                         android:textSize="18sp"
-                        app:drawableStartCompat="@drawable/ico_time"/>
+                        app:drawableStartCompat="@drawable/ico_time" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/mainDailyWeatherRv"
@@ -388,8 +388,8 @@
                     <com.aslib.AsTextView
                         android:id="@+id/nested_pm_2p5_value"
                         style="@style/basicMediumTextView"
-                        android:layout_marginTop="10dp"
                         android:layout_below="@+id/nested_pm_2p5_grade"
+                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="4dp"
                         android:layout_toStartOf="@+id/nested_pm_2p5_unit"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
@@ -483,8 +483,8 @@
                         style="@style/basicMediumTextView"
                         android:layout_alignTop="@+id/nested_pm_10_title"
                         android:layout_alignBottom="@+id/nested_pm_10_title"
-                        android:layout_marginEnd="20dp"
                         android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="20dp"
                         android:textSize="16sp"
                         app:sort="grade" />
 

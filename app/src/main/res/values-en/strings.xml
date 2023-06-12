@@ -36,8 +36,6 @@
     <string name="save_change">Settings have been saved successfully.\nRestart the app</string>
     <string name="ok">OK</string>
     <string name="theme_system">System Theme</string>
-    <string name="pm_10">Fine dust</string>
-    <string name="pm_2p5">Aerosol</string>
     <string name="event">Event</string>
     <string name="logout_msg">Do you want to log out?</string>
     <string name="yes">Yes</string>
@@ -107,6 +105,4 @@
     <string name="fail_to_get_gps">Fail to get GPS</string>
     <string name="thunder_sunny">Rainy,Thunder</string>
     <string name="thunder_rainy">Rain/Thunder</string>
-    <string name="cancel">Cancel</string>
-    <string name="exit">Exit</string>
 </resources>

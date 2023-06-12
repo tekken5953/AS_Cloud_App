@@ -1,9 +1,6 @@
 package com.example.airsignal_app.dao
 
-import android.graphics.Color
 import android.graphics.drawable.Drawable
-import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
 
 object AdapterModel {
 
@@ -37,14 +34,6 @@ object AdapterModel {
 //        val content: String,
 //        val isNotice: Boolean
 //    )
-
-    // 디자인 테스트 - 설정
-    data class TestItem(
-        val font: String,
-        val size: String,
-        val color: String,
-        val value: String
-    )
 
 //    // 앱 버전
 //    data class AppVersionItem(

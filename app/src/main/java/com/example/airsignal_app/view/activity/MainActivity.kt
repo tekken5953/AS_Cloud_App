@@ -89,7 +89,6 @@ class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private var isBackPressed = false
-    private lateinit var exitDialog: AlertDialog
     private val sideMenuBuilder by lazy { SideMenuBuilder(this@MainActivity) }
     private val sideMenu: View by lazy {
         LayoutInflater.from(this@MainActivity).inflate(R.layout.side_menu, null)
@@ -793,12 +792,12 @@ class MainActivity : BaseActivity() {
         this.weeklyWeatherList.add(item)
     }
 
-    // 위젯 데이터 갱신
-    private fun onUpdateWidgetData() {
-        sendBroadcast(Intent(WIDGET_UPDATE_TIME).apply {
-            component = ComponentName(this@MainActivity, WidgetProvider::class.java)
-        })
-    }
+//    // 위젯 데이터 갱신
+//    private fun onUpdateWidgetData() {
+//        sendBroadcast(Intent(WIDGET_UPDATE_TIME).apply {
+//            component = ComponentName(this@MainActivity, WidgetProvider::class.java)
+//        })
+//    }
 
     // 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트
     private fun applySkyText(rain: String?, sky: String?, thunder: Double?): String {
@@ -867,13 +866,13 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    // 마지막 기호 크기 줄이기
-    private fun spanUnit(tv: TextView, s: String) {
-        val span = SpannableStringBuilder(s)
-        span.setSpan(AbsoluteSizeSpan(35),
-            s.length - 1, s.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        tv.text = span
-    }
+//    // 마지막 기호 크기 줄이기
+//    private fun spanUnit(tv: TextView, s: String) {
+//        val span = SpannableStringBuilder(s)
+//        span.setSpan(AbsoluteSizeSpan(35),
+//            s.length - 1, s.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        tv.text = span
+//    }
 
     // 미세먼지 그래프 화살표 색상 변경
     private fun setPm2p5ArrowTint(value: Int): Int {

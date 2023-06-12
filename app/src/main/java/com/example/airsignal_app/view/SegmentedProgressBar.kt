@@ -12,7 +12,7 @@ class SegmentedProgressBar(context: Context?, attributeSet: AttributeSet? = null
     private var cornerRadius = 12f // set corner radius for your segmented progress bar
 
     private val paint = Paint()
-    var strokePaint = Paint()
+    private var strokePaint = Paint()
     private var barContexts: List<BarContext> = listOf()
 
     private val segment = RectF(

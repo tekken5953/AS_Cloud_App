@@ -39,9 +39,9 @@ object GetSystemInfo {
     }
 
     @SuppressLint("HardwareIds")
-    fun androidID(activity: Context): String {
+    fun androidID(context: Context): String {
         val id = Settings.Secure.getString(
-            activity.applicationContext.contentResolver,
+            context.applicationContext.contentResolver,
             Settings.Secure.ANDROID_ID
         )
         Timber.tag("buildUserInfo").i(id)

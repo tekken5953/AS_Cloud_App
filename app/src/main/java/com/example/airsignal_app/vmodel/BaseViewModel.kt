@@ -6,7 +6,7 @@ import kotlinx.coroutines.Job
 import timber.log.Timber
 
 open class BaseViewModel(msg: String?) : ViewModel() {
-    var message = msg
+    private var message = msg
     var job: Job? = null
 
     override fun onCleared() {

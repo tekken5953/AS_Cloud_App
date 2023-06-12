@@ -12,7 +12,6 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.nativead.NativeAdView
-import io.supercharge.shimmerlayout.ShimmerLayout
 import timber.log.Timber
 
 /**

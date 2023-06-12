@@ -3,7 +3,6 @@ package com.example.airsignal_app.util.`object`
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
-import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import java.text.SimpleDateFormat
@@ -231,7 +230,7 @@ object DataTypeParser {
             "흐림" -> {context.getString(R.string.sky_cloudy)}
             "소나기" -> {context.getString(R.string.sky_shower)}
             "비" -> {context.getString(R.string.sky_rainy)}
-            "구름많고 눈" -> {context.getString(R.string.sky_sunny_cloudy_rainy)}
+            "구름많고 눈" -> {context.getString(R.string.sky_sunny_cloudy_snowy)}
             "눈" -> {context.getString(R.string.sky_snowy)}
             "흐리고 눈" -> {context.getString(R.string.sky_cloudy_snowy)}
             "구름많고 소나기" -> {context.getString(R.string.sky_sunny_cloudy_shower)}

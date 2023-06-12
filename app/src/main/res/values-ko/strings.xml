@@ -35,8 +35,6 @@
     <string name="save_change">설정을 저장하였습니다.앱을 다시 시작합니다</string>
     <string name="ok">확인</string>
     <string name="theme_system">시스템 테마</string>
-    <string name="pm_10">미세먼지</string>
-    <string name="pm_2p5">초미세먼지</string>
     <string name="event">이벤트</string>
     <string name="logout_msg">로그아웃 하시겠습니까?</string>
     <string name="yes">예</string>
@@ -106,6 +104,4 @@
     <string name="fail_to_get_gps">위치를 불러오는데 실패했습니다</string>
     <string name="thunder_sunny">번개,뇌우</string>
     <string name="thunder_rainy">비/번개</string>
-    <string name="cancel">취소</string>
-    <string name="exit">종료</string>
 </resources>
