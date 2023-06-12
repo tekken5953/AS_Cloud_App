@@ -34,7 +34,7 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_gravity="center"
-            android:src="@drawable/sunny"/>
+            android:src="@drawable/sunny_test"/>
     </FrameLayout>
 
     <androidx.appcompat.widget.AppCompatButton

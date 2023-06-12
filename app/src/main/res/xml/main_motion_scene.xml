@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<MotionScene 
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:motion="http://schemas.android.com/apk/res-auto">
 
     <Transition
@@ -15,132 +14,132 @@
             motion:maxVelocity="15"
             motion:springStopThreshold="0.3"
             motion:touchAnchorId="@id/nested_scrollview"
-            motion:touchAnchorSide="top"/>
+            motion:touchAnchorSide="top" />
 
         <OnClick
             motion:clickAction="transitionToEnd"
-            motion:targetId="@id/mainMotionSlideGuide"/>
+            motion:targetId="@id/mainMotionSlideGuide" />
 
         <KeyFrameSet>
             <KeyAttribute
-                motion:motionTarget="@id/mainMinMaxValue"
-                motion:framePosition="0"
-                motion:curveFit="linear"
                 android:scaleX="1.0"
-                android:scaleY="1.0" />
-            <KeyAttribute
-                motion:motionTarget="@id/mainMinMaxValue"
-                motion:framePosition="100"
+                android:scaleY="1.0"
                 motion:curveFit="linear"
+                motion:framePosition="0"
+                motion:motionTarget="@id/mainMinMaxValue" />
+            <KeyAttribute
                 android:scaleX="1.4"
-                android:scaleY="1.4"/>
+                android:scaleY="1.4"
+                motion:curveFit="linear"
+                motion:framePosition="100"
+                motion:motionTarget="@id/mainMinMaxValue" />
 
             <KeyAttribute
-                motion:motionTarget="@id/mainLiveTempValue"
-                motion:framePosition="0"
-                motion:curveFit="linear"
+                android:scaleX="1.0"
                 android:scaleY="1.0"
-                android:scaleX="1.0"/>
-            <KeyAttribute
-                motion:motionTarget="@id/mainLiveTempValue"
-                motion:framePosition="100"
                 motion:curveFit="linear"
+                motion:framePosition="0"
+                motion:motionTarget="@id/mainLiveTempValue" />
+            <KeyAttribute
+                android:scaleX="0.85"
                 android:scaleY="0.85"
-                android:scaleX="0.85"/>
+                motion:curveFit="linear"
+                motion:framePosition="100"
+                motion:motionTarget="@id/mainLiveTempValue" />
         </KeyFrameSet>
 
-<!--        <KeyFrameSet>-->
-<!--            <KeyAttribute-->
-<!--                motion:motionTarget="@id/mainMotionLinear"-->
-<!--                motion:framePosition="0">-->
-<!--                <CustomAttribute-->
-<!--                    motion:attributeName="backgroundColor"-->
-<!--                    motion:customColorValue="@color/black" />-->
-<!--            </KeyAttribute>-->
+        <!--        <KeyFrameSet>-->
+        <!--            <KeyAttribute-->
+        <!--                motion:motionTarget="@id/mainMotionLinear"-->
+        <!--                motion:framePosition="0">-->
+        <!--                <CustomAttribute-->
+        <!--                    motion:attributeName="backgroundColor"-->
+        <!--                    motion:customColorValue="@color/black" />-->
+        <!--            </KeyAttribute>-->
 
-<!--            <KeyAttribute-->
-<!--                motion:motionTarget="@id/mainMotionLinear"-->
-<!--                motion:framePosition="100">-->
-<!--                <CustomAttribute-->
-<!--                    motion:attributeName="backgroundColor"-->
-<!--                    motion:customColorValue="@color/white"/>-->
-<!--            </KeyAttribute>-->
-<!--        </KeyFrameSet>-->
+        <!--            <KeyAttribute-->
+        <!--                motion:motionTarget="@id/mainMotionLinear"-->
+        <!--                motion:framePosition="100">-->
+        <!--                <CustomAttribute-->
+        <!--                    motion:attributeName="backgroundColor"-->
+        <!--                    motion:customColorValue="@color/white"/>-->
+        <!--            </KeyAttribute>-->
+        <!--        </KeyFrameSet>-->
     </Transition>
 
     <ConstraintSet android:id="@+id/start">
-<!--        <Constraint-->
-<!--            android:id="@+id/topBarLinear"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            motion:layout_constraintTop_toTopOf="@+id/mainMotionLinear"-->
-<!--            android:layout_marginTop="20dp" />-->
+        <!--        <Constraint-->
+        <!--            android:id="@+id/topBarLinear"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            motion:layout_constraintTop_toTopOf="@+id/mainMotionLinear"-->
+        <!--            android:layout_marginTop="20dp" />-->
         <Constraint
             android:id="@+id/mainTopBarGpsTitle"
             style="@style/basicTextView"
-            android:textSize="14sp"
             android:alpha="0"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintTop_toTopOf="@+id/topBarLinear"
+            android:textSize="14sp"
+            motion:drawableStartCompat="@drawable/location_fill"
             motion:layout_constraintBottom_toBottomOf="@id/topBarLinear"
-            motion:drawableStartCompat="@drawable/location_fill" />
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toTopOf="@+id/topBarLinear" />
         <Constraint
             android:id="@+id/mainMotionLinear"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintTop_toTopOf="parent" />
-<!--        <Constraint-->
-<!--            android:id="@+id/bottomNav"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="0.1dp"-->
-<!--            motion:layout_constraintBottom_toBottomOf="parent"-->
-<!--            android:alpha="0"/>-->
+        <!--        <Constraint-->
+        <!--            android:id="@+id/bottomNav"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="0.1dp"-->
+        <!--            motion:layout_constraintBottom_toBottomOf="parent"-->
+        <!--            android:alpha="0"/>-->
         <Constraint
             android:id="@+id/mainGpsTitleTv"
             style="@style/basicTextView"
             android:layout_marginStart="24dp"
             android:layout_marginTop="40dp"
-            android:fontFamily="@font/spoqa_hansansneo_regular"
             android:alpha="1"
+            android:fontFamily="@font/spoqa_hansansneo_regular"
             android:gravity="start"
             android:textColor="@color/mode_black_color"
             android:textSize="20sp"
             motion:layout_constraintStart_toStartOf="@id/mainMotionLayout"
-            motion:layout_constraintTop_toBottomOf="@+id/topBarLinear"  />
+            motion:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
         <Constraint
             android:id="@+id/mainGpsFix"
-            motion:layout_constraintStart_toEndOf="@+id/mainGpsTitleTv"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:alpha="1"
-            android:layout_marginEnd="24dp"
             android:layout_marginStart="6dp"
+            android:layout_marginEnd="24dp"
+            android:alpha="1"
+            motion:layout_constraintStart_toEndOf="@+id/mainGpsTitleTv"
             motion:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv" />
         <Constraint
             android:id="@+id/mainSkyImg"
             android:layout_width="184dp"
             android:layout_height="184dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintTop_toTopOf="parent"
-            motion:layout_constraintBottom_toBottomOf="parent"/>
+            motion:layout_constraintTop_toTopOf="parent" />
         <Constraint
             android:id="@+id/mainSkyText"
             style="@style/basicTextView"
             android:layout_marginTop="5dp"
+            android:alpha="1"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:alpha="1"
             motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             motion:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
         <Constraint
             android:id="@+id/mainLiveTempMinus"
-            motion:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
-            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             android:visibility="gone"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            motion:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
             motion:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
         <Constraint
             android:id="@+id/mainLiveTempValue"
@@ -165,33 +164,33 @@
             android:id="@+id/mainCompareTempTv"
             style="@style/basicTextView"
             android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
+            android:alpha="1"
             android:textColor="@color/mode_black_color"
             android:textSize="16sp"
-            android:alpha="1"
-            android:layout_marginEnd="5dp"
             motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
-            motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"  />
+            motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue" />
         <Constraint
             android:id="@+id/mainMinMaxTitle"
             style="@style/basicTextView"
-            android:text="최저/최고"
+            android:layout_marginTop="3dp"
             android:layout_marginEnd="15dp"
+            android:alpha="1"
+            android:text="최저/최고"
             android:textColor="@color/mode_black_90"
             android:textSize="14sp"
-            android:layout_marginTop="3dp"
-            motion:layout_constraintEnd_toStartOf="@id/mainMinMaxValue"
-            motion:layout_constraintTop_toTopOf="@+id/mainMinMaxValue"
             motion:layout_constraintBottom_toBottomOf="@id/mainMinMaxValue"
-            android:alpha="1"/>
+            motion:layout_constraintEnd_toStartOf="@id/mainMinMaxValue"
+            motion:layout_constraintTop_toTopOf="@+id/mainMinMaxValue" />
         <Constraint
             android:id="@+id/mainMinMaxValue"
             style="@style/basicTextView"
-            motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
-            motion:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="5dp"
             android:textColor="#70FFFFFF"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
+            motion:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv" />
         <Constraint
             android:id="@+id/mainNotiMsgTv"
             style="@style/basicTextView"
@@ -199,13 +198,13 @@
             android:layout_marginStart="50dp"
             android:layout_marginTop="50dp"
             android:layout_marginEnd="50dp"
+            android:alpha="1"
             android:background="@drawable/main_noti_text"
             android:text="도움말 테스트 텍스트"
             android:textColor="@color/white"
             android:textSize="14sp"
-            android:alpha="1"
-            motion:motionProgress="1"
-            motion:layout_constraintTop_toBottomOf="@+id/mainSkyText"  />
+            motion:layout_constraintTop_toBottomOf="@+id/mainSkyText"
+            motion:motionProgress="1" />
         <Constraint
             android:id="@+id/mainPmBoxTL"
             android:layout_width="match_parent"
@@ -213,9 +212,9 @@
             android:layout_marginStart="50dp"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="50dp"
+            android:alpha="1"
             android:background="@drawable/pm_motion_box_bg"
             android:gravity="center"
-            android:alpha="1"
             motion:layout_constraintTop_toBottomOf="@+id/mainNotiMsgTv" />
         <Constraint
             android:id="@+id/mainSubWeatherTL"
@@ -224,81 +223,81 @@
             android:layout_marginStart="50dp"
             android:layout_marginTop="22dp"
             android:layout_marginEnd="50dp"
-            android:gravity="center"
             android:alpha="1"
-            motion:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL"/>
+            android:gravity="center"
+            motion:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL" />
         <Constraint
             android:id="@+id/mainMotionSlideGuide"
             style="@style/basicTextView"
             android:layout_marginBottom="5dp"
+            android:alpha="1"
             android:text="날씨 정보 더보기"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:alpha="1"
             motion:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg"
             motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"/>
+            motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
         <Constraint
             android:id="@+id/mainMotionSLideImg"
-            motion:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:alpha="1"
             motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
+            motion:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
             motion:layout_constraintStart_toStartOf="@+id/mainMotionLayout" />
 
         <Constraint
             android:id="@+id/nested_fab"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/fab_bg"
-            android:src="@drawable/arrow_top"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
-            motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintBottom_toBottomOf="parent"/>
+            android:background="@drawable/fab_bg"
+            android:src="@drawable/arrow_top"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent" />
     </ConstraintSet>
 
 
     <ConstraintSet android:id="@+id/end">
-<!--        <Constraint-->
-<!--            android:id="@+id/topBarLinear"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            motion:layout_constraintBottom_toTopOf="@+id/mainMotionLayout" />-->
+        <!--        <Constraint-->
+        <!--            android:id="@+id/topBarLinear"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            motion:layout_constraintBottom_toTopOf="@+id/mainMotionLayout" />-->
         <Constraint
             android:id="@+id/mainTopBarGpsTitle"
             style="@style/basicTextView"
-            android:textSize="14sp"
             android:alpha="1"
-            android:maxEms="15"
             android:ellipsize="start"
             android:lines="1"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintTop_toTopOf="@+id/topBarLinear"
+            android:maxEms="15"
+            android:textSize="14sp"
+            motion:drawableStartCompat="@drawable/location_fill"
             motion:layout_constraintBottom_toBottomOf="@id/topBarLinear"
-            motion:drawableStartCompat="@drawable/location_fill"  />
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toTopOf="@+id/topBarLinear" />
         <Constraint
             android:id="@+id/mainMotionLinear"
             android:layout_width="match_parent"
             android:layout_height="170dp"
             android:orientation="vertical"
             motion:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
-<!--        <Constraint-->
-<!--            android:id="@+id/bottomNav"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="55dp"-->
-<!--            motion:layout_constraintBottom_toBottomOf="parent"-->
-<!--            android:alpha="1"/>-->
+        <!--        <Constraint-->
+        <!--            android:id="@+id/bottomNav"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="55dp"-->
+        <!--            motion:layout_constraintBottom_toBottomOf="parent"-->
+        <!--            android:alpha="1"/>-->
         <Constraint
             android:id="@+id/mainGpsTitleTv"
             style="@style/basicTextView"
-            android:fontFamily="@font/spoqa_hansansneo_regular"
             android:alpha="0"
+            android:fontFamily="@font/spoqa_hansansneo_regular"
             android:gravity="start"
             android:textColor="@color/mode_black_color"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
         <Constraint
             android:id="@+id/mainGpsFix"
             android:layout_width="24dp"
@@ -311,36 +310,36 @@
             android:layout_marginStart="37dp"
             motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            motion:layout_constraintTop_toBottomOf="@+id/topBarLinear"/>
+            motion:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
         <Constraint
             android:id="@+id/mainSkyText"
             style="@style/basicTextView"
+            android:alpha="0"
             android:textColor="@color/mode_black_color"
             android:textSize="15sp"
-            android:alpha="0"
             motion:layout_constraintEnd_toEndOf="@+id/mainSkyImg"
             motion:layout_constraintStart_toStartOf="@+id/mainSkyImg"
             motion:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
         <Constraint
             android:id="@+id/mainMinMaxValue"
             style="@style/basicTextView"
+            android:layout_marginStart="20dp"
             android:textColor="#70FFFFFF"
             android:textSize="18sp"
-            android:layout_marginStart="20dp"
-            motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"
+            motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
             motion:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
-            motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"/>
+            motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue" />
         <Constraint
             android:id="@+id/mainLiveTempMinus"
-            motion:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
-            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             android:visibility="gone"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            motion:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
             motion:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
         <Constraint
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
-            android:textSize="60sp"
             android:layout_marginStart="20dp"
+            android:textSize="60sp"
             motion:layout_constraintBottom_toBottomOf="@+id/mainSkyImg"
             motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             motion:layout_constraintStart_toEndOf="@+id/mainSkyText"
@@ -353,50 +352,50 @@
             android:textSize="45sp"
             motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             motion:layout_constraintStart_toEndOf="@+id/mainLiveTempValue"
-            motion:layout_constraintTop_toTopOf="@+id/mainLiveTempValue"/>
+            motion:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
         <Constraint
             android:id="@+id/mainCompareTempTv"
             style="@style/basicTextView"
             android:layout_marginTop="10dp"
+            android:alpha="0"
             android:textColor="@color/mode_black_color"
-            android:textSize="16sp"
-            android:alpha="0"/>
+            android:textSize="16sp" />
         <Constraint
             android:id="@+id/mainMinMaxTitle"
             style="@style/basicTextView"
-            android:alpha="0"/>
+            android:alpha="0" />
         <Constraint
             android:id="@+id/mainPmBoxTL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            motion:layout_constraintTop_toBottomOf="@+id/mainNotiMsgTv"
             android:layout_marginStart="24dp"
             android:layout_marginTop="10dp"
-            android:alpha="0"/>
+            android:layout_marginEnd="24dp"
+            android:alpha="0"
+            motion:layout_constraintTop_toBottomOf="@+id/mainNotiMsgTv" />
         <Constraint
             android:id="@+id/mainSubWeatherTL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="50dp"
-            motion:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL"
             android:layout_marginStart="50dp"
             android:layout_marginTop="22dp"
-            android:alpha="0"/>
+            android:layout_marginEnd="50dp"
+            android:alpha="0"
+            motion:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL" />
         <Constraint
             android:id="@+id/mainMotionSlideGuide"
-            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             android:layout_marginBottom="5dp"
             android:alpha="0"
             motion:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
         <Constraint
             android:id="@+id/mainMotionSLideImg"
-            motion:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:alpha="0"
             motion:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
+            motion:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
             motion:layout_constraintStart_toStartOf="@+id/mainMotionLayout" />
         <Constraint
             android:id="@+id/mainNotiMsgTv"
@@ -405,23 +404,23 @@
             android:layout_marginStart="50dp"
             android:layout_marginTop="50dp"
             android:layout_marginEnd="50dp"
+            android:alpha="0"
             android:background="@drawable/main_noti_text"
             android:text="도움말 테스트 텍스트"
             android:textColor="@color/white"
             android:textSize="14sp"
-            android:alpha="0"
-            motion:motionProgress="1"
-            motion:layout_constraintTop_toBottomOf="@+id/mainSkyText"  />
+            motion:layout_constraintTop_toBottomOf="@+id/mainSkyText"
+            motion:motionProgress="1" />
 
         <Constraint
             android:id="@+id/nested_fab"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/fab_bg"
-            android:src="@drawable/arrow_top"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
-            motion:layout_constraintEnd_toEndOf="parent"
-            motion:layout_constraintBottom_toBottomOf="parent"/>
+            android:background="@drawable/fab_bg"
+            android:src="@drawable/arrow_top"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent" />
     </ConstraintSet>
 </MotionScene>

@@ -54,7 +54,7 @@ object DataTypeParser {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.rainy_test, null)
             }
             "눈" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.snow_test, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.snow, null)
             }
             "비/눈" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.rain_snow, null)

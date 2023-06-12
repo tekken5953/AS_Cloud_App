@@ -105,4 +105,6 @@
     <string name="fail_to_get_gps">위치를 불러오는데 실패했습니다</string>
     <string name="thunder_sunny">번개,뇌우</string>
     <string name="thunder_rainy">비/번개</string>
+    <string name="pm_10">미세먼지</string>
+    <string name="pm_2p5">초미세먼지</string>
 </resources>
