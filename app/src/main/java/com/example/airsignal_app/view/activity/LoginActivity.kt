@@ -20,7 +20,7 @@ import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.login.PhoneLogin
-import com.example.airsignal_app.util.EnterPage
+import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.view.ShowDialogClass
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.orhanobut.logger.Logger
@@ -74,7 +74,7 @@ class LoginActivity : BaseActivity() {
                             Thread.sleep(100)
                             binding.pbLayout.visibility = View.VISIBLE
                             Handler(Looper.getMainLooper()).postDelayed({
-                                EnterPage(this).toMain("email")
+                                EnterPageUtil(this).toMain("email")
                                 binding.pbLayout.visibility = View.GONE
                             }, 2000)
                         } else {
@@ -100,7 +100,7 @@ class LoginActivity : BaseActivity() {
                 val data = result.data
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                 googleLogin.handleSignInResult(task, "수동")
-                EnterPage(this).toMain("google")
+                EnterPageUtil(this).toMain("google")
             } else {
                 Logger.t(TAG_LOGIN).e("로그인 실패 $result")
                 binding.googleLoginButton.isEnabled = true

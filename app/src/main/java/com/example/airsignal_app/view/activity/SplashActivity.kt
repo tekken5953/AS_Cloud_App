@@ -8,7 +8,7 @@ import android.os.Looper
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
-import com.example.airsignal_app.util.ConvertDataType.setFullScreenMode
+import com.example.airsignal_app.util.`object`.SetSystemInfo.setFullScreenMode
 import com.google.firebase.database.FirebaseDatabase
 
 @SuppressLint("CustomSplashScreen")

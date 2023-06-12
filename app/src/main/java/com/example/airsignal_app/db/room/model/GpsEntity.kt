@@ -2,7 +2,7 @@ package com.example.airsignal_app.db.room.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.airsignal_app.util.ConvertDataType
+import com.example.airsignal_app.util.`object`.DataTypeParser
 
 
 /**
@@ -22,7 +22,7 @@ data class GpsEntity(
     var lat: Double?,
     var lng: Double?,
     var addr: String?,
-    var timeStamp: Long = ConvertDataType.getCurrentTime()
+    var timeStamp: Long = DataTypeParser.getCurrentTime()
 ) {
-    constructor() : this(null,"",null,null,null,ConvertDataType.getCurrentTime())
+    constructor() : this(null,"",null,null,null, DataTypeParser.getCurrentTime())
 }

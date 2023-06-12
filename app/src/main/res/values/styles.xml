@@ -9,7 +9,9 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowTitleStyle">@null</item>
         <item name="android:windowFrame">@null</item>
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:background">@color/white</item>

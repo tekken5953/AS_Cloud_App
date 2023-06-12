@@ -104,4 +104,9 @@
     <string name="font_size">Text Size</string>
     <string name="similar_temp">Similar to yesterday</string>
     <string name="font_scale">Font Scale</string>
+    <string name="fail_to_get_gps">Fail to get GPS</string>
+    <string name="thunder_sunny">Rainy,Thunder</string>
+    <string name="thunder_rainy">Rain/Thunder</string>
+    <string name="cancel">Cancel</string>
+    <string name="exit">Exit</string>
 </resources>

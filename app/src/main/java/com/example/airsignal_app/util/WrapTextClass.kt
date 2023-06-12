@@ -1,12 +1,12 @@
 package com.example.airsignal_app.util
 
-import android.util.Log
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-06-05 오전 11:12
  **/
 class WrapTextClass {
+    // WordWrap 적용
     fun getFormedText(s: String, max: Int): String {
         val fs = getSplitCount(s)
         val sb = StringBuffer()

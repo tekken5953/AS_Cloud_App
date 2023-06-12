@@ -6,8 +6,10 @@ import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.view.activity.MainActivity
 import com.google.gson.GsonBuilder
 import com.orhanobut.logger.Logger
+import okhttp3.Headers
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import okhttp3.internal.addHeaderLenient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -35,8 +37,6 @@ object HttpClient {
          *
          * 클라이언트 빌더 Interceptor 구분 **/
         val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
-            connectTimeout(15,TimeUnit.SECONDS)
-            readTimeout(15,TimeUnit.SECONDS)
             retryOnConnectionFailure(retryOnConnectionFailure = false)
 //            addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
 //                override fun log(message: String) {
@@ -58,22 +58,22 @@ object HttpClient {
 //                level = HttpLoggingInterceptor.Level.BODY
 //            })
              .build()
-            addInterceptor { chain ->
-                val request = chain.request()
-                val response = try {
-                    chain.proceed(request)
-                } catch (e: MainActivity.CustomTimeOutException) {
-                    e.localizedMessage
-                }
-                response as Response
-            }.build()
-//            addInterceptor {
-//                val request = it.request().newBuilder()
-//                    .addHeader("Authorization", "Bearer $token")
-//                    .build()
-//
-//                it.proceed(request)
+//            addInterceptor { chain ->
+//                val request = chain.request()
+//                val response = try {
+//                    chain.proceed(request)
+//                } catch (e: MainActivity.CustomTimeOutException) {
+//                    e.localizedMessage
+//                }
+//                response as Response
 //            }.build()
+            addInterceptor {
+                val request = it.request().newBuilder()
+                    .addHeader("Connection", "close")
+                    .build()
+
+                it.proceed(request)
+            }.build()
         }
 
         /** Gson Converter 생성**/

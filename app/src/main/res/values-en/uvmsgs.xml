@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="uv_caution">
+        <item>Most dangerous because sun exposure can cause skin burns within minutes</item>
+        <item>Stay indoors as much as possible</item>
+        <item>Use long-sleeved clothes, hats, and sunglasses when you go out</item>
+        <item>Sunscreen must be applied regularly</item>
+    </string-array>
+
+    <string-array name="uv_very_high">
+        <item>Extremely dangerous as sun exposure can cause skin burns within minutes</item>
+        <item>Avoid going out from 10 a.m. to 3 p.m. and stay indoors or in the shade</item>
+        <item>Use long-sleeved clothes, hats, and sunglasses when you go out</item>
+        <item>Sunscreen must be applied regularly</item>
+    </string-array>
+
+    <string-array name="uv_high">
+        <item>Exposure to the sun can cause skin burns within 1–2 hours, which is dangerous</item>
+        <item>Must stay in the shade in the middle of the day</item>
+        <item>Use long-sleeved clothes, hats, and sunglasses when you go out</item>
+        <item>Sunscreen must be applied regularly</item>
+    </string-array>
+
+    <string-array name="uv_normal">
+        <item>Skin burns can occur even within 2–3 hours of exposure to the sun</item>
+        <item>Wear Hats and sunglasses</item>
+        <item>Sunscreen must be applied regularly</item>
+    </string-array>
+
+    <string-array name="uv_low">
+        <item>No protection against sun exposure required</item>
+        <item>However, people with sensitive skin should apply sunscreen</item>
+    </string-array>
+
+    <string-array name="uv_none"/>
+
+</resources>

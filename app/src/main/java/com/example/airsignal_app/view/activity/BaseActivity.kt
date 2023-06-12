@@ -4,9 +4,10 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.IgnoredKeyFile
-import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.util.ConvertDataType
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserTheme
+import com.example.airsignal_app.util.`object`.SetSystemInfo
 
 /**
  * @author : Lee Jae Young
@@ -17,34 +18,33 @@ open class BaseActivity : AppCompatActivity() {
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
 
-        val sp = SharedPreferenceManager(newBase!!)
         // 설정된 언어정보 불러오기
-        when(sp.getString(IgnoredKeyFile.userLocation)) {
+        when(getUserLocation(this)) {
             getString(R.string.korean) -> {
-                ConvertDataType.setLocaleToKorea(this)
+                SetSystemInfo.setLocaleToKorea(this)
             }
             getString(R.string.english) -> {
-                ConvertDataType.setLocaleToEnglish(this)
+                SetSystemInfo.setLocaleToEnglish(this)
             }
             else -> {
-                ConvertDataType.setLocaleToSystem(this)
+                SetSystemInfo.setLocaleToSystem(this)
             }
         }
 
-        when(sp.getString(IgnoredKeyFile.userFontScale)) {
+        when(getUserFontScale(this)) {
             "small" -> {
-                ConvertDataType.setTextSizeSmall(this)
+                SetSystemInfo.setTextSizeSmall(this)
             }
             "big" -> {
-                ConvertDataType.setTextSizeLarge(this)
+                SetSystemInfo.setTextSizeLarge(this)
             }
             else -> {
-                ConvertDataType.setTextSizeDefault(this)
+                SetSystemInfo.setTextSizeDefault(this)
             }
         }
 
         // 설정된 테마 정보 불러오기
-        when(sp.getString("theme")) {
+        when(getUserTheme(this)) {
             "dark" -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             }

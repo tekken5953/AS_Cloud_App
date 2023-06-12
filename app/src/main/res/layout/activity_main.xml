@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -157,7 +158,6 @@
             android:layout_marginTop="22dp"
             android:layout_marginEnd="24dp"
             android:paddingTop="5dp"
-            android:text="˚"
             android:textColor="@color/mode_black_color"
             android:textSize="57sp"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLayout"
@@ -276,10 +276,47 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/nested_weekly_box"
+                    android:id="@+id/adViewBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/nested_daily_box"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="12dp"
+                    android:animateLayoutChanges="true"
+                    android:background="@drawable/uv_box_bg"
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:id="@+id/adViewCancelIv"
+                        android:layout_width="17dp"
+                        android:layout_height="17dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/cancel"
+                        android:visibility="visible" />
+
+                    <com.google.android.gms.ads.AdView
+                        android:id="@+id/nested_adView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_toStartOf="@+id/adViewCancelIv"
+                        android:visibility="visible"
+                        ads:adSize="FULL_BANNER"
+                        ads:adUnitId="@string/adUnit_main_Id" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/nested_weekly_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/adViewBox"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
@@ -338,7 +375,7 @@
                         android:id="@+id/nested_pm_2p5_title"
                         style="@style/basicTextView"
                         android:layout_below="@+id/nested_pm_title"
-                        android:layout_marginTop="25dp"
+                        android:layout_marginTop="30dp"
                         android:text="@string/pm2_5_title"
                         android:textColor="#7C7C7C"
                         android:textSize="14sp" />
@@ -348,7 +385,7 @@
                         style="@style/basicTextView"
                         android:layout_below="@+id/nested_pm_2p5_title"
                         android:layout_marginStart="2dp"
-                        android:layout_marginTop="7dp"
+                        android:layout_marginTop="10dp"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:textSize="24sp"
                         app:sort="grade" />
@@ -450,7 +487,7 @@
                         style="@style/basicTextView"
                         android:layout_below="@+id/nested_pm_10_title"
                         android:layout_marginStart="2dp"
-                        android:layout_marginTop="7dp"
+                        android:layout_marginTop="10dp"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:textSize="24sp"
                         app:sort="grade" />
@@ -543,9 +580,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_below="@+id/segment_progress_10_section"
-                        android:layout_marginStart="22dp"
+                        android:layout_marginStart="14dp"
                         android:layout_marginTop="40dp"
-                        android:layout_marginEnd="22dp"
+                        android:layout_marginEnd="14dp"
                         android:background="#F3F3F3" />
 
                     <TableRow
@@ -559,56 +596,56 @@
 
                         <TextView
                             style="@style/basicTextView"
-                            android:layout_weight="0.16"
+                            android:layout_weight="0.2"
                             android:gravity="start"
-                            android:text="SO2"
+                            android:text="SO2 "
                             android:textColor="#7C7C7C"
-                            android:textSize="16sp" />
+                            android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/mainAirSO2Value"
                             style="@style/basicTextView"
                             android:layout_width="70dp"
-                            android:layout_weight="0.3"
+                            android:layout_weight="0.27"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
-                            android:textSize="20sp" />
+                            android:textSize="19sp" />
 
                         <TextView
                             style="@style/basicTextView"
                             android:layout_marginStart="4dp"
                             android:layout_marginTop="2dp"
-                            android:layout_weight="0.05"
+                            android:layout_weight="0.1"
                             android:gravity="start"
-                            android:text="ppm"
+                            android:text="ppm "
                             android:textColor="#7C7C7C"
                             android:textSize="11sp" />
 
                         <TextView
                             style="@style/basicTextView"
                             android:layout_marginStart="40dp"
-                            android:layout_weight="0.16"
+                            android:layout_weight="0.2"
                             android:gravity="start"
-                            android:text="NO2"
+                            android:text="NO2 "
                             android:textColor="#7C7C7C"
-                            android:textSize="16sp" />
+                            android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/mainAirNO2Value"
                             style="@style/basicTextView"
                             android:layout_width="70dp"
-                            android:layout_weight="0.3"
+                            android:layout_weight="0.27"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
-                            android:textSize="20sp" />
+                            android:textSize="19sp" />
 
                         <TextView
                             style="@style/basicTextView"
                             android:layout_marginStart="4dp"
                             android:layout_marginTop="2dp"
-                            android:layout_weight="0.05"
+                            android:layout_weight="0.1"
                             android:gravity="start"
-                            android:text="mg/m3"
+                            android:text="mg/m3 "
                             android:textColor="#7C7C7C"
                             android:textSize="11sp" />
 
@@ -626,56 +663,56 @@
 
                         <TextView
                             style="@style/basicTextView"
-                            android:layout_weight="0.16"
+                            android:layout_weight="0.2"
                             android:gravity="start"
                             android:text="O3 "
                             android:textColor="#7C7C7C"
-                            android:textSize="16sp" />
+                            android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/mainAirO3Value"
                             style="@style/basicTextView"
                             android:layout_width="70dp"
-                            android:layout_weight="0.3"
+                            android:layout_weight="0.27"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
-                            android:textSize="20sp" />
+                            android:textSize="19sp" />
 
                         <TextView
                             style="@style/basicTextView"
                             android:layout_marginStart="4dp"
                             android:layout_marginTop="2dp"
-                            android:layout_weight="0.05"
+                            android:layout_weight="0.1"
                             android:gravity="start"
-                            android:text="μg/m3"
+                            android:text="μg/m3 "
                             android:textColor="#7C7C7C"
                             android:textSize="11sp" />
 
                         <TextView
                             style="@style/basicTextView"
                             android:layout_marginStart="40dp"
-                            android:layout_weight="0.16"
+                            android:layout_weight="0.2"
                             android:gravity="start"
                             android:text="CO "
                             android:textColor="#7C7C7C"
-                            android:textSize="16sp" />
+                            android:textSize="15sp" />
 
                         <TextView
                             android:id="@+id/mainAirCOValue"
                             style="@style/basicTextView"
                             android:layout_width="70dp"
-                            android:layout_weight="0.3"
+                            android:layout_weight="0.27"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
-                            android:textSize="20sp" />
+                            android:textSize="19sp" />
 
                         <TextView
                             style="@style/basicTextView"
                             android:layout_marginStart="4dp"
                             android:layout_marginTop="2dp"
-                            android:layout_weight="0.05"
+                            android:layout_weight="0.1"
                             android:gravity="start"
-                            android:text="ppm"
+                            android:text="ppm "
                             android:textColor="#7C7C7C"
                             android:textSize="11sp" />
                     </TableRow>
@@ -710,7 +747,8 @@
                         android:layout_height="35dp"
                         android:layout_alignTop="@+id/mainUvTitle"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="20dp"
+                        android:layout_marginEnd="17dp"
+                        android:layout_marginBottom="8dp"
                         android:padding="5dp"
                         android:src="@drawable/btn_down"
                         app:tint="@color/black" />
@@ -744,7 +782,6 @@
                         android:layout_alignStart="@+id/mainUvTitle"
                         android:layout_marginStart="18dp"
                         android:layout_marginTop="25dp"
-                        android:paddingTop="5dp"
                         android:translationZ="0dp"
                         app:cardBackgroundColor="#4ADE80"
                         app:cardCornerRadius="50dp"
@@ -754,11 +791,12 @@
                             android:id="@+id/mainUvValue"
                             style="@style/basicTextView"
                             android:layout_gravity="center"
+                            android:layout_marginTop="4dp"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="center"
                             android:letterSpacing="-0.02"
+                            android:lineSpacingExtra="2dp"
                             android:textColor="@color/white"
-                            android:textColorHint="@color/white"
                             android:textSize="20sp" />
                     </androidx.cardview.widget.CardView>
 
@@ -859,16 +897,16 @@
                         android:layout_alignEnd="@+id/mainSunRiseTime"
                         android:layout_marginEnd="5dp"
                         android:layout_marginBottom="5dp"
-                        android:text="@string/sunrise"
-                        android:lines="1"
                         android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@string/sunrise"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/mainSunRiseTime"
                         style="@style/basicTextView"
-                        android:layout_width="60dp"
+                        android:layout_width="55dp"
                         android:layout_above="@+id/mainSunLine"
                         android:layout_marginEnd="30dp"
                         android:layout_marginBottom="12dp"
@@ -896,19 +934,19 @@
                         android:layout_alignEnd="@+id/mainSunSetTime"
                         android:layout_marginEnd="5dp"
                         android:layout_marginBottom="5dp"
-                        android:text="@string/sunset"
-                        android:lines="1"
                         android:ellipsize="end"
+                        android:lines="1"
+                        android:text="@string/sunset"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/mainSunSetTime"
                         style="@style/basicTextView"
+                        android:layout_width="55dp"
                         android:layout_above="@+id/mainSunLine"
                         android:layout_marginStart="30dp"
                         android:layout_marginBottom="12dp"
-                        android:layout_width="60dp"
                         android:layout_toEndOf="@+id/seekArc"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:textColor="@color/white"

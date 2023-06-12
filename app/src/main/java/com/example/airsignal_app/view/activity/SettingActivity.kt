@@ -3,6 +3,7 @@ package com.example.airsignal_app.view.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -22,26 +23,33 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.FaqAdapter
 import com.example.airsignal_app.adapter.NoticeAdapter
 import com.example.airsignal_app.dao.AdapterModel
-import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
-import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiEvent
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiNight
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiPM
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
-import com.example.airsignal_app.dao.IgnoredKeyFile.userFontScale
-import com.example.airsignal_app.dao.IgnoredKeyFile.userId
-import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
-import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.EVENT_ALL_NOTI
 import com.example.airsignal_app.dao.StaticDataObject.NIGHT_EVENT_NOTI
 import com.example.airsignal_app.databinding.ActivitySettingBinding
-import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.login.PhoneLogin
 import com.example.airsignal_app.util.*
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserNotiEvent
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserNotiNight
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserNotiPM
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserTheme
+import com.example.airsignal_app.util.`object`.GetSystemInfo
+import com.example.airsignal_app.util.`object`.SetAppInfo.removeAllKeys
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserFontScale
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLocation
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserNoti
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserTheme
 import com.example.airsignal_app.view.ShowDialogClass
 import com.example.airsignal_app.view.SnackBarUtils
 import kotlinx.coroutines.CoroutineScope
@@ -52,7 +60,6 @@ import java.util.*
 
 class SettingActivity : BaseActivity() {
     private lateinit var binding: ActivitySettingBinding
-    private val sp by lazy { SharedPreferenceManager(this) }
     private val faqItem = arrayListOf<String>()
     private val noticeItem = arrayListOf<AdapterModel.NoticeItem>()
     private var isInit = true
@@ -61,8 +68,17 @@ class SettingActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
 
-        if (sp.getString(userEmail) != "") {
-            binding.settingUserEmail.text = sp.getString(userEmail)
+        if (GetSystemInfo.isThemeNight(this)) {
+            window.statusBarColor = Color.BLACK
+            window.decorView.systemUiVisibility =
+                window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        } else {
+            window.statusBarColor = Color.WHITE
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
+
+        if (getUserEmail(this) != "") {
+            binding.settingUserEmail.text = userEmail
             binding.settingUserIcon.visibility = View.VISIBLE
         } else {
             binding.settingUserEmail.text = getString(R.string.please_login)
@@ -70,7 +86,7 @@ class SettingActivity : BaseActivity() {
         }
 
         // 설정 페이지 테마 항목이름 바꾸기
-        when (sp.getString("theme")) {
+        when (getUserTheme(this)) {
             "dark" -> {
                 binding.settingThemeThemeRight.text = getString(R.string.theme_dark)
             }
@@ -83,7 +99,7 @@ class SettingActivity : BaseActivity() {
         }
 
         // 설정 페이지 언어 항목이름 바꾸기
-        when (sp.getString(userLocation)) {
+        when (getUserLocation(this)) {
             getString(R.string.english) -> {
                 binding.settingThemeLangRight.text = getString(R.string.english)
             }
@@ -96,7 +112,7 @@ class SettingActivity : BaseActivity() {
         }
 
       // 설정 페이지 폰트크기 항목이름 바꾸기
-        when (sp.getString(userFontScale)) {
+        when (getUserFontScale(this)) {
             "small" -> {
                 binding.settingScaleTextRight.text = getString(R.string.font_small)
             }
@@ -111,23 +127,25 @@ class SettingActivity : BaseActivity() {
         // 미세먼지 알림 허용 스위치 설정
         settingAlertsRadio(
             switch = binding.settingNotiPMRight,
-            checked = sp.getBoolean(notiPM)
+            checked = getUserNotiPM(this)
         )
         // 이벤트 알림 허용 스위치 설정
         settingAlertsRadio(
             switch = binding.settingNotiEventRight,
-            checked = sp.getBoolean(notiEvent)
+            checked = getUserNotiEvent(this)
         )
         // 야간 알림 허용 스위치 설정
         settingAlertsRadio(
             switch = binding.settingNotiNightRight,
-            checked = sp.getBoolean(notiNight)
+            checked = getUserNotiNight(this)
         )
         // 야간 알림 허용 텍스트 설정
         setNightAlertsSpan(binding.settingNotiNightLeft)
 
         // 알림 스위치 이벤트 리스너
-        checkNotification(binding.settingNotiPMRight, notiPM, getString(R.string.pm_10),sp.getString(userLocation))
+        checkNotification(binding.settingNotiPMRight, notiPM, getString(R.string.pm_10),
+            getUserLocation(this)
+        )
         checkNotification(binding.settingNotiEventRight, notiEvent, getString(R.string.event),EVENT_ALL_NOTI)
         checkNotification(binding.settingNotiNightRight, notiNight, getString(R.string.night),NIGHT_EVENT_NOTI)
     }
@@ -137,8 +155,17 @@ class SettingActivity : BaseActivity() {
 
         binding = DataBindingUtil.setContentView(this@SettingActivity, R.layout.activity_setting)
 
+
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+            window.statusBarColor = Color.BLACK
+            window.decorView.systemUiVisibility = window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        } else {
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            window.statusBarColor = Color.WHITE
+        }
+
         // 마지막 로그인 플랫폼 종류
-        val lastLogin = sp.getString(lastLoginPlatform)
+        val lastLogin = getUserLoginPlatform(this)
         if (lastLogin != "") {
             binding.settingLogOut.text = getString(R.string.setting_logout)
         } else {
@@ -146,7 +173,7 @@ class SettingActivity : BaseActivity() {
         }
 
         // 로그인 시 저장된 핸드폰 번호
-        val email = sp.getString(userEmail)
+        val email = getUserEmail(this)
 
         // 로그인 플랫폼 아이콘 설정
         when (lastLogin) {
@@ -194,13 +221,8 @@ class SettingActivity : BaseActivity() {
                                 }
                             }
                             delay(100)
-                            sp.run {
-                                removeKey(userId)
-                                removeKey(userProfile)
-                                removeKey(lastLoginPhone)
-                                removeKey(lastLoginPlatform)
-                                removeKey(userEmail)
-                            }
+
+                            removeAllKeys(this@SettingActivity)
                         }
                     }
                     .setNegativeButton(
@@ -209,7 +231,7 @@ class SettingActivity : BaseActivity() {
 
                 builder.create().show()
             } else if (binding.settingLogOut.text == getString(R.string.login_title)) {
-                EnterPage(this).toLogin()
+                EnterPageUtil(this).toLogin()
             }
         }
 
@@ -229,7 +251,7 @@ class SettingActivity : BaseActivity() {
                 .show(themeView, true)
 
             // 현재 저장된 테마에 따라서 라디오버튼 체크
-            when (sp.getString("theme")) {
+            when (getUserTheme(this)) {
                 "dark" -> {
                     radioGroup.check(darkTheme.id)
                     changeCheckIcon(darkTheme, lightTheme, systemTheme)
@@ -301,7 +323,7 @@ class SettingActivity : BaseActivity() {
                 .show(langView, true)
 
             // 기존에 저장 된 언어로 라디오 버튼 체크
-            when (sp.getString(userLocation)) {
+            when (getUserLocation(this)) {
                 getString(R.string.korean) -> {
                     radioGroup.check(koreanLang.id)
                     changeCheckIcon(koreanLang, englishLang, systemLang)
@@ -363,7 +385,7 @@ class SettingActivity : BaseActivity() {
                 .show(scaleView, true)
 
             // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크
-            when (sp.getString(userFontScale)) {
+            when (getUserFontScale(this)) {
                 "small" -> {
                     rg.check(small.id)
                 }
@@ -378,17 +400,17 @@ class SettingActivity : BaseActivity() {
             rg.setOnCheckedChangeListener { radioGroup, i ->
                 when (i) {
                     small.id -> {
-                        sp.setString(userFontScale, "small")
+                        setUserFontScale(this,"small")
                         radioGroup.check(small.id)
                         this.goMain()
                     }
                     big.id -> {
-                        sp.setString(userFontScale, "big")
+                        setUserFontScale(this,"big")
                         radioGroup.check(big.id)
                         this.goMain()
                     }
                     default.id -> {
-                        sp.setString(userFontScale, "default")
+                        setUserFontScale(this,"default")
                         radioGroup.check(default.id)
                         this.goMain()
                     }
@@ -502,9 +524,9 @@ class SettingActivity : BaseActivity() {
 
     /** 언어 라디오 버튼 클릭 시 이벤트 처리 **/
     private fun changedLangRadio(lang: String, radioGroup: RadioGroup, radioButton: RadioButton, cancel: ImageView) {
-        if (sp.getString(userLocation) != lang) { // 현재 설정된 언어인지 필터링
+        if (getUserLocation(this) != lang) { // 현재 설정된 언어인지 필터링
             cancel.isEnabled = false
-            sp.setString(userLocation, lang)  // 다른 언어라면 db 값 변경
+            setUserLocation(this,lang)  // 다른 언어라면 db 값 변경
             radioGroup.check(radioButton.id) // 라디오 버튼 체크
             saveLanguageChange() // 언어 설정 변경 후 어플리케이션 재시작
         }
@@ -522,7 +544,7 @@ class SettingActivity : BaseActivity() {
             AppCompatDelegate.setDefaultNightMode(mode)
             cancel.isEnabled = false
             // DB에 바뀐 정보 저장
-            sp.setString("theme", dbData)
+            setUserTheme(this@SettingActivity, dbData)
             // 라디오 버튼 체크
             radioGroup.check(radioButton.id)
             delay(300)
@@ -552,10 +574,10 @@ class SettingActivity : BaseActivity() {
             if (!permission.isNotificationPermitted()) {
                 permission.requestNotification()
                 showSnackBar(isChecked, title)
-                sp.setBoolean(tag, isChecked)
+                setUserNoti(this, tag, isChecked)
             } else {
                 showSnackBar(isChecked, title)
-                sp.setBoolean(tag, isChecked)
+                setUserNoti(this, tag, isChecked)
             }
 
             if (isChecked) {

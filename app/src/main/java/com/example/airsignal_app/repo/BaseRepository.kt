@@ -1,15 +1,13 @@
 package com.example.airsignal_app.repo
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.airsignal_app.dao.StaticDataObject.CODE_INVALID_TOKEN
 import com.example.airsignal_app.dao.StaticDataObject.CODE_SERVER_DOWN
 import com.example.airsignal_app.dao.StaticDataObject.CODE_SERVER_OK
+import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.retrofit.HttpClient
-import com.example.airsignal_app.util.LoggerUtil
 import com.orhanobut.logger.Logger
 import retrofit2.Response
-import timber.log.Timber
 
 open class BaseRepository {
     private val httpClient = HttpClient
@@ -25,7 +23,7 @@ open class BaseRepository {
         try {
             when (response.code()) {
                 CODE_SERVER_OK -> {
-                    data.value = CODE_SERVER_OK.toString()
+                    data.postValue(CODE_SERVER_OK.toString())
                 }
                 CODE_SERVER_DOWN -> {
                     Logger.e("서버 연결 불가 : ${response.code()}")
@@ -49,9 +47,7 @@ open class BaseRepository {
         try {
             when (response.code()) {
                 CODE_SERVER_OK -> {
-                    data.value = response.body() as TD
-                    Logger.t("Timber").d(data.value.toString())
-//                    Log.d("Timber",data.value.toString())
+                    data.postValue(response.body() as TD)
                 }
                 CODE_SERVER_DOWN -> {
                     Logger.e("서버 연결 불가 : ${response.code()}")
@@ -65,6 +61,12 @@ open class BaseRepository {
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            RDBLogcat.writeBadRequest(
+                "Http Error",
+                "Error body : ${
+                    response.errorBody().toString()
+                }\nStack Trace : ${e.stackTraceToString()}"
+            )
         }
     }
 
@@ -76,7 +78,7 @@ open class BaseRepository {
             val mList: TR? = response.body()
             when (response.code()) {
                 CODE_SERVER_OK -> {
-                    data.value = mList as TD
+                    data.postValue(mList as TD)
                 }
                 CODE_SERVER_DOWN -> {
                     Logger.e("서버 연결 불가 : ${response.code()}")

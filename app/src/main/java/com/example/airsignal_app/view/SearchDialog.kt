@@ -3,31 +3,25 @@ package com.example.airsignal_app.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.*
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.AddressListAdapter
-import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
-import com.example.airsignal_app.dao.StaticDataObject.TAG_D
-import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
-import com.example.airsignal_app.util.ConvertDataType
-import com.example.airsignal_app.util.ConvertDataType.convertAddress
 import com.example.airsignal_app.util.KeyboardController
-import com.example.airsignal_app.util.RefreshUtils
-import com.example.airsignal_app.view.activity.MainActivity
+import com.example.airsignal_app.util.`object`.DataTypeParser.convertAddress
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
+import com.example.airsignal_app.util.`object`.SetSystemInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -61,15 +55,15 @@ class SearchDialog(
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        when(SharedPreferenceManager(activity).getString("scale")) {
+        when(getUserFontScale(activity)) {
             "small" -> {
-                ConvertDataType.setTextSizeSmall(activity)
+                SetSystemInfo.setTextSizeSmall(activity)
             }
             "big" -> {
-                ConvertDataType.setTextSizeLarge(activity)
+                SetSystemInfo.setTextSizeLarge(activity)
             }
             else -> {
-                ConvertDataType.setTextSizeDefault(activity)
+                SetSystemInfo.setTextSizeDefault(activity)
             }
         }
         if (layoutId == 0) {
@@ -92,16 +86,13 @@ class SearchDialog(
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
             GpsRepository(activity).findAll().forEach {
-                Log.d(TAG_D, "검색리스트 아이템 추가 : ${it.id}, ${it.name}, ${it.addr}")
+//                Log.d(TAG_D, "검색리스트 아이템 추가 : ${it.id}, ${it.name}, ${it.addr}")
                 addCurrentItem(it.addr.toString())
             }
 
             currentAdapter.setOnItemClickListener(object : AddressListAdapter.OnItemClickListener {
                 override fun onItemClick(v: View, position: Int) {
-                    SharedPreferenceManager(activity).setString(
-                        lastAddress,
-                        currentList[position].replace("null", "")
-                    )
+                    setUserLastAddr(activity, currentList[position].replace("null", ""))
                     dismissNow()
                     activity.recreate()
                 }
@@ -165,7 +156,7 @@ class SearchDialog(
                 model.name = searchItem[position]
                 model.addr = searchItem[position]
                 db.insert(model)
-                SharedPreferenceManager(activity).setString(lastAddress,model.addr!!)
+                setUserLastAddr(activity, model.addr!!)
                 this.dismissNow()
                 activity.recreate()
             }

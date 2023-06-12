@@ -6,22 +6,19 @@ import android.content.Intent
 import android.location.*
 import android.location.LocationListener
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
-import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
-import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogNotLogin
-import com.example.airsignal_app.firebase.fcm.SubFCM
-import com.example.airsignal_app.util.ConvertDataType
-import com.example.airsignal_app.util.GetDeviceInfo
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
+import com.example.airsignal_app.util.`object`.GetSystemInfo
+import com.example.airsignal_app.util.`object`.GetSystemInfo.androidID
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.google.android.gms.location.*
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.orhanobut.logger.Logger
@@ -31,7 +28,6 @@ import java.util.*
 
 
 class GetLocation(private val context: Context) {
-    private val sp by lazy { SharedPreferenceManager(context) }
 
     /** GPS 의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
     @SuppressLint("MissingPermission")
@@ -57,10 +53,9 @@ class GetLocation(private val context: Context) {
 
     /** 현재 주소를 불러옵니다 **/
     fun getAddress(lat: Double, lng: Double): String? {
-        val email = sp.getString(userEmail)
         lateinit var address: List<Address>
         try {
-            val geocoder = Geocoder(context, ConvertDataType.getLocale(context))
+            val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
             @Suppress("DEPRECATION")
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             return if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
@@ -71,7 +66,7 @@ class GetLocation(private val context: Context) {
         } catch (e: IOException) {
             Toast.makeText(context, "주소를 가져오는 도중 오류가 발생했습니다", Toast.LENGTH_SHORT).show()
             writeLogCause(
-                email,
+                getUserEmail(context),
                 "Background Location Exception",
                 "Error : ${e.localizedMessage}"
             )
@@ -100,7 +95,7 @@ class GetLocation(private val context: Context) {
     /** 현재 주소 DB에 업데이트 **/
     fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
         val roomDB = GpsRepository(context)
-        sp.setString(lastAddress, addr)
+        setUserLastAddr(context, addr)
         val model = GpsEntity()
         model.name = CURRENT_GPS_ID
         model.lat = lat
@@ -133,7 +128,7 @@ class GetLocation(private val context: Context) {
                 val longitude = location.longitude
                 updateCurrentAddress(latitude,longitude,getAddress(latitude,longitude)!!)
                 writeLogCause(
-                    email = sp.getString(userEmail),
+                    email = getUserEmail(context),
                     isSuccess = "WorkManager Location",
                     log = "새로운 위치 : ${latitude},${longitude} : ${getAddress(latitude,longitude)}"
                 )
@@ -150,8 +145,8 @@ class GetLocation(private val context: Context) {
     }
 
     /** 파이어베이스 로그 커스텀 **/
-    fun writeRdbLog(lat: Double, lng: Double, addr: String) {
-        val email = sp.getString(userEmail)
+    fun writeRdbCurrentLog(lat: Double?, lng: Double?, addr: String) {
+        val email = getUserEmail(context)
         if (email != "") {
             writeLogCause(
                 email = email,
@@ -162,7 +157,7 @@ class GetLocation(private val context: Context) {
         } else {
             writeLogNotLogin(
                 "비로그인",
-                GetDeviceInfo().androidID(context),
+                androidID(context),
                 isSuccess = "Background Location",
                 log = "$lat , $lng \t " +
                         addr
@@ -170,17 +165,38 @@ class GetLocation(private val context: Context) {
         }
     }
 
+    /** 파이어베이스 로그 커스텀 - 검색 **/
+    fun writeRdbSearchLog(addr: String) {
+        val email = getUserEmail(context)
+        if (email != "") {
+            writeLogCause(
+                email = email,
+                isSuccess = "Searched Location",
+                log = addr
+            )
+        } else {
+            writeLogNotLogin(
+                "비로그인",
+                androidID(context),
+                isSuccess = "Searched Location",
+                log = addr
+            )
+        }
+    }
+
     /** 디바이스 GPS 센서에 접근이 가능한지 확인 **/
-    fun isGPSConnected(): Boolean  {
+    fun isGPSConnected(): Boolean {
         val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
-        Log.i("Location Enable","위치정보 호출 여부 : ${lm.isProviderEnabled(LocationManager.GPS_PROVIDER)}")
+        Timber.tag("Location Enable")
+            .i("위치정보 호출 여부 : " + lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
     /** 디바이스 네트워크에 접근이 가능한지 확인 **/
     fun isNetWorkConnected(): Boolean {
         val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
-        Log.i("Location Enable","네트워크 호출 여부 : ${lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)}")
+        Timber.tag("Location Enable")
+            .i("네트워크 호출 여부 : " + lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
         return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 

@@ -103,4 +103,9 @@
     <string name="font_size">글씨 크기</string>
     <string name="similar_temp">어제와 기온이 비슷해요</string>
     <string name="font_scale">폰트 크기 설정</string>
+    <string name="fail_to_get_gps">위치를 불러오는데 실패했습니다</string>
+    <string name="thunder_sunny">번개,뇌우</string>
+    <string name="thunder_rainy">비/번개</string>
+    <string name="cancel">취소</string>
+    <string name="exit">종료</string>
 </resources>

@@ -28,39 +28,43 @@
         tools:replace="android:icon,android:label">
         <activity
             android:name=".view.activity.RedirectPermissionActivity"
-            android:exported="false">
+            android:exported="true"
+            android:hardwareAccelerated="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-        </activity>
-        <activity
-            android:name=".view.activity.SplashActivity"
-            android:exported="true">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!--        <activity-->
-<!--            android:name=".view.test.TestDesignActivity"-->
-<!--            android:exported="false" />-->
+        <activity
+            android:name=".view.activity.SplashActivity"
+            android:exported="true"
+            android:hardwareAccelerated="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+
+
+        </activity>
         <activity
             android:name=".view.activity.SettingActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:hardwareAccelerated="false"/>
         <activity
             android:name=".view.activity.MyDeviceActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:hardwareAccelerated="false"/>
         <activity
             android:name=".view.activity.MainActivity"
-            android:exported="false"/>
+            android:exported="false"
+            android:hardwareAccelerated="true" />
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
-            android:exported="true">
+            android:exported="true"
+            android:hardwareAccelerated="false">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -95,7 +99,6 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/adMobId" />
-
     </application>
 
 </manifest>

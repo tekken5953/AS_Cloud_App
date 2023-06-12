@@ -5,7 +5,7 @@
     android:gravity="top"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white">
+    android:background="@color/mode_color_view">
 
     <View
         android:id="@+id/changeAddressTopView"
