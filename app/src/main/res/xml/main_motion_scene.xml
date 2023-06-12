@@ -106,7 +106,7 @@
             android:alpha="1"
             android:gravity="start"
             android:textColor="@color/mode_black_color"
-            android:textSize="18sp"
+            android:textSize="20sp"
             motion:layout_constraintStart_toStartOf="@id/mainMotionLayout"
             motion:layout_constraintTop_toBottomOf="@+id/topBarLinear"  />
         <Constraint
@@ -144,24 +144,21 @@
             motion:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
         <Constraint
             android:id="@+id/mainLiveTempValue"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:layout_marginTop="22dp"
-            android:fontFamily="@font/spoqa_hansansneo_regular"
-            android:letterSpacing="0"
             android:textColor="@color/mode_black_color"
-            android:textSize="67sp"
-            android:textStyle="bold"
+            android:textSize="60sp"
             motion:layout_constraintEnd_toStartOf="@+id/mainLiveTempUnit"
             motion:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
         <Constraint
             android:id="@+id/mainLiveTempUnit"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:layout_marginTop="22dp"
             android:layout_marginEnd="24dp"
             android:paddingTop="5dp"
             android:text="˚"
             android:textColor="@color/mode_black_color"
-            android:textSize="60sp"
+            android:textSize="57sp"
             motion:layout_constraintEnd_toEndOf="@+id/mainMotionLayout"
             motion:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
         <Constraint
@@ -341,8 +338,7 @@
             motion:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
         <Constraint
             android:id="@+id/mainLiveTempValue"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/basicMediumTextView"
             android:textSize="60sp"
             android:layout_marginStart="20dp"
             motion:layout_constraintBottom_toBottomOf="@+id/mainSkyImg"

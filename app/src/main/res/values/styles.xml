@@ -17,6 +17,24 @@
         <item name="android:background">@color/white</item>
     </style>
 
+    <style name="basicBoldTextView">
+        <item name="android:letterSpacing">-0.04</item>
+        <item name="android:textColor">@color/mode_color_text</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_bold</item>
+    </style>
+
+    <style name="basicMediumTextView">
+        <item name="android:letterSpacing">-0.04</item>
+        <item name="android:textColor">@color/mode_color_text</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_medium</item>
+    </style>
+
     <style name="basicTextView">
         <item name="android:letterSpacing">-0.04</item>
         <item name="android:textColor">@color/mode_color_text</item>
@@ -24,6 +42,15 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="fontFamily">@font/spoqa_hansansneo_regular</item>
+    </style>
+
+    <style name="basicLightTextView">
+        <item name="android:letterSpacing">-0.04</item>
+        <item name="android:textColor">@color/mode_color_text</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_light</item>
     </style>
 
     <style name="settingMultiTextView">

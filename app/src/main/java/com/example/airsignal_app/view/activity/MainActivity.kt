@@ -577,7 +577,6 @@ class MainActivity : BaseActivity() {
                     setTextColor(getDataColor(this@MainActivity, air.so2Grade - 1))
                 }
 
-//                binding.mainUvGrade.text = uv.flag
                 binding.mainUvValue.text = translateUV(this, uv.flag) + "\n" + uv.value.toString()
 
                 setUvBackgroundColor(this, uv.flag, binding.mainUVLegendCardView) // UV 범주 색상 변경
@@ -625,7 +624,8 @@ class MainActivity : BaseActivity() {
                         val dailyIndex = result.realtime[i]
                         val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
 
-                        val dailyTime = millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
+                        val dailyTime =
+                            millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
                         val dailySunProgress =
                             100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(sun.sunrise)) / entireSun
                         val isNight = isNightProgress(dailySunProgress)
@@ -668,26 +668,18 @@ class MainActivity : BaseActivity() {
                     try {
                         val formedDate = dateNow.plusDays(i.toLong())
                         val date: String = when (i) {
-                            0 -> {
-                                getString(R.string.today)
-                            }
-                            1 -> {
-                                getString(R.string.tomorrow)
-                            }
+                            0 -> { getString(R.string.today) }
+                            1 -> { getString(R.string.tomorrow) }
                             else -> {
-                                "${
-                                    convertDayOfWeekToKorean(
-                                        this,
-                                        dateNow.dayOfWeek.value + i
-                                    )
-                                }${getString(R.string.date)}"
+                                "${convertDayOfWeekToKorean(this, 
+                                    dateNow.dayOfWeek.value + i)}${getString(R.string.date)}"
                             }
                         }
                         addWeeklyWeatherItem(
                             date,
                             convertDateAppendZero(formedDate),
-                            getSkyImgSmall(this, wfMin[i],false)!!,
-                            getSkyImgSmall(this, wfMax[i],false)!!,
+                            getSkyImgSmall(this, wfMin[i], false)!!,
+                            getSkyImgSmall(this, wfMax[i], false)!!,
                             "${taMin[i].roundToInt()}˚",
                             "${taMax[i].roundToInt()}˚"
                         )
@@ -704,7 +696,6 @@ class MainActivity : BaseActivity() {
             }
             runOnUiThread {
                 hidePB()
-//                animateProgress(binding.mainMotionLayout)
             }
         }
         return this
@@ -739,10 +730,8 @@ class MainActivity : BaseActivity() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-        // Pixel을 DP로 변환
-        fun dp(i: Int): Int {
-            return pixelToDp(this, i)
-        }
+        // pixel을 DP로 변환
+        fun dp(i: Int): Int { return pixelToDp(this, i) }
 
         val arrowWidth = dp(binding.segmentProgress10Arrow.width) / 2 - dp(2)
 
@@ -752,19 +741,12 @@ class MainActivity : BaseActivity() {
             params.addRule(RelativeLayout.ALIGN_START, R.id.segment_progress_2p5_bar)
 
             if (value > 125) {
-                params.setMargins(
-                    widthDp - arrowWidth - dp(1),
-                    dp(15),
-                    arrowWidth,
-                    0
-                ) // 왼쪽, 위, 오른쪽, 아래 순서
+                params.setMargins(widthDp - arrowWidth - dp(1), dp(15),
+                    arrowWidth, 0) // 왼쪽, 위, 오른쪽, 아래 순서
             } else {
                 params.setMargins(
                     value * widthDp / dp(125) - arrowWidth - dp(1),
-                    dp(15),
-                    arrowWidth,
-                    0
-                ) // 왼쪽, 위, 오른쪽, 아래 순서
+                    dp(15), arrowWidth, 0) // 왼쪽, 위, 오른쪽, 아래 순서
             }
         } else if (sort == "10") {
             val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
@@ -773,18 +755,12 @@ class MainActivity : BaseActivity() {
 
             if (value > 200) {
                 params.setMargins(
-                    widthDp - arrowWidth,
-                    dp(15),
-                    arrowWidth,
-                    0
-                ) // 왼쪽, 위, 오른쪽, 아래 순서
+                    // 왼쪽, 위, 오른쪽, 아래 순서
+                    widthDp - arrowWidth, dp(15), arrowWidth, 0)
             } else {
                 params.setMargins(
                     value * widthDp / dp(200) - arrowWidth,
-                    dp(15),
-                    arrowWidth,
-                    0
-                ) // 왼쪽, 위, 오른쪽, 아래 순서
+                    dp(15), arrowWidth, 0) // 왼쪽, 위, 오른쪽, 아래 순서
             }
         }
         return params
@@ -827,9 +803,11 @@ class MainActivity : BaseActivity() {
     // 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트
     private fun applySkyText(rain: String?, sky: String?, thunder: Double?): String {
         return if (rain != "없음") {
-            if ((thunder == null) || (thunder < 0.2)) { rain!! } else { getString(R.string.thunder_sunny) }
+            if ((thunder == null) || (thunder < 0.2)) { rain!! }
+            else { getString(R.string.thunder_sunny) }
         } else {
-            if ((thunder == null) || (thunder < 0.2)) { sky!! } else { getString(R.string.thunder_rainy) }
+            if ((thunder == null) || (thunder < 0.2)) { sky!! }
+            else { getString(R.string.thunder_rainy) }
         }
     }
 
@@ -892,12 +870,8 @@ class MainActivity : BaseActivity() {
     // 마지막 기호 크기 줄이기
     private fun spanUnit(tv: TextView, s: String) {
         val span = SpannableStringBuilder(s)
-        span.setSpan(
-            AbsoluteSizeSpan(35),
-            s.length - 1,
-            s.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
+        span.setSpan(AbsoluteSizeSpan(35),
+            s.length - 1, s.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         tv.text = span
     }
 
@@ -1001,7 +975,8 @@ class MainActivity : BaseActivity() {
                                             .replace(getString(R.string.korea), "")
                                     )
                                     getDataViewModel.loadDataResult(
-                                        loc.latitude, loc.longitude, null)
+                                        loc.latitude, loc.longitude, null
+                                    )
 
                                     locationClass.writeRdbCurrentLog(
                                         loc.latitude, loc.longitude,
@@ -1041,23 +1016,17 @@ class MainActivity : BaseActivity() {
                 GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude).apply {
                     if (this == null) {
                         Toast.makeText(
-                            this@MainActivity,
-                            getString(R.string.fail_to_get_gps),
-                            Toast.LENGTH_SHORT
-                        )
+                            this@MainActivity, getString(R.string.fail_to_get_gps), Toast.LENGTH_SHORT)
                             .show()
                     }
                     this?.let { addr ->
                         updateCurrentAddress(
-                            loc.latitude,
-                            loc.longitude,
+                            loc.latitude, loc.longitude,
                             addr.replaceFirst(" ", "").replace(getString(R.string.korea), "")
                         )
                         getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
                         locationClass.writeRdbCurrentLog(
-                            loc.latitude,
-                            loc.longitude,
-                            "NetWork - $addr"
+                            loc.latitude, loc.longitude, "NetWork - $addr"
                         )
                         binding.mainGpsTitleTv.text =
                             guardWordWrap(locationClass.formattingFullAddress(addr))
@@ -1194,7 +1163,6 @@ class MainActivity : BaseActivity() {
                 it.imageTintList = ColorStateList.valueOf(getColor(R.color.bg_black_color))
             }
 
-//                binding.mainSkyText.setTextColor(Color.parseColor("#FF8A48"))
             binding.mainMinMaxTitle.setTextColor(Color.parseColor("#703D3D3D"))
             binding.mainMinMaxValue.setTextColor(Color.parseColor("#703D3D3D"))
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
@@ -1207,9 +1175,7 @@ class MainActivity : BaseActivity() {
                 "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> { black() }
                 else -> { white() }
             }
-        } else {
-            white()
-        }
+        } else { white() }
     }
 
     // 미세먼지 그래프 그리기
@@ -1219,15 +1185,9 @@ class MainActivity : BaseActivity() {
                 barContexts = listOf(
                     SegmentedProgressBar.BarContext(
                         ResourcesCompat.getColor(
-                            resources,
-                            R.color.air_good,
-                            null
-                        ), //gradient start
+                            resources, R.color.air_good, null), //gradient start
                         ResourcesCompat.getColor(
-                            resources,
-                            R.color.air_good,
-                            null
-                        ), //gradient stop
+                            resources, R.color.air_good, null), //gradient stop
                         array[0] //percentage for segment
                     ),
                     SegmentedProgressBar.BarContext(

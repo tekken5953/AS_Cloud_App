@@ -41,7 +41,7 @@
         android:layout_below="@+id/itemDailySky"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="12dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
         android:textColor="@color/black"
         android:textSize="14sp" />
