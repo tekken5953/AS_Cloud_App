@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.activity.RedirectPermissionActivity">
+    tools:context=".view.activity.RedirectPermissionActivity"
+    android:background="@drawable/main_bg_snow">
 
     <Button
         android:id="@+id/permissionBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="위치 권한을 항상 허용으로 설정해주세요"
+        android:text="위치 권한을 허용으로 설정해주세요"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

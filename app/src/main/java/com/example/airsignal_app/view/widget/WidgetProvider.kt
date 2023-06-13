@@ -90,8 +90,8 @@ open class WidgetProvider : AppWidgetProvider() {
                         setOnClickPendingIntent(R.id.widgetMainLayout, pendingIntent)
                         setOnClickPendingIntent(R.id.widgetRefresh, pendingRefresh)
 
-                        setTextViewText(R.id.widgetTempValue, "${responseData!!.body()!!.realtime[0].temp.toInt()}˚")
-                        setTextViewText(R.id.widgetPmValue, responseData!!.body()!!.quality.pm10Value.toInt().toString())
+                        setTextViewText(R.id.widgetTempValue, "${responseData!!.body()!!.realtime[0].temp!!.toInt()}˚")
+                        setTextViewText(R.id.widgetPmValue, responseData!!.body()!!.quality.pm10Value!!.toInt().toString())
                         setImageViewBitmap(R.id.widgetSkyImg,(DataTypeParser.getSkyImgLarge(context,responseData!!.body()!!.realtime[0].sky,false) as BitmapDrawable).bitmap)
                         setTextViewText(R.id.widgetTimeStamp, DataTypeParser.millsToString(db.timeStamp,"HH시 mm분"))
                         setTextViewText(R.id.widgetAddress," · ${db.addr!!.split(" ").last()}")

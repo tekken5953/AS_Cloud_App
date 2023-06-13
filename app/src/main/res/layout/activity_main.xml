@@ -53,8 +53,9 @@
 
             <ImageView
                 android:id="@+id/mainSideMenuIv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="31dp"
+                android:layout_height="31dp"
+                android:padding="3dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="24dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -63,8 +64,9 @@
 
             <ImageView
                 android:id="@+id/mainAddAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="31dp"
+                android:layout_height="31dp"
+                android:padding="3dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="24dp"

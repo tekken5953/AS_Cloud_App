@@ -78,9 +78,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.NoSuchElementException
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -105,6 +107,7 @@ class MainActivity : BaseActivity() {
     private val locationClass by lazy { GetLocation(this) }
     private var currentSun = 0
     private var isSunAnimated = false
+    private var isInit = false
     private val rotateAnim by lazy {
         RotateAnimation(
             0f, 360f,
@@ -120,7 +123,10 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        showPB()
+        if (!isInit) {
+            showPB()
+            isInit = true
+        }
         getDataSingleTime()
         Thread.sleep(100)
         binding.nestedAdView.resume()
@@ -153,11 +159,12 @@ class MainActivity : BaseActivity() {
                 applyGetDataViewModel()
             }
 
+        initializing()
+
         // 메인 하단 스크롤 유도 화살표 애니메이션 적용
         val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
         binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
 
-        //findViewById or Binding for your SegmentedProgressBar
         val array2P5 = floatArrayOf(0.12f, 0.24f, 0.48f, 0.16f)
         val array10 = floatArrayOf(0.15f, 0.25f, 0.35f, 0.25f)
         drawingPmGraph(binding.segmentProgress2p5Bar, array2P5)
@@ -167,12 +174,7 @@ class MainActivity : BaseActivity() {
         addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
         addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
         addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
-        addUvLegendItem(
-            3,
-            "8 - 10",
-            getColor(R.color.uv_very_high),
-            getString(R.string.uv_very_high)
-        )
+        addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), getString(R.string.uv_very_high))
         addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
         binding.seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지
@@ -253,8 +255,6 @@ class MainActivity : BaseActivity() {
 
 //        onUpdateWidgetData()
 
-        initializing()
-
         // 플러스 모양 추가시 주소등록 다이얼로그
         binding.mainAddAddress.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
@@ -292,34 +292,39 @@ class MainActivity : BaseActivity() {
 
     // 햄버거 메뉴 세팅
     private fun addSideMenu() {
-        val cancel = sideMenu.findViewById<ImageView>(R.id.headerCancel)
-        val profile = sideMenu.findViewById<ImageView>(R.id.navHeaderProfileImg)
-        val id = sideMenu.findViewById<TextView>(R.id.navHeaderUserId)
-        val weather = sideMenu.findViewById<TextView>(R.id.navMenuWeather)
-        val setting = sideMenu.findViewById<TextView>(R.id.navMenuSetting)
-        val headerTr = sideMenu.findViewById<TableRow>(R.id.headerTr)
-        val adView = sideMenu.findViewById<AdView>(R.id.navMenuAdview)
+        try {
+            val cancel = sideMenu.findViewById<ImageView>(R.id.headerCancel)
+            val profile = sideMenu.findViewById<ImageView>(R.id.navHeaderProfileImg)
+            val id = sideMenu.findViewById<TextView>(R.id.navHeaderUserId)
+            val weather = sideMenu.findViewById<TextView>(R.id.navMenuWeather)
+            val setting = sideMenu.findViewById<TextView>(R.id.navMenuSetting)
+            val headerTr = sideMenu.findViewById<TableRow>(R.id.headerTr)
+            val adView = sideMenu.findViewById<AdView>(R.id.navMenuAdview)
 
-        sideMenuBuilder.apply {
-            setBackPressed(cancel)
-            setUserData(profile, id)
-            AdViewClass(this@MainActivity).loadAdView(adView)
-        }
-
-        headerTr.setOnClickListener {
-            if (getUserLoginPlatform(this) == "")
-                EnterPageUtil(this@MainActivity).toLogin()
-        }
-        weather.setOnClickListener {
-            sideMenuBuilder.dismiss()
-        }
-        setting.setOnClickListener {
-            CompletableFuture.supplyAsync {
-                sideMenuBuilder.dismiss()
-            }.thenAccept {
-                val intent = Intent(this@MainActivity, SettingActivity::class.java)
-                startActivity(intent)
+            sideMenuBuilder.apply {
+                setBackPressed(cancel)
+                setUserData(profile, id)
+                AdViewClass(this@MainActivity).loadAdView(adView)
             }
+
+            headerTr.setOnClickListener {
+                if (getUserLoginPlatform(this) == "")
+                    EnterPageUtil(this@MainActivity).toLogin()
+            }
+            weather.setOnClickListener {
+                sideMenuBuilder.dismiss()
+            }
+            setting.setOnClickListener {
+                CompletableFuture.supplyAsync {
+                    sideMenuBuilder.dismiss()
+                }.thenAccept {
+                    val intent = Intent(this@MainActivity, SettingActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+        } catch (e: NullPointerException) {
+            e.printStackTrace()
+            RDBLogcat.writeLogCause("ANR 발생", "Thread : ${Thread.currentThread()}","SideMenu NPE")
         }
     }
 
@@ -360,10 +365,14 @@ class MainActivity : BaseActivity() {
 
     // 7글자를 기준으로 WordWrap 적용
     private fun guardWordWrap(s: String): String {
-        val formS = if (s.first().toString() == " ")
-            s.replaceFirst(" ", "") else s
-
-        return WrapTextClass().getFormedText(formS, 7)
+        return try {
+            val formS = if (s.first().toString() == " ")
+                s.replaceFirst(" ", "") else s
+            WrapTextClass().getFormedText(formS, 7)
+        } catch (e: NoSuchElementException) {
+            e.printStackTrace()
+            "주소 재갱신 필요"
+        }
     }
 
     // 프로그래스 보이기
@@ -418,27 +427,6 @@ class MainActivity : BaseActivity() {
         }
     }
 
-//    private fun animateProgress(motionLayout: MotionLayout) {
-//        val targetProgress = 0.03f // 목표 progress
-//        val duration = 300L // 애니메이션 지속 시간
-//
-//        if (fowardAnimCcount < 4) {
-//            motionLayout.postDelayed({
-//                if (isForwardAnimation) {
-//                    val animator = ObjectAnimator.ofFloat(motionLayout, "progress", targetProgress)
-//                    animator.start()
-//                } else {
-//                    val animator = ObjectAnimator.ofFloat(motionLayout, "progress", 0f)
-//                    animator.start()
-//                }
-//
-//                isForwardAnimation = !isForwardAnimation
-//                fowardAnimCcount++
-//                animateProgress(motionLayout)
-//            }, duration)
-//        }
-//    }
-
     // 백그라운드 위치 호출
     private fun createWorkManager() {
         GetLocation(this).getGpsInBackground()
@@ -460,37 +448,6 @@ class MainActivity : BaseActivity() {
 
 //        addExitDialog()
     }
-
-//    private fun addExitDialog() {
-//        val builder = AlertDialog.Builder(this)
-//        val view = LayoutInflater.from(this).inflate(R.layout.dialog_exit_app,null)
-//        val nativeAdView: com.google.android.gms.ads.nativead.NativeAdView = view.findViewById(R.id.exitNativeAdView)
-//        val yesBtn: AppCompatButton = view.findViewById(R.id.exitYesBtn)
-//        val noBtn: AppCompatButton = view.findViewById(R.id.exitNoBtn)
-//        val nativeAd = NativeAdViewClass(this@MainActivity)
-//
-//        val title: TextView = view.findViewById(R.id.nativeAdTitle)
-//        val description: ImageView = view.findViewById(R.id.nativeAdDescription)
-//        builder.setView(view)
-//        val alertDialog = builder.create()
-//        exitDialog = alertDialog
-//
-//        CoroutineScope(Dispatchers.Default).launch {
-//            nativeAd.load(nativeAdView, title, description)
-//        }
-//
-//        yesBtn.setOnClickListener {
-//            sp.removeKey(lastAddress)
-//            alertDialog.dismiss()
-//            EnterPageUtil(this).fullyExit()
-//        }
-//
-//        noBtn.setOnClickListener {
-//            alertDialog.dismiss()
-//        }
-//
-//        alertDialog.show()
-//    }
 
     // 뷰모델에서 Observing 한 데이터 결과 적용
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
@@ -529,16 +486,17 @@ class MainActivity : BaseActivity() {
                 dailyWeatherList.clear()
                 weeklyWeatherList.clear()
 
-                binding.mainLiveTempValue.text = current.temperature.absoluteValue.toString()
-                binding.mainLiveTempUnit.text = "˚"
-
-                applyUvResponseItem(uv.flag)      // 자외선 단계별 대응요령 추가
-
-                if (current.temperature < 0) {
-                    binding.mainLiveTempMinus.visibility = VISIBLE
-                } else {
-                    binding.mainLiveTempMinus.visibility = GONE
+                current.temperature?.let {
+                    currentTemp ->
+                    binding.mainLiveTempValue.text = currentTemp.absoluteValue.toString()
+                    binding.mainLiveTempUnit.text = "˚"
+                    if (currentTemp < 0) {
+                        binding.mainLiveTempMinus.visibility = VISIBLE
+                    } else {
+                        binding.mainLiveTempMinus.visibility = GONE
+                    }
                 }
+
                 binding.mainSkyImg.setImageDrawable(
                     applySkyImg(
                         current.rainType,
@@ -553,32 +511,42 @@ class MainActivity : BaseActivity() {
                     applySkyText(current.rainType, realtime.sky, thunder)
                 )
                 binding.mainMinMaxValue.text =
-                    "${filteringNullData(today.min)}˚/${filteringNullData(today.max)}˚"
-                binding.nestedPm10Grade.getPM10GradeFromValue(air.pm10Value.toInt())
-                binding.nestedPm2p5Grade.getPM25GradeFromValue(air.pm25Value)
-                binding.nestedPm10Value.setIndexTextAsInt(air.pm10Value.toFloat())
-                binding.nestedPm2p5Value.setIndexTextAsInt(air.pm25Value.toFloat())
+                    "${filteringNullData(today.min!!)}˚/${filteringNullData(today.max!!)}˚"
+
+                air.pm10Value?.let {
+                    pm10 ->
+                    binding.nestedPm10Grade.getPM10GradeFromValue(pm10.toInt())
+                    binding.nestedPm10Value.setIndexTextAsInt(pm10.toFloat())
+                }
+                air.pm25Value?.let {
+                    pm2p5 ->
+                    binding.nestedPm2p5Grade.getPM25GradeFromValue(pm2p5)
+                    binding.nestedPm2p5Value.setIndexTextAsInt(pm2p5.toFloat())
+                }
 
                 binding.mainAirCOValue.apply {
                     text = air.coValue.toString()
-                    setTextColor(getDataColor(this@MainActivity, air.coGrade - 1))
+                    setTextColor(getDataColor(this@MainActivity, air.coGrade!! - 1))
                 }
                 binding.mainAirNO2Value.apply {
                     text = air.no2Value.toString()
-                    setTextColor(getDataColor(this@MainActivity, air.no2Grade - 1))
+                    setTextColor(getDataColor(this@MainActivity, air.no2Grade!! - 1))
                 }
                 binding.mainAirO3Value.apply {
                     text = air.o3Value.toString()
-                    setTextColor(getDataColor(this@MainActivity, air.o3Grade - 1))
+                    setTextColor(getDataColor(this@MainActivity, air.o3Grade!! - 1))
                 }
                 binding.mainAirSO2Value.apply {
                     text = air.so2Value.toString()
-                    setTextColor(getDataColor(this@MainActivity, air.so2Grade - 1))
+                    setTextColor(getDataColor(this@MainActivity, air.so2Grade!! - 1))
                 }
 
-                binding.mainUvValue.text = translateUV(this, uv.flag) + "\n" + uv.value.toString()
-
-                setUvBackgroundColor(this, uv.flag, binding.mainUVLegendCardView) // UV 범주 색상 변경
+                uv.flag?.let {
+                    uvFlag ->
+                    applyUvResponseItem(uvFlag)      // 자외선 단계별 대응요령 추가
+                    binding.mainUvValue.text = translateUV(this, uvFlag) + "\n" + uv.value.toString()
+                    setUvBackgroundColor(this, uvFlag, binding.mainUVLegendCardView) // UV 범주 색상 변경
+                }
 
                 val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
                 val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
@@ -590,13 +558,13 @@ class MainActivity : BaseActivity() {
                 binding.mainSunSetTom.text = sbSetTom
 
                 getCompareTemp(
-                    yesterday.temp,
-                    current.temperature,
+                    yesterday.temp!!,
+                    current.temperature!!,
                     binding.mainCompareTempTv
                 )
 
-                val sunsetTime = convertTimeToMinutes(sun.sunset)
-                val sunriseTime = convertTimeToMinutes(sun.sunrise)
+                val sunsetTime = convertTimeToMinutes(sun.sunset!!)
+                val sunriseTime = convertTimeToMinutes(sun.sunrise!!)
                 val entireSun = sunsetTime - sunriseTime
                 val currentTime = millsToString(getCurrentTime(), "HHmm")
                 currentSun =
@@ -609,20 +577,24 @@ class MainActivity : BaseActivity() {
                     applySkyText(current.rainType, realtime.sky, thunder)
                 )
 
-                binding.segmentProgress2p5Arrow.layoutParams = movePmBarChart(air.pm25Value, "25")
-                binding.segmentProgress10Arrow.layoutParams =
-                    movePmBarChart(air.pm10Value.roundToInt(), "10")
+                air.pm25Value?.let {
+                    pm2p5Value ->
+                    binding.segmentProgress2p5Arrow.layoutParams = movePmBarChart(pm2p5Value, "25")
+                    binding.segmentProgress2p5Arrow.imageTintList =
+                        ColorStateList.valueOf(setPm2p5ArrowTint(pm2p5Value))
+                }
 
-                binding.segmentProgress2p5Arrow.imageTintList =
-                    ColorStateList.valueOf(setPm2p5ArrowTint(air.pm25Value))
-                binding.segmentProgress10Arrow.imageTintList =
-                    ColorStateList.valueOf(setPm10ArrowTint(air.pm10Value.roundToInt()))
+                air.pm10Value?.let {
+                    pm10Value ->
+                    binding.segmentProgress10Arrow.layoutParams =
+                        movePmBarChart(pm10Value.roundToInt(), "10")
+                    binding.segmentProgress10Arrow.imageTintList =
+                        ColorStateList.valueOf(setPm10ArrowTint(pm10Value.roundToInt()))
+                }
 
                 for (i: Int in 0 until result.realtime.size) {
-                    try {
                         val dailyIndex = result.realtime[i]
                         val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
-
                         val dailyTime =
                             millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
                         val dailySunProgress =
@@ -654,13 +626,10 @@ class MainActivity : BaseActivity() {
                                     isLarge = false,
                                     isNight = isNight
                                 )!!,
-                                "${dailyIndex.temp.roundToInt()}˚",
+                                "${dailyIndex.temp!!.roundToInt()}˚",
                                 convertDateAppendZero(forecastToday)
                             )
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
                 }
 
                 for (i: Int in 0 until (7)) {
@@ -679,8 +648,8 @@ class MainActivity : BaseActivity() {
                             convertDateAppendZero(formedDate),
                             getSkyImgSmall(this, wfMin[i], false)!!,
                             getSkyImgSmall(this, wfMax[i], false)!!,
-                            "${taMin[i].roundToInt()}˚",
-                            "${taMax[i].roundToInt()}˚"
+                            "${taMin[i]!!.roundToInt()}˚",
+                            "${taMax[i]!!.roundToInt()}˚"
                         )
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -704,7 +673,7 @@ class MainActivity : BaseActivity() {
     private fun applyWindowBackground(progress: Int, sky: String?) {
         if (isNightProgress(progress)) {
             window.setBackgroundDrawableResource(R.drawable.main_bg_night)
-            changeTextColorStyle(sky!!, isNightProgress(progress))
+            changeTextColorStyle(sky!!, true)
         } else {
             when (sky) {
                 "맑음", "구름많음" -> window.setBackgroundDrawableResource(R.drawable.main_bg_clear)
@@ -1001,6 +970,7 @@ class MainActivity : BaseActivity() {
                     }
                 }
                 .addOnFailureListener {
+                    hidePB()
                     ToastUtils(this).showMessage(getString(R.string.fail_to_get_gps))
                     RDBLogcat.writeLogCause(
                         getUserEmail(this),
@@ -1043,24 +1013,18 @@ class MainActivity : BaseActivity() {
 
     // 현재 위치정보로 DB 갱신
     private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
-        CoroutineScope(Dispatchers.Default).launch {
-            val roomDB = GpsRepository(this@MainActivity)
-            setUserLastAddr(this@MainActivity, addr)
-            val model = GpsEntity()
+        val roomDB = GpsRepository(this@MainActivity)
+        setUserLastAddr(this@MainActivity, addr)
+        val model = GpsEntity()
 
-            model.name = CURRENT_GPS_ID
-            model.lat = lat
-            model.lng = lng
-            model.addr = addr
-            if (dbIsEmpty(roomDB)) {
-                roomDB.insert(model)
-                Logger.t(TAG_D)
-                    .d("Insert GPS In GetLocation : " + model.id + ", " + model.name + ", " + model.addr)
-            } else {
-                roomDB.update(model)
-                Logger.t(TAG_D)
-                    .d("Update GPS In GetLocation : " + model.id + ", " + model.name + ", " + model.addr)
-            }
+        model.name = CURRENT_GPS_ID
+        model.lat = lat
+        model.lng = lng
+        model.addr = addr
+        if (dbIsEmpty(roomDB)) {
+            roomDB.insert(model)
+        } else {
+            roomDB.update(model)
         }
     }
 
