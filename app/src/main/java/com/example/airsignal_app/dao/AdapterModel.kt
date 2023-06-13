@@ -59,4 +59,9 @@ object AdapterModel {
     data class UVResponseItem(
         val text: String
     )
+
+    // 날씨 특보 뷰페이저 아이템
+    data class ReportItem(
+        val text: String
+    )
 }

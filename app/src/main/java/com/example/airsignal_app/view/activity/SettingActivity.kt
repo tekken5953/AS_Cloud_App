@@ -78,7 +78,7 @@ class SettingActivity : BaseActivity() {
         }
 
         if (getUserEmail(this) != "") {
-            binding.settingUserEmail.text = userEmail
+            binding.settingUserEmail.text = getUserEmail(this)
             binding.settingUserIcon.visibility = View.VISIBLE
         } else {
             binding.settingUserEmail.text = getString(R.string.please_login)

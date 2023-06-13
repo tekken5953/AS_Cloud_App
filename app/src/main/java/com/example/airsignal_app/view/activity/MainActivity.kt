@@ -2,8 +2,6 @@ package com.example.airsignal_app.view.activity
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.ComponentName
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -11,13 +9,11 @@ import android.graphics.drawable.Drawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.*
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.AbsoluteSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.view.animation.LinearInterpolator
@@ -27,12 +23,10 @@ import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.setMargins
 import androidx.databinding.DataBindingUtil
+import androidx.viewpager2.widget.ViewPager2
 import androidx.work.*
 import com.example.airsignal_app.R
-import com.example.airsignal_app.adapter.DailyWeatherAdapter
-import com.example.airsignal_app.adapter.UVLegendAdapter
-import com.example.airsignal_app.adapter.UVResponseAdapter
-import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
+import com.example.airsignal_app.adapter.*
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
@@ -68,8 +62,6 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.removeSingleKey
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
-import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE_TIME
-import com.example.airsignal_app.view.widget.WidgetProvider
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
@@ -78,7 +70,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -95,6 +86,7 @@ class MainActivity : BaseActivity() {
     private val sideMenu: View by lazy {
         LayoutInflater.from(this@MainActivity).inflate(R.layout.side_menu, null)
     }
+    private lateinit var indicators: Array<ImageView>
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
@@ -104,10 +96,12 @@ class MainActivity : BaseActivity() {
     private val uvLegendAdapter = UVLegendAdapter(this, uvLegendList)
     private val uvResponseList = ArrayList<AdapterModel.UVResponseItem>()
     private val uvResponseAdapter = UVResponseAdapter(this, uvResponseList)
+    private val reportViewPagerItem = ArrayList<AdapterModel.ReportItem>()
+    private val reportViewPagerAdapter = ReportViewPagerAdapter(this, reportViewPagerItem)
     private val locationClass by lazy { GetLocation(this) }
     private var currentSun = 0
     private var isSunAnimated = false
-    private var isInit = false
+    private var isProgressed = false
     private val rotateAnim by lazy {
         RotateAnimation(
             0f, 360f,
@@ -119,13 +113,14 @@ class MainActivity : BaseActivity() {
             repeatMode = Animation.RESTART
         }
     }
+
     private val gpsFix by lazy { binding.mainGpsFix }
 
     override fun onResume() {
         super.onResume()
-        if (!isInit) {
+        if (!isProgressed) {
             showPB()
-            isInit = true
+            isProgressed = true
         }
         getDataSingleTime()
         Thread.sleep(100)
@@ -210,7 +205,7 @@ class MainActivity : BaseActivity() {
                         delay(100)
                         val animatorSun =
                             ObjectAnimator.ofInt(binding.seekArc, "progress", currentSun)
-                        animatorSun.duration = 1000
+                        animatorSun.duration = 800
                         animatorSun.start()
                     }
                     isSunAnimated = true
@@ -409,22 +404,46 @@ class MainActivity : BaseActivity() {
         binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter
         binding.mainUVLegendRv.adapter = uvLegendAdapter
         binding.mainUvCollapseRv.adapter = uvResponseAdapter
+        val interpolator = AccelerateInterpolator()
+        binding.nestedReportViewpager.apply {
+            adapter = reportViewPagerAdapter
+            isClickable = false
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            offscreenPageLimit = 3
 
-        binding.mainUvCollapseRv.isClickable = false
+//            setPageTransformer {page, position ->
+//                page.apply {
+//                    translationX = -position * width
+//                    scaleX = 0.5f + (1 - position.absoluteValue) * 0.5f
+//                    scaleY = 0.5f + (1 - position.absoluteValue) * 0.5f
+//                    alpha = 0.5f + (1 - position.absoluteValue) * 0.5f
+//                    interpolator.getInterpolation(position) // Interpolator 적용
+//                }
+//            }
 
-        createWorkManager()        // 워크 매니저 생성
-
-        AdViewClass(this).loadAdView(binding.nestedAdView)  // adView 생성
-
-        binding.adViewCancelIv.setOnClickListener {
-            it.visibility = GONE
-            val layoutParams =
-                RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-            layoutParams.addRule(RelativeLayout.BELOW, R.id.nested_daily_box)
-            layoutParams.setMargins(0)
-            binding.adViewBox.layoutParams = layoutParams
-            binding.nestedAdView.visibility = GONE
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    updateIndicators(position)
+                }
+            })
         }
+
+            binding.mainUvCollapseRv.isClickable = false
+
+            createWorkManager()        // 워크 매니저 생성
+
+            AdViewClass(this).loadAdView(binding.nestedAdView)  // adView 생성
+
+            binding.adViewCancelIv.setOnClickListener {
+                it.visibility = GONE
+                val layoutParams =
+                    RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+                layoutParams.addRule(RelativeLayout.BELOW, R.id.nested_daily_box)
+                layoutParams.setMargins(0)
+                binding.adViewBox.layoutParams = layoutParams
+                binding.nestedAdView.visibility = GONE
+            }
     }
 
     // 백그라운드 위치 호출
@@ -547,6 +566,13 @@ class MainActivity : BaseActivity() {
                     binding.mainUvValue.text = translateUV(this, uvFlag) + "\n" + uv.value.toString()
                     setUvBackgroundColor(this, uvFlag, binding.mainUVLegendCardView) // UV 범주 색상 변경
                 }
+
+                reportViewPagerItem.clear()
+                addReportViewPagerItem("오늘 오후부터 저녁 사이 제주도산지를 중심으로 소나기가 내리는 곳이 있겠습니다.")
+                addReportViewPagerItem("오늘 아침까지 제주도에는 빗방울이 떨어지는 곳이 있겠고, 중산간 이상 지역에는 가시거리 1km 미만의 안개가 끼는 곳이 있겠으니, 교통안전에 유의하기 바랍니다.")
+                addReportViewPagerItem("내일까지 해안가로는 너울이 유입되겠으니, 안전사고에 유의하기 바랍니다.")
+                createIndicators(binding.nestedReportIndicator)
+                reportViewPagerAdapter.notifyDataSetChanged()
 
                 val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
                 val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
@@ -732,6 +758,33 @@ class MainActivity : BaseActivity() {
             }
         }
         return params
+    }
+
+    // 뷰페이저 인디케이터 업데이트
+    private fun updateIndicators(position: Int) {
+        for (i in indicators.indices) {
+            indicators[i].setImageResource(
+                if (i == position) R.drawable.indicator_fill // 선택된 원 이미지
+                else R.drawable.indicator_empty // 선택되지 않은 원 이미지
+            )
+        }
+    }
+    // 뷰페이저 인디케이터 생성
+    private fun createIndicators(indicator: LinearLayout) {
+        binding.nestedReportIndicator.removeAllViews()
+        indicators = Array(reportViewPagerItem.size) {
+            val indicatorView = ImageView(this)
+            val params = LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(8, 0, 8, 0)
+            indicatorView.layoutParams = params
+            indicatorView.setImageResource(R.drawable.indicator_empty) // 선택되지 않은 원 이미지
+            indicator.addView(indicatorView)
+            indicatorView
+        }
+        updateIndicators(binding.nestedReportViewpager.currentItem)
     }
 
     // 일몰 이후인지 불러옴 - progress
@@ -1046,6 +1099,13 @@ class MainActivity : BaseActivity() {
         val item = AdapterModel.UVResponseItem(text)
 
         uvResponseList.add(item)
+    }
+
+    // 날씨특보 아이템 추가
+    private fun addReportViewPagerItem(text: String) {
+        val item = AdapterModel.ReportItem(text)
+
+        reportViewPagerItem.add(item)
     }
 
     // 자외선 지수에 따른 대처요령 불러오기
