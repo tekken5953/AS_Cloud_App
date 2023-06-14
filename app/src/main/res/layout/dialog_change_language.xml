@@ -7,12 +7,10 @@
 
     <ImageView
         android:id="@+id/changeLangBack"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:padding="4dp"
+        style="@style/BasicImageButtonIcon"
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
-        android:background="?selectableItemBackgroundBorderless"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/back_arrow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

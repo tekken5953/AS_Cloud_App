@@ -17,6 +17,7 @@ import android.view.animation.*
 import android.widget.*
 import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
 import androidx.databinding.DataBindingUtil
 import androidx.viewpager2.widget.ViewPager2
@@ -93,7 +94,7 @@ class MainActivity : BaseActivity() {
     private val uvResponseList = ArrayList<AdapterModel.UVResponseItem>()
     private val uvResponseAdapter = UVResponseAdapter(this, uvResponseList)
     private val reportViewPagerItem = ArrayList<AdapterModel.ReportItem>()
-    private val reportViewPagerAdapter = ReportViewPagerAdapter(this, reportViewPagerItem)
+    private val reportViewPagerAdapter by lazy { ReportViewPagerAdapter(this, reportViewPagerItem, binding.nestedReportViewpager)}
     private val locationClass by lazy { GetLocation(this) }
     private var currentSun = 0
     private var isSunAnimated = false
@@ -323,7 +324,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun mVib() {
-        vib.make(50)
+        vib.make(20)
     }
 
     // 날씨 데이터 API 호출
@@ -336,9 +337,9 @@ class MainActivity : BaseActivity() {
                 getCurrentLocation()
             }
             // TimeOut
-            Handler(Looper.getMainLooper()).postDelayed({
+            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
                 if (isProgressed()) { hidePB() }
-            }, 1000 * 5)
+            }, 1000 * 7)
         }
     }
 
@@ -422,25 +423,26 @@ class MainActivity : BaseActivity() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     updateIndicators(position)
+                    binding.nestedReportViewpager.requestLayout()
                 }
             })
         }
 
-            binding.mainUvCollapseRv.isClickable = false
+        binding.mainUvCollapseRv.isClickable = false
 
-            createWorkManager()        // 워크 매니저 생성
+        createWorkManager()        // 워크 매니저 생성
 
-            AdViewClass(this).loadAdView(binding.nestedAdView)  // adView 생성
+        AdViewClass(this).loadAdView(binding.nestedAdView)  // adView 생성
 
-            binding.adViewCancelIv.setOnClickListener {
-                it.visibility = GONE
-                val layoutParams =
-                    RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-                layoutParams.addRule(RelativeLayout.BELOW, R.id.nested_daily_box)
-                layoutParams.setMargins(0)
-                binding.adViewBox.layoutParams = layoutParams
-                binding.nestedAdView.visibility = GONE
-            }
+        binding.adViewCancelIv.setOnClickListener {
+            it.visibility = GONE
+            val layoutParams =
+                RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+            layoutParams.addRule(RelativeLayout.BELOW, R.id.nested_daily_box)
+            layoutParams.setMargins(0)
+            binding.adViewBox.layoutParams = layoutParams
+            binding.nestedAdView.visibility = GONE
+        }
     }
 
     // 백그라운드 위치 호출

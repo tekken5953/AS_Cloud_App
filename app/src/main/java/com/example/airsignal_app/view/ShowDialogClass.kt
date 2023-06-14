@@ -42,7 +42,7 @@ class ShowDialogClass {
     /** 다이얼로그 뒤로가기 버튼 리스너 등록 **/
     fun setBackPressed(imageView: View): ShowDialogClass {
         imageView.setOnClickListener {
-            makeVib()
+//            makeVib()
             dismiss()
         }
         return this
@@ -51,7 +51,7 @@ class ShowDialogClass {
     /** 다이얼로그 뒤로가기 버튼 후 액티비티 갱신 **/
     fun setBackPressRefresh(imageView: ImageView): ShowDialogClass {
         imageView.setOnClickListener {
-            makeVib()
+//            makeVib()
             dismiss()
             RefreshUtils(activity).refreshActivity()
         }
@@ -60,7 +60,7 @@ class ShowDialogClass {
 
     // 진동 발생
     private fun makeVib() {
-        VibrateUtil(activity).make(50)
+        VibrateUtil(activity).make(20)
     }
 
     /** 다이얼로그 뷰 소멸 **/

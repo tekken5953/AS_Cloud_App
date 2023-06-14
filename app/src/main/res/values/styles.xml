@@ -94,4 +94,10 @@
         <item name="android:windowEnterAnimation">@anim/sidebar_show</item>
         <item name="android:windowExitAnimation">@anim/sidebar_hidden</item>
     </style>
+
+    <style name="BasicImageButtonIcon">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:padding">3dp</item>
+    </style>
 </resources>

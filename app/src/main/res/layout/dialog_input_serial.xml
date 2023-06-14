@@ -6,9 +6,8 @@
     android:background="@color/white">
 
     <ImageView
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:padding="4dp"
+        style="@style/BasicImageButtonIcon"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/back_arrow"
         android:layout_marginTop="18dp"
         android:layout_marginStart="20dp"/>
@@ -25,14 +24,12 @@
 
     <ImageView
         android:id="@+id/inputSerialCancel"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:padding="4dp"
+        style="@style/BasicImageButtonIcon"
         app:tint="@color/mode_color_text"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="19dp"
         android:layout_marginTop="18dp"
-        android:background="?selectableItemBackgroundBorderless"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/cancel" />
 
     <TextView

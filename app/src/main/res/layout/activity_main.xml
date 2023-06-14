@@ -53,24 +53,20 @@
 
             <ImageView
                 android:id="@+id/mainSideMenuIv"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:padding="3dp"
+                style="@style/BasicImageButtonIcon"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="24dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ico_hamb_w"
                 app:tint="@color/mode_black_color" />
 
             <ImageView
                 android:id="@+id/mainAddAddress"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:padding="3dp"
+                style="@style/BasicImageButtonIcon"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="24dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ico_add_w"
                 app:tint="@color/mode_black_color" />
 
@@ -237,22 +233,26 @@
                 android:background="@color/view_line_color"
                 android:paddingBottom="55dp">
 
-                <FrameLayout
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/nested_report_frame"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:layout_marginStart="12dp"
                     android:layout_marginEnd="12dp"
-                    android:animateLayoutChanges="true"
                     android:layout_alignParentTop="true"
                     android:nestedScrollingEnabled="false"
+                    android:orientation="vertical"
                     android:scrollIndicators="bottom"
-                    android:background="@drawable/scrolled_box_bg">
+                    android:background="@drawable/report_frame_bg">
+
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/nested_report_viewpager"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"/>
+                        android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true"
+                        android:layout_marginTop="35dp"
+                        android:layout_marginBottom="20dp"/>
 
                     <LinearLayout
                         android:id="@+id/nested_report_indicator"
@@ -261,8 +261,9 @@
                         android:gravity="center"
                         android:orientation="horizontal"
                         android:layout_gravity="bottom"
-                        android:layout_marginBottom="10dp"/>
-                </FrameLayout>
+                        android:layout_marginBottom="10dp"
+                        android:clickable="false"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <RelativeLayout
                     android:id="@+id/nested_daily_box"

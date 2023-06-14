@@ -195,7 +195,7 @@ class SettingActivity : BaseActivity() {
 
         // 뒤로가기 버튼 클릭
         binding.settingBack.setOnClickListener {
-            VibrateUtil(this).make(50)
+//            VibrateUtil(this).make(50)
             onBackPressedDispatcher.onBackPressed()
         }
 
