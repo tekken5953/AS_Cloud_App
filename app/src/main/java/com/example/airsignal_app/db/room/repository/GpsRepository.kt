@@ -4,10 +4,8 @@ import android.content.Context
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.room.AppDataBase.Companion.getInstance
 import com.example.airsignal_app.db.room.model.GpsEntity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import com.orhanobut.logger.Logger
+import kotlinx.coroutines.*
 import timber.log.Timber
 
 /**
@@ -16,47 +14,46 @@ import timber.log.Timber
  **/
 class GpsRepository(private val context: Context) {
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun update(model: GpsEntity) {
-        val job = Job()
-        CoroutineScope(Dispatchers.IO + job).launch {
+        GlobalScope.launch(Dispatchers.Default) {
             getInstance(context)!!.gpsRepository().updateCurrentGPS(model)
-            Timber.tag(TAG_D).d("Update Model")
+            Logger.t(TAG_D).d("Update Model")
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun insert(model: GpsEntity) {
-        val job = Job()
-        CoroutineScope(Dispatchers.IO + job).launch {
+        GlobalScope.launch(Dispatchers.Default) {
             getInstance(context)!!.gpsRepository().insertNewGPS(model)
-            Timber.tag(TAG_D).d("insert Model")
+            Logger.t(TAG_D).d("insert Model")
         }
     }
 
     fun findAll(): List<GpsEntity> {
-        Timber.tag(TAG_D).d("findAll Model")
+        Logger.t(TAG_D).d("findAll Model")
         return getInstance(context)!!.gpsRepository().findAll()
     }
 
     fun findById(name: String): GpsEntity {
-        Timber.tag(TAG_D).d("findById Model")
+        Logger.t(TAG_D).d("findById Model")
         return getInstance(context)!!.gpsRepository().findById(name)
     }
 
     fun deleteFromAddress(addr: String) {
-        val job = Job()
-        CoroutineScope(Dispatchers.IO + job).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             getInstance(context)!!.gpsRepository().deleteFromAddr(addr)
         }
-        Timber.tag(TAG_D).d("deleteFromAddress Model")
+        Logger.t(TAG_D).d("deleteFromAddress Model")
     }
 
     fun findByAddress(addr: String): GpsEntity {
-        Timber.tag(TAG_D).d("findByAddr Model")
+        Logger.t(TAG_D).d("findByAddr Model")
         return getInstance(context)!!.gpsRepository().findByAddress(addr)
     }
 
     fun clearDB() {
-        Timber.tag(TAG_D).d("ClearDB Model")
         getInstance(context)!!.gpsRepository().clearDB()
+        Logger.t(TAG_D).d("ClearDB Model")
     }
 }

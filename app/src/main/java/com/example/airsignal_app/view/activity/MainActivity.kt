@@ -2,8 +2,6 @@ package com.example.airsignal_app.view.activity
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.ComponentName
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -11,28 +9,21 @@ import android.graphics.drawable.Drawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.*
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.AbsoluteSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.view.animation.LinearInterpolator
-import android.view.animation.RotateAnimation
+import android.view.animation.*
 import android.widget.*
 import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
 import androidx.databinding.DataBindingUtil
+import androidx.viewpager2.widget.ViewPager2
 import androidx.work.*
 import com.example.airsignal_app.R
-import com.example.airsignal_app.adapter.DailyWeatherAdapter
-import com.example.airsignal_app.adapter.UVLegendAdapter
-import com.example.airsignal_app.adapter.UVResponseAdapter
-import com.example.airsignal_app.adapter.WeeklyWeatherAdapter
+import com.example.airsignal_app.adapter.*
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
@@ -68,8 +59,6 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.removeSingleKey
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
-import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE_TIME
-import com.example.airsignal_app.view.widget.WidgetProvider
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
@@ -89,11 +78,12 @@ class MainActivity : BaseActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private var isBackPressed = false
-    private lateinit var exitDialog: AlertDialog
     private val sideMenuBuilder by lazy { SideMenuBuilder(this@MainActivity) }
     private val sideMenu: View by lazy {
         LayoutInflater.from(this@MainActivity).inflate(R.layout.side_menu, null)
     }
+    private lateinit var indicators: Array<ImageView>
+    private val vib by lazy { VibrateUtil(this) }
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
@@ -103,9 +93,12 @@ class MainActivity : BaseActivity() {
     private val uvLegendAdapter = UVLegendAdapter(this, uvLegendList)
     private val uvResponseList = ArrayList<AdapterModel.UVResponseItem>()
     private val uvResponseAdapter = UVResponseAdapter(this, uvResponseList)
+    private val reportViewPagerItem = ArrayList<AdapterModel.ReportItem>()
+    private val reportViewPagerAdapter by lazy { ReportViewPagerAdapter(this, reportViewPagerItem, binding.nestedReportViewpager)}
     private val locationClass by lazy { GetLocation(this) }
     private var currentSun = 0
     private var isSunAnimated = false
+    private var isProgressed = false
     private val rotateAnim by lazy {
         RotateAnimation(
             0f, 360f,
@@ -117,11 +110,15 @@ class MainActivity : BaseActivity() {
             repeatMode = Animation.RESTART
         }
     }
+
     private val gpsFix by lazy { binding.mainGpsFix }
 
     override fun onResume() {
         super.onResume()
-        showPB()
+        if (!isProgressed) {
+            showPB()
+            isProgressed = true
+        }
         getDataSingleTime()
         Thread.sleep(100)
         binding.nestedAdView.resume()
@@ -154,11 +151,12 @@ class MainActivity : BaseActivity() {
                 applyGetDataViewModel()
             }
 
+        initializing()
+
         // 메인 하단 스크롤 유도 화살표 애니메이션 적용
         val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
         binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
 
-        //findViewById or Binding for your SegmentedProgressBar
         val array2P5 = floatArrayOf(0.12f, 0.24f, 0.48f, 0.16f)
         val array10 = floatArrayOf(0.15f, 0.25f, 0.35f, 0.25f)
         drawingPmGraph(binding.segmentProgress2p5Bar, array2P5)
@@ -168,12 +166,7 @@ class MainActivity : BaseActivity() {
         addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
         addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
         addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
-        addUvLegendItem(
-            3,
-            "8 - 10",
-            getColor(R.color.uv_very_high),
-            getString(R.string.uv_very_high)
-        )
+        addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), getString(R.string.uv_very_high))
         addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
         binding.seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지
@@ -181,6 +174,7 @@ class MainActivity : BaseActivity() {
         // 자외선 지수 접고 펴기 화살표
         binding.mainUVBox.apply {
             this.setOnClickListener {
+                mVib()
                 if (binding.mainUvCollapsedLayout.visibility == VISIBLE) {
                     binding.mainUvCollapseArrow.setImageDrawable(
                         ResourcesCompat.getDrawable(resources, R.drawable.btn_down, null)
@@ -209,7 +203,7 @@ class MainActivity : BaseActivity() {
                         delay(100)
                         val animatorSun =
                             ObjectAnimator.ofInt(binding.seekArc, "progress", currentSun)
-                        animatorSun.duration = 1000
+                        animatorSun.duration = 800
                         animatorSun.start()
                     }
                     isSunAnimated = true
@@ -254,11 +248,10 @@ class MainActivity : BaseActivity() {
 
 //        onUpdateWidgetData()
 
-        initializing()
-
         // 플러스 모양 추가시 주소등록 다이얼로그
         binding.mainAddAddress.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
+                mVib()
                 val bottomSheet =
                     SearchDialog(
                         this@MainActivity,
@@ -273,6 +266,7 @@ class MainActivity : BaseActivity() {
         // 현재 주소로 갱신
         binding.mainGpsFix.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
+                mVib()
                 if (RequestPermissionsUtil(this@MainActivity).isLocationPermitted()) {
                     showPB()
                     getCurrentLocation()
@@ -293,35 +287,44 @@ class MainActivity : BaseActivity() {
 
     // 햄버거 메뉴 세팅
     private fun addSideMenu() {
-        val cancel = sideMenu.findViewById<ImageView>(R.id.headerCancel)
-        val profile = sideMenu.findViewById<ImageView>(R.id.navHeaderProfileImg)
-        val id = sideMenu.findViewById<TextView>(R.id.navHeaderUserId)
-        val weather = sideMenu.findViewById<TextView>(R.id.navMenuWeather)
-        val setting = sideMenu.findViewById<TextView>(R.id.navMenuSetting)
-        val headerTr = sideMenu.findViewById<TableRow>(R.id.headerTr)
-        val adView = sideMenu.findViewById<AdView>(R.id.navMenuAdview)
+        try {
+            val cancel = sideMenu.findViewById<ImageView>(R.id.headerCancel)
+            val profile = sideMenu.findViewById<ImageView>(R.id.navHeaderProfileImg)
+            val id = sideMenu.findViewById<TextView>(R.id.navHeaderUserId)
+            val weather = sideMenu.findViewById<TextView>(R.id.navMenuWeather)
+            val setting = sideMenu.findViewById<TextView>(R.id.navMenuSetting)
+            val headerTr = sideMenu.findViewById<TableRow>(R.id.headerTr)
+            val adView = sideMenu.findViewById<AdView>(R.id.navMenuAdview)
 
-        sideMenuBuilder.apply {
-            setBackPressed(cancel)
-            setUserData(profile, id)
-            AdViewClass(this@MainActivity).loadAdView(adView)
-        }
-
-        headerTr.setOnClickListener {
-            if (getUserLoginPlatform(this) == "")
-                EnterPageUtil(this@MainActivity).toLogin()
-        }
-        weather.setOnClickListener {
-            sideMenuBuilder.dismiss()
-        }
-        setting.setOnClickListener {
-            CompletableFuture.supplyAsync {
-                sideMenuBuilder.dismiss()
-            }.thenAccept {
-                val intent = Intent(this@MainActivity, SettingActivity::class.java)
-                startActivity(intent)
+            sideMenuBuilder.apply {
+                setBackPressed(cancel)
+                setUserData(profile, id)
+                AdViewClass(this@MainActivity).loadAdView(adView)
             }
+
+            headerTr.setOnClickListener {
+                if (getUserLoginPlatform(this) == "")
+                    EnterPageUtil(this@MainActivity).toLogin()
+            }
+            weather.setOnClickListener {
+                sideMenuBuilder.dismiss()
+            }
+            setting.setOnClickListener {
+                CompletableFuture.supplyAsync {
+                    sideMenuBuilder.dismiss()
+                }.thenAccept {
+                    val intent = Intent(this@MainActivity, SettingActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+        } catch (e: NullPointerException) {
+            e.printStackTrace()
+            RDBLogcat.writeLogCause("ANR 발생", "Thread : ${Thread.currentThread()}","SideMenu NPE")
         }
+    }
+
+    private fun mVib() {
+        vib.make(20)
     }
 
     // 날씨 데이터 API 호출
@@ -334,11 +337,9 @@ class MainActivity : BaseActivity() {
                 getCurrentLocation()
             }
             // TimeOut
-            Handler(Looper.getMainLooper()).postDelayed({
-                if (isProgressed()) {
-                    hidePB()
-                }
-            }, 1000 * 5)
+            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                if (isProgressed()) { hidePB() }
+            }, 1000 * 7)
         }
     }
 
@@ -346,11 +347,7 @@ class MainActivity : BaseActivity() {
     private fun loadSavedAddr() {
         val lastAddress = getUserLastAddress(this)
 
-        getDataViewModel.loadDataResult(
-            null,
-            null,
-            lastAddress
-        )
+        getDataViewModel.loadDataResult(null, null, lastAddress)
 
         Logger.t(TAG_R).i(lastAddress)
         locationClass.writeRdbSearchLog(lastAddress)
@@ -361,10 +358,14 @@ class MainActivity : BaseActivity() {
 
     // 7글자를 기준으로 WordWrap 적용
     private fun guardWordWrap(s: String): String {
-        val formS = if (s.first().toString() == " ")
-            s.replaceFirst(" ", "") else s
-
-        return WrapTextClass().getFormedText(formS, 7)
+        return try {
+            val formS = if (s.first().toString() == " ")
+                s.replaceFirst(" ", "") else s
+            WrapTextClass().getFormedText(formS, 7)
+        } catch (e: NoSuchElementException) {
+            e.printStackTrace()
+            "주소 재갱신 필요"
+        }
     }
 
     // 프로그래스 보이기
@@ -401,6 +402,31 @@ class MainActivity : BaseActivity() {
         binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter
         binding.mainUVLegendRv.adapter = uvLegendAdapter
         binding.mainUvCollapseRv.adapter = uvResponseAdapter
+        binding.nestedReportViewpager.apply {
+            adapter = reportViewPagerAdapter
+            isClickable = false
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            offscreenPageLimit = 3
+
+//            val interpolator = AccelerateInterpolator()
+//            setPageTransformer {page, position ->
+//                page.apply {
+//                    translationX = -position * width
+//                    scaleX = 0.5f + (1 - position.absoluteValue) * 0.5f
+//                    scaleY = 0.5f + (1 - position.absoluteValue) * 0.5f
+//                    alpha = 0.5f + (1 - position.absoluteValue) * 0.5f
+//                    interpolator.getInterpolation(position) // Interpolator 적용
+//                }
+//            }
+
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    updateIndicators(position)
+                    binding.nestedReportViewpager.requestLayout()
+                }
+            })
+        }
 
         binding.mainUvCollapseRv.isClickable = false
 
@@ -418,27 +444,6 @@ class MainActivity : BaseActivity() {
             binding.nestedAdView.visibility = GONE
         }
     }
-
-//    private fun animateProgress(motionLayout: MotionLayout) {
-//        val targetProgress = 0.03f // 목표 progress
-//        val duration = 300L // 애니메이션 지속 시간
-//
-//        if (fowardAnimCcount < 4) {
-//            motionLayout.postDelayed({
-//                if (isForwardAnimation) {
-//                    val animator = ObjectAnimator.ofFloat(motionLayout, "progress", targetProgress)
-//                    animator.start()
-//                } else {
-//                    val animator = ObjectAnimator.ofFloat(motionLayout, "progress", 0f)
-//                    animator.start()
-//                }
-//
-//                isForwardAnimation = !isForwardAnimation
-//                fowardAnimCcount++
-//                animateProgress(motionLayout)
-//            }, duration)
-//        }
-//    }
 
     // 백그라운드 위치 호출
     private fun createWorkManager() {
@@ -458,40 +463,7 @@ class MainActivity : BaseActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             isBackPressed = false
         }, 2000)
-
-//        addExitDialog()
     }
-
-//    private fun addExitDialog() {
-//        val builder = AlertDialog.Builder(this)
-//        val view = LayoutInflater.from(this).inflate(R.layout.dialog_exit_app,null)
-//        val nativeAdView: com.google.android.gms.ads.nativead.NativeAdView = view.findViewById(R.id.exitNativeAdView)
-//        val yesBtn: AppCompatButton = view.findViewById(R.id.exitYesBtn)
-//        val noBtn: AppCompatButton = view.findViewById(R.id.exitNoBtn)
-//        val nativeAd = NativeAdViewClass(this@MainActivity)
-//
-//        val title: TextView = view.findViewById(R.id.nativeAdTitle)
-//        val description: ImageView = view.findViewById(R.id.nativeAdDescription)
-//        builder.setView(view)
-//        val alertDialog = builder.create()
-//        exitDialog = alertDialog
-//
-//        CoroutineScope(Dispatchers.Default).launch {
-//            nativeAd.load(nativeAdView, title, description)
-//        }
-//
-//        yesBtn.setOnClickListener {
-//            sp.removeKey(lastAddress)
-//            alertDialog.dismiss()
-//            EnterPageUtil(this).fullyExit()
-//        }
-//
-//        noBtn.setOnClickListener {
-//            alertDialog.dismiss()
-//        }
-//
-//        alertDialog.show()
-//    }
 
     // 뷰모델에서 Observing 한 데이터 결과 적용
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
@@ -504,7 +476,7 @@ class MainActivity : BaseActivity() {
                 val air = result.quality
                 val week = result.week
                 val today = result.today
-                val uv = result.uv
+                val uv = result.uv!!
                 val yesterday = result.yesterday
                 val dateNow: LocalDateTime = LocalDateTime.now()
                 val current = result.current
@@ -530,16 +502,17 @@ class MainActivity : BaseActivity() {
                 dailyWeatherList.clear()
                 weeklyWeatherList.clear()
 
-                binding.mainLiveTempValue.text = current.temperature.absoluteValue.toString()
-                binding.mainLiveTempUnit.text = "˚"
-
-                applyUvResponseItem(uv.flag)      // 자외선 단계별 대응요령 추가
-
-                if (current.temperature < 0) {
-                    binding.mainLiveTempMinus.visibility = VISIBLE
-                } else {
-                    binding.mainLiveTempMinus.visibility = GONE
+                current.temperature?.let {
+                    currentTemp ->
+                    binding.mainLiveTempValue.text = currentTemp.absoluteValue.toString()
+                    binding.mainLiveTempUnit.text = "˚"
+                    if (currentTemp < 0) {
+                        binding.mainLiveTempMinus.visibility = VISIBLE
+                    } else {
+                        binding.mainLiveTempMinus.visibility = GONE
+                    }
                 }
+
                 binding.mainSkyImg.setImageDrawable(
                     applySkyImg(
                         current.rainType,
@@ -554,33 +527,53 @@ class MainActivity : BaseActivity() {
                     applySkyText(current.rainType, realtime.sky, thunder)
                 )
                 binding.mainMinMaxValue.text =
-                    "${filteringNullData(today.min)}˚/${filteringNullData(today.max)}˚"
-                binding.nestedPm10Grade.getPM10GradeFromValue(air.pm10Value.toInt())
-                binding.nestedPm2p5Grade.getPM25GradeFromValue(air.pm25Value)
-                binding.nestedPm10Value.setIndexTextAsInt(air.pm10Value.toFloat())
-                binding.nestedPm2p5Value.setIndexTextAsInt(air.pm25Value.toFloat())
+                    "${filteringNullData(today.min!!)}˚/${filteringNullData(today.max!!)}˚"
+
+                air.pm10Value?.let {
+                    pm10 ->
+                    binding.nestedPm10Grade.getPM10GradeFromValue(pm10.toInt())
+                    binding.nestedPm10Value.setIndexTextAsInt(pm10.toFloat())
+                }
+                air.pm25Value?.let {
+                    pm2p5 ->
+                    binding.nestedPm2p5Grade.getPM25GradeFromValue(pm2p5)
+                    binding.nestedPm2p5Value.setIndexTextAsInt(pm2p5.toFloat())
+                }
 
                 binding.mainAirCOValue.apply {
                     text = air.coValue.toString()
-                    setTextColor(getDataColor(this@MainActivity, air.coGrade - 1))
+                    setTextColor(getDataColor(this@MainActivity, air.coGrade!! - 1))
                 }
                 binding.mainAirNO2Value.apply {
                     text = air.no2Value.toString()
-                    setTextColor(getDataColor(this@MainActivity, air.no2Grade - 1))
+                    setTextColor(getDataColor(this@MainActivity, air.no2Grade!! - 1))
                 }
                 binding.mainAirO3Value.apply {
                     text = air.o3Value.toString()
-                    setTextColor(getDataColor(this@MainActivity, air.o3Grade - 1))
+                    setTextColor(getDataColor(this@MainActivity, air.o3Grade!! - 1))
                 }
                 binding.mainAirSO2Value.apply {
                     text = air.so2Value.toString()
-                    setTextColor(getDataColor(this@MainActivity, air.so2Grade - 1))
+                    setTextColor(getDataColor(this@MainActivity, air.so2Grade!! - 1))
                 }
 
-//                binding.mainUvGrade.text = uv.flag
-                binding.mainUvValue.text = translateUV(this, uv.flag) + "\n" + uv.value.toString()
+                // UV 값이 없으면 카드 없앰
+                if ((uv.flag == null) || (uv.value == null) || (uv.flag == "null") || (uv.value.toString() == "null"))
+                    binding.mainUVBox.visibility = GONE
+                else {
+                    binding.mainUVBox.visibility = VISIBLE
+                    applyUvResponseItem(uv.flag)   // 자외선 단계별 대응요령 추가
+                    setUvBackgroundColor(this, uv.flag, binding.mainUVLegendCardView) // UV 범주 색상 변경
+                    binding.mainUvValue.text = translateUV(this, uv.flag) + "\n" + uv.value.toString()
+                }
 
-                setUvBackgroundColor(this, uv.flag, binding.mainUVLegendCardView) // UV 범주 색상 변경
+                reportViewPagerItem.clear()
+                //TODO 실제 데이터를 받아와서 교체
+                addReportViewPagerItem("오늘 오후부터 저녁 사이 제주도산지를 중심으로 소나기가 내리는 곳이 있겠습니다.")
+                addReportViewPagerItem("오늘 아침까지 제주도에는 빗방울이 떨어지는 곳이 있겠고, 중산간 이상 지역에는 가시거리 1km 미만의 안개가 끼는 곳이 있겠으니, 교통안전에 유의하기 바랍니다.")
+                addReportViewPagerItem("내일까지 해안가로는 너울이 유입되겠으니, 안전사고에 유의하기 바랍니다.")
+                createIndicators(binding.nestedReportIndicator)
+                reportViewPagerAdapter.notifyDataSetChanged()
 
                 val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
                 val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
@@ -592,17 +585,17 @@ class MainActivity : BaseActivity() {
                 binding.mainSunSetTom.text = sbSetTom
 
                 getCompareTemp(
-                    yesterday.temp,
-                    current.temperature,
+                    yesterday.temp!!,
+                    current.temperature!!,
                     binding.mainCompareTempTv
                 )
 
-                val sunsetTime = convertTimeToMinutes(sun.sunset)
-                val sunriseTime = convertTimeToMinutes(sun.sunrise)
+                val sunsetTime = convertTimeToMinutes(sun.sunset!!)
+                val sunriseTime = convertTimeToMinutes(sun.sunrise!!)
                 val entireSun = sunsetTime - sunriseTime
                 val currentTime = millsToString(getCurrentTime(), "HHmm")
                 currentSun =
-                    100 * (convertTimeToMinutes(currentTime) - convertTimeToMinutes(sun.sunrise)) / entireSun
+                    (100 * (convertTimeToMinutes(currentTime) - convertTimeToMinutes(sun.sunrise))) / entireSun
 
                 if (currentSun > 100) { currentSun = 100 }
 
@@ -611,21 +604,26 @@ class MainActivity : BaseActivity() {
                     applySkyText(current.rainType, realtime.sky, thunder)
                 )
 
-                binding.segmentProgress2p5Arrow.layoutParams = movePmBarChart(air.pm25Value, "25")
-                binding.segmentProgress10Arrow.layoutParams =
-                    movePmBarChart(air.pm10Value.roundToInt(), "10")
+                air.pm25Value?.let {
+                    pm2p5Value ->
+                    binding.segmentProgress2p5Arrow.layoutParams = movePmBarChart(pm2p5Value, "25")
+                    binding.segmentProgress2p5Arrow.imageTintList =
+                        ColorStateList.valueOf(setPm2p5ArrowTint(pm2p5Value))
+                }
 
-                binding.segmentProgress2p5Arrow.imageTintList =
-                    ColorStateList.valueOf(setPm2p5ArrowTint(air.pm25Value))
-                binding.segmentProgress10Arrow.imageTintList =
-                    ColorStateList.valueOf(setPm10ArrowTint(air.pm10Value.roundToInt()))
+                air.pm10Value?.let {
+                    pm10Value ->
+                    binding.segmentProgress10Arrow.layoutParams =
+                        movePmBarChart(pm10Value.roundToInt(), "10")
+                    binding.segmentProgress10Arrow.imageTintList =
+                        ColorStateList.valueOf(setPm10ArrowTint(pm10Value.roundToInt()))
+                }
 
                 for (i: Int in 0 until result.realtime.size) {
-                    try {
                         val dailyIndex = result.realtime[i]
                         val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
-
-                        val dailyTime = millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
+                        val dailyTime =
+                            millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
                         val dailySunProgress =
                             100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(sun.sunrise)) / entireSun
                         val isNight = isNightProgress(dailySunProgress)
@@ -655,41 +653,30 @@ class MainActivity : BaseActivity() {
                                     isLarge = false,
                                     isNight = isNight
                                 )!!,
-                                "${dailyIndex.temp.roundToInt()}˚",
+                                "${dailyIndex.temp!!.roundToInt()}˚",
                                 convertDateAppendZero(forecastToday)
                             )
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
                 }
 
                 for (i: Int in 0 until (7)) {
                     try {
                         val formedDate = dateNow.plusDays(i.toLong())
                         val date: String = when (i) {
-                            0 -> {
-                                getString(R.string.today)
-                            }
-                            1 -> {
-                                getString(R.string.tomorrow)
-                            }
+                            0 -> { getString(R.string.today) }
+                            1 -> { getString(R.string.tomorrow) }
                             else -> {
-                                "${
-                                    convertDayOfWeekToKorean(
-                                        this,
-                                        dateNow.dayOfWeek.value + i
-                                    )
-                                }${getString(R.string.date)}"
+                                "${convertDayOfWeekToKorean(this, 
+                                    dateNow.dayOfWeek.value + i)}${getString(R.string.date)}"
                             }
                         }
                         addWeeklyWeatherItem(
                             date,
                             convertDateAppendZero(formedDate),
-                            getSkyImgSmall(this, wfMin[i],false)!!,
-                            getSkyImgSmall(this, wfMax[i],false)!!,
-                            "${taMin[i].roundToInt()}˚",
-                            "${taMax[i].roundToInt()}˚"
+                            getSkyImgSmall(this, wfMin[i], false)!!,
+                            getSkyImgSmall(this, wfMax[i], false)!!,
+                            "${taMin[i]!!.roundToInt()}˚",
+                            "${taMax[i]!!.roundToInt()}˚"
                         )
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -698,13 +685,12 @@ class MainActivity : BaseActivity() {
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
                 changeTextColorStyle(
-                    applySkyText(realtime.rainType, realtime.sky, thunder),
+                    applySkyText(current.rainType, realtime.sky, thunder),
                     isNightProgress(currentSun)
                 )
             }
             runOnUiThread {
                 hidePB()
-//                animateProgress(binding.mainMotionLayout)
             }
         }
         return this
@@ -714,7 +700,7 @@ class MainActivity : BaseActivity() {
     private fun applyWindowBackground(progress: Int, sky: String?) {
         if (isNightProgress(progress)) {
             window.setBackgroundDrawableResource(R.drawable.main_bg_night)
-            changeTextColorStyle(sky!!, isNightProgress(progress))
+            changeTextColorStyle(sky!!, true)
         } else {
             when (sky) {
                 "맑음", "구름많음" -> window.setBackgroundDrawableResource(R.drawable.main_bg_clear)
@@ -739,10 +725,8 @@ class MainActivity : BaseActivity() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-        // Pixel을 DP로 변환
-        fun dp(i: Int): Int {
-            return pixelToDp(this, i)
-        }
+        // pixel을 DP로 변환
+        fun dp(i: Int): Int { return pixelToDp(this, i) }
 
         val arrowWidth = dp(binding.segmentProgress10Arrow.width) / 2 - dp(2)
 
@@ -752,19 +736,12 @@ class MainActivity : BaseActivity() {
             params.addRule(RelativeLayout.ALIGN_START, R.id.segment_progress_2p5_bar)
 
             if (value > 125) {
-                params.setMargins(
-                    widthDp - arrowWidth - dp(1),
-                    dp(15),
-                    arrowWidth,
-                    0
-                ) // 왼쪽, 위, 오른쪽, 아래 순서
+                params.setMargins(widthDp - arrowWidth - dp(1), dp(15),
+                    arrowWidth, 0) // 왼쪽, 위, 오른쪽, 아래 순서
             } else {
                 params.setMargins(
                     value * widthDp / dp(125) - arrowWidth - dp(1),
-                    dp(15),
-                    arrowWidth,
-                    0
-                ) // 왼쪽, 위, 오른쪽, 아래 순서
+                    dp(15), arrowWidth, 0) // 왼쪽, 위, 오른쪽, 아래 순서
             }
         } else if (sort == "10") {
             val widthDp = pixelToDp(this, binding.segmentProgress10Bar.width)
@@ -773,21 +750,42 @@ class MainActivity : BaseActivity() {
 
             if (value > 200) {
                 params.setMargins(
-                    widthDp - arrowWidth,
-                    dp(15),
-                    arrowWidth,
-                    0
-                ) // 왼쪽, 위, 오른쪽, 아래 순서
+                    // 왼쪽, 위, 오른쪽, 아래 순서
+                    widthDp - arrowWidth, dp(15), arrowWidth, 0)
             } else {
                 params.setMargins(
                     value * widthDp / dp(200) - arrowWidth,
-                    dp(15),
-                    arrowWidth,
-                    0
-                ) // 왼쪽, 위, 오른쪽, 아래 순서
+                    dp(15), arrowWidth, 0) // 왼쪽, 위, 오른쪽, 아래 순서
             }
         }
         return params
+    }
+
+    // 뷰페이저 인디케이터 업데이트
+    private fun updateIndicators(position: Int) {
+        for (i in indicators.indices) {
+            indicators[i].setImageResource(
+                if (i == position) R.drawable.indicator_fill // 선택된 원 이미지
+                else R.drawable.indicator_empty // 선택되지 않은 원 이미지
+            )
+        }
+    }
+    // 뷰페이저 인디케이터 생성
+    private fun createIndicators(indicator: LinearLayout) {
+        binding.nestedReportIndicator.removeAllViews()
+        indicators = Array(reportViewPagerItem.size) {
+            val indicatorView = ImageView(this)
+            val params = LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(8, 0, 8, 0)
+            indicatorView.layoutParams = params
+            indicatorView.setImageResource(R.drawable.indicator_empty) // 선택되지 않은 원 이미지
+            indicator.addView(indicatorView)
+            indicatorView
+        }
+        updateIndicators(binding.nestedReportViewpager.currentItem)
     }
 
     // 일몰 이후인지 불러옴 - progress
@@ -817,19 +815,21 @@ class MainActivity : BaseActivity() {
         this.weeklyWeatherList.add(item)
     }
 
-    // 위젯 데이터 갱신
-    private fun onUpdateWidgetData() {
-        sendBroadcast(Intent(WIDGET_UPDATE_TIME).apply {
-            component = ComponentName(this@MainActivity, WidgetProvider::class.java)
-        })
-    }
+//    // 위젯 데이터 갱신
+//    private fun onUpdateWidgetData() {
+//        sendBroadcast(Intent(WIDGET_UPDATE_TIME).apply {
+//            component = ComponentName(this@MainActivity, WidgetProvider::class.java)
+//        })
+//    }
 
     // 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트
     private fun applySkyText(rain: String?, sky: String?, thunder: Double?): String {
         return if (rain != "없음") {
-            if ((thunder == null) || (thunder < 0.2)) { rain!! } else { getString(R.string.thunder_sunny) }
+            if ((thunder == null) || (thunder < 0.2)) { rain!! }
+            else { getString(R.string.thunder_sunny) }
         } else {
-            if ((thunder == null) || (thunder < 0.2)) { sky!! } else { getString(R.string.thunder_rainy) }
+            if ((thunder == null) || (thunder < 0.2)) { sky!! }
+            else { getString(R.string.thunder_rainy) }
         }
     }
 
@@ -889,17 +889,13 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    // 마지막 기호 크기 줄이기
-    private fun spanUnit(tv: TextView, s: String) {
-        val span = SpannableStringBuilder(s)
-        span.setSpan(
-            AbsoluteSizeSpan(35),
-            s.length - 1,
-            s.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        tv.text = span
-    }
+//    // 마지막 기호 크기 줄이기
+//    private fun spanUnit(tv: TextView, s: String) {
+//        val span = SpannableStringBuilder(s)
+//        span.setSpan(AbsoluteSizeSpan(35),
+//            s.length - 1, s.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        tv.text = span
+//    }
 
     // 미세먼지 그래프 화살표 색상 변경
     private fun setPm2p5ArrowTint(value: Int): Int {
@@ -1001,7 +997,8 @@ class MainActivity : BaseActivity() {
                                             .replace(getString(R.string.korea), "")
                                     )
                                     getDataViewModel.loadDataResult(
-                                        loc.latitude, loc.longitude, null)
+                                        loc.latitude, loc.longitude, null
+                                    )
 
                                     locationClass.writeRdbCurrentLog(
                                         loc.latitude, loc.longitude,
@@ -1027,6 +1024,7 @@ class MainActivity : BaseActivity() {
                     }
                 }
                 .addOnFailureListener {
+                    hidePB()
                     ToastUtils(this).showMessage(getString(R.string.fail_to_get_gps))
                     RDBLogcat.writeLogCause(
                         getUserEmail(this),
@@ -1041,23 +1039,17 @@ class MainActivity : BaseActivity() {
                 GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude).apply {
                     if (this == null) {
                         Toast.makeText(
-                            this@MainActivity,
-                            getString(R.string.fail_to_get_gps),
-                            Toast.LENGTH_SHORT
-                        )
+                            this@MainActivity, getString(R.string.fail_to_get_gps), Toast.LENGTH_SHORT)
                             .show()
                     }
                     this?.let { addr ->
                         updateCurrentAddress(
-                            loc.latitude,
-                            loc.longitude,
+                            loc.latitude, loc.longitude,
                             addr.replaceFirst(" ", "").replace(getString(R.string.korea), "")
                         )
                         getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
                         locationClass.writeRdbCurrentLog(
-                            loc.latitude,
-                            loc.longitude,
-                            "NetWork - $addr"
+                            loc.latitude, loc.longitude, "NetWork - $addr"
                         )
                         binding.mainGpsTitleTv.text =
                             guardWordWrap(locationClass.formattingFullAddress(addr))
@@ -1075,24 +1067,18 @@ class MainActivity : BaseActivity() {
 
     // 현재 위치정보로 DB 갱신
     private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
-        CoroutineScope(Dispatchers.Default).launch {
-            val roomDB = GpsRepository(this@MainActivity)
-            setUserLastAddr(this@MainActivity, addr)
-            val model = GpsEntity()
+        val roomDB = GpsRepository(this@MainActivity)
+        setUserLastAddr(this@MainActivity, addr)
+        val model = GpsEntity()
 
-            model.name = CURRENT_GPS_ID
-            model.lat = lat
-            model.lng = lng
-            model.addr = addr
-            if (dbIsEmpty(roomDB)) {
-                roomDB.insert(model)
-                Logger.t(TAG_D)
-                    .d("Insert GPS In GetLocation : " + model.id + ", " + model.name + ", " + model.addr)
-            } else {
-                roomDB.update(model)
-                Logger.t(TAG_D)
-                    .d("Update GPS In GetLocation : " + model.id + ", " + model.name + ", " + model.addr)
-            }
+        model.name = CURRENT_GPS_ID
+        model.lat = lat
+        model.lng = lng
+        model.addr = addr
+        if (dbIsEmpty(roomDB)) {
+            roomDB.insert(model)
+        } else {
+            roomDB.update(model)
         }
     }
 
@@ -1114,6 +1100,13 @@ class MainActivity : BaseActivity() {
         val item = AdapterModel.UVResponseItem(text)
 
         uvResponseList.add(item)
+    }
+
+    // 날씨특보 아이템 추가
+    private fun addReportViewPagerItem(text: String) {
+        val item = AdapterModel.ReportItem(text)
+
+        reportViewPagerItem.add(item)
     }
 
     // 자외선 지수에 따른 대처요령 불러오기
@@ -1175,8 +1168,8 @@ class MainActivity : BaseActivity() {
             }
 
 //                binding.mainSkyText.setTextColor(Color.parseColor("#FF8A48"))
-            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#70FFFFFF"))
-            binding.mainMinMaxValue.setTextColor(Color.parseColor("#70FFFFFF"))
+            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#cccccc"))
+            binding.mainMinMaxValue.setTextColor(Color.parseColor("#cccccc"))
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
                 .setTint(ResourcesCompat.getColor(resources, R.color.white, null))
             window.decorView.systemUiVisibility =
@@ -1194,9 +1187,8 @@ class MainActivity : BaseActivity() {
                 it.imageTintList = ColorStateList.valueOf(getColor(R.color.bg_black_color))
             }
 
-//                binding.mainSkyText.setTextColor(Color.parseColor("#FF8A48"))
-            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#703D3D3D"))
-            binding.mainMinMaxValue.setTextColor(Color.parseColor("#703D3D3D"))
+            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#4F4F4F"))
+            binding.mainMinMaxValue.setTextColor(Color.parseColor("#4F4F4F"))
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
                 .setTint(ResourcesCompat.getColor(resources, R.color.black, null))
             window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -1207,9 +1199,7 @@ class MainActivity : BaseActivity() {
                 "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> { black() }
                 else -> { white() }
             }
-        } else {
-            white()
-        }
+        } else { white() }
     }
 
     // 미세먼지 그래프 그리기
@@ -1219,15 +1209,9 @@ class MainActivity : BaseActivity() {
                 barContexts = listOf(
                     SegmentedProgressBar.BarContext(
                         ResourcesCompat.getColor(
-                            resources,
-                            R.color.air_good,
-                            null
-                        ), //gradient start
+                            resources, R.color.air_good, null), //gradient start
                         ResourcesCompat.getColor(
-                            resources,
-                            R.color.air_good,
-                            null
-                        ), //gradient stop
+                            resources, R.color.air_good, null), //gradient stop
                         array[0] //percentage for segment
                     ),
                     SegmentedProgressBar.BarContext(

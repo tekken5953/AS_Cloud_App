@@ -31,6 +31,7 @@ open class BaseActivity : AppCompatActivity() {
             }
         }
 
+        // 설정된 폰트크기 불러오기
         when(getUserFontScale(this)) {
             "small" -> {
                 SetSystemInfo.setTextSizeSmall(this)

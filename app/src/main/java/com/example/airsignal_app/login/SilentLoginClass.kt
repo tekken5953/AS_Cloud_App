@@ -11,7 +11,6 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
  * @since : 2023-04-06 오후 5:21
  **/
 class SilentLoginClass {
-
     /** 플랫폼 별 자동로그인 **/
     fun login(activity: Activity, pbLayout: MotionLayout) {
         val email = getUserEmail(activity)

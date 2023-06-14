@@ -22,6 +22,9 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.google.android.gms.location.*
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.IOException
 import java.util.*
@@ -94,19 +97,21 @@ class GetLocation(private val context: Context) {
 
     /** 현재 주소 DB에 업데이트 **/
     fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
-        val roomDB = GpsRepository(context)
-        setUserLastAddr(context, addr)
-        val model = GpsEntity()
-        model.name = CURRENT_GPS_ID
-        model.lat = lat
-        model.lng = lng
-        model.addr = addr
-        if (roomDB.findAll().isEmpty()) {
-            roomDB.insert(model)
-            Logger.t(TAG_D).d("Insert GPS In GetLocation")
-        } else {
-            roomDB.update(model)
-            Logger.t(TAG_D).d("Update GPS In GetLocation")
+        CoroutineScope(Dispatchers.Default).launch {
+            val roomDB = GpsRepository(context)
+            setUserLastAddr(context, addr)
+            val model = GpsEntity()
+            model.name = CURRENT_GPS_ID
+            model.lat = lat
+            model.lng = lng
+            model.addr = addr
+            if (roomDB.findAll().isEmpty()) {
+                roomDB.insert(model)
+                Logger.t(TAG_D).d("Insert GPS In GetLocation")
+            } else {
+                roomDB.update(model)
+                Logger.t(TAG_D).d("Update GPS In GetLocation")
+            }
         }
     }
 

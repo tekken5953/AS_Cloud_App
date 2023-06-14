@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.example.airsignal_app.R
 import com.example.airsignal_app.databinding.CustomViewSnackbarBinding
-import com.example.airsignal_app.util.MakeVibrator
+import com.example.airsignal_app.util.VibrateUtil
 import com.google.android.material.snackbar.Snackbar
 
 /**
@@ -72,6 +72,6 @@ class SnackBarUtils(view: View, private val message: String, private val drawabl
 
     /** 진동 발생 **/
     private fun vibrate() {
-        MakeVibrator().init(context).make(100)
+        VibrateUtil(context).make(100)
     }
 }

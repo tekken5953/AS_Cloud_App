@@ -73,7 +73,7 @@ class NotificationBuilder {
             .setContentIntent(pendingIntent)
             .setContentTitle(title)
             .setContentText(data)
-            .setLargeIcon((ResourcesCompat.getDrawable(context.resources,R.drawable.sunny_test,null) as BitmapDrawable).bitmap)
+            .setLargeIcon((ResourcesCompat.getDrawable(context.resources,R.drawable.sm_good,null) as BitmapDrawable).bitmap)
 
         notificationManager!!.run {
             createNotificationChannel(notificationChannel)

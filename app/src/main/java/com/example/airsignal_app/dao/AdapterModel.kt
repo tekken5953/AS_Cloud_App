@@ -1,9 +1,6 @@
 package com.example.airsignal_app.dao
 
-import android.graphics.Color
 import android.graphics.drawable.Drawable
-import androidx.room.PrimaryKey
-import com.google.gson.annotations.SerializedName
 
 object AdapterModel {
 
@@ -38,14 +35,6 @@ object AdapterModel {
 //        val isNotice: Boolean
 //    )
 
-    // 디자인 테스트 - 설정
-    data class TestItem(
-        val font: String,
-        val size: String,
-        val color: String,
-        val value: String
-    )
-
 //    // 앱 버전
 //    data class AppVersionItem(
 //        val version: String
@@ -68,6 +57,11 @@ object AdapterModel {
 
     // 자외선 단계별 대응요령
     data class UVResponseItem(
+        val text: String
+    )
+
+    // 날씨 특보 뷰페이저 아이템
+    data class ReportItem(
         val text: String
     )
 }

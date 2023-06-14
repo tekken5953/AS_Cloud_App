@@ -3,16 +3,11 @@ package com.example.airsignal_app.retrofit
 import android.annotation.SuppressLint
 import com.example.airsignal_app.dao.IgnoredKeyFile.springServerURL
 import com.example.airsignal_app.dao.StaticDataObject.TAG_R
-import com.example.airsignal_app.view.activity.MainActivity
 import com.google.gson.GsonBuilder
 import com.orhanobut.logger.Logger
-import okhttp3.Headers
 import okhttp3.OkHttpClient
-import okhttp3.Response
-import okhttp3.internal.addHeaderLenient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Singleton

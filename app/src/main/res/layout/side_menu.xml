@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:ads="http://schemas.android.com/apk/res-auto">
+    android:background="@color/mode_color_view">
 
     <ImageView
         android:id="@+id/headerCancel"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:padding="4dp"
+        style="@style/BasicImageButtonIcon"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="24dp"
-        android:src="@drawable/cancel"
         android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/cancel"
         app:tint="@color/mode_color_text" />
 
     <TableRow
         android:id="@+id/headerTr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_below="@+id/headerCancel"
         android:layout_marginStart="20dp"
         android:layout_marginTop="5dp"
         android:gravity="center_vertical"
-        android:layout_below="@+id/headerCancel">
+        android:orientation="horizontal">
 
         <androidx.cardview.widget.CardView
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_marginStart="4dp"
             android:layout_marginTop="7dp"
             android:layout_marginBottom="7dp"
-            android:layout_marginStart="4dp"
-            android:background="@color/white"
+            android:background="@color/mode_color_view"
             app:cardCornerRadius="50dp">
+
             <ImageView
                 android:id="@+id/navHeaderProfileImg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"/>
+                android:scaleType="fitXY" />
         </androidx.cardview.widget.CardView>
 
         <TextView
@@ -47,7 +47,7 @@
             style="@style/basicTextView"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="30dp"
-            android:textColor="@color/black"
+            android:textColor="@color/mode_color_text"
             android:textSize="16sp" />
     </TableRow>
 
@@ -64,40 +64,40 @@
     <TextView
         android:id="@+id/navMenuWeather"
         style="@style/basicTextView"
-        android:background="?android:attr/selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:gravity="start|center_vertical"
-        android:text="@string/weather"
-        android:textColor="@color/black"
-        android:textSize="17sp"
         android:layout_below="@+id/navHeaderView1"
         android:layout_marginTop="30dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="start|center_vertical"
         android:paddingStart="24dp"
-        android:paddingEnd="24dp"/>
+        android:paddingEnd="24dp"
+        android:text="@string/weather"
+        android:textColor="@color/mode_color_text"
+        android:textSize="17sp" />
 
     <TextView
         android:id="@+id/navMenuSetting"
         style="@style/basicTextView"
-        android:background="?android:attr/selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:gravity="start|center_vertical"
-        android:textSize="17sp"
-        android:text="@string/setting_title"
-        android:textColor="@color/black"
         android:layout_below="@+id/navMenuWeather"
         android:layout_marginTop="20dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="start|center_vertical"
         android:paddingStart="24dp"
-        android:paddingEnd="24dp"/>
+        android:paddingEnd="24dp"
+        android:text="@string/setting_title"
+        android:textColor="@color/mode_color_text"
+        android:textSize="17sp" />
 
     <com.google.android.gms.ads.AdView
         android:id="@+id/navMenuAdview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="visible"
         android:layout_alignParentBottom="true"
+        android:visibility="visible"
         ads:adSize="FULL_BANNER"
-        ads:adUnitId="@string/adUnit_side_menu_Id"/>
+        ads:adUnitId="@string/adUnit_side_menu_Id" />
 
 </RelativeLayout>

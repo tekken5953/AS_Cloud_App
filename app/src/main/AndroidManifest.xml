@@ -9,8 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
-
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission
         android:name="android.permission.BIND_REMOTEVIEWS"
         tools:ignore="ProtectedPermissions" />
@@ -33,6 +32,7 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,23 +40,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.activity.SplashActivity"
-            android:exported="true"
-            android:hardwareAccelerated="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-
-
-        </activity>
-        <activity
             android:name=".view.activity.SettingActivity"
             android:exported="false"
-            android:hardwareAccelerated="false"/>
+            android:hardwareAccelerated="false" />
         <activity
             android:name=".view.activity.MyDeviceActivity"
             android:exported="false"
-            android:hardwareAccelerated="false"/>
+            android:hardwareAccelerated="false" />
         <activity
             android:name=".view.activity.MainActivity"
             android:exported="false"
@@ -78,24 +68,19 @@
         </activity>
         <activity
             android:name=".view.activity.LoginActivity"
-            android:exported="true" />
-
-<!--        <receiver-->
-<!--            android:name=".view.widget.WidgetProvider"-->
-<!--            android:exported="false">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
-<!--                <action android:name="android.intent.action.DATE_CHANGED" />-->
-<!--&lt;!&ndash;                <action android:name="com.example.airsignal_app.view.widget.RE_GPS" />&ndash;&gt;-->
-
-<!--                <category android:name="android.intent.category.DEFAULT" />-->
-<!--            </intent-filter>-->
-
-<!--            <meta-data-->
-<!--                android:name="android.appwidget.provider"-->
-<!--                android:resource="@xml/widget_provider" />-->
-<!--        </receiver>-->
-
+            android:exported="true" /> <!-- <receiver -->
+        <!-- android:name=".view.widget.WidgetProvider" -->
+        <!-- android:exported="false"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.appwidget.action.APPWIDGET_UPDATE" /> -->
+        <!-- <action android:name="android.intent.action.DATE_CHANGED" /> -->
+        <!-- &lt;!&ndash;                <action android:name="com.example.airsignal_app.view.widget.RE_GPS" />&ndash;&gt; -->
+        <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+        <!-- </intent-filter> -->
+        <!-- <meta-data -->
+        <!-- android:name="android.appwidget.provider" -->
+        <!-- android:resource="@xml/widget_provider" /> -->
+        <!-- </receiver> -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/adMobId" />

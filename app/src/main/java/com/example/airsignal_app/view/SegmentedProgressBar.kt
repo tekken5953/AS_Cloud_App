@@ -1,18 +1,19 @@
 package com.example.airsignal_app.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 
 
-// 참고 : https://github.com/Komdosh/android-segmented-progressbar
+// Ref : https://github.com/Komdosh/android-segmented-progressbar
 
 class SegmentedProgressBar(context: Context?, attributeSet: AttributeSet? = null) : View(context, attributeSet) {
     private var cornerRadius = 12f // set corner radius for your segmented progress bar
 
     private val paint = Paint()
-    var strokePaint = Paint()
+    private var strokePaint = Paint()
     private var barContexts: List<BarContext> = listOf()
 
     private val segment = RectF(
@@ -22,6 +23,7 @@ class SegmentedProgressBar(context: Context?, attributeSet: AttributeSet? = null
         height.toFloat()
     )
 
+    @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
         var filling = 0f
         val barContextsLastIndex = barContexts.lastIndex

@@ -8,13 +8,11 @@
 
     <ImageView
         android:id="@+id/changeThemeBack"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:padding="4dp"
+        style="@style/BasicImageButtonIcon"
         android:src="@drawable/back_arrow"
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
-        android:background="?selectableItemBackgroundBorderless"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 

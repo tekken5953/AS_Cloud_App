@@ -53,22 +53,20 @@
 
             <ImageView
                 android:id="@+id/mainSideMenuIv"
-                android:layout_width="31dp"
-                android:layout_height="31dp"
+                style="@style/BasicImageButtonIcon"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="24dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ico_hamb_w"
                 app:tint="@color/mode_black_color" />
 
             <ImageView
                 android:id="@+id/mainAddAddress"
-                android:layout_width="31dp"
-                android:layout_height="31dp"
+                style="@style/BasicImageButtonIcon"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="24dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ico_add_w"
                 app:tint="@color/mode_black_color" />
 
@@ -141,13 +139,10 @@
 
         <TextView
             android:id="@+id/mainLiveTempValue"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:layout_marginTop="22dp"
-            android:fontFamily="@font/spoqa_hansansneo_regular"
-            android:letterSpacing="0"
             android:textColor="@color/mode_black_color"
             android:textSize="60sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/mainLiveTempUnit"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 
@@ -179,7 +174,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginEnd="15dp"
             android:text="@string/min_max"
-            android:textColor="#70FFFFFF"
+            android:textColor="#4F4F4F"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@id/mainMinMaxValue"
             app:layout_constraintEnd_toStartOf="@id/mainMinMaxValue"
@@ -190,7 +185,7 @@
             style="@style/basicTextView"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="5dp"
-            android:textColor="#70FFFFFF"
+            android:textColor="#4F4F4F"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
             app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv" />
@@ -238,24 +233,56 @@
                 android:background="@color/view_line_color"
                 android:paddingBottom="55dp">
 
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/nested_report_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_alignParentTop="true"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="vertical"
+                    android:scrollIndicators="bottom"
+                    android:background="@drawable/report_frame_bg">
+
+                    <androidx.viewpager2.widget.ViewPager2
+                        android:id="@+id/nested_report_viewpager"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true"
+                        android:layout_marginTop="35dp"
+                        android:layout_marginBottom="20dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/nested_report_indicator"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:clickable="false"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
                 <RelativeLayout
                     android:id="@+id/nested_daily_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
+                    android:layout_below="@+id/nested_report_frame"
                     android:background="@drawable/scrolled_box_bg"
                     android:paddingStart="15dp"
                     android:paddingEnd="15dp">
 
                     <TextView
                         android:id="@+id/mainDailyWeatherTitle"
-                        style="@style/basicTextView"
+                        style="@style/basicMediumTextView"
                         android:layout_marginStart="5dp"
                         android:layout_marginTop="24dp"
                         android:drawablePadding="5dp"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:text="@string/daily_weather"
                         android:textColor="#4F4F4F"
                         android:textSize="18sp"
@@ -267,7 +294,7 @@
                         android:layout_height="match_parent"
                         android:layout_below="@+id/mainDailyWeatherTitle"
                         android:layout_marginTop="20dp"
-                        android:layout_marginBottom="30dp"
+                        android:layout_marginBottom="18dp"
                         android:clipToPadding="false"
                         android:orientation="horizontal"
                         android:overScrollMode="never"
@@ -324,11 +351,10 @@
 
                     <TextView
                         android:id="@+id/mainWeeklyWeatherTitle"
-                        style="@style/basicTextView"
+                        style="@style/basicMediumTextView"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="24dp"
                         android:drawablePadding="5dp"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:text="@string/weekly_weather"
                         android:textColor="#4F4F4F"
                         android:textSize="18sp"
@@ -362,10 +388,9 @@
 
                     <TextView
                         android:id="@+id/nested_pm_title"
-                        style="@style/basicTextView"
+                        style="@style/basicMediumTextView"
                         android:layout_marginTop="24dp"
                         android:drawablePadding="5dp"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:text="@string/live_air_quality"
                         android:textColor="#4F4F4F"
                         android:textSize="18sp"
@@ -373,39 +398,41 @@
 
                     <TextView
                         android:id="@+id/nested_pm_2p5_title"
-                        style="@style/basicTextView"
+                        style="@style/basicMediumTextView"
                         android:layout_below="@+id/nested_pm_title"
                         android:layout_marginTop="30dp"
                         android:text="@string/pm2_5_title"
                         android:textColor="#7C7C7C"
-                        android:textSize="14sp" />
+                        android:textSize="16sp" />
 
                     <com.aslib.AsTextView
                         android:id="@+id/nested_pm_2p5_grade"
-                        style="@style/basicTextView"
-                        android:layout_below="@+id/nested_pm_2p5_title"
-                        android:layout_marginStart="2dp"
-                        android:layout_marginTop="10dp"
+                        style="@style/basicMediumTextView"
+                        android:layout_alignTop="@+id/nested_pm_2p5_title"
+                        android:layout_alignBottom="@+id/nested_pm_2p5_title"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="20dp"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:textSize="24sp"
+                        android:textSize="16sp"
                         app:sort="grade" />
 
                     <com.aslib.AsTextView
                         android:id="@+id/nested_pm_2p5_value"
-                        style="@style/basicTextView"
-                        android:layout_alignBottom="@+id/nested_pm_2p5_grade"
-                        android:layout_marginEnd="10dp"
+                        style="@style/basicMediumTextView"
+                        android:layout_below="@+id/nested_pm_2p5_grade"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_toStartOf="@+id/nested_pm_2p5_unit"
                         android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:textSize="24sp"
+                        android:textSize="16sp"
                         app:sort="pm2.5" />
 
                     <TextView
                         android:id="@+id/nested_pm_2p5_unit"
                         style="@style/basicTextView"
-                        android:layout_alignBottom="@+id/nested_pm_2p5_grade"
+                        android:layout_alignBottom="@+id/nested_pm_2p5_value"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="2dp"
+                        android:layout_marginEnd="10dp"
                         android:layout_marginBottom="4dp"
                         android:text="㎍/㎥"
                         android:textColor="#7C7C7C"
@@ -475,40 +502,39 @@
 
                     <TextView
                         android:id="@+id/nested_pm_10_title"
-                        style="@style/basicTextView"
+                        style="@style/basicMediumTextView"
                         android:layout_below="@+id/segment_progress_2p5_section"
-                        android:layout_marginTop="25dp"
+                        android:layout_marginTop="50dp"
                         android:text="@string/pm10_title"
                         android:textColor="#7C7C7C"
-                        android:textSize="14sp" />
+                        android:textSize="16sp" />
 
                     <com.aslib.AsTextView
                         android:id="@+id/nested_pm_10_grade"
-                        style="@style/basicTextView"
-                        android:layout_below="@+id/nested_pm_10_title"
-                        android:layout_marginStart="2dp"
-                        android:layout_marginTop="10dp"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:textSize="24sp"
+                        style="@style/basicMediumTextView"
+                        android:layout_alignTop="@+id/nested_pm_10_title"
+                        android:layout_alignBottom="@+id/nested_pm_10_title"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginEnd="20dp"
+                        android:textSize="16sp"
                         app:sort="grade" />
 
                     <com.aslib.AsTextView
                         android:id="@+id/nested_pm_10_value"
-                        style="@style/basicTextView"
-                        android:layout_alignBottom="@+id/nested_pm_10_grade"
-                        android:layout_marginEnd="10dp"
+                        style="@style/basicMediumTextView"
+                        android:layout_below="@+id/nested_pm_10_grade"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_toStartOf="@+id/nested_pm_2p5_unit"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
-                        android:textSize="24sp"
+                        android:textSize="16sp"
                         app:sort="pm10" />
 
                     <TextView
                         android:id="@+id/nested_pm_10_unit"
                         style="@style/basicTextView"
-                        android:layout_alignBottom="@+id/nested_pm_10_grade"
+                        android:layout_alignBaseline="@+id/nested_pm_10_value"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginEnd="10dp"
                         android:text="㎍/㎥"
                         android:textColor="#7C7C7C"
                         android:textSize="12sp" />
@@ -595,7 +621,7 @@
                         android:gravity="center">
 
                         <TextView
-                            style="@style/basicTextView"
+                            style="@style/basicMediumTextView"
                             android:layout_weight="0.2"
                             android:gravity="start"
                             android:text="SO2 "
@@ -604,10 +630,9 @@
 
                         <TextView
                             android:id="@+id/mainAirSO2Value"
-                            style="@style/basicTextView"
+                            style="@style/basicMediumTextView"
                             android:layout_width="70dp"
                             android:layout_weight="0.27"
-                            android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
                             android:textSize="19sp" />
 
@@ -622,7 +647,7 @@
                             android:textSize="11sp" />
 
                         <TextView
-                            style="@style/basicTextView"
+                            style="@style/basicMediumTextView"
                             android:layout_marginStart="40dp"
                             android:layout_weight="0.2"
                             android:gravity="start"
@@ -632,10 +657,9 @@
 
                         <TextView
                             android:id="@+id/mainAirNO2Value"
-                            style="@style/basicTextView"
+                            style="@style/basicMediumTextView"
                             android:layout_width="70dp"
                             android:layout_weight="0.27"
-                            android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
                             android:textSize="19sp" />
 
@@ -645,7 +669,7 @@
                             android:layout_marginTop="2dp"
                             android:layout_weight="0.1"
                             android:gravity="start"
-                            android:text="mg/m3 "
+                            android:text="㎍/㎥ "
                             android:textColor="#7C7C7C"
                             android:textSize="11sp" />
 
@@ -662,7 +686,7 @@
                         android:gravity="center">
 
                         <TextView
-                            style="@style/basicTextView"
+                            style="@style/basicMediumTextView"
                             android:layout_weight="0.2"
                             android:gravity="start"
                             android:text="O3 "
@@ -671,10 +695,9 @@
 
                         <TextView
                             android:id="@+id/mainAirO3Value"
-                            style="@style/basicTextView"
+                            style="@style/basicMediumTextView"
                             android:layout_width="70dp"
                             android:layout_weight="0.27"
-                            android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
                             android:textSize="19sp" />
 
@@ -684,12 +707,12 @@
                             android:layout_marginTop="2dp"
                             android:layout_weight="0.1"
                             android:gravity="start"
-                            android:text="μg/m3 "
+                            android:text="㎍/㎥ "
                             android:textColor="#7C7C7C"
                             android:textSize="11sp" />
 
                         <TextView
-                            style="@style/basicTextView"
+                            style="@style/basicMediumTextView"
                             android:layout_marginStart="40dp"
                             android:layout_weight="0.2"
                             android:gravity="start"
@@ -699,10 +722,9 @@
 
                         <TextView
                             android:id="@+id/mainAirCOValue"
-                            style="@style/basicTextView"
+                            style="@style/basicMediumTextView"
                             android:layout_width="70dp"
                             android:layout_weight="0.27"
-                            android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="end"
                             android:textSize="19sp" />
 
@@ -732,11 +754,10 @@
 
                     <TextView
                         android:id="@+id/mainUvTitle"
-                        style="@style/basicTextView"
+                        style="@style/basicMediumTextView"
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="24dp"
                         android:drawablePadding="5dp"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:text="@string/uv_title"
                         android:textSize="18sp"
                         app:drawableStartCompat="@drawable/ico_uv" />
@@ -789,10 +810,9 @@
 
                         <TextView
                             android:id="@+id/mainUvValue"
-                            style="@style/basicTextView"
+                            style="@style/basicMediumTextView"
                             android:layout_gravity="center"
                             android:layout_marginTop="4dp"
-                            android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:gravity="center"
                             android:letterSpacing="-0.02"
                             android:lineSpacingExtra="2dp"
@@ -819,7 +839,7 @@
 
                         <TextView
                             android:id="@+id/mainUvCollapsedTitle"
-                            style="@style/basicTextView"
+                            style="@style/basicMediumTextView"
                             android:layout_below="@+id/mainUvLine"
                             android:layout_marginStart="20dp"
                             android:layout_marginTop="16dp"
@@ -905,13 +925,12 @@
 
                     <TextView
                         android:id="@+id/mainSunRiseTime"
-                        style="@style/basicTextView"
+                        style="@style/basicMediumTextView"
                         android:layout_width="55dp"
                         android:layout_above="@+id/mainSunLine"
                         android:layout_marginEnd="30dp"
                         android:layout_marginBottom="12dp"
                         android:layout_toStartOf="@+id/seekArc"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:textColor="@color/white"
                         android:textSize="18sp" />
 
@@ -942,13 +961,12 @@
 
                     <TextView
                         android:id="@+id/mainSunSetTime"
-                        style="@style/basicTextView"
+                        style="@style/basicMediumTextView"
                         android:layout_width="55dp"
                         android:layout_above="@+id/mainSunLine"
                         android:layout_marginStart="30dp"
                         android:layout_marginBottom="12dp"
                         android:layout_toEndOf="@+id/seekArc"
-                        android:fontFamily="@font/spoqa_hansansneo_medium"
                         android:textColor="@color/white"
                         android:textSize="18sp" />
 
@@ -971,7 +989,7 @@
                         android:gravity="center">
 
                         <TextView
-                            style="@style/basicTextView"
+                            style="@style/basicMediumTextView"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:text="@string/tomorrow"
                             android:textColor="@color/white"

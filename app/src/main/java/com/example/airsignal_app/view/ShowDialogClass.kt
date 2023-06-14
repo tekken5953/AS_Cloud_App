@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.example.airsignal_app.R
+import com.example.airsignal_app.util.VibrateUtil
 import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
 import com.example.airsignal_app.util.`object`.SetSystemInfo
@@ -41,6 +42,7 @@ class ShowDialogClass {
     /** 다이얼로그 뒤로가기 버튼 리스너 등록 **/
     fun setBackPressed(imageView: View): ShowDialogClass {
         imageView.setOnClickListener {
+//            makeVib()
             dismiss()
         }
         return this
@@ -49,10 +51,16 @@ class ShowDialogClass {
     /** 다이얼로그 뒤로가기 버튼 후 액티비티 갱신 **/
     fun setBackPressRefresh(imageView: ImageView): ShowDialogClass {
         imageView.setOnClickListener {
+//            makeVib()
             dismiss()
             RefreshUtils(activity).refreshActivity()
         }
         return this
+    }
+
+    // 진동 발생
+    private fun makeVib() {
+        VibrateUtil(activity).make(20)
     }
 
     /** 다이얼로그 뷰 소멸 **/

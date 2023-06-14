@@ -3,7 +3,6 @@ package com.example.airsignal_app.util.`object`
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
-import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import java.text.SimpleDateFormat
@@ -52,7 +51,7 @@ object DataTypeParser {
     fun getRainTypeLarge(context: Context, rain: String?): Drawable? {
         return when (rain) {
             "비" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.rainy_test, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy, null)
             }
             "눈" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.snow_test, null)
@@ -81,29 +80,29 @@ object DataTypeParser {
             }
             "구름많음" -> {
                 if (!isNight) {
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.cloud2_test, null)
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.lg_cloudy, null)
                 } else {
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.cloud2_test, null)
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.lg_cloudy, null)
                 }
             }
             "흐림" -> {
                 if (!isNight) {
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.ico_cloud, null)
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.lg_more_cloudy, null)
                 } else {
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.ico_cloud, null)
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.lg_more_cloudy, null)
                 }
             }
             "소나기", "비" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy, null)
             }
             "구름많고 눈", "눈", "흐리고 눈" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.snow, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.snow_test, null)
             }
             "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy, null)
             }
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_snow, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.snow_test, null)
             }
             else -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
@@ -231,7 +230,7 @@ object DataTypeParser {
             "흐림" -> {context.getString(R.string.sky_cloudy)}
             "소나기" -> {context.getString(R.string.sky_shower)}
             "비" -> {context.getString(R.string.sky_rainy)}
-            "구름많고 눈" -> {context.getString(R.string.sky_sunny_cloudy_rainy)}
+            "구름많고 눈" -> {context.getString(R.string.sky_sunny_cloudy_snowy)}
             "눈" -> {context.getString(R.string.sky_snowy)}
             "흐리고 눈" -> {context.getString(R.string.sky_cloudy_snowy)}
             "구름많고 소나기" -> {context.getString(R.string.sky_sunny_cloudy_shower)}

@@ -16,7 +16,7 @@ class SensibleTempFormula {
      * @param ta 기온
      * @param rh 상대습도
      */
-    fun getInSummer(ta: Double, rh: Double) : Double {
+    private fun getInSummer(ta: Double, rh: Double) : Double {
         val tw = getTw(ta, rh)
         return -0.2442 + (0.55399 * tw) + (0.45535 * ta) - (0.0022 * tw.pow(2.0)) + (0.00278 * tw * ta) + 3.0
     }
@@ -27,7 +27,7 @@ class SensibleTempFormula {
      * @param ta 기온
      * @param v 10분 평균 풍속
      */
-    fun getInWinter(ta: Double, v: Double) : Double {
+    private fun getInWinter(ta: Double, v: Double) : Double {
         return 13.12 + (0.6215 * ta) - (11.37 * v.pow(0.16)) + (0.3965 * v.pow(0.16) * ta)
     }
 
@@ -49,7 +49,7 @@ class SensibleTempFormula {
     }
 
     /** 현재 월수 출력 **/
-    fun getCurrentSeason() : Int {
+    private fun getCurrentSeason() : Int {
         return LocalDateTime.now().monthValue
     }
 }
