@@ -26,7 +26,6 @@ import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiEvent
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiNight
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiPM
-import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.StaticDataObject.EVENT_ALL_NOTI
 import com.example.airsignal_app.dao.StaticDataObject.NIGHT_EVENT_NOTI
 import com.example.airsignal_app.databinding.ActivitySettingBinding
@@ -68,6 +67,7 @@ class SettingActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
 
+        @Suppress("DEPRECATION")
         if (GetSystemInfo.isThemeNight(this)) {
             window.statusBarColor = Color.BLACK
             window.decorView.systemUiVisibility =
@@ -194,7 +194,10 @@ class SettingActivity : BaseActivity() {
         isInit = false
 
         // 뒤로가기 버튼 클릭
-        binding.settingBack.setOnClickListener { onBackPressedDispatcher.onBackPressed() }
+        binding.settingBack.setOnClickListener {
+            VibrateUtil(this).make(50)
+            onBackPressedDispatcher.onBackPressed()
+        }
 
         // 로그아웃 버튼 클릭
         binding.settingLogOut.setOnClickListener {

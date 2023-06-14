@@ -308,7 +308,7 @@ class ApiModel {
         @SerializedName("yesterday")
         val yesterday: YesterdayTemp,
         @SerializedName("uv")
-        val uv: UV,
+        val uv: UV?,
         @SerializedName("current")
         val current: Current,
         @SerializedName("thunder")

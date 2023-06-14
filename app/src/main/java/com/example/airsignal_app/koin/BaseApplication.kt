@@ -23,7 +23,7 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     }
 
     override fun uncaughtException(p0: Thread, p1: Throwable) {
-        RDBLogcat.writeLogCause("ANR 발생", "Thread : ${p0.name}", "Error Msg: ${p1.localizedMessage}\t Error Trace: ${p1.printStackTrace()}")
+        RDBLogcat.writeLogCause("ANR 발생", "Thread : ${p0.name}", "Error Msg: ${p1.localizedMessage}\t Error Trace: ${p1.stackTraceToString()}")
         Thread.sleep(100)
         exitProcess(1)
     }

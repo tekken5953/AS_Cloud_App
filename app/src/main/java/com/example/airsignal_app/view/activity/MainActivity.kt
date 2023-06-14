@@ -13,11 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
-import android.view.animation.AccelerateInterpolator
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.view.animation.LinearInterpolator
-import android.view.animation.RotateAnimation
+import android.view.animation.*
 import android.widget.*
 import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.res.ResourcesCompat
@@ -73,7 +69,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import kotlin.NoSuchElementException
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -87,6 +82,7 @@ class MainActivity : BaseActivity() {
         LayoutInflater.from(this@MainActivity).inflate(R.layout.side_menu, null)
     }
     private lateinit var indicators: Array<ImageView>
+    private val vib by lazy { VibrateUtil(this) }
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
@@ -177,6 +173,7 @@ class MainActivity : BaseActivity() {
         // 자외선 지수 접고 펴기 화살표
         binding.mainUVBox.apply {
             this.setOnClickListener {
+                mVib()
                 if (binding.mainUvCollapsedLayout.visibility == VISIBLE) {
                     binding.mainUvCollapseArrow.setImageDrawable(
                         ResourcesCompat.getDrawable(resources, R.drawable.btn_down, null)
@@ -253,6 +250,7 @@ class MainActivity : BaseActivity() {
         // 플러스 모양 추가시 주소등록 다이얼로그
         binding.mainAddAddress.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
+                mVib()
                 val bottomSheet =
                     SearchDialog(
                         this@MainActivity,
@@ -267,6 +265,7 @@ class MainActivity : BaseActivity() {
         // 현재 주소로 갱신
         binding.mainGpsFix.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
+                mVib()
                 if (RequestPermissionsUtil(this@MainActivity).isLocationPermitted()) {
                     showPB()
                     getCurrentLocation()
@@ -323,6 +322,10 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    private fun mVib() {
+        vib.make(50)
+    }
+
     // 날씨 데이터 API 호출
     private fun getDataSingleTime() {
         if (RequestPermissionsUtil(this).isLocationPermitted()) {
@@ -334,9 +337,7 @@ class MainActivity : BaseActivity() {
             }
             // TimeOut
             Handler(Looper.getMainLooper()).postDelayed({
-                if (isProgressed()) {
-                    hidePB()
-                }
+                if (isProgressed()) { hidePB() }
             }, 1000 * 5)
         }
     }
@@ -345,11 +346,7 @@ class MainActivity : BaseActivity() {
     private fun loadSavedAddr() {
         val lastAddress = getUserLastAddress(this)
 
-        getDataViewModel.loadDataResult(
-            null,
-            null,
-            lastAddress
-        )
+        getDataViewModel.loadDataResult(null, null, lastAddress)
 
         Logger.t(TAG_R).i(lastAddress)
         locationClass.writeRdbSearchLog(lastAddress)
@@ -404,13 +401,13 @@ class MainActivity : BaseActivity() {
         binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter
         binding.mainUVLegendRv.adapter = uvLegendAdapter
         binding.mainUvCollapseRv.adapter = uvResponseAdapter
-        val interpolator = AccelerateInterpolator()
         binding.nestedReportViewpager.apply {
             adapter = reportViewPagerAdapter
             isClickable = false
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             offscreenPageLimit = 3
 
+//            val interpolator = AccelerateInterpolator()
 //            setPageTransformer {page, position ->
 //                page.apply {
 //                    translationX = -position * width
@@ -464,8 +461,6 @@ class MainActivity : BaseActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             isBackPressed = false
         }, 2000)
-
-//        addExitDialog()
     }
 
     // 뷰모델에서 Observing 한 데이터 결과 적용
@@ -479,7 +474,7 @@ class MainActivity : BaseActivity() {
                 val air = result.quality
                 val week = result.week
                 val today = result.today
-                val uv = result.uv
+                val uv = result.uv!!
                 val yesterday = result.yesterday
                 val dateNow: LocalDateTime = LocalDateTime.now()
                 val current = result.current
@@ -560,14 +555,18 @@ class MainActivity : BaseActivity() {
                     setTextColor(getDataColor(this@MainActivity, air.so2Grade!! - 1))
                 }
 
-                uv.flag?.let {
-                    uvFlag ->
-                    applyUvResponseItem(uvFlag)      // 자외선 단계별 대응요령 추가
-                    binding.mainUvValue.text = translateUV(this, uvFlag) + "\n" + uv.value.toString()
-                    setUvBackgroundColor(this, uvFlag, binding.mainUVLegendCardView) // UV 범주 색상 변경
+                // UV 값이 없으면 카드 없앰
+                if ((uv.flag == null) || (uv.value == null) || (uv.flag == "null") || (uv.value.toString() == "null"))
+                    binding.mainUVBox.visibility = GONE
+                else {
+                    binding.mainUVBox.visibility = VISIBLE
+                    applyUvResponseItem(uv.flag)   // 자외선 단계별 대응요령 추가
+                    setUvBackgroundColor(this, uv.flag, binding.mainUVLegendCardView) // UV 범주 색상 변경
+                    binding.mainUvValue.text = translateUV(this, uv.flag) + "\n" + uv.value.toString()
                 }
 
                 reportViewPagerItem.clear()
+                //TODO 실제 데이터를 받아와서 교체
                 addReportViewPagerItem("오늘 오후부터 저녁 사이 제주도산지를 중심으로 소나기가 내리는 곳이 있겠습니다.")
                 addReportViewPagerItem("오늘 아침까지 제주도에는 빗방울이 떨어지는 곳이 있겠고, 중산간 이상 지역에는 가시거리 1km 미만의 안개가 끼는 곳이 있겠으니, 교통안전에 유의하기 바랍니다.")
                 addReportViewPagerItem("내일까지 해안가로는 너울이 유입되겠으니, 안전사고에 유의하기 바랍니다.")
@@ -594,7 +593,7 @@ class MainActivity : BaseActivity() {
                 val entireSun = sunsetTime - sunriseTime
                 val currentTime = millsToString(getCurrentTime(), "HHmm")
                 currentSun =
-                    100 * (convertTimeToMinutes(currentTime) - convertTimeToMinutes(sun.sunrise)) / entireSun
+                    (100 * (convertTimeToMinutes(currentTime) - convertTimeToMinutes(sun.sunrise))) / entireSun
 
                 if (currentSun > 100) { currentSun = 100 }
 
@@ -684,7 +683,7 @@ class MainActivity : BaseActivity() {
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
                 changeTextColorStyle(
-                    applySkyText(realtime.rainType, realtime.sky, thunder),
+                    applySkyText(current.rainType, realtime.sky, thunder),
                     isNightProgress(currentSun)
                 )
             }
@@ -1167,8 +1166,8 @@ class MainActivity : BaseActivity() {
             }
 
 //                binding.mainSkyText.setTextColor(Color.parseColor("#FF8A48"))
-            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#70FFFFFF"))
-            binding.mainMinMaxValue.setTextColor(Color.parseColor("#70FFFFFF"))
+            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#cccccc"))
+            binding.mainMinMaxValue.setTextColor(Color.parseColor("#cccccc"))
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
                 .setTint(ResourcesCompat.getColor(resources, R.color.white, null))
             window.decorView.systemUiVisibility =
@@ -1186,8 +1185,8 @@ class MainActivity : BaseActivity() {
                 it.imageTintList = ColorStateList.valueOf(getColor(R.color.bg_black_color))
             }
 
-            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#703D3D3D"))
-            binding.mainMinMaxValue.setTextColor(Color.parseColor("#703D3D3D"))
+            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#4F4F4F"))
+            binding.mainMinMaxValue.setTextColor(Color.parseColor("#4F4F4F"))
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
                 .setTint(ResourcesCompat.getColor(resources, R.color.black, null))
             window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR

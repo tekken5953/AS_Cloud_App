@@ -176,9 +176,6 @@
             android:layout_marginTop="3dp"
             android:layout_marginEnd="15dp"
             android:alpha="1"
-            android:text="최저/최고"
-            android:textColor="@color/mode_black_90"
-            android:textSize="14sp"
             motion:layout_constraintBottom_toBottomOf="@id/mainMinMaxValue"
             motion:layout_constraintEnd_toStartOf="@id/mainMinMaxValue"
             motion:layout_constraintTop_toTopOf="@+id/mainMinMaxValue" />
@@ -187,7 +184,7 @@
             style="@style/basicTextView"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="5dp"
-            android:textColor="#70FFFFFF"
+            android:textColor="#7C7C7C"
             android:textSize="14sp"
             motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
             motion:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv" />

@@ -43,7 +43,7 @@
             android:layout_width="170dp"
             android:layout_height="170dp"
             android:layout_gravity="center"
-            android:src="@drawable/cloud2_test"/>
+            android:src="@drawable/lg_cloudy"/>
     </FrameLayout>
 
 

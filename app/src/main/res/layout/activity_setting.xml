@@ -17,11 +17,10 @@
 
             <ImageView
                 android:id="@+id/settingBack"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:padding="4dp"
                 android:layout_marginStart="20dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/back_arrow"
                 app:tint="@color/mode_color_text"
                 android:layout_marginTop="5dp"
