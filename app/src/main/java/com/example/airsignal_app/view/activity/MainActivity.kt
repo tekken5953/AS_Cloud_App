@@ -49,6 +49,8 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.getRainTypeSmall
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgLarge
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgSmall
 import com.example.airsignal_app.util.`object`.DataTypeParser.millsToString
+import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentRainType
+import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentTempType
 import com.example.airsignal_app.util.`object`.DataTypeParser.pixelToDp
 import com.example.airsignal_app.util.`object`.DataTypeParser.translateSky
 import com.example.airsignal_app.util.`object`.DataTypeParser.translateUV
@@ -504,27 +506,13 @@ class MainActivity : BaseActivity() {
 
                 current.temperature?.let {
                     currentTemp ->
-                    binding.mainLiveTempValue.text = currentTemp.absoluteValue.toString()
+                    binding.mainLiveTempValue.text = modifyCurrentTempType(currentTemp,realtime.temp).toString()
                     binding.mainLiveTempUnit.text = "˚"
-                    if (currentTemp < 0) {
-                        binding.mainLiveTempMinus.visibility = VISIBLE
-                    } else {
-                        binding.mainLiveTempMinus.visibility = GONE
-                    }
                 }
 
-                binding.mainSkyImg.setImageDrawable(
-                    applySkyImg(
-                        current.rainType,
-                        realtime.sky,
-                        thunder,
-                        isLarge = true,
-                        isNight = isNightProgress(currentSun)
-                    )
-                )
                 binding.mainSkyText.text = translateSky(
                     this,
-                    applySkyText(current.rainType, realtime.sky, thunder)
+                    applySkyText(modifyCurrentRainType(current.rainType, realtime.rainType), realtime.sky, thunder)
                 )
                 binding.mainMinMaxValue.text =
                     "${filteringNullData(today.min!!)}˚/${filteringNullData(today.max!!)}˚"
@@ -567,14 +555,6 @@ class MainActivity : BaseActivity() {
                     binding.mainUvValue.text = translateUV(this, uv.flag) + "\n" + uv.value.toString()
                 }
 
-                reportViewPagerItem.clear()
-                //TODO 실제 데이터를 받아와서 교체
-                addReportViewPagerItem("오늘 오후부터 저녁 사이 제주도산지를 중심으로 소나기가 내리는 곳이 있겠습니다.")
-                addReportViewPagerItem("오늘 아침까지 제주도에는 빗방울이 떨어지는 곳이 있겠고, 중산간 이상 지역에는 가시거리 1km 미만의 안개가 끼는 곳이 있겠으니, 교통안전에 유의하기 바랍니다.")
-                addReportViewPagerItem("내일까지 해안가로는 너울이 유입되겠으니, 안전사고에 유의하기 바랍니다.")
-                createIndicators(binding.nestedReportIndicator)
-                reportViewPagerAdapter.notifyDataSetChanged()
-
                 val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
                 val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
                 val sbRiseTom = StringBuffer().append(sunTomorrow.sunrise).insert(2, ":")
@@ -586,7 +566,7 @@ class MainActivity : BaseActivity() {
 
                 getCompareTemp(
                     yesterday.temp!!,
-                    current.temperature!!,
+                    modifyCurrentTempType(current.temperature, realtime.temp)!!,
                     binding.mainCompareTempTv
                 )
 
@@ -599,9 +579,19 @@ class MainActivity : BaseActivity() {
 
                 if (currentSun > 100) { currentSun = 100 }
 
-                applyWindowBackground(
+                binding.mainSkyImg.setImageDrawable(
+                    applySkyImg(
+                        modifyCurrentRainType(current.rainType,realtime.rainType),
+                        realtime.sky,
+                        thunder,
+                        isLarge = true,
+                        isNight = isNightProgress(currentSun)
+                    )
+                )
+
+                applyWindowBackground (
                     currentSun,
-                    applySkyText(current.rainType, realtime.sky, thunder)
+                    applySkyText(modifyCurrentRainType(current.rainType,realtime.rainType), realtime.sky, thunder)
                 )
 
                 air.pm25Value?.let {
@@ -619,6 +609,14 @@ class MainActivity : BaseActivity() {
                         ColorStateList.valueOf(setPm10ArrowTint(pm10Value.roundToInt()))
                 }
 
+                reportViewPagerItem.clear()
+                //TODO 실제 데이터를 받아와서 교체
+                addReportViewPagerItem("오늘 오후부터 저녁 사이 제주도산지를 중심으로 소나기가 내리는 곳이 있겠습니다.")
+                addReportViewPagerItem("오늘 아침까지 제주도에는 빗방울이 떨어지는 곳이 있겠고, 중산간 이상 지역에는 가시거리 1km 미만의 안개가 끼는 곳이 있겠으니, 교통안전에 유의하기 바랍니다.")
+                addReportViewPagerItem("내일까지 해안가로는 너울이 유입되겠으니, 안전사고에 유의하기 바랍니다.")
+                createIndicators(binding.nestedReportIndicator)
+                reportViewPagerAdapter.notifyDataSetChanged()
+
                 for (i: Int in 0 until result.realtime.size) {
                         val dailyIndex = result.realtime[i]
                         val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
@@ -634,13 +632,13 @@ class MainActivity : BaseActivity() {
                             addDailyWeatherItem(
                                 "${forecastToday.hour}${getString(R.string.hour)}",
                                 applySkyImg(
-                                    current.rainType,
+                                    modifyCurrentRainType(current.rainType,realtime.rainType),
                                     dailyIndex.sky,
                                     thunder,
                                     isLarge = false,
                                     isNight = isNight
                                 )!!,
-                                "${current.temperature.roundToInt()}˚",
+                                "${modifyCurrentTempType(current.temperature,realtime.temp)!!.roundToInt()}˚",
                                 convertDateAppendZero(forecastToday)
                             )
                         } else {
@@ -685,7 +683,7 @@ class MainActivity : BaseActivity() {
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
                 changeTextColorStyle(
-                    applySkyText(current.rainType, realtime.sky, thunder),
+                    applySkyText(modifyCurrentRainType(current.rainType,realtime.rainType), realtime.sky, thunder),
                     isNightProgress(currentSun)
                 )
             }
@@ -1147,9 +1145,9 @@ class MainActivity : BaseActivity() {
     // 메인화면 배경에 따라 텍스트의 색상을 변경
     private fun changeTextColorStyle(sky: String, isNight: Boolean) {
         val changeColorTextViews = listOf(
-            binding.mainGpsTitleTv, binding.mainLiveTempMinus,
             binding.mainLiveTempValue, binding.mainLiveTempUnit, binding.mainCompareTempTv,
-            binding.mainTopBarGpsTitle, binding.mainMotionSlideGuide, binding.mainSkyText
+            binding.mainTopBarGpsTitle, binding.mainMotionSlideGuide, binding.mainSkyText,
+            binding.mainGpsTitleTv
         )
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,

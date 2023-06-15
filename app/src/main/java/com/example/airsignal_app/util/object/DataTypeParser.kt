@@ -47,6 +47,33 @@ object DataTypeParser {
         return email.replace(".", "_")
     }
 
+    /** Current의 rainType의 에러 방지 **/
+    fun modifyCurrentRainType(rainTypeCurrent: String?, rainTypeReal: String?): String? {
+        return if (rainTypeCurrent != null) {
+            when(rainTypeCurrent) {
+                "비","눈","비/눈","소나기","없음" -> {
+                    rainTypeCurrent
+                }
+                else -> rainTypeReal
+            }
+        } else {
+            rainTypeReal
+        }
+    }
+
+    /** Current의 Temperature의 에러 방지 **/
+    fun modifyCurrentTempType(tempCurrent: Double?, tempReal: Double?): Double? {
+        return if (tempCurrent != null) {
+            if (tempCurrent < 50.0 && tempCurrent > -50.0) {
+                return tempCurrent
+            } else {
+                return tempReal
+            }
+        } else {
+            return tempReal
+        }
+    }
+
     /** rain type에 따른 이미지 설정 **/
     fun getRainTypeLarge(context: Context, rain: String?): Drawable? {
         return when (rain) {

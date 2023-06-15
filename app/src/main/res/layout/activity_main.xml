@@ -125,19 +125,6 @@
             app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
 
         <TextView
-            android:id="@+id/mainLiveTempMinus"
-            style="@style/basicTextView"
-            android:fontFamily="@font/spoqa_hansansneo_regular"
-            android:text="-"
-            android:textColor="@color/mode_black_color"
-            android:textSize="55sp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
-            app:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
-
-        <TextView
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
             android:layout_marginTop="22dp"
@@ -251,7 +238,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:animateLayoutChanges="true"
-                        android:layout_marginTop="35dp"
+                        android:layout_marginTop="30dp"
                         android:layout_marginBottom="20dp"/>
 
                     <LinearLayout
