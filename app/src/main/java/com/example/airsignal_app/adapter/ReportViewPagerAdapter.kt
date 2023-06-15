@@ -62,6 +62,12 @@ class ReportViewPagerAdapter(private val context: Context, list: ArrayList<Adapt
         fun bind(dao: AdapterModel.ReportItem) {
             textView.text = dao.text
 
+            if (mList.size == 0) {
+                viewPager2.visibility = View.GONE
+            } else {
+                viewPager2.visibility = View.VISIBLE
+            }
+
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
