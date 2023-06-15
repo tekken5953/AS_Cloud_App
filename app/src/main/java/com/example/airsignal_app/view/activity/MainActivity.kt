@@ -1159,7 +1159,8 @@ class MainActivity : BaseActivity() {
         )
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
-            binding.mainGpsFix, binding.mainMotionSLideImg
+            binding.mainGpsFix, binding.mainMotionSLideImg,
+            binding.mainRefreshData
         )
 
         // 글자색 white로 변경

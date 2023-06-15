@@ -64,7 +64,7 @@ open class WidgetProvider : AppWidgetProvider() {
         val db = GpsRepository(context).findById(CURRENT_GPS_ID)
 
         val getDataMap: Call<ApiModel.GetEntireData> =
-            HttpClient.mMyAPIImpl.getForecast(db.lat, db.lng, db.lng.toString())
+            HttpClient.getInstance().mMyAPIImpl.getForecast(db.lat, db.lng, db.lng.toString())
         getDataMap.enqueue(object : Callback<ApiModel.GetEntireData> {
             override fun onResponse(
                 call: Call<ApiModel.GetEntireData>,
