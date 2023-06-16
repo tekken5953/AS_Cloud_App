@@ -10,9 +10,8 @@
         <OnSwipe
             motion:dragDirection="dragUp"
             motion:dragScale="2.5"
-            motion:maxAcceleration="15"
-            motion:maxVelocity="15"
-            motion:springStopThreshold="0.3"
+            motion:maxAcceleration="30"
+            motion:maxVelocity="30"
             motion:touchAnchorId="@id/nested_scrollview"
             motion:touchAnchorSide="top" />
 
