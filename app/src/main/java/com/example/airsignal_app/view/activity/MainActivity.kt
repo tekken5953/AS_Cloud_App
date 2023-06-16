@@ -42,6 +42,7 @@ import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.login.SilentLoginClass
 import com.example.airsignal_app.util.*
+import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyText
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertDayOfWeekToKorean
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertLocalDateTimeToLong
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertTimeToMinutes
@@ -516,7 +517,7 @@ class MainActivity
 
                 binding.mainSkyText.text = translateSky(
                     this,
-                    applySkyText(modifyCurrentRainType(current.rainType, realtime.rainType), realtime.sky, thunder)
+                    applySkyText(this, modifyCurrentRainType(current.rainType, realtime.rainType), realtime.sky, thunder)
                 )
                 binding.mainMinMaxValue.text =
                     "${filteringNullData(today.min!!)}˚/${filteringNullData(today.max!!)}˚"
@@ -570,7 +571,7 @@ class MainActivity
 
                 getCompareTemp(
                     yesterday.temp!!,
-                    modifyCurrentTempType(current.temperature, realtime.temp)!!,
+                    modifyCurrentTempType(current.temperature, realtime.temp),
                     binding.mainCompareTempTv
                 )
 
@@ -595,7 +596,7 @@ class MainActivity
 
                 applyWindowBackground (
                     currentSun,
-                    applySkyText(modifyCurrentRainType(current.rainType,realtime.rainType), realtime.sky, thunder)
+                    applySkyText(this, modifyCurrentRainType(current.rainType,realtime.rainType), realtime.sky, thunder)
                 )
 
                 air.pm25Value?.let {
@@ -642,7 +643,7 @@ class MainActivity
                                     isLarge = false,
                                     isNight = isNight
                                 )!!,
-                                "${modifyCurrentTempType(current.temperature,realtime.temp)!!.roundToInt()}˚",
+                                "${modifyCurrentTempType(current.temperature,realtime.temp).roundToInt()}˚",
                                 convertDateAppendZero(forecastToday)
                             )
                         } else {
@@ -687,7 +688,7 @@ class MainActivity
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
                 changeTextColorStyle(
-                    applySkyText(modifyCurrentRainType(current.rainType,realtime.rainType), realtime.sky, thunder),
+                    applySkyText(this, modifyCurrentRainType(current.rainType,realtime.rainType), realtime.sky, thunder),
                     isNightProgress(currentSun)
                 )
             }
@@ -824,16 +825,7 @@ class MainActivity
 //        })
 //    }
 
-    // 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트
-    private fun applySkyText(rain: String?, sky: String?, thunder: Double?): String {
-        return if (rain != "없음") {
-            if ((thunder == null) || (thunder < 0.2)) { rain!! }
-            else { getString(R.string.thunder_sunny) }
-        } else {
-            if ((thunder == null) || (thunder < 0.2)) { sky!! }
-            else { getString(R.string.thunder_rainy) }
-        }
-    }
+
 
     // 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지
     private fun applySkyImg(
@@ -996,7 +988,7 @@ class MainActivity
                                     updateCurrentAddress(
                                         loc.latitude, loc.longitude,
                                         addr.replaceFirst(" ", "")
-                                            .replace(getString(R.string.korea), "")
+                                            .replace(getString(R.string.korea), ""),
                                     )
                                     getDataViewModel.loadDataResult(
                                         loc.latitude, loc.longitude, null
@@ -1047,7 +1039,7 @@ class MainActivity
                     this?.let { addr ->
                         updateCurrentAddress(
                             loc.latitude, loc.longitude,
-                            addr.replaceFirst(" ", "").replace(getString(R.string.korea), "")
+                            addr.replaceFirst(" ", "").replace(getString(R.string.korea), ""),
                         )
                         getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
                         locationClass.writeRdbCurrentLog(
@@ -1077,6 +1069,7 @@ class MainActivity
         model.lat = lat
         model.lng = lng
         model.addr = addr
+        model.timeStamp = getCurrentTime()
         if (dbIsEmpty(roomDB)) {
             roomDB.insert(model)
         } else {

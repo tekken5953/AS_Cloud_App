@@ -756,6 +756,7 @@
                         android:drawablePadding="5dp"
                         android:text="@string/uv_title"
                         android:textSize="18sp"
+                        android:textColor="#4F4F4F"
                         app:drawableStartCompat="@drawable/ico_uv" />
 
                     <ImageView

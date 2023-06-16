@@ -15,6 +15,7 @@ import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogNotLogin
+import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.GetSystemInfo.androidID
@@ -39,7 +40,7 @@ class GetLocation(private val context: Context) {
         fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
             .addOnSuccessListener { location: Location? ->
                 location?.let {
-                    getAddress(it.latitude, it.longitude)
+                    updateCurrentAddress(it.latitude,it.longitude,getAddress(it.latitude, it.longitude)!!)
                 }
             }.addOnFailureListener {
                 it.printStackTrace()
@@ -63,9 +64,7 @@ class GetLocation(private val context: Context) {
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             return if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
-            } else {
-                "Null Address"
-            }
+            } else { "Null Address" }
         } catch (e: IOException) {
             Toast.makeText(context, "주소를 가져오는 도중 오류가 발생했습니다", Toast.LENGTH_SHORT).show()
             writeLogCause(
@@ -105,6 +104,7 @@ class GetLocation(private val context: Context) {
             model.lat = lat
             model.lng = lng
             model.addr = addr
+            model.timeStamp = getCurrentTime()
             if (roomDB.findAll().isEmpty()) {
                 roomDB.insert(model)
                 Logger.t(TAG_D).d("Insert GPS In GetLocation")

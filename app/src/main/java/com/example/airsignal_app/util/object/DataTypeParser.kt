@@ -61,16 +61,27 @@ object DataTypeParser {
         }
     }
 
+    // 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트
+    fun applySkyText(context: Context,rain: String?, sky: String?, thunder: Double?): String {
+        return if (rain != "없음") {
+            if ((thunder == null) || (thunder < 0.2)) { rain!! }
+            else { context.getString(R.string.thunder_sunny) }
+        } else {
+            if ((thunder == null) || (thunder < 0.2)) { sky!! }
+            else { context.getString(R.string.thunder_rainy) }
+        }
+    }
+
     /** Current의 Temperature의 에러 방지 **/
-    fun modifyCurrentTempType(tempCurrent: Double?, tempReal: Double?): Double? {
+    fun modifyCurrentTempType(tempCurrent: Double?, tempReal: Double?): Double {
         return if (tempCurrent != null) {
             if (tempCurrent < 50.0 && tempCurrent > -50.0) {
-                return tempCurrent
+                tempCurrent
             } else {
-                return tempReal
+                tempReal!!
             }
         } else {
-            return tempReal
+            tempReal!!
         }
     }
 
@@ -200,6 +211,18 @@ object DataTypeParser {
         }
     }
 
+    /** 위젯 하늘에 따른 배경 **/
+    fun getSkyImgWidget(sky: String?): Int {
+        return when (sky) {
+            "맑음", "구름많음", -> {
+                R.drawable.widget_bg_clear
+            }
+            else -> {
+                R.drawable.widget_bg_cloudy
+            }
+        }
+    }
+
     /** 등급에 따른 색상 변환 **/
     fun getDataColor(context: Context, grade: Int): Int {
         return when (grade) {
@@ -208,6 +231,17 @@ object DataTypeParser {
             2 -> ResourcesCompat.getColor(context.resources, R.color.air_bad, null)
             3 -> ResourcesCompat.getColor(context.resources, R.color.air_very_bad , null)
             else -> ResourcesCompat.getColor(context.resources, R.color.progressError, null)
+        }
+    }
+
+    /** 등급에 따른 텍스트 변환 **/
+    fun getDataText(grade: Int): String {
+        return when (grade) {
+            0 -> "좋음"
+            1 -> "보통"
+            2 -> "나쁨"
+            3 -> "매우나쁨"
+            else -> "에러"
         }
     }
 
