@@ -475,7 +475,7 @@ class MainActivity
     // 뷰모델에서 Observing 한 데이터 결과 적용
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel(): MainActivity {
-        getDataViewModel.getDataResult().observe(this) {
+        getDataViewModel.getDataResult().observe(this) { it ->
             it?.let { result ->
                 val realtime = result.realtime[0]
                 val sun = result.sun
@@ -615,14 +615,26 @@ class MainActivity
                 }
 
                 reportViewPagerItem.clear()
-                //TODO 실제 데이터를 받아와서 교체
-                addReportViewPagerItem("오늘 오후부터 저녁 사이 제주도산지를 중심으로 소나기가 내리는 곳이 있겠습니다.")
-                addReportViewPagerItem("오늘 아침까지 제주도에는 빗방울이 떨어지는 곳이 있겠고, 중산간 이상 지역에는 가시거리 1km 미만의 안개가 끼는 곳이 있겠으니, 교통안전에 유의하기 바랍니다.")
-                addReportViewPagerItem("내일까지 해안가로는 너울이 유입되겠으니, 안전사고에 유의하기 바랍니다.")
-                createIndicators(binding.nestedReportIndicator)
-                reportViewPagerAdapter.notifyDataSetChanged()
+                result.summary?.let {
+                    sList ->
+                    sList.forEach {
+                        summary ->
+                    addReportViewPagerItem(
+                        summary.replace("○","")
+                            .replace("\n","")
+                            .trim())
+                }
 
-                for (i: Int in 0 until result.realtime.size) {
+                    createIndicators(binding.nestedReportIndicator)
+                    reportViewPagerAdapter.notifyDataSetChanged()
+
+                    if (reportViewPagerItem.size == 0) {
+                        binding.nestedReportFrame.visibility = GONE
+                    } else {
+                        binding.nestedReportFrame.visibility = VISIBLE
+                    }
+
+                    for (i: Int in 0 until result.realtime.size) {
                         val dailyIndex = result.realtime[i]
                         val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
                         val dailyTime =
@@ -660,37 +672,38 @@ class MainActivity
                                 convertDateAppendZero(forecastToday)
                             )
                         }
-                }
-
-                for (i: Int in 0 until (7)) {
-                    try {
-                        val formedDate = dateNow.plusDays(i.toLong())
-                        val date: String = when (i) {
-                            0 -> { getString(R.string.today) }
-                            1 -> { getString(R.string.tomorrow) }
-                            else -> {
-                                "${convertDayOfWeekToKorean(this, 
-                                    dateNow.dayOfWeek.value + i)}${getString(R.string.date)}"
-                            }
-                        }
-                        addWeeklyWeatherItem(
-                            date,
-                            convertDateAppendZero(formedDate),
-                            getSkyImgSmall(this, wfMin[i], false)!!,
-                            getSkyImgSmall(this, wfMax[i], false)!!,
-                            "${taMin[i]!!.roundToInt()}˚",
-                            "${taMax[i]!!.roundToInt()}˚"
-                        )
-                    } catch (e: Exception) {
-                        e.printStackTrace()
                     }
+
+                    for (i: Int in 0 until (7)) {
+                        try {
+                            val formedDate = dateNow.plusDays(i.toLong())
+                            val date: String = when (i) {
+                                0 -> { getString(R.string.today) }
+                                1 -> { getString(R.string.tomorrow) }
+                                else -> {
+                                    "${convertDayOfWeekToKorean(this,
+                                        dateNow.dayOfWeek.value + i)}${getString(R.string.date)}"
+                                }
+                            }
+                            addWeeklyWeatherItem(
+                                date,
+                                convertDateAppendZero(formedDate),
+                                getSkyImgSmall(this, wfMin[i], false)!!,
+                                getSkyImgSmall(this, wfMax[i], false)!!,
+                                "${taMin[i]!!.roundToInt()}˚",
+                                "${taMax[i]!!.roundToInt()}˚"
+                            )
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+                    weeklyWeatherAdapter.notifyDataSetChanged()
+                    dailyWeatherAdapter.notifyDataSetChanged()
+                    changeTextColorStyle(
+                        applySkyText(this, modifyCurrentRainType(current.rainType,realtime.rainType), realtime.sky, thunder),
+                        isNightProgress(currentSun)
+                    )
                 }
-                weeklyWeatherAdapter.notifyDataSetChanged()
-                dailyWeatherAdapter.notifyDataSetChanged()
-                changeTextColorStyle(
-                    applySkyText(this, modifyCurrentRainType(current.rainType,realtime.rainType), realtime.sky, thunder),
-                    isNightProgress(currentSun)
-                )
             }
             runOnUiThread {
                 hidePB()
@@ -824,8 +837,6 @@ class MainActivity
 //            component = ComponentName(this@MainActivity, WidgetProvider::class.java)
 //        })
 //    }
-
-
 
     // 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지
     private fun applySkyImg(
@@ -1163,7 +1174,6 @@ class MainActivity
                 it.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
             }
 
-//                binding.mainSkyText.setTextColor(Color.parseColor("#FF8A48"))
             binding.mainMinMaxTitle.setTextColor(Color.parseColor("#cccccc"))
             binding.mainMinMaxValue.setTextColor(Color.parseColor("#cccccc"))
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()

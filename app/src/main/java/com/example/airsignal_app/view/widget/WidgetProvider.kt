@@ -89,7 +89,7 @@ open class WidgetProvider : AppWidgetProvider() {
             setOnClickPendingIntent(R.id.widgetRefresh, pendingRefresh)
         }
 
-        loadData(context)
+        pendingRefresh.send()
 
         appWidgetManager.updateAppWidget(appWidgetIds, views)
     }
