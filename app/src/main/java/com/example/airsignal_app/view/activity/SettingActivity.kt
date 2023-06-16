@@ -57,8 +57,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 
-class SettingActivity : BaseActivity() {
-    private lateinit var binding: ActivitySettingBinding
+class SettingActivity
+    : BaseActivity<ActivitySettingBinding>() {
+    override val resID: Int get() = R.layout.activity_setting
+
     private val faqItem = arrayListOf<String>()
     private val noticeItem = arrayListOf<AdapterModel.NoticeItem>()
     private var isInit = true
@@ -152,9 +154,7 @@ class SettingActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = DataBindingUtil.setContentView(this@SettingActivity, R.layout.activity_setting)
-
+        initBinding()
 
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
             window.statusBarColor = Color.BLACK

@@ -15,17 +15,20 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
+import com.example.airsignal_app.databinding.ActivityMyDeviceBinding
 import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.view.ShowDialogClass
 
-class MyDeviceActivity : BaseActivity() {
+class MyDeviceActivity
+    : BaseActivity<ActivityMyDeviceBinding>() {
+    override val resID: Int get() = R.layout.activity_my_device
 
     private val sp by lazy { ShowDialogClass().getInstance(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initBinding()
 
-        setContentView(R.layout.activity_my_device)
         val refreshUtils = RefreshUtils(this)
 
         /** 장치 추가 다이얼로그 **/
@@ -45,9 +48,8 @@ class MyDeviceActivity : BaseActivity() {
         val viewComplete: View =
             LayoutInflater.from(this).inflate(R.layout.dialog_comp_add_device, null)
 
-        val addBtn: ImageView = findViewById(R.id.myDeviceAddDevice)
 
-        addBtn.setOnClickListener {
+        binding.myDeviceAddDevice.setOnClickListener {
             ShowDialogClass().show(viewAddDevice, true)  // 장치추가 레이아웃 출력
             val addDeviceFrame: FrameLayout =
                 viewAddDevice.findViewById(R.id.addDeviceFrame)   // 장치추가 클릭 필드

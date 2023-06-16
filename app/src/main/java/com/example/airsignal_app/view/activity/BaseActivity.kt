@@ -1,8 +1,12 @@
 package com.example.airsignal_app.view.activity
 
 import android.content.Context
+import android.os.Bundle
+import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import com.example.airsignal_app.R
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
@@ -13,7 +17,15 @@ import com.example.airsignal_app.util.`object`.SetSystemInfo
  * @author : Lee Jae Young
  * @since : 2023-05-04 오후 2:56
  **/
-open class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity<VB: ViewDataBinding> : AppCompatActivity() {
+
+    protected lateinit var binding: VB
+    abstract val resID: Int
+
+    protected fun initBinding() {
+        binding = DataBindingUtil.setContentView(this, resID)
+        binding.lifecycleOwner = this
+    }
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)

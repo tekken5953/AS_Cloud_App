@@ -79,8 +79,9 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 
-class MainActivity : BaseActivity() {
-    private lateinit var binding: ActivityMainBinding
+class MainActivity
+    : BaseActivity<ActivityMainBinding>() {
+    override val resID: Int get() = R.layout.activity_main
 
     private var isBackPressed = false
     private val sideMenuBuilder by lazy { SideMenuBuilder(this@MainActivity) }
@@ -145,16 +146,9 @@ class MainActivity : BaseActivity() {
         if (savedInstanceState == null) {
             window.setBackgroundDrawableResource(R.drawable.main_bg_snow)
         }
-        binding = DataBindingUtil.setContentView<ActivityMainBinding?>(
-            this@MainActivity,
-            R.layout.activity_main
-        )
-            .apply {
-                lifecycleOwner = this@MainActivity
-                dataVM = getDataViewModel
-                // 뷰모델 생성
-                applyGetDataViewModel()
-            }
+        initBinding()
+        binding.dataVM = getDataViewModel
+        applyGetDataViewModel()
 
         initializing()
 
@@ -229,11 +223,13 @@ class MainActivity : BaseActivity() {
             }
         }
 
-        binding.mainRefreshData.setOnClickListener {
-            it.startAnimation(rotateAnim)
-            mVib()
-            getDataSingleTime()
-        }
+        binding.mainRefreshData.setOnClickListener(object : OnSingleClickListener() {
+            override fun onSingleClick(v: View?) {
+                v!!.startAnimation(rotateAnim)
+                mVib()
+                getDataSingleTime()
+            }
+        })
 
 //        // TEST NOTIFICATION
 //        /////////////////////////////////////////////////////////////////
