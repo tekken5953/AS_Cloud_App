@@ -10,9 +10,8 @@
         <OnSwipe
             motion:dragDirection="dragUp"
             motion:dragScale="2.5"
-            motion:maxAcceleration="15"
-            motion:maxVelocity="15"
-            motion:springStopThreshold="0.3"
+            motion:maxAcceleration="30"
+            motion:maxVelocity="30"
             motion:touchAnchorId="@id/nested_scrollview"
             motion:touchAnchorSide="top" />
 
@@ -135,12 +134,6 @@
             motion:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             motion:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             motion:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
-        <Constraint
-            android:id="@+id/mainLiveTempMinus"
-            android:visibility="gone"
-            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-            motion:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
-            motion:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
         <Constraint
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
@@ -326,12 +319,6 @@
             motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
             motion:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
             motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue" />
-        <Constraint
-            android:id="@+id/mainLiveTempMinus"
-            android:visibility="gone"
-            motion:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-            motion:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
-            motion:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
         <Constraint
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"

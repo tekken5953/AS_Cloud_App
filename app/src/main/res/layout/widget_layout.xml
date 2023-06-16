@@ -1,84 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/widgetMainLayout"
-    android:layout_width="150dp"
-    android:layout_height="70dp"
-    android:background="@drawable/widget_bg_290_160"
+    android:layout_width="290dp"
+    android:layout_height="95dp"
+    android:layout_margin="5dp"
+    android:background="@drawable/widget_bg_clear"
     android:padding="@dimen/widget_margin">
-
-<!--    <ImageView-->
-<!--        android:id="@+id/widgetLogoImg"-->
-<!--        android:layout_width="30dp"-->
-<!--        android:layout_height="20dp"-->
-<!--        android:layout_marginStart="5dp"-->
-<!--        android:layout_marginTop="5dp"-->
-<!--        android:src="@drawable/airsignal_logo_color" />-->
-
-    <TextView
-        android:id="@+id/widgetAddress"
-        style="@style/basicTextView"
-        android:layout_toEndOf="@+id/widgetTimeStamp"
-        android:textSize="11sp"
-        android:gravity="center_vertical"/>
-
-    <TextView
-        android:id="@+id/widgetTimeStamp"
-        style="@style/basicTextView"
-        android:layout_alignTop="@+id/widgetAddress"
-        android:layout_alignBottom="@+id/widgetAddress"
-        android:textSize="11sp" />
-
-    <ImageView
-        android:id="@+id/widgetRefresh"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="5dp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/refresh"
-        app:tint="@color/mode_color_text" />
-
-    <TextView
-        android:id="@+id/widgetTempIndex"
-        style="@style/basicTextView"
-        android:textSize="12sp"
-        android:layout_below="@+id/widgetAddress"
-        android:layout_marginTop="3dp"
-        android:text="기온 : "/>
 
     <TextView
         android:id="@+id/widgetTempValue"
         style="@style/basicTextView"
-        android:textSize="12sp"
-        android:layout_toEndOf="@+id/widgetTempIndex"
-        android:layout_alignTop="@+id/widgetTempIndex"
-        android:layout_marginStart="5dp"/>
+        android:textSize="40sp"
+        android:textColor="@color/white"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:id="@+id/widgetTempIndex"
+        style="@style/basicTextView"
+        android:textSize="13sp"
+        android:paddingStart="0dp"
+        android:paddingEnd="7dp"
+        android:textColor="@color/white"
+        android:layout_below="@+id/widgetTempValue"
+        android:layout_alignStart="@+id/widgetTempValue"
+        android:layout_alignEnd="@+id/widgetTempValue"/>
+
+    <ImageView
+        android:id="@+id/widgetVerticalLine"
+        android:layout_width="0.7dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_toEndOf="@+id/widgetTempValue"
+        android:background="#80FFFFFF"/>
+
+    <ImageView
+        android:id="@+id/widgetAddressVector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/vector"
+        android:layout_toEndOf="@+id/widgetVerticalLine"
+        android:layout_marginStart="13dp"
+        android:layout_alignTop="@+id/widgetAddress"
+        android:layout_alignBottom="@+id/widgetAddress"/>
+
+    <TextView
+        android:id="@+id/widgetAddress"
+        style="@style/basicTextView"
+        android:layout_toEndOf="@+id/widgetAddressVector"
+        android:textSize="13sp"
+        android:maxLines="1"
+        android:maxEms="7"
+        android:ellipsize="start"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_alignTop="@+id/widgetTempValue"
+        android:textColor="@color/white" />
+
+    <ImageView
+        android:id="@+id/widgetSkyImg"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:layout_marginEnd="10dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"/>
+
+    <ImageView
+        android:id="@+id/widgetRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@+id/widgetAddress"
+        android:layout_alignTop="@+id/widgetAddress"
+        android:layout_alignBottom="@+id/widgetAddress"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/widget_refresh" />
+
+    <TextView
+        android:id="@+id/widgetTime"
+        style="@style/basicTextView"
+        android:textSize="11sp"
+        android:textColor="@color/white"
+        android:layout_below="@+id/widgetAddress"
+        android:layout_alignStart="@+id/widgetAddressVector"/>
 
     <TextView
         android:id="@+id/widgetPmIndex"
         style="@style/basicTextView"
-        android:textSize="12sp"
-        android:layout_below="@+id/widgetTempIndex"
-        android:layout_marginTop="5dp"
+        android:textSize="13sp"
+        android:layout_alignStart="@+id/widgetAddressVector"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/widgetTime"
+        android:textColor="@color/white"
         android:text="미세먼지 : "/>
 
     <TextView
         android:id="@+id/widgetPmValue"
         style="@style/basicTextView"
-        android:textSize="12sp"
-        android:layout_below="@+id/widgetTempIndex"
-        android:layout_toEndOf="@+id/widgetPmIndex"
+        android:textSize="14sp"
+        android:textColor="@color/white"
         android:layout_alignTop="@+id/widgetPmIndex"
-        android:layout_marginStart="5dp"/>
-
-    <ImageView
-        android:id="@+id/widgetSkyImg"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_below="@+id/widgetRefresh"
-        android:layout_alignEnd="@+id/widgetRefresh"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        android:layout_marginEnd="5dp"/>
+        android:layout_alignBottom="@+id/widgetPmIndex"
+        android:layout_toEndOf="@+id/widgetPmIndex"
+        android:layout_marginStart="7dp"/>
 </RelativeLayout>

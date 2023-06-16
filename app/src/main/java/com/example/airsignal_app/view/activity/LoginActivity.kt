@@ -25,16 +25,17 @@ import com.example.airsignal_app.view.ShowDialogClass
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.orhanobut.logger.Logger
 
-class LoginActivity : BaseActivity() {
-    private lateinit var binding: ActivityLoginBinding
+class LoginActivity
+    : BaseActivity<ActivityLoginBinding>() {
+    override val resID: Int get() = R.layout.activity_login
+
     private val googleLogin by lazy { GoogleLogin(this) }   // 구글 로그인
     private val kakaoLogin by lazy { KakaoLogin(this) }     // 카카오 로그인
     private val naverLogin by lazy { NaverLogin(this) }     // 네이버 로그인
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
+        initBinding()
 
         binding.googleLoginButton.setOnClickListener {
             googleLogin.login(binding.googleLoginButton, startActivityResult)

@@ -41,10 +41,6 @@ class ApiModel {
         val base: String?,
         @SerializedName("forecast")
         val forecast: String?,
-        @SerializedName("x")
-        val gridX: Int?,
-        @SerializedName("y")
-        val gridY: Int??,
         @SerializedName("rainProbability")
         val rainP: Double?,
         @SerializedName("rainType")

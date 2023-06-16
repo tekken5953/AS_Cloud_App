@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import com.example.airsignal_app.R
+import com.example.airsignal_app.databinding.ActivityRedirectPermissionBinding
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.LoggerUtil
@@ -13,7 +14,10 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.google.firebase.database.FirebaseDatabase
 
 
-class RedirectPermissionActivity : BaseActivity() {
+class RedirectPermissionActivity
+    : BaseActivity<ActivityRedirectPermissionBinding>() {
+    override val resID: Int get() = R.layout.activity_redirect_permission
+
     private val locationManager by lazy { getSystemService(LOCATION_SERVICE) as LocationManager }
 
     override fun onResume() {
@@ -27,7 +31,7 @@ class RedirectPermissionActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_redirect_permission)
+        initBinding()
 
         @Suppress("DEPRECATION")
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -35,8 +39,7 @@ class RedirectPermissionActivity : BaseActivity() {
         FirebaseDatabase.getInstance()
         LoggerUtil().getInstance()
 
-        val btn = findViewById<Button>(R.id.permissionBtn)
-        btn.setOnClickListener {
+        binding.permissionBtn.setOnClickListener {
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 if (!RequestPermissionsUtil(this).isLocationPermitted()) {
                     RequestPermissionsUtil(this).requestLocation()

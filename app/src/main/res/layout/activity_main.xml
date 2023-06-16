@@ -60,6 +60,15 @@
                 android:src="@drawable/ico_hamb_w"
                 app:tint="@color/mode_black_color" />
 
+
+            <ImageView
+                android:id="@+id/mainRefreshData"
+                style="@style/BasicImageButtonIcon"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/refresh"
+                android:layout_toStartOf="@+id/mainAddAddress"
+                android:layout_marginEnd="15dp"/>
+
             <ImageView
                 android:id="@+id/mainAddAddress"
                 style="@style/BasicImageButtonIcon"
@@ -123,19 +132,6 @@
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
-
-        <TextView
-            android:id="@+id/mainLiveTempMinus"
-            style="@style/basicTextView"
-            android:fontFamily="@font/spoqa_hansansneo_regular"
-            android:text="-"
-            android:textColor="@color/mode_black_color"
-            android:textSize="55sp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
-            app:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
 
         <TextView
             android:id="@+id/mainLiveTempValue"
@@ -251,7 +247,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:animateLayoutChanges="true"
-                        android:layout_marginTop="35dp"
+                        android:layout_marginTop="30dp"
                         android:layout_marginBottom="20dp"/>
 
                     <LinearLayout
@@ -760,6 +756,7 @@
                         android:drawablePadding="5dp"
                         android:text="@string/uv_title"
                         android:textSize="18sp"
+                        android:textColor="#4F4F4F"
                         app:drawableStartCompat="@drawable/ico_uv" />
 
                     <ImageView

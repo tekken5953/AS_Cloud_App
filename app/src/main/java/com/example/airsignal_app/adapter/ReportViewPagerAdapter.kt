@@ -62,34 +62,44 @@ class ReportViewPagerAdapter(private val context: Context, list: ArrayList<Adapt
         fun bind(dao: AdapterModel.ReportItem) {
             textView.text = dao.text
 
+            if (mList.size == 0) {
+                viewPager2.visibility = View.GONE
+            } else {
+                viewPager2.visibility = View.VISIBLE
+            }
+
             itemView.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    val count = textView.layout.lineCount
-                    val lastLineIndex: Int = count - 1
-                    val ellipsisCount: Int = textView.layout.getEllipsisCount(lastLineIndex)
-                    val isEllipsized = ellipsisCount > 0
+                    try {
+                        val count = textView.layout.lineCount
+                        val lastLineIndex: Int = count - 1
+                        val ellipsisCount: Int = textView.layout.getEllipsisCount(lastLineIndex)
+                        val isEllipsized = ellipsisCount > 0
 //                    onClickListener.onItemClick(it, position)
-                    if (textView.maxLines == 2) {
-                        if (isEllipsized) {
+                        if (textView.maxLines == 2) {
+                            if (isEllipsized) {
+                                mVib()
+                                val lineCount = 4
+                                textView.maxLines = lineCount
+                                val lineHeight = textView.lineHeight
+                                val desiredHeight = lineCount * lineHeight
+                                textView.layoutParams.height = desiredHeight
+                                viewPager2.layoutParams.height = desiredHeight
+                                textView.requestLayout()
+                            }
+                        } else {
                             mVib()
-                            val lineCount = 4
-                            textView.maxLines = lineCount
+                            val lineCount = 2
+                            textView.maxLines = 2
                             val lineHeight = textView.lineHeight
                             val desiredHeight = lineCount * lineHeight
                             textView.layoutParams.height = desiredHeight
                             viewPager2.layoutParams.height = desiredHeight
                             textView.requestLayout()
                         }
-                    } else {
-                        mVib()
-                        val lineCount = 2
-                        textView.maxLines = 2
-                        val lineHeight = textView.lineHeight
-                        val desiredHeight = lineCount * lineHeight
-                        textView.layoutParams.height = desiredHeight
-                        viewPager2.layoutParams.height = desiredHeight
-                        textView.requestLayout()
+                    } catch (e: NullPointerException) {
+                        e.printStackTrace()
                     }
                 }
             }
