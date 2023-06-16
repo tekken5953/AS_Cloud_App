@@ -16,12 +16,7 @@ class SegmentedProgressBar(context: Context?, attributeSet: AttributeSet? = null
     private var strokePaint = Paint()
     private var barContexts: List<BarContext> = listOf()
 
-    private val segment = RectF(
-        0f,
-        0f,
-        0f,
-        height.toFloat()
-    )
+    private val segment = RectF(0f, 0f, 0f, height.toFloat())
 
     @SuppressLint("DrawAllocation")
     override fun onDraw(canvas: Canvas) {
@@ -67,11 +62,7 @@ class SegmentedProgressBar(context: Context?, attributeSet: AttributeSet? = null
                 ), paint
             )
 
-            strokePaint.shader = LinearGradient(
-                0f,
-                0f,
-                0f,
-                height.toFloat(),
+            strokePaint.shader = LinearGradient(0f, 0f, 0f, height.toFloat(),
                 intArrayOf(Color.parseColor("#80FFFFFF"), Color.parseColor("#33000000")),
                 null,
                 Shader.TileMode.CLAMP
@@ -178,7 +169,6 @@ class SegmentedProgressBar(context: Context?, attributeSet: AttributeSet? = null
             return this
         }
     }
-
 
     class BarContext(val colorFrom: Int, val colorTo: Int, val percentage: Float)
 }

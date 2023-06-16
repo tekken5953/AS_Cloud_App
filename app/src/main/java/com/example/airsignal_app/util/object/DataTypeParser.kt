@@ -61,7 +61,7 @@ object DataTypeParser {
         }
     }
 
-    // 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트
+    /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트 **/
     fun applySkyText(context: Context,rain: String?, sky: String?, thunder: Double?): String {
         return if (rain != "없음") {
             if ((thunder == null) || (thunder < 0.2)) { rain!! }

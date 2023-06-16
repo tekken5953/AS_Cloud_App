@@ -134,16 +134,16 @@ open class WidgetProvider : AppWidgetProvider() {
                     response: Response<ApiModel.GetEntireData>
                 ) {
                     val realtime = response.body()!!.realtime[0]
+                    val current = response.body()!!.current
                     val addr = db.addr!!.split(" ")
                     val skyText = applySkyText(
                         context,
-                        realtime.rainType!!,
+                        current.rainType!!,
                         realtime.sky!!,
                         response.body()!!.thunder
                     )
 
                     views.apply {
-
                         setInt(
                             R.id.widgetMainLayout, "setBackgroundResource",
                             getSkyImgWidget(skyText)
@@ -156,7 +156,7 @@ open class WidgetProvider : AppWidgetProvider() {
 
                         setTextViewText(
                             R.id.widgetTempValue,
-                            "${response.body()!!.current.temperature!!.roundToInt()}˚"
+                            "${current.temperature!!.roundToInt()}˚"
                         )
 
                         setTextViewText(
@@ -168,7 +168,7 @@ open class WidgetProvider : AppWidgetProvider() {
 
                         setImageViewBitmap(
                             R.id.widgetSkyImg,
-                            (getSkyImgLarge(context, response.body()!!.realtime[0].sky, false)
+                            (getSkyImgLarge(context, skyText, false)
                                     as BitmapDrawable).bitmap
                         )
 
