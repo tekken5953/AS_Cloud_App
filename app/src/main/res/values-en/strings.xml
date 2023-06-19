@@ -107,4 +107,6 @@
     <string name="thunder_rainy">Rain/Thunder</string>
     <string name="pm_10">Fine dust</string>
     <string name="pm_2p5">Aerosol</string>
+    <string name="widget_pm">PM :</string>
+    <string name="widget_reload">Please press to update</string>
 </resources>

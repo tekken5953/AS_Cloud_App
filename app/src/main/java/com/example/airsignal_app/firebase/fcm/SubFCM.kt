@@ -2,6 +2,7 @@ package com.example.airsignal_app.firebase.fcm
 
 import android.content.Intent
 import com.example.airsignal_app.view.activity.LoginActivity
+import com.example.airsignal_app.view.activity.RedirectPermissionActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -18,7 +19,7 @@ class SubFCM : FirebaseMessagingService() {
         super.onMessageReceived(message)
         Timber.tag("Notification").d("FCM 메시지 수신")
 
-        val intent = Intent(this, LoginActivity::class.java)
+        val intent = Intent(this, RedirectPermissionActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP and Intent.FLAG_ACTIVITY_NEW_TASK)
         // 포그라운드 노티피케이션 발생
         NotificationBuilder().sendNotification(

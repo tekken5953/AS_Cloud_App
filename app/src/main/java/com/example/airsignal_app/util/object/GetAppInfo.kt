@@ -11,6 +11,7 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userFontScale
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
+import com.example.airsignal_app.dao.StaticDataObject.WEATHER_ALL_NOTI
 import com.example.airsignal_app.db.SharedPreferenceManager
 
 /**
@@ -60,5 +61,9 @@ object GetAppInfo {
 
     fun getLoginVerificationCode(context: Context): String {
         return SharedPreferenceManager(context).getString(IgnoredKeyFile.loginVerificationCode)
+    }
+
+    fun getTopicNotification(context: Context): String {
+        return SharedPreferenceManager(context).getString(WEATHER_ALL_NOTI)
     }
 }

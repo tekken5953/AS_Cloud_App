@@ -15,10 +15,13 @@ import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogNotLogin
+import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
+import com.example.airsignal_app.util.`object`.GetAppInfo.getTopicNotification
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.GetSystemInfo.androidID
+import com.example.airsignal_app.util.`object`.SetAppInfo.setTopicNotification
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.google.android.gms.location.*
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
@@ -62,6 +65,7 @@ class GetLocation(private val context: Context) {
             val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
             @Suppress("DEPRECATION")
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
+            renewTopic(getTopicNotification(context), "test")
             return if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
             } else { "Null Address" }
@@ -115,12 +119,11 @@ class GetLocation(private val context: Context) {
         }
     }
 
-//    /** 현재 위치 토픽 갱신 **/
-//    private fun renewTopic(old: String, new: String) {
-//        SubFCM().unSubTopic(old).subTopic(new)
-//        Thread.sleep(100)
-//        sp.setString("WEATHER_CURRENT", new)
-//    }
+    /** 현재 위치 토픽 갱신 **/
+    private fun renewTopic(old: String, new: String) {
+        SubFCM().unSubTopic(old).subTopic(new)
+        setTopicNotification(context, new)
+    }
 
     /** 백그라운드에서 위치 갱신 **/
     @SuppressLint("MissingPermission")

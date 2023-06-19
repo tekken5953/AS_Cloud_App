@@ -615,95 +615,112 @@ class MainActivity
                 }
 
                 reportViewPagerItem.clear()
-                result.summary?.let {
-                    sList ->
-                    sList.forEach {
-                        summary ->
-                    addReportViewPagerItem(
-                        summary.replace("○","")
-                            .replace("\n","")
-                            .trim())
+                result.summary?.let { sList ->
+                    sList.forEach { summary ->
+                        addReportViewPagerItem(
+                            summary.replace("○", "")
+                                .replace("\n", "")
+                                .trim()
+                        )
+                    }
                 }
 
-                    createIndicators(binding.nestedReportIndicator)
-                    reportViewPagerAdapter.notifyDataSetChanged()
+                createIndicators(binding.nestedReportIndicator)
+                reportViewPagerAdapter.notifyDataSetChanged()
 
-                    if (reportViewPagerItem.size == 0) {
-                        binding.nestedReportFrame.visibility = GONE
+                if (reportViewPagerItem.size == 0) {
+                    binding.nestedReportFrame.visibility = GONE
+                } else {
+                    binding.nestedReportFrame.visibility = VISIBLE
+                }
+
+                for (i: Int in 0 until result.realtime.size) {
+                    val dailyIndex = result.realtime[i]
+                    val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
+                    val dailyTime =
+                        millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
+                    val dailySunProgress =
+                        100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(sun.sunrise)) / entireSun
+                    val isNight = isNightProgress(dailySunProgress)
+
+                    if (i == result.realtime.lastIndex + 1) {
+                        break
+                    } else if (i == 0) {
+                        addDailyWeatherItem(
+                            "${forecastToday.hour}${getString(R.string.hour)}",
+                            applySkyImg(
+                                modifyCurrentRainType(current.rainType, realtime.rainType),
+                                dailyIndex.sky,
+                                thunder,
+                                isLarge = false,
+                                isNight = isNight
+                            )!!,
+                            "${
+                                modifyCurrentTempType(
+                                    current.temperature,
+                                    realtime.temp
+                                ).roundToInt()
+                            }˚",
+                            convertDateAppendZero(forecastToday)
+                        )
                     } else {
-                        binding.nestedReportFrame.visibility = VISIBLE
+                        addDailyWeatherItem(
+                            "${forecastToday.hour}${getString(R.string.hour)}",
+                            applySkyImg(
+                                dailyIndex.rainType,
+                                dailyIndex.sky,
+                                thunder,
+                                isLarge = false,
+                                isNight = isNight
+                            )!!,
+                            "${dailyIndex.temp!!.roundToInt()}˚",
+                            convertDateAppendZero(forecastToday)
+                        )
                     }
-
-                    for (i: Int in 0 until result.realtime.size) {
-                        val dailyIndex = result.realtime[i]
-                        val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
-                        val dailyTime =
-                            millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
-                        val dailySunProgress =
-                            100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(sun.sunrise)) / entireSun
-                        val isNight = isNightProgress(dailySunProgress)
-
-                        if (i == result.realtime.lastIndex + 1) {
-                            break
-                        } else if (i == 0) {
-                            addDailyWeatherItem(
-                                "${forecastToday.hour}${getString(R.string.hour)}",
-                                applySkyImg(
-                                    modifyCurrentRainType(current.rainType,realtime.rainType),
-                                    dailyIndex.sky,
-                                    thunder,
-                                    isLarge = false,
-                                    isNight = isNight
-                                )!!,
-                                "${modifyCurrentTempType(current.temperature,realtime.temp).roundToInt()}˚",
-                                convertDateAppendZero(forecastToday)
-                            )
-                        } else {
-                            addDailyWeatherItem(
-                                "${forecastToday.hour}${getString(R.string.hour)}",
-                                applySkyImg(
-                                    dailyIndex.rainType,
-                                    dailyIndex.sky,
-                                    thunder,
-                                    isLarge = false,
-                                    isNight = isNight
-                                )!!,
-                                "${dailyIndex.temp!!.roundToInt()}˚",
-                                convertDateAppendZero(forecastToday)
-                            )
-                        }
-                    }
-
-                    for (i: Int in 0 until (7)) {
-                        try {
-                            val formedDate = dateNow.plusDays(i.toLong())
-                            val date: String = when (i) {
-                                0 -> { getString(R.string.today) }
-                                1 -> { getString(R.string.tomorrow) }
-                                else -> {
-                                    "${convertDayOfWeekToKorean(this,
-                                        dateNow.dayOfWeek.value + i)}${getString(R.string.date)}"
-                                }
-                            }
-                            addWeeklyWeatherItem(
-                                date,
-                                convertDateAppendZero(formedDate),
-                                getSkyImgSmall(this, wfMin[i], false)!!,
-                                getSkyImgSmall(this, wfMax[i], false)!!,
-                                "${taMin[i]!!.roundToInt()}˚",
-                                "${taMax[i]!!.roundToInt()}˚"
-                            )
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-                    weeklyWeatherAdapter.notifyDataSetChanged()
-                    dailyWeatherAdapter.notifyDataSetChanged()
-                    changeTextColorStyle(
-                        applySkyText(this, modifyCurrentRainType(current.rainType,realtime.rainType), realtime.sky, thunder),
-                        isNightProgress(currentSun)
-                    )
                 }
+
+                for (i: Int in 0 until (7)) {
+                    try {
+                        val formedDate = dateNow.plusDays(i.toLong())
+                        val date: String = when (i) {
+                            0 -> {
+                                getString(R.string.today)
+                            }
+                            1 -> {
+                                getString(R.string.tomorrow)
+                            }
+                            else -> {
+                                "${
+                                    convertDayOfWeekToKorean(
+                                        this,
+                                        dateNow.dayOfWeek.value + i
+                                    )
+                                }${getString(R.string.date)}"
+                            }
+                        }
+                        addWeeklyWeatherItem(
+                            date,
+                            convertDateAppendZero(formedDate),
+                            getSkyImgSmall(this, wfMin[i], false)!!,
+                            getSkyImgSmall(this, wfMax[i], false)!!,
+                            "${taMin[i]!!.roundToInt()}˚",
+                            "${taMax[i]!!.roundToInt()}˚"
+                        )
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                weeklyWeatherAdapter.notifyDataSetChanged()
+                dailyWeatherAdapter.notifyDataSetChanged()
+                changeTextColorStyle(
+                    applySkyText(
+                        this,
+                        modifyCurrentRainType(current.rainType, realtime.rainType),
+                        realtime.sky,
+                        thunder
+                    ),
+                    isNightProgress(currentSun)
+                )
             }
             runOnUiThread {
                 hidePB()
