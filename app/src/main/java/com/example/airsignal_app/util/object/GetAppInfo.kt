@@ -66,4 +66,26 @@ object GetAppInfo {
     fun getTopicNotification(context: Context): String {
         return SharedPreferenceManager(context).getString(WEATHER_ALL_NOTI)
     }
+
+    fun getEntireSun(sunRise: String, sunSet: String): Int {
+        val sunsetTime = DataTypeParser.convertTimeToMinutes(sunSet)
+        val sunriseTime = DataTypeParser.convertTimeToMinutes(sunRise)
+        return sunsetTime - sunriseTime
+    }
+
+    fun getCurrentSun(sunRise: String, sunSet: String): Int {
+        val currentTime = DataTypeParser.millsToString(DataTypeParser.getCurrentTime(), "HHmm")
+        var currentSun =
+            (100 * (DataTypeParser.convertTimeToMinutes(currentTime) - DataTypeParser.convertTimeToMinutes(
+                sunRise
+            ))) / getEntireSun(sunRise,sunSet)
+
+        if (currentSun > 100) { currentSun = 100 }
+
+        return currentSun
+    }
+
+    fun getIsNight(progress: Int): Boolean {
+        return progress >= 100 || progress < 0
+    }
 }

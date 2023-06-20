@@ -26,10 +26,14 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.getDataText
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgLarge
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgWidget
+import com.example.airsignal_app.util.`object`.GetAppInfo.getCurrentSun
 import com.example.airsignal_app.view.activity.MainActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -157,13 +161,14 @@ open class WidgetProvider : AppWidgetProvider() {
                                     realtime.sky!!,
                                     response.body()!!.thunder
                                 )
+                                val sun = response.body()!!.sun
 
                                 views.apply {
                                     setViewVisibility(R.id.widgetReloadLayout, View.GONE)
 
                                     setInt(
                                         R.id.widgetMainLayout, "setBackgroundResource",
-                                        getSkyImgWidget(skyText)
+                                        getSkyImgWidget(skyText,getCurrentSun(sun.sunrise!!,sun.sunset!!))
                                     )
 
                                     setTextViewText(
@@ -192,7 +197,6 @@ open class WidgetProvider : AppWidgetProvider() {
                                     setTextViewText(
                                         R.id.widgetAddress,
                                         addrFormat[addrFormat.size - 2]
-//                                            "${addrFormat[addrFormat.size - 2]} ${addrFormat[addrFormat.size - 1]}"
                                     )
                                 }
 

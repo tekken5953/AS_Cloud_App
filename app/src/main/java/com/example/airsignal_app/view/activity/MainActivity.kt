@@ -22,7 +22,6 @@ import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
-import androidx.databinding.DataBindingUtil
 import androidx.viewpager2.widget.ViewPager2
 import androidx.work.*
 import com.example.airsignal_app.R
@@ -58,6 +57,9 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentTempT
 import com.example.airsignal_app.util.`object`.DataTypeParser.pixelToDp
 import com.example.airsignal_app.util.`object`.DataTypeParser.translateSky
 import com.example.airsignal_app.util.`object`.DataTypeParser.translateUV
+import com.example.airsignal_app.util.`object`.GetAppInfo
+import com.example.airsignal_app.util.`object`.GetAppInfo.getEntireSun
+import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
@@ -79,7 +81,7 @@ import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
-
+@SuppressLint("InflateParams")
 class MainActivity
     : BaseActivity<ActivityMainBinding>() {
     override val resID: Int get() = R.layout.activity_main
@@ -231,30 +233,6 @@ class MainActivity
                 getDataSingleTime()
             }
         })
-
-//        // TEST NOTIFICATION
-//        /////////////////////////////////////////////////////////////////
-//        val intent = Intent(applicationContext, MainActivity::class.java)
-//        val pmString = "미세먼지 나쁨"
-//        pmString.toSpannable().setSpan(
-//            ForegroundColorSpan(Color.RED),
-//            5, pmString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE
-//        )
-//        val location = GpsRepository(this).getInstance().findById(CURRENT_GPS_ID).addr.toString()
-//        location.toSpannable().setSpan(
-//            android.text.style.AbsoluteSizeSpan(18),
-//            0,
-//            location.length,
-//            Spannable.SPAN_INCLUSIVE_INCLUSIVE
-//        )
-//        val data = "최고: 24˚ 최저 : 10˚"
-//        NotificationBuilder().sendNotification(
-//            this, intent,
-//            data, location, getCurrentTime()
-//        )
-//        ///////////////////////////////////////////////////////////////
-
-//        onUpdateWidgetData()
 
         // 플러스 모양 추가시 주소등록 다이얼로그
         binding.mainAddAddress.setOnClickListener(object : OnSingleClickListener() {
@@ -415,17 +393,6 @@ class MainActivity
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             offscreenPageLimit = 3
 
-//            val interpolator = AccelerateInterpolator()
-//            setPageTransformer {page, position ->
-//                page.apply {
-//                    translationX = -position * width
-//                    scaleX = 0.5f + (1 - position.absoluteValue) * 0.5f
-//                    scaleY = 0.5f + (1 - position.absoluteValue) * 0.5f
-//                    alpha = 0.5f + (1 - position.absoluteValue) * 0.5f
-//                    interpolator.getInterpolation(position) // Interpolator 적용
-//                }
-//            }
-
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
@@ -488,6 +455,7 @@ class MainActivity
                 val dateNow: LocalDateTime = LocalDateTime.now()
                 val current = result.current
                 val thunder = result.thunder!!
+                currentSun = GetAppInfo.getCurrentSun(sun.sunrise!!, sun.sunset!!)
 
                 val wfMin = listOf(
                     week.wf0Am, week.wf1Am, week.wf2Am, week.wf3Am,
@@ -575,22 +543,11 @@ class MainActivity
                     binding.mainCompareTempTv
                 )
 
-                val sunsetTime = convertTimeToMinutes(sun.sunset!!)
-                val sunriseTime = convertTimeToMinutes(sun.sunrise!!)
-                val entireSun = sunsetTime - sunriseTime
-                val currentTime = millsToString(getCurrentTime(), "HHmm")
-                currentSun =
-                    (100 * (convertTimeToMinutes(currentTime) - convertTimeToMinutes(sun.sunrise))) / entireSun
-
-                if (currentSun > 100) { currentSun = 100 }
-
                 binding.mainSkyImg.setImageDrawable(
                     applySkyImg(
                         modifyCurrentRainType(current.rainType,realtime.rainType),
-                        realtime.sky,
-                        thunder,
-                        isLarge = true,
-                        isNight = isNightProgress(currentSun)
+                        realtime.sky, thunder,
+                        isLarge = true, isNight = getIsNight(currentSun)
                     )
                 )
 
@@ -639,9 +596,9 @@ class MainActivity
                     val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
                     val dailyTime =
                         millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
-                    val dailySunProgress =
-                        100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(sun.sunrise)) / entireSun
-                    val isNight = isNightProgress(dailySunProgress)
+                    val dailySunProgress = 100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(sun.sunrise)) /
+                            getEntireSun(sun.sunrise, sun.sunset)
+                    val isNight = getIsNight(dailySunProgress)
 
                     if (i == result.realtime.lastIndex + 1) {
                         break
@@ -650,15 +607,10 @@ class MainActivity
                             "${forecastToday.hour}${getString(R.string.hour)}",
                             applySkyImg(
                                 modifyCurrentRainType(current.rainType, realtime.rainType),
-                                dailyIndex.sky,
-                                thunder,
-                                isLarge = false,
-                                isNight = isNight
-                            )!!,
+                                dailyIndex.sky, thunder, isLarge = false, isNight = isNight)!!,
                             "${
                                 modifyCurrentTempType(
-                                    current.temperature,
-                                    realtime.temp
+                                    current.temperature, realtime.temp
                                 ).roundToInt()
                             }˚",
                             convertDateAppendZero(forecastToday)
@@ -667,11 +619,8 @@ class MainActivity
                         addDailyWeatherItem(
                             "${forecastToday.hour}${getString(R.string.hour)}",
                             applySkyImg(
-                                dailyIndex.rainType,
-                                dailyIndex.sky,
-                                thunder,
-                                isLarge = false,
-                                isNight = isNight
+                                dailyIndex.rainType, dailyIndex.sky, thunder,
+                                isLarge = false, isNight = isNight
                             )!!,
                             "${dailyIndex.temp!!.roundToInt()}˚",
                             convertDateAppendZero(forecastToday)
@@ -683,18 +632,11 @@ class MainActivity
                     try {
                         val formedDate = dateNow.plusDays(i.toLong())
                         val date: String = when (i) {
-                            0 -> {
-                                getString(R.string.today)
-                            }
-                            1 -> {
-                                getString(R.string.tomorrow)
-                            }
+                            0 -> { getString(R.string.today) }
+                            1 -> { getString(R.string.tomorrow) }
                             else -> {
-                                "${
-                                    convertDayOfWeekToKorean(
-                                        this,
-                                        dateNow.dayOfWeek.value + i
-                                    )
+                                "${convertDayOfWeekToKorean(this, 
+                                    dateNow.dayOfWeek.value + i)
                                 }${getString(R.string.date)}"
                             }
                         }
@@ -716,22 +658,19 @@ class MainActivity
                     applySkyText(
                         this,
                         modifyCurrentRainType(current.rainType, realtime.rainType),
-                        realtime.sky,
-                        thunder
+                        realtime.sky, thunder
                     ),
-                    isNightProgress(currentSun)
+                    getIsNight(currentSun)
                 )
             }
-            runOnUiThread {
-                hidePB()
-            }
+            runOnUiThread { hidePB() }
         }
         return this
     }
 
     // 하늘상태에 따라 윈도우 배경 변경
     private fun applyWindowBackground(progress: Int, sky: String?) {
-        if (isNightProgress(progress)) {
+        if (getIsNight(progress)) {
             window.setBackgroundDrawableResource(R.drawable.main_bg_night)
             changeTextColorStyle(sky!!, true)
         } else {
@@ -819,11 +758,6 @@ class MainActivity
             indicatorView
         }
         updateIndicators(binding.nestedReportViewpager.currentItem)
-    }
-
-    // 일몰 이후인지 불러옴 - progress
-    private fun isNightProgress(current: Int): Boolean {
-        return current >= 100 || current < 0
     }
 
     // 필드값이 없을 때 -100 출력 됨
