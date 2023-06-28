@@ -1,5 +1,5 @@
 <resources>
-    <string name="app__name">AirSignal_App</string>
+    <string name="app__name">AirSignal</string>
     <string name="my_device_title">내 기기</string>
     <string name="as_eye">AS_Eye</string>
     <string name="aqi">공기질 통합지수</string>
@@ -106,4 +106,6 @@
     <string name="thunder_rainy">비/번개</string>
     <string name="pm_10">미세먼지</string>
     <string name="pm_2p5">초미세먼지</string>
+    <string name="widget_pm">미세먼지 :</string>
+    <string name="widget_reload">눌러서 갱신하세요</string>
 </resources>

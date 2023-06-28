@@ -133,13 +133,7 @@ class MyDeviceActivity
     private fun setNextButton(button: AppCompatButton, isEnable: Boolean, color: Int) {
         button.apply {
             isEnabled = isEnable
-            setTextColor(
-                ResourcesCompat.getColor(
-                    resources,
-                    color,
-                    null
-                )
-            )
+            setTextColor(ResourcesCompat.getColor(resources, color, null))
         }
     }
 }

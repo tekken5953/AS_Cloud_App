@@ -22,7 +22,6 @@ import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
-import androidx.databinding.DataBindingUtil
 import androidx.viewpager2.widget.ViewPager2
 import androidx.work.*
 import com.example.airsignal_app.R
@@ -58,6 +57,9 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentTempT
 import com.example.airsignal_app.util.`object`.DataTypeParser.pixelToDp
 import com.example.airsignal_app.util.`object`.DataTypeParser.translateSky
 import com.example.airsignal_app.util.`object`.DataTypeParser.translateUV
+import com.example.airsignal_app.util.`object`.GetAppInfo
+import com.example.airsignal_app.util.`object`.GetAppInfo.getEntireSun
+import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
@@ -65,6 +67,7 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.removeSingleKey
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
+import com.example.airsignal_app.vmodel.GetLocationViewModel
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
@@ -72,6 +75,7 @@ import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
 import java.util.*
@@ -79,30 +83,33 @@ import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
-
+@SuppressLint("InflateParams")
 class MainActivity
     : BaseActivity<ActivityMainBinding>() {
     override val resID: Int get() = R.layout.activity_main
 
     private var isBackPressed = false
-    private val sideMenuBuilder by lazy { SideMenuBuilder(this@MainActivity) }
-    private val sideMenu: View by lazy {
+    private val sideMenuBuilder by lazy { SideMenuBuilder(this) }
+    private val sideMenuView: View by lazy {
         LayoutInflater.from(this@MainActivity).inflate(R.layout.side_menu, null)
     }
     private lateinit var indicators: Array<ImageView>
     private val vib by lazy { VibrateUtil(this) }
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
+    private val getLocationViewModel by viewModel<GetLocationViewModel>()
+    private val locationClass: GetLocation by inject()
+
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
+    private val uvLegendList = ArrayList<AdapterModel.UVLegendItem>()
+    private val uvResponseList = ArrayList<AdapterModel.UVResponseItem>()
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(this, dailyWeatherList) }
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
-    private val uvLegendList = ArrayList<AdapterModel.UVLegendItem>()
+    private val reportViewPagerAdapter by lazy { ReportViewPagerAdapter(this, reportViewPagerItem, binding.nestedReportViewpager)}
     private val uvLegendAdapter = UVLegendAdapter(this, uvLegendList)
-    private val uvResponseList = ArrayList<AdapterModel.UVResponseItem>()
     private val uvResponseAdapter = UVResponseAdapter(this, uvResponseList)
     private val reportViewPagerItem = ArrayList<AdapterModel.ReportItem>()
-    private val reportViewPagerAdapter by lazy { ReportViewPagerAdapter(this, reportViewPagerItem, binding.nestedReportViewpager)}
-    private val locationClass by lazy { GetLocation(this) }
+
     private var currentSun = 0
     private var isSunAnimated = false
     private var isProgressed = false
@@ -149,7 +156,9 @@ class MainActivity
         }
         initBinding()
         binding.dataVM = getDataViewModel
+        binding.locationVM = getLocationViewModel
         applyGetDataViewModel()
+        applyGetLocationViewModel()
 
         initializing()
 
@@ -232,30 +241,6 @@ class MainActivity
             }
         })
 
-//        // TEST NOTIFICATION
-//        /////////////////////////////////////////////////////////////////
-//        val intent = Intent(applicationContext, MainActivity::class.java)
-//        val pmString = "미세먼지 나쁨"
-//        pmString.toSpannable().setSpan(
-//            ForegroundColorSpan(Color.RED),
-//            5, pmString.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE
-//        )
-//        val location = GpsRepository(this).getInstance().findById(CURRENT_GPS_ID).addr.toString()
-//        location.toSpannable().setSpan(
-//            android.text.style.AbsoluteSizeSpan(18),
-//            0,
-//            location.length,
-//            Spannable.SPAN_INCLUSIVE_INCLUSIVE
-//        )
-//        val data = "최고: 24˚ 최저 : 10˚"
-//        NotificationBuilder().sendNotification(
-//            this, intent,
-//            data, location, getCurrentTime()
-//        )
-//        ///////////////////////////////////////////////////////////////
-
-//        onUpdateWidgetData()
-
         // 플러스 모양 추가시 주소등록 다이얼로그
         binding.mainAddAddress.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
@@ -277,7 +262,7 @@ class MainActivity
                 mVib()
                 if (RequestPermissionsUtil(this@MainActivity).isLocationPermitted()) {
                     showPB()
-                    getCurrentLocation()
+                    getLocationViewModel.loadDataResult(this@MainActivity)
                 } else {
                     RequestPermissionsUtil(this@MainActivity).requestLocation()
                 }
@@ -288,7 +273,7 @@ class MainActivity
         binding.mainSideMenuIv.setOnClickListener(object : OnSingleClickListener() {
             @SuppressLint("InflateParams")
             override fun onSingleClick(v: View?) {
-                sideMenuBuilder.show(sideMenu, true)
+                sideMenuBuilder.show(sideMenuView, true)
             }
         })
     }
@@ -296,13 +281,13 @@ class MainActivity
     // 햄버거 메뉴 세팅
     private fun addSideMenu() {
         try {
-            val cancel = sideMenu.findViewById<ImageView>(R.id.headerCancel)
-            val profile = sideMenu.findViewById<ImageView>(R.id.navHeaderProfileImg)
-            val id = sideMenu.findViewById<TextView>(R.id.navHeaderUserId)
-            val weather = sideMenu.findViewById<TextView>(R.id.navMenuWeather)
-            val setting = sideMenu.findViewById<TextView>(R.id.navMenuSetting)
-            val headerTr = sideMenu.findViewById<TableRow>(R.id.headerTr)
-            val adView = sideMenu.findViewById<AdView>(R.id.navMenuAdview)
+            val cancel = sideMenuView.findViewById<ImageView>(R.id.headerCancel)
+            val profile = sideMenuView.findViewById<ImageView>(R.id.navHeaderProfileImg)
+            val id = sideMenuView.findViewById<TextView>(R.id.navHeaderUserId)
+            val weather = sideMenuView.findViewById<TextView>(R.id.navMenuWeather)
+            val setting = sideMenuView.findViewById<TextView>(R.id.navMenuSetting)
+            val headerTr = sideMenuView.findViewById<TableRow>(R.id.headerTr)
+            val adView = sideMenuView.findViewById<AdView>(R.id.navMenuAdview)
 
             sideMenuBuilder.apply {
                 setBackPressed(cancel)
@@ -340,7 +325,7 @@ class MainActivity
             if (addrArray.contains(getUserLastAddress(this))) {
                 loadSavedAddr()
             } else {
-                getCurrentLocation()
+                getLocationViewModel.loadDataResult(this@MainActivity)
             }
             // TimeOut
             HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
@@ -415,17 +400,6 @@ class MainActivity
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             offscreenPageLimit = 3
 
-//            val interpolator = AccelerateInterpolator()
-//            setPageTransformer {page, position ->
-//                page.apply {
-//                    translationX = -position * width
-//                    scaleX = 0.5f + (1 - position.absoluteValue) * 0.5f
-//                    scaleY = 0.5f + (1 - position.absoluteValue) * 0.5f
-//                    alpha = 0.5f + (1 - position.absoluteValue) * 0.5f
-//                    interpolator.getInterpolation(position) // Interpolator 적용
-//                }
-//            }
-
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
@@ -475,7 +449,7 @@ class MainActivity
     // 뷰모델에서 Observing 한 데이터 결과 적용
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel(): MainActivity {
-        getDataViewModel.getDataResult().observe(this) {
+        getDataViewModel.getDataResult().observe(this) { it ->
             it?.let { result ->
                 val realtime = result.realtime[0]
                 val sun = result.sun
@@ -488,6 +462,7 @@ class MainActivity
                 val dateNow: LocalDateTime = LocalDateTime.now()
                 val current = result.current
                 val thunder = result.thunder!!
+                currentSun = GetAppInfo.getCurrentSun(sun.sunrise!!, sun.sunset!!)
 
                 val wfMin = listOf(
                     week.wf0Am, week.wf1Am, week.wf2Am, week.wf3Am,
@@ -575,22 +550,11 @@ class MainActivity
                     binding.mainCompareTempTv
                 )
 
-                val sunsetTime = convertTimeToMinutes(sun.sunset!!)
-                val sunriseTime = convertTimeToMinutes(sun.sunrise!!)
-                val entireSun = sunsetTime - sunriseTime
-                val currentTime = millsToString(getCurrentTime(), "HHmm")
-                currentSun =
-                    (100 * (convertTimeToMinutes(currentTime) - convertTimeToMinutes(sun.sunrise))) / entireSun
-
-                if (currentSun > 100) { currentSun = 100 }
-
                 binding.mainSkyImg.setImageDrawable(
                     applySkyImg(
                         modifyCurrentRainType(current.rainType,realtime.rainType),
-                        realtime.sky,
-                        thunder,
-                        isLarge = true,
-                        isNight = isNightProgress(currentSun)
+                        realtime.sky, thunder,
+                        isLarge = true, isNight = getIsNight(currentSun)
                     )
                 )
 
@@ -615,51 +579,60 @@ class MainActivity
                 }
 
                 reportViewPagerItem.clear()
-                //TODO 실제 데이터를 받아와서 교체
-                addReportViewPagerItem("오늘 오후부터 저녁 사이 제주도산지를 중심으로 소나기가 내리는 곳이 있겠습니다.")
-                addReportViewPagerItem("오늘 아침까지 제주도에는 빗방울이 떨어지는 곳이 있겠고, 중산간 이상 지역에는 가시거리 1km 미만의 안개가 끼는 곳이 있겠으니, 교통안전에 유의하기 바랍니다.")
-                addReportViewPagerItem("내일까지 해안가로는 너울이 유입되겠으니, 안전사고에 유의하기 바랍니다.")
+                result.summary?.let { sList ->
+                    sList.forEach { summary ->
+                        addReportViewPagerItem(
+                            summary.replace("○", "")
+                                .replace("\n", "")
+                                .trim()
+                        )
+                    }
+                }
+
                 createIndicators(binding.nestedReportIndicator)
                 reportViewPagerAdapter.notifyDataSetChanged()
 
-                for (i: Int in 0 until result.realtime.size) {
-                        val dailyIndex = result.realtime[i]
-                        val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
-                        val dailyTime =
-                            millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
-                        val dailySunProgress =
-                            100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(sun.sunrise)) / entireSun
-                        val isNight = isNightProgress(dailySunProgress)
+                if (reportViewPagerItem.size == 0) {
+                    binding.nestedReportFrame.visibility = GONE
+                } else {
+                    binding.nestedReportFrame.visibility = VISIBLE
+                }
 
-                        if (i == result.realtime.lastIndex + 1) {
-                            break
-                        } else if (i == 0) {
-                            addDailyWeatherItem(
-                                "${forecastToday.hour}${getString(R.string.hour)}",
-                                applySkyImg(
-                                    modifyCurrentRainType(current.rainType,realtime.rainType),
-                                    dailyIndex.sky,
-                                    thunder,
-                                    isLarge = false,
-                                    isNight = isNight
-                                )!!,
-                                "${modifyCurrentTempType(current.temperature,realtime.temp).roundToInt()}˚",
-                                convertDateAppendZero(forecastToday)
-                            )
-                        } else {
-                            addDailyWeatherItem(
-                                "${forecastToday.hour}${getString(R.string.hour)}",
-                                applySkyImg(
-                                    dailyIndex.rainType,
-                                    dailyIndex.sky,
-                                    thunder,
-                                    isLarge = false,
-                                    isNight = isNight
-                                )!!,
-                                "${dailyIndex.temp!!.roundToInt()}˚",
-                                convertDateAppendZero(forecastToday)
-                            )
-                        }
+                for (i: Int in 0 until result.realtime.size) {
+                    val dailyIndex = result.realtime[i]
+                    val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
+                    val dailyTime =
+                        millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
+                    val dailySunProgress = 100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(sun.sunrise)) /
+                            getEntireSun(sun.sunrise, sun.sunset)
+                    val isNight = getIsNight(dailySunProgress)
+
+                    if (i == result.realtime.lastIndex + 1) {
+                        break
+                    } else if (i == 0) {
+                        addDailyWeatherItem(
+                            "${forecastToday.hour}${getString(R.string.hour)}",
+                            applySkyImg(
+                                modifyCurrentRainType(current.rainType, realtime.rainType),
+                                dailyIndex.sky, thunder, isLarge = false, isNight = isNight)!!,
+                            "${
+                                modifyCurrentTempType(
+                                    current.temperature, realtime.temp
+                                ).roundToInt()
+                            }˚",
+                            convertDateAppendZero(forecastToday)
+                        )
+                    } else {
+                        addDailyWeatherItem(
+                            "${forecastToday.hour}${getString(R.string.hour)}",
+                            applySkyImg(
+                                dailyIndex.rainType, dailyIndex.sky, thunder,
+                                isLarge = false, isNight = isNight
+                            )!!,
+                            "${dailyIndex.temp!!.roundToInt()}˚",
+                            convertDateAppendZero(forecastToday)
+                        )
+                    }
                 }
 
                 for (i: Int in 0 until (7)) {
@@ -670,7 +643,8 @@ class MainActivity
                             1 -> { getString(R.string.tomorrow) }
                             else -> {
                                 "${convertDayOfWeekToKorean(this, 
-                                    dateNow.dayOfWeek.value + i)}${getString(R.string.date)}"
+                                    dateNow.dayOfWeek.value + i)
+                                }${getString(R.string.date)}"
                             }
                         }
                         addWeeklyWeatherItem(
@@ -688,20 +662,22 @@ class MainActivity
                 weeklyWeatherAdapter.notifyDataSetChanged()
                 dailyWeatherAdapter.notifyDataSetChanged()
                 changeTextColorStyle(
-                    applySkyText(this, modifyCurrentRainType(current.rainType,realtime.rainType), realtime.sky, thunder),
-                    isNightProgress(currentSun)
+                    applySkyText(
+                        this,
+                        modifyCurrentRainType(current.rainType, realtime.rainType),
+                        realtime.sky, thunder
+                    ),
+                    getIsNight(currentSun)
                 )
             }
-            runOnUiThread {
-                hidePB()
-            }
+            runOnUiThread { hidePB() }
         }
         return this
     }
 
     // 하늘상태에 따라 윈도우 배경 변경
     private fun applyWindowBackground(progress: Int, sky: String?) {
-        if (isNightProgress(progress)) {
+        if (getIsNight(progress)) {
             window.setBackgroundDrawableResource(R.drawable.main_bg_night)
             changeTextColorStyle(sky!!, true)
         } else {
@@ -766,11 +742,13 @@ class MainActivity
 
     // 뷰페이저 인디케이터 업데이트
     private fun updateIndicators(position: Int) {
-        for (i in indicators.indices) {
-            indicators[i].setImageResource(
-                if (i == position) R.drawable.indicator_fill // 선택된 원 이미지
-                else R.drawable.indicator_empty // 선택되지 않은 원 이미지
-            )
+        if (!indicators.indices.isEmpty()) {
+            for (i in indicators.indices) {
+                indicators[i].setImageResource(
+                    if (i == position) R.drawable.indicator_fill // 선택된 원 이미지
+                    else R.drawable.indicator_empty // 선택되지 않은 원 이미지
+                )
+            }
         }
     }
     // 뷰페이저 인디케이터 생성
@@ -789,11 +767,6 @@ class MainActivity
             indicatorView
         }
         updateIndicators(binding.nestedReportViewpager.currentItem)
-    }
-
-    // 일몰 이후인지 불러옴 - progress
-    private fun isNightProgress(current: Int): Boolean {
-        return current >= 100 || current < 0
     }
 
     // 필드값이 없을 때 -100 출력 됨
@@ -824,8 +797,6 @@ class MainActivity
 //            component = ComponentName(this@MainActivity, WidgetProvider::class.java)
 //        })
 //    }
-
-
 
     // 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지
     private fun applySkyImg(
@@ -975,87 +946,54 @@ class MainActivity
 
     // 현재 위치정보를 받아오고 데이터 갱신
     @SuppressLint("MissingPermission", "SuspiciousIndentation")
-    private fun getCurrentLocation() {
-        if (locationClass.isGPSConnected()) {
-            val fusedGPSLocationClient = LocationServices.getFusedLocationProviderClient(this)
-            fusedGPSLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
-                .addOnSuccessListener { location: Location? ->
-                    location?.let { loc ->
-                        Logger.t(TAG_D).d("${loc.latitude},${loc.longitude}")
-                        locationClass.getAddress(loc.latitude, loc.longitude)
-                            ?.let { addr ->
-                                if (addr != "Null Address") {
-                                    updateCurrentAddress(
-                                        loc.latitude, loc.longitude,
-                                        addr.replaceFirst(" ", "")
-                                            .replace(getString(R.string.korea), ""),
-                                    )
-                                    getDataViewModel.loadDataResult(
-                                        loc.latitude, loc.longitude, null
-                                    )
-
-                                    locationClass.writeRdbCurrentLog(
-                                        loc.latitude, loc.longitude,
-                                        locationClass.formattingFullAddress(addr)
-                                    )
-
-                                    binding.mainGpsTitleTv.text = guardWordWrap(
-                                        locationClass.formattingFullAddress(addr)
-                                    )
-
-                                    binding.mainTopBarGpsTitle.text =
-                                        locationClass.formattingFullAddress(addr)
-                                            .replaceFirst(" ", "")
-                                } else {
-                                    Toast.makeText(
-                                        this@MainActivity,
-                                        getString(R.string.fail_to_get_gps),
-                                        Toast.LENGTH_SHORT
-                                    )
-                                        .show()
-                                }
-                            }
-                    }
-                }
-                .addOnFailureListener {
-                    hidePB()
-                    ToastUtils(this).showMessage(getString(R.string.fail_to_get_gps))
-                    RDBLogcat.writeLogCause(
-                        getUserEmail(this),
-                        "GPS 위치정보 갱신실패",
-                        it.localizedMessage!!
+    private fun applyGetLocationViewModel() {
+        getLocationViewModel.getDataResult().observe(this) { loc ->
+            val lat = loc.lat!!
+            val lng = loc.lng!!
+            val addr = loc.addr!!
+            if (loc.isGPS) {
+                Logger.t(TAG_D).d("${lat},${lng}")
+                if (addr != "Null Address") {
+                    updateCurrentAddress(
+                        lat, lng,
+                        addr.replaceFirst(" ", "")
+                            .replace(getString(R.string.korea), ""),
                     )
-                }
-        } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
-            val lm = getSystemService(LOCATION_SERVICE) as LocationManager
-            val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            location?.let { loc ->
-                GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude).apply {
-                    if (this == null) {
-                        Toast.makeText(
-                            this@MainActivity, getString(R.string.fail_to_get_gps), Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                    this?.let { addr ->
-                        updateCurrentAddress(
-                            loc.latitude, loc.longitude,
-                            addr.replaceFirst(" ", "").replace(getString(R.string.korea), ""),
-                        )
-                        getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
-                        locationClass.writeRdbCurrentLog(
-                            loc.latitude, loc.longitude, "NetWork - $addr"
-                        )
-                        binding.mainGpsTitleTv.text =
-                            guardWordWrap(locationClass.formattingFullAddress(addr))
-                        binding.mainTopBarGpsTitle.text = locationClass.formattingFullAddress(addr)
-                            .replaceFirst(" ", "")
+                    getDataViewModel.loadDataResult(
+                        lat, loc.lng, null
+                    )
 
-                        ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
-                    }
+                    locationClass.writeRdbCurrentLog(
+                        lat, loc.lng,
+                        locationClass.formattingFullAddress(addr)
+                    )
+
+                    binding.mainGpsTitleTv.text = guardWordWrap(
+                        locationClass.formattingFullAddress(addr)
+                    )
+
+                    binding.mainTopBarGpsTitle.text =
+                        locationClass.formattingFullAddress(addr)
+                            .replaceFirst(" ", "")
+                } else {
+                    ToastUtils(this).showMessage(getString(R.string.fail_to_get_gps))
                 }
+            } else {
+                updateCurrentAddress(
+                    lat, lng,
+                    addr.replaceFirst(" ", "").replace(getString(R.string.korea), ""),
+                )
+                getDataViewModel.loadDataResult(lat, loc.lng, null)
+                locationClass.writeRdbCurrentLog(
+                    lat, loc.lng, "NetWork - $addr"
+                )
+                binding.mainGpsTitleTv.text =
+                    guardWordWrap(locationClass.formattingFullAddress(addr))
+                binding.mainTopBarGpsTitle.text = locationClass.formattingFullAddress(addr)
+                    .replaceFirst(" ", "")
+
+                ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
             }
-        } else {
-            locationClass.requestSystemGPSEnable()
         }
     }
 
@@ -1163,7 +1101,6 @@ class MainActivity
                 it.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
             }
 
-//                binding.mainSkyText.setTextColor(Color.parseColor("#FF8A48"))
             binding.mainMinMaxTitle.setTextColor(Color.parseColor("#cccccc"))
             binding.mainMinMaxValue.setTextColor(Color.parseColor("#cccccc"))
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()

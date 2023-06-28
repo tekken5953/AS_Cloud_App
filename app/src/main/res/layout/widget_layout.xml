@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/widgetMainLayout"
     android:layout_width="290dp"
     android:layout_height="95dp"
     android:layout_margin="5dp"
     android:background="@drawable/widget_bg_clear"
     android:padding="@dimen/widget_margin">
+
+    <LinearLayout
+        android:id="@+id/widgetReloadLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_margin="5dp"
+        android:background="@drawable/widget_reload_bg">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/widget_reload"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:textColor="@color/black"/>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/widgetTempValue"
@@ -41,8 +58,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/vector"
+        app:tint="@color/white"
         android:layout_toEndOf="@+id/widgetVerticalLine"
-        android:layout_marginStart="13dp"
+        android:layout_marginStart="8dp"
         android:layout_alignTop="@+id/widgetAddress"
         android:layout_alignBottom="@+id/widgetAddress"/>
 
@@ -55,7 +73,7 @@
         android:maxEms="7"
         android:ellipsize="start"
         android:layout_marginTop="5dp"
-        android:layout_marginStart="5dp"
+        android:layout_marginStart="2dp"
         android:layout_alignTop="@+id/widgetTempValue"
         android:textColor="@color/white" />
 
@@ -71,7 +89,7 @@
         android:id="@+id/widgetRefresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="2dp"
         android:layout_toEndOf="@+id/widgetAddress"
         android:layout_alignTop="@+id/widgetAddress"
         android:layout_alignBottom="@+id/widgetAddress"
@@ -82,6 +100,8 @@
         android:id="@+id/widgetTime"
         style="@style/basicTextView"
         android:textSize="11sp"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="2dp"
         android:textColor="@color/white"
         android:layout_below="@+id/widgetAddress"
         android:layout_alignStart="@+id/widgetAddressVector"/>
@@ -94,7 +114,7 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/widgetTime"
         android:textColor="@color/white"
-        android:text="미세먼지 : "/>
+        android:text="@string/widget_pm"/>
 
     <TextView
         android:id="@+id/widgetPmValue"

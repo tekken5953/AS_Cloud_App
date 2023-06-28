@@ -83,6 +83,7 @@
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="@+id/topBarLinear" />
+
         <Constraint
             android:id="@+id/mainMotionLinear"
             android:layout_width="match_parent"
@@ -268,6 +269,7 @@
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="@+id/topBarLinear" />
+
         <Constraint
             android:id="@+id/mainMotionLinear"
             android:layout_width="match_parent"

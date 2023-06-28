@@ -2,6 +2,7 @@ package com.example.airsignal_app.view
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.net.Uri
 import android.util.DisplayMetrics
 import android.view.*
@@ -18,9 +19,9 @@ import com.example.airsignal_app.util.`object`.SetSystemInfo
  * @author : Lee Jae Young
  * @since : 2023-05-11 오전 11:55
  **/
-class SideMenuBuilder(private val activity: Activity) {
+class SideMenuBuilder(private val context: Context) {
     private var builder: AlertDialog.Builder =
-        AlertDialog.Builder(activity, R.style.DialogAnimationMenu)
+        AlertDialog.Builder(context, R.style.DialogAnimationMenu)
     private lateinit var alertDialog: AlertDialog
 
     init {
@@ -39,7 +40,7 @@ class SideMenuBuilder(private val activity: Activity) {
     fun setBackPressRefresh(imageView: ImageView): SideMenuBuilder {
         imageView.setOnClickListener {
             dismiss()
-            RefreshUtils(activity).refreshActivity()
+            RefreshUtils(context).refreshActivity()
         }
         return this
     }
@@ -71,20 +72,20 @@ class SideMenuBuilder(private val activity: Activity) {
     }
 
     fun setUserData(profile: ImageView, Id: TextView): SideMenuBuilder {
-        Glide.with(activity)
-            .load(Uri.parse(getUserProfileImage(activity)))
+        Glide.with(context)
+            .load(Uri.parse(getUserProfileImage(context)))
             .into(profile)
 
-        val email = getUserEmail(activity)
+        val email = getUserEmail(context)
         if (email != "") {
             Id.text = email
-        } else Id.text = activity.getString(R.string.please_login)
+        } else Id.text = context.getString(R.string.please_login)
 
         return this
     }
 
     private fun setFontScale(): SideMenuBuilder {
-        when (getUserFontScale(activity)) {
+        when (getUserFontScale(context)) {
             "small" -> {
                 SetSystemInfo.setTextSizeSmall(builder.context)
             }
@@ -118,7 +119,7 @@ class SideMenuBuilder(private val activity: Activity) {
     private fun getWindowWidth(): Int {
         // Calculate window height for fullscreen use
         val displayMetrics = DisplayMetrics()
-        @Suppress("DEPRECATION") activity.windowManager.defaultDisplay.getMetrics(
+        @Suppress("DEPRECATION") (context as Activity).windowManager.defaultDisplay.getMetrics(
             displayMetrics
         )
         return displayMetrics.widthPixels

@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
+import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -61,7 +62,7 @@ object DataTypeParser {
         }
     }
 
-    // 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트
+    /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트 **/
     fun applySkyText(context: Context,rain: String?, sky: String?, thunder: Double?): String {
         return if (rain != "없음") {
             if ((thunder == null) || (thunder < 0.2)) { rain!! }
@@ -212,10 +213,11 @@ object DataTypeParser {
     }
 
     /** 위젯 하늘에 따른 배경 **/
-    fun getSkyImgWidget(sky: String?): Int {
+    fun getSkyImgWidget(sky: String?, progress: Int): Int {
         return when (sky) {
             "맑음", "구름많음", -> {
-                R.drawable.widget_bg_clear
+                if(getIsNight(progress)) R.drawable.widget_bg_night
+                else R.drawable.widget_bg_clear
             }
             else -> {
                 R.drawable.widget_bg_cloudy

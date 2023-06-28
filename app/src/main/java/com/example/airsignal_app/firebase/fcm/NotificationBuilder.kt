@@ -21,8 +21,6 @@ import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_CHANNEL_NAME
 import com.example.airsignal_app.db.room.repository.GpsRepository
 
 class NotificationBuilder {
-
-
     fun sendNotification(context: Context, intent: Intent, data: String, title: String,time: Long) {
 //        // Get the layouts to use in the custom notification
 //        val notificationLayout = RemoteViews(context.packageName, R.layout.notification_small)

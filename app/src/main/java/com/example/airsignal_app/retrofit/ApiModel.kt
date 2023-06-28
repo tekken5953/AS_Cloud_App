@@ -308,6 +308,8 @@ class ApiModel {
         @SerializedName("current")
         val current: Current,
         @SerializedName("thunder")
-        val thunder: Double?
+        val thunder: Double?,
+        @SerializedName("summary")
+        val summary: List<String>?
     )
 }

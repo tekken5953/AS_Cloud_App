@@ -15,10 +15,13 @@ import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogNotLogin
+import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
+import com.example.airsignal_app.util.`object`.GetAppInfo.getTopicNotification
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.GetSystemInfo.androidID
+import com.example.airsignal_app.util.`object`.SetAppInfo.setTopicNotification
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.google.android.gms.location.*
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
@@ -33,28 +36,6 @@ import java.util.*
 
 class GetLocation(private val context: Context) {
 
-    /** GPS 의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
-    @SuppressLint("MissingPermission")
-    fun getLocationInBackground() {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    updateCurrentAddress(it.latitude,it.longitude,getAddress(it.latitude, it.longitude)!!)
-                }
-            }.addOnFailureListener {
-                it.printStackTrace()
-                it.localizedMessage?.let { it1 ->
-                    writeLogCause(
-                        email = "Error",
-                        isSuccess = "주소 불러오기 실패",
-                        log = it1
-                    )
-                }
-                Logger.t(TAG_D).e("Fail to Get Location")
-            }
-    }
-
     /** 현재 주소를 불러옵니다 **/
     fun getAddress(lat: Double, lng: Double): String? {
         lateinit var address: List<Address>
@@ -62,6 +43,7 @@ class GetLocation(private val context: Context) {
             val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
             @Suppress("DEPRECATION")
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
+            renewTopic(getTopicNotification(context), "test")
             return if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
             } else { "Null Address" }
@@ -115,12 +97,11 @@ class GetLocation(private val context: Context) {
         }
     }
 
-//    /** 현재 위치 토픽 갱신 **/
-//    private fun renewTopic(old: String, new: String) {
-//        SubFCM().unSubTopic(old).subTopic(new)
-//        Thread.sleep(100)
-//        sp.setString("WEATHER_CURRENT", new)
-//    }
+    /** 현재 위치 토픽 갱신 **/
+    private fun renewTopic(old: String, new: String) {
+        SubFCM().unSubTopic(old).subTopic(new)
+        setTopicNotification(context, new)
+    }
 
     /** 백그라운드에서 위치 갱신 **/
     @SuppressLint("MissingPermission")

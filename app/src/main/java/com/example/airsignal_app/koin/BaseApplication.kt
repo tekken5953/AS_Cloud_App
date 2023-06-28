@@ -1,7 +1,14 @@
 package com.example.airsignal_app.koin
 
 import android.app.Application
+import android.content.Context
 import com.example.airsignal_app.firebase.db.RDBLogcat
+import com.example.airsignal_app.gps.GetLocation
+import com.example.airsignal_app.repo.GetLocationRepo
+import com.example.airsignal_app.repo.GetWeatherRepo
+import com.example.airsignal_app.retrofit.HttpClient
+import com.example.airsignal_app.view.widget.WidgetProvider
+import com.example.airsignal_app.vmodel.GetLocationViewModel
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -18,7 +25,7 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
         startKoin {
             androidLogger()
             androidContext(this@BaseApplication)
-            modules(listOf(weatherDataModule))
+            modules(listOf(myModule))
         }
     }
 
@@ -32,5 +39,14 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     /* factory : 호출될 때마다 객체 생성 */
     /* viewModel : 뷰모델 의존성 제거 객체 생성 */
 
-    private val weatherDataModule = module { viewModel { GetWeatherViewModel() } }
+    private val myModule = module {
+        single<Context> { applicationContext }
+        single { GetLocation(get()) }
+        single { WidgetProvider(get(),get()) }
+        single { HttpClient }
+        single { GetWeatherRepo() }
+        single { GetLocationRepo() }
+        viewModel { GetLocationViewModel(get()) }
+        viewModel { GetWeatherViewModel(get()) }
+    }
 }
