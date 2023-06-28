@@ -12,11 +12,13 @@ import com.example.airsignal_app.util.LoggerUtil
 import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.google.firebase.database.FirebaseDatabase
+import org.koin.android.ext.android.inject
 
 
 class RedirectPermissionActivity
     : BaseActivity<ActivityRedirectPermissionBinding>() {
     override val resID: Int get() = R.layout.activity_redirect_permission
+    private val locationClass: GetLocation by inject()
 
     private val locationManager by lazy { getSystemService(LOCATION_SERVICE) as LocationManager }
 
@@ -45,7 +47,7 @@ class RedirectPermissionActivity
                     RequestPermissionsUtil(this).requestLocation()
                 }
             } else {
-               GetLocation(this).requestSystemGPSEnable()
+                locationClass.requestSystemGPSEnable()
             }
         }
     }

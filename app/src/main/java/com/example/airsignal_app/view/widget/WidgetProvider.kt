@@ -14,7 +14,8 @@ import android.view.View
 import android.widget.RemoteViews
 import android.widget.Toast
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.StaticDataObject
+import com.example.airsignal_app.dao.StaticDataObject.TAG_D
+import com.example.airsignal_app.dao.StaticDataObject.TAG_W
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.retrofit.ApiModel
@@ -31,27 +32,24 @@ import com.example.airsignal_app.view.activity.MainActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
 import kotlin.math.roundToInt
 
-open class WidgetProvider : AppWidgetProvider() {
+open class WidgetProvider(private val getLocation: GetLocation, private val httpClient: HttpClient) : AppWidgetProvider() {
 
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        Timber.tag("TAG_WIDGET").i("onEnabled")
+        Timber.tag(TAG_W).i("onEnabled")
     }
 
     // onEnabled() 와는 반대로 마지막의 최종 앱 위젯 인스턴스가 삭제 될 때 호출 됩니다
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        Timber.tag("TAG_WIDGET").i("onDisabled")
+        Timber.tag(TAG_W).i("onDisabled")
     }
 
     // android 4.1 에 추가 된 메소드 이며, 앱 위젯이 등록 될 때와 앱 위젯의 크기가 변경 될 때 호출 됩니다.
@@ -63,7 +61,7 @@ open class WidgetProvider : AppWidgetProvider() {
         newOptions: Bundle
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        Timber.tag("TAG_WIDGET").i("onAppWidgetOptionsChanged")
+        Timber.tag(TAG_W).i("onAppWidgetOptionsChanged")
     }
 
     // 위젯 메타 데이터를 구성 할 때 updatePeriodMillis 라는 업데이트 주기 값을 설정하게 되며, 이 주기에 따라 호출 됩니다.
@@ -73,7 +71,7 @@ open class WidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        Timber.tag("TAG_WIDGET").i("onUpdate : ${currentDateTimeString(context)}")
+        Timber.tag(TAG_W).i("onUpdate : ${currentDateTimeString(context)}")
 
         val views = RemoteViews(context.packageName, R.layout.widget_layout)
 
@@ -109,19 +107,19 @@ open class WidgetProvider : AppWidgetProvider() {
     // 위젯 ID 는 UID 별로 관리 되는데 이때 복원 시점에서 ID 가 변경 될 수 있으므로 백업 시점의 oldID 와 복원 후의 newID 를 전달합니다
     override fun onRestored(context: Context, oldWidgetIds: IntArray, newWidgetIds: IntArray) {
         super.onRestored(context, oldWidgetIds, newWidgetIds)
-        Timber.tag("TAG_WIDGET").i("onRestored")
+        Timber.tag(TAG_W).i("onRestored")
     }
 
     // 해당 앱 위젯이 삭제 될 때 호출 됩니다
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         super.onDeleted(context, appWidgetIds)
-        Timber.tag("TAG_WIDGET").i("onDeleted")
+        Timber.tag(TAG_W).i("onDeleted")
     }
 
     // 앱의 브로드캐스트를 수신하며 해당 메서드를 통해 각 브로드캐스트에 맞게 메서드를 호출한다.
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        Timber.tag("TAG_WIDGET")
+        Timber.tag(TAG_W)
             .i("onReceive : ${currentDateTimeString(context)} intent : ${intent.action}")
 
         if (intent.action != null && intent.action == "refreshButtonClicked") {
@@ -132,7 +130,6 @@ open class WidgetProvider : AppWidgetProvider() {
     @SuppressLint("MissingPermission")
     private fun loadData(context: Context) {
         val views = RemoteViews(context.packageName, R.layout.widget_layout)
-        val getLocation = GetLocation(context)
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
             .addOnSuccessListener { location: Location? ->
@@ -143,7 +140,7 @@ open class WidgetProvider : AppWidgetProvider() {
                         getLocation.updateCurrentAddress(it.latitude, it.longitude, addr)
 
                         val getDataMap: Call<ApiModel.GetEntireData> =
-                            HttpClient.getInstance().mMyAPIImpl.getForecast(
+                             httpClient.mMyAPIImpl.getForecast(
                                 it.latitude,
                                 it.longitude,
                                 addr
@@ -230,7 +227,7 @@ open class WidgetProvider : AppWidgetProvider() {
                         log = it1
                     )
                 }
-                Logger.t(StaticDataObject.TAG_D).e("Fail to Get Location")
+                Logger.t(TAG_D).e("Fail to Get Location")
                 views.setViewVisibility(R.id.widgetReloadLayout, View.VISIBLE)
             }
     }

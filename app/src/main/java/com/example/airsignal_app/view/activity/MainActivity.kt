@@ -67,6 +67,7 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.removeSingleKey
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
+import com.example.airsignal_app.vmodel.GetLocationViewModel
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
@@ -74,6 +75,7 @@ import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
 import java.util.*
@@ -87,24 +89,27 @@ class MainActivity
     override val resID: Int get() = R.layout.activity_main
 
     private var isBackPressed = false
-    private val sideMenuBuilder by lazy { SideMenuBuilder(this@MainActivity) }
-    private val sideMenu: View by lazy {
+    private val sideMenuBuilder by lazy { SideMenuBuilder(this) }
+    private val sideMenuView: View by lazy {
         LayoutInflater.from(this@MainActivity).inflate(R.layout.side_menu, null)
     }
     private lateinit var indicators: Array<ImageView>
     private val vib by lazy { VibrateUtil(this) }
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
+    private val getLocationViewModel by viewModel<GetLocationViewModel>()
+    private val locationClass: GetLocation by inject()
+
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
+    private val uvLegendList = ArrayList<AdapterModel.UVLegendItem>()
+    private val uvResponseList = ArrayList<AdapterModel.UVResponseItem>()
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(this, dailyWeatherList) }
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
-    private val uvLegendList = ArrayList<AdapterModel.UVLegendItem>()
+    private val reportViewPagerAdapter by lazy { ReportViewPagerAdapter(this, reportViewPagerItem, binding.nestedReportViewpager)}
     private val uvLegendAdapter = UVLegendAdapter(this, uvLegendList)
-    private val uvResponseList = ArrayList<AdapterModel.UVResponseItem>()
     private val uvResponseAdapter = UVResponseAdapter(this, uvResponseList)
     private val reportViewPagerItem = ArrayList<AdapterModel.ReportItem>()
-    private val reportViewPagerAdapter by lazy { ReportViewPagerAdapter(this, reportViewPagerItem, binding.nestedReportViewpager)}
-    private val locationClass by lazy { GetLocation(this) }
+
     private var currentSun = 0
     private var isSunAnimated = false
     private var isProgressed = false
@@ -151,7 +156,9 @@ class MainActivity
         }
         initBinding()
         binding.dataVM = getDataViewModel
+        binding.locationVM = getLocationViewModel
         applyGetDataViewModel()
+        applyGetLocationViewModel()
 
         initializing()
 
@@ -255,7 +262,7 @@ class MainActivity
                 mVib()
                 if (RequestPermissionsUtil(this@MainActivity).isLocationPermitted()) {
                     showPB()
-                    getCurrentLocation()
+                    getLocationViewModel.loadDataResult(this@MainActivity)
                 } else {
                     RequestPermissionsUtil(this@MainActivity).requestLocation()
                 }
@@ -266,7 +273,7 @@ class MainActivity
         binding.mainSideMenuIv.setOnClickListener(object : OnSingleClickListener() {
             @SuppressLint("InflateParams")
             override fun onSingleClick(v: View?) {
-                sideMenuBuilder.show(sideMenu, true)
+                sideMenuBuilder.show(sideMenuView, true)
             }
         })
     }
@@ -274,13 +281,13 @@ class MainActivity
     // 햄버거 메뉴 세팅
     private fun addSideMenu() {
         try {
-            val cancel = sideMenu.findViewById<ImageView>(R.id.headerCancel)
-            val profile = sideMenu.findViewById<ImageView>(R.id.navHeaderProfileImg)
-            val id = sideMenu.findViewById<TextView>(R.id.navHeaderUserId)
-            val weather = sideMenu.findViewById<TextView>(R.id.navMenuWeather)
-            val setting = sideMenu.findViewById<TextView>(R.id.navMenuSetting)
-            val headerTr = sideMenu.findViewById<TableRow>(R.id.headerTr)
-            val adView = sideMenu.findViewById<AdView>(R.id.navMenuAdview)
+            val cancel = sideMenuView.findViewById<ImageView>(R.id.headerCancel)
+            val profile = sideMenuView.findViewById<ImageView>(R.id.navHeaderProfileImg)
+            val id = sideMenuView.findViewById<TextView>(R.id.navHeaderUserId)
+            val weather = sideMenuView.findViewById<TextView>(R.id.navMenuWeather)
+            val setting = sideMenuView.findViewById<TextView>(R.id.navMenuSetting)
+            val headerTr = sideMenuView.findViewById<TableRow>(R.id.headerTr)
+            val adView = sideMenuView.findViewById<AdView>(R.id.navMenuAdview)
 
             sideMenuBuilder.apply {
                 setBackPressed(cancel)
@@ -318,7 +325,7 @@ class MainActivity
             if (addrArray.contains(getUserLastAddress(this))) {
                 loadSavedAddr()
             } else {
-                getCurrentLocation()
+                getLocationViewModel.loadDataResult(this@MainActivity)
             }
             // TimeOut
             HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
@@ -735,11 +742,13 @@ class MainActivity
 
     // 뷰페이저 인디케이터 업데이트
     private fun updateIndicators(position: Int) {
-        for (i in indicators.indices) {
-            indicators[i].setImageResource(
-                if (i == position) R.drawable.indicator_fill // 선택된 원 이미지
-                else R.drawable.indicator_empty // 선택되지 않은 원 이미지
-            )
+        if (!indicators.indices.isEmpty()) {
+            for (i in indicators.indices) {
+                indicators[i].setImageResource(
+                    if (i == position) R.drawable.indicator_fill // 선택된 원 이미지
+                    else R.drawable.indicator_empty // 선택되지 않은 원 이미지
+                )
+            }
         }
     }
     // 뷰페이저 인디케이터 생성
@@ -937,87 +946,54 @@ class MainActivity
 
     // 현재 위치정보를 받아오고 데이터 갱신
     @SuppressLint("MissingPermission", "SuspiciousIndentation")
-    private fun getCurrentLocation() {
-        if (locationClass.isGPSConnected()) {
-            val fusedGPSLocationClient = LocationServices.getFusedLocationProviderClient(this)
-            fusedGPSLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
-                .addOnSuccessListener { location: Location? ->
-                    location?.let { loc ->
-                        Logger.t(TAG_D).d("${loc.latitude},${loc.longitude}")
-                        locationClass.getAddress(loc.latitude, loc.longitude)
-                            ?.let { addr ->
-                                if (addr != "Null Address") {
-                                    updateCurrentAddress(
-                                        loc.latitude, loc.longitude,
-                                        addr.replaceFirst(" ", "")
-                                            .replace(getString(R.string.korea), ""),
-                                    )
-                                    getDataViewModel.loadDataResult(
-                                        loc.latitude, loc.longitude, null
-                                    )
-
-                                    locationClass.writeRdbCurrentLog(
-                                        loc.latitude, loc.longitude,
-                                        locationClass.formattingFullAddress(addr)
-                                    )
-
-                                    binding.mainGpsTitleTv.text = guardWordWrap(
-                                        locationClass.formattingFullAddress(addr)
-                                    )
-
-                                    binding.mainTopBarGpsTitle.text =
-                                        locationClass.formattingFullAddress(addr)
-                                            .replaceFirst(" ", "")
-                                } else {
-                                    Toast.makeText(
-                                        this@MainActivity,
-                                        getString(R.string.fail_to_get_gps),
-                                        Toast.LENGTH_SHORT
-                                    )
-                                        .show()
-                                }
-                            }
-                    }
-                }
-                .addOnFailureListener {
-                    hidePB()
-                    ToastUtils(this).showMessage(getString(R.string.fail_to_get_gps))
-                    RDBLogcat.writeLogCause(
-                        getUserEmail(this),
-                        "GPS 위치정보 갱신실패",
-                        it.localizedMessage!!
+    private fun applyGetLocationViewModel() {
+        getLocationViewModel.getDataResult().observe(this) { loc ->
+            val lat = loc.lat!!
+            val lng = loc.lng!!
+            val addr = loc.addr!!
+            if (loc.isGPS) {
+                Logger.t(TAG_D).d("${lat},${lng}")
+                if (addr != "Null Address") {
+                    updateCurrentAddress(
+                        lat, lng,
+                        addr.replaceFirst(" ", "")
+                            .replace(getString(R.string.korea), ""),
                     )
-                }
-        } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
-            val lm = getSystemService(LOCATION_SERVICE) as LocationManager
-            val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            location?.let { loc ->
-                GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude).apply {
-                    if (this == null) {
-                        Toast.makeText(
-                            this@MainActivity, getString(R.string.fail_to_get_gps), Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                    this?.let { addr ->
-                        updateCurrentAddress(
-                            loc.latitude, loc.longitude,
-                            addr.replaceFirst(" ", "").replace(getString(R.string.korea), ""),
-                        )
-                        getDataViewModel.loadDataResult(loc.latitude, loc.longitude, null)
-                        locationClass.writeRdbCurrentLog(
-                            loc.latitude, loc.longitude, "NetWork - $addr"
-                        )
-                        binding.mainGpsTitleTv.text =
-                            guardWordWrap(locationClass.formattingFullAddress(addr))
-                        binding.mainTopBarGpsTitle.text = locationClass.formattingFullAddress(addr)
-                            .replaceFirst(" ", "")
+                    getDataViewModel.loadDataResult(
+                        lat, loc.lng, null
+                    )
 
-                        ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
-                    }
+                    locationClass.writeRdbCurrentLog(
+                        lat, loc.lng,
+                        locationClass.formattingFullAddress(addr)
+                    )
+
+                    binding.mainGpsTitleTv.text = guardWordWrap(
+                        locationClass.formattingFullAddress(addr)
+                    )
+
+                    binding.mainTopBarGpsTitle.text =
+                        locationClass.formattingFullAddress(addr)
+                            .replaceFirst(" ", "")
+                } else {
+                    ToastUtils(this).showMessage(getString(R.string.fail_to_get_gps))
                 }
+            } else {
+                updateCurrentAddress(
+                    lat, lng,
+                    addr.replaceFirst(" ", "").replace(getString(R.string.korea), ""),
+                )
+                getDataViewModel.loadDataResult(lat, loc.lng, null)
+                locationClass.writeRdbCurrentLog(
+                    lat, loc.lng, "NetWork - $addr"
+                )
+                binding.mainGpsTitleTv.text =
+                    guardWordWrap(locationClass.formattingFullAddress(addr))
+                binding.mainTopBarGpsTitle.text = locationClass.formattingFullAddress(addr)
+                    .replaceFirst(" ", "")
+
+                ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
             }
-        } else {
-            locationClass.requestSystemGPSEnable()
         }
     }
 

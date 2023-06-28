@@ -36,28 +36,6 @@ import java.util.*
 
 class GetLocation(private val context: Context) {
 
-    /** GPS 의 위치정보를 불러온 후 이전 좌표와의 거리를 계산합니다 **/
-    @SuppressLint("MissingPermission")
-    fun getLocationInBackground() {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        fusedLocationClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    updateCurrentAddress(it.latitude,it.longitude,getAddress(it.latitude, it.longitude)!!)
-                }
-            }.addOnFailureListener {
-                it.printStackTrace()
-                it.localizedMessage?.let { it1 ->
-                    writeLogCause(
-                        email = "Error",
-                        isSuccess = "주소 불러오기 실패",
-                        log = it1
-                    )
-                }
-                Logger.t(TAG_D).e("Fail to Get Location")
-            }
-    }
-
     /** 현재 주소를 불러옵니다 **/
     fun getAddress(lat: Double, lng: Double): String? {
         lateinit var address: List<Address>
