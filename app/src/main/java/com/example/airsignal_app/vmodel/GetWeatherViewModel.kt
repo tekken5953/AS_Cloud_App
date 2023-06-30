@@ -1,14 +1,12 @@
 package com.example.airsignal_app.vmodel
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
+import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.repo.GetWeatherRepo
 import com.example.airsignal_app.retrofit.ApiModel
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.util.concurrent.Executors
 
 /**
  * @author : Lee Jae Young
@@ -17,17 +15,22 @@ import java.util.concurrent.Executors
 class GetWeatherViewModel(private val repo: GetWeatherRepo) : BaseViewModel("날씨 데이터 호출") {
 
     // MutableLiveData 값을 받아 View 로 전달해 줄 LiveData
-    private lateinit var getDataResultData: LiveData<ApiModel.GetEntireData>
+    private lateinit var getDataResultData: LiveData<BaseRepository.ApiState<ApiModel.GetEntireData>?>
 
     // MutableLiveData 값을 갱신하기 위한 함수
-    fun loadDataResult(lat: Double?, lng: Double?, addr: String?) : GetWeatherViewModel {
+    fun loadData(lat: Double?, lng: Double?, addr: String?): GetWeatherViewModel {
+//        repo._getDataResult.value = BaseRepository.ApiState.Loading
+        Logger.t("Weather API").d("API Request : $lat , $lng , $addr")
+
         repo.loadDataResult(lat, lng, addr)
         return this
     }
 
     // LiveData 에 MutableLiveData 값 적용 후 View 에 전달
-    fun getDataResult(): LiveData<ApiModel.GetEntireData> {
-        getDataResultData = repo._getDataResult
+    fun fetchData(): LiveData<BaseRepository.ApiState<ApiModel.GetEntireData>?> {
+        viewModelScope.launch {
+            getDataResultData = repo._getDataResult
+        }
         return getDataResultData
     }
 }

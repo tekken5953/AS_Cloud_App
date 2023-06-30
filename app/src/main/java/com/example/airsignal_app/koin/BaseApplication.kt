@@ -42,7 +42,7 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     private val myModule = module {
         single<Context> { applicationContext }
         single { GetLocation(get()) }
-        single { WidgetProvider(get(),get()) }
+        single { WidgetProvider() }
         single { HttpClient }
         single { GetWeatherRepo() }
         single { GetLocationRepo() }

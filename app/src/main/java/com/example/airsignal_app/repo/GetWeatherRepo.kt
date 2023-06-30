@@ -6,11 +6,11 @@ import com.example.airsignal_app.retrofit.HttpClient.mMyAPIImpl
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import timber.log.Timber
 
 /**
  * @author : Lee Jae Young
@@ -19,26 +19,37 @@ import retrofit2.Response
 class GetWeatherRepo : BaseRepository() {
     // 날씨 호출 Response Body : Map
     var _getDataResult =
-        MutableLiveData<ApiModel.GetEntireData>()
+        MutableLiveData<ApiState<ApiModel.GetEntireData>?>()
 
     fun loadDataResult(lat: Double?, lng: Double?, addr: String?) {
-        val getDataMap: Call<ApiModel.GetEntireData> = mMyAPIImpl.getForecast(lat, lng, addr)
         CoroutineScope(Dispatchers.Default).launch {
-            getDataMap.enqueue(object : Callback<ApiModel.GetEntireData> {
-                override fun onResponse(
-                    call: Call<ApiModel.GetEntireData>,
-                    response: Response<ApiModel.GetEntireData>
-                ) {
-                    loadSuccessMapData(_getDataResult, response)
-                    Logger.t("Timber").d(response.body().toString())
-                }
+            mMyAPIImpl.getForecast(lat, lng, addr)
+                .enqueue(object : Callback<ApiModel.GetEntireData> {
+                    override fun onResponse(
+                        call: Call<ApiModel.GetEntireData>,
+                        response: Response<ApiModel.GetEntireData>
+                    ) {
+                        val responseBody = response.body()!!
 
-                override fun onFailure(call: Call<ApiModel.GetEntireData>, t: Throwable) {
-                    Logger.t("Timber").e("날씨 데이터 호출 실패 : " + t.stackTraceToString())
-                    call.timeout()
-                    call.cancel()
-                }
-            })
+                        if (response.isSuccessful) {
+                            Logger.t("Weather API").d("Success API : ${ApiState.Success(responseBody).data}")
+                            _getDataResult.postValue(ApiState.Success(responseBody))
+                        } else {
+                            Logger.t("Weather API").e("Data Error API : ${ApiState.Success(responseBody).data}")
+                            _getDataResult.postValue(ApiState.Error("API ERROR OCCURRED"))
+                        }
+                    }
+
+                    override fun onFailure(
+                        call: Call<ApiModel.GetEntireData>,
+                        t: Throwable
+                    ) {
+                        Logger.t("Weather API").e("API NetworkError : ${t.stackTraceToString()}")
+                        _getDataResult.postValue(ApiState.Error("Network Error"))
+                        call.timeout()
+                        call.cancel()
+                    }
+                })
         }
     }
 }
