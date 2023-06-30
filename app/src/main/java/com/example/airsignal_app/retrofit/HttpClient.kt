@@ -1,6 +1,7 @@
 package com.example.airsignal_app.retrofit
 
 import android.annotation.SuppressLint
+import com.example.airsignal_app.dao.IgnoredKeyFile.localServerURL
 import com.example.airsignal_app.dao.IgnoredKeyFile.springServerURL
 import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.google.gson.GsonBuilder
@@ -77,7 +78,8 @@ object HttpClient {
         /** 서버 URL 주소에 연결, GSON Convert 활성화**/
         val retrofit: Retrofit by lazy {
             Retrofit.Builder()
-                .baseUrl(springServerURL)
+//                .baseUrl(springServerURL)
+                .baseUrl(localServerURL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(clientBuilder.build())
                 .build()

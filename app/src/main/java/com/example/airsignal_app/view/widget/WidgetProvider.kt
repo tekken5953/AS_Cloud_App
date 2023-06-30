@@ -38,7 +38,7 @@ import retrofit2.Response
 import timber.log.Timber
 import kotlin.math.roundToInt
 
-open class WidgetProvider(private val getLocation: GetLocation, private val httpClient: HttpClient) : AppWidgetProvider() {
+open class WidgetProvider : AppWidgetProvider() {
 
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
     override fun onEnabled(context: Context) {
@@ -130,6 +130,8 @@ open class WidgetProvider(private val getLocation: GetLocation, private val http
     @SuppressLint("MissingPermission")
     private fun loadData(context: Context) {
         val views = RemoteViews(context.packageName, R.layout.widget_layout)
+        val getLocation = GetLocation(context)
+        val httpClient = HttpClient
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
             .addOnSuccessListener { location: Location? ->
@@ -140,37 +142,46 @@ open class WidgetProvider(private val getLocation: GetLocation, private val http
                         getLocation.updateCurrentAddress(it.latitude, it.longitude, addr)
 
                         val getDataMap: Call<ApiModel.GetEntireData> =
-                             httpClient.mMyAPIImpl.getForecast(
+                            httpClient.mMyAPIImpl.getForecast(
                                 it.latitude,
                                 it.longitude,
                                 addr
                             )
-                        getDataMap.enqueue(object : Callback<ApiModel.GetEntireData> {
+                        getDataMap.enqueue(object :
+                            Callback<ApiModel.GetEntireData> {
                             override fun onResponse(
                                 call: Call<ApiModel.GetEntireData>,
                                 response: Response<ApiModel.GetEntireData>
                             ) {
-                                val realtime = response.body()!!.realtime[0]
-                                val current = response.body()!!.current
+                                val body = response.body()
+                                val data = body!!
+                                val realtime = data.realtime[0]
+                                val current = data.current
                                 val skyText = applySkyText(
                                     context,
                                     current.rainType!!,
                                     realtime.sky!!,
-                                    response.body()!!.thunder
+                                    data.thunder
                                 )
-                                val sun = response.body()!!.sun
+                                val sun = data.sun
 
                                 views.apply {
                                     setViewVisibility(R.id.widgetReloadLayout, View.GONE)
 
                                     setInt(
                                         R.id.widgetMainLayout, "setBackgroundResource",
-                                        getSkyImgWidget(skyText,getCurrentSun(sun.sunrise!!,sun.sunset!!))
+                                        getSkyImgWidget(
+                                            skyText,
+                                            getCurrentSun(sun.sunrise!!, sun.sunset!!)
+                                        )
                                     )
 
                                     setTextViewText(
                                         R.id.widgetTime,
-                                        DataTypeParser.millsToString(getCurrentTime(), "HH시 mm분")
+                                        DataTypeParser.millsToString(
+                                            getCurrentTime(),
+                                            "HH시 mm분"
+                                        )
                                     )
 
                                     setTextViewText(
@@ -180,7 +191,7 @@ open class WidgetProvider(private val getLocation: GetLocation, private val http
 
                                     setTextViewText(
                                         R.id.widgetPmValue,
-                                        getDataText(response.body()!!.quality.pm10Grade!!)
+                                        getDataText(data.quality.pm10Grade!!)
                                     )
 
                                     setTextViewText(R.id.widgetTempIndex, skyText)
@@ -201,6 +212,16 @@ open class WidgetProvider(private val getLocation: GetLocation, private val http
                                 val componentName =
                                     ComponentName(context, WidgetProvider::class.java)
                                 appWidgetManager.updateAppWidget(componentName, views)
+
+                                views.setViewVisibility(
+                                    R.id.widgetReloadLayout,
+                                    View.VISIBLE
+                                )
+                                RDBLogcat.writeLogCause(
+                                    "ANR 발생",
+                                    "Thread : WidgetProvider",
+                                    "Data Error Occurred"
+                                )
                             }
 
                             override fun onFailure(

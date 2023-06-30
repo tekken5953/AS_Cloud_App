@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.FaqAdapter
@@ -69,87 +68,16 @@ class SettingActivity
     override fun onResume() {
         super.onResume()
 
-        @Suppress("DEPRECATION")
-        if (GetSystemInfo.isThemeNight(this)) {
-            window.statusBarColor = Color.BLACK
-            window.decorView.systemUiVisibility =
-                window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        } else {
-            window.statusBarColor = Color.WHITE
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        }
+        applyDeviceTheme()
 
-        if (getUserEmail(this) != "") {
-            binding.settingUserEmail.text = getUserEmail(this)
-            binding.settingUserIcon.visibility = View.VISIBLE
-        } else {
-            binding.settingUserEmail.text = getString(R.string.please_login)
-            binding.settingUserIcon.visibility = View.GONE
-        }
+        applyUserEmail()
 
-        // 설정 페이지 테마 항목이름 바꾸기
-        when (getUserTheme(this)) {
-            "dark" -> {
-                binding.settingThemeThemeRight.text = getString(R.string.theme_dark)
-            }
-            "light" -> {
-                binding.settingThemeThemeRight.text = getString(R.string.theme_light)
-            }
-            else -> {
-                binding.settingThemeThemeRight.text = getString(R.string.theme_system)
-            }
-        }
+        applyUserLanguage()
 
-        // 설정 페이지 언어 항목이름 바꾸기
-        when (getUserLocation(this)) {
-            getString(R.string.english) -> {
-                binding.settingThemeLangRight.text = getString(R.string.english)
-            }
-            getString(R.string.korean) -> {
-                binding.settingThemeLangRight.text = getString(R.string.korean)
-            }
-            else -> {
-                binding.settingThemeLangRight.text = getString(R.string.system_lang)
-            }
-        }
+        applyFontScale()
 
-      // 설정 페이지 폰트크기 항목이름 바꾸기
-        when (getUserFontScale(this)) {
-            "small" -> {
-                binding.settingScaleTextRight.text = getString(R.string.font_small)
-            }
-            "big" -> {
-                binding.settingScaleTextRight.text = getString(R.string.font_large)
-            }
-            else -> {
-                binding.settingScaleTextRight.text = getString(R.string.font_normal)
-            }
-        }
+        applyNotification()
 
-        // 미세먼지 알림 허용 스위치 설정
-        settingAlertsRadio(
-            switch = binding.settingNotiPMRight,
-            checked = getUserNotiPM(this)
-        )
-        // 이벤트 알림 허용 스위치 설정
-        settingAlertsRadio(
-            switch = binding.settingNotiEventRight,
-            checked = getUserNotiEvent(this)
-        )
-        // 야간 알림 허용 스위치 설정
-        settingAlertsRadio(
-            switch = binding.settingNotiNightRight,
-            checked = getUserNotiNight(this)
-        )
-        // 야간 알림 허용 텍스트 설정
-        setNightAlertsSpan(binding.settingNotiNightLeft)
-
-        // 알림 스위치 이벤트 리스너
-        checkNotification(binding.settingNotiPMRight, notiPM, getString(R.string.pm_10),
-            getUserLocation(this)
-        )
-        checkNotification(binding.settingNotiEventRight, notiEvent, getString(R.string.event),EVENT_ALL_NOTI)
-        checkNotification(binding.settingNotiNightRight, notiNight, getString(R.string.night),NIGHT_EVENT_NOTI)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -158,40 +86,22 @@ class SettingActivity
 
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
             window.statusBarColor = Color.BLACK
-            window.decorView.systemUiVisibility = window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility =
+                window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
         } else {
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             window.statusBarColor = Color.WHITE
-        }
-
-        // 마지막 로그인 플랫폼 종류
-        val lastLogin = getUserLoginPlatform(this)
-        if (lastLogin != "") {
-            binding.settingLogOut.text = getString(R.string.setting_logout)
-        } else {
-            binding.settingLogOut.text = getString(R.string.login_title)
         }
 
         // 로그인 시 저장된 핸드폰 번호
         val email = getUserEmail(this)
 
-        // 로그인 플랫폼 아이콘 설정
-        when (lastLogin) {
-            "google" -> {
-                setImageDrawable(binding.settingUserIcon, R.drawable.google_icon)
-            }
-            "kakao" -> {
-                setImageDrawable(binding.settingUserIcon, R.drawable.kakao_icon)
-            }
-            "naver" -> {
-                setImageDrawable(binding.settingUserIcon, R.drawable.naver_icon)
-            }
-            "phone" -> {
-                setImageDrawable(binding.settingUserIcon, R.drawable.phone_icon)
-            }
-        }
-
         isInit = false
+
+        val lastLogin = applyLastLogin()
 
         // 뒤로가기 버튼 클릭
         binding.settingBack.setOnClickListener {
@@ -482,11 +392,6 @@ class SettingActivity
             })
         }
 
-//        binding.settingTest.setOnClickListener {
-//            val intent = Intent(this, TestDesignActivity::class.java)
-//            startActivity(intent)
-//        }
-
         // 앱 정보 클릭
         binding.settingAppInfo.setOnClickListener {
             val viewAppInfo: View =
@@ -495,6 +400,126 @@ class SettingActivity
             dialog.setBackPressed(viewAppInfo.findViewById(R.id.appInfoBack))
                 .show(viewAppInfo, true)
         }}
+
+    private fun applyDeviceTheme() {
+        @Suppress("DEPRECATION")
+        if (GetSystemInfo.isThemeNight(this)) {
+            window.statusBarColor = Color.BLACK
+            window.decorView.systemUiVisibility =
+                window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        } else {
+            window.statusBarColor = Color.WHITE
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
+
+        // 설정 페이지 테마 항목이름 바꾸기
+        when (getUserTheme(this)) {
+            "dark" -> {
+                binding.settingThemeThemeRight.text = getString(R.string.theme_dark)
+            }
+            "light" -> {
+                binding.settingThemeThemeRight.text = getString(R.string.theme_light)
+            }
+            else -> {
+                binding.settingThemeThemeRight.text = getString(R.string.theme_system)
+            }
+        }
+    }
+
+    private fun applyUserEmail() {
+        if (getUserEmail(this) != "") {
+            binding.settingUserEmail.text = getUserEmail(this)
+            binding.settingUserIcon.visibility = View.VISIBLE
+        } else {
+            binding.settingUserEmail.text = getString(R.string.please_login)
+            binding.settingUserIcon.visibility = View.GONE
+        }
+    }
+
+    private fun applyUserLanguage() {
+        // 설정 페이지 언어 항목이름 바꾸기
+        when (getUserLocation(this)) {
+            getString(R.string.english) -> {
+                binding.settingThemeLangRight.text = getString(R.string.english)
+            }
+            getString(R.string.korean) -> {
+                binding.settingThemeLangRight.text = getString(R.string.korean)
+            }
+            else -> {
+                binding.settingThemeLangRight.text = getString(R.string.system_lang)
+            }
+        }
+    }
+
+    private fun applyFontScale() {
+        // 설정 페이지 폰트크기 항목이름 바꾸기
+        when (getUserFontScale(this)) {
+            "small" -> {
+                binding.settingScaleTextRight.text = getString(R.string.font_small)
+            }
+            "big" -> {
+                binding.settingScaleTextRight.text = getString(R.string.font_large)
+            }
+            else -> {
+                binding.settingScaleTextRight.text = getString(R.string.font_normal)
+            }
+        }
+    }
+
+    private fun applyLastLogin(): String {
+        // 마지막 로그인 플랫폼 종류
+        val lastLogin = getUserLoginPlatform(this)
+        if (lastLogin != "") {
+            binding.settingLogOut.text = getString(R.string.setting_logout)
+        } else {
+            binding.settingLogOut.text = getString(R.string.login_title)
+        }
+
+        // 로그인 플랫폼 아이콘 설정
+        when (lastLogin) {
+            "google" -> {
+                setImageDrawable(binding.settingUserIcon, R.drawable.google_icon)
+            }
+            "kakao" -> {
+                setImageDrawable(binding.settingUserIcon, R.drawable.kakao_icon)
+            }
+            "naver" -> {
+                setImageDrawable(binding.settingUserIcon, R.drawable.naver_icon)
+            }
+            "phone" -> {
+                setImageDrawable(binding.settingUserIcon, R.drawable.phone_icon)
+            }
+        }
+
+        return lastLogin
+    }
+
+    private fun applyNotification() {
+        // 미세먼지 알림 허용 스위치 설정
+        settingAlertsRadio(
+            switch = binding.settingNotiPMRight,
+            checked = getUserNotiPM(this)
+        )
+        // 이벤트 알림 허용 스위치 설정
+        settingAlertsRadio(
+            switch = binding.settingNotiEventRight,
+            checked = getUserNotiEvent(this)
+        )
+        // 야간 알림 허용 스위치 설정
+        settingAlertsRadio(
+            switch = binding.settingNotiNightRight,
+            checked = getUserNotiNight(this)
+        )
+        // 야간 알림 허용 텍스트 설정
+        setNightAlertsSpan(binding.settingNotiNightLeft)
+
+        // 알림 스위치 이벤트 리스너
+        checkNotification(binding.settingNotiPMRight, notiPM, getString(R.string.pm_10),
+            getUserLocation(this)
+        )
+        checkNotification(binding.settingNotiEventRight, notiEvent, getString(R.string.event),EVENT_ALL_NOTI)
+        checkNotification(binding.settingNotiNightRight, notiNight, getString(R.string.night),NIGHT_EVENT_NOTI)
+    }
 
     /** 이미지 드로어블 할당 **/
     private fun setImageDrawable(imageView: ImageView, src: Int) {
