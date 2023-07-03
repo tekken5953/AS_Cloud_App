@@ -513,22 +513,14 @@ class MainActivity
                             binding.nestedPm2p5Value.setIndexTextAsInt(pm2p5.toFloat())
                         }
 
-                        binding.mainAirCOValue.apply {
-                            text = air.coValue.toString()
-                            setTextColor(getDataColor(this@MainActivity, air.coGrade!! - 1))
-                        }
-                        binding.mainAirNO2Value.apply {
-                            text = air.no2Value.toString()
-                            setTextColor(getDataColor(this@MainActivity, air.no2Grade!! - 1))
-                        }
-                        binding.mainAirO3Value.apply {
-                            text = air.o3Value.toString()
-                            setTextColor(getDataColor(this@MainActivity, air.o3Grade!! - 1))
-                        }
-                        binding.mainAirSO2Value.apply {
-                            text = air.so2Value.toString()
-                            setTextColor(getDataColor(this@MainActivity, air.so2Grade!! - 1))
-                        }
+                        binding.mainAirCO.fetchData(air.coValue.toString(),
+                            getDataColor(this@MainActivity, air.coGrade!! - 1))
+                        binding.mainAirNO2.fetchData(air.no2Value.toString(),
+                            getDataColor(this@MainActivity, air.no2Grade!! - 1))
+                        binding.mainAirO3.fetchData(air.o3Value.toString(),
+                            getDataColor(this@MainActivity, air.o3Grade!! - 1))
+                        binding.mainAirSO2.fetchData(air.so2Value.toString(),
+                            getDataColor(this@MainActivity, air.so2Grade!! - 1))
 
                         // UV 값이 없으면 카드 없앰
                         if ((uv.flag == null) || (uv.value == null) || (uv.flag == "null") || (uv.value.toString() == "null"))

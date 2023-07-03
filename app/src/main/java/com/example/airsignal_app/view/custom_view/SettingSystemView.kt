@@ -29,7 +29,6 @@ class SettingSystemView(context: Context, attrs: AttributeSet?)
             typedArray.recycle()
 
             systemBinding.customSettingLeft.text = customText
-            Log.d("testtest", "$customText height : ${systemBinding.root.height}")
         }
     }
 
