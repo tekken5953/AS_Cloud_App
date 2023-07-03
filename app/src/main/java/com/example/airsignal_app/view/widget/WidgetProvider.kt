@@ -40,10 +40,13 @@ import kotlin.math.roundToInt
 
 open class WidgetProvider : AppWidgetProvider() {
 
+    private val refreshClicked = "refreshButtonClicked"
+
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
         Timber.tag(TAG_W).i("onEnabled")
+        loadData(context)
     }
 
     // onEnabled() 와는 반대로 마지막의 최종 앱 위젯 인스턴스가 삭제 될 때 호출 됩니다
@@ -76,7 +79,7 @@ open class WidgetProvider : AppWidgetProvider() {
         val views = RemoteViews(context.packageName, R.layout.widget_layout)
 
         val refreshBtnIntent = Intent(context, WidgetProvider::class.java)
-        refreshBtnIntent.action = "refreshButtonClicked"
+        refreshBtnIntent.action = refreshClicked
         val pendingRefresh: PendingIntent =
             PendingIntent.getBroadcast(context, 0, refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
 
@@ -117,8 +120,9 @@ open class WidgetProvider : AppWidgetProvider() {
         Timber.tag(TAG_W)
             .i("onReceive : ${currentDateTimeString(context)} intent : ${intent.action}")
 
-        if (intent.action != null && intent.action == "refreshButtonClicked") {
-            loadData(context)
+        intent.action?.let {
+            if (intent.action == refreshClicked)
+                loadData(context)
         }
     }
 

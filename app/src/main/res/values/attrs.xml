@@ -12,4 +12,11 @@
         <attr name="customSort" format="string"/>
         <attr name="customUnit" format="string"/>
     </declare-styleable>
+    
+    <declare-styleable name="NotiSwitchView">
+        <attr name="notiTitle" format="string"/>
+        <attr name="enableSubTitle" format="boolean"/>
+        <attr name="topicTitle" format="string"/>
+        <attr name="basicTitle" format="string"/>
+    </declare-styleable>
 </resources>
