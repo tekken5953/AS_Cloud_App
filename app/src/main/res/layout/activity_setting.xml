@@ -127,78 +127,29 @@
                     android:background="@color/view_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingThemeTitle" />
 
-                <TableRow
-                    android:id="@+id/settingThemeTR1"
+                <com.example.airsignal_app.view.custom_view.SettingSystemView
+                    android:id="@+id/settingSystemTheme"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginTop="5dp"
-                    android:background="?selectableItemBackground"
-                    android:orientation="horizontal"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:weightSum="1"
-                    app:layout_constraintTop_toBottomOf="@+id/settingLine2">
+                    app:left="@string/setting_theme_left"
+                    app:layout="@layout/custom_view_setting_system"
+                    app:layout_constraintTop_toBottomOf="@+id/settingLine2"/>
 
-                    <TextView
-                        android:id="@+id/settingThemeThemeLeft"
-                        style="@style/settingMultiTextView"
-                        android:text="@string/setting_theme_left" />
-
-                    <TextView
-                        android:id="@+id/settingThemeThemeRight"
-                        style="@style/settingMultiTextView"
-                        android:gravity="center_vertical|end"
-                        android:textColor="@color/main_blue_color"/>
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/settingThemeTR2"
+                <com.example.airsignal_app.view.custom_view.SettingSystemView
+                    android:id="@+id/settingSystemLang"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginTop="5dp"
-                    android:background="?selectableItemBackground"
-                    android:orientation="horizontal"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:weightSum="1"
-                    app:layout_constraintTop_toBottomOf="@+id/settingThemeTR1">
+                    app:left="@string/setting_lang"
+                    app:layout="@layout/custom_view_setting_system"
+                    app:layout_constraintTop_toBottomOf="@+id/settingSystemTheme"/>
 
-                    <TextView
-                        android:id="@+id/settingThemeLangLeft"
-                        style="@style/settingMultiTextView"
-                        android:text="@string/setting_lang"/>
-
-                    <TextView
-                        android:id="@+id/settingThemeLangRight"
-                        style="@style/settingMultiTextView"
-                        android:gravity="center_vertical|end"
-                        android:textColor="@color/main_blue_color" />
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/settingThemeTR3"
+                <com.example.airsignal_app.view.custom_view.SettingSystemView
+                    android:id="@+id/settingSystemFont"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginTop="5dp"
-                    android:background="?selectableItemBackground"
-                    android:orientation="horizontal"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:weightSum="1"
-                    app:layout_constraintTop_toBottomOf="@+id/settingThemeTR2">
-
-                    <TextView
-                        android:id="@+id/settingScaleTextLeft"
-                        style="@style/settingMultiTextView"
-                        android:text="@string/font_size"/>
-
-                    <TextView
-                        android:id="@+id/settingScaleTextRight"
-                        style="@style/settingMultiTextView"
-                        android:gravity="center_vertical|end"
-                        android:textColor="@color/main_blue_color" />
-
-                </TableRow>
+                    app:left="@string/font_scale"
+                    app:layout="@layout/custom_view_setting_system"
+                    app:layout_constraintTop_toBottomOf="@+id/settingSystemLang"/>
 
                 <TextView
                     android:id="@+id/settingNotiTitle"
@@ -209,7 +160,7 @@
                     android:textSize="14sp"
                     android:fontFamily="@font/spoqa_hansansneo_bold"
                     app:layout_constraintStart_toStartOf="@+id/settingUserTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/settingThemeTR3" />
+                    app:layout_constraintTop_toBottomOf="@+id/settingSystemFont" />
 
                 <View
                     android:id="@+id/settingLine3"

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="DialogAnimationUp">
         <item name="android:windowEnterAnimation">@anim/trans_bottom_to_top</item>
         <item name="android:windowExitAnimation">@anim/trans_top_to_bottom</item>

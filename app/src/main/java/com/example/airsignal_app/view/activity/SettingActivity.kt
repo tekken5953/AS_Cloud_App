@@ -49,7 +49,8 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLocation
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserNoti
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserTheme
 import com.example.airsignal_app.view.ShowDialogClass
-import com.example.airsignal_app.view.SnackBarUtils
+import com.example.airsignal_app.view.custom_view.SettingSystemView
+import com.example.airsignal_app.view.custom_view.SnackBarUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -149,7 +150,7 @@ class SettingActivity
         }
 
         // 테마 설정 클릭
-        binding.settingThemeTR1.setOnClickListener {
+        binding.settingSystemTheme.setOnClickListener {
             // 레이아웃 뷰 생성
             val themeView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_change_theme, null)
@@ -221,7 +222,7 @@ class SettingActivity
         }
 
         // 언어 설정 클릭
-        binding.settingThemeTR2.setOnClickListener {
+        binding.settingSystemLang.setOnClickListener {
             // 뷰 레이아웃 생성
             val langView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_change_language, null)
@@ -284,7 +285,7 @@ class SettingActivity
             }
         }
 
-        binding.settingThemeTR3.setOnClickListener {
+        binding.settingSystemFont.setOnClickListener {
             val scaleView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_change_font_scale, null)
             val small = scaleView.findViewById<RadioButton>(R.id.scaleSmallRB)
@@ -415,13 +416,16 @@ class SettingActivity
         // 설정 페이지 테마 항목이름 바꾸기
         when (getUserTheme(this)) {
             "dark" -> {
-                binding.settingThemeThemeRight.text = getString(R.string.theme_dark)
+                binding.settingSystemTheme.fetchData(getString(R.string.theme_dark))
+//                binding.settingSystemTheme.fetchData(getString(R.string.theme_dark))
             }
             "light" -> {
-                binding.settingThemeThemeRight.text = getString(R.string.theme_light)
+                binding.settingSystemTheme.fetchData(getString(R.string.theme_light))
+//                binding.settingSystemTheme.fetchData(getString(R.string.theme_light))
             }
             else -> {
-                binding.settingThemeThemeRight.text = getString(R.string.theme_system)
+                binding.settingSystemTheme.fetchData(getString(R.string.theme_system))
+//                binding.settingSystemFont.fetchData(getString(R.string.theme_system))
             }
         }
     }
@@ -440,13 +444,13 @@ class SettingActivity
         // 설정 페이지 언어 항목이름 바꾸기
         when (getUserLocation(this)) {
             getString(R.string.english) -> {
-                binding.settingThemeLangRight.text = getString(R.string.english)
+                binding.settingSystemLang.fetchData(getString(R.string.english))
             }
             getString(R.string.korean) -> {
-                binding.settingThemeLangRight.text = getString(R.string.korean)
+                binding.settingSystemLang.fetchData(getString(R.string.korean))
             }
             else -> {
-                binding.settingThemeLangRight.text = getString(R.string.system_lang)
+                binding.settingSystemLang.fetchData(getString(R.string.system_lang))
             }
         }
     }
@@ -455,13 +459,13 @@ class SettingActivity
         // 설정 페이지 폰트크기 항목이름 바꾸기
         when (getUserFontScale(this)) {
             "small" -> {
-                binding.settingScaleTextRight.text = getString(R.string.font_small)
+                binding.settingSystemFont.fetchData(getString(R.string.font_small))
             }
             "big" -> {
-                binding.settingScaleTextRight.text = getString(R.string.font_large)
+                binding.settingSystemFont.fetchData(getString(R.string.font_large))
             }
             else -> {
-                binding.settingScaleTextRight.text = getString(R.string.font_normal)
+                binding.settingSystemFont.fetchData(getString(R.string.font_normal))
             }
         }
     }
