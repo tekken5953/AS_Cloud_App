@@ -49,7 +49,9 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLocation
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserNoti
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserTheme
 import com.example.airsignal_app.view.ShowDialogClass
-import com.example.airsignal_app.view.SnackBarUtils
+import com.example.airsignal_app.view.custom_view.NotiSwitchView
+import com.example.airsignal_app.view.custom_view.SettingSystemView
+import com.example.airsignal_app.view.custom_view.SnackBarUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -149,7 +151,7 @@ class SettingActivity
         }
 
         // 테마 설정 클릭
-        binding.settingThemeTR1.setOnClickListener {
+        binding.settingSystemTheme.setOnClickListener {
             // 레이아웃 뷰 생성
             val themeView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_change_theme, null)
@@ -221,7 +223,7 @@ class SettingActivity
         }
 
         // 언어 설정 클릭
-        binding.settingThemeTR2.setOnClickListener {
+        binding.settingSystemLang.setOnClickListener {
             // 뷰 레이아웃 생성
             val langView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_change_language, null)
@@ -284,7 +286,7 @@ class SettingActivity
             }
         }
 
-        binding.settingThemeTR3.setOnClickListener {
+        binding.settingSystemFont.setOnClickListener {
             val scaleView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_change_font_scale, null)
             val small = scaleView.findViewById<RadioButton>(R.id.scaleSmallRB)
@@ -415,13 +417,16 @@ class SettingActivity
         // 설정 페이지 테마 항목이름 바꾸기
         when (getUserTheme(this)) {
             "dark" -> {
-                binding.settingThemeThemeRight.text = getString(R.string.theme_dark)
+                binding.settingSystemTheme.fetchData(getString(R.string.theme_dark))
+//                binding.settingSystemTheme.fetchData(getString(R.string.theme_dark))
             }
             "light" -> {
-                binding.settingThemeThemeRight.text = getString(R.string.theme_light)
+                binding.settingSystemTheme.fetchData(getString(R.string.theme_light))
+//                binding.settingSystemTheme.fetchData(getString(R.string.theme_light))
             }
             else -> {
-                binding.settingThemeThemeRight.text = getString(R.string.theme_system)
+                binding.settingSystemTheme.fetchData(getString(R.string.theme_system))
+//                binding.settingSystemFont.fetchData(getString(R.string.theme_system))
             }
         }
     }
@@ -440,13 +445,13 @@ class SettingActivity
         // 설정 페이지 언어 항목이름 바꾸기
         when (getUserLocation(this)) {
             getString(R.string.english) -> {
-                binding.settingThemeLangRight.text = getString(R.string.english)
+                binding.settingSystemLang.fetchData(getString(R.string.english))
             }
             getString(R.string.korean) -> {
-                binding.settingThemeLangRight.text = getString(R.string.korean)
+                binding.settingSystemLang.fetchData(getString(R.string.korean))
             }
             else -> {
-                binding.settingThemeLangRight.text = getString(R.string.system_lang)
+                binding.settingSystemLang.fetchData(getString(R.string.system_lang))
             }
         }
     }
@@ -455,13 +460,13 @@ class SettingActivity
         // 설정 페이지 폰트크기 항목이름 바꾸기
         when (getUserFontScale(this)) {
             "small" -> {
-                binding.settingScaleTextRight.text = getString(R.string.font_small)
+                binding.settingSystemFont.fetchData(getString(R.string.font_small))
             }
             "big" -> {
-                binding.settingScaleTextRight.text = getString(R.string.font_large)
+                binding.settingSystemFont.fetchData(getString(R.string.font_large))
             }
             else -> {
-                binding.settingScaleTextRight.text = getString(R.string.font_normal)
+                binding.settingSystemFont.fetchData(getString(R.string.font_normal))
             }
         }
     }
@@ -495,30 +500,9 @@ class SettingActivity
     }
 
     private fun applyNotification() {
-        // 미세먼지 알림 허용 스위치 설정
-        settingAlertsRadio(
-            switch = binding.settingNotiPMRight,
-            checked = getUserNotiPM(this)
-        )
-        // 이벤트 알림 허용 스위치 설정
-        settingAlertsRadio(
-            switch = binding.settingNotiEventRight,
-            checked = getUserNotiEvent(this)
-        )
-        // 야간 알림 허용 스위치 설정
-        settingAlertsRadio(
-            switch = binding.settingNotiNightRight,
-            checked = getUserNotiNight(this)
-        )
-        // 야간 알림 허용 텍스트 설정
-        setNightAlertsSpan(binding.settingNotiNightLeft)
-
-        // 알림 스위치 이벤트 리스너
-        checkNotification(binding.settingNotiPMRight, notiPM, getString(R.string.pm_10),
-            getUserLocation(this)
-        )
-        checkNotification(binding.settingNotiEventRight, notiEvent, getString(R.string.event),EVENT_ALL_NOTI)
-        checkNotification(binding.settingNotiNightRight, notiNight, getString(R.string.night),NIGHT_EVENT_NOTI)
+        binding.notiPM.fetchData(getUserNotiPM(this))
+        binding.notiEvent.fetchData(getUserNotiEvent(this))
+        binding.notiNight.fetchData(getUserNotiNight(this))
     }
 
     /** 이미지 드로어블 할당 **/
@@ -595,32 +579,6 @@ class SettingActivity
             .show()
     }
 
-    /** 알림 권한을 체크하고 상태저장 **/
-    private fun checkNotification(switch: SwitchCompat, tag: String, title: String, topic: String) {
-        switch.setOnCheckedChangeListener { _, isChecked ->
-            val permission = RequestPermissionsUtil(this@SettingActivity)
-            if (!permission.isNotificationPermitted()) {
-                permission.requestNotification()
-                showSnackBar(isChecked, title)
-                setUserNoti(this, tag, isChecked)
-            } else {
-                showSnackBar(isChecked, title)
-                setUserNoti(this, tag, isChecked)
-            }
-
-            if (isChecked) {
-                SubFCM().subTopic(topic)
-            } else {
-                SubFCM().unSubTopic(topic)
-            }
-        }
-    }
-
-    /** 알림 설정 불러오기 **/
-    private fun settingAlertsRadio(switch: SwitchCompat, checked: Boolean) {
-        switch.isChecked = checked
-    }
-
     /** 자주묻는질문 아이템 추가하기 **/
     private fun addFaqItem(text: String) {
         faqItem.add(text)
@@ -630,41 +588,5 @@ class SettingActivity
     private fun addNoticeItem(date: String, title: String) {
         val item = AdapterModel.NoticeItem(date, title)
         noticeItem.add(item)
-    }
-
-    /** 야간 알림 허용 텍스트 설정 **/
-    private fun setNightAlertsSpan(textView: TextView) {
-        val span = SpannableStringBuilder(textView.text)
-        val formatText = textView.text.split(System.lineSeparator())
-        // 색상변경
-        span.setSpan(
-            ForegroundColorSpan(getColor(R.color.main_gray_color)),
-            formatText[0].length, span.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        // 크기변경
-        span.setSpan(
-            RelativeSizeSpan(0.8f),
-            formatText[0].length, span.length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        textView.text = span
-    }
-
-    /** 알림 커스텀 스낵바 세팅 **/
-    private fun showSnackBar(isAllow: Boolean, title: String) {
-        val alertOn = ContextCompat.getDrawable(this@SettingActivity, R.drawable.alert_on)!!
-        val alertOff = ContextCompat.getDrawable(this@SettingActivity, R.drawable.alert_off)!!
-        alertOn.setTint(getColor(R.color.mode_color_view))
-        alertOff.setTint(getColor(R.color.mode_color_view))
-        if (isAllow) {
-            if (!isInit) {
-                SnackBarUtils.make(binding.root, "$title ${getString(R.string.allowed_noti)}", alertOn).show()
-            }
-        } else {
-            if (!isInit) {
-                SnackBarUtils.make(binding.root, "$title ${getString(R.string.denied_noti)}", alertOff).show()
-            }
-        }
     }
 }

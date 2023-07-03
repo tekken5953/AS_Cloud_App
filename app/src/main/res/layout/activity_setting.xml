@@ -127,78 +127,29 @@
                     android:background="@color/view_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingThemeTitle" />
 
-                <TableRow
-                    android:id="@+id/settingThemeTR1"
+                <com.example.airsignal_app.view.custom_view.SettingSystemView
+                    android:id="@+id/settingSystemTheme"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginTop="5dp"
-                    android:background="?selectableItemBackground"
-                    android:orientation="horizontal"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:weightSum="1"
-                    app:layout_constraintTop_toBottomOf="@+id/settingLine2">
+                    app:left="@string/setting_theme_left"
+                    app:layout="@layout/custom_view_setting_system"
+                    app:layout_constraintTop_toBottomOf="@+id/settingLine2"/>
 
-                    <TextView
-                        android:id="@+id/settingThemeThemeLeft"
-                        style="@style/settingMultiTextView"
-                        android:text="@string/setting_theme_left" />
-
-                    <TextView
-                        android:id="@+id/settingThemeThemeRight"
-                        style="@style/settingMultiTextView"
-                        android:gravity="center_vertical|end"
-                        android:textColor="@color/main_blue_color"/>
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/settingThemeTR2"
+                <com.example.airsignal_app.view.custom_view.SettingSystemView
+                    android:id="@+id/settingSystemLang"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginTop="5dp"
-                    android:background="?selectableItemBackground"
-                    android:orientation="horizontal"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:weightSum="1"
-                    app:layout_constraintTop_toBottomOf="@+id/settingThemeTR1">
+                    app:left="@string/setting_lang"
+                    app:layout="@layout/custom_view_setting_system"
+                    app:layout_constraintTop_toBottomOf="@+id/settingSystemTheme"/>
 
-                    <TextView
-                        android:id="@+id/settingThemeLangLeft"
-                        style="@style/settingMultiTextView"
-                        android:text="@string/setting_lang"/>
-
-                    <TextView
-                        android:id="@+id/settingThemeLangRight"
-                        style="@style/settingMultiTextView"
-                        android:gravity="center_vertical|end"
-                        android:textColor="@color/main_blue_color" />
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/settingThemeTR3"
+                <com.example.airsignal_app.view.custom_view.SettingSystemView
+                    android:id="@+id/settingSystemFont"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:layout_marginTop="5dp"
-                    android:background="?selectableItemBackground"
-                    android:orientation="horizontal"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:weightSum="1"
-                    app:layout_constraintTop_toBottomOf="@+id/settingThemeTR2">
-
-                    <TextView
-                        android:id="@+id/settingScaleTextLeft"
-                        style="@style/settingMultiTextView"
-                        android:text="@string/font_size"/>
-
-                    <TextView
-                        android:id="@+id/settingScaleTextRight"
-                        style="@style/settingMultiTextView"
-                        android:gravity="center_vertical|end"
-                        android:textColor="@color/main_blue_color" />
-
-                </TableRow>
+                    app:left="@string/font_scale"
+                    app:layout="@layout/custom_view_setting_system"
+                    app:layout_constraintTop_toBottomOf="@+id/settingSystemLang"/>
 
                 <TextView
                     android:id="@+id/settingNotiTitle"
@@ -209,7 +160,7 @@
                     android:textSize="14sp"
                     android:fontFamily="@font/spoqa_hansansneo_bold"
                     app:layout_constraintStart_toStartOf="@+id/settingUserTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/settingThemeTR3" />
+                    app:layout_constraintTop_toBottomOf="@+id/settingSystemFont" />
 
                 <View
                     android:id="@+id/settingLine3"
@@ -221,96 +172,38 @@
                     android:background="@color/view_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingNotiTitle" />
 
-                <TableRow
-                    android:id="@+id/settingNotiTR1"
+                <com.example.airsignal_app.view.custom_view.NotiSwitchView
+                    android:id="@+id/notiPM"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="5dp"
-                    android:orientation="horizontal"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:weightSum="1"
-                    app:layout_constraintTop_toBottomOf="@+id/settingLine3">
+                    android:layout_height="wrap_content"
+                    app:enableSubTitle="false"
+                    app:topicTitle="notification_pm"
+                    app:notiTitle="@string/setting_notify_pm"
+                    app:basicTitle="@string/pm"
+                    app:layout="@layout/custom_view_setting_noti"
+                    app:layout_constraintTop_toBottomOf="@+id/settingLine3"/>
 
-                    <TextView
-                        android:id="@+id/settingNotiPMLeft"
-                        style="@style/settingMultiTextView"
-                        android:layout_weight="0.95"
-                        android:background="?selectableItemBackground"
-                        android:text="@string/setting_notify_pm" />
-
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/settingNotiPMRight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.05"
-                        android:gravity="center_vertical|end"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:thumb="@drawable/switch_thumb"
-                        app:track="@drawable/switch_selector" />
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/settingNotiTR2"
+                <com.example.airsignal_app.view.custom_view.NotiSwitchView
+                    android:id="@+id/notiEvent"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="5dp"
-                    android:orientation="horizontal"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:weightSum="1"
-                    app:layout_constraintTop_toBottomOf="@+id/settingNotiTR1">
+                    android:layout_height="wrap_content"
+                    app:notiTitle="@string/setting_notify_event"
+                    app:enableSubTitle="false"
+                    app:basicTitle="@string/event"
+                    app:topicTitle="notification_event"
+                    app:layout="@layout/custom_view_setting_noti"
+                    app:layout_constraintTop_toBottomOf="@+id/notiPM"/>
 
-                    <TextView
-                        android:id="@+id/settingNotiEventLeft"
-                        style="@style/settingMultiTextView"
-                        android:layout_weight="0.95"
-                        android:background="?selectableItemBackground"
-                        android:text="@string/setting_notify_event" />
-
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/settingNotiEventRight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.05"
-                        android:gravity="center_vertical|end"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:thumb="@drawable/switch_thumb"
-                        app:track="@drawable/switch_selector" />
-                </TableRow>
-
-                <TableRow
-                    android:id="@+id/settingNotiTR3"
+                <com.example.airsignal_app.view.custom_view.NotiSwitchView
+                    android:id="@+id/notiNight"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="5dp"
-                    android:orientation="horizontal"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:weightSum="1"
-                    app:layout_constraintTop_toBottomOf="@+id/settingNotiTR2">
-
-                    <TextView
-                        android:id="@+id/settingNotiNightLeft"
-                        style="@style/settingMultiTextView"
-                        android:layout_weight="0.95"
-                        android:background="?selectableItemBackground"
-                        android:text="@string/setting_notify_night"
-                        android:lineSpacingExtra="5dp"/>
-
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/settingNotiNightRight"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.05"
-                        android:gravity="center_vertical|end"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:thumb="@drawable/switch_thumb"
-                        app:track="@drawable/switch_selector" />
-                </TableRow>
+                    android:layout_height="wrap_content"
+                    app:enableSubTitle="true"
+                    app:basicTitle="@string/night"
+                    app:topicTitle="notification_night"
+                    app:notiTitle="@string/setting_notify_night"
+                    app:layout="@layout/custom_view_setting_noti"
+                    app:layout_constraintTop_toBottomOf="@+id/notiEvent"/>
 
                 <TextView
                     android:id="@+id/settingCustomerTitle"
@@ -321,7 +214,7 @@
                     android:textSize="14sp"
                     android:fontFamily="@font/spoqa_hansansneo_bold"
                     app:layout_constraintStart_toStartOf="@+id/settingUserTitle"
-                    app:layout_constraintTop_toBottomOf="@+id/settingNotiTR3" />
+                    app:layout_constraintTop_toBottomOf="@+id/notiNight" />
 
                 <View
                     android:id="@+id/settingLine4"

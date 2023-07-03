@@ -2,14 +2,15 @@ package com.example.airsignal_app.retrofit
 
 import android.annotation.SuppressLint
 import com.example.airsignal_app.dao.IgnoredKeyFile.localServerURL
-import com.example.airsignal_app.dao.IgnoredKeyFile.springServerURL
 import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.google.gson.GsonBuilder
 import com.orhanobut.logger.Logger
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+
 
 @Singleton
 @SuppressLint("SetTextI18n")
@@ -29,11 +30,16 @@ object HttpClient {
                 Logger.t(TAG_R).d("API Instance 생성")
             }
         }
+
+
         /** OkHttp 빌드
          *
          * 클라이언트 빌더 Interceptor 구분 **/
         val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
             retryOnConnectionFailure(retryOnConnectionFailure = false)
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
 //            addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
 //                override fun log(message: String) {
 //                    if (!message.startsWith("{") && !message.startsWith("[")) {

@@ -1,4 +1,4 @@
-package com.example.airsignal_app.view
+package com.example.airsignal_app.view.custom_view
 
 import android.graphics.drawable.Drawable
 import android.os.Handler

@@ -38,7 +38,7 @@
             android:drawablePadding="3dp"
             android:ellipsize="start"
             android:lines="1"
-            android:maxEms="15"
+            android:maxEms="12"
             android:textColor="@color/mode_black_color"
             android:textSize="14sp"
             app:drawableStartCompat="@drawable/location_fill"
@@ -616,62 +616,25 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_pm_box_view1"
                         android:layout_marginTop="20dp"
-                        android:background="@color/white"
-                        android:gravity="center">
+                        android:background="@color/white">
 
-                        <TextView
-                            style="@style/basicMediumTextView"
-                            android:layout_weight="0.2"
-                            android:gravity="start"
-                            android:text="SO2 "
-                            android:textColor="#7C7C7C"
-                            android:textSize="15sp" />
+                        <com.example.airsignal_app.view.custom_view.AirQView
+                            android:id="@+id/mainAirSO2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            ads:customSort="SO2"
+                            ads:customUnit="ppm"
+                            android:layout_weight="0.5"
+                            app:layout="@layout/custom_view_main_air"/>
 
-                        <TextView
-                            android:id="@+id/mainAirSO2Value"
-                            style="@style/basicMediumTextView"
-                            android:layout_width="70dp"
-                            android:layout_weight="0.27"
-                            android:gravity="end"
-                            android:textSize="19sp" />
-
-                        <TextView
-                            style="@style/basicTextView"
-                            android:layout_marginStart="4dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_weight="0.1"
-                            android:gravity="start"
-                            android:text="ppm "
-                            android:textColor="#7C7C7C"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            style="@style/basicMediumTextView"
-                            android:layout_marginStart="40dp"
-                            android:layout_weight="0.2"
-                            android:gravity="start"
-                            android:text="NO2 "
-                            android:textColor="#7C7C7C"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:id="@+id/mainAirNO2Value"
-                            style="@style/basicMediumTextView"
-                            android:layout_width="70dp"
-                            android:layout_weight="0.27"
-                            android:gravity="end"
-                            android:textSize="19sp" />
-
-                        <TextView
-                            style="@style/basicTextView"
-                            android:layout_marginStart="4dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_weight="0.1"
-                            android:gravity="start"
-                            android:text="㎍/㎥ "
-                            android:textColor="#7C7C7C"
-                            android:textSize="11sp" />
-
+                        <com.example.airsignal_app.view.custom_view.AirQView
+                            android:id="@+id/mainAirNO2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            ads:customSort="NO2"
+                            ads:customUnit="㎍/㎥"
+                            android:layout_weight="0.5"
+                            app:layout="@layout/custom_view_main_air"/>
                     </TableRow>
 
                     <TableRow
@@ -681,61 +644,24 @@
                         android:layout_below="@+id/mainAirTr1"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="25dp"
-                        android:background="@color/white"
-                        android:gravity="center">
+                        android:background="@color/white">
+                        <com.example.airsignal_app.view.custom_view.AirQView
+                            android:id="@+id/mainAirO3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            ads:customSort="O3"
+                            ads:customUnit="㎍/㎥"
+                            android:layout_weight="0.5"
+                            app:layout="@layout/custom_view_main_air"/>
 
-                        <TextView
-                            style="@style/basicMediumTextView"
-                            android:layout_weight="0.2"
-                            android:gravity="start"
-                            android:text="O3 "
-                            android:textColor="#7C7C7C"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:id="@+id/mainAirO3Value"
-                            style="@style/basicMediumTextView"
-                            android:layout_width="70dp"
-                            android:layout_weight="0.27"
-                            android:gravity="end"
-                            android:textSize="19sp" />
-
-                        <TextView
-                            style="@style/basicTextView"
-                            android:layout_marginStart="4dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_weight="0.1"
-                            android:gravity="start"
-                            android:text="㎍/㎥ "
-                            android:textColor="#7C7C7C"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            style="@style/basicMediumTextView"
-                            android:layout_marginStart="40dp"
-                            android:layout_weight="0.2"
-                            android:gravity="start"
-                            android:text="CO "
-                            android:textColor="#7C7C7C"
-                            android:textSize="15sp" />
-
-                        <TextView
-                            android:id="@+id/mainAirCOValue"
-                            style="@style/basicMediumTextView"
-                            android:layout_width="70dp"
-                            android:layout_weight="0.27"
-                            android:gravity="end"
-                            android:textSize="19sp" />
-
-                        <TextView
-                            style="@style/basicTextView"
-                            android:layout_marginStart="4dp"
-                            android:layout_marginTop="2dp"
-                            android:layout_weight="0.1"
-                            android:gravity="start"
-                            android:text="ppm "
-                            android:textColor="#7C7C7C"
-                            android:textSize="11sp" />
+                        <com.example.airsignal_app.view.custom_view.AirQView
+                            android:id="@+id/mainAirCO"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            ads:customSort="CO"
+                            ads:customUnit="ppm"
+                            android:layout_weight="0.5"
+                            app:layout="@layout/custom_view_main_air"/>
                     </TableRow>
                 </RelativeLayout>
 

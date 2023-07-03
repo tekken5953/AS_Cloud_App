@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    tools:context=".view.activity.MainActivity">
+
+    <TextView
+        android:id="@+id/customAirQTitle"
+        style="@style/basicMediumTextView"
+        android:gravity="start"
+        android:layout_weight="0.4"
+        android:textColor="#7C7C7C"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/customAirQValue"
+        style="@style/basicMediumTextView"
+        android:layout_width="70dp"
+        android:gravity="end"
+        android:layout_weight="0.54"
+        android:layout_marginStart="11dp"
+        android:textSize="19sp"/>
+
+    <TextView
+        android:id="@+id/customAirQUnit"
+        style="@style/basicTextView"
+        android:layout_marginStart="4dp"
+        android:gravity="end"
+        android:layout_weight="0.2"
+        android:textColor="#7C7C7C"
+        android:textSize="11sp"/>
+
+</LinearLayout>
