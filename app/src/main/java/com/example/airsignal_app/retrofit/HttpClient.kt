@@ -37,9 +37,9 @@ object HttpClient {
          * 클라이언트 빌더 Interceptor 구분 **/
         val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
             retryOnConnectionFailure(retryOnConnectionFailure = false)
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
-                .writeTimeout(5, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(7, TimeUnit.SECONDS)
+                .writeTimeout(7, TimeUnit.SECONDS)
 //            addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
 //                override fun log(message: String) {
 //                    if (!message.startsWith("{") && !message.startsWith("[")) {

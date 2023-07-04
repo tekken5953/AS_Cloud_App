@@ -144,6 +144,7 @@ open class WidgetProvider : AppWidgetProvider() {
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     getLocation.getAddress(it.latitude, it.longitude)?.let { addr ->
+                        views.setViewVisibility(R.id.widgetReloadLayout,View.GONE)
                         val addrFormat = addr.split(" ")
 
                         getLocation.updateCurrentAddress(it.latitude, it.longitude, addr)
