@@ -1,17 +1,10 @@
 package com.example.airsignal_app.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.core.view.marginBottom
-import androidx.core.view.marginEnd
-import androidx.core.view.marginStart
-import androidx.core.view.marginTop
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.airsignal_app.R
@@ -22,7 +15,11 @@ import com.example.airsignal_app.util.VibrateUtil
  * @author : Lee Jae Young
  * @since : 2023-06-013 오후 2:35
  **/
-class ReportViewPagerAdapter(private val context: Context, list: ArrayList<AdapterModel.ReportItem>, private val viewPager2: ViewPager2) :
+class ReportViewPagerAdapter(
+    private val context: Context,
+    list: ArrayList<AdapterModel.ReportItem>,
+    private val viewPager2: ViewPager2
+) :
     RecyclerView.Adapter<ReportViewPagerAdapter.ViewHolder>() {
     private val mList = list
 
@@ -74,14 +71,15 @@ class ReportViewPagerAdapter(private val context: Context, list: ArrayList<Adapt
                     try {
                         val count = textView.layout.lineCount
                         val lastLineIndex: Int = count - 1
-                        val ellipsisCount: Int = textView.layout.getEllipsisCount(lastLineIndex)
+                        val ellipsisCount: Int = textView.layout.getEllipsisCount(lastLineIndex) /
+                                textView.maxEms
                         val isEllipsized = ellipsisCount > 0
 //                    onClickListener.onItemClick(it, position)
                         if (textView.maxLines == 2) {
                             if (isEllipsized) {
                                 mVib()
                                 val lineCount = textView.lineCount + ellipsisCount
-                                textView.maxLines = Int.MAX_VALUE
+                                textView.maxLines = lineCount
                                 val lineHeight = textView.lineHeight
                                 val desiredHeight = lineCount * lineHeight
                                 textView.layoutParams.height = desiredHeight

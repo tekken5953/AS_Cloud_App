@@ -18,7 +18,7 @@ class GpsRepository(private val context: Context) {
     fun update(model: GpsEntity) {
         GlobalScope.launch(Dispatchers.Default) {
             getInstance(context)!!.gpsRepository().updateCurrentGPS(model)
-            Logger.t(TAG_D).d("Update Model")
+            Logger.t(TAG_D).d("Update Model : $model")
         }
     }
 
@@ -26,7 +26,7 @@ class GpsRepository(private val context: Context) {
     fun insert(model: GpsEntity) {
         GlobalScope.launch(Dispatchers.Default) {
             getInstance(context)!!.gpsRepository().insertNewGPS(model)
-            Logger.t(TAG_D).d("insert Model")
+            Logger.t(TAG_D).d("insert Model : $model")
         }
     }
 
@@ -36,7 +36,7 @@ class GpsRepository(private val context: Context) {
     }
 
     fun findById(name: String): GpsEntity {
-        Logger.t(TAG_D).d("findById Model")
+        Logger.t(TAG_D).d("findById Model : $name")
         return getInstance(context)!!.gpsRepository().findById(name)
     }
 

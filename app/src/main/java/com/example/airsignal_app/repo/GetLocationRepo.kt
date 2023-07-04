@@ -47,9 +47,6 @@ class GetLocationRepo : BaseRepository() {
                             }
                         }
                         .addOnFailureListener {
-                            if (context is Activity)
-                                ToastUtils(context).showMessage(context.getString(R.string.fail_to_get_gps))
-
                             RDBLogcat.writeLogCause(
                                 GetAppInfo.getUserEmail(context),
                                 "GPS 위치정보 갱신실패",

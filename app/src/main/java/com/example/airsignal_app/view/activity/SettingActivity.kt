@@ -5,30 +5,18 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.appcompat.widget.SwitchCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.FaqAdapter
 import com.example.airsignal_app.adapter.NoticeAdapter
 import com.example.airsignal_app.dao.AdapterModel
-import com.example.airsignal_app.dao.IgnoredKeyFile.notiEvent
-import com.example.airsignal_app.dao.IgnoredKeyFile.notiNight
-import com.example.airsignal_app.dao.IgnoredKeyFile.notiPM
-import com.example.airsignal_app.dao.StaticDataObject.EVENT_ALL_NOTI
-import com.example.airsignal_app.dao.StaticDataObject.NIGHT_EVENT_NOTI
 import com.example.airsignal_app.databinding.ActivitySettingBinding
-import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
@@ -46,12 +34,8 @@ import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.removeAllKeys
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserFontScale
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLocation
-import com.example.airsignal_app.util.`object`.SetAppInfo.setUserNoti
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserTheme
 import com.example.airsignal_app.view.ShowDialogClass
-import com.example.airsignal_app.view.custom_view.NotiSwitchView
-import com.example.airsignal_app.view.custom_view.SettingSystemView
-import com.example.airsignal_app.view.custom_view.SnackBarUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -257,7 +241,7 @@ class SettingActivity
                 when (checkedId) {
                     systemLang.id -> {
                         changedLangRadio(
-                            lang = getString(R.string.system_lang),
+                            lang = "system",
                             radioGroup = radioGroup,
                             radioButton = systemLang,
                             cancelBtn
@@ -266,7 +250,7 @@ class SettingActivity
                     }
                     koreanLang.id -> {
                         changedLangRadio(
-                            lang = getString(R.string.korean),
+                            lang = "korean",
                             radioGroup = radioGroup,
                             radioButton = koreanLang,
                             cancelBtn
@@ -275,7 +259,7 @@ class SettingActivity
                     }
                     englishLang.id -> {
                         changedLangRadio(
-                            lang = getString(R.string.english),
+                            lang = "english",
                             radioGroup = radioGroup,
                             radioButton = englishLang,
                             cancelBtn
@@ -315,17 +299,17 @@ class SettingActivity
             rg.setOnCheckedChangeListener { radioGroup, i ->
                 when (i) {
                     small.id -> {
-                        setUserFontScale(this,"small")
+                        setUserFontScale(this, "small")
                         radioGroup.check(small.id)
                         this.goMain()
                     }
                     big.id -> {
-                        setUserFontScale(this,"big")
+                        setUserFontScale(this, "big")
                         radioGroup.check(big.id)
                         this.goMain()
                     }
                     default.id -> {
-                        setUserFontScale(this,"default")
+                        setUserFontScale(this, "default")
                         radioGroup.check(default.id)
                         this.goMain()
                     }
@@ -401,7 +385,8 @@ class SettingActivity
 
             dialog.setBackPressed(viewAppInfo.findViewById(R.id.appInfoBack))
                 .show(viewAppInfo, true)
-        }}
+        }
+    }
 
     private fun applyDeviceTheme() {
         @Suppress("DEPRECATION")
@@ -444,10 +429,10 @@ class SettingActivity
     private fun applyUserLanguage() {
         // 설정 페이지 언어 항목이름 바꾸기
         when (getUserLocation(this)) {
-            getString(R.string.english) -> {
+            "english" -> {
                 binding.settingSystemLang.fetchData(getString(R.string.english))
             }
-            getString(R.string.korean) -> {
+            "korean" -> {
                 binding.settingSystemLang.fetchData(getString(R.string.korean))
             }
             else -> {
@@ -535,14 +520,20 @@ class SettingActivity
     }
 
     /** 언어 라디오 버튼 클릭 시 이벤트 처리 **/
-    private fun changedLangRadio(lang: String, radioGroup: RadioGroup, radioButton: RadioButton, cancel: ImageView) {
+    private fun changedLangRadio(
+        lang: String,
+        radioGroup: RadioGroup,
+        radioButton: RadioButton,
+        cancel: ImageView
+    ) {
         if (getUserLocation(this) != lang) { // 현재 설정된 언어인지 필터링
             cancel.isEnabled = false
-            setUserLocation(this,lang)  // 다른 언어라면 db 값 변경
+            setUserLocation(this, lang)  // 다른 언어라면 db 값 변경
             radioGroup.check(radioButton.id) // 라디오 버튼 체크
             saveLanguageChange() // 언어 설정 변경 후 어플리케이션 재시작
         }
     }
+
     /** 테마 라디오 버튼 클릭 시 이벤트 처리 **/
     private fun changedThemeRadio(
         mode: Int,

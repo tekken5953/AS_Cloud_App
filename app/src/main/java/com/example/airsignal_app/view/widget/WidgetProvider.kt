@@ -38,9 +38,10 @@ import retrofit2.Response
 import timber.log.Timber
 import kotlin.math.roundToInt
 
+
 open class WidgetProvider : AppWidgetProvider() {
 
-    private val refreshClicked = "refreshButtonClicked"
+    private val REFRESH_BUTTON_CLICKED = "refreshButtonClicked"
 
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
     override fun onEnabled(context: Context) {
@@ -79,7 +80,7 @@ open class WidgetProvider : AppWidgetProvider() {
         val views = RemoteViews(context.packageName, R.layout.widget_layout)
 
         val refreshBtnIntent = Intent(context, WidgetProvider::class.java)
-        refreshBtnIntent.action = refreshClicked
+        refreshBtnIntent.action = REFRESH_BUTTON_CLICKED
         val pendingRefresh: PendingIntent =
             PendingIntent.getBroadcast(context, 0, refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
 
@@ -121,7 +122,7 @@ open class WidgetProvider : AppWidgetProvider() {
             .i("onReceive : ${currentDateTimeString(context)} intent : ${intent.action}")
 
         intent.action?.let {
-            if (intent.action == refreshClicked)
+            if (intent.action == REFRESH_BUTTON_CLICKED)
                 loadData(context)
         }
     }
@@ -137,7 +138,7 @@ open class WidgetProvider : AppWidgetProvider() {
     private fun loadData(context: Context) {
         val views = RemoteViews(context.packageName, R.layout.widget_layout)
         val getLocation = GetLocation(context)
-        val httpClient = HttpClient
+        val httpClient = HttpClient.getInstance()
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
             .addOnSuccessListener { location: Location? ->
@@ -156,6 +157,7 @@ open class WidgetProvider : AppWidgetProvider() {
                                 response: Response<ApiModel.GetEntireData>
                             ) {
                                 try {
+                                    Logger.t(TAG_W).i("Complete Load Data")
                                     val body = response.body()
                                     val data = body!!
                                     val realtime =
@@ -237,7 +239,7 @@ open class WidgetProvider : AppWidgetProvider() {
                                 RDBLogcat.writeLogCause(
                                     "ANR 발생",
                                     "Thread : WidgetProvider",
-                                    t.localizedMessage!!
+                                   t.stackTraceToString()
                                 )
                                 Toast.makeText(context, "데이터 호출 실패", Toast.LENGTH_SHORT).show()
                             }

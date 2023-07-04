@@ -5,4 +5,4 @@
     android:minHeight="95dp"
     android:previewImage="@drawable/app_icon"
     android:resizeMode="none"
-    android:updatePeriodMillis="3600000" />
+    android:updatePeriodMillis="2400000" />
