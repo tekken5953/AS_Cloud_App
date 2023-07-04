@@ -12,6 +12,7 @@ import android.location.Location
 import android.os.Bundle
 import android.view.View
 import android.widget.RemoteViews
+import android.widget.RemoteViewsService
 import android.widget.Toast
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
@@ -39,7 +40,7 @@ import timber.log.Timber
 import kotlin.math.roundToInt
 
 
-open class WidgetProvider : AppWidgetProvider() {
+open class WidgetProvider4x2 : AppWidgetProvider() {
 
     private val REFRESH_BUTTON_CLICKED = "refreshButtonClicked"
 
@@ -77,9 +78,9 @@ open class WidgetProvider : AppWidgetProvider() {
     ) {
         Timber.tag(TAG_W).i("onUpdate : ${currentDateTimeString(context)}")
 
-        val views = RemoteViews(context.packageName, R.layout.widget_layout)
+        val views4x2 = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
 
-        val refreshBtnIntent = Intent(context, WidgetProvider::class.java)
+        val refreshBtnIntent = Intent(context, WidgetProvider4x2::class.java)
         refreshBtnIntent.action = REFRESH_BUTTON_CLICKED
         val pendingRefresh: PendingIntent =
             PendingIntent.getBroadcast(context, 0, refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
@@ -90,15 +91,15 @@ open class WidgetProvider : AppWidgetProvider() {
                 PendingIntent.getActivity(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
             }
 
-        views.apply {
-            setOnClickPendingIntent(R.id.widgetMainLayout, pendingIntent)
-            setOnClickPendingIntent(R.id.widgetRefresh, pendingRefresh)
-            setOnClickPendingIntent(R.id.widgetReloadLayout, pendingRefresh)
+        views4x2.apply {
+            setOnClickPendingIntent(R.id.widget4x2MainLayout, pendingIntent)
+            setOnClickPendingIntent(R.id.widget4x2Refresh, pendingRefresh)
+            setOnClickPendingIntent(R.id.widget4x2ReloadLayout, pendingRefresh)
         }
 
         loadData(context)
 
-        appWidgetManager.updateAppWidget(appWidgetIds, views)
+        appWidgetManager.updateAppWidget(appWidgetIds, views4x2)
     }
 
     // 이 메소드는 앱 데이터가 구글 시스템에 백업 된 이후 복원 될 때 만약 위젯 데이터가 있다면 데이터가 복구 된 이후 호출 됩니다.
@@ -130,13 +131,13 @@ open class WidgetProvider : AppWidgetProvider() {
     private fun fetch(context: Context, views: RemoteViews) {
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val componentName =
-            ComponentName(context, WidgetProvider::class.java)
+            ComponentName(context, WidgetProvider4x2::class.java)
         appWidgetManager.updateAppWidget(componentName, views)
     }
 
     @SuppressLint("MissingPermission")
     private fun loadData(context: Context) {
-        val views = RemoteViews(context.packageName, R.layout.widget_layout)
+        val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
         val getLocation = GetLocation(context)
         val httpClient = HttpClient.getInstance()
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
@@ -144,7 +145,7 @@ open class WidgetProvider : AppWidgetProvider() {
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     getLocation.getAddress(it.latitude, it.longitude)?.let { addr ->
-                        views.setViewVisibility(R.id.widgetReloadLayout,View.GONE)
+                        views.setViewVisibility(R.id.widget4x2ReloadLayout,View.GONE)
                         val addrFormat = addr.split(" ")
 
                         getLocation.updateCurrentAddress(it.latitude, it.longitude, addr)
@@ -158,6 +159,11 @@ open class WidgetProvider : AppWidgetProvider() {
                                 response: Response<ApiModel.GetEntireData>
                             ) {
                                 try {
+                                    RDBLogcat.writeLogCause(
+                                        "위젯 데이터 호출 성공",
+                                        "Thread : WidgetProvider",
+                                        response.body().toString()
+                                    )
                                     Logger.t(TAG_W).i("Complete Load Data")
                                     val body = response.body()
                                     val data = body!!
@@ -173,10 +179,10 @@ open class WidgetProvider : AppWidgetProvider() {
                                     val sun = data.sun
 
                                     views.apply {
-                                        setViewVisibility(R.id.widgetReloadLayout, View.GONE)
+                                        setViewVisibility(R.id.widget4x2ReloadLayout, View.GONE)
 
                                         setInt(
-                                            R.id.widgetMainLayout, "setBackgroundResource",
+                                            R.id.widget4x2MainLayout, "setBackgroundResource",
                                             getSkyImgWidget(
                                                 skyText,
                                                 getCurrentSun(sun.sunrise!!, sun.sunset!!)
@@ -184,7 +190,7 @@ open class WidgetProvider : AppWidgetProvider() {
                                         )
 
                                         setTextViewText(
-                                            R.id.widgetTime,
+                                            R.id.widget4x2Time,
                                             DataTypeParser.millsToString(
                                                 getCurrentTime(),
                                                 "HH시 mm분"
@@ -192,25 +198,25 @@ open class WidgetProvider : AppWidgetProvider() {
                                         )
 
                                         setTextViewText(
-                                            R.id.widgetTempValue,
+                                            R.id.widget4x2TempValue,
                                             "${current.temperature!!.roundToInt()}˚"
                                         )
 
                                         setTextViewText(
-                                            R.id.widgetPmValue,
+                                            R.id.widget4x2PmValue,
                                             getDataText(data.quality.pm10Grade!!)
                                         )
 
-                                        setTextViewText(R.id.widgetTempIndex, skyText)
+                                        setTextViewText(R.id.widget4x2TempIndex, skyText)
 
                                         setImageViewBitmap(
-                                            R.id.widgetSkyImg,
+                                            R.id.widget4x2SkyImg,
                                             (getSkyImgLarge(context, skyText, false)
                                                     as BitmapDrawable).bitmap
                                         )
 
                                         setTextViewText(
-                                            R.id.widgetAddress,
+                                            R.id.widget4x2Address,
                                             addrFormat[addrFormat.size - 2]
                                         )
                                     }
@@ -219,7 +225,7 @@ open class WidgetProvider : AppWidgetProvider() {
                                 } catch (e: Exception) {
                                     e.printStackTrace()
                                     Toast.makeText(context, "데이터 호출 실패", Toast.LENGTH_SHORT).show()
-                                    views.setViewVisibility(R.id.widgetReloadLayout, View.VISIBLE)
+                                    views.setViewVisibility(R.id.widget4x2ReloadLayout, View.VISIBLE)
                                     e.localizedMessage?.let { it1 ->
                                         RDBLogcat.writeLogCause(
                                             email = "Error",
@@ -235,7 +241,7 @@ open class WidgetProvider : AppWidgetProvider() {
                                 call: Call<ApiModel.GetEntireData>,
                                 t: Throwable
                             ) {
-                                views.setViewVisibility(R.id.widgetReloadLayout, View.VISIBLE)
+                                views.setViewVisibility(R.id.widget4x2ReloadLayout, View.VISIBLE)
                                 fetch(context, views)
                                 RDBLogcat.writeLogCause(
                                     "ANR 발생",
@@ -257,7 +263,7 @@ open class WidgetProvider : AppWidgetProvider() {
                     )
                 }
                 Logger.t(TAG_D).e("Fail to Get Location")
-                views.setViewVisibility(R.id.widgetReloadLayout, View.VISIBLE)
+                views.setViewVisibility(R.id.widget4x2ReloadLayout, View.VISIBLE)
                 fetch(context, views)
             }
     }
