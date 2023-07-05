@@ -110,7 +110,6 @@
         style="@style/basicTextView"
         android:textSize="13sp"
         android:layout_alignStart="@+id/widget4x2AddressVector"
-        android:layout_alignParentBottom="true"
         android:layout_below="@+id/widget4x2Time"
         android:textColor="@color/white"
         android:text="@string/widget_pm"/>
@@ -123,5 +122,25 @@
         android:layout_alignTop="@+id/widget4x2PmIndex"
         android:layout_alignBottom="@+id/widget4x2PmIndex"
         android:layout_toEndOf="@+id/widget4x2PmIndex"
+        android:layout_marginStart="7dp"/>
+
+    <TextView
+        android:id="@+id/widget4x2RainPer"
+        style="@style/basicTextView"
+        android:textSize="13sp"
+        android:layout_alignStart="@+id/widget4x2AddressVector"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/widget4x2PmIndex"
+        android:textColor="@color/white"
+        android:text="@string/widget_rainPer"/>
+
+    <TextView
+        android:id="@+id/widget4x2RainPerValue"
+        style="@style/basicTextView"
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        android:layout_alignTop="@+id/widget4x2RainPer"
+        android:layout_alignBottom="@+id/widget4x2RainPer"
+        android:layout_toEndOf="@+id/widget4x2RainPer"
         android:layout_marginStart="7dp"/>
 </RelativeLayout>

@@ -181,11 +181,11 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                                         val current = data.current
                                         val thunder = data.thunder
                                         val sun = data.sun
-                                        val realtime = data.realtime
+                                        val realtime = data.realtime[0]
                                         val skyText = applySkyText(
                                             context,
                                             current.rainType!!,
-                                            realtime[0].sky,
+                                            realtime.sky,
                                             thunder
                                         )
 
@@ -211,6 +211,11 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                                             setTextViewText(
                                                 R.id.widget4x2TempValue,
                                                 "${current.temperature!!.roundToInt()}˚"
+                                            )
+
+                                            setTextViewText(
+                                                R.id.widget4x2RainPerValue,
+                                                "${realtime.rainP}%"
                                             )
 
                                             setTextViewText(

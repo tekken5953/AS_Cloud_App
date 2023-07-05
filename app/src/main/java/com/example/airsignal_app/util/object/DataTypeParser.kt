@@ -7,9 +7,11 @@ import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
+
 
 /**
  * @author : Lee Jae Young
@@ -215,8 +217,8 @@ object DataTypeParser {
     /** 위젯 하늘에 따른 배경 **/
     fun getSkyImgWidget(sky: String?, progress: Int): Int {
         return when (sky) {
-            "맑음", "구름많음", -> {
-                if(getIsNight(progress)) R.drawable.widget_bg_night
+            "맑음", "구름많음" -> {
+                if (getIsNight(progress)) R.drawable.widget_bg_night
                 else R.drawable.widget_bg_clear
             }
             else -> {
@@ -325,5 +327,10 @@ object DataTypeParser {
     fun convertLocalDateTimeToLong(localDateTime: LocalDateTime): Long {
         return localDateTime.atZone(
             ZoneId.systemDefault()).toInstant().toEpochMilli()
+    }
+
+    /** Long을 LocalDateTime으로 파싱 **/
+    fun parseLongToLocalDateTime(long: Long): LocalDateTime {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(long), ZoneId.systemDefault())
     }
 }
