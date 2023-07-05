@@ -12,7 +12,6 @@ import android.location.Location
 import android.os.Bundle
 import android.view.View
 import android.widget.RemoteViews
-import android.widget.RemoteViewsService
 import android.widget.Toast
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
@@ -33,6 +32,9 @@ import com.example.airsignal_app.view.activity.MainActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,7 +44,9 @@ import kotlin.math.roundToInt
 
 open class WidgetProvider4x2 : AppWidgetProvider() {
 
-    private val REFRESH_BUTTON_CLICKED = "refreshButtonClicked"
+    companion object {
+        const val REFRESH_BUTTON_CLICKED = "refreshButtonClicked"
+    }
 
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
     override fun onEnabled(context: Context) {
@@ -77,6 +81,12 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         Timber.tag(TAG_W).i("onUpdate : ${currentDateTimeString(context)}")
+
+        RDBLogcat.writeLogCause(
+            "위젯 데이터 호출 성공",
+            "onUpdate",
+            appWidgetIds.toString()
+        )
 
         val views4x2 = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
 
@@ -145,112 +155,123 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     getLocation.getAddress(it.latitude, it.longitude)?.let { addr ->
-                        views.setViewVisibility(R.id.widget4x2ReloadLayout,View.GONE)
+                        views.setViewVisibility(R.id.widget4x2ReloadLayout, View.GONE)
                         val addrFormat = addr.split(" ")
 
                         getLocation.updateCurrentAddress(it.latitude, it.longitude, addr)
 
-                        val getDataMap: Call<ApiModel.GetEntireData> =
-                            httpClient.mMyAPIImpl.getForecast(it.latitude, it.longitude, addr)
-                        getDataMap.enqueue(object :
-                            Callback<ApiModel.GetEntireData> {
-                            override fun onResponse(
-                                call: Call<ApiModel.GetEntireData>,
-                                response: Response<ApiModel.GetEntireData>
-                            ) {
-                                try {
-                                    RDBLogcat.writeLogCause(
-                                        "위젯 데이터 호출 성공",
-                                        "Thread : WidgetProvider",
-                                        response.body().toString()
-                                    )
-                                    Logger.t(TAG_W).i("Complete Load Data")
-                                    val body = response.body()
-                                    val data = body!!
-                                    val realtime =
-                                        data.realtime[0]
-                                    val current = data.current
-                                    val skyText = applySkyText(
-                                        context,
-                                        current.rainType!!,
-                                        realtime.sky!!,
-                                        data.thunder
-                                    )!!
-                                    val sun = data.sun
-
-                                    views.apply {
-                                        setViewVisibility(R.id.widget4x2ReloadLayout, View.GONE)
-
-                                        setInt(
-                                            R.id.widget4x2MainLayout, "setBackgroundResource",
-                                            getSkyImgWidget(
-                                                skyText,
-                                                getCurrentSun(sun.sunrise!!, sun.sunset!!)
-                                            )
-                                        )
-
-                                        setTextViewText(
-                                            R.id.widget4x2Time,
-                                            DataTypeParser.millsToString(
-                                                getCurrentTime(),
-                                                "HH시 mm분"
-                                            )
-                                        )
-
-                                        setTextViewText(
-                                            R.id.widget4x2TempValue,
-                                            "${current.temperature!!.roundToInt()}˚"
-                                        )
-
-                                        setTextViewText(
-                                            R.id.widget4x2PmValue,
-                                            getDataText(data.quality.pm10Grade!!)
-                                        )
-
-                                        setTextViewText(R.id.widget4x2TempIndex, skyText)
-
-                                        setImageViewBitmap(
-                                            R.id.widget4x2SkyImg,
-                                            (getSkyImgLarge(context, skyText, false)
-                                                    as BitmapDrawable).bitmap
-                                        )
-
-                                        setTextViewText(
-                                            R.id.widget4x2Address,
-                                            addrFormat[addrFormat.size - 2]
-                                        )
-                                    }
-
-                                    fetch(context, views)
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                    Toast.makeText(context, "데이터 호출 실패", Toast.LENGTH_SHORT).show()
-                                    views.setViewVisibility(R.id.widget4x2ReloadLayout, View.VISIBLE)
-                                    e.localizedMessage?.let { it1 ->
+                        val getDataResponse: Call<ApiModel.Widget4x2Data> =
+                            httpClient.mMyAPIImpl.getWidgetForecast(it.latitude, it.longitude,1)
+                        CoroutineScope(Dispatchers.Default).launch {
+                            getDataResponse.enqueue(object :
+                                Callback<ApiModel.Widget4x2Data> {
+                                override fun onResponse(
+                                    call: Call<ApiModel.Widget4x2Data>,
+                                    response: Response<ApiModel.Widget4x2Data>
+                                ) {
+                                    try {
                                         RDBLogcat.writeLogCause(
-                                            email = "Error",
-                                            isSuccess = "주소 불러오기 실패",
-                                            log = it1
+                                            "위젯 데이터 호출 성공",
+                                            "Thread : WidgetProvider",
+                                            response.body().toString()
+                                        )
+                                        Logger.t(TAG_W).i("Complete Load Data")
+                                        val body = response.body()
+                                        val data = body!!
+                                        val current = data.current
+                                        val thunder = data.thunder
+                                        val sun = data.sun
+                                        val realtime = data.realtime
+                                        val skyText = applySkyText(
+                                            context,
+                                            current.rainType!!,
+                                            realtime[0].sky,
+                                            thunder
+                                        )
+
+                                        views.apply {
+                                            setViewVisibility(R.id.widget4x2ReloadLayout, View.GONE)
+
+                                            setInt(
+                                                R.id.widget4x2MainLayout, "setBackgroundResource",
+                                                getSkyImgWidget(
+                                                    skyText,
+                                                    getCurrentSun(sun.sunrise!!, sun.sunset!!)
+                                                )
+                                            )
+
+                                            setTextViewText(
+                                                R.id.widget4x2Time,
+                                                DataTypeParser.millsToString(
+                                                    getCurrentTime(),
+                                                    "HH시 mm분"
+                                                )
+                                            )
+
+                                            setTextViewText(
+                                                R.id.widget4x2TempValue,
+                                                "${current.temperature!!.roundToInt()}˚"
+                                            )
+
+                                            setTextViewText(
+                                                R.id.widget4x2PmValue,
+                                                getDataText(data.quality.pm10Grade1h!!)
+                                            )
+
+                                            setTextViewText(R.id.widget4x2TempIndex, skyText)
+
+                                            setImageViewBitmap(
+                                                R.id.widget4x2SkyImg,
+                                                (getSkyImgLarge(context, skyText, false)
+                                                        as BitmapDrawable).bitmap
+                                            )
+
+                                            setTextViewText(
+                                                R.id.widget4x2Address,
+                                                addrFormat[addrFormat.size - 2]
+                                            )
+                                        }
+
+                                        fetch(context, views)
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                        Toast.makeText(context, "데이터 호출 실패", Toast.LENGTH_SHORT)
+                                            .show()
+                                        views.setViewVisibility(
+                                            R.id.widget4x2ReloadLayout,
+                                            View.VISIBLE
+                                        )
+                                        e.localizedMessage?.let { it1 ->
+                                            RDBLogcat.writeLogCause(
+                                                email = "Error",
+                                                isSuccess = "주소 불러오기 실패",
+                                                log = it1
+                                            )
+                                        }
+                                        fetch(context, views)
+                                    }
+                                }
+
+                                override fun onFailure(
+                                    call: Call<ApiModel.Widget4x2Data>,
+                                    t: Throwable
+                                ) {
+                                    views.setViewVisibility(
+                                        R.id.widget4x2ReloadLayout,
+                                        View.VISIBLE
+                                    )
+                                    fetch(context, views)
+                                    t.localizedMessage?.let { it1 ->
+                                        RDBLogcat.writeLogCause(
+                                            "ANR 발생",
+                                            "Thread : WidgetProvider",
+                                            it1
                                         )
                                     }
-                                    fetch(context, views)
+                                    Toast.makeText(context, "데이터 호출 실패", Toast.LENGTH_SHORT).show()
                                 }
-                            }
-
-                            override fun onFailure(
-                                call: Call<ApiModel.GetEntireData>,
-                                t: Throwable
-                            ) {
-                                views.setViewVisibility(R.id.widget4x2ReloadLayout, View.VISIBLE)
-                                fetch(context, views)
-                                RDBLogcat.writeLogCause(
-                                    "ANR 발생",
-                                    "Thread : WidgetProvider",
-                                   t.stackTraceToString()
-                                )
-                                Toast.makeText(context, "데이터 호출 실패", Toast.LENGTH_SHORT).show()
-                            }
-                        })
+                            })
+                        }
                     }
                 }
             }.addOnFailureListener {

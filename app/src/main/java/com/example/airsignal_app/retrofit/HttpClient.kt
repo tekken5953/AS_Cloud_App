@@ -37,38 +37,9 @@ object HttpClient {
          * 클라이언트 빌더 Interceptor 구분 **/
         val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
             retryOnConnectionFailure(retryOnConnectionFailure = false)
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(7, TimeUnit.SECONDS)
-                .writeTimeout(7, TimeUnit.SECONDS)
-//            addInterceptor(HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-//                override fun log(message: String) {
-//                    if (!message.startsWith("{") && !message.startsWith("[")) {
-//                        Timber.tag("Timber").i(message)
-//                        return
-//                    }
-//                    try {
-//                        // Timber 와 Gson setPrettyPrinting 를 이용해 json 을 보기 편하게 표시해준다.
-//                        LoggerUtil().getInstance().logJsonTimberDebug("Timber", message)
-//                        return
-//                    } catch (m: JsonSyntaxException) {
-//                        Timber.tag("Timber").e(m.localizedMessage!!.toString())
-//                        Timber.tag("Timber").e(message)
-//                        return
-//                    }
-//                }
-//            }).apply {
-//                level = HttpLoggingInterceptor.Level.BODY
-//            })
-             .build()
-//            addInterceptor { chain ->
-//                val request = chain.request()
-//                val response = try {
-//                    chain.proceed(request)
-//                } catch (e: MainActivity.CustomTimeOutException) {
-//                    e.localizedMessage
-//                }
-//                response as Response
-//            }.build()
+            connectTimeout(30, TimeUnit.SECONDS)
+            readTimeout(7, TimeUnit.SECONDS)
+            writeTimeout(7, TimeUnit.SECONDS)
             addInterceptor {
                 val request = it.request().newBuilder()
                     .addHeader("Connection", "close")
@@ -84,7 +55,7 @@ object HttpClient {
         /** 서버 URL 주소에 연결, GSON Convert 활성화**/
         val retrofit: Retrofit by lazy {
             Retrofit.Builder()
-//                .baseUrl(springServerURL)
+//                .baseUrl(hostingServerURL)
                 .baseUrl(localServerURL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(clientBuilder.build())
