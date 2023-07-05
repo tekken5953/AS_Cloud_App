@@ -6,7 +6,6 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -21,8 +20,7 @@ import com.example.airsignal_app.util.`object`.SetAppInfo
  * @author : Lee Jae Young
  * @since : 2023-07-03 오후 3:35
  **/
-class NotiSwitchView(context: Context, attrs: AttributeSet?)
-    : LinearLayout(context, attrs) {
+class NotiSwitchView(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs) {
     private var notiBinding: CustomViewSettingNotiBinding
     private var isInit = true
 
@@ -49,11 +47,9 @@ class NotiSwitchView(context: Context, attrs: AttributeSet?)
                 if (!permission.isNotificationPermitted()) {
                     permission.requestNotification()
                     showSnackBar(isChecked, basicTopic)
-                    Log.d("testtest", "topic : $customTopic $isChecked")
                     SetAppInfo.setUserNoti(context, customTopic, isChecked)
                 } else {
                     showSnackBar(isChecked, basicTopic)
-                    Log.d("testtest", "topic : $customTopic $isChecked")
                     SetAppInfo.setUserNoti(context, customTopic, isChecked)
                 }
 
@@ -65,7 +61,7 @@ class NotiSwitchView(context: Context, attrs: AttributeSet?)
             }
         }
     }
-    
+
     /** 알림 커스텀 스낵바 세팅 **/
     private fun showSnackBar(isAllow: Boolean, title: String) {
         val alertOn = ContextCompat.getDrawable(context, R.drawable.alert_on)!!
@@ -74,16 +70,21 @@ class NotiSwitchView(context: Context, attrs: AttributeSet?)
         alertOff.setTint(context.getColor(R.color.mode_color_view))
         if (isAllow) {
             if (!isInit) {
-                SnackBarUtils.make(notiBinding.root,
-                    "$title ${context.getString(R.string.allowed_noti)}", alertOn).show()
+                SnackBarUtils.make(
+                    notiBinding.root,
+                    "$title ${context.getString(R.string.allowed_noti)}", alertOn
+                ).show()
             }
         } else {
             if (!isInit) {
-                SnackBarUtils.make(notiBinding.root,
-                    "$title ${context.getString(R.string.denied_noti)}", alertOff).show()
+                SnackBarUtils.make(
+                    notiBinding.root,
+                    "$title ${context.getString(R.string.denied_noti)}", alertOff
+                ).show()
             }
         }
     }
+
     /** 야간 알림 허용 텍스트 설정 **/
     private fun setNightAlertsSpan(textView: TextView) {
         val span = SpannableStringBuilder(textView.text)

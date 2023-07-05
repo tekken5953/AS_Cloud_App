@@ -11,14 +11,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
-import com.example.airsignal_app.dao.StaticDataObject.WEATHER_ALL_NOTI
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogNotLogin
 import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
-import com.example.airsignal_app.util.`object`.GetAppInfo.getTopicNotification
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.GetSystemInfo.androidID
@@ -174,7 +172,7 @@ class GetLocation(private val context: Context) {
     fun isGPSConnected(): Boolean {
         val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
         Timber.tag("Location Enable")
-            .i("위치정보 호출 여부 : " + lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
+            .i("위치정보 호출 여부 :  ${lm.isProviderEnabled(LocationManager.GPS_PROVIDER)} ")
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
@@ -182,7 +180,7 @@ class GetLocation(private val context: Context) {
     fun isNetWorkConnected(): Boolean {
         val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
         Timber.tag("Location Enable")
-            .i("네트워크 호출 여부 : " + lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
+            .i("네트워크 호출 여부 : ${lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)}")
         return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 

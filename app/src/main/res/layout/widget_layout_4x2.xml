@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/widgetMainLayout"
+    android:id="@+id/widget4x2MainLayout"
     android:layout_width="290dp"
     android:layout_height="95dp"
     android:layout_margin="5dp"
@@ -9,7 +9,7 @@
     android:padding="@dimen/widget_margin">
 
     <LinearLayout
-        android:id="@+id/widgetReloadLayout"
+        android:id="@+id/widget4x2ReloadLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
@@ -24,7 +24,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/widgetTempValue"
+        android:id="@+id/widget4x2TempValue"
         style="@style/basicTextView"
         android:textSize="40sp"
         android:textColor="@color/white"
@@ -32,52 +32,52 @@
         android:layout_marginTop="4dp"/>
 
     <TextView
-        android:id="@+id/widgetTempIndex"
+        android:id="@+id/widget4x2TempIndex"
         style="@style/basicTextView"
-        android:textSize="13sp"
+        android:layout_below="@+id/widget4x2TempValue"
+        android:layout_alignStart="@+id/widget4x2TempValue"
+        android:layout_alignEnd="@+id/widget4x2TempValue"
         android:paddingStart="0dp"
         android:paddingEnd="7dp"
         android:textColor="@color/white"
-        android:layout_below="@+id/widgetTempValue"
-        android:layout_alignStart="@+id/widgetTempValue"
-        android:layout_alignEnd="@+id/widgetTempValue"/>
+        android:textSize="13sp" />
 
     <ImageView
-        android:id="@+id/widgetVerticalLine"
+        android:id="@+id/widget4x2VerticalLine"
         android:layout_width="0.7dp"
         android:layout_height="match_parent"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:layout_toEndOf="@+id/widgetTempValue"
+        android:layout_toEndOf="@+id/widget4x2TempValue"
         android:background="#80FFFFFF"/>
 
     <ImageView
-        android:id="@+id/widgetAddressVector"
+        android:id="@+id/widget4x2AddressVector"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/vector"
         app:tint="@color/white"
-        android:layout_toEndOf="@+id/widgetVerticalLine"
+        android:layout_toEndOf="@+id/widget4x2VerticalLine"
         android:layout_marginStart="8dp"
-        android:layout_alignTop="@+id/widgetAddress"
-        android:layout_alignBottom="@+id/widgetAddress"/>
+        android:layout_alignTop="@+id/widget4x2Address"
+        android:layout_alignBottom="@+id/widget4x2Address"/>
 
     <TextView
-        android:id="@+id/widgetAddress"
+        android:id="@+id/widget4x2Address"
         style="@style/basicTextView"
-        android:layout_toEndOf="@+id/widgetAddressVector"
+        android:layout_toEndOf="@+id/widget4x2AddressVector"
         android:textSize="13sp"
         android:maxLines="1"
         android:maxEms="7"
         android:ellipsize="start"
         android:layout_marginTop="5dp"
         android:layout_marginStart="2dp"
-        android:layout_alignTop="@+id/widgetTempValue"
+        android:layout_alignTop="@+id/widget4x2TempValue"
         android:textColor="@color/white" />
 
     <ImageView
-        android:id="@+id/widgetSkyImg"
+        android:id="@+id/widget4x2SkyImg"
         android:layout_width="65dp"
         android:layout_height="65dp"
         android:layout_marginEnd="5dp"
@@ -85,43 +85,43 @@
         android:layout_alignParentEnd="true"/>
 
     <ImageView
-        android:id="@+id/widgetRefresh"
+        android:id="@+id/widget4x2Refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
-        android:layout_toEndOf="@+id/widgetAddress"
-        android:layout_alignTop="@+id/widgetAddress"
-        android:layout_alignBottom="@+id/widgetAddress"
+        android:layout_toEndOf="@+id/widget4x2Address"
+        android:layout_alignTop="@+id/widget4x2Address"
+        android:layout_alignBottom="@+id/widget4x2Address"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/widget_refresh" />
 
     <TextView
-        android:id="@+id/widgetTime"
+        android:id="@+id/widget4x2Time"
         style="@style/basicTextView"
         android:textSize="11sp"
         android:layout_marginStart="3dp"
         android:layout_marginTop="2dp"
         android:textColor="@color/white"
-        android:layout_below="@+id/widgetAddress"
-        android:layout_alignStart="@+id/widgetAddressVector"/>
+        android:layout_below="@+id/widget4x2Address"
+        android:layout_alignStart="@+id/widget4x2AddressVector"/>
 
     <TextView
-        android:id="@+id/widgetPmIndex"
+        android:id="@+id/widget4x2PmIndex"
         style="@style/basicTextView"
         android:textSize="13sp"
-        android:layout_alignStart="@+id/widgetAddressVector"
+        android:layout_alignStart="@+id/widget4x2AddressVector"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/widgetTime"
+        android:layout_below="@+id/widget4x2Time"
         android:textColor="@color/white"
         android:text="@string/widget_pm"/>
 
     <TextView
-        android:id="@+id/widgetPmValue"
+        android:id="@+id/widget4x2PmValue"
         style="@style/basicTextView"
         android:textSize="14sp"
         android:textColor="@color/white"
-        android:layout_alignTop="@+id/widgetPmIndex"
-        android:layout_alignBottom="@+id/widgetPmIndex"
-        android:layout_toEndOf="@+id/widgetPmIndex"
+        android:layout_alignTop="@+id/widget4x2PmIndex"
+        android:layout_alignBottom="@+id/widget4x2PmIndex"
+        android:layout_toEndOf="@+id/widget4x2PmIndex"
         android:layout_marginStart="7dp"/>
 </RelativeLayout>

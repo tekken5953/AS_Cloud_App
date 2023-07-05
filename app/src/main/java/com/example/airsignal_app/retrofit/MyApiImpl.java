@@ -14,6 +14,12 @@ public interface MyApiImpl {
             @Query("lng") Double lng,
             @Query("addr") String addr);
 
+    @GET("forecast")
+    Call<ApiModel.Widget4x2Data> getWidgetForecast(
+            @Query("lat") Double lat,
+            @Query("lng") Double lng,
+            @Query("rcount") Integer count);
+
     @GET("forecast/realtime")
     Call<List<ApiModel.RealTimeData>> getRealTime(
             @Query("lat")Double lat,

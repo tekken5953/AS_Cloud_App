@@ -312,4 +312,40 @@ class ApiModel {
         @SerializedName("summary")
         val summary: List<String>?
     )
+
+    data class Widget4x2Quality(
+        @SerializedName("pm10Grade1h")
+        val pm10Grade1h: Int?
+    )
+
+    data class Widget4x2Current(
+        @SerializedName("rainType")
+        val rainType: String?,
+        @SerializedName("temperature")
+        val temperature: Double?
+    )
+    data class Widget4x2Sun(
+        @SerializedName("sunrise")
+        val sunrise: String?,
+        @SerializedName("sunset")
+        val sunset: String?
+    )
+
+    data class Widget4x2Realtime(
+        @SerializedName("sky")
+        val sky: String?
+    )
+
+    data class Widget4x2Data(
+        @SerializedName("quality")
+        val quality: Widget4x2Quality,
+        @SerializedName("current")
+        val current: Widget4x2Current,
+        @SerializedName("sun")
+        val sun: Widget4x2Sun,
+        @SerializedName("thunder")
+        val thunder: Double?,
+        @SerializedName("realtime")
+        val realtime: List<Widget4x2Realtime>
+    )
 }

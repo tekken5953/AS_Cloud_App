@@ -15,16 +15,21 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.AddressListAdapter
+import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.util.KeyboardController
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertAddress
+import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.orhanobut.logger.Logger
+import kotlinx.coroutines.*
 
 
 /**
@@ -39,6 +44,7 @@ class SearchDialog(
     private val layoutId = lId
     val currentList = ArrayList<String>()
     private val currentAdapter = AddressListAdapter(activity, currentList)
+    private val db by lazy { GpsRepository(activity) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,7 +61,7 @@ class SearchDialog(
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        when(getUserFontScale(activity)) {
+        when (getUserFontScale(activity)) {
             "small" -> {
                 SetSystemInfo.setTextSizeSmall(activity)
             }
@@ -92,9 +98,8 @@ class SearchDialog(
 
             currentAdapter.setOnItemClickListener(object : AddressListAdapter.OnItemClickListener {
                 override fun onItemClick(v: View, position: Int) {
-                    setUserLastAddr(activity, currentList[position].replace("null", ""))
-                    dismissNow()
-                    activity.recreate()
+                    val currentAddr = currentList[position].replace("null", "")
+                    dbUpdate(currentAddr)
                 }
             })
 
@@ -109,7 +114,7 @@ class SearchDialog(
             val listView: ListView = view.findViewById(R.id.searchAddressListView)
 
             searchEditListener(listView, searchView)
-            KeyboardController().onKeyboardUp(requireContext(),searchView)
+            KeyboardController().onKeyboardUp(requireContext(), searchView)
         }
     }
 
@@ -135,9 +140,11 @@ class SearchDialog(
                     searchItem.clear()
 
                     allTextArray.forEach { allList ->
-                        val nonSpacing = p0.toString().replace(" ","").lowercase()
-                        if (allList.replace(" ","").lowercase().contains(nonSpacing) ||
-                                convertAddress(allList).replace(" ","").lowercase().contains(nonSpacing)) {
+                        val nonSpacing = p0.toString().replace(" ", "").lowercase()
+                        if (allList.replace(" ", "").lowercase().contains(nonSpacing) ||
+                            convertAddress(allList).replace(" ", "").lowercase()
+                                .contains(nonSpacing)
+                        ) {
                             searchItem.add(allList)
                         }
                     }
@@ -151,14 +158,12 @@ class SearchDialog(
         // 검색주소 리스트
         listView.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                val db = GpsRepository(requireContext())
                 val model = GpsEntity()
                 model.name = searchItem[position]
                 model.addr = searchItem[position]
                 db.insert(model)
-                setUserLastAddr(activity, model.addr!!)
-                this.dismissNow()
-                activity.recreate()
+
+                dbUpdate(model.addr!!)
             }
     }
 
@@ -171,14 +176,13 @@ class SearchDialog(
             dialog.setOnShowListener { dialogInterface ->
                 val bottomSheetDialog = dialogInterface as BottomSheetDialog
                 bottomSheetDialog.behavior.isDraggable = false
-                setupRatio(bottomSheetDialog,100)
+                setupRatio(bottomSheetDialog, 100)
             }
             dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationSide
-        }
-        else {
+        } else {
             dialog.setOnShowListener { dialogInterface ->
                 val bottomSheetDialog = dialogInterface as BottomSheetDialog
-                setupRatio(bottomSheetDialog,90)
+                setupRatio(bottomSheetDialog, 90)
                 bottomSheetDialog.behavior.isDraggable = true
             }
             dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationUp
@@ -190,6 +194,23 @@ class SearchDialog(
     // 레이아웃 노출
     fun show(layoutId: Int) {
         SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId)
+    }
+
+    private fun dbUpdate(addr: String?) {
+        CoroutineScope(Dispatchers.Default).launch {
+            setUserLastAddr(activity, addr!!)
+            Logger.t("testtest").w(getUserLastAddress(activity))
+            val model = GpsEntity()
+            model.name = CURRENT_GPS_ID
+            model.addr = addr
+            model.timeStamp = getCurrentTime()
+            db.update(model)
+
+            withContext(Dispatchers.Main) {
+                dismissNow()
+                activity.recreate()
+            }
+        }
     }
 
     // 리스트 아이템 추가

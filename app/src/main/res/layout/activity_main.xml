@@ -446,47 +446,18 @@
                         android:layout_marginTop="3dp"
                         android:layout_marginEnd="8dp" />
 
-                    <TableRow
-                        android:id="@+id/segment_progress_2p5_section"
+                    <com.example.airsignal_app.view.custom_view.SegmentSectionView
+                        android:id="@+id/segment_section_2p5"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/segment_progress_2p5_bar"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp">
-
-                        <TextView
-                            style="@style/basicTextView"
-                            android:layout_weight="0.1"
-                            android:gravity="start"
-                            android:text="0"
-                            android:textColor="#7C7C7C"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            style="@style/basicTextView"
-                            android:layout_weight="0.21"
-                            android:gravity="start"
-                            android:text="15"
-                            android:textColor="#7C7C7C"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            style="@style/basicTextView"
-                            android:layout_weight="0.45"
-                            android:gravity="start"
-                            android:text="35"
-                            android:textColor="#7C7C7C"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            style="@style/basicTextView"
-                            android:layout_weight="0.14"
-                            android:gravity="start"
-                            android:text="75"
-                            android:textColor="#7C7C7C"
-                            android:textSize="11sp" />
-                    </TableRow>
+                        ads:weight0="0.1"
+                        ads:weight1="0.21"
+                        ads:weight2="0.45"
+                        ads:weight3="0.14"
+                        ads:section1="15"
+                        ads:section2="35"
+                        ads:section3="75"/>
 
                     <ImageView
                         android:id="@+id/segment_progress_2p5_arrow"
@@ -502,7 +473,7 @@
                     <TextView
                         android:id="@+id/nested_pm_10_title"
                         style="@style/basicMediumTextView"
-                        android:layout_below="@+id/segment_progress_2p5_section"
+                        android:layout_below="@+id/segment_section_2p5"
                         android:layout_marginTop="50dp"
                         android:text="@string/pm10_title"
                         android:textColor="#7C7C7C"
@@ -547,47 +518,18 @@
                         android:layout_marginTop="3dp"
                         android:layout_marginEnd="8dp" />
 
-                    <TableRow
-                        android:id="@+id/segment_progress_10_section"
+                    <com.example.airsignal_app.view.custom_view.SegmentSectionView
+                        android:id="@+id/segment_section_10"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/segment_progress_10_bar"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginEnd="8dp">
-
-                        <TextView
-                            style="@style/basicTextView"
-                            android:layout_weight="0.15"
-                            android:gravity="start"
-                            android:text="0"
-                            android:textColor="#7C7C7C"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            style="@style/basicTextView"
-                            android:layout_weight="0.25"
-                            android:gravity="start"
-                            android:text="30"
-                            android:textColor="#7C7C7C"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            style="@style/basicTextView"
-                            android:layout_weight="0.35"
-                            android:gravity="start"
-                            android:text="80"
-                            android:textColor="#7C7C7C"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            style="@style/basicTextView"
-                            android:layout_weight="0.25"
-                            android:gravity="start"
-                            android:text="150"
-                            android:textColor="#7C7C7C"
-                            android:textSize="11sp" />
-                    </TableRow>
+                        ads:weight0="0.15"
+                        ads:weight1="0.25"
+                        ads:weight2="0.35"
+                        ads:weight3="0.25"
+                        ads:section1="30"
+                        ads:section2="80"
+                        ads:section3="150"/>
 
                     <ImageView
                         android:id="@+id/segment_progress_10_arrow"
@@ -604,7 +546,7 @@
                         android:id="@+id/nested_pm_box_view1"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_below="@+id/segment_progress_10_section"
+                        android:layout_below="@+id/segment_section_10"
                         android:layout_marginStart="14dp"
                         android:layout_marginTop="40dp"
                         android:layout_marginEnd="14dp"

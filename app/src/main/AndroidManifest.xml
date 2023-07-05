@@ -71,7 +71,7 @@
             android:exported="true" />
 
         <receiver
-            android:name=".view.widget.WidgetProvider"
+            android:name=".view.widget.WidgetProvider4x2"
             android:exported="false"
             tools:ignore="Instantiatable">
             <intent-filter>
@@ -82,7 +82,19 @@
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_provider" />
+                android:resource="@xml/widget4x2_provider" />
+        </receiver>
+
+        <receiver
+            android:name=".view.widget.WidgetProvider3x3"
+            android:exported="false"
+            tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget3x3_provider" />
         </receiver>
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

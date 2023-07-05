@@ -32,11 +32,9 @@ class WeeklyWeatherAdapter(
         val view: View = inflater.inflate(R.layout.list_item_weekly_weather, parent, false)
         when(getUserFontScale(context)) {
             "small" -> {
-//                ConvertDataType.setTextSizeLarge(view.context)
                 SetSystemInfo.setTextSizeSmall(view.context)
             }
             "big" -> {
-//                ConvertDataType.setTextSizeSmall(view.context)
                 SetSystemInfo.setTextSizeLarge(view.context)
             }
             else -> {
@@ -68,20 +66,8 @@ class WeeklyWeatherAdapter(
             minImg.setImageDrawable(dao.minImg)
             maxImg.setImageDrawable(dao.maxImg)
             minText.text = dao.minText
-//            minText.setTextColor(context.getColor(R.color.main_blue_color))
             maxText.text = dao.maxText
-//            maxText.setTextColor(context.getColor(R.color.red))
 
-//            if (mList[adapterPosition].day == "${currentDate.month.value}.${currentDate.dayOfMonth}" +
-//                "(${
-//                    ConvertDataType.convertDayOfWeekToKorean(
-//                        context,
-//                        currentDate.dayOfWeek.value
-//                    )
-//                })"
-//            ) {
-//                day.setTextColor(context.getColor(R.color.main_blue_color))
-//            }
             if (adapterPosition == 0) {
                 day.setTextColor(context.getColor(R.color.main_blue_color))
                 date.setTextColor(context.getColor(R.color.main_blue_color))
