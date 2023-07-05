@@ -20,6 +20,7 @@ class DailyWeatherAdapter(
 ) :
     RecyclerView.Adapter<DailyWeatherAdapter.ViewHolder>() {
     private val mList = list
+    private val dateSection = ArrayList<Int>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -39,7 +40,16 @@ class DailyWeatherAdapter(
             holder.date.visibility = View.INVISIBLE
         } else {
             holder.date.visibility = View.VISIBLE
+            dateSection.add(position)
         }
+    }
+
+    fun getDateSectionList(): ArrayList<Int> {
+        return dateSection
+    }
+
+    fun getDateSectionSize(): Int {
+        return dateSection.size
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

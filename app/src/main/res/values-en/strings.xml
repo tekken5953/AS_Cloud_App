@@ -111,4 +111,5 @@
     <string name="widget_reload">Fail to get data\nPlease press to update</string>
     <string name="pm">pm</string>
     <string name="widget_rainPer">강수확률 :</string>
+    <string name="theDayAfterTomorrow">모레</string>
 </resources>

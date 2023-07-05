@@ -11,12 +11,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
+import com.example.airsignal_app.dao.StaticDataObject.WEATHER_ALL_NOTI
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogNotLogin
 import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
+import com.example.airsignal_app.util.`object`.GetAppInfo.getTopicNotification
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.GetSystemInfo.androidID
@@ -41,7 +44,7 @@ class GetLocation(private val context: Context) {
             val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
             @Suppress("DEPRECATION")
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
-//            renewTopic(getTopicNotification(context, WEATHER_ALL_NOTI), "test")
+//            renewTopic(SharedPreferenceManager(context).getString(WEATHER_ALL_NOTI), "test")
             return if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
             } else { "Null Address" }

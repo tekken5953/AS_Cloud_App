@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/widget4x2MainLayout"
     android:layout_width="290dp"
-    android:layout_height="95dp"
+    android:layout_height="105dp"
     android:layout_margin="5dp"
     android:background="@drawable/widget_bg_clear"
     android:padding="@dimen/widget_margin">
@@ -59,7 +59,7 @@
         android:src="@drawable/vector"
         app:tint="@color/white"
         android:layout_toEndOf="@+id/widget4x2VerticalLine"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="9dp"
         android:layout_alignTop="@+id/widget4x2Address"
         android:layout_alignBottom="@+id/widget4x2Address"/>
 
@@ -71,7 +71,7 @@
         android:maxLines="1"
         android:maxEms="7"
         android:ellipsize="start"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="3dp"
         android:layout_marginStart="2dp"
         android:layout_alignTop="@+id/widget4x2TempValue"
         android:textColor="@color/white" />
@@ -80,7 +80,7 @@
         android:id="@+id/widget4x2SkyImg"
         android:layout_width="65dp"
         android:layout_height="65dp"
-        android:layout_marginEnd="5dp"
+        android:layout_marginEnd="7dp"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"/>
 
@@ -108,7 +108,8 @@
     <TextView
         android:id="@+id/widget4x2PmIndex"
         style="@style/basicTextView"
-        android:textSize="13sp"
+        android:textSize="12sp"
+        android:layout_marginTop="10dp"
         android:layout_alignStart="@+id/widget4x2AddressVector"
         android:layout_below="@+id/widget4x2Time"
         android:textColor="@color/white"
@@ -117,7 +118,7 @@
     <TextView
         android:id="@+id/widget4x2PmValue"
         style="@style/basicTextView"
-        android:textSize="14sp"
+        android:textSize="13sp"
         android:textColor="@color/white"
         android:layout_alignTop="@+id/widget4x2PmIndex"
         android:layout_alignBottom="@+id/widget4x2PmIndex"
@@ -127,17 +128,17 @@
     <TextView
         android:id="@+id/widget4x2RainPer"
         style="@style/basicTextView"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:layout_alignStart="@+id/widget4x2AddressVector"
-        android:layout_alignParentBottom="true"
         android:layout_below="@+id/widget4x2PmIndex"
+        android:layout_marginTop="7dp"
         android:textColor="@color/white"
         android:text="@string/widget_rainPer"/>
 
     <TextView
         android:id="@+id/widget4x2RainPerValue"
         style="@style/basicTextView"
-        android:textSize="14sp"
+        android:textSize="13sp"
         android:textColor="@color/white"
         android:layout_alignTop="@+id/widget4x2RainPer"
         android:layout_alignBottom="@+id/widget4x2RainPer"

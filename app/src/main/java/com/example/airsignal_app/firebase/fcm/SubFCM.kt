@@ -19,7 +19,8 @@ class SubFCM : FirebaseMessagingService() {
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        Timber.tag(TAG_N).d("FCM 메시지 수신")
+        Timber.tag(TAG_N).d("FCM 메시지 수신 : data : ${message.data}\n" +
+                "from : ${message.from}")
 
         val intent = Intent(this, RedirectPermissionActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP and Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -27,9 +28,7 @@ class SubFCM : FirebaseMessagingService() {
         NotificationBuilder().sendNotification(
             this,
             intent,
-            message.data.toString(),
-            "AS-Cloud FCM Test Msg",
-            System.currentTimeMillis()
+            message.data
         )
     }
 
