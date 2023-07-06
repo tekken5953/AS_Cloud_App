@@ -3,6 +3,7 @@ package com.example.airsignal_app.util.`object`
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
@@ -11,6 +12,8 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
+import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 
 
 /**
@@ -73,6 +76,27 @@ object DataTypeParser {
             if ((thunder == null) || (thunder < 0.2)) { sky!! }
             else { context.getString(R.string.thunder_rainy) }
         }
+    }
+
+    /** 어제 날씨와 오늘 날씨의 비교 값 반환 **/
+    fun getComparedTemp(yesterday: Double?, today: Double?): Double? {
+        val temp = yesterday?.let { y ->
+            today?.let { t ->
+                if (y != -100.0 && t != -100.0) {
+                    if (y > t) {
+                        ((y - t) * 10).roundToInt() / 10.0
+                    } else if (t > y) {
+                        ((t - y) * 10).roundToInt() / 10.0
+                    } else {
+                        0.0
+                    }
+                } else {
+                    null
+                }
+            }
+        }
+
+        return temp
     }
 
     /** Current의 Temperature의 에러 방지 **/

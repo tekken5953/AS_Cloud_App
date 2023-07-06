@@ -36,20 +36,17 @@ class DailyWeatherAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(mList[position])
-        if (position > 0 && mList[position - 1].date == mList[position].date) {
-            holder.date.visibility = View.INVISIBLE
-        } else {
+        if (position == 0 || mList[position - 1].date != mList[position].date) {
             holder.date.visibility = View.VISIBLE
-            dateSection.add(position)
+            if (!dateSection.contains(position))
+                dateSection.add(position)
+        } else {
+            holder.date.visibility = View.INVISIBLE
         }
     }
 
     fun getDateSectionList(): ArrayList<Int> {
         return dateSection
-    }
-
-    fun getDateSectionSize(): Int {
-        return dateSection.size
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

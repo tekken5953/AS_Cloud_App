@@ -21,6 +21,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.viewpager2.widget.ViewPager2
@@ -46,6 +47,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyText
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertDayOfWeekToKorean
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertLocalDateTimeToLong
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertTimeToMinutes
+import com.example.airsignal_app.util.`object`.DataTypeParser.getComparedTemp
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.getDataColor
 import com.example.airsignal_app.util.`object`.DataTypeParser.getRainTypeLarge
@@ -75,7 +77,6 @@ import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -322,10 +323,26 @@ class MainActivity
         }
     }
 
+    // 진동 발생
     private fun mVib() {
         vib.make(20)
     }
 
+    // 시간별 날씨 스크롤 첫번째 인덱스로 이동
+    private fun scrollSmoothFirst(position: Int) {
+        val layoutManager = binding.mainDailyWeatherRv.layoutManager
+        layoutManager?.let {
+            val smoothScroller = object : LinearSmoothScroller(this) {
+                override fun getVerticalSnapPreference(): Int {
+                    return SNAP_TO_START // 가장 첫 번째로 스크롤되도록 설정
+                }
+            }
+            smoothScroller.targetPosition = position + 4
+            it.startSmoothScroll(smoothScroller)
+        }
+    }
+
+    // 시간별 날씨 색션 컬러 변경
     private fun setSectionTextColor(t1: TextView, t2: TextView, t3: TextView) {
         t1.setTextColor(getColor(R.color.main_blue_color))
         t2.setTextColor(getColor(R.color.main_gray_color))
@@ -448,56 +465,63 @@ class MainActivity
         val tomorrowSection = binding.dailySectionTomorrow
         val afterTomorrowSection = binding.dailySectionAfterTomorrow
 
-//        todaySection.setOnClickListener {
-//            if (.size >= 1) {
-//                setSectionTextColor(todaySection,tomorrowSection,afterTomorrowSection)
-//                binding.mainDailyWeatherRv.smoothScrollToPosition(sectionList[0])
-////                binding.mainDailyWeatherRv.scrollToPosition(dailyWeatherList.lastIndex)
-//            }
-//        }
-//
-//        tomorrowSection.setOnClickListener {
-//            if (sectionList.size >= 2) {
-//                setSectionTextColor(tomorrowSection,todaySection,afterTomorrowSection)
-//                binding.mainDailyWeatherRv.smoothScrollToPosition(sectionList[1])
-//            }
-//        }
-//
-//        afterTomorrowSection.setOnClickListener {
-//            Logger.t("gggggg").d(sectionList.size)
-//            if (sectionList.size >= 3) {
-//                setSectionTextColor(afterTomorrowSection,tomorrowSection,todaySection)
-//                binding.mainDailyWeatherRv.smoothScrollToPosition(sectionList[2])
-//            }
-//        }
-
-        // 시간별 날씨 스크롤에 따른 탭 변화
-        binding.mainDailyWeatherRv.addOnScrollListener(object : OnScrollListener() {
+        val scrollListener = object : OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val sectionList = dailyWeatherAdapter.getDateSectionList()
                 super.onScrolled(recyclerView, dx, dy)
+                val sectionList = dailyWeatherAdapter.getDateSectionList()
                 // 현재 스크롤 위치 확인
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
 
                 sectionList.forEach {
                     if (firstVisibleItemPosition >= it) {
-                        when(it) {
-                            sectionList[0] -> {
-                                setSectionTextColor(todaySection,tomorrowSection,afterTomorrowSection)
-                            }
-                            sectionList[1] -> {
-                                setSectionTextColor(tomorrowSection,todaySection,afterTomorrowSection)
-                            }
-                            sectionList[2] -> {
-                                setSectionTextColor(afterTomorrowSection,todaySection,tomorrowSection)
-                            }
+                        when (it) {
+                            sectionList[0] -> { setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection) }
+                            sectionList[1] -> { setSectionTextColor(tomorrowSection, todaySection, afterTomorrowSection) }
+                            sectionList[2] -> { setSectionTextColor(afterTomorrowSection, todaySection, tomorrowSection) }
                             else -> {}
                         }
                     }
                 }
             }
-        })
+        }
+
+        // 오늘 클릭
+        todaySection.setOnClickListener {
+            val sectionList = dailyWeatherAdapter.getDateSectionList()
+            if (sectionList.size >= 1) {
+                setSectionTextColor(todaySection,tomorrowSection,afterTomorrowSection)
+                binding.mainDailyWeatherRv.smoothScrollToPosition(sectionList[0])
+            }
+        }
+
+        // 내일 클릭
+        tomorrowSection.setOnClickListener {
+            val sectionList = dailyWeatherAdapter.getDateSectionList()
+            if (sectionList.size >= 2) {
+                setSectionTextColor(tomorrowSection,todaySection,afterTomorrowSection)
+                binding.mainDailyWeatherRv.scrollToPosition(sectionList[1])
+                binding.mainDailyWeatherRv.post {
+                    scrollSmoothFirst(sectionList[1])
+                }
+            }
+        }
+
+        // 모레 클릭
+        afterTomorrowSection.setOnClickListener {
+            val sectionList = dailyWeatherAdapter.getDateSectionList()
+            if (sectionList.size >= 3) {
+                setSectionTextColor(afterTomorrowSection,tomorrowSection,todaySection)
+                binding.mainDailyWeatherRv.smoothScrollToPosition(sectionList[2])
+                binding.mainDailyWeatherRv.post {
+                    scrollSmoothFirst(sectionList[2])
+                }
+            }
+        }
+
+        // 시간별 날씨 스크롤에 따른 탭 변화
+        binding.mainDailyWeatherRv.addOnScrollListener(scrollListener)
     }
 
     // 백그라운드 위치 호출
@@ -635,7 +659,7 @@ class MainActivity
                         binding.mainSunRiseTom.text = sbRiseTom
                         binding.mainSunSetTom.text = sbSetTom
 
-                        getCompareTemp(
+                        getCompareTempText(
                             yesterday.temp!!,
                             modifyCurrentTempType(current.temperature, realtime.temp),
                             binding.mainCompareTempTv
@@ -1034,37 +1058,30 @@ class MainActivity
         }
     }
 
-    //어제와 기온 비교
+    // 어제와 기온 비교
     @SuppressLint("SetTextI18n")
-    private fun getCompareTemp(yesterday: Double?, today: Double?, tv: TextView) {
-        yesterday?.let { y ->
-            today?.let { t ->
-                if (y != -100.0 && t != -100.0) {
-                    if (y > t) {
-                        tv.visibility = VISIBLE
-                        tv.text =
-                            if (resources.configuration.locales[0] == Locale.KOREA) {
-                                "어제보다 ${((y - t).absoluteValue * 10).roundToInt() / 10.0}˚ 낮아요"
-                            } else {
-                                "${((y - t).absoluteValue * 10).roundToInt() / 10.0}˚ lower than yesterday"
-                            }
-
-                    } else if (t > y) {
-                        tv.visibility = VISIBLE
-                        tv.text =
-                            if (resources.configuration.locales[0] == Locale.KOREA) {
-                                "어제보다 ${((t - y).absoluteValue * 10).roundToInt() / 10.0} ˚ 높아요"
-                            } else {
-                                "${((y - t).absoluteValue * 10).roundToInt() / 10.0}˚ upper than yesterday"
-                            }
-
+    private fun getCompareTempText(y: Double?, t: Double?, tv: TextView) {
+        val compared = getComparedTemp(y,t)
+        compared?.let {
+            if (it < 0) {
+                tv.visibility = VISIBLE
+                tv.text =
+                    if (resources.configuration.locales[0] == Locale.KOREA) {
+                        "어제보다 ${it.absoluteValue}˚ 낮아요"
                     } else {
-                        tv.visibility = VISIBLE
-                        tv.text = getString(R.string.similar_temp)
+                        "${it.absoluteValue}˚ lower than yesterday"
                     }
-                } else {
-                    tv.visibility = GONE
-                }
+            } else if (it == 0.0) {
+                tv.visibility = VISIBLE
+                tv.text = getString(R.string.similar_temp)
+            } else {
+                tv.visibility = VISIBLE
+                tv.text =
+                    if (resources.configuration.locales[0] == Locale.KOREA) {
+                        "어제보다 ${it.absoluteValue} ˚ 높아요"
+                    } else {
+                        "${it.absoluteValue}˚ upper than yesterday"
+                    }
             }
         }
     }

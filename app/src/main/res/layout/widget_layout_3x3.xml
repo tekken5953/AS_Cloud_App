@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/widget3x3MainLayout"
-    android:layout_width="210dp"
-    android:layout_height="230dp"
-    android:layout_margin="5dp"
+    android:layout_width="205dp"
+    android:layout_height="135dp"
     android:background="@drawable/widget_bg_clear"
     android:padding="@dimen/widget_margin">
 
@@ -17,7 +15,6 @@
         android:layout_alignTop="@+id/widget3x3Address"
         android:layout_alignBottom="@+id/widget3x3Address"
         android:layout_marginStart="5dp"/>
-
 
     <TextView
         android:id="@+id/widget3x3Address"
@@ -49,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="5dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/widget_refresh" />
 
@@ -59,7 +56,7 @@
         android:layout_height="65dp"
         android:layout_below="@id/widget3x3Address"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="5dp"
         android:src="@drawable/ico_sunny" />
 
     <TextView
@@ -80,6 +77,7 @@
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/widget3x3Sky"
         android:text="25˚"
+        android:paddingBottom="4dp"
         android:paddingStart="5dp"
         android:paddingEnd="0dp"
         android:layout_above="@+id/widget3x3Humidity"
@@ -88,11 +86,11 @@
 
     <ImageView
         android:id="@+id/widget3x3HumidImg"
-        android:layout_width="15dp"
-        android:layout_height="15dp"
-        android:src="@drawable/humidity"
+        android:layout_width="17dp"
+        android:layout_height="17dp"
+        android:src="@drawable/mask"
         app:tint="@color/white"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/widget3x3Sky"
         android:layout_alignTop="@+id/widget3x3Humidity"
         android:layout_alignBottom="@+id/widget3x3Humidity"/>
@@ -103,7 +101,7 @@
         android:layout_alignBottom="@+id/widget3x3TempIndex"
         android:layout_marginTop="5dp"
         android:layout_toEndOf="@+id/widget3x3HumidImg"
-        android:text="60%"
+        android:text="보통"
         android:letterSpacing="0.0"
         android:layout_marginStart="2dp"
         android:textColor="@color/white"
@@ -113,7 +111,7 @@
         android:id="@+id/widget3x3WindImg"
         android:layout_width="15dp"
         android:layout_height="15dp"
-        android:src="@drawable/vector"
+        android:src="@drawable/humidity"
         app:tint="@color/white"
         android:layout_marginStart="15dp"
         android:layout_toEndOf="@+id/widget3x3Humidity"
@@ -125,8 +123,8 @@
         style="@style/basicTextView"
         android:layout_alignBottom="@+id/widget3x3TempIndex"
         android:layout_marginTop="5dp"
+        android:text="60%"
         android:layout_toEndOf="@+id/widget3x3WindImg"
-        android:text="4㎧"
         android:letterSpacing="0.0"
         android:layout_marginStart="2dp"
         android:textColor="@color/white"

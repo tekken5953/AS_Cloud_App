@@ -300,7 +300,7 @@
                             android:id="@+id/dailySectionToday"
                             style="@style/basicMediumTextView"
                             android:text="@string/today"
-                            android:textColor="@color/black"
+                            android:textColor="@color/main_blue_color"
                             android:textSize="14sp"/>
                         <TextView
                             android:id="@+id/dailySectionTomorrow"
