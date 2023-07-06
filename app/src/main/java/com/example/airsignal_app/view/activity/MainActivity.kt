@@ -80,6 +80,7 @@ import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -164,6 +165,9 @@ class MainActivity
             window.setBackgroundDrawableResource(R.drawable.main_bg_snow)
             createWorkManager()        // 워크 매니저 생성
         }
+
+        applyGetDataViewModel()
+        applyGetLocationViewModel()
 
         initBinding()
         binding.dataVM = getDataViewModel
@@ -361,7 +365,6 @@ class MainActivity
                 loadSavedAddr(lastAddress)
                 Logger.t("testtest").i("loadSavedAddr : $lastAddress")
             } else {
-                applyGetLocationViewModel()
                 loadLocationData()
                 Logger.t("testtest").i("loadDataResult : $lastAddress")
             }
@@ -547,6 +550,7 @@ class MainActivity
             when (entireData) {
                 is BaseRepository.ApiState.Success -> {
                     try {
+                        Timber.tag("ttestt").i("applyGetDataViewModel")
                         val result = entireData.data
                         val metaAddr = result.meta.address!!
                         reNewTopicInMain(metaAddr)
@@ -1097,6 +1101,7 @@ class MainActivity
     @SuppressLint("MissingPermission", "SuspiciousIndentation")
     private fun applyGetLocationViewModel(): MainActivity {
         getLocationViewModel.getDataResult().observe(this) { loc ->
+            Timber.tag("ttestt").i("applyGetLocationViewModel")
             hidePB()
             val lat = loc.lat!!
             val lng = loc.lng!!
@@ -1146,17 +1151,14 @@ class MainActivity
     }
 
     private fun loadCurrentViewModelData(lat: Double, lng: Double) {
-        applyGetDataViewModel()
         getDataViewModel.loadData(lat, lng, null)
     }
 
     private fun loadSavedViewModelData(addr: String) {
-        applyGetDataViewModel()
         getDataViewModel.loadData(null, null, addr)
     }
 
     private fun loadLocationData() {
-        applyGetLocationViewModel()
         getLocationViewModel.loadDataResult(this)
     }
 

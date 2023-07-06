@@ -158,12 +158,16 @@ class SearchDialog(
         // 검색주소 리스트
         listView.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                val model = GpsEntity()
-                model.name = searchItem[position]
-                model.addr = searchItem[position]
-                db.insert(model)
+                CoroutineScope(Dispatchers.Default).launch {
+                    val model = GpsEntity()
+                    model.name = searchItem[position]
+                    model.addr = searchItem[position]
+                    db.insert(model)
 
-                dbUpdate(model.addr!!)
+                    withContext(coroutineContext) {
+                        dbUpdate(model.addr)
+                    }
+                }
             }
     }
 
@@ -199,7 +203,7 @@ class SearchDialog(
     private fun dbUpdate(addr: String?) {
         CoroutineScope(Dispatchers.Default).launch {
             setUserLastAddr(activity, addr!!)
-            Logger.t("testtest").w(getUserLastAddress(activity))
+            Logger.t("ttestt").w(getUserLastAddress(activity))
             val model = GpsEntity()
             model.name = CURRENT_GPS_ID
             model.addr = addr

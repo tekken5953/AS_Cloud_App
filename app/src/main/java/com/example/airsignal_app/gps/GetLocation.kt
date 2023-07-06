@@ -45,7 +45,10 @@ class GetLocation(private val context: Context) {
             setNotificationAddress(context,notificationAddr)
 //            renewTopic(SharedPreferenceManager(context).getString(WEATHER_ALL_NOTI), "test")
             return if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
-                address[0].getAddressLine(0)
+                ("${address[0].adminArea} ${address[0].subAdminArea} ${address[0].locality}" +
+                        " ${address[0].subLocality} ${address[0].thoroughfare}")
+                    .replace("null","")
+//                address[0].getAddressLine(0)
             } else { "Null Address" }
         } catch (e: IOException) {
             Toast.makeText(context, "주소를 가져오는 도중 오류가 발생했습니다", Toast.LENGTH_SHORT).show()

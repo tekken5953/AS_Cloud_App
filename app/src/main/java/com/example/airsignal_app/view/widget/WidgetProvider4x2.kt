@@ -28,6 +28,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.getDataText
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgLarge
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgWidget
 import com.example.airsignal_app.util.`object`.GetAppInfo.getCurrentSun
+import com.example.airsignal_app.util.`object`.GetAppInfo.getNotificationAddress
 import com.example.airsignal_app.view.activity.MainActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -186,17 +187,17 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         val getLocation = GetLocation(context)
         val httpClient = HttpClient.getInstance()
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_PASSIVE, null)
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     getLocation.getAddress(it.latitude, it.longitude)?.let { addr ->
+                        Log.d(TAG_W,"loadData addOnSuccessListener 완료 : ${location.latitude},${location.longitude},$addr")
                         RDBLogcat.writeLogCause(
                             "위젯 데이터 호출 성공",
                             "onUpdate",
                             addr
                         )
                         views.setViewVisibility(R.id.widget4x2ReloadLayout, View.GONE)
-                        val addrFormat = addr.split(" ")
 
                         getLocation.updateCurrentAddress(it.latitude, it.longitude, addr)
 
@@ -215,7 +216,6 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                                         "Thread : WidgetProvider",
                                         response.body().toString()
                                     )
-                                    Logger.t(TAG_W).i("Complete Load Data")
                                     val body = response.body()
                                     val data = body!!
                                     val current = data.current
@@ -273,7 +273,10 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
                                         setTextViewText(
                                             R.id.widget4x2Address,
-                                            addrFormat[addrFormat.size - 2]
+                                            getNotificationAddress(context)
+                                                .trim()
+                                                .replace("null","")
+//                                            addrFormat[addrFormat.size - 2]
                                         )
                                     }
 

@@ -47,7 +47,7 @@
         android:id="@+id/widget4x2VerticalLine"
         android:layout_width="0.7dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="7dp"
         android:layout_marginTop="7dp"
         android:layout_marginBottom="7dp"
         android:layout_toEndOf="@+id/widget4x2TempValue"
@@ -60,27 +60,27 @@
         android:src="@drawable/vector"
         app:tint="@color/white"
         android:layout_toEndOf="@+id/widget4x2VerticalLine"
-        android:layout_marginStart="9dp"
+        android:layout_marginStart="7dp"
         android:layout_alignTop="@+id/widget4x2VerticalLine"/>
 
     <TextView
         android:id="@+id/widget4x2Address"
         style="@style/basicTextView"
         android:layout_toEndOf="@+id/widget4x2AddressVector"
-        android:autoSizeMaxTextSize="13sp"
+        android:autoSizeMaxTextSize="12sp"
         android:maxLines="1"
         android:maxEms="6"
         android:ellipsize="start"
-        android:layout_marginTop="3dp"
         android:layout_marginStart="2dp"
-        android:layout_alignTop="@+id/widget4x2VerticalLine"
+        android:layout_alignTop="@+id/widget4x2AddressVector"
+        android:layout_alignBottom="@+id/widget4x2AddressVector"
         android:textColor="@color/white" />
 
     <ImageView
         android:id="@+id/widget4x2SkyImg"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginEnd="7dp"
+        android:layout_marginEnd="5dp"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"/>
 
@@ -88,7 +88,6 @@
         android:id="@+id/widget4x2Refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
         android:layout_toEndOf="@+id/widget4x2Address"
         android:layout_alignTop="@+id/widget4x2AddressVector"
         android:layout_alignBottom="@+id/widget4x2AddressVector"
