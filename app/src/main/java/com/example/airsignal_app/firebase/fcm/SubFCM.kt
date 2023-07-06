@@ -72,9 +72,10 @@ class SubFCM : FirebaseMessagingService() {
         val encoder: Base64.Encoder = Base64.getEncoder()
         val encodedStream: String = encoder.encodeToString(new.toByteArray())
             .replace("=","").replace("+","")
-        Logger.t(TAG_N)
-            .i("reNewTopic - old : $old , new : $new , encoded : $encodedStream")
+
         if (old != encodedStream) {
+            Logger.t(TAG_N)
+                .i("reNewTopic - old : $old , new : $new , encoded : $encodedStream")
             SubFCM().unSubTopic(old).subTopic(encodedStream)
             SetAppInfo.setTopicNotification(context, encodedStream)
         }

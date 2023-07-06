@@ -51,6 +51,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.convertTimeToMinut
 import com.example.airsignal_app.util.`object`.DataTypeParser.getComparedTemp
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.getDataColor
+import com.example.airsignal_app.util.`object`.DataTypeParser.getHourCountToTomorrow
 import com.example.airsignal_app.util.`object`.DataTypeParser.getRainTypeLarge
 import com.example.airsignal_app.util.`object`.DataTypeParser.getRainTypeSmall
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgLarge
@@ -467,63 +468,50 @@ class MainActivity
         val tomorrowSection = binding.dailySectionTomorrow
         val afterTomorrowSection = binding.dailySectionAfterTomorrow
 
-        val scrollListener = object : OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val sectionList = dailyWeatherAdapter.getDateSectionList()
-                // 현재 스크롤 위치 확인
-                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-
-                sectionList.forEach {
-                    if (firstVisibleItemPosition >= it) {
-                        when (it) {
-                            sectionList[0] -> { setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection) }
-                            sectionList[1] -> { setSectionTextColor(tomorrowSection, todaySection, afterTomorrowSection) }
-                            sectionList[2] -> { setSectionTextColor(afterTomorrowSection, todaySection, tomorrowSection) }
-                            else -> {}
-                        }
-                    }
-                }
-            }
-        }
-
         // 오늘 클릭
         todaySection.setOnClickListener {
-            val sectionList = dailyWeatherAdapter.getDateSectionList()
-            if (sectionList.size >= 1) {
-                setSectionTextColor(todaySection,tomorrowSection,afterTomorrowSection)
-                binding.mainDailyWeatherRv.smoothScrollToPosition(sectionList[0])
-            }
+            setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection)
+            binding.mainDailyWeatherRv.smoothScrollToPosition(0)
         }
 
         // 내일 클릭
         tomorrowSection.setOnClickListener {
-            val sectionList = dailyWeatherAdapter.getDateSectionList()
-            if (sectionList.size >= 2) {
-                setSectionTextColor(tomorrowSection,todaySection,afterTomorrowSection)
-                binding.mainDailyWeatherRv.scrollToPosition(sectionList[1])
-                binding.mainDailyWeatherRv.post {
-                    scrollSmoothFirst(sectionList[1])
-                }
+            binding.mainDailyWeatherRv.scrollToPosition(getHourCountToTomorrow())
+            binding.mainDailyWeatherRv.post {
+                scrollSmoothFirst(getHourCountToTomorrow())
             }
         }
 
         // 모레 클릭
         afterTomorrowSection.setOnClickListener {
-            val sectionList = dailyWeatherAdapter.getDateSectionList()
-            if (sectionList.size >= 3) {
-                setSectionTextColor(afterTomorrowSection,tomorrowSection,todaySection)
-                binding.mainDailyWeatherRv.smoothScrollToPosition(sectionList[2])
-                binding.mainDailyWeatherRv.post {
-                    scrollSmoothFirst(sectionList[2])
-                }
+            binding.mainDailyWeatherRv.post{
+                scrollSmoothFirst(getHourCountToTomorrow() + 24)
             }
         }
 
         // 시간별 날씨 스크롤에 따른 탭 변화
-        binding.mainDailyWeatherRv.addOnScrollListener(scrollListener)
+        binding.mainDailyWeatherRv.addOnScrollListener(object : OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dx != 0) {
+                    val sectionList = dailyWeatherAdapter.getDateSectionList()
+                    // 현재 스크롤 위치 확인
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                    sectionList.forEach {
+                        if (firstVisibleItemPosition >= it) {
+                            when (it) {
+                                sectionList[0] -> { setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection) }
+                                sectionList[1] -> { setSectionTextColor(tomorrowSection, todaySection, afterTomorrowSection) }
+                                sectionList[2] -> { setSectionTextColor(afterTomorrowSection, todaySection, tomorrowSection) }
+                                else -> {}
+                            }
+                        }
+                    }
+                }
+            }
+        })
     }
 
     // 백그라운드 위치 호출
@@ -797,6 +785,7 @@ class MainActivity
                         }
 
                         weeklyWeatherAdapter.notifyDataSetChanged()
+                        dailyWeatherAdapter.notifyDataSetChanged()
 
                         changeTextColorStyle(
                             applySkyText(
@@ -940,7 +929,6 @@ class MainActivity
         val item = AdapterModel.DailyWeatherItem(time, img, value, date)
 
         this.dailyWeatherList.add(item)
-        dailyWeatherAdapter.notifyDataSetChanged()
     }
 
     // 시간별 날씨 리사이클러뷰 아이템 추가

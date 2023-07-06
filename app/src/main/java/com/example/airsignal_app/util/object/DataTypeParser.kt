@@ -32,6 +32,18 @@ object DataTypeParser {
         return System.currentTimeMillis()
     }
 
+    /** LocalDateTime을 Long으로 파싱 **/
+    fun parseLocalDateTimeToLong(localDateTime: LocalDateTime): Long {
+        return localDateTime.atZone(
+            // systemDefault는 현재 디바이스의 지역을 의미함
+            ZoneId.systemDefault()).toInstant().toEpochMilli()
+    }
+
+    fun getHourCountToTomorrow(): Int {
+        val currentHour = parseLongToLocalDateTime(getCurrentTime()).hour
+        return 24 - currentHour
+    }
+
     /** 위젯용 현재시간 타임포멧 **/
     fun currentDateTimeString(context: Context): String {
         @SuppressLint("SimpleDateFormat") val format =
