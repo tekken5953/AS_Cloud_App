@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
+import timber.log.Timber
 
 /**
  * @author : Lee Jae Young
@@ -20,6 +21,7 @@ class DailyWeatherAdapter(
 ) :
     RecyclerView.Adapter<DailyWeatherAdapter.ViewHolder>() {
     private val mList = list
+    private val dateSection = ArrayList<Int>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -35,11 +37,17 @@ class DailyWeatherAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(mList[position])
-        if (position > 0 && mList[position - 1].date == mList[position].date) {
-            holder.date.visibility = View.INVISIBLE
-        } else {
+        if (position == 0 || mList[position - 1].date != mList[position].date) {
             holder.date.visibility = View.VISIBLE
+            if (!dateSection.contains(position))
+                dateSection.add(position)
+        } else {
+            holder.date.visibility = View.INVISIBLE
         }
+    }
+
+    fun getDateSectionList(): ArrayList<Int> {
+        return dateSection
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

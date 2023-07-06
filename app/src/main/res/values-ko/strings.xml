@@ -109,4 +109,6 @@
     <string name="widget_pm">미세먼지 :</string>
     <string name="widget_reload">데이터를 가져오지 못했습니다\n눌러서 갱신하세요</string>
     <string name="pm">미세먼지</string>
+    <string name="widget_rainPer">강수확률 :</string>
+    <string name="theDayAfterTomorrow">모레</string>
 </resources>

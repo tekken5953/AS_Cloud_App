@@ -6,34 +6,45 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
+import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.app.NotificationCompat
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.StaticDataObject
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_CHANNEL_ID
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_CHANNEL_NAME
-import com.example.airsignal_app.db.room.repository.GpsRepository
+import com.example.airsignal_app.firebase.db.RDBLogcat
+import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyText
+import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgLarge
+import com.example.airsignal_app.util.`object`.GetAppInfo.getNotificationAddress
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
+import kotlin.math.roundToInt
 
 class NotificationBuilder {
-    fun sendNotification(context: Context, intent: Intent, data: String, title: String,time: Long) {
+    fun sendNotification(context: Context, intent: Intent, data: Map<String,String>) {
 //        // Get the layouts to use in the custom notification
 //        val notificationLayout = RemoteViews(context.packageName, R.layout.notification_small)
 //        val notificationLayoutExpanded = RemoteViews(context.packageName, R.layout.notification_large)
+//        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 //
 //        // Apply the layouts to the notification
 //        val customNotification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+//            .setAutoCancel(true)
+//            .setDefaults(Notification.DEFAULT_ALL)
+//            .setWhen(System.currentTimeMillis())
+////            .setSilent(true)
+//            .setSubText("${data["location"]}시 중원구")
 //            .setSmallIcon(R.drawable.app_icon)
-//            .setLargeIcon((ResourcesCompat.getDrawable(context.resources,R.drawable.sunny_test,null) as BitmapDrawable).bitmap)
-//            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-//            .setCustomContentView(notificationLayout)
-//            .setCustomBigContentView(notificationLayoutExpanded)
-//            .build()
+//            .setPriority(NotificationManager.IMPORTANCE_HIGH)
+//            .setContentIntent(pendingIntent)
+//            .setContentTitle("${data["temp"].toString().toDouble().roundToInt()}˚")
+//            .setContentText("최대 : ${data["max"]}˚ 최소 : ${data["min"]}˚")
+//            .setLargeIcon((ResourcesCompat.getDrawable(context.resources,R.drawable.ico_sunny,
+//                null) as BitmapDrawable).bitmap)
 
 
         val notificationManager =
@@ -52,30 +63,44 @@ class NotificationBuilder {
             enableVibration(true)
         }
 
-        val pmString = "미세먼지 나쁨"
-        val pmSpan = SpannableStringBuilder(pmString).setSpan(
-            ForegroundColorSpan(Color.RED),
-            5,pmString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE).toString()
-        val location = GpsRepository(context).findById(StaticDataObject.CURRENT_GPS_ID).addr.toString()
-        val locationSpan = SpannableStringBuilder(location).setSpan(
-            android.text.style.AbsoluteSizeSpan(10),0,location.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE).toString()
-        val data = "최고: 24˚ 최저 : 10˚"
-
         val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
 
-        notificationBuilder.setAutoCancel(true)
+        RDBLogcat.writeLogCause(
+            getUserEmail(context),
+            "Notification",
+            data.toString()
+        )
+
+        notificationBuilder
+            .setAutoCancel(true)
             .setDefaults(Notification.DEFAULT_ALL)
-            .setWhen(time)
+            .setWhen(System.currentTimeMillis())
+//            .setSilent(true)
+            .setSubText(getNotificationAddress(context))
             .setSmallIcon(R.drawable.app_icon)
             .setPriority(NotificationManager.IMPORTANCE_HIGH)
             .setContentIntent(pendingIntent)
-            .setContentTitle(title)
-            .setContentText(data)
-            .setLargeIcon((ResourcesCompat.getDrawable(context.resources,R.drawable.sm_good,null) as BitmapDrawable).bitmap)
+            .setContentTitle("${parseStringToDoubleToInt(data["temp"].toString())}˚")
+            .setContentText("최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
+                    "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚")
+            .setLargeIcon(getSkyImg(context,
+                data["rainType"]!!,data["sky"]!!, data["thunder"]!!.toDouble()))
 
         notificationManager!!.run {
             createNotificationChannel(notificationChannel)
             notify(1, notificationBuilder.build())
         }
+    }
+
+    private fun getSkyImg(context: Context, rain: String?, sky: String?, thunder: Double?): Bitmap? {
+        val bitmapDrawable = getSkyImgLarge(context,
+            applySkyText(context, rain, sky, thunder),
+            false) as BitmapDrawable
+
+        return bitmapDrawable.bitmap
+    }
+
+    private fun parseStringToDoubleToInt(s: String): Int {
+        return s.toDouble().roundToInt()
     }
 }

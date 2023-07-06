@@ -3,13 +3,18 @@ package com.example.airsignal_app.util.`object`
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
 import java.text.SimpleDateFormat
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
+import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
+
 
 /**
  * @author : Lee Jae Young
@@ -25,6 +30,18 @@ object DataTypeParser {
     /** 현재시간 불러오기 **/
     fun getCurrentTime(): Long {
         return System.currentTimeMillis()
+    }
+
+    /** LocalDateTime을 Long으로 파싱 **/
+    fun parseLocalDateTimeToLong(localDateTime: LocalDateTime): Long {
+        return localDateTime.atZone(
+            // systemDefault는 현재 디바이스의 지역을 의미함
+            ZoneId.systemDefault()).toInstant().toEpochMilli()
+    }
+
+    fun getHourCountToTomorrow(): Int {
+        val currentHour = parseLongToLocalDateTime(getCurrentTime()).hour
+        return 24 - currentHour
     }
 
     /** 위젯용 현재시간 타임포멧 **/
@@ -71,6 +88,27 @@ object DataTypeParser {
             if ((thunder == null) || (thunder < 0.2)) { sky!! }
             else { context.getString(R.string.thunder_rainy) }
         }
+    }
+
+    /** 어제 날씨와 오늘 날씨의 비교 값 반환 **/
+    fun getComparedTemp(yesterday: Double?, today: Double?): Double? {
+        val temp = yesterday?.let { y ->
+            today?.let { t ->
+                if (y != -100.0 && t != -100.0) {
+                    if (y > t) {
+                        ((y - t) * 10).roundToInt() / 10.0
+                    } else if (t > y) {
+                        ((t - y) * 10).roundToInt() / 10.0
+                    } else {
+                        0.0
+                    }
+                } else {
+                    null
+                }
+            }
+        }
+
+        return temp
     }
 
     /** Current의 Temperature의 에러 방지 **/
@@ -215,8 +253,8 @@ object DataTypeParser {
     /** 위젯 하늘에 따른 배경 **/
     fun getSkyImgWidget(sky: String?, progress: Int): Int {
         return when (sky) {
-            "맑음", "구름많음", -> {
-                if(getIsNight(progress)) R.drawable.widget_bg_night
+            "맑음", "구름많음" -> {
+                if (getIsNight(progress)) R.drawable.widget_bg_night
                 else R.drawable.widget_bg_clear
             }
             else -> {
@@ -325,5 +363,10 @@ object DataTypeParser {
     fun convertLocalDateTimeToLong(localDateTime: LocalDateTime): Long {
         return localDateTime.atZone(
             ZoneId.systemDefault()).toInstant().toEpochMilli()
+    }
+
+    /** Long을 LocalDateTime으로 파싱 **/
+    fun parseLongToLocalDateTime(long: Long): LocalDateTime {
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(long), ZoneId.systemDefault())
     }
 }

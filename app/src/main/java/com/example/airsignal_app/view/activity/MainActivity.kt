@@ -20,6 +20,10 @@ import android.widget.LinearLayout.LayoutParams
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.viewpager2.widget.ViewPager2
 import androidx.work.*
 import com.example.airsignal_app.R
@@ -35,6 +39,7 @@ import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.admob.AdViewClass
 import com.example.airsignal_app.firebase.db.RDBLogcat
+import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.login.SilentLoginClass
 import com.example.airsignal_app.repo.BaseRepository
@@ -43,8 +48,10 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyText
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertDayOfWeekToKorean
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertLocalDateTimeToLong
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertTimeToMinutes
+import com.example.airsignal_app.util.`object`.DataTypeParser.getComparedTemp
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.getDataColor
+import com.example.airsignal_app.util.`object`.DataTypeParser.getHourCountToTomorrow
 import com.example.airsignal_app.util.`object`.DataTypeParser.getRainTypeLarge
 import com.example.airsignal_app.util.`object`.DataTypeParser.getRainTypeSmall
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgLarge
@@ -58,6 +65,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.translateUV
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.GetAppInfo.getEntireSun
 import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
+import com.example.airsignal_app.util.`object`.GetAppInfo.getTopicNotification
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.example.airsignal_app.util.`object`.SetAppInfo.removeSingleKey
@@ -72,6 +80,7 @@ import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -156,6 +165,9 @@ class MainActivity
             window.setBackgroundDrawableResource(R.drawable.main_bg_snow)
             createWorkManager()        // 워크 매니저 생성
         }
+
+        applyGetDataViewModel()
+        applyGetLocationViewModel()
 
         initBinding()
         binding.dataVM = getDataViewModel
@@ -318,8 +330,30 @@ class MainActivity
         }
     }
 
+    // 진동 발생
     private fun mVib() {
         vib.make(20)
+    }
+
+    // 시간별 날씨 스크롤 첫번째 인덱스로 이동
+    private fun scrollSmoothFirst(position: Int) {
+        val layoutManager = binding.mainDailyWeatherRv.layoutManager
+        layoutManager?.let {
+            val smoothScroller = object : LinearSmoothScroller(this) {
+                override fun getVerticalSnapPreference(): Int {
+                    return SNAP_TO_START // 가장 첫 번째로 스크롤되도록 설정
+                }
+            }
+            smoothScroller.targetPosition = position + 4
+            it.startSmoothScroll(smoothScroller)
+        }
+    }
+
+    // 시간별 날씨 색션 컬러 변경
+    private fun setSectionTextColor(t1: TextView, t2: TextView, t3: TextView) {
+        t1.setTextColor(getColor(R.color.main_blue_color))
+        t2.setTextColor(getColor(R.color.main_gray_color))
+        t3.setTextColor(getColor(R.color.main_gray_color))
     }
 
     // 날씨 데이터 API 호출
@@ -331,7 +365,6 @@ class MainActivity
                 loadSavedAddr(lastAddress)
                 Logger.t("testtest").i("loadSavedAddr : $lastAddress")
             } else {
-                applyGetLocationViewModel()
                 loadLocationData()
                 Logger.t("testtest").i("loadDataResult : $lastAddress")
             }
@@ -432,6 +465,56 @@ class MainActivity
             binding.adViewBox.layoutParams = layoutParams
             binding.nestedAdView.visibility = GONE
         }
+
+        // 특정 포지션을 감지하고 처리
+        val todaySection = binding.dailySectionToday
+        val tomorrowSection = binding.dailySectionTomorrow
+        val afterTomorrowSection = binding.dailySectionAfterTomorrow
+
+        // 오늘 클릭
+        todaySection.setOnClickListener {
+            setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection)
+            binding.mainDailyWeatherRv.smoothScrollToPosition(0)
+        }
+
+        // 내일 클릭
+        tomorrowSection.setOnClickListener {
+            binding.mainDailyWeatherRv.scrollToPosition(getHourCountToTomorrow())
+            binding.mainDailyWeatherRv.post {
+                scrollSmoothFirst(getHourCountToTomorrow())
+            }
+        }
+
+        // 모레 클릭
+        afterTomorrowSection.setOnClickListener {
+            binding.mainDailyWeatherRv.post{
+                scrollSmoothFirst(getHourCountToTomorrow() + 24)
+            }
+        }
+
+        // 시간별 날씨 스크롤에 따른 탭 변화
+        binding.mainDailyWeatherRv.addOnScrollListener(object : OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dx != 0) {
+                    val sectionList = dailyWeatherAdapter.getDateSectionList()
+                    // 현재 스크롤 위치 확인
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+
+                    sectionList.forEach {
+                        if (firstVisibleItemPosition >= it) {
+                            when (it) {
+                                sectionList[0] -> { setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection) }
+                                sectionList[1] -> { setSectionTextColor(tomorrowSection, todaySection, afterTomorrowSection) }
+                                sectionList[2] -> { setSectionTextColor(afterTomorrowSection, todaySection, tomorrowSection) }
+                                else -> {}
+                            }
+                        }
+                    }
+                }
+            }
+        })
     }
 
     // 백그라운드 위치 호출
@@ -454,6 +537,12 @@ class MainActivity
         }, 2000)
     }
 
+    // 토픽을 갱신하는 작업
+    private fun reNewTopicInMain(newAddr: String) {
+        val oldAddr = getTopicNotification(this)
+        SubFCM().renewTopic(this, oldAddr, newAddr)
+    }
+
     // 뷰모델에서 Observing 한 데이터 결과 적용
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel(): MainActivity {
@@ -461,7 +550,10 @@ class MainActivity
             when (entireData) {
                 is BaseRepository.ApiState.Success -> {
                     try {
+                        Timber.tag("ttestt").i("applyGetDataViewModel")
                         val result = entireData.data
+                        val metaAddr = result.meta.address!!
+                        reNewTopicInMain(metaAddr)
 
                         val realtime = result.realtime[0]
                         val sun = result.sun
@@ -512,7 +604,7 @@ class MainActivity
                                     modifyCurrentRainType(current.rainType, realtime.rainType),
                                     realtime.sky,
                                     thunder
-                                )!!
+                                )
                             )
                         }
 
@@ -569,7 +661,7 @@ class MainActivity
                         binding.mainSunRiseTom.text = sbRiseTom
                         binding.mainSunSetTom.text = sbSetTom
 
-                        getCompareTemp(
+                        getCompareTempText(
                             yesterday.temp!!,
                             modifyCurrentTempType(current.temperature, realtime.temp),
                             binding.mainCompareTempTv
@@ -626,6 +718,7 @@ class MainActivity
                             binding.nestedReportFrame.visibility = VISIBLE
                         }
 
+
                         for (i: Int in 0 until result.realtime.size) {
                             val dailyIndex = result.realtime[i]
                             val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
@@ -635,7 +728,6 @@ class MainActivity
                                 100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(sun.sunrise)) /
                                         getEntireSun(sun.sunrise, sun.sunset)
                             val isNight = getIsNight(dailySunProgress)
-
                             if (i == result.realtime.lastIndex + 1) {
                                 break
                             } else if (i == 0) {
@@ -648,7 +740,7 @@ class MainActivity
                                     "${
                                         modifyCurrentTempType(
                                             current.temperature, realtime.temp
-                                        )!!.roundToInt()
+                                        ).roundToInt()
                                     }˚",
                                     convertDateAppendZero(forecastToday)
                                 )
@@ -695,14 +787,16 @@ class MainActivity
                                 e.printStackTrace()
                             }
                         }
+
                         weeklyWeatherAdapter.notifyDataSetChanged()
                         dailyWeatherAdapter.notifyDataSetChanged()
+
                         changeTextColorStyle(
                             applySkyText(
                                 this,
                                 modifyCurrentRainType(current.rainType, realtime.rainType),
                                 realtime.sky, thunder
-                            )!!,
+                            ),
                             getIsNight(currentSun)
                         )
                         runOnUiThread { hidePB() }
@@ -966,37 +1060,30 @@ class MainActivity
         }
     }
 
-    //어제와 기온 비교
+    // 어제와 기온 비교
     @SuppressLint("SetTextI18n")
-    private fun getCompareTemp(yesterday: Double?, today: Double?, tv: TextView) {
-        yesterday?.let { y ->
-            today?.let { t ->
-                if (y != -100.0 && t != -100.0) {
-                    if (y > t) {
-                        tv.visibility = VISIBLE
-                        tv.text =
-                            if (resources.configuration.locales[0] == Locale.KOREA) {
-                                "어제보다 ${((y - t).absoluteValue * 10).roundToInt() / 10.0}˚ 낮아요"
-                            } else {
-                                "${((y - t).absoluteValue * 10).roundToInt() / 10.0}˚ lower than yesterday"
-                            }
-
-                    } else if (t > y) {
-                        tv.visibility = VISIBLE
-                        tv.text =
-                            if (resources.configuration.locales[0] == Locale.KOREA) {
-                                "어제보다 ${((t - y).absoluteValue * 10).roundToInt() / 10.0} ˚ 높아요"
-                            } else {
-                                "${((y - t).absoluteValue * 10).roundToInt() / 10.0}˚ upper than yesterday"
-                            }
-
+    private fun getCompareTempText(y: Double?, t: Double?, tv: TextView) {
+        val compared = getComparedTemp(y,t)
+        compared?.let {
+            if (it < 0) {
+                tv.visibility = VISIBLE
+                tv.text =
+                    if (resources.configuration.locales[0] == Locale.KOREA) {
+                        "어제보다 ${it.absoluteValue}˚ 낮아요"
                     } else {
-                        tv.visibility = VISIBLE
-                        tv.text = getString(R.string.similar_temp)
+                        "${it.absoluteValue}˚ lower than yesterday"
                     }
-                } else {
-                    tv.visibility = GONE
-                }
+            } else if (it == 0.0) {
+                tv.visibility = VISIBLE
+                tv.text = getString(R.string.similar_temp)
+            } else {
+                tv.visibility = VISIBLE
+                tv.text =
+                    if (resources.configuration.locales[0] == Locale.KOREA) {
+                        "어제보다 ${it.absoluteValue} ˚ 높아요"
+                    } else {
+                        "${it.absoluteValue}˚ upper than yesterday"
+                    }
             }
         }
     }
@@ -1012,8 +1099,9 @@ class MainActivity
 
     // 현재 위치정보를 받아오고 데이터 갱신
     @SuppressLint("MissingPermission", "SuspiciousIndentation")
-    private fun applyGetLocationViewModel() {
+    private fun applyGetLocationViewModel(): MainActivity {
         getLocationViewModel.getDataResult().observe(this) { loc ->
+            Timber.tag("ttestt").i("applyGetLocationViewModel")
             hidePB()
             val lat = loc.lat!!
             val lng = loc.lng!!
@@ -1059,20 +1147,18 @@ class MainActivity
                 ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
             }
         }
+        return this
     }
 
     private fun loadCurrentViewModelData(lat: Double, lng: Double) {
-        applyGetDataViewModel()
         getDataViewModel.loadData(lat, lng, null)
     }
 
     private fun loadSavedViewModelData(addr: String) {
-        applyGetDataViewModel()
         getDataViewModel.loadData(null, null, addr)
     }
 
     private fun loadLocationData() {
-        applyGetLocationViewModel()
         getLocationViewModel.loadDataResult(this)
     }
 

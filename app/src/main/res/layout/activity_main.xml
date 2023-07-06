@@ -287,6 +287,37 @@
                         android:textSize="18sp"
                         app:drawableStartCompat="@drawable/ico_time" />
 
+                    <TableRow
+                        android:id="@+id/mainDailyWeatherSectionTR"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginStart="10dp"
+                        android:layout_alignBottom="@+id/mainDailyWeatherTitle"
+                        android:layout_toEndOf="@+id/mainDailyWeatherTitle">
+
+                        <TextView
+                            android:id="@+id/dailySectionToday"
+                            style="@style/basicMediumTextView"
+                            android:text="@string/today"
+                            android:textColor="@color/main_blue_color"
+                            android:textSize="14sp"/>
+                        <TextView
+                            android:id="@+id/dailySectionTomorrow"
+                            style="@style/basicMediumTextView"
+                            android:text="@string/tomorrow"
+                            android:textColor="@color/main_gray_color"
+                            android:textSize="14sp"
+                            android:layout_marginStart="9dp"/>
+                        <TextView
+                            android:id="@+id/dailySectionAfterTomorrow"
+                            style="@style/basicMediumTextView"
+                            android:textColor="@color/main_gray_color"
+                            android:text="@string/theDayAfterTomorrow"
+                            android:textSize="14sp"
+                            android:layout_marginStart="9dp"/>
+                    </TableRow>
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/mainDailyWeatherRv"
                         android:layout_width="match_parent"

@@ -36,6 +36,17 @@ class ApiModel {
 //    data class PutBookMark(val starred: Boolean)
 //    data class RefreshToken(val refresh: String?)
 
+    data class MetaData(
+        @SerializedName("address")
+        val address: String?,
+        @SerializedName("address1")
+        val address1: String?,
+        @SerializedName("address2")
+        val address2: String?,
+        @SerializedName("address3")
+        val address3: String?
+    )
+
     data class RealTimeData(
         @SerializedName("base")
         val base: String?,
@@ -289,6 +300,8 @@ class ApiModel {
     )
 
     data class GetEntireData(
+        @SerializedName("metadata")
+        val meta: MetaData,
         @SerializedName("realtime")
         val realtime: List<RealTimeData>,
         @SerializedName("week")
@@ -333,7 +346,9 @@ class ApiModel {
 
     data class Widget4x2Realtime(
         @SerializedName("sky")
-        val sky: String?
+        val sky: String?,
+        @SerializedName("rainProbability")
+        val rainP: Double?
     )
 
     data class Widget4x2Data(
