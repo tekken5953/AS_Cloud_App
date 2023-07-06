@@ -10,6 +10,7 @@ import android.os.*
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -30,10 +31,12 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.*
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
+import com.example.airsignal_app.dao.StaticDataObject
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.NOT_SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.TAG_R
+import com.example.airsignal_app.dao.StaticDataObject.WEATHER_ALL_NOTI
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
@@ -63,9 +66,11 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.translateUV
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.GetAppInfo.getEntireSun
 import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
+import com.example.airsignal_app.util.`object`.GetAppInfo.getTopicNotification
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.example.airsignal_app.util.`object`.SetAppInfo.removeSingleKey
+import com.example.airsignal_app.util.`object`.SetAppInfo.setTopicNotification
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
@@ -544,6 +549,13 @@ class MainActivity
         }, 2000)
     }
 
+    // 토픽을 갱신하는 작업
+    private fun reNewTopicInMain(newAddr: String) {
+        val oldAddr = getTopicNotification(this)
+        setTopicNotification(this, newAddr)
+        locationClass.renewTopic(oldAddr, newAddr)
+    }
+
     // 뷰모델에서 Observing 한 데이터 결과 적용
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel(): MainActivity {
@@ -552,6 +564,8 @@ class MainActivity
                 is BaseRepository.ApiState.Success -> {
                     try {
                         val result = entireData.data
+                        val metaAddr = result.meta.address!!
+                        reNewTopicInMain(metaAddr)
 
                         val realtime = result.realtime[0]
                         val sun = result.sun

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.location.*
 import android.location.LocationListener
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.airsignal_app.R
@@ -99,7 +100,7 @@ class GetLocation(private val context: Context) {
     }
 
     /** 현재 위치 토픽 갱신 **/
-    private fun renewTopic(old: String, new: String) {
+    fun renewTopic(old: String, new: String) {
         SubFCM().unSubTopic(old).subTopic(new)
         setTopicNotification(context, new)
     }
@@ -119,6 +120,8 @@ class GetLocation(private val context: Context) {
                     isSuccess = "WorkManager Location",
                     log = "새로운 위치 : ${latitude},${longitude} : ${getAddress(latitude,longitude)}"
                 )
+
+//                renewTopic(getTopicNotification(context), )
             }
             override fun onProviderEnabled(provider: String) {}
             override fun onProviderDisabled(provider: String) {}

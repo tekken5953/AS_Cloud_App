@@ -63,8 +63,8 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getString(IgnoredKeyFile.loginVerificationCode)
     }
 
-    fun getTopicNotification(context: Context, topic: String): String {
-        return SharedPreferenceManager(context).getString(topic)
+    fun getTopicNotification(context: Context): String {
+        return SharedPreferenceManager(context).getString("Notification_All")
     }
 
     fun getEntireSun(sunRise: String, sunSet: String): Int {
