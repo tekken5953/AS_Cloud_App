@@ -132,7 +132,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         }
     }
 
-    private fun <T> failToFetchData(context: Context, t: T, views: RemoteViews) {
+    private fun <T> failToFetchData(context: Context, t: T, views: RemoteViews, title: String) {
 
         Toast.makeText(context, "데이터 호출 실패", Toast.LENGTH_SHORT)
             .show()
@@ -146,7 +146,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 t.localizedMessage?.let { it1 ->
                     RDBLogcat.writeLogCause(
                         "ANR 발생",
-                        "Thread : WidgetProvider",
+                        "Thread : WidgetProvider - $title",
                         it1
                     )
                 }
@@ -156,7 +156,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 t.localizedMessage?.let { it1 ->
                     RDBLogcat.writeLogCause(
                         "ANR 발생",
-                        "Thread : WidgetProvider",
+                        "Thread : WidgetProvider - $title",
                         it1
                     )
                 }
@@ -164,7 +164,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
             else -> {
                 RDBLogcat.writeLogCause(
                     "ANR 발생",
-                    "Thread : WidgetProvider",
+                    "Thread : WidgetProvider - $title",
                     t.toString()
                 )
             }
@@ -279,7 +279,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
                                     fetch(context, views)
                                 } catch (e: Exception) {
-                                    failToFetchData(context, e, views)
+                                    failToFetchData(context, e, views, "onResponse - catch")
                                 }
                             }
 
@@ -287,13 +287,13 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                                 call: Call<ApiModel.Widget4x2Data>,
                                 t: Throwable
                             ) {
-                                failToFetchData(context, t, views)
+                                failToFetchData(context, t, views, "onFailure")
                             }
                         })
                     }
                 }
             }.addOnFailureListener {
-                failToFetchData(context, it, views)
+                failToFetchData(context, it, views, "addOnFailureListener")
             }
     }
 }
