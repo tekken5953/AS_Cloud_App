@@ -11,6 +11,7 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userFontScale
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
+import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import com.example.airsignal_app.dao.StaticDataObject.WEATHER_ALL_NOTI
 import com.example.airsignal_app.db.SharedPreferenceManager
 
@@ -87,5 +88,9 @@ object GetAppInfo {
 
     fun getIsNight(progress: Int): Boolean {
         return progress >= 100 || progress < 0
+    }
+
+    fun getNotificationAddress(context: Context): String {
+        return SharedPreferenceManager(context).getString(NOTIFICATION_ADDRESS)
     }
 }

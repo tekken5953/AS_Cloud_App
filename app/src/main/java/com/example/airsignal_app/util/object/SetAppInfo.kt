@@ -11,6 +11,7 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
+import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import com.example.airsignal_app.dao.StaticDataObject.WEATHER_ALL_NOTI
 import com.example.airsignal_app.db.SharedPreferenceManager
 
@@ -78,5 +79,9 @@ object SetAppInfo {
 
     fun setTopicNotification(context: Context, topic: String) {
         SharedPreferenceManager(context).setString("Notification_All", topic)
+    }
+
+    fun setNotificationAddress(context: Context, addr: String?) {
+        SharedPreferenceManager(context).setString(NOTIFICATION_ADDRESS, addr!!)
     }
 }
