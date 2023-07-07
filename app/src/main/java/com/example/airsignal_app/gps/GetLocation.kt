@@ -15,6 +15,7 @@ import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogNotLogin
+import com.example.airsignal_app.util.`object`.DataTypeParser.getAddressDefault
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetSystemInfo
@@ -42,12 +43,12 @@ class GetLocation(private val context: Context) {
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             val notificationAddr = "${address[0].locality} ${address[0].subLocality}"
                 .replace("null","")
-            setNotificationAddress(context,notificationAddr)
+            setNotificationAddress(context, notificationAddr)
+            setUserLastAddr(context, address[0].getAddressLine(0))
 //            renewTopic(SharedPreferenceManager(context).getString(WEATHER_ALL_NOTI), "test")
+            Timber.tag("testtest").d(getAddressDefault(address[0]))
             return if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
-//                ("${address[0].adminArea} ${address[0].subAdminArea} ${address[0].locality}" +
-//                        " ${address[0].subLocality} ${address[0].thoroughfare}")
-//                    .replace("null","")
+//                getAddressDefault(address[0])
                 address[0].getAddressLine(0)
             } else { "Null Address" }
         } catch (e: IOException) {

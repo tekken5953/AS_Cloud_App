@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.room.AppDataBase.Companion.getInstance
 import com.example.airsignal_app.db.room.model.GpsEntity
+import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -14,17 +15,16 @@ import timber.log.Timber
  **/
 class GpsRepository(private val context: Context) {
 
-    @OptIn(DelicateCoroutinesApi::class)
     fun update(model: GpsEntity) {
-        GlobalScope.launch(Dispatchers.Default) {
+        CoroutineScope(Dispatchers.Default).launch {
             getInstance(context)!!.gpsRepository().updateCurrentGPS(model)
             Logger.t(TAG_D).d("Update Model : $model")
+            Timber.tag("ReAddrTest").i("GpsRepository update : ${model.addr}")
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     fun insert(model: GpsEntity) {
-        GlobalScope.launch(Dispatchers.Default) {
+        CoroutineScope(Dispatchers.Default).launch {
             getInstance(context)!!.gpsRepository().insertNewGPS(model)
             Logger.t(TAG_D).d("insert Model : $model")
         }

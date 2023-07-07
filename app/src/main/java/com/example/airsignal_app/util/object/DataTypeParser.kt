@@ -3,6 +3,7 @@ package com.example.airsignal_app.util.`object`
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.location.Address
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
@@ -288,6 +289,12 @@ object DataTypeParser {
     /** Double을 지정 자릿수에서 반올림 **/
     fun convertDoubleToDecimal(double: Double, digit: Int): String {
         return String.format("%.${digit}f", double)
+    }
+    
+    /** 주소 추출 **/
+    fun getAddressDefault(address: Address): String {
+        return "${address.adminArea} ${address.subAdminArea} ${address.locality}" +
+                " ${address.subLocality} ${address.thoroughfare}".replace("null","")
     }
 
     /** 요일 변환 **/

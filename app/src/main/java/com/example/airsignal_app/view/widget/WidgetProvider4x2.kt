@@ -31,6 +31,8 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getCurrentSun
 import com.example.airsignal_app.util.`object`.GetAppInfo.getNotificationAddress
 import com.example.airsignal_app.util.`object`.GetSystemInfo.getDeviceWidth
 import com.example.airsignal_app.view.activity.MainActivity
+import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_ENABLE
+import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.orhanobut.logger.Logger
@@ -86,7 +88,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         appWidgetManager.getAppWidgetInfo(appWidgetIds[0]).minWidth = getDeviceWidth(context)
 
         val refreshBtnIntent = Intent(context, WidgetProvider4x2::class.java)
-        refreshBtnIntent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        refreshBtnIntent.action = WIDGET_UPDATE
         val pendingRefresh: PendingIntent =
             PendingIntent.getBroadcast(context, 0, refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
 
@@ -127,8 +129,8 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
         intent.action?.let {
             when(it) {
-                AppWidgetManager.ACTION_APPWIDGET_UPDATE,
-                AppWidgetManager.ACTION_APPWIDGET_ENABLED -> {
+                WIDGET_UPDATE,
+                WIDGET_ENABLE -> {
                     loadData(context)
                 }
                 else -> {}
@@ -165,7 +167,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         }
     }
 
-    private fun <T> failToFetchData(context: Context, t: T, views: RemoteViews, title: String) {
+    private fun <T> failToFetchData(t: T, views: RemoteViews, title: String) {
 
 //        Toast.makeText(context, "데이터 호출 실패", Toast.LENGTH_SHORT).show()
         changeVisibility(views, true)
@@ -199,8 +201,6 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 )
             }
         }
-
-        fetch(context, views)
     }
 
     private fun fetch(context: Context, views: RemoteViews) {
@@ -309,7 +309,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
                                     fetch(context, views)
                                 } catch (e: Exception) {
-                                    failToFetchData(context, e, views, "onResponse - catch")
+                                    failToFetchData(e, views, "onResponse - catch")
                                 }
                             }
 
@@ -317,13 +317,13 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                                 call: Call<ApiModel.Widget4x2Data>,
                                 t: Throwable
                             ) {
-                                failToFetchData(context, t, views, "onFailure")
+                                failToFetchData(t, views, "onFailure")
                             }
                         })
                     }
                 }
             }.addOnFailureListener {
-                failToFetchData(context, it, views, "addOnFailureListener")
+                failToFetchData(it, views, "addOnFailureListener")
             }
     }
 }
