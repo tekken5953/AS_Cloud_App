@@ -65,12 +65,6 @@ class NotificationBuilder {
 
         val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
 
-        RDBLogcat.writeLogCause(
-            getUserEmail(context),
-            "Notification",
-            data.toString()
-        )
-
         notificationBuilder
             .setAutoCancel(true)
             .setDefaults(Notification.DEFAULT_ALL)

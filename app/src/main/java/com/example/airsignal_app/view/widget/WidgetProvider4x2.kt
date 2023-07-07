@@ -29,6 +29,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgLarge
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgWidget
 import com.example.airsignal_app.util.`object`.GetAppInfo.getCurrentSun
 import com.example.airsignal_app.util.`object`.GetAppInfo.getNotificationAddress
+import com.example.airsignal_app.util.`object`.GetSystemInfo.getDeviceWidth
 import com.example.airsignal_app.view.activity.MainActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -44,6 +45,11 @@ import kotlin.math.roundToInt
 
 
 open class WidgetProvider4x2 : AppWidgetProvider() {
+    private var httpClient = HttpClient
+
+    init {
+        httpClient = HttpClient.getInstance()
+    }
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
@@ -77,6 +83,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     ) {
 
         val views4x2 = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
+        appWidgetManager.getAppWidgetInfo(appWidgetIds[0]).minWidth = getDeviceWidth(context)
 
         val refreshBtnIntent = Intent(context, WidgetProvider4x2::class.java)
         refreshBtnIntent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
@@ -122,25 +129,47 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
             when(it) {
                 AppWidgetManager.ACTION_APPWIDGET_UPDATE,
                 AppWidgetManager.ACTION_APPWIDGET_ENABLED -> {
-                    Log.d(TAG_W,"리시브 액션 진입")
-                    CoroutineScope(Dispatchers.Default).launch {
-                        Log.d(TAG_W,"리시브 코루틴 호출")
-                        loadData(context)
-                    }
+                    loadData(context)
                 }
-                else -> {Log.w(TAG_W,"리시브 액션 진입 실패")}
+                else -> {}
             }
+        }
+    }
+
+    private fun changeVisibility(views: RemoteViews, isReload: Boolean) {
+        val list = listOf(R.id.widget4x2Address,R.id.widget4x2PmValue,R.id.widget4x2RainPerValue,
+        R.id.widget4x2AddressVector,R.id.widget4x2RainPer,R.id.widget4x2PmIndex,R.id.widget4x2Refresh,
+        R.id.widget4x2VerticalLine,R.id.widget4x2SkyImg,R.id.widget4x2TempValue,R.id.widget4x2TempIndex)
+        if (isReload) {
+            list.forEach {
+                views.setViewVisibility(
+                    it,
+                    View.GONE
+                )
+            }
+            views.setViewVisibility(
+                R.id.widget4x2ReloadLayout,
+                View.VISIBLE
+            )
+        } else {
+            list.forEach {
+                views.setViewVisibility(
+                    it,
+                    View.VISIBLE
+                )
+            }
+            views.setViewVisibility(
+                R.id.widget4x2ReloadLayout,
+                View.GONE
+            )
         }
     }
 
     private fun <T> failToFetchData(context: Context, t: T, views: RemoteViews, title: String) {
 
-        Toast.makeText(context, "데이터 호출 실패", Toast.LENGTH_SHORT)
-            .show()
-        views.setViewVisibility(
-            R.id.widget4x2ReloadLayout,
-            View.VISIBLE
-        )
+//        Toast.makeText(context, "데이터 호출 실패", Toast.LENGTH_SHORT).show()
+        changeVisibility(views, true)
+
         when (t) {
             is java.lang.Exception -> {
                 t.printStackTrace()
@@ -185,19 +214,17 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     private fun loadData(context: Context) {
         val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
         val getLocation = GetLocation(context)
-        val httpClient = HttpClient.getInstance()
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_PASSIVE, null)
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
             .addOnSuccessListener { location: Location? ->
                 location?.let {
                     getLocation.getAddress(it.latitude, it.longitude)?.let { addr ->
-                        Log.d(TAG_W,"loadData addOnSuccessListener 완료 : ${location.latitude},${location.longitude},$addr")
                         RDBLogcat.writeLogCause(
                             "위젯 데이터 호출 성공",
                             "onUpdate",
                             addr
                         )
-                        views.setViewVisibility(R.id.widget4x2ReloadLayout, View.GONE)
+                        changeVisibility(views, false)
 
                         getLocation.updateCurrentAddress(it.latitude, it.longitude, addr)
 
@@ -275,7 +302,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                                             R.id.widget4x2Address,
                                             getNotificationAddress(context)
                                                 .trim()
-                                                .replace("null","")
+                                                .replace("null", "")
 //                                            addrFormat[addrFormat.size - 2]
                                         )
                                     }

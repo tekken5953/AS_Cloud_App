@@ -366,7 +366,7 @@ object DataTypeParser {
     }
 
     /** Long을 LocalDateTime으로 파싱 **/
-    fun parseLongToLocalDateTime(long: Long): LocalDateTime {
+    private fun parseLongToLocalDateTime(long: Long): LocalDateTime {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(long), ZoneId.systemDefault())
     }
 }

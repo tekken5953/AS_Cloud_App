@@ -3,6 +3,7 @@ package com.example.airsignal_app.firebase.fcm
 import android.content.Context
 import android.content.Intent
 import com.example.airsignal_app.dao.StaticDataObject.TAG_N
+import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.util.`object`.SetAppInfo
 import com.example.airsignal_app.view.activity.RedirectPermissionActivity
 import com.google.android.gms.tasks.OnCompleteListener
@@ -25,6 +26,12 @@ class SubFCM : FirebaseMessagingService() {
         Timber.tag(TAG_N).d(
             "FCM 메시지 수신 : data : ${message.data}\n" +
                     "from : ${message.from}"
+        )
+
+        RDBLogcat.writeLogCause(
+            "Notification",
+            message.from!!,
+            message.data.toString()
         )
 
         val intent = Intent(this, RedirectPermissionActivity::class.java)
