@@ -37,6 +37,13 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    distribution {
+        // 필수 입력값 제공
+        internalSharing {
+            // 설정 내용
+        }
+    }
 }
 
 dependencies {
