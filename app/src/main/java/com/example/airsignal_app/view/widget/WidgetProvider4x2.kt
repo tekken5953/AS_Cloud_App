@@ -7,7 +7,6 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.graphics.drawable.BitmapDrawable
 import android.location.Location
 import android.os.Bundle
@@ -45,6 +44,8 @@ import kotlin.math.roundToInt
 
 open class WidgetProvider4x2 : AppWidgetProvider() {
 
+    lateinit var httpClient: HttpClient
+
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
@@ -66,10 +67,14 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         newOptions: Bundle
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        newOptions.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH,
-            newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH))
-        newOptions.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT,
-            newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT))
+        newOptions.putInt(
+            AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH,
+            newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
+        )
+        newOptions.putInt(
+            AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT,
+            newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
+        )
     }
 
     // 위젯 메타 데이터를 구성 할 때 updatePeriodMillis 라는 업데이트 주기 값을 설정하게 되며, 이 주기에 따라 호출 됩니다.
@@ -87,9 +92,9 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
             PendingIntent.getBroadcast(context, 0, refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
-            .let {
-                it.action = "enterApplication"
-                PendingIntent.getActivity(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
+            .let { intent ->
+                intent.action = "enterApplication"
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
             }
 
         views4x2.apply {
@@ -97,6 +102,8 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
             setOnClickPendingIntent(R.id.widget4x2Refresh, pendingRefresh)
             setOnClickPendingIntent(R.id.widget4x2ReloadLayout, pendingRefresh)
         }
+
+        pendingRefresh.send()
 
         appWidgetManager.updateAppWidget(appWidgetIds, views4x2)
     }
@@ -119,7 +126,8 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         intent.action?.let {
-            when(it) {
+            when (it) {
+                WIDGET_ENABLE,
                 WIDGET_UPDATE
                 -> {
                     Timber.tag(TAG_W)
@@ -137,9 +145,19 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     }
 
     private fun changeVisibility(context: Context, views: RemoteViews, isReload: Boolean) {
-        val list = listOf(R.id.widget4x2Address,R.id.widget4x2PmValue,R.id.widget4x2RainPerValue,
-        R.id.widget4x2AddressVector,R.id.widget4x2RainPer,R.id.widget4x2PmIndex,R.id.widget4x2Refresh,
-        R.id.widget4x2VerticalLine,R.id.widget4x2SkyImg,R.id.widget4x2TempValue,R.id.widget4x2TempIndex)
+        val list = listOf(
+            R.id.widget4x2Address,
+            R.id.widget4x2PmValue,
+            R.id.widget4x2RainPerValue,
+            R.id.widget4x2AddressVector,
+            R.id.widget4x2RainPer,
+            R.id.widget4x2PmIndex,
+            R.id.widget4x2Refresh,
+            R.id.widget4x2VerticalLine,
+            R.id.widget4x2SkyImg,
+            R.id.widget4x2TempValue,
+            R.id.widget4x2TempIndex
+        )
         if (isReload) {
             list.forEach {
                 views.setViewVisibility(
@@ -178,8 +196,8 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 t.printStackTrace()
                 t.localizedMessage?.let { it1 ->
                     RDBLogcat.writeLogCause(
-                        "ANR 발생",
-                        "Thread : WidgetProvider - $title",
+                        "Widget",
+                        "Error - $title",
                         it1
                     )
                 }
@@ -189,7 +207,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 t.localizedMessage?.let { it1 ->
                     RDBLogcat.writeLogCause(
                         "ANR 발생",
-                        "Thread : WidgetProvider - $title",
+                        "Error - $title",
                         it1
                     )
                 }
@@ -197,7 +215,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
             else -> {
                 RDBLogcat.writeLogCause(
                     "ANR 발생",
-                    "Thread : WidgetProvider - $title",
+                    "Error - $title",
                     t.toString()
                 )
             }
@@ -211,138 +229,151 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         appWidgetManager.updateAppWidget(componentName, views)
     }
 
-    private fun getIsNight(forecastTime: String,sunRise: String, sunSet: String): Boolean {
+    private fun getIsNight(forecastTime: String, sunRise: String, sunSet: String): Boolean {
         val forecastToday = LocalDateTime.parse(forecastTime)
         val dailyTime =
-            DataTypeParser.millsToString(DataTypeParser.convertLocalDateTimeToLong(forecastToday),
-                "HHmm")
+            DataTypeParser.millsToString(
+                DataTypeParser.convertLocalDateTimeToLong(forecastToday),
+                "HHmm"
+            )
         val dailySunProgress =
-        100 * (DataTypeParser.convertTimeToMinutes(dailyTime) - DataTypeParser.convertTimeToMinutes(
-            sunRise
-        )) / GetAppInfo.getEntireSun(sunRise, sunSet)
+            100 * (DataTypeParser.convertTimeToMinutes(dailyTime) - DataTypeParser.convertTimeToMinutes(
+                sunRise
+            )) / GetAppInfo.getEntireSun(sunRise, sunSet)
 
         return GetAppInfo.getIsNight(dailySunProgress)
     }
 
     @SuppressLint("MissingPermission")
     private fun loadData(context: Context) {
+        httpClient = HttpClient.getInstance(true).setClientBuilder()
         val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
         val getLocation = GetLocation(context)
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
         fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    getLocation.getAddress(it.latitude, it.longitude)?.let { addr ->
-                        RDBLogcat.writeLogCause(
-                            "위젯 데이터 호출 성공",
-                            "onUpdate",
-                            addr
-                        )
-                        changeVisibility(context, views, false)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    task.result?.let { location ->
+                        Timber.tag(TAG_W).d("addOnCompleteListener")
+                        getLocation.getAddress(location.latitude, location.longitude)?.let { addr ->
+                            RDBLogcat.writeLogCause(
+                                "Widget",
+                                "Address",
+                                addr
+                            )
+                            changeVisibility(context, views, false)
 
-                        getLocation.updateCurrentAddress(it.latitude, it.longitude, addr)
+                            getLocation.updateCurrentAddress(
+                                location.latitude,
+                                location.longitude,
+                                addr
+                            )
 
-                        val getDataResponse: Call<ApiModel.Widget4x2Data> =
-                            HttpClient.getInstance(true)
-                                .mMyAPIImpl.getWidgetForecast(it.latitude, it.longitude, 1)
-
-                        getDataResponse.enqueue(object :
-                            Callback<ApiModel.Widget4x2Data> {
-                            override fun onResponse(
-                                call: Call<ApiModel.Widget4x2Data>,
-                                response: Response<ApiModel.Widget4x2Data>
-                            ) {
-                                try {
-                                    RDBLogcat.writeLogCause(
-                                        "위젯 데이터 호출 성공",
-                                        "Thread : WidgetProvider",
-                                        response.body().toString()
-                                    )
-                                    val body = response.body()
-                                    val data = body!!
-                                    val current = data.current
-                                    val thunder = data.thunder
-                                    val sun = data.sun
-                                    val realtime = data.realtime[0]
-                                    val skyText = applySkyText(
-                                        context,
-                                        current.rainType!!,
-                                        realtime.sky,
-                                        thunder
+                            val getDataResponse: Call<ApiModel.Widget4x2Data> =
+                                httpClient.mMyAPIImpl.getWidgetForecast(
+                                        location.latitude,
+                                        location.longitude,
+                                        1
                                     )
 
-                                    views.apply {
-                                        setViewVisibility(R.id.widget4x2ReloadLayout, View.GONE)
+                            getDataResponse.enqueue(object :
+                                Callback<ApiModel.Widget4x2Data> {
+                                override fun onResponse(
+                                    call: Call<ApiModel.Widget4x2Data>,
+                                    response: Response<ApiModel.Widget4x2Data>
+                                ) {
+                                    try {
+                                        RDBLogcat.writeLogCause(
+                                            "Widget",
+                                            "Success Call Data",
+                                            response.body().toString()
+                                        )
+                                        val body = response.body()
+                                        val data = body!!
+                                        val current = data.current
+                                        val thunder = data.thunder
+                                        val sun = data.sun
+                                        val realtime = data.realtime[0]
+                                        val skyText = applySkyText(
+                                            context,
+                                            current.rainType!!,
+                                            realtime.sky,
+                                            thunder
+                                        )
 
-                                        setInt(
-                                            R.id.widget4x2MainLayout, "setBackgroundResource",
-                                            getSkyImgWidget(
-                                                skyText,
-                                                getCurrentSun(sun.sunrise!!, sun.sunset!!)
+                                        views.apply {
+                                            setViewVisibility(R.id.widget4x2ReloadLayout, View.GONE)
+
+                                            setInt(
+                                                R.id.widget4x2MainLayout, "setBackgroundResource",
+                                                getSkyImgWidget(
+                                                    skyText,
+                                                    getCurrentSun(sun.sunrise!!, sun.sunset!!)
+                                                )
                                             )
-                                        )
 
-                                        setTextViewText(
-                                            R.id.widget4x2Time,
-                                            DataTypeParser.millsToString(
-                                                getCurrentTime(),
-                                                "HH시 mm분"
+                                            setTextViewText(
+                                                R.id.widget4x2Time,
+                                                DataTypeParser.millsToString(
+                                                    getCurrentTime(),
+                                                    "HH시 mm분"
+                                                )
                                             )
-                                        )
 
-                                        setTextViewText(
-                                            R.id.widget4x2TempValue,
-                                            "${current.temperature!!.roundToInt()}˚"
-                                        )
+                                            setTextViewText(
+                                                R.id.widget4x2TempValue,
+                                                "${current.temperature!!.roundToInt()}˚"
+                                            )
 
-                                        setTextViewText(
-                                            R.id.widget4x2RainPerValue,
-                                            "${realtime.rainP!!.toInt()}%"
-                                        )
+                                            setTextViewText(
+                                                R.id.widget4x2RainPerValue,
+                                                "${realtime.rainP!!.toInt()}%"
+                                            )
 
-                                        setTextViewText(
-                                            R.id.widget4x2PmValue,
-                                            getDataText(data.quality.pm10Grade1h!!).trim()
-                                        )
+                                            setTextViewText(
+                                                R.id.widget4x2PmValue,
+                                                getDataText(data.quality.pm10Grade1h!!).trim()
+                                            )
 
-                                        setTextViewText(R.id.widget4x2TempIndex, skyText)
+                                            setTextViewText(R.id.widget4x2TempIndex, skyText)
 
-                                        setImageViewBitmap(
-                                            R.id.widget4x2SkyImg,
-                                            (getSkyImgLarge(context, skyText,
-                                                getIsNight(
-                                                    forecastTime = realtime.forecast!!,
-                                                    sunRise = sun.sunrise,
-                                                    sunSet = sun.sunset))
-                                                    as BitmapDrawable).bitmap
-                                        )
+                                            setImageViewBitmap(
+                                                R.id.widget4x2SkyImg,
+                                                (getSkyImgLarge(
+                                                    context, skyText,
+                                                    getIsNight(
+                                                        forecastTime = realtime.forecast!!,
+                                                        sunRise = sun.sunrise,
+                                                        sunSet = sun.sunset
+                                                    )
+                                                )
+                                                        as BitmapDrawable).bitmap
+                                            )
 
-                                        setTextViewText(
-                                            R.id.widget4x2Address,
-                                            getNotificationAddress(context)
-                                                .trim()
-                                                .replace("null", "")
-//                                            addrFormat[addrFormat.size - 2]
-                                        )
+                                            setTextViewText(
+                                                R.id.widget4x2Address,
+                                                getNotificationAddress(context).trim()
+                                            )
 
-                                        fetch(context, views)
+                                            fetch(context, views)
+                                        }
+                                    } catch (e: Exception) {
+                                        failToFetchData(context, e, views, "onResponse - catch")
                                     }
-                                } catch (e: Exception) {
-                                    failToFetchData(context, e, views, "onResponse - catch")
                                 }
-                            }
 
-                            override fun onFailure(
-                                call: Call<ApiModel.Widget4x2Data>,
-                                t: Throwable
-                            ) {
-                                failToFetchData(context, t, views, "onFailure")
-                            }
-                        })
+                                override fun onFailure(
+                                    call: Call<ApiModel.Widget4x2Data>,
+                                    t: Throwable
+                                ) {
+                                    failToFetchData(context, t, views, "onFailure")
+                                }
+                            })
+                        }
                     }
+                } else {
+                    failToFetchData(context, task.exception, views, "is Not Successful")
                 }
-            }.addOnFailureListener {
-                failToFetchData(context, it, views, "addOnFailureListener")
             }
     }
 }

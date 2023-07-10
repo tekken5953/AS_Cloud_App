@@ -61,7 +61,8 @@
         app:tint="@color/white"
         android:layout_toEndOf="@+id/widget4x2VerticalLine"
         android:layout_marginStart="7dp"
-        android:layout_alignTop="@+id/widget4x2VerticalLine"/>
+        android:layout_alignTop="@+id/widget4x2Address"
+        android:layout_alignBottom="@+id/widget4x2Address"/>
 
     <TextView
         android:id="@+id/widget4x2Address"
@@ -72,8 +73,8 @@
         android:maxEms="6"
         android:ellipsize="start"
         android:layout_marginStart="2dp"
-        android:layout_alignTop="@+id/widget4x2AddressVector"
-        android:layout_alignBottom="@+id/widget4x2AddressVector"
+        android:gravity="center"
+        android:layout_alignTop="@+id/widget4x2VerticalLine"
         android:textColor="@color/white" />
 
     <ImageView

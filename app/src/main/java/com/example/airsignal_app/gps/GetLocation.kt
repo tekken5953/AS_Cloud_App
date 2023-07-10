@@ -44,9 +44,8 @@ class GetLocation(private val context: Context) {
             val notificationAddr = "${address[0].locality} ${address[0].subLocality}"
                 .replace("null","")
             setNotificationAddress(context, notificationAddr)
-            setUserLastAddr(context, address[0].getAddressLine(0))
+            setUserLastAddr(context, formattingFullAddress(address[0].getAddressLine(0)))
 //            renewTopic(SharedPreferenceManager(context).getString(WEATHER_ALL_NOTI), "test")
-            Timber.tag("testtest").d(getAddressDefault(address[0]))
             return if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
 //                getAddressDefault(address[0])
                 address[0].getAddressLine(0)
@@ -59,11 +58,14 @@ class GetLocation(private val context: Context) {
                 "Error : ${e.localizedMessage}"
             )
             return context.getString(R.string.address)
+        } catch (e: IndexOutOfBoundsException) {
+            Toast.makeText(context, "주소를 가져오는 도중 오류가 발생했습니다", Toast.LENGTH_SHORT).show()
+            return context.getString(R.string.address)
         }
     }
 
     /** getAddressLine으로 불러온 주소 포멧**/
-    fun formattingFullAddress(fullAddr: String): String {
+    private fun formattingFullAddress(fullAddr: String): String {
         val addressParts = fullAddr.split(" ").toTypedArray() // 공백을 기준으로 주소 요소 분리
         var formattedAddress = ""
         for (i in 0 until addressParts.size - 1) {

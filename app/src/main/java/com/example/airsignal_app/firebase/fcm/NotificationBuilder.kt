@@ -74,7 +74,8 @@ class NotificationBuilder {
             .setSmallIcon(R.drawable.app_icon)
             .setPriority(NotificationManager.IMPORTANCE_HIGH)
             .setContentIntent(pendingIntent)
-            .setContentTitle("${parseStringToDoubleToInt(data["temp"].toString())}˚")
+            .setContentTitle("${parseStringToDoubleToInt(data["temp"].toString())}˚ ·" +
+                    " ${applySkyText(context,data["rainType"],data["sky"],data["thunder"]!!.toDouble())}")
             .setContentText("최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
                     "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚")
             .setLargeIcon(getSkyImg(context,

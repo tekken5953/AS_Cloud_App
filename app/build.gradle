@@ -37,16 +37,10 @@ android {
     buildFeatures {
         viewBinding true
     }
-
-    distribution {
-        // 필수 입력값 제공
-        internalSharing {
-            // 설정 내용
-        }
-    }
 }
 
 dependencies {
+    implementation 'androidx.test.ext:junit-ktx:1.1.5'
     modules {
         module("org.jetbrains.kotlin:kotlin-stdlib-jdk7") {
             replacedBy("org.jetbrains.kotlin:kotlin-stdlib", "kotlin-stdlib-jdk7 is now part of kotlin-stdlib")
@@ -64,6 +58,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     // Mockito
     testImplementation 'org.mockito:mockito-core:3.5.9'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.0"
 
     // Google Login
     implementation 'com.google.android.gms:play-services-auth:20.6.0' // 구글 어스

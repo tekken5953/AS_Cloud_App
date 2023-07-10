@@ -3,17 +3,17 @@ package com.example.airsignal_app.util.`object`
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.icu.util.ChineseCalendar
 import android.location.Address
-import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
+import com.orhanobut.logger.Logger
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
-import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 
@@ -91,6 +91,45 @@ object DataTypeParser {
         }
     }
 
+    fun getLunarDate(): Int {
+        val cal = LocalDateTime.now()
+        val cc = ChineseCalendar()
+        cc.set(cal.year,cal.monthValue,cal.dayOfMonth)
+        return cc.get(ChineseCalendar.DAY_OF_MONTH)
+    }
+
+    private fun applyLunarImg(): Int {
+        return when (getLunarDate()) {
+            29,30,1 -> {
+                R.drawable.moon_sak
+            }
+            2,3,4,5,6 -> {
+                R.drawable.moon_cho
+            }
+            7,8,9 -> {
+                R.drawable.moon_sang_d
+            }
+            10,11,12,13 -> {
+                R.drawable.moon_sang_m
+            }
+            14,15,16 -> {
+                R.drawable.moon_bo
+            }
+            17,18,19 -> {
+                R.drawable.moon_ha_d
+            }
+            20,21,22,23-> {
+                R.drawable.moon_ha_m
+            }
+            24,25,26,27,28 -> {
+                R.drawable.moon_g
+            }
+            else -> {
+                R.drawable.main_moon
+            }
+        }
+    }
+
     /** 어제 날씨와 오늘 날씨의 비교 값 반환 **/
     fun getComparedTemp(yesterday: Double?, today: Double?): Double? {
         val temp = yesterday?.let { y ->
@@ -153,7 +192,7 @@ object DataTypeParser {
                 if (!isNight) {
                     ResourcesCompat.getDrawable(context.resources, R.drawable.ico_sunny, null)
                 } else {
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.main_moon, null)
+                    ResourcesCompat.getDrawable(context.resources, applyLunarImg(), null)
                 }
             }
             "구름많음" -> {
@@ -293,8 +332,14 @@ object DataTypeParser {
     
     /** 주소 추출 **/
     fun getAddressDefault(address: Address): String {
+        Logger.t("testtest").i("${address.adminArea} ${address.subAdminArea} ${address.locality}" +
+                " ${address.subLocality} ${address.thoroughfare} ${address.subThoroughfare} ${address.featureName}"
+                    .replace(" null "," ")
+                    .trim())
         return "${address.adminArea} ${address.subAdminArea} ${address.locality}" +
-                " ${address.subLocality} ${address.thoroughfare}".replace("null","")
+                " ${address.subLocality} ${address.thoroughfare} ${address.subThoroughfare}"
+                    .replace(" null "," ")
+                    .trim()
     }
 
     /** 요일 변환 **/

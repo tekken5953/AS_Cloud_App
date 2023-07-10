@@ -30,7 +30,7 @@ object GetSystemInfo {
     fun getLocale(context: Context): Locale {
         return when (getUserLocation(context)) {
             "korean" -> {
-                Locale.KOREA
+                Locale.KOREAN
             }
             "english" -> {
                 Locale.ENGLISH
