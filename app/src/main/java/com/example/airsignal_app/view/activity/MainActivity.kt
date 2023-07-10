@@ -167,8 +167,6 @@ class MainActivity
             createWorkManager()        // 워크 매니저 생성
         }
 
-        Timber.tag("ReAddrTest").i("onCreate Main")
-
         initBinding()
         binding.dataVM = getDataViewModel
         binding.locationVM = getLocationViewModel
@@ -254,6 +252,12 @@ class MainActivity
                 getDataSingleTime()
             }
         })
+
+        binding.mainTopBarGpsTitle.requestFocus()
+        binding.mainTopBarGpsTitle.setOnFocusChangeListener { v, hasFocus ->
+            v.isSelected = hasFocus
+        }
+        binding.mainTopBarGpsTitleScroll.isHorizontalScrollBarEnabled = false
 
         // 플러스 모양 추가시 주소등록 다이얼로그
         binding.mainAddAddress.setOnClickListener(object : OnSingleClickListener() {
@@ -363,10 +367,8 @@ class MainActivity
             val lastAddress = getUserLastAddress(this)
             if (addrArray.contains(lastAddress)) {
                 loadSavedAddr(lastAddress)
-                Timber.tag("ReAddrTest").i("loadSavedAddr : $lastAddress")
             } else {
                 loadLocationData()
-                Timber.tag("ReAddrTest").i("loadDataResult : $lastAddress")
             }
             // TimeOut
             HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
@@ -1319,12 +1321,8 @@ class MainActivity
 
         if (!isNight) {
             when (sky) {
-                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> {
-                    black()
-                }
-                else -> {
-                    white()
-                }
+                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> { black() }
+                else -> { white() }
             }
         } else {
             white()

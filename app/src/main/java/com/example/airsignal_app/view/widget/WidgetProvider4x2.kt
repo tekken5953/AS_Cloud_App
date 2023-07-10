@@ -7,13 +7,12 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.drawable.BitmapDrawable
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
-import android.widget.Toast
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
 import com.example.airsignal_app.firebase.db.RDBLogcat
@@ -27,31 +26,25 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.getDataText
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgLarge
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgWidget
+import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.GetAppInfo.getCurrentSun
 import com.example.airsignal_app.util.`object`.GetAppInfo.getNotificationAddress
-import com.example.airsignal_app.util.`object`.GetSystemInfo.getDeviceWidth
 import com.example.airsignal_app.view.activity.MainActivity
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_ENABLE
+import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_OPTIONS_CHANGED
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.orhanobut.logger.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
+import java.time.LocalDateTime
 import kotlin.math.roundToInt
 
 
 open class WidgetProvider4x2 : AppWidgetProvider() {
-    private var httpClient = HttpClient
 
-    init {
-        httpClient = HttpClient.getInstance()
-    }
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
@@ -73,7 +66,10 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         newOptions: Bundle
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        Timber.tag(TAG_W).i("onAppWidgetOptionsChanged")
+        newOptions.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH,
+            newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH))
+        newOptions.putInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT,
+            newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT))
     }
 
     // 위젯 메타 데이터를 구성 할 때 updatePeriodMillis 라는 업데이트 주기 값을 설정하게 되며, 이 주기에 따라 호출 됩니다.
@@ -83,9 +79,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-
         val views4x2 = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
-        appWidgetManager.getAppWidgetInfo(appWidgetIds[0]).minWidth = getDeviceWidth(context)
 
         val refreshBtnIntent = Intent(context, WidgetProvider4x2::class.java)
         refreshBtnIntent.action = WIDGET_UPDATE
@@ -124,21 +118,25 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     // 앱의 브로드캐스트를 수신하며 해당 메서드를 통해 각 브로드캐스트에 맞게 메서드를 호출한다.
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        Timber.tag(TAG_W)
-            .i("onReceive : ${currentDateTimeString(context)} intent : ${intent.action}")
-
         intent.action?.let {
             when(it) {
-                WIDGET_UPDATE,
-                WIDGET_ENABLE -> {
+                WIDGET_UPDATE
+                -> {
+                    Timber.tag(TAG_W)
+                        .i("onReceive : ${currentDateTimeString(context)} intent : ${intent.action}")
                     loadData(context)
+                }
+                WIDGET_OPTIONS_CHANGED
+                -> {
+                    Timber.tag(TAG_W)
+                        .i("onReceive : Options were changed")
                 }
                 else -> {}
             }
         }
     }
 
-    private fun changeVisibility(views: RemoteViews, isReload: Boolean) {
+    private fun changeVisibility(context: Context, views: RemoteViews, isReload: Boolean) {
         val list = listOf(R.id.widget4x2Address,R.id.widget4x2PmValue,R.id.widget4x2RainPerValue,
         R.id.widget4x2AddressVector,R.id.widget4x2RainPer,R.id.widget4x2PmIndex,R.id.widget4x2Refresh,
         R.id.widget4x2VerticalLine,R.id.widget4x2SkyImg,R.id.widget4x2TempValue,R.id.widget4x2TempIndex)
@@ -153,6 +151,8 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 R.id.widget4x2ReloadLayout,
                 View.VISIBLE
             )
+
+            fetch(context, views)
         } else {
             list.forEach {
                 views.setViewVisibility(
@@ -164,13 +164,14 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 R.id.widget4x2ReloadLayout,
                 View.GONE
             )
+            fetch(context, views)
         }
     }
 
-    private fun <T> failToFetchData(t: T, views: RemoteViews, title: String) {
+    private fun <T> failToFetchData(context: Context, t: T, views: RemoteViews, title: String) {
 
 //        Toast.makeText(context, "데이터 호출 실패", Toast.LENGTH_SHORT).show()
-        changeVisibility(views, true)
+        changeVisibility(context, views, true)
 
         when (t) {
             is java.lang.Exception -> {
@@ -210,6 +211,19 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         appWidgetManager.updateAppWidget(componentName, views)
     }
 
+    private fun getIsNight(forecastTime: String,sunRise: String, sunSet: String): Boolean {
+        val forecastToday = LocalDateTime.parse(forecastTime)
+        val dailyTime =
+            DataTypeParser.millsToString(DataTypeParser.convertLocalDateTimeToLong(forecastToday),
+                "HHmm")
+        val dailySunProgress =
+        100 * (DataTypeParser.convertTimeToMinutes(dailyTime) - DataTypeParser.convertTimeToMinutes(
+            sunRise
+        )) / GetAppInfo.getEntireSun(sunRise, sunSet)
+
+        return GetAppInfo.getIsNight(dailySunProgress)
+    }
+
     @SuppressLint("MissingPermission")
     private fun loadData(context: Context) {
         val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
@@ -224,12 +238,13 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                             "onUpdate",
                             addr
                         )
-                        changeVisibility(views, false)
+                        changeVisibility(context, views, false)
 
                         getLocation.updateCurrentAddress(it.latitude, it.longitude, addr)
 
                         val getDataResponse: Call<ApiModel.Widget4x2Data> =
-                            httpClient.mMyAPIImpl.getWidgetForecast(it.latitude, it.longitude, 1)
+                            HttpClient.getInstance(true)
+                                .mMyAPIImpl.getWidgetForecast(it.latitude, it.longitude, 1)
 
                         getDataResponse.enqueue(object :
                             Callback<ApiModel.Widget4x2Data> {
@@ -294,7 +309,11 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
                                         setImageViewBitmap(
                                             R.id.widget4x2SkyImg,
-                                            (getSkyImgLarge(context, skyText, false)
+                                            (getSkyImgLarge(context, skyText,
+                                                getIsNight(
+                                                    forecastTime = realtime.forecast!!,
+                                                    sunRise = sun.sunrise,
+                                                    sunSet = sun.sunset))
                                                     as BitmapDrawable).bitmap
                                         )
 
@@ -305,11 +324,11 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                                                 .replace("null", "")
 //                                            addrFormat[addrFormat.size - 2]
                                         )
-                                    }
 
-                                    fetch(context, views)
+                                        fetch(context, views)
+                                    }
                                 } catch (e: Exception) {
-                                    failToFetchData(e, views, "onResponse - catch")
+                                    failToFetchData(context, e, views, "onResponse - catch")
                                 }
                             }
 
@@ -317,13 +336,13 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                                 call: Call<ApiModel.Widget4x2Data>,
                                 t: Throwable
                             ) {
-                                failToFetchData(t, views, "onFailure")
+                                failToFetchData(context, t, views, "onFailure")
                             }
                         })
                     }
                 }
             }.addOnFailureListener {
-                failToFetchData(it, views, "addOnFailureListener")
+                failToFetchData(context, it, views, "addOnFailureListener")
             }
     }
 }

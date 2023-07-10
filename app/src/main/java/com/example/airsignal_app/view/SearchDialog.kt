@@ -21,7 +21,6 @@ import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.util.KeyboardController
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertAddress
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
-import com.example.airsignal_app.util.`object`.GetAppInfo.getNotificationAddress
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
@@ -29,9 +28,7 @@ import com.example.airsignal_app.util.`object`.SetSystemInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 
 /**
@@ -106,7 +103,6 @@ class SearchDialog(
                     CoroutineScope(Dispatchers.Default).launch {
                         val currentAddr = currentList[position].replace("null", "")
                         dbUpdate(currentAddr)
-                        Timber.tag("ReAddrTest").i("currentAdapterClicked : $currentAddr")
 
                         withContext(Dispatchers.Main) {
                             dismissNow()
@@ -217,7 +213,6 @@ class SearchDialog(
 
     private suspend fun dbUpdate(addr: String?) {
         withContext(Dispatchers.Default) {
-            Timber.tag("ReAddrTest").i("dbUpdate : ${getUserLastAddress(activity)}")
             val model = GpsEntity()
             model.name = CURRENT_GPS_ID
             model.addr = addr
