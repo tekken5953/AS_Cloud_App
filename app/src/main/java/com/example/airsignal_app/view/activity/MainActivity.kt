@@ -44,6 +44,7 @@ import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.login.SilentLoginClass
 import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.util.*
+import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyImg
 import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyText
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertDayOfWeekToKorean
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertLocalDateTimeToLong
@@ -375,7 +376,7 @@ class MainActivity
                 if (isProgressed()) {
                     hidePB()
                 }
-            }, 1000 * 7)
+            }, 1000 * 9)
         }
     }
 
@@ -672,6 +673,7 @@ class MainActivity
 
                             binding.mainSkyImg.setImageDrawable(
                                 applySkyImg(
+                                    this,
                                     modifyCurrentRainType(current.rainType, realtime.rainType),
                                     realtime.sky, thunder,
                                     isLarge = true, isNight = getIsNight(currentSun)
@@ -737,6 +739,7 @@ class MainActivity
                                     addDailyWeatherItem(
                                         "${forecastToday.hour}${getString(R.string.hour)}",
                                         applySkyImg(
+                                            this,
                                             modifyCurrentRainType(current.rainType, realtime.rainType),
                                             dailyIndex.sky, thunder, isLarge = false, isNight = isNight
                                         )!!,
@@ -751,6 +754,7 @@ class MainActivity
                                     addDailyWeatherItem(
                                         "${forecastToday.hour}${getString(R.string.hour)}",
                                         applySkyImg(
+                                            this,
                                             dailyIndex.rainType, dailyIndex.sky, thunder,
                                             isLarge = false, isNight = isNight
                                         )!!,
@@ -957,45 +961,6 @@ class MainActivity
 //            component = ComponentName(this@MainActivity, WidgetProvider::class.java)
 //        })
 //    }
-
-    // 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지
-    private fun applySkyImg(
-        rain: String?,
-        sky: String?,
-        thunder: Double?,
-        isLarge: Boolean,
-        isNight: Boolean?
-    ): Drawable? {
-        return if (rain != "없음") {
-            if ((thunder == null) || (thunder < 0.2)) {
-                if (isLarge) {
-                    getRainTypeLarge(this, rain!!)!!
-                } else {
-                    getRainTypeSmall(this, rain!!)!!
-                }
-            } else {
-                ResourcesCompat.getDrawable(resources, R.drawable.ico_thunder, null)
-            }
-        } else {
-            if ((thunder == null) || (thunder < 0.2)) {
-                if (isLarge) {
-                    if (isNight!!) {
-                        getSkyImgLarge(this, sky!!, isNight)!!
-                    } else {
-                        getSkyImgLarge(this, sky!!, isNight)!!
-                    }
-                } else {
-                    if (isNight!!) {
-                        getSkyImgSmall(this, sky!!, isNight)!!
-                    } else {
-                        getSkyImgSmall(this, sky!!, isNight)!!
-                    }
-                }
-            } else {
-                ResourcesCompat.getDrawable(resources, R.drawable.ico_thunder_rain, null)
-            }
-        }
-    }
 
     // 날짜가 한자리일 때 앞에 0 붙이기
     private fun convertDateAppendZero(dateTime: LocalDateTime): String {

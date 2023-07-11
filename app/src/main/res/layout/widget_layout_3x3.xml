@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/widget3x3MainLayout"
     android:layout_width="205dp"
     android:layout_height="135dp"
     android:background="@drawable/widget_bg_clear"
@@ -31,7 +30,6 @@
         android:textSize="13sp"/>
 
     <TextView
-        android:id="@+id/widget3x3Time"
         style="@style/basicTextView"
         android:layout_alignTop="@+id/widget3x3Address"
         android:layout_alignBottom="@+id/widget3x3Address"
@@ -41,7 +39,6 @@
         android:textSize="11sp"/>
 
     <ImageView
-        android:id="@+id/widget3x3Refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -71,7 +68,6 @@
         android:textSize="13sp" />
 
     <TextView
-        android:id="@+id/widget3x3TempLive"
         style="@style/basicTextView"
         android:layout_alignTop="@+id/widget3x3Sky"
         android:layout_alignParentEnd="true"
@@ -119,7 +115,6 @@
         android:layout_alignBottom="@+id/widget3x3Humidity"/>
 
     <TextView
-        android:id="@+id/widget3x3Wind"
         style="@style/basicTextView"
         android:layout_alignBottom="@+id/widget3x3TempIndex"
         android:layout_marginTop="5dp"

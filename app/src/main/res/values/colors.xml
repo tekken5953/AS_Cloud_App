@@ -38,7 +38,6 @@
     <color name="black_overlay">#66000000</color>
 
     <color name="mode_black_color">#000000</color>
-    <color name="mode_black_90">#903D3D3D</color>
 
     <color name="uv_low">#94F532</color>
     <color name="uv_normal">#FCD53A</color>
@@ -48,9 +47,5 @@
 
     <color name="bg_black_color">#3D3D3D</color>
     <color name="ripple_white">#B4cccccc</color>
-    <color name="light_blue_400">#FF29B6F6</color>
-    <color name="light_blue_600">#FF039BE5</color>
-    <color name="gray_400">#FFBDBDBD</color>
-    <color name="gray_600">#FF757575</color>
 
 </resources>

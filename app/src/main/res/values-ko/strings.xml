@@ -63,9 +63,6 @@
     <string name="sunrise">일출</string>
     <string name="sunset">일몰</string>
     <string name="tomorrow">내일</string>
-    <string name="rain_per">강수확률</string>
-    <string name="wind">바람</string>
-    <string name="humid">습도</string>
     <string name="weekly_weather">주간별 날씨</string>
     <string name="daily_weather">시간별 날씨</string>
     <string name="font_small">작게</string>
@@ -98,14 +95,11 @@
     <string name="date">요일</string>
     <string name="today">오늘</string>
     <string name="min_max">최저/최고</string>
-    <string name="font_size">글씨 크기</string>
     <string name="similar_temp">어제와 기온이 비슷해요</string>
     <string name="font_scale">폰트 크기 설정</string>
     <string name="fail_to_get_gps">위치를 불러오는데 실패했습니다</string>
     <string name="thunder_sunny">번개,뇌우</string>
     <string name="thunder_rainy">비/번개</string>
-    <string name="pm_10">미세먼지</string>
-    <string name="pm_2p5">초미세먼지</string>
     <string name="widget_pm">미세먼지 :</string>
     <string name="widget_reload">데이터를 가져오지 못했습니다\n눌러서 갱신하세요</string>
     <string name="pm">미세먼지</string>

@@ -31,7 +31,7 @@ class GetLocationRepo : BaseRepository() {
     @SuppressLint("MissingPermission")
     fun loadDataResult(context: Context) {
         val locationClass = GetLocation(context)
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             if (locationClass.isGPSConnected()) {
                 LocationServices.getFusedLocationProviderClient(context).run {
                     this.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
