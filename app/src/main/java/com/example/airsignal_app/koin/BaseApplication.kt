@@ -31,8 +31,12 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
 
     override fun uncaughtException(p0: Thread, p1: Throwable) {
         RDBLogcat.writeLogCause("ANR 발생", "Thread : ${p0.name}", "Error Msg: ${p1.localizedMessage}")
-        Thread.sleep(100)
-        exitProcess(1)
+        if (p0.name == "WidgetProvider") {
+            WidgetProvider4x2().onEnabled(applicationContext)
+        } else {
+            Thread.sleep(100)
+            exitProcess(1)
+        }
     }
 
     /* single : 싱글톤 빈 정의를 제공. 즉 1번만 객체를 생성한다 */

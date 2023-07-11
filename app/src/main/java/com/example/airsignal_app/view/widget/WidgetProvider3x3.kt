@@ -50,10 +50,12 @@ open class WidgetProvider3x3 : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
+        appWidgetIds.forEach {
+            Timber.tag("testtest").i("widget Id : $it")
+            val views4x3 = RemoteViews(context.packageName, R.layout.widget_layout_3x3)
 
-        val views4x3 = RemoteViews(context.packageName, R.layout.widget_layout_3x3)
-
-        appWidgetManager.updateAppWidget(appWidgetIds, views4x3)
+            appWidgetManager.updateAppWidget(appWidgetIds, views4x3)
+        }
     }
 
     // 이 메소드는 앱 데이터가 구글 시스템에 백업 된 이후 복원 될 때 만약 위젯 데이터가 있다면 데이터가 복구 된 이후 호출 됩니다.

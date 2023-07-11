@@ -32,20 +32,30 @@
             app:layout_constraintBottom_toTopOf="@+id/nested_scrollview"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 
-        <TextView
-            android:id="@+id/mainTopBarGpsTitle"
-            style="@style/basicTextView"
-            android:drawablePadding="3dp"
-            android:ellipsize="start"
-            android:lines="1"
-            android:maxEms="12"
-            android:textColor="@color/mode_black_color"
-            android:textSize="14sp"
-            app:drawableStartCompat="@drawable/location_fill"
+        <ScrollView
+            android:id="@+id/mainTopBarGpsTitleScroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:scrollbars="none"
+            android:overScrollMode="ifContentScrolls"
             app:layout_constraintBottom_toBottomOf="@id/topBarLinear"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/topBarLinear" />
+            app:layout_constraintTop_toTopOf="@+id/topBarLinear">
+            <TextView
+                android:id="@+id/mainTopBarGpsTitle"
+                style="@style/basicTextView"
+                android:drawablePadding="3dp"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:maxEms="12"
+                android:textColor="@color/mode_black_color"
+                android:textSize="14sp"
+                app:drawableStartCompat="@drawable/location_fill" />
+        </ScrollView>
 
         <RelativeLayout
             android:id="@+id/topBarLinear"

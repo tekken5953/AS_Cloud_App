@@ -15,6 +15,7 @@ import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogCause
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLogNotLogin
+import com.example.airsignal_app.util.`object`.DataTypeParser.getAddressDefault
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetSystemInfo
@@ -42,13 +43,12 @@ class GetLocation(private val context: Context) {
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             val notificationAddr = "${address[0].locality} ${address[0].subLocality}"
                 .replace("null","")
-            setNotificationAddress(context,notificationAddr)
+            setNotificationAddress(context, notificationAddr)
+            setUserLastAddr(context, formattingFullAddress(address[0].getAddressLine(0)))
 //            renewTopic(SharedPreferenceManager(context).getString(WEATHER_ALL_NOTI), "test")
             return if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
-                ("${address[0].adminArea} ${address[0].subAdminArea} ${address[0].locality}" +
-                        " ${address[0].subLocality} ${address[0].thoroughfare}")
-                    .replace("null","")
-//                address[0].getAddressLine(0)
+//                getAddressDefault(address[0])
+                address[0].getAddressLine(0)
             } else { "Null Address" }
         } catch (e: IOException) {
             Toast.makeText(context, "주소를 가져오는 도중 오류가 발생했습니다", Toast.LENGTH_SHORT).show()
@@ -58,11 +58,14 @@ class GetLocation(private val context: Context) {
                 "Error : ${e.localizedMessage}"
             )
             return context.getString(R.string.address)
+        } catch (e: IndexOutOfBoundsException) {
+            Toast.makeText(context, "주소를 가져오는 도중 오류가 발생했습니다", Toast.LENGTH_SHORT).show()
+            return context.getString(R.string.address)
         }
     }
 
     /** getAddressLine으로 불러온 주소 포멧**/
-    fun formattingFullAddress(fullAddr: String): String {
+    private fun formattingFullAddress(fullAddr: String): String {
         val addressParts = fullAddr.split(" ").toTypedArray() // 공백을 기준으로 주소 요소 분리
         var formattedAddress = ""
         for (i in 0 until addressParts.size - 1) {

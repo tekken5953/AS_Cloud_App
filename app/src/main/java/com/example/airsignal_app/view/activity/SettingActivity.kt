@@ -68,6 +68,7 @@ class SettingActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         initBinding()
 
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
@@ -85,7 +86,19 @@ class SettingActivity
         // 로그인 시 저장된 핸드폰 번호
         val email = getUserEmail(this)
 
-        isInit = false
+        binding.settingEvent.setOnClickListener {
+            binding.cpv11.setValueAnimated(15f,500)
+            binding.cpv22.setValueAnimated(60f,500)
+            binding.cpv33.setValueAnimated(80f,500)
+            binding.cpv1.setValueAnimated(25f,1000)
+            binding.cpv2.setValueAnimated(50f,1000)
+            binding.cpv3.setValueAnimated(75f,1000)
+            binding.cpv4.setValueAnimated(100f,1000)
+        }
+
+        if (isInit) {
+            isInit = false
+        }
 
         val lastLogin = applyLastLogin()
 

@@ -4,9 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.provider.Settings
+import android.util.DisplayMetrics
+import android.view.WindowManager
+import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
+import com.orhanobut.logger.Logger
 import timber.log.Timber
 import java.util.*
+
 
 /**
  * @author : Lee Jae Young
@@ -25,7 +30,7 @@ object GetSystemInfo {
     fun getLocale(context: Context): Locale {
         return when (getUserLocation(context)) {
             "korean" -> {
-                Locale.KOREA
+                Locale.KOREAN
             }
             "english" -> {
                 Locale.ENGLISH
@@ -44,5 +49,14 @@ object GetSystemInfo {
         )
         Timber.tag("buildUserInfo").i(id)
         return id
+    }
+
+    @Suppress("DEPRECATION")
+    fun getDeviceWidth(context: Context): Int {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        Logger.t(TAG_D).i("Display Width : ${displayMetrics.widthPixels}")
+        return displayMetrics.widthPixels
     }
 }

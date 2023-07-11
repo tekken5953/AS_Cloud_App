@@ -17,7 +17,7 @@ class GetLocationViewModel(private val repo: GetLocationRepo): BaseViewModel("ì£
         return this
     }
 
-    fun getDataResult(): LiveData<GpsDataModel> {
+    fun fetchData(): LiveData<GpsDataModel> {
         getResultData = repo._getLocationResult
         return getResultData
     }

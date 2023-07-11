@@ -3,16 +3,17 @@ package com.example.airsignal_app.util.`object`
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.view.View
+import android.icu.util.ChineseCalendar
+import android.location.Address
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
+import com.orhanobut.logger.Logger
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
-import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 
@@ -90,6 +91,45 @@ object DataTypeParser {
         }
     }
 
+    fun getLunarDate(): Int {
+        val cal = LocalDateTime.now()
+        val cc = ChineseCalendar()
+        cc.set(cal.year,cal.monthValue-1,cal.dayOfMonth)
+        return cc.get(ChineseCalendar.DAY_OF_MONTH)
+    }
+
+    private fun applyLunarImg(): Int {
+        return when (getLunarDate()) {
+            29,30,1 -> {
+                R.drawable.moon_sak
+            }
+            2,3,4,5 -> {
+                R.drawable.moon_cho
+            }
+            6,7,8,9 -> {
+                R.drawable.moon_sang_d
+            }
+            10,11,12,13 -> {
+                R.drawable.moon_sang_m
+            }
+            14,15,16 -> {
+                R.drawable.moon_bo
+            }
+            17,18,19,20 -> {
+                R.drawable.moon_ha_d
+            }
+            21,22,23,24-> {
+                R.drawable.moon_ha_m
+            }
+            25,26,27,28 -> {
+                R.drawable.moon_g
+            }
+            else -> {
+                R.drawable.main_moon
+            }
+        }
+    }
+
     /** 어제 날씨와 오늘 날씨의 비교 값 반환 **/
     fun getComparedTemp(yesterday: Double?, today: Double?): Double? {
         val temp = yesterday?.let { y ->
@@ -128,16 +168,16 @@ object DataTypeParser {
     fun getRainTypeLarge(context: Context, rain: String?): Drawable? {
         return when (rain) {
             "비" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_cloudy_rainy, null)
             }
             "눈" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.snow_test, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_snow, null)
             }
             "비/눈" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_snow, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_rainy_snow, null)
             }
             "소나기" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_rainy, null)
             }
             else -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
@@ -150,36 +190,36 @@ object DataTypeParser {
         return when (sky) {
             "맑음" -> {
                 if (!isNight) {
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.ico_sunny, null)
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_sunny, null)
                 } else {
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.main_moon, null)
+                    ResourcesCompat.getDrawable(context.resources, applyLunarImg(), null)
                 }
             }
             "구름많음" -> {
                 if (!isNight) {
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.lg_cloudy, null)
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_m_cloudy, null)
                 } else {
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.lg_cloudy, null)
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_m_ncloudy, null)
                 }
             }
             "흐림" -> {
                 if (!isNight) {
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.lg_more_cloudy, null)
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_cloudy, null)
                 } else {
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.lg_more_cloudy, null)
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_ncloudy, null)
                 }
             }
             "소나기", "비" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_rainy, null)
             }
             "구름많고 눈", "눈", "흐리고 눈" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.snow_test, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_snow, null)
             }
             "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.rain_cloudy, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_cloudy_rainy, null)
             }
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> {
-                ResourcesCompat.getDrawable(context.resources, R.drawable.snow_test, null)
+                ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_rainy_snow, null)
             }
             else -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
@@ -250,6 +290,58 @@ object DataTypeParser {
         }
     }
 
+    // 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지
+    fun applySkyImg(
+        context: Context,
+        rain: String?,
+        sky: String?,
+        thunder: Double?,
+        isLarge: Boolean,
+        isNight: Boolean?
+    ): Drawable? {
+        return if (rain != "없음") {
+            if ((thunder == null) || (thunder < 0.2)) {
+                if (isLarge) {
+                    getRainTypeLarge(context, rain!!)!!
+                } else {
+                    getRainTypeSmall(context, rain!!)!!
+                }
+            } else {
+                if (isLarge) {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_cloudy_th, null)
+                } else {
+                    if (isNight!!) {
+                        ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudy_nth, null)
+                    } else {
+                        ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudy_th, null)
+                    }
+                }
+            }
+        } else {
+            if ((thunder == null) || (thunder < 0.2)) {
+                if (isLarge) {
+                    if (isNight!!) {
+                        getSkyImgLarge(context, sky!!, isNight)!!
+                    } else {
+                        getSkyImgLarge(context, sky!!, isNight)!!
+                    }
+                } else {
+                    if (isNight!!) {
+                        getSkyImgSmall(context, sky!!, isNight)!!
+                    } else {
+                        getSkyImgSmall(context, sky!!, isNight)!!
+                    }
+                }
+            } else {
+                if (isLarge) {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_rainy_th, null)
+                } else {
+                    ResourcesCompat.getDrawable(context.resources, R.drawable.sm_rainy_th, null)
+                }
+            }
+        }
+    }
+
     /** 위젯 하늘에 따른 배경 **/
     fun getSkyImgWidget(sky: String?, progress: Int): Int {
         return when (sky) {
@@ -288,6 +380,18 @@ object DataTypeParser {
     /** Double을 지정 자릿수에서 반올림 **/
     fun convertDoubleToDecimal(double: Double, digit: Int): String {
         return String.format("%.${digit}f", double)
+    }
+    
+    /** 주소 추출 **/
+    fun getAddressDefault(address: Address): String {
+        Logger.t("testtest").i("${address.adminArea} ${address.subAdminArea} ${address.locality}" +
+                " ${address.subLocality} ${address.thoroughfare} ${address.subThoroughfare} ${address.featureName}"
+                    .replace(" null "," ")
+                    .trim())
+        return "${address.adminArea} ${address.subAdminArea} ${address.locality}" +
+                " ${address.subLocality} ${address.thoroughfare} ${address.subThoroughfare}"
+                    .replace(" null "," ")
+                    .trim()
     }
 
     /** 요일 변환 **/
@@ -366,7 +470,7 @@ object DataTypeParser {
     }
 
     /** Long을 LocalDateTime으로 파싱 **/
-    fun parseLongToLocalDateTime(long: Long): LocalDateTime {
+    private fun parseLongToLocalDateTime(long: Long): LocalDateTime {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(long), ZoneId.systemDefault())
     }
 }

@@ -31,18 +31,30 @@ class GetLocationRepo : BaseRepository() {
     @SuppressLint("MissingPermission")
     fun loadDataResult(context: Context) {
         val locationClass = GetLocation(context)
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             if (locationClass.isGPSConnected()) {
                 LocationServices.getFusedLocationProviderClient(context).run {
                     this.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
-                        .addOnSuccessListener { location: Location? ->
-                            location?.let { loc ->
-                                val addr = locationClass.getAddress(loc.latitude, loc.longitude)
-                                _getLocationResult.postValue(
-                                    GpsDataModel(loc.latitude, loc.longitude, addr, isGPS = true)
-                                )
-                                Logger.t("Timber").d(
-                                    GpsDataModel(loc.latitude, loc.longitude, addr, isGPS = true)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                task.result?.let { loc ->
+                                    val addr = locationClass.getAddress(loc.latitude, loc.longitude)
+                                    _getLocationResult.postValue(
+                                        GpsDataModel(
+                                            loc.latitude, loc.longitude, addr, isGPS = true
+                                        )
+                                    )
+                                    Logger.t("Timber").d(
+                                        GpsDataModel(
+                                            loc.latitude, loc.longitude, addr, isGPS = true
+                                        )
+                                    )
+                                }
+                            } else {
+                                RDBLogcat.writeLogCause(
+                                    GetAppInfo.getUserEmail(context),
+                                    "GPS 위치정보 갱신실패",
+                                    task.exception?.localizedMessage!!
                                 )
                             }
                         }

@@ -74,11 +74,10 @@
         <!--            motion:layout_constraintTop_toTopOf="@+id/mainMotionLinear"-->
         <!--            android:layout_marginTop="20dp" />-->
         <Constraint
-            android:id="@+id/mainTopBarGpsTitle"
-            style="@style/basicTextView"
+            android:id="@+id/mainTopBarGpsTitleScroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:alpha="0"
-            android:textSize="14sp"
-            motion:drawableStartCompat="@drawable/location_fill"
             motion:layout_constraintBottom_toBottomOf="@id/topBarLinear"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
@@ -208,7 +207,6 @@
             android:gravity="center"
             motion:layout_constraintTop_toBottomOf="@+id/mainNotiMsgTv" />
         <Constraint
-            android:id="@+id/mainSubWeatherTL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
@@ -257,14 +255,10 @@
         <!--            android:layout_height="wrap_content"-->
         <!--            motion:layout_constraintBottom_toTopOf="@+id/mainMotionLayout" />-->
         <Constraint
-            android:id="@+id/mainTopBarGpsTitle"
-            style="@style/basicTextView"
+            android:id="@+id/mainTopBarGpsTitleScroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:alpha="1"
-            android:ellipsize="start"
-            android:lines="1"
-            android:maxEms="15"
-            android:textSize="14sp"
-            motion:drawableStartCompat="@drawable/location_fill"
             motion:layout_constraintBottom_toBottomOf="@id/topBarLinear"
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
@@ -360,7 +354,6 @@
             android:alpha="0"
             motion:layout_constraintTop_toBottomOf="@+id/mainNotiMsgTv" />
         <Constraint
-            android:id="@+id/mainSubWeatherTL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"

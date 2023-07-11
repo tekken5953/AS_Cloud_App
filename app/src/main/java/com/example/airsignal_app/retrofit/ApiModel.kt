@@ -345,6 +345,8 @@ class ApiModel {
     )
 
     data class Widget4x2Realtime(
+        @SerializedName("forecast")
+        val forecast: String?,
         @SerializedName("sky")
         val sky: String?,
         @SerializedName("rainProbability")

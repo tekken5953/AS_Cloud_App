@@ -2,8 +2,8 @@ package com.example.airsignal_app.retrofit
 
 import android.annotation.SuppressLint
 import com.example.airsignal_app.dao.IgnoredKeyFile.hostingServerURL
-import com.example.airsignal_app.dao.IgnoredKeyFile.localServerURL
 import com.example.airsignal_app.dao.StaticDataObject.TAG_R
+import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.google.gson.GsonBuilder
 import com.orhanobut.logger.Logger
 import okhttp3.OkHttpClient
@@ -24,15 +24,26 @@ object HttpClient {
     private var instance: HttpClient? = null
 
     /** API Instance Singleton **/
-    fun getInstance(): HttpClient {
-        instance ?: synchronized(HttpClient::class.java) {   // 멀티스레드에서 동시생성하는 것을 막음
-            instance ?: HttpClient.also {
-                instance = it
-                Logger.t(TAG_R).d("API Instance 생성")
+    fun getInstance(isWidget: Boolean): HttpClient {
+        if (!isWidget) {
+            instance ?: synchronized(HttpClient::class.java) {   // 멀티스레드에서 동시생성하는 것을 막음
+                instance ?: HttpClient.also {
+                    instance = it
+                    Logger.t(TAG_R).d("API Instance 생성 : Not Widget")
+                }
+            }
+        } else {
+            try {
+                instance = HttpClient
+                RDBLogcat.writeLogCause("Widget","Get Instance", instance.toString())
+            } catch (e: Exception) {
+                e.localizedMessage?.let { RDBLogcat.writeLogCause("ANR 발생","Get Instance", it) }
             }
         }
+        return instance!!
+    }
 
-
+    fun setClientBuilder(): HttpClient {
         /** OkHttp 빌드
          *
          * 클라이언트 빌더 Interceptor 구분 **/
@@ -65,7 +76,12 @@ object HttpClient {
 
         if (instance != null)
             mMyAPIImpl = retrofit.create(MyApiImpl::class.java) // API 인터페이스 형태로 레트로핏 클라이언트 생성
+        else {
+            instance = HttpClient
+            mMyAPIImpl = retrofit.create(MyApiImpl::class.java) // API 인터페이스 형태로 레트로핏 클라이언트 생성
+            Logger.t(TAG_R).d("API Instance 재생성 : Widget")
+        }
 
-        return instance!!
+        return this
     }
 }

@@ -1,49 +1,30 @@
 package com.example.airsignal_app.view.widget
 
-import android.annotation.SuppressLint
 import android.app.PendingIntent
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.BitmapDrawable
-import android.location.Location
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.widget.RemoteViews
-import android.widget.Toast
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
 import com.example.airsignal_app.firebase.db.RDBLogcat
-import com.example.airsignal_app.gps.GetLocation
-import com.example.airsignal_app.retrofit.ApiModel
-import com.example.airsignal_app.retrofit.HttpClient
-import com.example.airsignal_app.util.`object`.DataTypeParser
-import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyText
 import com.example.airsignal_app.util.`object`.DataTypeParser.currentDateTimeString
-import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
-import com.example.airsignal_app.util.`object`.DataTypeParser.getDataText
-import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgLarge
-import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgWidget
-import com.example.airsignal_app.util.`object`.GetAppInfo.getCurrentSun
-import com.example.airsignal_app.util.`object`.GetAppInfo.getNotificationAddress
 import com.example.airsignal_app.view.activity.MainActivity
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
-import com.orhanobut.logger.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_ENABLE
+import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_OPTIONS_CHANGED
+import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE
 import timber.log.Timber
-import kotlin.math.roundToInt
 
 
 open class WidgetProvider4x2 : AppWidgetProvider() {
+
+
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
@@ -65,7 +46,14 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         newOptions: Bundle
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        Timber.tag(TAG_W).i("onAppWidgetOptionsChanged")
+        newOptions.putInt(
+            AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH,
+            newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
+        )
+        newOptions.putInt(
+            AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT,
+            newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
+        )
     }
 
     // 위젯 메타 데이터를 구성 할 때 updatePeriodMillis 라는 업데이트 주기 값을 설정하게 되며, 이 주기에 따라 호출 됩니다.
@@ -75,18 +63,17 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-
         val views4x2 = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
 
         val refreshBtnIntent = Intent(context, WidgetProvider4x2::class.java)
-        refreshBtnIntent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        refreshBtnIntent.action = WIDGET_UPDATE
         val pendingRefresh: PendingIntent =
             PendingIntent.getBroadcast(context, 0, refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
-            .let {
-                it.action = "enterApplication"
-                PendingIntent.getActivity(context, 0, it, PendingIntent.FLAG_IMMUTABLE)
+            .let { intent ->
+                intent.action = "enterApplication"
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
             }
 
         views4x2.apply {
@@ -95,7 +82,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
             setOnClickPendingIntent(R.id.widget4x2ReloadLayout, pendingRefresh)
         }
 
-        appWidgetManager.updateAppWidget(appWidgetIds, views4x2)
+        context.sendBroadcast(refreshBtnIntent)
     }
 
     // 이 메소드는 앱 데이터가 구글 시스템에 백업 된 이후 복원 될 때 만약 위젯 데이터가 있다면 데이터가 복구 된 이후 호출 됩니다.
@@ -115,188 +102,65 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     // 앱의 브로드캐스트를 수신하며 해당 메서드를 통해 각 브로드캐스트에 맞게 메서드를 호출한다.
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        Timber.tag(TAG_W)
-            .i("onReceive : ${currentDateTimeString(context)} intent : ${intent.action}")
-
         intent.action?.let {
-            when(it) {
-                AppWidgetManager.ACTION_APPWIDGET_UPDATE,
-                AppWidgetManager.ACTION_APPWIDGET_ENABLED -> {
-                    Log.d(TAG_W,"리시브 액션 진입")
-                    CoroutineScope(Dispatchers.Default).launch {
-                        Log.d(TAG_W,"리시브 코루틴 호출")
-                        loadData(context)
-                    }
+            when (it) {
+                WIDGET_ENABLE,
+                WIDGET_UPDATE
+                -> {
+                    Timber.tag(TAG_W)
+                        .i("onReceive : ${currentDateTimeString(context)} intent : ${intent.action}")
+                    NotiJobScheduler().scheduleJob(context)
                 }
-                else -> {Log.w(TAG_W,"리시브 액션 진입 실패")}
+                WIDGET_OPTIONS_CHANGED
+                -> {
+                    Timber.tag(TAG_W).i("onReceive : Options were changed")
+                }
+                else -> {}
             }
         }
     }
 
-    private fun <T> failToFetchData(context: Context, t: T, views: RemoteViews, title: String) {
-
-        Toast.makeText(context, "데이터 호출 실패", Toast.LENGTH_SHORT)
-            .show()
-        views.setViewVisibility(
-            R.id.widget4x2ReloadLayout,
-            View.VISIBLE
-        )
-        when (t) {
-            is java.lang.Exception -> {
-                t.printStackTrace()
-                t.localizedMessage?.let { it1 ->
-                    RDBLogcat.writeLogCause(
-                        "ANR 발생",
-                        "Thread : WidgetProvider - $title",
-                        it1
-                    )
-                }
-            }
-            is Throwable -> {
-                t.printStackTrace()
-                t.localizedMessage?.let { it1 ->
-                    RDBLogcat.writeLogCause(
-                        "ANR 발생",
-                        "Thread : WidgetProvider - $title",
-                        it1
-                    )
-                }
-            }
-            else -> {
-                RDBLogcat.writeLogCause(
-                    "ANR 발생",
-                    "Thread : WidgetProvider - $title",
-                    t.toString()
-                )
+    class NotiJobScheduler : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
+                // 재부팅 후 JobScheduler 다시 등록
+                scheduleJob(context)
             }
         }
 
-        fetch(context, views)
-    }
+        fun scheduleJob(context: Context) {
+            // JobScheduler 생성 및 설정
+            val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
 
-    private fun fetch(context: Context, views: RemoteViews) {
-        val appWidgetManager = AppWidgetManager.getInstance(context)
-        val componentName =
-            ComponentName(context, WidgetProvider4x2::class.java)
-        appWidgetManager.updateAppWidget(componentName, views)
-    }
+            val componentName = ComponentName(context, NotiJobService::class.java)
+            val jobInfo = JobInfo.Builder(JOB_ID, componentName)
+                .setPeriodic(INTERVAL_MILLISECONDS)
+                .setPersisted(true)
+                .build()
 
-    @SuppressLint("MissingPermission")
-    private fun loadData(context: Context) {
-        val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
-        val getLocation = GetLocation(context)
-        val httpClient = HttpClient.getInstance()
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_PASSIVE, null)
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    getLocation.getAddress(it.latitude, it.longitude)?.let { addr ->
-                        Log.d(TAG_W,"loadData addOnSuccessListener 완료 : ${location.latitude},${location.longitude},$addr")
-                        RDBLogcat.writeLogCause(
-                            "위젯 데이터 호출 성공",
-                            "onUpdate",
-                            addr
-                        )
-                        views.setViewVisibility(R.id.widget4x2ReloadLayout, View.GONE)
-
-                        getLocation.updateCurrentAddress(it.latitude, it.longitude, addr)
-
-                        val getDataResponse: Call<ApiModel.Widget4x2Data> =
-                            httpClient.mMyAPIImpl.getWidgetForecast(it.latitude, it.longitude, 1)
-
-                        getDataResponse.enqueue(object :
-                            Callback<ApiModel.Widget4x2Data> {
-                            override fun onResponse(
-                                call: Call<ApiModel.Widget4x2Data>,
-                                response: Response<ApiModel.Widget4x2Data>
-                            ) {
-                                try {
-                                    RDBLogcat.writeLogCause(
-                                        "위젯 데이터 호출 성공",
-                                        "Thread : WidgetProvider",
-                                        response.body().toString()
-                                    )
-                                    val body = response.body()
-                                    val data = body!!
-                                    val current = data.current
-                                    val thunder = data.thunder
-                                    val sun = data.sun
-                                    val realtime = data.realtime[0]
-                                    val skyText = applySkyText(
-                                        context,
-                                        current.rainType!!,
-                                        realtime.sky,
-                                        thunder
-                                    )
-
-                                    views.apply {
-                                        setViewVisibility(R.id.widget4x2ReloadLayout, View.GONE)
-
-                                        setInt(
-                                            R.id.widget4x2MainLayout, "setBackgroundResource",
-                                            getSkyImgWidget(
-                                                skyText,
-                                                getCurrentSun(sun.sunrise!!, sun.sunset!!)
-                                            )
-                                        )
-
-                                        setTextViewText(
-                                            R.id.widget4x2Time,
-                                            DataTypeParser.millsToString(
-                                                getCurrentTime(),
-                                                "HH시 mm분"
-                                            )
-                                        )
-
-                                        setTextViewText(
-                                            R.id.widget4x2TempValue,
-                                            "${current.temperature!!.roundToInt()}˚"
-                                        )
-
-                                        setTextViewText(
-                                            R.id.widget4x2RainPerValue,
-                                            "${realtime.rainP!!.toInt()}%"
-                                        )
-
-                                        setTextViewText(
-                                            R.id.widget4x2PmValue,
-                                            getDataText(data.quality.pm10Grade1h!!).trim()
-                                        )
-
-                                        setTextViewText(R.id.widget4x2TempIndex, skyText)
-
-                                        setImageViewBitmap(
-                                            R.id.widget4x2SkyImg,
-                                            (getSkyImgLarge(context, skyText, false)
-                                                    as BitmapDrawable).bitmap
-                                        )
-
-                                        setTextViewText(
-                                            R.id.widget4x2Address,
-                                            getNotificationAddress(context)
-                                                .trim()
-                                                .replace("null","")
-//                                            addrFormat[addrFormat.size - 2]
-                                        )
-                                    }
-
-                                    fetch(context, views)
-                                } catch (e: Exception) {
-                                    failToFetchData(context, e, views, "onResponse - catch")
-                                }
-                            }
-
-                            override fun onFailure(
-                                call: Call<ApiModel.Widget4x2Data>,
-                                t: Throwable
-                            ) {
-                                failToFetchData(context, t, views, "onFailure")
-                            }
-                        })
-                    }
-                }
-            }.addOnFailureListener {
-                failToFetchData(context, it, views, "addOnFailureListener")
+            if (!isJobScheduled(context)) {
+                jobScheduler.schedule(jobInfo)
+                RDBLogcat.writeLogCause("Widget","JobScheduler 등록 성공", jobInfo.service.shortClassName)
+                Timber.tag("JobServices").d("JobScheduler 등록 성공 : ${jobInfo.intervalMillis}")
+            } else {
+                Timber.tag("JobServices").d("JobScheduler 이미 존재 : ${jobScheduler.getPendingJob(JOB_ID)}")
             }
+        }
+
+        private fun isJobScheduled(context: Context) : Boolean {
+            val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+
+            val pendingJobs = jobScheduler.allPendingJobs
+            for (jobInfo in pendingJobs) {
+                if (jobInfo.id == JOB_ID) { return true }
+            }
+
+            return false
+        }
+
+        companion object {
+            private const val JOB_ID = 1001
+            private const val INTERVAL_MILLISECONDS: Long = 15 * 60 * 1000
+        }
     }
 }

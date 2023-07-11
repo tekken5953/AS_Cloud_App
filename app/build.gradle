@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.test.ext:junit-ktx:1.1.5'
     modules {
         module("org.jetbrains.kotlin:kotlin-stdlib-jdk7") {
             replacedBy("org.jetbrains.kotlin:kotlin-stdlib", "kotlin-stdlib-jdk7 is now part of kotlin-stdlib")
@@ -57,9 +58,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     // Mockito
     testImplementation 'org.mockito:mockito-core:3.5.9'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.0"
 
     // Google Login
-    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+    implementation 'com.google.android.gms:play-services-auth:20.6.0' // 구글 어스
     // Kakao Login
     implementation 'com.kakao.sdk:v2-user:2.10.0'
     // Naver Login - JDK 11 이상
@@ -73,7 +75,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-directboot:23.1.2' // FCM
     implementation 'com.google.firebase:firebase-database-ktx' // RDB
     implementation 'com.google.firebase:firebase-auth-ktx' // 이메일 로그인
-    implementation 'com.google.android.gms:play-services-auth:20.5.0' // 구글 어스
 
     // logger
     implementation "com.orhanobut:logger:2.2.0"
@@ -103,23 +104,12 @@ dependencies {
     def koin_android_version = "3.3.2"
     // Koin main features for Android
     implementation "io.insert-koin:koin-android:$koin_android_version"
-//    // Koin Test features
-//    testImplementation "io.insert-koin:koin-test:$koin_android_version"
-//    // Koin for JUnit 4
-//    testImplementation "io.insert-koin:koin-test-junit4:$koin_android_version"
-//    // Koin for JUnit 5
-//    testImplementation "io.insert-koin:koin-test-junit5:$koin_android_version"
-//    testImplementation "androidx.arch.core:core-testing:2.2.0"
-//    testImplementation "com.google.truth:truth:1.0.1"
-//    testImplementation 'androidx.test.ext:junit:1.1.5'
-//    testImplementation "org.robolectric:robolectric:4.4"
-//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 
     //AS Custom TextView
     implementation 'com.github.tekken5953:ASCustomText:2.2.5'
 
     // Firebase Admob
-    implementation 'com.google.android.gms:play-services-ads:22.1.0'
+    implementation 'com.google.android.gms:play-services-ads:22.2.0'
 
     // Firebase ui auth
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
@@ -130,4 +120,6 @@ dependencies {
 
 //    // MPAndroid
 //    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    implementation 'com.github.jakob-grabner:Circle-Progress-View:1.4'
 }

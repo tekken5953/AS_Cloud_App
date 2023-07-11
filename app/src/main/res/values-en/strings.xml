@@ -64,9 +64,6 @@
     <string name="sunrise">Sunrise</string>
     <string name="sunset">Sunset</string>
     <string name="tomorrow">Tomorrow</string>
-    <string name="rain_per">Rain Per</string>
-    <string name="wind">Wind</string>
-    <string name="humid">Humidity</string>
     <string name="weekly_weather">Weekly weather</string>
     <string name="daily_weather">Timely weather</string>
     <string name="font_small">Small</string>
@@ -99,14 +96,11 @@
     <string name="date">.</string>
     <string name="today">Today</string>
     <string name="min_max">Min/Max</string>
-    <string name="font_size">Text Size</string>
     <string name="similar_temp">Similar to yesterday</string>
     <string name="font_scale">Font Scale</string>
     <string name="fail_to_get_gps">Fail to get GPS</string>
     <string name="thunder_sunny">Rainy,Thunder</string>
     <string name="thunder_rainy">Rain/Thunder</string>
-    <string name="pm_10">Fine dust</string>
-    <string name="pm_2p5">Aerosol</string>
     <string name="widget_pm">PM :</string>
     <string name="widget_reload">Fail to get data\nPlease press to update</string>
     <string name="pm">pm</string>

@@ -28,7 +28,6 @@ import com.example.airsignal_app.util.`object`.SetSystemInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 
 
@@ -93,13 +92,23 @@ class SearchDialog(
             rv.adapter = currentAdapter
             GpsRepository(activity).findAll().forEach {
 //                Log.d(TAG_D, "검색리스트 아이템 추가 : ${it.id}, ${it.name}, ${it.addr}")
+                if (it.name == CURRENT_GPS_ID) {
+                    it.addr = getUserLastAddress(activity)
+                }
                 addCurrentItem(it.addr.toString())
             }
 
             currentAdapter.setOnItemClickListener(object : AddressListAdapter.OnItemClickListener {
                 override fun onItemClick(v: View, position: Int) {
-                    val currentAddr = currentList[position].replace("null", "")
-                    dbUpdate(currentAddr)
+                    CoroutineScope(Dispatchers.Default).launch {
+                        val currentAddr = currentList[position].replace("null", "")
+                        dbUpdate(currentAddr)
+
+                        withContext(Dispatchers.Main) {
+                            dismissNow()
+                            activity.recreate()
+                        }
+                    }
                 }
             })
 
@@ -163,9 +172,11 @@ class SearchDialog(
                     model.name = searchItem[position]
                     model.addr = searchItem[position]
                     db.insert(model)
+                    dbUpdate(model.addr)
 
-                    withContext(coroutineContext) {
-                        dbUpdate(model.addr)
+                    withContext(Dispatchers.Main) {
+                        dismissNow()
+                        activity.recreate()
                     }
                 }
             }
@@ -200,20 +211,15 @@ class SearchDialog(
         SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId)
     }
 
-    private fun dbUpdate(addr: String?) {
-        CoroutineScope(Dispatchers.Default).launch {
-            setUserLastAddr(activity, addr!!)
-            Logger.t("ttestt").w(getUserLastAddress(activity))
+    private suspend fun dbUpdate(addr: String?) {
+        withContext(Dispatchers.Default) {
             val model = GpsEntity()
             model.name = CURRENT_GPS_ID
             model.addr = addr
             model.timeStamp = getCurrentTime()
             db.update(model)
 
-            withContext(Dispatchers.Main) {
-                dismissNow()
-                activity.recreate()
-            }
+            setUserLastAddr(activity, addr!!)
         }
     }
 

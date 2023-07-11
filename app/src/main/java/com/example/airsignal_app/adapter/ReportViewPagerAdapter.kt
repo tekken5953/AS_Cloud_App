@@ -10,6 +10,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.util.VibrateUtil
+import timber.log.Timber
 
 /**
  * @author : Lee Jae Young
@@ -99,6 +100,8 @@ class ReportViewPagerAdapter(
                     } catch (e: NullPointerException) {
                         e.printStackTrace()
                     }
+                } else {
+                    Timber.tag("testtest").w("No Position")
                 }
             }
         }
