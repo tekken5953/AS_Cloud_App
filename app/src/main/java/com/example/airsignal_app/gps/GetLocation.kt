@@ -105,7 +105,7 @@ class GetLocation(private val context: Context) {
 
     /** 백그라운드에서 위치 갱신 **/
     @SuppressLint("MissingPermission")
-    fun getGpsInBackground() {
+    fun getGpsInBackground(mills: Long, distance: Float) {
         val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
         val locationListener: LocationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
@@ -124,8 +124,8 @@ class GetLocation(private val context: Context) {
         }
         locationManager!!.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
-            0,
-            500f,
+            mills,
+            distance,
             locationListener
         )
     }

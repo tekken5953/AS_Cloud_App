@@ -57,6 +57,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.getRainTypeLarge
 import com.example.airsignal_app.util.`object`.DataTypeParser.getRainTypeSmall
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgLarge
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgSmall
+import com.example.airsignal_app.util.`object`.DataTypeParser.isRainyDay
 import com.example.airsignal_app.util.`object`.DataTypeParser.millsToString
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentRainType
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentTempType
@@ -336,9 +337,7 @@ class MainActivity
     }
 
     // 진동 발생
-    private fun mVib() {
-        vib.make(20)
-    }
+    private fun mVib() { vib.make(20) }
 
     // 시간별 날씨 스크롤 첫번째 인덱스로 이동
     private fun scrollSmoothFirst(position: Int) {
@@ -349,7 +348,7 @@ class MainActivity
                     return SNAP_TO_START // 가장 첫 번째로 스크롤되도록 설정
                 }
             }
-            smoothScroller.targetPosition = position + 4
+            smoothScroller.targetPosition = position + 5
             it.startSmoothScroll(smoothScroller)
         }
     }
@@ -522,7 +521,7 @@ class MainActivity
 
     // 백그라운드 위치 호출
     private fun createWorkManager() {
-        GetLocation(this).getGpsInBackground()
+        GetLocation(this).getGpsInBackground(0,500f)
     }
 
     @Deprecated("Deprecated in Java")
@@ -748,7 +747,9 @@ class MainActivity
                                                 current.temperature, realtime.temp
                                             ).roundToInt()
                                         }˚",
-                                        convertDateAppendZero(forecastToday)
+                                        dailyIndex.forecast!!,
+                                        isRainyDay(dailyIndex.rainType),
+                                        dailyIndex.rainP!!
                                     )
                                 } else {
                                     addDailyWeatherItem(
@@ -759,7 +760,9 @@ class MainActivity
                                             isLarge = false, isNight = isNight
                                         )!!,
                                         "${dailyIndex.temp!!.roundToInt()}˚",
-                                        convertDateAppendZero(forecastToday)
+                                        dailyIndex.forecast!!,
+                                        isRainyDay(dailyIndex.rainType),
+                                        dailyIndex.rainP!!
                                     )
                                 }
                             }
@@ -822,7 +825,9 @@ class MainActivity
                     is BaseRepository.ApiState.Loading -> {
                         runOnUiThread { showPB() }
                     }
-                    else -> {}
+                    else -> {
+                        Timber.tag(TAG_R).e("API Error $entireData")
+                    }
                 }
             }
         } else {
@@ -939,8 +944,9 @@ class MainActivity
     }
 
     // 시간별 날씨 리사이클러뷰 아이템 추가
-    private fun addDailyWeatherItem(time: String, img: Drawable, value: String, date: String) {
-        val item = AdapterModel.DailyWeatherItem(time, img, value, date)
+    private fun addDailyWeatherItem(time: String, img: Drawable, value: String, date: String,
+                                    isRain: Boolean, rainP: Double?) {
+        val item = AdapterModel.DailyWeatherItem(time, img, value, date,rainP,isRain)
 
         this.dailyWeatherList.add(item)
     }

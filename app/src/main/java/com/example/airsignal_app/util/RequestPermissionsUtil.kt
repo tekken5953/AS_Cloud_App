@@ -18,7 +18,7 @@ class RequestPermissionsUtil(private val context: Context) {
     private val permissionsLocationUpApi29Impl = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
-//        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        Manifest.permission.ACCESS_BACKGROUND_LOCATION
     )
 
     /** 위치 권한 SDK 버전 29 이하**/
@@ -45,10 +45,10 @@ class RequestPermissionsUtil(private val context: Context) {
                     context,
                     permissionsLocationUpApi29Impl[1]
                 ) != PackageManager.PERMISSION_GRANTED
-//                || ActivityCompat.checkSelfPermission(
-//                    context,
-//                    permissionsLocationUpApi29Impl[2]
-//                ) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(
+                    context,
+                    permissionsLocationUpApi29Impl[2]
+                ) != PackageManager.PERMISSION_GRANTED
             ) {
                 ActivityCompat.requestPermissions(
                     context as Activity,

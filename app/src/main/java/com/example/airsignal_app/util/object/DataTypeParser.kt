@@ -9,9 +9,12 @@ import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
 import com.orhanobut.logger.Logger
+import timber.log.Timber
 import java.text.SimpleDateFormat
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
+import java.time.Period
 import java.time.ZoneId
 import java.util.*
 import kotlin.math.roundToInt
@@ -130,18 +133,17 @@ object DataTypeParser {
         }
     }
 
+    /** 비가 오는지 안오는지 Flag **/
+    fun isRainyDay(rainType: String?): Boolean {
+        return rainType != "없음"
+    }
+
     /** 어제 날씨와 오늘 날씨의 비교 값 반환 **/
     fun getComparedTemp(yesterday: Double?, today: Double?): Double? {
         val temp = yesterday?.let { y ->
             today?.let { t ->
                 if (y != -100.0 && t != -100.0) {
-                    if (y > t) {
-                        ((y - t) * 10).roundToInt() / 10.0
-                    } else if (t > y) {
-                        ((t - y) * 10).roundToInt() / 10.0
-                    } else {
-                        0.0
-                    }
+                    ((today - yesterday) * 10).roundToInt() / 10.0
                 } else {
                     null
                 }
@@ -290,7 +292,17 @@ object DataTypeParser {
         }
     }
 
-    // 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지
+    /** 시간별 날씨 날짜 이름 **/
+    fun getDailyItemDate(localDateTime: LocalDateTime): String? {
+        return when(localDateTime.toLocalDate().compareTo(parseLongToLocalDateTime(getCurrentTime()).toLocalDate())) {
+            0 -> { "오늘" }
+            1 -> { "내일" }
+            2 -> { "모레" }
+            else -> { null }
+        }
+    }
+
+    /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지 **/
     fun applySkyImg(
         context: Context,
         rain: String?,

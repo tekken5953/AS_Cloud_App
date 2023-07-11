@@ -83,6 +83,8 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         }
 
         context.sendBroadcast(refreshBtnIntent)
+
+        appWidgetManager.updateAppWidget(appWidgetIds, views4x2)
     }
 
     // 이 메소드는 앱 데이터가 구글 시스템에 백업 된 이후 복원 될 때 만약 위젯 데이터가 있다면 데이터가 복구 된 이후 호출 됩니다.
@@ -140,7 +142,8 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
             if (!isJobScheduled(context)) {
                 jobScheduler.schedule(jobInfo)
-                RDBLogcat.writeLogCause("Widget","JobScheduler 등록 성공", jobInfo.service.shortClassName)
+                NotiJobService().writeLog(false,
+                    "JobScheduler 등록 성공", jobInfo.service.shortClassName)
                 Timber.tag("JobServices").d("JobScheduler 등록 성공 : ${jobInfo.intervalMillis}")
             } else {
                 Timber.tag("JobServices").d("JobScheduler 이미 존재 : ${jobScheduler.getPendingJob(JOB_ID)}")

@@ -9,7 +9,9 @@ object AdapterModel {
         val time: String,
         val img: Drawable?,
         val value: String,
-        val date: String
+        val date: String,
+        val rainP: Double?,
+        val isRain: Boolean
     )
 
     // 주간별 날씨

@@ -35,9 +35,8 @@ class GetLocationRepo : BaseRepository() {
             if (locationClass.isGPSConnected()) {
                 LocationServices.getFusedLocationProviderClient(context).run {
                     this.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                task.result?.let { loc ->
+                        .addOnSuccessListener { location ->
+                            location?.let { loc ->
                                     val addr = locationClass.getAddress(loc.latitude, loc.longitude)
                                     _getLocationResult.postValue(
                                         GpsDataModel(
@@ -50,12 +49,6 @@ class GetLocationRepo : BaseRepository() {
                                         )
                                     )
                                 }
-                            } else {
-                                RDBLogcat.writeLogCause(
-                                    GetAppInfo.getUserEmail(context),
-                                    "GPS 위치정보 갱신실패",
-                                    task.exception?.localizedMessage!!
-                                )
                             }
                         }
                         .addOnFailureListener {
@@ -65,7 +58,6 @@ class GetLocationRepo : BaseRepository() {
                                 it.localizedMessage!!
                             )
                         }
-                }
             } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
                 val lm =
                     context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
