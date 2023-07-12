@@ -350,7 +350,11 @@ class ApiModel {
         @SerializedName("sky")
         val sky: String?,
         @SerializedName("rainProbability")
-        val rainP: Double?
+        val rainP: Double?,
+        @SerializedName("rainType")
+        val rainType: String?,
+        @SerializedName("temperature")
+        val temp: Double?
     )
 
     data class Widget4x2Data(

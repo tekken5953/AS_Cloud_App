@@ -1,13 +1,14 @@
 package com.example.airsignal_app.view.widget
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.app.job.JobParameters
 import android.app.job.JobService
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
-import android.location.LocationManager
 import android.view.View
 import android.widget.RemoteViews
 import com.example.airsignal_app.R
@@ -16,14 +17,13 @@ import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient
 import com.example.airsignal_app.util.`object`.DataTypeParser
+import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentRainType
+import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentTempType
 import com.example.airsignal_app.util.`object`.GetAppInfo
+import com.example.airsignal_app.view.activity.MainActivity
 import com.google.android.gms.location.CurrentLocationRequest
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -44,7 +44,7 @@ class NotiJobService : JobService() {
     override fun onStartJob(params: JobParameters?): Boolean {
         Timber.tag("JobServices").d("onStartJob : ${params!!.jobId}")
 
-        getLocation()
+        getWidgetLocation()
         return true
     }
 
@@ -93,6 +93,7 @@ class NotiJobService : JobService() {
                 R.id.widget4x2ReloadLayout,
                 View.GONE
             )
+
             fetch(context, views)
         }
     }
@@ -159,7 +160,7 @@ class NotiJobService : JobService() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun getLocation() {
+    fun getWidgetLocation() {
         val locationManager = LocationServices.getFusedLocationProviderClient(context)
         locationManager.getCurrentLocation(
             CurrentLocationRequest.Builder()
@@ -169,7 +170,7 @@ class NotiJobService : JobService() {
                 .build(), null
         )
             .addOnSuccessListener { location ->
-                loadData(location.latitude, location.longitude)
+                loadWidgetData(location.latitude, location.longitude)
             }
             .addOnFailureListener { e ->
                 writeLog(false, "addOnFailureListener", e.localizedMessage)
@@ -185,9 +186,26 @@ class NotiJobService : JobService() {
             }
     }
 
-    private fun loadData(lat: Double?, lng: Double?) {
+     private fun loadWidgetData(lat: Double?, lng: Double?) {
         val httpClient = HttpClient.getInstance(true).setClientBuilder()
         val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
+
+         val refreshBtnIntent = Intent(context, WidgetProvider4x2::class.java)
+         refreshBtnIntent.action = WidgetAction.WIDGET_UPDATE
+         val pendingRefresh: PendingIntent =
+             PendingIntent.getBroadcast(context, 0, refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
+
+         val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
+             .let { intent ->
+                 intent.action = "enterApplication"
+                 PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+             }
+
+         views.apply {
+             setOnClickPendingIntent(R.id.widget4x2MainLayout, pendingIntent)
+             setOnClickPendingIntent(R.id.widget4x2Refresh, pendingRefresh)
+             setOnClickPendingIntent(R.id.widget4x2ReloadLayout, pendingRefresh)
+         }
 
         GetLocation(context).getAddress(lat!!, lng!!)?.let { addr ->
             writeLog(false, "Address", addr)
@@ -227,7 +245,7 @@ class NotiJobService : JobService() {
                             val realtime = data.realtime[0]
                             val skyText = DataTypeParser.applySkyText(
                                 context,
-                                current.rainType!!,
+                                modifyCurrentRainType(current.rainType, realtime.rainType),
                                 realtime.sky,
                                 thunder
                             )
@@ -256,7 +274,8 @@ class NotiJobService : JobService() {
 
                                 setTextViewText(
                                     R.id.widget4x2TempValue,
-                                    "${current.temperature!!.roundToInt()}˚"
+                                    "${modifyCurrentTempType(current.temperature,realtime.temp)
+                                        .roundToInt()}˚"
                                 )
 
                                 setTextViewText(
@@ -290,6 +309,7 @@ class NotiJobService : JobService() {
                                     GetAppInfo.getNotificationAddress(context).trim()
                                 )
 
+                                context.sendBroadcast(refreshBtnIntent)
                                 fetch(context, views)
                             }
                         } catch (e: Exception) {
