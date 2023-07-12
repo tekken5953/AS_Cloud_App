@@ -9,9 +9,13 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
+import android.os.Looper
 import android.view.View
 import android.widget.RemoteViews
+import androidx.core.os.HandlerCompat
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.StaticDataObject
+import com.example.airsignal_app.dao.StaticDataObject.TAG_W
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.retrofit.ApiModel
@@ -42,14 +46,16 @@ class NotiJobService : JobService() {
 
     @SuppressLint("MissingPermission")
     override fun onStartJob(params: JobParameters?): Boolean {
-        Timber.tag("JobServices").d("onStartJob : ${params!!.jobId}")
+        Timber.tag(TAG_W).d("onStartJob : ${params!!.jobId}")
 
-        getWidgetLocation()
+        HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+            getWidgetLocation()
+        },2000)
         return true
     }
 
     override fun onStopJob(p0: JobParameters?): Boolean {
-        Timber.tag("JobServices").d("onStopJob : ${p0?.jobId}")
+        Timber.tag(TAG_W).d("onStopJob : ${p0?.jobId}")
         writeLog(false, "JobScheduler 정지", "onStopJob : ${p0?.jobId}")
 
         return true
@@ -180,34 +186,35 @@ class NotiJobService : JobService() {
             }
             .addOnCompleteListener { task ->
                 writeLog(
-                    false, "addOnCompleteListener", "task isSuccess ${task.isSuccessful}" +
+                    false, "addOnCompleteListener", "task isSuccess ${task.isSuccessful} " +
                             "result is ${task.result}"
                 )
             }
     }
 
-     private fun loadWidgetData(lat: Double?, lng: Double?) {
+    private fun loadWidgetData(lat: Double, lng: Double) {
         val httpClient = HttpClient.getInstance(true).setClientBuilder()
+        writeLog(false, "Get Instance", httpClient.toString())
         val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
 
-         val refreshBtnIntent = Intent(context, WidgetProvider4x2::class.java)
-         refreshBtnIntent.action = WidgetAction.WIDGET_UPDATE
-         val pendingRefresh: PendingIntent =
-             PendingIntent.getBroadcast(context, 0, refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
+        val refreshBtnIntent = Intent(context, WidgetProvider4x2::class.java)
+        refreshBtnIntent.action = WidgetAction.WIDGET_UPDATE
+        val pendingRefresh: PendingIntent =
+            PendingIntent.getBroadcast(context, 0, refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
 
-         val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
-             .let { intent ->
-                 intent.action = "enterApplication"
-                 PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-             }
+        val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
+            .let { intent ->
+                intent.action = "enterApplication"
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            }
 
-         views.apply {
-             setOnClickPendingIntent(R.id.widget4x2MainLayout, pendingIntent)
-             setOnClickPendingIntent(R.id.widget4x2Refresh, pendingRefresh)
-             setOnClickPendingIntent(R.id.widget4x2ReloadLayout, pendingRefresh)
-         }
+        views.apply {
+            setOnClickPendingIntent(R.id.widget4x2MainLayout, pendingIntent)
+            setOnClickPendingIntent(R.id.widget4x2Refresh, pendingRefresh)
+            setOnClickPendingIntent(R.id.widget4x2ReloadLayout, pendingRefresh)
+        }
 
-        GetLocation(context).getAddress(lat!!, lng!!)?.let { addr ->
+        GetLocation(context).getAddress(lat, lng)?.let { addr ->
             writeLog(false, "Address", addr)
             RDBLogcat.writeLogCause(
                 "Widget",
@@ -274,8 +281,10 @@ class NotiJobService : JobService() {
 
                                 setTextViewText(
                                     R.id.widget4x2TempValue,
-                                    "${modifyCurrentTempType(current.temperature,realtime.temp)
-                                        .roundToInt()}˚"
+                                    "${
+                                        modifyCurrentTempType(current.temperature, realtime.temp)
+                                            .roundToInt()
+                                    }˚"
                                 )
 
                                 setTextViewText(

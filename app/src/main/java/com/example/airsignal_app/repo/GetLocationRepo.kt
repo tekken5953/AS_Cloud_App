@@ -31,46 +31,44 @@ class GetLocationRepo : BaseRepository() {
     @SuppressLint("MissingPermission")
     fun loadDataResult(context: Context) {
         val locationClass = GetLocation(context)
-        CoroutineScope(Dispatchers.Default).launch {
-            if (locationClass.isGPSConnected()) {
-                LocationServices.getFusedLocationProviderClient(context).run {
-                    this.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
-                        .addOnSuccessListener { location ->
-                            location?.let { loc ->
-                                    val addr = locationClass.getAddress(loc.latitude, loc.longitude)
-                                    _getLocationResult.postValue(
-                                        GpsDataModel(
-                                            loc.latitude, loc.longitude, addr, isGPS = true
-                                        )
-                                    )
-                                    Logger.t("Timber").d(
-                                        GpsDataModel(
-                                            loc.latitude, loc.longitude, addr, isGPS = true
-                                        )
-                                    )
-                                }
-                            }
-                        }
-                        .addOnFailureListener {
-                            RDBLogcat.writeLogCause(
-                                GetAppInfo.getUserEmail(context),
-                                "GPS 위치정보 갱신실패",
-                                it.localizedMessage!!
+        if (locationClass.isGPSConnected()) {
+            LocationServices.getFusedLocationProviderClient(context).run {
+                this.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
+                    .addOnSuccessListener { location ->
+                        location?.let { loc ->
+                            val addr = locationClass.getAddress(loc.latitude, loc.longitude)
+                            _getLocationResult.postValue(
+                                GpsDataModel(
+                                    loc.latitude, loc.longitude, addr, isGPS = true
+                                )
+                            )
+                            Logger.t("Timber").d(
+                                GpsDataModel(
+                                    loc.latitude, loc.longitude, addr, isGPS = true
+                                )
                             )
                         }
-            } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
-                val lm =
-                    context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
-                val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                location?.let { loc ->
-                    val addr = locationClass.getAddress(loc.latitude, loc.longitude)
-                    _getLocationResult.postValue(
-                        GpsDataModel(loc.latitude, loc.longitude, addr, isGPS = false)
+                    }
+            }
+                .addOnFailureListener {
+                    RDBLogcat.writeLogCause(
+                        GetAppInfo.getUserEmail(context),
+                        "GPS 위치정보 갱신실패",
+                        it.localizedMessage!!
                     )
                 }
-            } else {
-                locationClass.requestSystemGPSEnable()
+        } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
+            val lm =
+                context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
+            val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            location?.let { loc ->
+                val addr = locationClass.getAddress(loc.latitude, loc.longitude)
+                _getLocationResult.postValue(
+                    GpsDataModel(loc.latitude, loc.longitude, addr, isGPS = false)
+                )
             }
+        } else {
+            locationClass.requestSystemGPSEnable()
         }
     }
 }

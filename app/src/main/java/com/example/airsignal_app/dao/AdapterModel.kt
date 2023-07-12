@@ -66,4 +66,10 @@ object AdapterModel {
     data class ReportItem(
         val text: String
     )
+
+    // 실시간 공기질 타이틀 아이템
+    data class AirQTitleItem(
+        val title: String,
+        var isSelect: Boolean = false
+    )
 }

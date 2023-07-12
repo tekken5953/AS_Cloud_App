@@ -373,7 +373,17 @@ object DataTypeParser {
             0 -> ResourcesCompat.getColor(context.resources, R.color.air_good, null)
             1 -> ResourcesCompat.getColor(context.resources, R.color.air_normal, null)
             2 -> ResourcesCompat.getColor(context.resources, R.color.air_bad, null)
-            3 -> ResourcesCompat.getColor(context.resources, R.color.air_very_bad , null)
+            3 -> ResourcesCompat.getColor(context.resources, R.color.air_very_bad, null)
+            else -> ResourcesCompat.getColor(context.resources, R.color.progressError, null)
+        }
+    }
+
+    fun getDataOpacityColor(context: Context, grade: Int): Int {
+        return when (grade) {
+            0 -> ResourcesCompat.getColor(context.resources, R.color.air_good_o, null)
+            1 -> ResourcesCompat.getColor(context.resources, R.color.air_normal_o, null)
+            2 -> ResourcesCompat.getColor(context.resources, R.color.air_bad_o, null)
+            3 -> ResourcesCompat.getColor(context.resources, R.color.air_very_bad_o, null)
             else -> ResourcesCompat.getColor(context.resources, R.color.progressError, null)
         }
     }

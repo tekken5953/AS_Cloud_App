@@ -133,7 +133,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
         companion object {
             const val JOB_ID = 1001
-            private const val INTERVAL_MILLISECONDS: Long = 15 * 60 * 1000
+            private const val INTERVAL_MILLISECONDS: Long = 30 * 60 * 1000
         }
     }
 
