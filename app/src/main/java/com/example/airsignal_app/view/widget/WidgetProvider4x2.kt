@@ -1,6 +1,5 @@
 package com.example.airsignal_app.view.widget
 
-import android.app.PendingIntent
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.appwidget.AppWidgetManager
@@ -10,12 +9,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.RemoteViews
-import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
-import com.example.airsignal_app.firebase.db.RDBLogcat
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.`object`.DataTypeParser.currentDateTimeString
-import com.example.airsignal_app.view.activity.MainActivity
+import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_ENABLE
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_OPTIONS_CHANGED
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE
@@ -87,11 +84,14 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         super.onReceive(context, intent)
         intent.action?.let {
             when (it) {
-                WIDGET_ENABLE,
+                WIDGET_ENABLE -> {
+                    NotiJobService().getWidgetLocation(context)
+                }
                 WIDGET_UPDATE
                 -> {
                     Timber.tag(TAG_W)
                         .i("onReceive : ${currentDateTimeString(context)} intent : ${intent.action}")
+
                     NotiJobScheduler().scheduleJob(context)
                 }
                 WIDGET_OPTIONS_CHANGED
@@ -105,9 +105,18 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
     class NotiJobScheduler : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            NotiJobService().writeLog(false, "onReceive Action" ,intent.action)
             if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
                 // 재부팅 후 JobScheduler 다시 등록
                 scheduleJob(context)
+            }
+            if (intent.action == Intent.ACTION_SCREEN_ON) {
+                // 절전 모드에서 벗어났을 때의 동작을 여기에 구현합니다.
+                if (getCurrentTime() -
+                    SharedPreferenceManager(context).getLong("lastWidgetDataCall")
+                 > (30 * 60 * 1000)) {
+                    scheduleJob(context)
+                }
             }
         }
 
@@ -128,6 +137,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 Timber.tag("JobServices").d("JobScheduler 등록 성공 : ${jobInfo.intervalMillis}")
             } else {
                 Timber.tag("JobServices").d("JobScheduler 이미 존재 : ${jobScheduler.getPendingJob(JOB_ID)}")
+                NotiJobService().getWidgetLocation(context)
             }
         }
 

@@ -2,24 +2,17 @@ package com.example.airsignal_app.repo
 
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.location.Location
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
-import com.example.airsignal_app.R
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsDataModel
 import com.example.airsignal_app.util.`object`.GetAppInfo
-import com.example.airsignal_app.view.ToastUtils
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 /**
  * @author : Lee Jae Young

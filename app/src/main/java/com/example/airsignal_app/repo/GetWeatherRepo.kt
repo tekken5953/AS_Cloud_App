@@ -37,6 +37,7 @@ class GetWeatherRepo : BaseRepository() {
                         } else {
                             Logger.t("Weather API").e("Data Error API : ${ApiState.Success(responseBody).data}")
                             _getDataResult.postValue(ApiState.Error("API ERROR OCCURRED"))
+                            call.cancel()
                         }
                     }
 

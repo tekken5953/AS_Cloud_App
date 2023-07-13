@@ -68,12 +68,13 @@
         android:id="@+id/widget4x2Address"
         style="@style/basicTextView"
         android:layout_toEndOf="@+id/widget4x2AddressVector"
+        android:layout_toStartOf="@+id/widget4x2Refresh"
         android:autoSizeMaxTextSize="12sp"
         android:maxLines="1"
-        android:maxEms="6"
         android:ellipsize="start"
         android:layout_marginStart="2dp"
-        android:gravity="center"
+        android:layout_marginEnd="5dp"
+        android:gravity="start"
         android:layout_alignTop="@+id/widget4x2VerticalLine"
         android:textColor="@color/white" />
 
@@ -83,18 +84,18 @@
         android:layout_height="60dp"
         android:layout_below="@+id/widget4x2Refresh"
         android:layout_alignParentEnd="true"
-        android:layout_margin="5dp"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp" />
 
     <ImageView
         android:id="@+id/widget4x2Refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="5dp"
-        android:layout_alignTop="@+id/widget4x2Address"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignEnd="@+id/widget4x2SkyImg"
+        android:layout_marginEnd="3dp"
+        android:layout_marginTop="2dp"
         android:layout_alignBottom="@+id/widget4x2Address"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/widget_refresh" />

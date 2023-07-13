@@ -8,23 +8,25 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.drawable.BitmapDrawable
 import android.os.Looper
 import android.view.View
 import android.widget.RemoteViews
 import androidx.core.os.HandlerCompat
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.StaticDataObject
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient
 import com.example.airsignal_app.util.`object`.DataTypeParser
+import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentRainType
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentTempType
 import com.example.airsignal_app.util.`object`.GetAppInfo
-import com.example.airsignal_app.view.activity.MainActivity
+import com.example.airsignal_app.view.activity.RedirectPermissionActivity
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -43,13 +45,16 @@ import kotlin.math.roundToInt
 @SuppressLint("SpecifyJobSchedulerIdRange")
 class NotiJobService : JobService() {
     private val context = this@NotiJobService
+    private val filter = IntentFilter(Intent.ACTION_SCREEN_ON)
 
     @SuppressLint("MissingPermission")
     override fun onStartJob(params: JobParameters?): Boolean {
         Timber.tag(TAG_W).d("onStartJob : ${params!!.jobId}")
 
         HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-            getWidgetLocation()
+            getWidgetLocation(context)
+
+            context.registerReceiver(WidgetProvider4x2.NotiJobScheduler(), filter)
         },2000)
         return true
     }
@@ -57,6 +62,10 @@ class NotiJobService : JobService() {
     override fun onStopJob(p0: JobParameters?): Boolean {
         Timber.tag(TAG_W).d("onStopJob : ${p0?.jobId}")
         writeLog(false, "JobScheduler 정지", "onStopJob : ${p0?.jobId}")
+        context.unregisterReceiver(WidgetProvider4x2.NotiJobScheduler())
+        if (!WidgetProvider4x2().isJobScheduled(context)) {
+            WidgetProvider4x2.NotiJobScheduler().scheduleJob(context)
+        }
 
         return true
     }
@@ -147,6 +156,25 @@ class NotiJobService : JobService() {
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val componentName =
             ComponentName(context, WidgetProvider4x2::class.java)
+
+        val refreshBtnIntent = Intent(context, WidgetProvider4x2::class.java)
+        refreshBtnIntent.action = WidgetAction.WIDGET_UPDATE
+        val pendingRefresh: PendingIntent =
+            PendingIntent.getBroadcast(context, 0,
+                refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
+
+        val pendingIntent: PendingIntent = Intent(context, RedirectPermissionActivity::class.java)
+            .let { intent ->
+                intent.action = "enterApplication"
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+            }
+
+        views.apply {
+            setOnClickPendingIntent(R.id.widget4x2MainLayout, pendingIntent)
+            setOnClickPendingIntent(R.id.widget4x2Refresh, pendingRefresh)
+            setOnClickPendingIntent(R.id.widget4x2ReloadLayout, pendingRefresh)
+        }
+
         appWidgetManager.updateAppWidget(componentName, views)
     }
 
@@ -166,7 +194,7 @@ class NotiJobService : JobService() {
     }
 
     @SuppressLint("MissingPermission")
-    fun getWidgetLocation() {
+    fun getWidgetLocation(context: Context) {
         val locationManager = LocationServices.getFusedLocationProviderClient(context)
         locationManager.getCurrentLocation(
             CurrentLocationRequest.Builder()
@@ -176,7 +204,7 @@ class NotiJobService : JobService() {
                 .build(), null
         )
             .addOnSuccessListener { location ->
-                loadWidgetData(location.latitude, location.longitude)
+                loadWidgetData(context, location.latitude, location.longitude)
             }
             .addOnFailureListener { e ->
                 writeLog(false, "addOnFailureListener", e.localizedMessage)
@@ -192,27 +220,10 @@ class NotiJobService : JobService() {
             }
     }
 
-    private fun loadWidgetData(lat: Double, lng: Double) {
+    private fun loadWidgetData(context: Context, lat: Double, lng: Double) {
         val httpClient = HttpClient.getInstance(true).setClientBuilder()
         writeLog(false, "Get Instance", httpClient.toString())
         val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
-
-        val refreshBtnIntent = Intent(context, WidgetProvider4x2::class.java)
-        refreshBtnIntent.action = WidgetAction.WIDGET_UPDATE
-        val pendingRefresh: PendingIntent =
-            PendingIntent.getBroadcast(context, 0, refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
-
-        val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
-            .let { intent ->
-                intent.action = "enterApplication"
-                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-            }
-
-        views.apply {
-            setOnClickPendingIntent(R.id.widget4x2MainLayout, pendingIntent)
-            setOnClickPendingIntent(R.id.widget4x2Refresh, pendingRefresh)
-            setOnClickPendingIntent(R.id.widget4x2ReloadLayout, pendingRefresh)
-        }
 
         GetLocation(context).getAddress(lat, lng)?.let { addr ->
             writeLog(false, "Address", addr)
@@ -221,6 +232,9 @@ class NotiJobService : JobService() {
                 "Address",
                 addr
             )
+
+            SharedPreferenceManager(context).setLong("lastWidgetDataCall", getCurrentTime())
+
             changeVisibility(context, views, false)
 
             GetLocation(context).updateCurrentAddress(
@@ -318,7 +332,6 @@ class NotiJobService : JobService() {
                                     GetAppInfo.getNotificationAddress(context).trim()
                                 )
 
-                                context.sendBroadcast(refreshBtnIntent)
                                 fetch(context, views)
                             }
                         } catch (e: Exception) {

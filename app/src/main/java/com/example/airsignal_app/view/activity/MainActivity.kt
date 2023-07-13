@@ -282,12 +282,8 @@ class MainActivity
         binding.mainGpsFix.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 mVib()
-                if (RequestPermissionsUtil(this@MainActivity).isLocationPermitted()) {
-                    showPB()
-                    loadLocationData()
-                } else {
-                    RequestPermissionsUtil(this@MainActivity).requestLocation()
-                }
+                showPB()
+                loadLocationData()
             }
         })
 
@@ -364,20 +360,27 @@ class MainActivity
 
     // 날씨 데이터 API 호출
     private fun getDataSingleTime() {
-        if (RequestPermissionsUtil(this).isLocationPermitted()) {
-            val addrArray = resources.getStringArray(R.array.address)
-            val lastAddress = getUserLastAddress(this)
-            if (addrArray.contains(lastAddress)) {
-                loadSavedAddr(lastAddress)
-            } else {
-                loadLocationData()
-            }
-            // TimeOut
-            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                if (isProgressed()) {
-                    hidePB()
+        if (RequestPermissionsUtil(this).isNetworkPermitted()) {
+            if (RequestPermissionsUtil(this).isLocationPermitted()) {
+                binding.mainDailyWeatherRv.scrollToPosition(0)
+                val addrArray = resources.getStringArray(R.array.address)
+                val lastAddress = getUserLastAddress(this)
+                if (addrArray.contains(lastAddress)) {
+                    loadSavedAddr(lastAddress)
+                } else {
+                    loadLocationData()
                 }
-            }, 1000 * 9)
+                // TimeOut
+                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                    if (isProgressed()) {
+                        hidePB()
+                    }
+                }, 1000 * 9)
+            } else {
+                RequestPermissionsUtil(this@MainActivity).requestLocation()
+            }
+        } else {
+            ToastUtils(this).showMessage(getString(R.string.error_network))
         }
     }
 
@@ -531,7 +534,7 @@ class MainActivity
                     val model = db.findByName(title)
 
                     applyAirQView(model.nameKR!!,model.name,model.grade,
-                        model.unit, model.value)
+                        model.unit, model.value, model.maxValue)
 
                     airQList.forEach {
                         it.isSelect = it.title == airQList[position].title
@@ -598,6 +601,8 @@ class MainActivity
                                 val thunder = result.thunder!!
                                 currentSun = GetAppInfo.getCurrentSun(sun.sunrise!!, sun.sunset!!)
 
+                                airQList.clear()
+
                                 val wfMin = listOf(
                                     week.wf0Am, week.wf1Am, week.wf2Am, week.wf3Am,
                                     week.wf4Am, week.wf5Am, week.wf6Am, week.wf7Am
@@ -641,28 +646,27 @@ class MainActivity
                                 binding.mainMinMaxValue.text =
                                     "${filteringNullData(today.min!!)}˚/${filteringNullData(today.max!!)}˚"
 
-
-                                airQList.clear()
                                 updateAirQData(
                                     PM2p5_INDEX,"초미세먼지","PM2.5",
-                                    "㎍/㎥",air.pm25Value!!.toInt().toString(),500f,air.pm25Grade!!)
+                                    "㎍/㎥",air.pm25Value!!.toInt().toString(),151f,air.pm25Grade!!)
                                 updateAirQData(
                                     PM10_INDEX,"미세먼지","PM10",
-                                    "㎍/㎥",air.pm10Value!!.toInt().toString(),500f,air.pm10Grade!!)
-                                updateAirQData(CO_INDEX,"일산화탄소","CO",
-                                    "ppm",air.coValue!!.toString(), 50f, air.coGrade!!)
+                                    "㎍/㎥",air.pm10Value!!.toInt().toString(),76f,air.pm10Grade!!)
+                                updateAirQData(
+                                    CO_INDEX,"일산화탄소","CO",
+                                    "ppm",air.coValue!!.toString(), 15.01f, air.coGrade!!)
                                 updateAirQData(
                                     SO2_INDEX,"아황산가스","SO2",
-                                    "ppm",air.so2Value!!.toString(), 1f,air.so2Grade!!)
+                                    "ppm",air.so2Value!!.toString(), 0.151f,air.so2Grade!!)
                                 updateAirQData(
                                     NO2_INDEX,"이산화질소","NO2",
-                                    "㎍/㎥",air.no2Value!!.toString(),2f,air.no2Grade!!)
+                                    "㎍/㎥",air.no2Value!!.toString(),0.201f,air.no2Grade!!)
                                 updateAirQData(
                                     O3_INDEX,"오존","O3",
-                                    "㎍/㎥",air.o3Value!!.toString(),0.6f,air.o3Grade!!)
+                                    "㎍/㎥",air.o3Value!!.toString(),0.151f,air.o3Grade!!)
 
                                 applyAirQView("초미세먼지","PM2.5",
-                                    air.pm25Grade,"㎍/m3", air.pm25Value.toInt().toString())
+                                    air.pm25Grade,"㎍/m3", air.pm25Value.toInt().toString(),151f)
 
                                 airQList[PM2p5_INDEX].isSelect = true
 
@@ -1040,7 +1044,6 @@ class MainActivity
     private fun applyGetLocationViewModel(): MainActivity {
         if (!getLocationViewModel.fetchData().hasObservers()) {
             Timber.tag("ReAddrTest").i("applyGetLocationViewModel")
-
             getLocationViewModel.fetchData().observe(this) { loc ->
                 hidePB()
                 val lat = loc.lat!!
@@ -1099,6 +1102,7 @@ class MainActivity
             }
         } else {
             Timber.tag("ReAddrTest").i("Already has applyGetDataViewModel")
+            getLocationViewModel.loadDataResult(this)
         }
         return this
     }
@@ -1128,16 +1132,21 @@ class MainActivity
         }
     }
 
-    private fun applyAirQView(kr: String, en: String, grade: Int, unit: String, value: String) {
+    private fun applyAirQView(kr: String, en: String, grade: Int, unit: String,
+                              value: String, maxValue: Float) {
         binding.nestedPmTitleKr.text = kr
         binding.nestedPmTitleEn.text = en
         setAirCPV(getDataColor(this,grade), unit, grade)
 
-        binding.nestedPmCpv.setText(DataTypeParser.getDataText(grade))
-        binding.nestedPmCpv.setValueAnimated(value.toFloat(),500)
-        binding.nestedPmGrade.text = value
-        binding.nestedPmGrade.setTextColor(getDataColor(this@MainActivity,grade))
+        binding.nestedPmCpv.apply {
+            setText(DataTypeParser.getDataText(grade))
+            setMaxValue(maxValue)
+        }
+        binding.nestedPmValue.text = value
+        binding.nestedPmValue.setTextColor(getDataColor(this@MainActivity, grade))
         binding.nestedPmUnit.text = unit
+
+        binding.nestedPmCpv.setValueAnimated(value.toFloat(), 500)
     }
 
     private fun addAirQItem(position: Int, title: String) {
@@ -1154,7 +1163,7 @@ class MainActivity
         model.name = name
         model.unit = unit
         model.grade = grade
-        model.value = value.toString()
+        model.value = value
         model.maxValue = maxValue
         model.timeStamp = getCurrentTime()
 

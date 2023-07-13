@@ -106,4 +106,5 @@
     <string name="pm">미세먼지</string>
     <string name="widget_rainPer">강수확률 :</string>
     <string name="theDayAfterTomorrow">모레</string>
+    <string name="error_network">네트워크 연결이 불안정합니다.</string>
 </resources>

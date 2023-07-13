@@ -76,7 +76,7 @@ class ReportViewPagerAdapter(
                                 textView.maxEms
                         val isEllipsized = ellipsisCount > 0
 //                    onClickListener.onItemClick(it, position)
-                        if (textView.maxLines == 2) {
+                        if (textView.maxLines == 3) {
                             if (isEllipsized) {
                                 mVib()
                                 val lineCount = textView.lineCount + ellipsisCount
@@ -89,8 +89,8 @@ class ReportViewPagerAdapter(
                             }
                         } else {
                             mVib()
-                            val lineCount = 2
-                            textView.maxLines = 2
+                            val lineCount = 3
+                            textView.maxLines = 3
                             val lineHeight = textView.lineHeight
                             val desiredHeight = lineCount * lineHeight
                             textView.layoutParams.height = desiredHeight
