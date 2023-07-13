@@ -27,6 +27,18 @@
         android:layout_alignTop="@+id/faqBack"
         android:layout_alignBottom="@+id/faqBack"/>
 
+    <TextView
+        android:id="@+id/faqNullText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/faqBack"
+        android:gravity="center"
+        android:text="자주 묻는 질문이 없습니다"
+        android:textSize="20sp"
+        android:visibility="gone"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:textColor="@color/mode_color_text"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/faqRv"
         android:layout_width="match_parent"

@@ -1055,31 +1055,27 @@ class MainActivity
                     .replace("null","")
 
                 if (loc.isGPS) {
-                    if (addr != "Null Address") {
+                    loadCurrentViewModelData(lat, lng)
 
-                        loadCurrentViewModelData(lat, lng)
+                    updateCurrentAddress(
+                        lat, lng,
+                        formatAddr
+                    )
 
-                        updateCurrentAddress(
-                            lat, lng,
-                            formatAddr
-                        )
+                    setNotificationAddress(this, formatAddr)
 
-                        setNotificationAddress(this, formatAddr)
+                    locationClass.writeRdbCurrentLog(
+                        lat, loc.lng,
+                        formatAddr
+                    )
 
-                        locationClass.writeRdbCurrentLog(
-                            lat, loc.lng,
-                            formatAddr
-                        )
+                    binding.mainGpsTitleTv.text = guardWordWrap(
+                        formatAddr
+                    )
 
-                        binding.mainGpsTitleTv.text = guardWordWrap(
-                            formatAddr
-                        )
+                    binding.mainTopBarGpsTitle.text =
+                        formatAddr
 
-                        binding.mainTopBarGpsTitle.text =
-                            formatAddr
-                    } else {
-                        ToastUtils(this).showMessage(getString(R.string.fail_to_get_gps))
-                    }
                 } else {
                     updateCurrentAddress(
                         lat, lng,

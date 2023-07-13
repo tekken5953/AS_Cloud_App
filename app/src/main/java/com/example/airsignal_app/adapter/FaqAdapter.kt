@@ -7,12 +7,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.AdapterModel
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-03-28 오전 11:52
  **/
-class FaqAdapter(private val context: Context, list: ArrayList<String>) :
+class FaqAdapter(private val context: Context, list: ArrayList<AdapterModel.FaqItem>) :
     RecyclerView.Adapter<FaqAdapter.ViewHolder>() {
     private val mList = list
 
@@ -45,8 +46,8 @@ class FaqAdapter(private val context: Context, list: ArrayList<String>) :
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val headLine: TextView = itemView.findViewById(R.id.itemFaqText)
 
-        fun bind(dao: String) {
-            headLine.text = dao
+        fun bind(dao: AdapterModel.FaqItem) {
+            headLine.text = dao.title
 
             itemView.setOnClickListener {
                 val position = adapterPosition

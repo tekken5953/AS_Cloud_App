@@ -48,7 +48,7 @@ class NoticeAdapter(private val context: Context, list: ArrayList<AdapterModel.N
         private val title: TextView = itemView.findViewById(R.id.itemNoticeHeader)
 
         fun bind(dao: AdapterModel.NoticeItem) {
-            date.text = dao.date
+            date.text = dao.created
             title.text = dao.title
 
             if (adapterPosition == 0) {

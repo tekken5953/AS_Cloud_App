@@ -242,9 +242,7 @@ class NotiJobService : JobService() {
             )
 
             val getDataResponse: Call<ApiModel.Widget4x2Data> =
-                httpClient.mMyAPIImpl.getWidgetForecast(
-                    lat, lng, 1
-                )
+                httpClient.mMyAPIImpl.getWidgetForecast(lat, lng, 1)
 
             getDataResponse.enqueue(object :
                 Callback<ApiModel.Widget4x2Data> {

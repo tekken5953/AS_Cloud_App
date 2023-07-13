@@ -1,6 +1,7 @@
 package com.example.airsignal_app.dao
 
 import android.graphics.drawable.Drawable
+import com.google.gson.annotations.SerializedName
 
 object AdapterModel {
 
@@ -26,16 +27,23 @@ object AdapterModel {
 
     // 공지사항 리스트
     data class NoticeItem(
-        val date: String,
-        val title: String
+        @SerializedName("created")
+        val created: String,
+        @SerializedName("modified")
+        val modified: String,
+        @SerializedName("title")
+        val title: String,
+        @SerializedName("content")
+        val content: String
     )
-//
-//    // 공지사항 내용
-//    data class DetailItem(
-//        val title: String,
-//        val content: String,
-//        val isNotice: Boolean
-//    )
+
+    // 자주 묻는 질문
+    data class FaqItem(
+        @SerializedName("title")
+        val title: String,
+        @SerializedName("content")
+        val content: String
+    )
 
 //    // 앱 버전
 //    data class AppVersionItem(

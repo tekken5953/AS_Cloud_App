@@ -23,7 +23,7 @@ class MyDeviceActivity
     : BaseActivity<ActivityMyDeviceBinding>() {
     override val resID: Int get() = R.layout.activity_my_device
 
-    private val sp by lazy { ShowDialogClass().getInstance(this) }
+    private val sp by lazy { ShowDialogClass(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +50,7 @@ class MyDeviceActivity
 
 
         binding.myDeviceAddDevice.setOnClickListener {
-            ShowDialogClass().show(viewAddDevice, true)  // 장치추가 레이아웃 출력
+            ShowDialogClass(this).show(viewAddDevice, true)  // 장치추가 레이아웃 출력
             val addDeviceFrame: FrameLayout =
                 viewAddDevice.findViewById(R.id.addDeviceFrame)   // 장치추가 클릭 필드
             val cancelAddDevice: ImageView =
@@ -110,7 +110,7 @@ class MyDeviceActivity
 
                         sp.show(viewLoading, false) // 로딩 레이아웃 출력
                         // 로딩 GIF
-                        Glide.with(it.context).asGif().load(R.drawable.loading_gif)
+                        Glide.with(it.context).load(R.drawable.b_ico_sunny)
                             .into(viewLoading.findViewById(R.id.progressAddFrameImage))
                         val handler = Handler(Looper.getMainLooper())
                         handler.postDelayed({
