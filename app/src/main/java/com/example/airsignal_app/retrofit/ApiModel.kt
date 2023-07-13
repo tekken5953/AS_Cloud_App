@@ -16,6 +16,13 @@ class ApiModel {
 //    // 유저 이메일 변경 모델
 //    data class PutMyEmail(val email: String?)
 
+    data class AppVersion(
+        @SerializedName("version")
+        val version: String,
+        @SerializedName("releaseDate")
+        val releaseDate: String
+    )
+
     data class MetaData(
         @SerializedName("address")
         val address: String?,

@@ -1,5 +1,6 @@
 package com.example.airsignal_app.view.activity
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -25,6 +26,7 @@ class MyDeviceActivity
 
     private val sp by lazy { ShowDialogClass(this) }
 
+    @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()

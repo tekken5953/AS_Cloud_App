@@ -27,4 +27,7 @@ public interface MyApiImpl {
 
     @GET("faq")
     Call<List<AdapterModel.FaqItem>> getFaq();
+
+    @GET("version")
+    Call<ApiModel.AppVersion> getVersion();
 }

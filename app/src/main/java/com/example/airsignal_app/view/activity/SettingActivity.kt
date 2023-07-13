@@ -21,6 +21,7 @@ import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.login.PhoneLogin
+import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
@@ -32,6 +33,7 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getUserNotiNight
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserNotiPM
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserTheme
 import com.example.airsignal_app.util.`object`.GetSystemInfo
+import com.example.airsignal_app.util.`object`.GetSystemInfo.getApplicationVersion
 import com.example.airsignal_app.util.`object`.SetAppInfo.removeAllKeys
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserFontScale
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLocation
@@ -44,7 +46,6 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 
@@ -480,6 +481,43 @@ class SettingActivity
         binding.settingAppInfo.setOnClickListener {
             val viewAppInfo: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_app_info, null)
+
+            val appInfoVersionValue: TextView = viewAppInfo.findViewById(R.id.appInfoVersionValue)
+            val appInfoIsRecent: TextView = viewAppInfo.findViewById(R.id.appInfoIsRecent)
+            val appInfoDownBtn: Button = viewAppInfo.findViewById(R.id.appInfoDownBtn)
+            val appInfoReleaseDate: TextView = viewAppInfo.findViewById(R.id.appInfoReleaseDate)
+
+            HttpClient.getInstance(false)
+                .setClientBuilder()
+                .mMyAPIImpl.version.enqueue(object : Callback<ApiModel.AppVersion> {
+                    override fun onResponse(
+                        call: Call<ApiModel.AppVersion>,
+                        response: Response<ApiModel.AppVersion>
+                    ) {
+                        val result = response.body()!!
+                        val appVersion = getApplicationVersion(this@SettingActivity)
+                        appInfoReleaseDate.text = "(최종 업데이트 : ${convertDateFormat(result.releaseDate)})"
+                        appInfoVersionValue.text = appVersion
+                        if (result.version == appVersion) {
+                            appInfoIsRecent.text = "최신 소프트웨어입니다."
+                            appInfoDownBtn.visibility = View.GONE
+                        } else {
+                            appInfoIsRecent.text =
+                                "최신 버전이 아닙니다. (최신버전 : ${result.version})"
+                            appInfoDownBtn.apply {
+                                visibility = View.VISIBLE
+                                text = "최신버전 ${getString(R.string.download)}"
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<ApiModel.AppVersion>, t: Throwable) {
+                        t.printStackTrace()
+                        Toast.makeText(this@SettingActivity,
+                            "앱 정보를 불러오는데 실패했습니다",
+                            Toast.LENGTH_SHORT).show()
+                    }
+                })
 
             ShowDialogClass(this)
                 .setBackPressed(viewAppInfo.findViewById(R.id.appInfoBack))

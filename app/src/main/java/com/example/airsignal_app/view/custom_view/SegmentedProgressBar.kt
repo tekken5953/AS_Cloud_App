@@ -1,4 +1,4 @@
-package com.example.airsignal_app.view
+package com.example.airsignal_app.view.custom_view
 
 import android.annotation.SuppressLint
 import android.content.Context

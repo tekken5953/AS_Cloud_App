@@ -62,7 +62,11 @@ class NotiJobService : JobService() {
     override fun onStopJob(p0: JobParameters?): Boolean {
         Timber.tag(TAG_W).d("onStopJob : ${p0?.jobId}")
         writeLog(false, "JobScheduler 정지", "onStopJob : ${p0?.jobId}")
-        context.unregisterReceiver(WidgetProvider4x2.NotiJobScheduler())
+        try {
+            context.unregisterReceiver(WidgetProvider4x2.NotiJobScheduler())
+        } catch (e: IllegalArgumentException) {
+           e.printStackTrace()
+        }
         if (!WidgetProvider4x2().isJobScheduled(context)) {
             WidgetProvider4x2.NotiJobScheduler().scheduleJob(context)
         }

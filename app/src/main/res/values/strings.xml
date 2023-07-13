@@ -104,4 +104,6 @@
     <string name="widget_rainPer">강수확률 :</string>
     <string name="theDayAfterTomorrow">모레</string>
     <string name="error_network">네트워크 연결이 불안정합니다.</string>
+    <string name="download">다운로드</string>
+    <string name="app_version">앱 버전</string>
 </resources>

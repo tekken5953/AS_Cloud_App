@@ -101,7 +101,9 @@
     <string name="widget_pm">PM :</string>
     <string name="widget_reload">Fail to get data\nPlease press to update</string>
     <string name="pm">pm</string>
-    <string name="widget_rainPer">강수확률 :</string>
-    <string name="theDayAfterTomorrow">모레</string>
+    <string name="widget_rainPer">Rain :</string>
+    <string name="theDayAfterTomorrow">Next tomorrow</string>
     <string name="error_network">Please check network status</string>
+    <string name="download">Download</string>
+    <string name="app_version">App Version</string>
 </resources>

@@ -52,12 +52,12 @@
     <View
         android:id="@+id/detailView"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:layout_below="@+id/detailNoticeDate"
         android:layout_alignStart="@+id/detailHeadLine"
         android:layout_marginTop="20dp"
         android:layout_alignEnd="@+id/detailHeadLine"
-        android:background="@color/mode_color_text" />
+        android:background="@color/main_gray_color" />
 
     <TextView
         android:id="@+id/detailContent"

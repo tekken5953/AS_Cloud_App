@@ -524,6 +524,23 @@
                         android:src="@drawable/help"
                         app:tint="#7C7C7C" />
 
+                    <LinearLayout
+                        android:id="@+id/nested_pm_help_popup"
+                        android:layout_width="250dp"
+                        android:layout_height="200dp"
+                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="-5dp"
+                        android:alpha="0"
+                        android:background="@drawable/bubble2"
+                        android:layout_alignTop="@+id/nested_pm_help"
+                        android:layout_toStartOf="@+id/nested_pm_help">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="도움말 팝업"/>
+                    </LinearLayout>
+
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/nested_pm_rv"
                         android:layout_width="match_parent"

@@ -80,6 +80,7 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
+import com.example.airsignal_app.view.custom_view.SegmentedProgressBar
 import com.example.airsignal_app.vmodel.GetLocationViewModel
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.gms.ads.AdView
@@ -546,6 +547,24 @@ class MainActivity
                 }
             }
         })
+
+        binding.nestedPmHelp.setOnClickListener {
+            if (binding.nestedPmHelpPopup.alpha == 0f) {
+                val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
+                binding.nestedPmHelpPopup.apply {
+                    bringToFront()
+                    startAnimation(fadeIn)
+                    alpha = 1f
+                }
+            } else {
+                val fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
+                binding.nestedPmHelpPopup.apply {
+                    startAnimation(fadeOut)
+                    alpha = 0f
+                }
+                binding.nestedPmRv.bringToFront()
+            }
+        }
     }
 
     // 백그라운드 위치 호출
