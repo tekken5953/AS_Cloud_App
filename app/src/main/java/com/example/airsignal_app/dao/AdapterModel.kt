@@ -9,7 +9,9 @@ object AdapterModel {
         val time: String,
         val img: Drawable?,
         val value: String,
-        val date: String
+        val date: String,
+        val rainP: Double?,
+        val isRain: Boolean
     )
 
     // 주간별 날씨
@@ -63,5 +65,11 @@ object AdapterModel {
     // 날씨 특보 뷰페이저 아이템
     data class ReportItem(
         val text: String
+    )
+
+    // 실시간 공기질 타이틀 아이템
+    data class AirQTitleItem(
+        val title: String,
+        var isSelect: Boolean = false
     )
 }

@@ -14,6 +14,7 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
     <uses-permission
         android:name="android.permission.BIND_REMOTEVIEWS"
         tools:ignore="ProtectedPermissions" />
@@ -124,10 +125,12 @@
             android:label="NotiBootService">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.SCREEN_ON" />
             </intent-filter>
         </receiver>
 
         <service android:name=".view.widget.NotiJobService"
+            tools:ignore="Instantiatable"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
     </application>
 

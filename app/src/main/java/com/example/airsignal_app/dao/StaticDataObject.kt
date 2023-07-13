@@ -22,4 +22,10 @@ object StaticDataObject {
     const val NOTIFICATION_ADDRESS = "Notification_address" // 노티피케이션 용 주소
     const val SHOWING_LOADING_FLOAT = 0.5f
     const val NOT_SHOWING_LOADING_FLOAT = 1f
+    const val PM2p5_INDEX = 0
+    const val PM10_INDEX = 1
+    const val CO_INDEX = 2
+    const val SO2_INDEX = 3
+    const val NO2_INDEX = 4
+    const val O3_INDEX = 5
 }

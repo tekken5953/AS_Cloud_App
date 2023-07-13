@@ -13,12 +13,14 @@ import com.example.airsignal_app.dao.StaticDataObject.REQUEST_NOTIFICATION
 
 class RequestPermissionsUtil(private val context: Context) {
 
+    private val permissionNetWork = Manifest.permission.INTERNET
+
     /** 위치 권한 SDK 버전 29 이상**/
     @RequiresApi(Build.VERSION_CODES.Q)
     private val permissionsLocationUpApi29Impl = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION,
-//        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        Manifest.permission.ACCESS_BACKGROUND_LOCATION
     )
 
     /** 위치 권한 SDK 버전 29 이하**/
@@ -45,10 +47,10 @@ class RequestPermissionsUtil(private val context: Context) {
                     context,
                     permissionsLocationUpApi29Impl[1]
                 ) != PackageManager.PERMISSION_GRANTED
-//                || ActivityCompat.checkSelfPermission(
-//                    context,
-//                    permissionsLocationUpApi29Impl[2]
-//                ) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(
+                    context,
+                    permissionsLocationUpApi29Impl[2]
+                ) != PackageManager.PERMISSION_GRANTED
             ) {
                 ActivityCompat.requestPermissions(
                     context as Activity,
@@ -125,5 +127,13 @@ class RequestPermissionsUtil(private val context: Context) {
             return true
         }
         return true
+    }
+
+    /** 인터넷 허용 여부 검사 **/
+    fun isNetworkPermitted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            permissionNetWork
+        ) == PackageManager.PERMISSION_GRANTED
     }
 }

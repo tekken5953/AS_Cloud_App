@@ -37,6 +37,7 @@ class GetWeatherRepo : BaseRepository() {
                         } else {
                             Logger.t("Weather API").e("Data Error API : ${ApiState.Success(responseBody).data}")
                             _getDataResult.postValue(ApiState.Error("API ERROR OCCURRED"))
+                            call.cancel()
                         }
                     }
 
@@ -46,7 +47,6 @@ class GetWeatherRepo : BaseRepository() {
                     ) {
                         Logger.t("Weather API").e("API NetworkError : ${t.stackTraceToString()}")
                         _getDataResult.postValue(ApiState.Error("Network Error"))
-                        call.timeout()
                         call.cancel()
                     }
                 })

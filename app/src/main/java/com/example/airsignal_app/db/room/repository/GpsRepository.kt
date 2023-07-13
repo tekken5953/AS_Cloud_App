@@ -2,9 +2,8 @@ package com.example.airsignal_app.db.room.repository
 
 import android.content.Context
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
-import com.example.airsignal_app.db.room.AppDataBase.Companion.getInstance
+import com.example.airsignal_app.db.database.GpsDataBase.Companion.getInstance
 import com.example.airsignal_app.db.room.model.GpsEntity
-import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -19,7 +18,7 @@ class GpsRepository(private val context: Context) {
         CoroutineScope(Dispatchers.Default).launch {
             getInstance(context)!!.gpsRepository().updateCurrentGPS(model)
             Logger.t(TAG_D).d("Update Model : $model")
-            Timber.tag("ReAddrTest").i("GpsRepository update : ${model.addr}")
+            Timber.tag("ReAddrTest").i("airQRepository update : ${model.addr}")
         }
     }
 

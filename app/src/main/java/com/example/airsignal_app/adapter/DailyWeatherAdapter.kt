@@ -1,5 +1,6 @@
 package com.example.airsignal_app.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.util.`object`.DataTypeParser.getDailyItemDate
 import timber.log.Timber
+import java.time.LocalDateTime
 
 /**
  * @author : Lee Jae Young
@@ -36,13 +39,24 @@ class DailyWeatherAdapter(
     override fun getItemCount(): Int = mList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(mList[position])
-        if (position == 0 || mList[position - 1].date != mList[position].date) {
-            holder.date.visibility = View.VISIBLE
-            if (!dateSection.contains(position))
-                dateSection.add(position)
-        } else {
-            holder.date.visibility = View.INVISIBLE
+        holder.bind(mList[position]).apply {
+            if (position == 0 ||
+                LocalDateTime.parse(mList[position - 1].date).toLocalDate()
+                    .compareTo(LocalDateTime.parse(mList[position].date).toLocalDate())
+                != 0) {
+                holder.date.visibility = View.VISIBLE
+                if (!dateSection.contains(position)) {
+                    dateSection.add(position)
+                }
+            } else {
+                holder.date.visibility = View.INVISIBLE
+            }
+
+            if (mList[position].isRain) {
+                holder.rain.visibility = View.VISIBLE
+            } else {
+                holder.rain.visibility = View.INVISIBLE
+            }
         }
     }
 
@@ -55,12 +69,21 @@ class DailyWeatherAdapter(
         private val image: ImageView = itemView.findViewById(R.id.itemDailySky)
         private val value: TextView = itemView.findViewById(R.id.itemDailyValue)
         val date: TextView = itemView.findViewById(R.id.itemDailyDate)
+        val rain: TextView = itemView.findViewById(R.id.itemDailyRain)
 
+        @SuppressLint("SetTextI18n")
         fun bind(dao: AdapterModel.DailyWeatherItem) {
             time.text = dao.time
             image.setImageDrawable(dao.img)
             value.text = dao.value
-            date.text = dao.date
+            date.text = getDailyItemDate(LocalDateTime.parse(dao.date))
+            rain.text = "${dao.rainP?.toInt().toString()}%"
+
+            if (adapterPosition == 0) {
+                date.setBackgroundResource(R.drawable.daily_date_bg_s)
+            } else {
+                date.setBackgroundResource(R.drawable.daily_date_bg_ns)
+            }
         }
     }
 }

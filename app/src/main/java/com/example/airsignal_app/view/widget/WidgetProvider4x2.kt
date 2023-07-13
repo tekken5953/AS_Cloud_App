@@ -1,6 +1,5 @@
 package com.example.airsignal_app.view.widget
 
-import android.app.PendingIntent
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.appwidget.AppWidgetManager
@@ -10,12 +9,10 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.RemoteViews
-import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
-import com.example.airsignal_app.firebase.db.RDBLogcat
+import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.`object`.DataTypeParser.currentDateTimeString
-import com.example.airsignal_app.view.activity.MainActivity
+import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_ENABLE
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_OPTIONS_CHANGED
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE
@@ -63,26 +60,9 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        val views4x2 = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
-
-        val refreshBtnIntent = Intent(context, WidgetProvider4x2::class.java)
-        refreshBtnIntent.action = WIDGET_UPDATE
-        val pendingRefresh: PendingIntent =
-            PendingIntent.getBroadcast(context, 0, refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
-
-        val pendingIntent: PendingIntent = Intent(context, MainActivity::class.java)
-            .let { intent ->
-                intent.action = "enterApplication"
-                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-            }
-
-        views4x2.apply {
-            setOnClickPendingIntent(R.id.widget4x2MainLayout, pendingIntent)
-            setOnClickPendingIntent(R.id.widget4x2Refresh, pendingRefresh)
-            setOnClickPendingIntent(R.id.widget4x2ReloadLayout, pendingRefresh)
+        if (!isJobScheduled(context)) {
+            NotiJobScheduler().scheduleJob(context)
         }
-
-        context.sendBroadcast(refreshBtnIntent)
     }
 
     // 이 메소드는 앱 데이터가 구글 시스템에 백업 된 이후 복원 될 때 만약 위젯 데이터가 있다면 데이터가 복구 된 이후 호출 됩니다.
@@ -104,11 +84,14 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         super.onReceive(context, intent)
         intent.action?.let {
             when (it) {
-                WIDGET_ENABLE,
+                WIDGET_ENABLE -> {
+                    NotiJobService().getWidgetLocation(context)
+                }
                 WIDGET_UPDATE
                 -> {
                     Timber.tag(TAG_W)
                         .i("onReceive : ${currentDateTimeString(context)} intent : ${intent.action}")
+
                     NotiJobScheduler().scheduleJob(context)
                 }
                 WIDGET_OPTIONS_CHANGED
@@ -122,9 +105,18 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
     class NotiJobScheduler : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            NotiJobService().writeLog(false, "onReceive Action" ,intent.action)
             if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
                 // 재부팅 후 JobScheduler 다시 등록
                 scheduleJob(context)
+            }
+            if (intent.action == Intent.ACTION_SCREEN_ON) {
+                // 절전 모드에서 벗어났을 때의 동작을 여기에 구현합니다.
+                if (getCurrentTime() -
+                    SharedPreferenceManager(context).getLong("lastWidgetDataCall")
+                 > (30 * 60 * 1000)) {
+                    scheduleJob(context)
+                }
             }
         }
 
@@ -138,29 +130,31 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 .setPersisted(true)
                 .build()
 
-            if (!isJobScheduled(context)) {
+            if (!WidgetProvider4x2().isJobScheduled(context)) {
                 jobScheduler.schedule(jobInfo)
-                RDBLogcat.writeLogCause("Widget","JobScheduler 등록 성공", jobInfo.service.shortClassName)
+                NotiJobService().writeLog(false,
+                    "JobScheduler 등록 성공", jobInfo.service.shortClassName)
                 Timber.tag("JobServices").d("JobScheduler 등록 성공 : ${jobInfo.intervalMillis}")
             } else {
                 Timber.tag("JobServices").d("JobScheduler 이미 존재 : ${jobScheduler.getPendingJob(JOB_ID)}")
+                NotiJobService().getWidgetLocation(context)
             }
-        }
-
-        private fun isJobScheduled(context: Context) : Boolean {
-            val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-
-            val pendingJobs = jobScheduler.allPendingJobs
-            for (jobInfo in pendingJobs) {
-                if (jobInfo.id == JOB_ID) { return true }
-            }
-
-            return false
         }
 
         companion object {
-            private const val JOB_ID = 1001
-            private const val INTERVAL_MILLISECONDS: Long = 15 * 60 * 1000
+            const val JOB_ID = 1001
+            private const val INTERVAL_MILLISECONDS: Long = 30 * 60 * 1000
         }
+    }
+
+    fun isJobScheduled(context: Context) : Boolean {
+        val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+
+        val pendingJobs = jobScheduler.allPendingJobs
+        for (jobInfo in pendingJobs) {
+            if (jobInfo.id == NotiJobScheduler.JOB_ID) { return true }
+        }
+
+        return false
     }
 }

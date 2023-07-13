@@ -1,4 +1,4 @@
-package com.example.airsignal_app.db.room
+package com.example.airsignal_app.db.database
 
 import android.content.Context
 import androidx.room.Database
@@ -11,20 +11,20 @@ import com.example.airsignal_app.db.room.scheme.GpsScheme
 import timber.log.Timber
 
 @Database(entities = [GpsEntity::class], version = dbVersion)
-abstract class AppDataBase : RoomDatabase() {
+abstract class GpsDataBase : RoomDatabase() {
     abstract fun gpsRepository(): GpsScheme
 
     companion object {
         private const val dbName = "room-gps"
-        private var INSTANCE: AppDataBase? = null
+        private var INSTANCE: GpsDataBase? = null
 
-        fun getInstance(context: Context): AppDataBase? {
+        fun getInstance(context: Context): GpsDataBase? {
             if (INSTANCE == null) {
-                synchronized(AppDataBase::class.java) {
+                synchronized(GpsDataBase::class.java) {
                     Timber.tag(TAG_D).d("DB 인스턴스 생성")
                     INSTANCE = Room.databaseBuilder(
                         context.applicationContext,
-                        AppDataBase::class.java, dbName
+                        GpsDataBase::class.java, dbName
                     )
                         .fallbackToDestructiveMigration()
                         .allowMainThreadQueries()
