@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,9 @@ import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.login.PhoneLogin
+import com.example.airsignal_app.repo.BaseRepository
+import com.example.airsignal_app.retrofit.ApiModel
+import com.example.airsignal_app.retrofit.HttpClient
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
@@ -31,25 +35,33 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getUserNotiNight
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserNotiPM
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserTheme
 import com.example.airsignal_app.util.`object`.GetSystemInfo
+import com.example.airsignal_app.util.`object`.GetSystemInfo.getApplicationVersion
 import com.example.airsignal_app.util.`object`.SetAppInfo.removeAllKeys
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserFontScale
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLocation
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserTheme
 import com.example.airsignal_app.view.ShowDialogClass
+import com.example.airsignal_app.vmodel.GetAppVersionViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.time.LocalDateTime
 import java.util.*
+import kotlin.system.exitProcess
 
 class SettingActivity
     : BaseActivity<ActivitySettingBinding>() {
     override val resID: Int get() = R.layout.activity_setting
 
-    private val faqItem = arrayListOf<String>()
+    private val faqItem = arrayListOf<AdapterModel.FaqItem>()
     private val noticeItem = arrayListOf<AdapterModel.NoticeItem>()
     private var isInit = true
-    private val dialog by lazy { ShowDialogClass().getInstance(this) }
+    private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
 
     override fun onResume() {
         super.onResume()
@@ -85,16 +97,6 @@ class SettingActivity
 
         // 로그인 시 저장된 핸드폰 번호
         val email = getUserEmail(this)
-
-        binding.settingEvent.setOnClickListener {
-            binding.cpv11.setValueAnimated(15f,500)
-            binding.cpv22.setValueAnimated(60f,500)
-            binding.cpv33.setValueAnimated(80f,500)
-            binding.cpv1.setValueAnimated(25f,1000)
-            binding.cpv2.setValueAnimated(50f,1000)
-            binding.cpv3.setValueAnimated(75f,1000)
-            binding.cpv4.setValueAnimated(100f,1000)
-        }
 
         if (isInit) {
             isInit = false
@@ -158,7 +160,7 @@ class SettingActivity
             val radioGroup: RadioGroup = themeView.findViewById(R.id.changeThemeRadioGroup)
             val cancel: ImageView = themeView.findViewById(R.id.changeThemeBack)
 
-            dialog
+            ShowDialogClass(this)
                 .setBackPressRefresh(themeView.findViewById(R.id.changeThemeBack))
                 .show(themeView, true)
 
@@ -230,7 +232,7 @@ class SettingActivity
             val radioGroup: RadioGroup = langView.findViewById(R.id.changeLangRadioGroup)
             val cancelBtn: ImageView = langView.findViewById(R.id.changeLangBack)
 
-            dialog
+            ShowDialogClass(this)
                 .setBackPressed(cancelBtn)
                 .show(langView, true)
 
@@ -292,7 +294,7 @@ class SettingActivity
             val back = scaleView.findViewById<ImageView>(R.id.changeScaleBack)
             val rg = scaleView.findViewById<RadioGroup>(R.id.changeScaleRadioGroup)
 
-            dialog
+            ShowDialogClass(this)
                 .setBackPressRefresh(back)
                 .show(scaleView, true)
 
@@ -334,6 +336,8 @@ class SettingActivity
             LayoutInflater.from(this).inflate(R.layout.dialog_detail, null)
         val detailDate: TextView = detailView.findViewById(R.id.detailNoticeDate)
         val detailTitle: TextView = detailView.findViewById(R.id.detailTitle)
+        val detailContent: TextView = detailView.findViewById(R.id.detailContent)
+        val detailHeadLine: TextView = detailView.findViewById(R.id.detailHeadLine)
 
         // 공지사항 클릭
         binding.settingNotice.setOnClickListener {
@@ -342,23 +346,68 @@ class SettingActivity
             val noticeAdapter = NoticeAdapter(this, noticeItem)
             val recyclerView: RecyclerView = noticeMainView.findViewById(R.id.noticeRv)
             val noticeTitle: TextView = noticeMainView.findViewById(R.id.noticeTitle)
+            val nullText = noticeMainView.findViewById<TextView>(R.id.noticeNullText)
+
             recyclerView.adapter = noticeAdapter
             noticeItem.clear()
-            for (i: Int in 5 downTo 0) {
-                addNoticeItem("01.1${i}", "$i 가나다 라마바사아 자차 카 타파하 가나다 라마바사아 자차 카 타파하")
-                noticeAdapter.notifyItemInserted(i)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                HttpClient
+                    .getInstance(false)
+                    .setClientBuilder()
+                    .mMyAPIImpl
+                    .notice.enqueue(object : Callback<List<AdapterModel.NoticeItem>> {
+                        @SuppressLint("NotifyDataSetChanged")
+                        override fun onResponse(
+                            call: Call<List<AdapterModel.NoticeItem>>,
+                            response: Response<List<AdapterModel.NoticeItem>>
+                        ) {
+                            try {
+                                val list = response.body()!!
+                                list.forEach {
+                                    addNoticeItem(convertDateFormat(it.created),
+                                        convertDateFormat(it.modified),
+                                        it.title,
+                                        it.content)
+                                }
+
+                                noticeAdapter.notifyDataSetChanged()
+                                if (list.isEmpty()) {
+                                    nullText.visibility = View.VISIBLE
+                                } else {
+                                    nullText.visibility = View.GONE
+                                }
+                            } catch(e: Exception) {
+                                nullText.visibility = View.VISIBLE
+                                e.printStackTrace()
+                            }
+                        }
+
+                        override fun onFailure(
+                            call: Call<List<AdapterModel.NoticeItem>>,
+                            t: Throwable
+                        ) {
+                            nullText.visibility = View.VISIBLE
+                            Toast.makeText(this@SettingActivity,
+                                "공지사항을 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+
+                            t.printStackTrace()
+                        }
+                    })
             }
 
-            dialog
+            ShowDialogClass(this)
                 .setBackPressed(noticeMainView.findViewById(R.id.noticeBack))
                 .show(noticeMainView, true)
 
             noticeAdapter.setOnItemClickListener(object : NoticeAdapter.OnItemClickListener {
                 override fun onItemClick(v: View, position: Int) {
-                    detailDate.text = noticeItem[position].date
+                    detailDate.text = noticeItem[position].created
                     detailDate.visibility = View.VISIBLE
                     detailTitle.text = noticeTitle.text.toString()
-                    dialog
+                    detailContent.text = noticeItem[position].content
+                    detailHeadLine.text = noticeItem[position].title
+                    ShowDialogClass(this@SettingActivity)
                         .setBackPressed(detailView.findViewById(R.id.detailBack))
                         .show(detailView, true)
                 }
@@ -371,14 +420,53 @@ class SettingActivity
             val faqAdapter = FaqAdapter(this, faqItem)
             val recyclerView = faqMainView.findViewById<RecyclerView>(R.id.faqRv)
             val faqTitle: TextView = faqMainView.findViewById(R.id.faqTitle)
+            val faqNullText: TextView = faqMainView.findViewById(R.id.faqNullText)
             faqItem.clear()
             recyclerView.adapter = faqAdapter
-            for (i: Int in 0..5) {
-                addFaqItem("$i 가나다 라마바사아 자차 카 타파하")
-                faqAdapter.notifyItemInserted(i)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                HttpClient.getInstance(false)
+                    .setClientBuilder()
+                    .mMyAPIImpl.faq.enqueue(object : Callback<List<AdapterModel.FaqItem>>{
+                        @SuppressLint("NotifyDataSetChanged")
+                        override fun onResponse(
+                            call: Call<List<AdapterModel.FaqItem>>,
+                            response: Response<List<AdapterModel.FaqItem>>
+                        ) {
+                            try {
+                                val list = response.body()!!
+                                list.forEach {
+                                    addFaqItem(it.title,it.content)
+                                }
+
+                                faqAdapter.notifyDataSetChanged()
+
+                                if (list.isEmpty()) {
+                                    faqNullText.visibility = View.VISIBLE
+                                } else {
+                                    faqNullText.visibility = View.GONE
+                                }
+                            } catch (e: Exception) {
+                                faqNullText.visibility = View.VISIBLE
+                                e.printStackTrace()
+                            }
+                        }
+
+                        override fun onFailure(
+                            call: Call<List<AdapterModel.FaqItem>>,
+                            t: Throwable
+                        ) {
+                            faqNullText.visibility = View.VISIBLE
+                            Toast.makeText(this@SettingActivity,
+                                "자주 묻는 질문을 불러오는데 실패했습니다",
+                                Toast.LENGTH_SHORT).show()
+
+                            t.printStackTrace()
+                        }
+                    })
             }
 
-            dialog
+            ShowDialogClass(this)
                 .setBackPressed(faqMainView.findViewById(R.id.faqBack))
                 .show(faqMainView, true)
 
@@ -386,18 +474,19 @@ class SettingActivity
                 override fun onItemClick(v: View, position: Int) {
                     detailDate.visibility = View.GONE
                     detailTitle.text = faqTitle.text.toString()
-                    dialog.show(detailView, true)
+                    detailContent.text = faqItem[position].content
+                    detailHeadLine.text = faqItem[position].title
+                    ShowDialogClass(this@SettingActivity)
+                        .setBackPressed(detailView.findViewById(R.id.detailBack))
+                        .show(detailView, true)
                 }
             })
         }
 
         // 앱 정보 클릭
         binding.settingAppInfo.setOnClickListener {
-            val viewAppInfo: View =
-                LayoutInflater.from(this).inflate(R.layout.dialog_app_info, null)
-
-            dialog.setBackPressed(viewAppInfo.findViewById(R.id.appInfoBack))
-                .show(viewAppInfo, true)
+            applyAppVersionResult()
+            appVersionViewModel.loadDataResult()
         }
     }
 
@@ -427,6 +516,68 @@ class SettingActivity
 //                binding.settingSystemFont.fetchData(getString(R.string.theme_system))
             }
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun applyAppVersionResult() {
+        val viewAppInfo: View =
+            LayoutInflater.from(this).inflate(R.layout.dialog_app_info, null)
+
+        val appInfoVersionValue: TextView = viewAppInfo.findViewById(R.id.appInfoVersionValue)
+        val appInfoIsRecent: TextView = viewAppInfo.findViewById(R.id.appInfoIsRecent)
+        val appInfoDownBtn: Button = viewAppInfo.findViewById(R.id.appInfoDownBtn)
+        val appInfoReleaseDate: TextView = viewAppInfo.findViewById(R.id.appInfoReleaseDate)
+        val appInfoPB: ProgressBar = viewAppInfo.findViewById(R.id.appInfoPB)
+
+        appVersionViewModel.fetchData().observe(this) { result ->
+            result?.let { ver ->
+                when (ver) {
+                    is BaseRepository.ApiState.Success -> {
+                        val data = ver.data
+                        val versionInfo = getApplicationVersion(this)
+
+                        //TODO 수정해야함 버전 명 보내면 최신버전이랑 날짜랑 그 버전의 배포날짜 받아오기로
+                        appInfoReleaseDate.text =
+                            "(최종 업데이트 : ${convertDateFormat(data.releaseDate)})"
+                        appInfoVersionValue.text = versionInfo
+                        if (data.version == versionInfo) {
+                            appInfoIsRecent.text = "최신 소프트웨어입니다."
+                            appInfoDownBtn.visibility = View.GONE
+                        } else {
+                            appInfoIsRecent.text =
+                                "최신 버전이 아닙니다. (최신버전 : ${data.version})"
+                            appInfoDownBtn.apply {
+                                visibility = View.VISIBLE
+                                text = "최신버전 ${getString(R.string.download)}"
+                            }
+                        }
+                    }
+                    is BaseRepository.ApiState.Error -> {
+                        Toast.makeText(
+                            this@SettingActivity,
+                            "앱 정보를 불러오는데 실패했습니다",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+
+        appInfoPB.visibility = View.GONE
+        appInfoVersionValue.visibility = View.VISIBLE
+        appInfoIsRecent.visibility = View.VISIBLE
+        appInfoIsRecent.visibility = View.VISIBLE
+
+        ShowDialogClass(this)
+            .setBackPressed(viewAppInfo.findViewById(R.id.appInfoBack))
+            .show(viewAppInfo, true)
+    }
+
+    private fun convertDateFormat(s: String): String {
+        val fs = LocalDateTime.parse(s)
+        return "${fs.year}.${fs.monthValue}.${fs.dayOfMonth}"
     }
 
     private fun applyUserEmail() {
@@ -584,13 +735,14 @@ class SettingActivity
     }
 
     /** 자주묻는질문 아이템 추가하기 **/
-    private fun addFaqItem(text: String) {
-        faqItem.add(text)
+    private fun addFaqItem(title: String, content: String) {
+        val item = AdapterModel.FaqItem(title, content)
+        faqItem.add(item)
     }
 
     /** 공지사항 아이템 추가하기 **/
-    private fun addNoticeItem(date: String, title: String) {
-        val item = AdapterModel.NoticeItem(date, title)
+    private fun addNoticeItem(created: String, modified: String, title: String, content: String) {
+        val item = AdapterModel.NoticeItem(created,modified,title,content)
         noticeItem.add(item)
     }
 }

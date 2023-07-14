@@ -9,10 +9,13 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.`object`.DataTypeParser.currentDateTimeString
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
+import com.example.airsignal_app.util.`object`.GetAppInfo
+import com.example.airsignal_app.view.ToastUtils
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_ENABLE
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_OPTIONS_CHANGED
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE
@@ -89,10 +92,14 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 }
                 WIDGET_UPDATE
                 -> {
-                    Timber.tag(TAG_W)
-                        .i("onReceive : ${currentDateTimeString(context)} intent : ${intent.action}")
+                    if (isRefreshable(context)) {
+                        Timber.tag(TAG_W)
+                            .i("onReceive : ${currentDateTimeString(context)} intent : ${intent.action}")
 
-                    NotiJobScheduler().scheduleJob(context)
+                        NotiJobScheduler().scheduleJob(context)
+                    } else {
+                        ToastUtils(context).showMessage("마지막 갱신 뒤 1분 후에 가능합니다",1)
+                    }
                 }
                 WIDGET_OPTIONS_CHANGED
                 -> {
@@ -156,5 +163,9 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         }
 
         return false
+    }
+
+    private fun isRefreshable(context: Context): Boolean {
+        return getCurrentTime() - GetAppInfo.getLastRefreshTime(context) >= 1000 * 60
     }
 }

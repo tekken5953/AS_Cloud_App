@@ -1,5 +1,7 @@
 package com.example.airsignal_app.retrofit;
 
+import com.example.airsignal_app.dao.AdapterModel;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -20,23 +22,12 @@ public interface MyApiImpl {
             @Query("lng") Double lng,
             @Query("rcount") Integer count);
 
-    @GET("forecast/realtime")
-    Call<List<ApiModel.RealTimeData>> getRealTime(
-            @Query("lat")Double lat,
-            @Query("lng")Double lng);
+    @GET("notice")
+    Call<List<AdapterModel.NoticeItem>> getNotice();
 
-    @GET("forecast/week")
-    Call<ApiModel.WeeklyData> getWeeklyData(
-            @Query("lat")Double lat,
-            @Query("lng")Double lng);
+    @GET("faq")
+    Call<List<AdapterModel.FaqItem>> getFaq();
 
-    @GET("forecast/quality")
-    Call<ApiModel.AirQualityData> getAirQuality(
-            @Query("lat")Double lat,
-            @Query("lng")Double lng);
-
-    @GET("forecast/sun")
-    Call<ApiModel.SunData> getSun(
-            @Query("lat")Double lat,
-            @Query("lng")Double lng);
+    @GET("version")
+    Call<ApiModel.AppVersion> getVersion();
 }

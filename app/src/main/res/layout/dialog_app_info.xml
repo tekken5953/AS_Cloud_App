@@ -7,12 +7,10 @@
 
     <ImageView
         android:id="@+id/appInfoBack"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        style="@style/BasicImageButtonIcon"
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
-        android:background="?selectableItemBackgroundBorderless"
-        android:padding="4dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/back_arrow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -35,29 +33,63 @@
         android:layout_marginTop="40dp"
         android:fontFamily="@font/spoqa_hansansneo_medium"
         android:gravity="start"
-        android:text="앱 버전"
+        android:text="@string/app_version"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="@+id/appInfoBack"
         app:layout_constraintTop_toBottomOf="@+id/appInfoBack" />
+
+    <ProgressBar
+        android:id="@+id/appInfoPB"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        style="@android:style/Widget.Material.Light.ProgressBar.Small"
+        app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle"
+        app:layout_constraintStart_toStartOf="@+id/appInfoVersionTitle"
+        app:layout_constraintEnd_toEndOf="@+id/appInfoVersionTitle"
+        android:layout_marginTop="8dp"/>
 
     <TextView
         android:id="@+id/appInfoVersionValue"
         style="@style/basicTextView"
         android:layout_marginTop="5dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:text="1.1.1 (최종 업데이트 2023.03.28)"
         android:textColor="@color/main_blue_color"
         android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="@+id/appInfoVersionTitle"
         app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle" />
 
     <TextView
+        android:id="@+id/appInfoReleaseDate"
+        style="@style/basicTextView"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:textColor="@color/main_blue_color"
+        android:textSize="12sp"
+        android:visibility="gone"
+        android:layout_marginStart="2dp"
+        app:layout_constraintStart_toEndOf="@+id/appInfoVersionValue"
+        app:layout_constraintTop_toTopOf="@+id/appInfoVersionValue"
+        app:layout_constraintBottom_toBottomOf="@+id/appInfoVersionValue"/>
+
+    <TextView
+        android:id="@+id/appInfoIsRecent"
         style="@style/basicTextView"
         android:layout_marginTop="5dp"
-        android:text="최신 소프트웨어입니다."
         android:textColor="@color/option_title_color"
         android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="@+id/appInfoVersionTitle"
         app:layout_constraintTop_toBottomOf="@+id/appInfoVersionValue" />
+
+    <Button
+        android:id="@+id/appInfoDownBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:backgroundTint="@color/main_blue_color"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/appInfoIsRecent"
+        app:layout_constraintStart_toStartOf="@+id/appInfoIsRecent"
+        android:layout_marginTop="10dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

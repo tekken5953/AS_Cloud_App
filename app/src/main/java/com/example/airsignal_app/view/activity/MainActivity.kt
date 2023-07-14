@@ -40,9 +40,7 @@ import com.example.airsignal_app.dao.StaticDataObject.SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.SO2_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.databinding.ActivityMainBinding
-import com.example.airsignal_app.db.room.model.AirQEntity
 import com.example.airsignal_app.db.room.model.GpsEntity
-import com.example.airsignal_app.db.room.repository.AirQRepository
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.admob.AdViewClass
 import com.example.airsignal_app.firebase.db.RDBLogcat
@@ -80,6 +78,7 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
+import com.example.airsignal_app.view.custom_view.SegmentedProgressBar
 import com.example.airsignal_app.vmodel.GetLocationViewModel
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.gms.ads.AdView
@@ -526,26 +525,44 @@ class MainActivity
         })
 
         // 실시간 공기질 리스트 클릭
-        airQAdapter.setOnItemClickListener(object : AirQTitleAdapter.OnItemClickListener{
+        airQAdapter.setOnItemClickListener(object : AirQTitleAdapter.OnItemClickListener {
             override fun onItemClick(v: View, position: Int) {
                 try {
-                    val title = airQList[position].title
-                    val db = AirQRepository(this@MainActivity)
-                    val model = db.findByName(title)
-
-                    applyAirQView(model.nameKR!!,model.name,model.grade,
-                        model.unit, model.value, model.maxValue)
+                    val model = airQList[position]
+                    applyAirQView(
+                        model.nameKR, model.name, model.grade,
+                        model.unit, model.value, model.maxValue
+                    )
 
                     airQList.forEach {
-                        it.isSelect = it.title == airQList[position].title
+                        it.isSelect = it.position == airQList[position].position
                     }
-
                     airQAdapter.notifyDataSetChanged()
+
                 } catch (e: Exception) {
                     e.printStackTrace()
+
                 }
             }
         })
+
+        binding.nestedPmHelp.setOnClickListener {
+            if (binding.nestedPmHelpPopup.alpha == 0f) {
+                val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
+                binding.nestedPmHelpPopup.apply {
+                    bringToFront()
+                    startAnimation(fadeIn)
+                    alpha = 1f
+                }
+            } else {
+                val fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
+                binding.nestedPmHelpPopup.apply {
+                    startAnimation(fadeOut)
+                    alpha = 0f
+                }
+                binding.nestedPmRv.bringToFront()
+            }
+        }
     }
 
     // 백그라운드 위치 호출
@@ -1044,60 +1061,69 @@ class MainActivity
     private fun applyGetLocationViewModel(): MainActivity {
         if (!getLocationViewModel.fetchData().hasObservers()) {
             Timber.tag("ReAddrTest").i("applyGetLocationViewModel")
-            getLocationViewModel.fetchData().observe(this) { loc ->
-                hidePB()
-                val lat = loc.lat!!
-                val lng = loc.lng!!
-                val addr = loc.addr!!
-                val formatAddr = addr
-                    .replaceFirst(" ", "")
-                    .replace(getString(R.string.korea), "")
-                    .replace("null","")
+            getLocationViewModel.fetchData().observe(this) { location ->
+                location?.let { loc ->
+                    when (loc) {
+                        is BaseRepository.ApiState.Success -> {
+                            val data = loc.data
+                            hidePB()
+                            val lat = data.lat!!
+                            val lng = data.lng!!
+                            val addr = data.addr!!
+                            val formatAddr = addr
+                                .replaceFirst(" ", "")
+                                .replace(getString(R.string.korea), "")
+                                .replace("null","")
 
-                if (loc.isGPS) {
-                    if (addr != "Null Address") {
+                            if (data.isGPS) {
+                                loadCurrentViewModelData(lat, lng)
 
-                        loadCurrentViewModelData(lat, lng)
+                                updateCurrentAddress(
+                                    lat, lng,
+                                    formatAddr
+                                )
 
-                        updateCurrentAddress(
-                            lat, lng,
-                            formatAddr
-                        )
+                                setNotificationAddress(this, formatAddr)
 
-                        setNotificationAddress(this, formatAddr)
+                                locationClass.writeRdbCurrentLog(
+                                    lat, lng,
+                                    formatAddr
+                                )
 
-                        locationClass.writeRdbCurrentLog(
-                            lat, loc.lng,
-                            formatAddr
-                        )
+                                binding.mainGpsTitleTv.text = guardWordWrap(
+                                    formatAddr
+                                )
 
-                        binding.mainGpsTitleTv.text = guardWordWrap(
-                            formatAddr
-                        )
+                                binding.mainTopBarGpsTitle.text =
+                                    formatAddr
 
-                        binding.mainTopBarGpsTitle.text =
-                            formatAddr
-                    } else {
-                        ToastUtils(this).showMessage(getString(R.string.fail_to_get_gps))
+                            } else {
+                                updateCurrentAddress(
+                                    lat, lng,
+                                    formatAddr
+                                )
+                                loadCurrentViewModelData(lat, lng)
+
+                                locationClass.writeRdbCurrentLog(
+                                    lat, lng, "NetWork - $addr"
+                                )
+
+                                setNotificationAddress(this,  formatAddr)
+
+                                binding.mainGpsTitleTv.text =
+                                    formatAddr
+                                binding.mainTopBarGpsTitle.text = formatAddr
+
+                                ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
+                            }
+                        }
+                        is BaseRepository.ApiState.Error -> {
+                            Toast.makeText(this,
+                                "주소를 불러오지 못했습니다",
+                                Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {}
                     }
-                } else {
-                    updateCurrentAddress(
-                        lat, lng,
-                        formatAddr
-                    )
-                    loadCurrentViewModelData(lat, lng)
-
-                    locationClass.writeRdbCurrentLog(
-                        lat, loc.lng, "NetWork - $addr"
-                    )
-
-                    setNotificationAddress(this,  formatAddr)
-
-                    binding.mainGpsTitleTv.text =
-                        formatAddr
-                    binding.mainTopBarGpsTitle.text = formatAddr
-
-                    ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
                 }
             }
         } else {
@@ -1149,33 +1175,23 @@ class MainActivity
         binding.nestedPmCpv.setValueAnimated(value.toFloat(), 500)
     }
 
-    private fun addAirQItem(position: Int, title: String) {
-        val item = AdapterModel.AirQTitleItem(title)
+    private fun addAirQItem(position: Int, nameKR: String, name: String, unit: String,
+                            value: String, maxValue: Float, grade: Int) {
+        val item = AdapterModel.AirQTitleItem(false, position, nameKR,
+            name, unit, value, maxValue, grade)
 
         this.airQList.add(position,item)
+        this.airQAdapter.notifyItemChanged(position)
     }
 
     private fun updateAirQData(position: Int, nameKR: String, name: String, unit: String,
                                value: String, maxValue: Float, grade: Int) {
-        val db = AirQRepository(this@MainActivity)
-        val model = AirQEntity()
-        model.nameKR = nameKR
-        model.name = name
-        model.unit = unit
-        model.grade = grade
-        model.value = value
-        model.maxValue = maxValue
-        model.timeStamp = getCurrentTime()
 
-       if (!airQList.contains(AdapterModel.AirQTitleItem(name))) {
-           addAirQItem(position,name)
+       if (!airQList.contains(AdapterModel.AirQTitleItem(false, position, nameKR,
+               name, unit, value, maxValue, grade))) {
+           addAirQItem(position, nameKR,
+               name, unit, value, maxValue, grade)
        }
-
-        if (airQDbIsEmpty(db)) {
-            db.insert(model)
-        } else {
-            db.update(model)
-        }
     }
 
     // 현재 위치정보로 DB 갱신
@@ -1200,11 +1216,6 @@ class MainActivity
 
     // DB가 비어있는지 확인
     private fun gpsDbIsEmpty(db: GpsRepository): Boolean {
-        return db.findAll().isEmpty()
-    }
-
-    // DB가 비어있는지 확인
-    private fun airQDbIsEmpty(db: AirQRepository): Boolean {
         return db.findAll().isEmpty()
     }
 

@@ -1,45 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginEnd="8dp"
-    android:orientation="horizontal"
-    tools:context=".view.activity.MainActivity">
+<layout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="horizontal"
+        tools:context=".view.activity.MainActivity">
 
-    <TextView
-        android:id="@+id/customSegment0"
-        style="@style/basicTextView"
-        android:layout_weight="0.15"
-        android:gravity="start"
-        android:text="0"
-        android:textColor="#7C7C7C"
-        android:textSize="11sp" />
+        <TextView
+            android:id="@+id/customSegment0"
+            style="@style/basicTextView"
+            android:layout_weight="0.15"
+            android:gravity="start"
+            android:text="0"
+            android:textColor="#7C7C7C"
+            android:textSize="11sp" />
 
-    <TextView
-        android:id="@+id/customSegment1"
-        style="@style/basicTextView"
-        android:layout_weight="0.25"
-        android:gravity="start"
-        android:textColor="#7C7C7C"
-        android:textSize="11sp" />
+        <TextView
+            android:id="@+id/customSegment1"
+            style="@style/basicTextView"
+            android:layout_weight="0.25"
+            android:gravity="start"
+            android:textColor="#7C7C7C"
+            android:textSize="11sp" />
 
-    <TextView
-        android:id="@+id/customSegment2"
-        style="@style/basicTextView"
-        android:layout_weight="0.35"
-        android:gravity="start"
-        android:textColor="#7C7C7C"
-        android:textSize="11sp" />
+        <TextView
+            android:id="@+id/customSegment2"
+            style="@style/basicTextView"
+            android:layout_weight="0.35"
+            android:gravity="start"
+            android:textColor="#7C7C7C"
+            android:textSize="11sp" />
 
-    <TextView
-        android:id="@+id/customSegment3"
-        style="@style/basicTextView"
-        android:layout_weight="0.25"
-        android:gravity="start"
-        android:textColor="#7C7C7C"
-        android:textSize="11sp" />
+        <TextView
+            android:id="@+id/customSegment3"
+            style="@style/basicTextView"
+            android:layout_weight="0.25"
+            android:gravity="start"
+            android:textColor="#7C7C7C"
+            android:textSize="11sp" />
 
-</LinearLayout>
+    </LinearLayout>
+</layout>

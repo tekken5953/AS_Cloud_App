@@ -52,7 +52,7 @@ class LoginActivity
         binding.phoneLoginButton.setOnClickListener {
             val viewEmailLogin: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_phone_input, null)
-            val dialog = ShowDialogClass().getInstance(this)
+            val dialog = ShowDialogClass(this)
             dialog.show(viewEmailLogin, true)
             val inputEt: EditText = viewEmailLogin.findViewById(R.id.inputEt)
             val inputSendBtn: Button = viewEmailLogin.findViewById(R.id.inputSendBtn)

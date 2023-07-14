@@ -17,6 +17,7 @@
         android:id="@+id/detailTitle"
         style="@style/basicTextView"
         android:layout_alignTop="@+id/detailBack"
+        android:layout_alignBottom="@+id/detailBack"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="10dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
@@ -34,7 +35,6 @@
         android:layout_marginEnd="37dp"
         android:fontFamily="@font/spoqa_hansansneo_medium"
         android:gravity="start"
-        android:text="가나다 라마 바사아자 차카 타파하가나다 라마 바사아자 차카 타파하"
         android:textColor="@color/mode_color_text"
         android:textSize="16sp" />
 
@@ -46,21 +46,21 @@
         android:layout_marginTop="10dp"
         android:visibility="gone"
         android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:text="01.13"
         android:textColor="@color/main_blue_color"
         android:textSize="12sp" />
 
     <View
         android:id="@+id/detailView"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:layout_below="@+id/detailNoticeDate"
         android:layout_alignStart="@+id/detailHeadLine"
         android:layout_marginTop="20dp"
         android:layout_alignEnd="@+id/detailHeadLine"
-        android:background="@color/mode_color_text" />
+        android:background="@color/main_gray_color" />
 
     <TextView
+        android:id="@+id/detailContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/detailView"
@@ -71,19 +71,7 @@
         android:layout_alignEnd="@+id/detailHeadLine"
         android:layout_marginBottom="40dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:text="가나다 라마 바사아자 차카 타파하가나다 라마 바사아자 차카 타파하
-가나다 라마 바사아자 차카 타파하가나다 라마 바사아자 차카 타파하
-가나다 라마 바사아자 차카 타파하가나다 라마 바사아자 차카 타파하
-가나다 라마 바사아자 차카 타파하가나다 라마 바사아자 차카 타파하
-가나다 라마 바사아자 차카 타파하가나다 라마 바사아자 차카 타파하
-가나다 라마 바사아자 차카 타파하가나다 라마 바사아자 차카 타파하
-가나다 라마 바사아자 차카 타파하가나다 라마 바사아자 차카 타파하
-가나다 라마 바사아자 차카 타파하가나다 라마 바사아자 차카 타파하
-가나다 라마 바사아자 차카 타파하가나다 라마 바사아자 차카 타파하
-가나다 라마 바사아자 차카 타파하가나다 라마 바사아자 차카 타파하"
         android:textColor="@color/option_title_color"
         android:textSize="14sp" />
-
-
 
 </RelativeLayout>

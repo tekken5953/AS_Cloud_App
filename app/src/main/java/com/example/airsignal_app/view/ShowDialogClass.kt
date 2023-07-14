@@ -16,15 +16,12 @@ import javax.inject.Singleton
  * @since : 2023-03-28 오전 11:15
  **/
 
-class ShowDialogClass {
-    private lateinit var activity: Activity
-    private lateinit var builder: androidx.appcompat.app.AlertDialog.Builder
+class ShowDialogClass(private val activity: Activity) {
+    private var builder: androidx.appcompat.app.AlertDialog.Builder =
+        androidx.appcompat.app.AlertDialog.Builder(activity, R.style.AlertDialog)
     private lateinit var alertDialog: androidx.appcompat.app.AlertDialog
 
-    @Singleton
-    fun getInstance(mActivity: Activity): ShowDialogClass {
-        activity = mActivity
-        builder = androidx.appcompat.app.AlertDialog.Builder(activity, R.style.AlertDialog)
+    init {
         when(getUserFontScale(activity)) {
             "small" -> {
                 SetSystemInfo.setTextSizeSmall(activity)
@@ -36,7 +33,6 @@ class ShowDialogClass {
                 SetSystemInfo.setTextSizeDefault(activity)
             }
         }
-        return this
     }
 
     /** 다이얼로그 뒤로가기 버튼 리스너 등록 **/

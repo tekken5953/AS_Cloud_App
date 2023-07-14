@@ -57,8 +57,6 @@
     <string name="delete_item">will be deleted</string>
     <string name="system">System</string>
     <string name="live_air_quality">Realtime air quality</string>
-    <string name="pm2_5_title">PM2.5(Ultra Fine)</string>
-    <string name="pm10_title">PM10(Fine)</string>
     <string name="uv_title">UV index</string>
     <string name="how_to_response_title">Counter measures</string>
     <string name="sunrise">Sunrise</string>
@@ -98,13 +96,14 @@
     <string name="min_max">Min/Max</string>
     <string name="similar_temp">Similar to yesterday</string>
     <string name="font_scale">Font Scale</string>
-    <string name="fail_to_get_gps">Fail to get GPS</string>
     <string name="thunder_sunny">Rainy,Thunder</string>
     <string name="thunder_rainy">Rain/Thunder</string>
     <string name="widget_pm">PM :</string>
     <string name="widget_reload">Fail to get data\nPlease press to update</string>
     <string name="pm">pm</string>
-    <string name="widget_rainPer">강수확률 :</string>
-    <string name="theDayAfterTomorrow">모레</string>
+    <string name="widget_rainPer">Rain :</string>
+    <string name="theDayAfterTomorrow">Next tomorrow</string>
     <string name="error_network">Please check network status</string>
+    <string name="download">Download</string>
+    <string name="app_version">App Version</string>
 </resources>

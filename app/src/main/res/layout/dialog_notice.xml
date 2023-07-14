@@ -26,6 +26,18 @@
         android:textColor="@color/mode_color_text"
         android:textSize="16sp" />
 
+    <TextView
+        android:id="@+id/noticeNullText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/noticeBack"
+        android:gravity="center"
+        android:text="공지사항이 없습니다"
+        android:textSize="20sp"
+        android:visibility="gone"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:textColor="@color/mode_color_text"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/noticeRv"
         android:layout_width="match_parent"

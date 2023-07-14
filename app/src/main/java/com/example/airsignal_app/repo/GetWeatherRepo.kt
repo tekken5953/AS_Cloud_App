@@ -1,6 +1,7 @@
 package com.example.airsignal_app.repo
 
 import androidx.lifecycle.MutableLiveData
+import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient.mMyAPIImpl
 import com.orhanobut.logger.Logger
@@ -11,6 +12,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
+import java.net.SocketTimeoutException
 
 /**
  * @author : Lee Jae Young
@@ -32,10 +34,10 @@ class GetWeatherRepo : BaseRepository() {
                         val responseBody = response.body()!!
 
                         if (response.isSuccessful) {
-                            Logger.t("Weather API").d("Success API : ${ApiState.Success(responseBody).data}")
+                            Logger.t(TAG_R).d("Success API : ${ApiState.Success(responseBody).data}")
                             _getDataResult.postValue(ApiState.Success(responseBody))
                         } else {
-                            Logger.t("Weather API").e("Data Error API : ${ApiState.Success(responseBody).data}")
+                            Logger.t(TAG_R).e("Data Error API : ${ApiState.Success(responseBody).data}")
                             _getDataResult.postValue(ApiState.Error("API ERROR OCCURRED"))
                             call.cancel()
                         }
@@ -45,9 +47,13 @@ class GetWeatherRepo : BaseRepository() {
                         call: Call<ApiModel.GetEntireData>,
                         t: Throwable
                     ) {
-                        Logger.t("Weather API").e("API NetworkError : ${t.stackTraceToString()}")
-                        _getDataResult.postValue(ApiState.Error("Network Error"))
-                        call.cancel()
+                        try {
+                            Logger.t(TAG_R).e("API NetworkError : ${t.stackTraceToString()}")
+                            _getDataResult.postValue(ApiState.Error("Network Error"))
+                            call.cancel()
+                        } catch (e: SocketTimeoutException) {
+                            _getDataResult.postValue(ApiState.Error("Timeout Error"))
+                        }
                     }
                 })
         }

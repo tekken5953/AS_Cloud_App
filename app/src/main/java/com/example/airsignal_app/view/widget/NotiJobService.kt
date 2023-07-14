@@ -26,6 +26,8 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentRainType
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentTempType
 import com.example.airsignal_app.util.`object`.GetAppInfo
+import com.example.airsignal_app.util.`object`.GetAppInfo.getLastRefreshTime
+import com.example.airsignal_app.util.`object`.SetAppInfo.setLastRefreshTime
 import com.example.airsignal_app.view.activity.RedirectPermissionActivity
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
@@ -55,14 +57,18 @@ class NotiJobService : JobService() {
             getWidgetLocation(context)
 
             context.registerReceiver(WidgetProvider4x2.NotiJobScheduler(), filter)
-        },2000)
+        },1000)
         return true
     }
 
     override fun onStopJob(p0: JobParameters?): Boolean {
         Timber.tag(TAG_W).d("onStopJob : ${p0?.jobId}")
         writeLog(false, "JobScheduler 정지", "onStopJob : ${p0?.jobId}")
-        context.unregisterReceiver(WidgetProvider4x2.NotiJobScheduler())
+        try {
+            context.unregisterReceiver(WidgetProvider4x2.NotiJobScheduler())
+        } catch (e: IllegalArgumentException) {
+           e.printStackTrace()
+        }
         if (!WidgetProvider4x2().isJobScheduled(context)) {
             WidgetProvider4x2.NotiJobScheduler().scheduleJob(context)
         }
@@ -242,9 +248,7 @@ class NotiJobService : JobService() {
             )
 
             val getDataResponse: Call<ApiModel.Widget4x2Data> =
-                httpClient.mMyAPIImpl.getWidgetForecast(
-                    lat, lng, 1
-                )
+                httpClient.mMyAPIImpl.getWidgetForecast(lat, lng, 1)
 
             getDataResponse.enqueue(object :
                 Callback<ApiModel.Widget4x2Data> {
@@ -288,10 +292,12 @@ class NotiJobService : JobService() {
                                 setTextViewText(
                                     R.id.widget4x2Time,
                                     DataTypeParser.millsToString(
-                                        DataTypeParser.getCurrentTime(),
+                                        getCurrentTime(),
                                         "HH시 mm분"
                                     )
                                 )
+
+                                setLastRefreshTime(context, getCurrentTime())
 
                                 setTextViewText(
                                     R.id.widget4x2TempValue,
