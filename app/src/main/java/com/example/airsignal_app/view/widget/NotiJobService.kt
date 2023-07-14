@@ -57,7 +57,7 @@ class NotiJobService : JobService() {
             getWidgetLocation(context)
 
             context.registerReceiver(WidgetProvider4x2.NotiJobScheduler(), filter)
-        },1500)
+        },1000)
         return true
     }
 

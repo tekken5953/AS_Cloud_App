@@ -12,6 +12,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
+import java.net.SocketTimeoutException
 
 /**
  * @author : Lee Jae Young
@@ -46,9 +47,13 @@ class GetWeatherRepo : BaseRepository() {
                         call: Call<ApiModel.GetEntireData>,
                         t: Throwable
                     ) {
-                        Logger.t(TAG_R).e("API NetworkError : ${t.stackTraceToString()}")
-                        _getDataResult.postValue(ApiState.Error("Network Error"))
-                        call.cancel()
+                        try {
+                            Logger.t(TAG_R).e("API NetworkError : ${t.stackTraceToString()}")
+                            _getDataResult.postValue(ApiState.Error("Network Error"))
+                            call.cancel()
+                        } catch (e: SocketTimeoutException) {
+                            _getDataResult.postValue(ApiState.Error("Timeout Error"))
+                        }
                     }
                 })
         }

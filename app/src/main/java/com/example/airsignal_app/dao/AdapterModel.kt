@@ -77,7 +77,13 @@ object AdapterModel {
 
     // 실시간 공기질 타이틀 아이템
     data class AirQTitleItem(
-        val title: String,
-        var isSelect: Boolean = false
+        var isSelect: Boolean = false,
+        val position: Int,
+        val nameKR: String,
+        val name: String,
+        val unit: String,
+        val value: String,
+        val maxValue: Float,
+        val grade: Int
     )
 }

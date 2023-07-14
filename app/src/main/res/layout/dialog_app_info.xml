@@ -7,12 +7,10 @@
 
     <ImageView
         android:id="@+id/appInfoBack"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        style="@style/BasicImageButtonIcon"
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
-        android:background="?selectableItemBackgroundBorderless"
-        android:padding="4dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/back_arrow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,6 +38,16 @@
         app:layout_constraintStart_toStartOf="@+id/appInfoBack"
         app:layout_constraintTop_toBottomOf="@+id/appInfoBack" />
 
+    <ProgressBar
+        android:id="@+id/appInfoPB"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        style="@android:style/Widget.Material.Light.ProgressBar.Small"
+        app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle"
+        app:layout_constraintStart_toStartOf="@+id/appInfoVersionTitle"
+        app:layout_constraintEnd_toEndOf="@+id/appInfoVersionTitle"
+        android:layout_marginTop="8dp"/>
+
     <TextView
         android:id="@+id/appInfoVersionValue"
         style="@style/basicTextView"
@@ -47,6 +55,7 @@
         android:fontFamily="@font/spoqa_hansansneo_regular"
         android:textColor="@color/main_blue_color"
         android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="@+id/appInfoVersionTitle"
         app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle" />
 
@@ -56,6 +65,7 @@
         android:fontFamily="@font/spoqa_hansansneo_regular"
         android:textColor="@color/main_blue_color"
         android:textSize="12sp"
+        android:visibility="gone"
         android:layout_marginStart="2dp"
         app:layout_constraintStart_toEndOf="@+id/appInfoVersionValue"
         app:layout_constraintTop_toTopOf="@+id/appInfoVersionValue"
@@ -67,6 +77,7 @@
         android:layout_marginTop="5dp"
         android:textColor="@color/option_title_color"
         android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="@+id/appInfoVersionTitle"
         app:layout_constraintTop_toBottomOf="@+id/appInfoVersionValue" />
 

@@ -548,6 +548,8 @@
                         android:layout_below="@+id/nested_pm_cpv"
                         android:layout_marginTop="47dp"
                         android:orientation="horizontal"
+                        android:scrollbars="none"
+                        android:overScrollMode="never"
                         ads:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/list_item_pm_title" />
 

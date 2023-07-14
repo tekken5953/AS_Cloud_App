@@ -40,9 +40,7 @@ import com.example.airsignal_app.dao.StaticDataObject.SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.SO2_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.databinding.ActivityMainBinding
-import com.example.airsignal_app.db.room.model.AirQEntity
 import com.example.airsignal_app.db.room.model.GpsEntity
-import com.example.airsignal_app.db.room.repository.AirQRepository
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.admob.AdViewClass
 import com.example.airsignal_app.firebase.db.RDBLogcat
@@ -527,23 +525,23 @@ class MainActivity
         })
 
         // 실시간 공기질 리스트 클릭
-        airQAdapter.setOnItemClickListener(object : AirQTitleAdapter.OnItemClickListener{
+        airQAdapter.setOnItemClickListener(object : AirQTitleAdapter.OnItemClickListener {
             override fun onItemClick(v: View, position: Int) {
                 try {
-                    val title = airQList[position].title
-                    val db = AirQRepository(this@MainActivity)
-                    val model = db.findByName(title)
-
-                    applyAirQView(model.nameKR!!,model.name,model.grade,
-                        model.unit, model.value, model.maxValue)
+                    val model = airQList[position]
+                    applyAirQView(
+                        model.nameKR, model.name, model.grade,
+                        model.unit, model.value, model.maxValue
+                    )
 
                     airQList.forEach {
-                        it.isSelect = it.title == airQList[position].title
+                        it.isSelect = it.position == airQList[position].position
                     }
-
                     airQAdapter.notifyDataSetChanged()
+
                 } catch (e: Exception) {
                     e.printStackTrace()
+
                 }
             }
         })
@@ -1177,33 +1175,23 @@ class MainActivity
         binding.nestedPmCpv.setValueAnimated(value.toFloat(), 500)
     }
 
-    private fun addAirQItem(position: Int, title: String) {
-        val item = AdapterModel.AirQTitleItem(title)
+    private fun addAirQItem(position: Int, nameKR: String, name: String, unit: String,
+                            value: String, maxValue: Float, grade: Int) {
+        val item = AdapterModel.AirQTitleItem(false, position, nameKR,
+            name, unit, value, maxValue, grade)
 
         this.airQList.add(position,item)
+        this.airQAdapter.notifyItemChanged(position)
     }
 
     private fun updateAirQData(position: Int, nameKR: String, name: String, unit: String,
                                value: String, maxValue: Float, grade: Int) {
-        val db = AirQRepository(this@MainActivity)
-        val model = AirQEntity()
-        model.nameKR = nameKR
-        model.name = name
-        model.unit = unit
-        model.grade = grade
-        model.value = value
-        model.maxValue = maxValue
-        model.timeStamp = getCurrentTime()
 
-       if (!airQList.contains(AdapterModel.AirQTitleItem(name))) {
-           addAirQItem(position,name)
+       if (!airQList.contains(AdapterModel.AirQTitleItem(false, position, nameKR,
+               name, unit, value, maxValue, grade))) {
+           addAirQItem(position, nameKR,
+               name, unit, value, maxValue, grade)
        }
-
-        if (airQDbIsEmpty(db)) {
-            db.insert(model)
-        } else {
-            db.update(model)
-        }
     }
 
     // 현재 위치정보로 DB 갱신
@@ -1228,11 +1216,6 @@ class MainActivity
 
     // DB가 비어있는지 확인
     private fun gpsDbIsEmpty(db: GpsRepository): Boolean {
-        return db.findAll().isEmpty()
-    }
-
-    // DB가 비어있는지 확인
-    private fun airQDbIsEmpty(db: AirQRepository): Boolean {
         return db.findAll().isEmpty()
     }
 

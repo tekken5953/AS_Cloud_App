@@ -48,7 +48,7 @@ class AirQTitleAdapter(private val context: Context, list: ArrayList<AdapterMode
         private val title: TextView = itemView.findViewById(R.id.listItemCpvTitle)
 
         fun bind(dao: AdapterModel.AirQTitleItem) {
-            title.text = dao.title
+            title.text = dao.name
 
             if (dao.isSelect) {
                 title.setBackgroundResource(R.drawable.pm_rv_title_bg_s)

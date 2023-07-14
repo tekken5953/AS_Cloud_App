@@ -38,7 +38,13 @@ class RedirectPermissionActivity
     override fun onResume() {
         super.onResume()
 
-        appVersionViewModel.loadDataResult()
+        if (RequestPermissionsUtil(this).isNetworkPermitted()) {
+            appVersionViewModel.loadDataResult()
+        } else {
+            Toast.makeText(this,
+                "인터넷 연결 상태를 확인해주세요",
+                Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +56,8 @@ class RedirectPermissionActivity
 
         FirebaseDatabase.getInstance()
         LoggerUtil().getInstance()
+
+        binding.permissionPB.visibility = View.VISIBLE
 
         binding.permissionBtn.setOnClickListener {
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -87,9 +95,11 @@ class RedirectPermissionActivity
                                         enterMainPage()
                                     } else {
                                         binding.permissionBtn.visibility = View.VISIBLE
+                                        binding.permissionPB.visibility = View.GONE
                                     }
                                 } else {
                                     binding.permissionBtn.visibility = View.VISIBLE
+                                    binding.permissionPB.visibility = View.GONE
                                 }
                             } else {
                                 //TODO 버전 업데이트로 유도

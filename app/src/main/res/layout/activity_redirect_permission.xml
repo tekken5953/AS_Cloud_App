@@ -9,6 +9,17 @@
         tools:context=".view.activity.RedirectPermissionActivity"
         android:background="@drawable/main_bg_snow">
 
+        <ProgressBar
+            android:id="@+id/permissionPB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@android:style/Widget.Material.Light.ProgressBar.Large"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
         <Button
             android:id="@+id/permissionBtn"
             android:layout_width="wrap_content"
