@@ -1,16 +1,16 @@
 package com.example.airsignal_app.view;
 
-import android.app.Activity;
+import android.content.Context;
 import android.widget.Toast;
 
 public class ToastUtils {
-    private final Activity mContext;
+    private final Context mContext;
     private Toast toast;
 
     /**
      * Constructor
      **/
-    public ToastUtils(Activity context) {
+    public ToastUtils(Context context) {
         this.mContext = context;
     }
 
@@ -24,7 +24,7 @@ public class ToastUtils {
             toast.show();
         };
 
-        mContext.runOnUiThread(r);
+        r.run();
     }
 
     /**
@@ -37,7 +37,7 @@ public class ToastUtils {
             toast.show();
         };
 
-        mContext.runOnUiThread(r);
+        r.run();
     }
 
     /**
@@ -45,7 +45,7 @@ public class ToastUtils {
      **/
     private void cancelToast() {
         if (toast != null) {
-            this.mContext.runOnUiThread(() -> toast.cancel());
+            toast.cancel();
         }
 
         toast = new Toast(mContext);

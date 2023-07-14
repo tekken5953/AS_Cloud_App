@@ -85,7 +85,11 @@ class RedirectPermissionActivity
                                 if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                                     if (RequestPermissionsUtil(this).isLocationPermitted()) {
                                         enterMainPage()
+                                    } else {
+                                        binding.permissionBtn.visibility = View.VISIBLE
                                     }
+                                } else {
+                                    binding.permissionBtn.visibility = View.VISIBLE
                                 }
                             } else {
                                 //TODO 버전 업데이트로 유도

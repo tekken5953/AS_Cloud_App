@@ -11,6 +11,8 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userFontScale
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
+import com.example.airsignal_app.dao.StaticDataObject
+import com.example.airsignal_app.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import com.example.airsignal_app.dao.StaticDataObject.WEATHER_ALL_NOTI
 import com.example.airsignal_app.db.SharedPreferenceManager
@@ -92,5 +94,9 @@ object GetAppInfo {
 
     fun getNotificationAddress(context: Context): String {
         return SharedPreferenceManager(context).getString(NOTIFICATION_ADDRESS)
+    }
+
+    fun getLastRefreshTime(context: Context): Long {
+        return SharedPreferenceManager(context).getLong(LAST_REFRESH_WIDGET_TIME)
     }
 }
