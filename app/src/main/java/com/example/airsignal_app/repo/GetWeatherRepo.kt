@@ -1,6 +1,7 @@
 package com.example.airsignal_app.repo
 
 import androidx.lifecycle.MutableLiveData
+import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient.mMyAPIImpl
 import com.orhanobut.logger.Logger
@@ -32,10 +33,10 @@ class GetWeatherRepo : BaseRepository() {
                         val responseBody = response.body()!!
 
                         if (response.isSuccessful) {
-                            Logger.t("Weather API").d("Success API : ${ApiState.Success(responseBody).data}")
+                            Logger.t(TAG_R).d("Success API : ${ApiState.Success(responseBody).data}")
                             _getDataResult.postValue(ApiState.Success(responseBody))
                         } else {
-                            Logger.t("Weather API").e("Data Error API : ${ApiState.Success(responseBody).data}")
+                            Logger.t(TAG_R).e("Data Error API : ${ApiState.Success(responseBody).data}")
                             _getDataResult.postValue(ApiState.Error("API ERROR OCCURRED"))
                             call.cancel()
                         }
@@ -45,7 +46,7 @@ class GetWeatherRepo : BaseRepository() {
                         call: Call<ApiModel.GetEntireData>,
                         t: Throwable
                     ) {
-                        Logger.t("Weather API").e("API NetworkError : ${t.stackTraceToString()}")
+                        Logger.t(TAG_R).e("API NetworkError : ${t.stackTraceToString()}")
                         _getDataResult.postValue(ApiState.Error("Network Error"))
                         call.cancel()
                     }

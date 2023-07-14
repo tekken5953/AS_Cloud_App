@@ -1063,56 +1063,69 @@ class MainActivity
     private fun applyGetLocationViewModel(): MainActivity {
         if (!getLocationViewModel.fetchData().hasObservers()) {
             Timber.tag("ReAddrTest").i("applyGetLocationViewModel")
-            getLocationViewModel.fetchData().observe(this) { loc ->
-                hidePB()
-                val lat = loc.lat!!
-                val lng = loc.lng!!
-                val addr = loc.addr!!
-                val formatAddr = addr
-                    .replaceFirst(" ", "")
-                    .replace(getString(R.string.korea), "")
-                    .replace("null","")
+            getLocationViewModel.fetchData().observe(this) { location ->
+                location?.let { loc ->
+                    when (loc) {
+                        is BaseRepository.ApiState.Success -> {
+                            val data = loc.data
+                            hidePB()
+                            val lat = data.lat!!
+                            val lng = data.lng!!
+                            val addr = data.addr!!
+                            val formatAddr = addr
+                                .replaceFirst(" ", "")
+                                .replace(getString(R.string.korea), "")
+                                .replace("null","")
 
-                if (loc.isGPS) {
-                    loadCurrentViewModelData(lat, lng)
+                            if (data.isGPS) {
+                                loadCurrentViewModelData(lat, lng)
 
-                    updateCurrentAddress(
-                        lat, lng,
-                        formatAddr
-                    )
+                                updateCurrentAddress(
+                                    lat, lng,
+                                    formatAddr
+                                )
 
-                    setNotificationAddress(this, formatAddr)
+                                setNotificationAddress(this, formatAddr)
 
-                    locationClass.writeRdbCurrentLog(
-                        lat, loc.lng,
-                        formatAddr
-                    )
+                                locationClass.writeRdbCurrentLog(
+                                    lat, lng,
+                                    formatAddr
+                                )
 
-                    binding.mainGpsTitleTv.text = guardWordWrap(
-                        formatAddr
-                    )
+                                binding.mainGpsTitleTv.text = guardWordWrap(
+                                    formatAddr
+                                )
 
-                    binding.mainTopBarGpsTitle.text =
-                        formatAddr
+                                binding.mainTopBarGpsTitle.text =
+                                    formatAddr
 
-                } else {
-                    updateCurrentAddress(
-                        lat, lng,
-                        formatAddr
-                    )
-                    loadCurrentViewModelData(lat, lng)
+                            } else {
+                                updateCurrentAddress(
+                                    lat, lng,
+                                    formatAddr
+                                )
+                                loadCurrentViewModelData(lat, lng)
 
-                    locationClass.writeRdbCurrentLog(
-                        lat, loc.lng, "NetWork - $addr"
-                    )
+                                locationClass.writeRdbCurrentLog(
+                                    lat, lng, "NetWork - $addr"
+                                )
 
-                    setNotificationAddress(this,  formatAddr)
+                                setNotificationAddress(this,  formatAddr)
 
-                    binding.mainGpsTitleTv.text =
-                        formatAddr
-                    binding.mainTopBarGpsTitle.text = formatAddr
+                                binding.mainGpsTitleTv.text =
+                                    formatAddr
+                                binding.mainTopBarGpsTitle.text = formatAddr
 
-                    ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
+                                ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
+                            }
+                        }
+                        is BaseRepository.ApiState.Error -> {
+                            Toast.makeText(this,
+                                "주소를 불러오지 못했습니다",
+                                Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {}
+                    }
                 }
             }
         } else {

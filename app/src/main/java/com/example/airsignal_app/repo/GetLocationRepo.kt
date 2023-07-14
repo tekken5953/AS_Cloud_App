@@ -10,6 +10,7 @@ import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsDataModel
 import com.example.airsignal_app.util.`object`.GetAppInfo
+import com.google.android.gms.common.api.Api
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.orhanobut.logger.Logger
@@ -19,7 +20,7 @@ import com.orhanobut.logger.Logger
  * @since : 2023-06-28 오전 10:02
  **/
 class GetLocationRepo : BaseRepository() {
-    var _getLocationResult = MutableLiveData<GpsDataModel>()
+    var _getLocationResult = MutableLiveData<ApiState<GpsDataModel>>()
 
     @SuppressLint("MissingPermission")
     fun loadDataResult(context: Context) {
@@ -31,9 +32,9 @@ class GetLocationRepo : BaseRepository() {
                         location?.let { loc ->
                             val addr = locationClass.getAddress(loc.latitude, loc.longitude)
                             _getLocationResult.postValue(
-                                GpsDataModel(
+                                ApiState.Success(GpsDataModel(
                                     loc.latitude, loc.longitude, addr, isGPS = true
-                                )
+                                ))
                             )
                             Logger.t("Timber").d(
                                 GpsDataModel(
@@ -49,6 +50,7 @@ class GetLocationRepo : BaseRepository() {
                         "GPS 위치정보 갱신실패",
                         it.localizedMessage!!
                     )
+                    _getLocationResult.postValue(ApiState.Error(""))
                 }
         } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
             val lm =
@@ -56,11 +58,14 @@ class GetLocationRepo : BaseRepository() {
             val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
             location?.let { loc ->
                 val addr = locationClass.getAddress(loc.latitude, loc.longitude)
+
                 _getLocationResult.postValue(
+                    ApiState.Success(
                     GpsDataModel(loc.latitude, loc.longitude, addr, isGPS = false)
-                )
+                ))
             }
         } else {
+            _getLocationResult.postValue(ApiState.Error(""))
             locationClass.requestSystemGPSEnable()
         }
     }
