@@ -20,7 +20,7 @@ import com.orhanobut.logger.Logger
  * @since : 2023-06-28 오전 10:02
  **/
 class GetLocationRepo : BaseRepository() {
-    var _getLocationResult = MutableLiveData<ApiState<GpsDataModel>>()
+    var _getLocationResult = MutableLiveData<GpsDataModel>()
 
     @SuppressLint("MissingPermission")
     fun loadDataResult(context: Context) {
@@ -32,9 +32,9 @@ class GetLocationRepo : BaseRepository() {
                         location?.let { loc ->
                             val addr = locationClass.getAddress(loc.latitude, loc.longitude)
                             _getLocationResult.postValue(
-                                ApiState.Success(GpsDataModel(
+                                GpsDataModel(
                                     loc.latitude, loc.longitude, addr, isGPS = true
-                                ))
+                                )
                             )
                             Logger.t("Timber").d(
                                 GpsDataModel(
@@ -50,7 +50,6 @@ class GetLocationRepo : BaseRepository() {
                         "GPS 위치정보 갱신실패",
                         it.localizedMessage!!
                     )
-                    _getLocationResult.postValue(ApiState.Error(""))
                 }
         } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
             val lm =
@@ -60,12 +59,10 @@ class GetLocationRepo : BaseRepository() {
                 val addr = locationClass.getAddress(loc.latitude, loc.longitude)
 
                 _getLocationResult.postValue(
-                    ApiState.Success(
                     GpsDataModel(loc.latitude, loc.longitude, addr, isGPS = false)
-                ))
+                )
             }
         } else {
-            _getLocationResult.postValue(ApiState.Error(""))
             locationClass.requestSystemGPSEnable()
         }
     }

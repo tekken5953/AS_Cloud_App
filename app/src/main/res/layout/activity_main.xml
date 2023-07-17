@@ -252,6 +252,7 @@
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="12dp"
+                    android:visibility="gone"
                     android:background="@drawable/report_frame_bg"
                     android:nestedScrollingEnabled="false"
                     android:orientation="vertical"
@@ -403,7 +404,7 @@
                         android:text="@string/weekly_weather"
                         android:textColor="#4F4F4F"
                         android:textSize="18sp"
-                        app:drawableStartCompat="@drawable/ico_week" />
+                        app:drawableStartCompat="@drawable/ico_weekly" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/mainWeeklyWeatherRv"
@@ -439,7 +440,7 @@
                         android:text="@string/live_air_quality"
                         android:textColor="#4F4F4F"
                         android:textSize="18sp"
-                        app:drawableStartCompat="@drawable/ico_flow" />
+                        app:drawableStartCompat="@drawable/ico_airquality" />
 
                     <at.grabner.circleprogress.CircleProgressView
                         android:id="@+id/nested_pm_cpv"
@@ -805,6 +806,8 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/mainSunBoxTomorrowTitle"
+                            android:visibility="gone"
                             style="@style/basicMediumTextView"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:text="@string/tomorrow"

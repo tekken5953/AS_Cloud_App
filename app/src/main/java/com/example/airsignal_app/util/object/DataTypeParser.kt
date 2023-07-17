@@ -167,7 +167,7 @@ object DataTypeParser {
     }
 
     /** rain type에 따른 이미지 설정 **/
-    fun getRainTypeLarge(context: Context, rain: String?): Drawable? {
+    private fun getRainTypeLarge(context: Context, rain: String?): Drawable? {
         return when (rain) {
             "비" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_cloudy_rainy, null)
@@ -230,7 +230,7 @@ object DataTypeParser {
     }
 
     /** rain type에 따른 이미지 설정 **/
-    fun getRainTypeSmall(context: Context, rain: String?): Drawable? {
+    private fun getRainTypeSmall(context: Context, rain: String?): Drawable? {
         return when (rain) {
             "비" -> {
                 ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudrain, null)

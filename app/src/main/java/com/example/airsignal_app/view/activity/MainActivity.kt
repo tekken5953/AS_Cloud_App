@@ -16,6 +16,7 @@ import android.view.View.*
 import android.view.animation.*
 import android.widget.*
 import android.widget.LinearLayout.LayoutParams
+import android.widget.LinearLayout.VISIBLE
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
@@ -334,7 +335,9 @@ class MainActivity
     }
 
     // 진동 발생
-    private fun mVib() { vib.make(20) }
+    private fun mVib() {
+        vib.make(20)
+    }
 
     // 시간별 날씨 스크롤 첫번째 인덱스로 이동
     private fun scrollSmoothFirst(position: Int) {
@@ -495,7 +498,7 @@ class MainActivity
 
         // 모레 클릭
         afterTomorrowSection.setOnClickListener {
-            binding.mainDailyWeatherRv.post{
+            binding.mainDailyWeatherRv.post {
                 scrollSmoothFirst(getHourCountToTomorrow() + 24)
             }
         }
@@ -513,9 +516,27 @@ class MainActivity
                     sectionList.forEach {
                         if (firstVisibleItemPosition >= it) {
                             when (it) {
-                                sectionList[0] -> { setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection) }
-                                sectionList[1] -> { setSectionTextColor(tomorrowSection, todaySection, afterTomorrowSection) }
-                                sectionList[2] -> { setSectionTextColor(afterTomorrowSection, todaySection, tomorrowSection) }
+                                sectionList[0] -> {
+                                    setSectionTextColor(
+                                        todaySection,
+                                        tomorrowSection,
+                                        afterTomorrowSection
+                                    )
+                                }
+                                sectionList[1] -> {
+                                    setSectionTextColor(
+                                        tomorrowSection,
+                                        todaySection,
+                                        afterTomorrowSection
+                                    )
+                                }
+                                sectionList[2] -> {
+                                    setSectionTextColor(
+                                        afterTomorrowSection,
+                                        todaySection,
+                                        tomorrowSection
+                                    )
+                                }
                                 else -> {}
                             }
                         }
@@ -567,7 +588,7 @@ class MainActivity
 
     // 백그라운드 위치 호출
     private fun createWorkManager() {
-        GetLocation(this).getGpsInBackground(0,500f)
+        GetLocation(this).getGpsInBackground(0, 500f)
     }
 
     @Deprecated("Deprecated in Java")
@@ -643,7 +664,10 @@ class MainActivity
                                 current.temperature?.let { currentTemp ->
                                     realtime.let {
                                         binding.mainLiveTempValue.text =
-                                            modifyCurrentTempType(currentTemp, realtime.temp).toString()
+                                            modifyCurrentTempType(
+                                                currentTemp,
+                                                realtime.temp
+                                            ).toString()
                                         binding.mainLiveTempUnit.text = "˚"
                                     }
                                 }
@@ -653,37 +677,50 @@ class MainActivity
                                         this,
                                         applySkyText(
                                             this,
-                                            modifyCurrentRainType(current.rainType, realtime.rainType),
+                                            modifyCurrentRainType(
+                                                current.rainType,
+                                                realtime.rainType
+                                            ),
                                             realtime.sky,
                                             thunder
                                         )
                                     )
                                 }
 
-                                binding.mainMinMaxValue.text =
-                                    "${filteringNullData(today.min!!)}˚/${filteringNullData(today.max!!)}˚"
+                                today?.let {
+                                    binding.mainMinMaxValue.text =
+                                        "${filteringNullData(it.min!!)}˚/${filteringNullData(it.max!!)}˚"
+                                }
 
                                 updateAirQData(
-                                    PM2p5_INDEX,"초미세먼지","PM2.5",
-                                    "㎍/㎥",air.pm25Value!!.toInt().toString(),151f,air.pm25Grade!!)
+                                    PM2p5_INDEX, "초미세먼지", "PM2.5",
+                                    "㎍/㎥", air.pm25Value!!.toInt().toString(), 151f, air.pm25Grade!!
+                                )
                                 updateAirQData(
-                                    PM10_INDEX,"미세먼지","PM10",
-                                    "㎍/㎥",air.pm10Value!!.toInt().toString(),76f,air.pm10Grade!!)
+                                    PM10_INDEX, "미세먼지", "PM10",
+                                    "㎍/㎥", air.pm10Value!!.toInt().toString(), 76f, air.pm10Grade!!
+                                )
                                 updateAirQData(
-                                    CO_INDEX,"일산화탄소","CO",
-                                    "ppm",air.coValue!!.toString(), 15.01f, air.coGrade!!)
+                                    CO_INDEX, "일산화탄소", "CO",
+                                    "ppm", air.coValue!!.toString(), 15.01f, air.coGrade!!
+                                )
                                 updateAirQData(
-                                    SO2_INDEX,"아황산가스","SO2",
-                                    "ppm",air.so2Value!!.toString(), 0.151f,air.so2Grade!!)
+                                    SO2_INDEX, "아황산가스", "SO2",
+                                    "ppm", air.so2Value!!.toString(), 0.151f, air.so2Grade!!
+                                )
                                 updateAirQData(
-                                    NO2_INDEX,"이산화질소","NO2",
-                                    "㎍/㎥",air.no2Value!!.toString(),0.201f,air.no2Grade!!)
+                                    NO2_INDEX, "이산화질소", "NO2",
+                                    "㎍/㎥", air.no2Value!!.toString(), 0.201f, air.no2Grade!!
+                                )
                                 updateAirQData(
-                                    O3_INDEX,"오존","O3",
-                                    "㎍/㎥",air.o3Value!!.toString(),0.151f,air.o3Grade!!)
+                                    O3_INDEX, "오존", "O3",
+                                    "㎍/㎥", air.o3Value!!.toString(), 0.151f, air.o3Grade!!
+                                )
 
-                                applyAirQView("초미세먼지","PM2.5",
-                                    air.pm25Grade,"㎍/m3", air.pm25Value.toInt().toString(),151f)
+                                applyAirQView(
+                                    "초미세먼지", "PM2.5",
+                                    air.pm25Grade, "㎍/m3", air.pm25Value.toInt().toString(), 151f
+                                )
 
                                 airQList[PM2p5_INDEX].isSelect = true
 
@@ -704,12 +741,16 @@ class MainActivity
 
                                 val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
                                 val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
-                                val sbRiseTom = StringBuffer().append(sunTomorrow.sunrise).insert(2, ":")
-                                val sbSetTom = StringBuffer().append(sunTomorrow.sunset).insert(2, ":")
+                                sunTomorrow?.let {
+                                    binding.mainSunBoxTomorrowTitle.visibility = VISIBLE
+                                    val sbRiseTom = StringBuffer().append(it.sunrise).insert(2, ":")
+                                    val sbSetTom = StringBuffer().append(it.sunset).insert(2, ":")
+                                    binding.mainSunRiseTom.text = sbRiseTom
+                                    binding.mainSunSetTom.text = sbSetTom
+                                }
+
                                 binding.mainSunRiseTime.text = sbRise
                                 binding.mainSunSetTime.text = sbSet
-                                binding.mainSunRiseTom.text = sbRiseTom
-                                binding.mainSunSetTom.text = sbSetTom
 
                                 getCompareTempText(
                                     yesterday.temp!!,
@@ -760,9 +801,14 @@ class MainActivity
                                     val dailyIndex = result.realtime[i]
                                     val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
                                     val dailyTime =
-                                        millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
+                                        millsToString(
+                                            convertLocalDateTimeToLong(forecastToday),
+                                            "HHmm"
+                                        )
                                     val dailySunProgress =
-                                        100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(sun.sunrise)) /
+                                        100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(
+                                            sun.sunrise
+                                        )) /
                                                 getEntireSun(sun.sunrise, sun.sunset)
                                     val isNight = getIsNight(dailySunProgress)
                                     if (i == result.realtime.lastIndex + 1) {
@@ -772,8 +818,14 @@ class MainActivity
                                             "${forecastToday.hour}${getString(R.string.hour)}",
                                             applySkyImg(
                                                 this,
-                                                modifyCurrentRainType(current.rainType, realtime.rainType),
-                                                dailyIndex.sky, thunder, isLarge = false, isNight = isNight
+                                                modifyCurrentRainType(
+                                                    current.rainType,
+                                                    realtime.rainType
+                                                ),
+                                                dailyIndex.sky,
+                                                thunder,
+                                                isLarge = false,
+                                                isNight = isNight
                                             )!!,
                                             "${
                                                 modifyCurrentTempType(
@@ -847,7 +899,17 @@ class MainActivity
                             } catch (e: java.lang.NullPointerException) {
                                 Logger.t(TAG_R).e("Null Point Error : ${e.stackTraceToString()}")
                             } catch (e: IndexOutOfBoundsException) {
-                                Logger.t(TAG_R).w("Index Out Of Bounds Error : ${e.stackTraceToString()}")
+                                binding.mainSkyImg.visibility = VISIBLE
+                                binding.mainSkyText.visibility = VISIBLE
+                                binding.mainSkyImg.setImageDrawable(
+                                    ResourcesCompat.getDrawable(
+                                        resources,
+                                        R.drawable.cancel, null
+                                    )
+                                )
+                                binding.mainSkyText.text = "데이터를 불러 올 수 없습니다"
+                                Logger.t(TAG_R)
+                                    .w("Index Out Of Bounds Error : ${e.stackTraceToString()}")
                             }
                         }
 
@@ -926,9 +988,11 @@ class MainActivity
     }
 
     // 시간별 날씨 리사이클러뷰 아이템 추가
-    private fun addDailyWeatherItem(time: String, img: Drawable, value: String, date: String,
-                                    isRain: Boolean, rainP: Double?) {
-        val item = AdapterModel.DailyWeatherItem(time, img, value, date,rainP,isRain)
+    private fun addDailyWeatherItem(
+        time: String, img: Drawable, value: String, date: String,
+        isRain: Boolean, rainP: Double?
+    ) {
+        val item = AdapterModel.DailyWeatherItem(time, img, value, date, rainP, isRain)
 
         this.dailyWeatherList.add(item)
     }
@@ -1022,7 +1086,7 @@ class MainActivity
     // 어제와 기온 비교
     @SuppressLint("SetTextI18n")
     private fun getCompareTempText(y: Double?, t: Double?, tv: TextView) {
-        val compared = getComparedTemp(y,t)
+        val compared = getComparedTemp(y, t)
         compared?.let {
             if (it < 0) {
                 tv.visibility = VISIBLE
@@ -1063,66 +1127,55 @@ class MainActivity
             Timber.tag("ReAddrTest").i("applyGetLocationViewModel")
             getLocationViewModel.fetchData().observe(this) { location ->
                 location?.let { loc ->
-                    when (loc) {
-                        is BaseRepository.ApiState.Success -> {
-                            val data = loc.data
-                            hidePB()
-                            val lat = data.lat!!
-                            val lng = data.lng!!
-                            val addr = data.addr!!
-                            val formatAddr = addr
-                                .replaceFirst(" ", "")
-                                .replace(getString(R.string.korea), "")
-                                .replace("null","")
+                    hidePB()
+                    val lat = loc.lat!!
+                    val lng = loc.lng!!
+                    val addr = loc.addr!!
+                    val formatAddr = addr
+                        .replaceFirst(" ", "")
+                        .replace(getString(R.string.korea), "")
+                        .replace("null", "")
 
-                            if (data.isGPS) {
-                                loadCurrentViewModelData(lat, lng)
+                    if (loc.isGPS) {
+                        updateCurrentAddress(
+                            lat, lng,
+                            formatAddr
+                        )
 
-                                updateCurrentAddress(
-                                    lat, lng,
-                                    formatAddr
-                                )
+                        setNotificationAddress(this, formatAddr)
 
-                                setNotificationAddress(this, formatAddr)
+                        locationClass.writeRdbCurrentLog(
+                            lat, lng,
+                            formatAddr
+                        )
 
-                                locationClass.writeRdbCurrentLog(
-                                    lat, lng,
-                                    formatAddr
-                                )
+                        binding.mainGpsTitleTv.text = guardWordWrap(
+                            formatAddr
+                        )
 
-                                binding.mainGpsTitleTv.text = guardWordWrap(
-                                    formatAddr
-                                )
+                        binding.mainTopBarGpsTitle.text =
+                            formatAddr
 
-                                binding.mainTopBarGpsTitle.text =
-                                    formatAddr
+                        loadCurrentViewModelData(lat, lng)
+                    } else {
+                        updateCurrentAddress(
+                            lat, lng,
+                            formatAddr
+                        )
 
-                            } else {
-                                updateCurrentAddress(
-                                    lat, lng,
-                                    formatAddr
-                                )
-                                loadCurrentViewModelData(lat, lng)
+                        locationClass.writeRdbCurrentLog(
+                            lat, lng, "NetWork - $addr"
+                        )
 
-                                locationClass.writeRdbCurrentLog(
-                                    lat, lng, "NetWork - $addr"
-                                )
+                        setNotificationAddress(this, formatAddr)
 
-                                setNotificationAddress(this,  formatAddr)
+                        binding.mainGpsTitleTv.text =
+                            formatAddr
+                        binding.mainTopBarGpsTitle.text = formatAddr
 
-                                binding.mainGpsTitleTv.text =
-                                    formatAddr
-                                binding.mainTopBarGpsTitle.text = formatAddr
+                        loadCurrentViewModelData(lat, lng)
 
-                                ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
-                            }
-                        }
-                        is BaseRepository.ApiState.Error -> {
-                            Toast.makeText(this,
-                                "주소를 불러오지 못했습니다",
-                                Toast.LENGTH_SHORT).show()
-                        }
-                        else -> {}
+                        ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
                     }
                 }
             }
@@ -1158,11 +1211,13 @@ class MainActivity
         }
     }
 
-    private fun applyAirQView(kr: String, en: String, grade: Int, unit: String,
-                              value: String, maxValue: Float) {
+    private fun applyAirQView(
+        kr: String, en: String, grade: Int, unit: String,
+        value: String, maxValue: Float
+    ) {
         binding.nestedPmTitleKr.text = kr
         binding.nestedPmTitleEn.text = en
-        setAirCPV(getDataColor(this,grade), unit, grade)
+        setAirCPV(getDataColor(this, grade), unit, grade)
 
         binding.nestedPmCpv.apply {
             setText(DataTypeParser.getDataText(grade))
@@ -1175,23 +1230,36 @@ class MainActivity
         binding.nestedPmCpv.setValueAnimated(value.toFloat(), 500)
     }
 
-    private fun addAirQItem(position: Int, nameKR: String, name: String, unit: String,
-                            value: String, maxValue: Float, grade: Int) {
-        val item = AdapterModel.AirQTitleItem(false, position, nameKR,
-            name, unit, value, maxValue, grade)
+    private fun addAirQItem(
+        position: Int, nameKR: String, name: String, unit: String,
+        value: String, maxValue: Float, grade: Int
+    ) {
+        val item = AdapterModel.AirQTitleItem(
+            false, position, nameKR,
+            name, unit, value, maxValue, grade
+        )
 
-        this.airQList.add(position,item)
+        this.airQList.add(position, item)
         this.airQAdapter.notifyItemChanged(position)
     }
 
-    private fun updateAirQData(position: Int, nameKR: String, name: String, unit: String,
-                               value: String, maxValue: Float, grade: Int) {
+    private fun updateAirQData(
+        position: Int, nameKR: String, name: String, unit: String,
+        value: String, maxValue: Float, grade: Int
+    ) {
 
-       if (!airQList.contains(AdapterModel.AirQTitleItem(false, position, nameKR,
-               name, unit, value, maxValue, grade))) {
-           addAirQItem(position, nameKR,
-               name, unit, value, maxValue, grade)
-       }
+        if (!airQList.contains(
+                AdapterModel.AirQTitleItem(
+                    false, position, nameKR,
+                    name, unit, value, maxValue, grade
+                )
+            )
+        ) {
+            addAirQItem(
+                position, nameKR,
+                name, unit, value, maxValue, grade
+            )
+        }
     }
 
     // 현재 위치정보로 DB 갱신
@@ -1328,8 +1396,12 @@ class MainActivity
 
         if (!isNight) {
             when (sky) {
-                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> { black() }
-                else -> { white() }
+                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> {
+                    black()
+                }
+                else -> {
+                    white()
+                }
             }
         } else {
             white()

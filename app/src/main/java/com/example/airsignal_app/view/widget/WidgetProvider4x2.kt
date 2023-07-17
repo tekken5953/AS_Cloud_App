@@ -9,7 +9,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.`object`.DataTypeParser.currentDateTimeString
@@ -98,7 +97,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
                         NotiJobScheduler().scheduleJob(context)
                     } else {
-                        ToastUtils(context).showMessage("마지막 갱신 뒤 1분 후에 가능합니다",1)
+                        ToastUtils(context).showMessage("마지막 갱신 후 1분 뒤에 가능합니다",1)
                     }
                 }
                 WIDGET_OPTIONS_CHANGED

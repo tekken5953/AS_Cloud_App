@@ -105,4 +105,14 @@
     <string name="error_network">네트워크 연결이 불안정합니다.</string>
     <string name="download">다운로드</string>
     <string name="app_version">앱 버전</string>
+    <string name="location_perm">위치 권한</string>
+    <string name="essential">(필수)</string>
+    <string name="loc_perm_explain">현재 위치 날씨 데이터 제공</string>
+    <string name="non_essential_perm">선택 권한</string>
+    <string name="essential_perm">필수 권한</string>
+    <string name="noti_perm">알림 권한</string>
+    <string name="non_essential">(선택)</string>
+    <string name="noti_perm_explain">날씨 및 미세먼지 정보 알림 제공</string>
+    <string name="perm_notice">권한을 허용하지 않아도 이용은 가능하지만\n 일부 서비스가 제한 될 수 있습니다.</string>
+    <string name="perm_title">앱 사용을 위해\n 접근 권한을 허용해주세요</string>
 </resources>

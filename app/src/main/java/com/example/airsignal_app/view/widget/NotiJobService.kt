@@ -10,10 +10,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.drawable.BitmapDrawable
-import android.os.Looper
 import android.view.View
 import android.widget.RemoteViews
-import androidx.core.os.HandlerCompat
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
 import com.example.airsignal_app.db.SharedPreferenceManager
@@ -26,9 +24,9 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentRainType
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentTempType
 import com.example.airsignal_app.util.`object`.GetAppInfo
-import com.example.airsignal_app.util.`object`.GetAppInfo.getLastRefreshTime
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.SetAppInfo.setLastRefreshTime
-import com.example.airsignal_app.view.activity.RedirectPermissionActivity
+import com.example.airsignal_app.view.activity.RedirectActivity
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -53,11 +51,9 @@ class NotiJobService : JobService() {
     override fun onStartJob(params: JobParameters?): Boolean {
         Timber.tag(TAG_W).d("onStartJob : ${params!!.jobId}")
 
-        HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-            getWidgetLocation(context)
+        getWidgetLocation(context)
 
-            context.registerReceiver(WidgetProvider4x2.NotiJobScheduler(), filter)
-        },1000)
+        context.registerReceiver(WidgetProvider4x2.NotiJobScheduler(), filter)
         return true
     }
 
@@ -119,9 +115,7 @@ class NotiJobService : JobService() {
         }
     }
 
-    private fun <T> failToFetchData(context: Context, t: T, views: RemoteViews, title: String) {
-
-        changeVisibility(context, views, true)
+    private fun <T> failToFetchData(t: T, title: String) {
 
         when (t) {
             is Exception -> {
@@ -143,15 +137,26 @@ class NotiJobService : JobService() {
     }
 
     fun writeLog(isANR: Boolean, s1: String?, s2: String?) {
-        if (isANR) {
-            RDBLogcat.writeLogCause(
+        try {
+            if (isANR) {
+                RDBLogcat.writeLogCause(
+                    "ANR 발생",
+                    s1!!,
+                    s2!!
+                )
+            } else {
+                RDBLogcat.writeWidgetLog(
+                    getUserEmail(context),
+                    "Widget",
+                    s1!!,
+                    s2!!
+                )
+            }
+        } catch (e: java.lang.NullPointerException) {
+            e.printStackTrace()
+            RDBLogcat.writeWidgetLog(
                 "ANR 발생",
-                s1!!,
-                s2!!
-            )
-        } else {
-            RDBLogcat.writeLogCause(
-                "Widget",
+                "NPE",
                 s1!!,
                 s2!!
             )
@@ -169,7 +174,7 @@ class NotiJobService : JobService() {
             PendingIntent.getBroadcast(context, 0,
                 refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
 
-        val pendingIntent: PendingIntent = Intent(context, RedirectPermissionActivity::class.java)
+        val pendingIntent: PendingIntent = Intent(context, RedirectActivity::class.java)
             .let { intent ->
                 intent.action = "enterApplication"
                 PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
@@ -341,22 +346,12 @@ class NotiJobService : JobService() {
                                 fetch(context, views)
                             }
                         } catch (e: Exception) {
-                            failToFetchData(
-                                context,
-                                e,
-                                views,
-                                "onResponse - catch\n${call.request()}"
-                            )
+                            changeVisibility(context, views, true)
+                            failToFetchData(e, "onResponse - catch")
                             return
                         }
                     } else {
-                        failToFetchData(
-                            context,
-                            response.errorBody(),
-                            views,
-                            "onResponse - Failed\n" +
-                                    "${call.request()}"
-                        )
+                        failToFetchData(response.errorBody(), "onResponse - Failed")
                         call.cancel()
                         return
                     }
@@ -366,10 +361,7 @@ class NotiJobService : JobService() {
                     call: Call<ApiModel.Widget4x2Data>,
                     t: Throwable
                 ) {
-                    failToFetchData(
-                        context, t, views, "onFailure\n" +
-                                "${call.request()}"
-                    )
+                    failToFetchData(t, "onFailure")
                     call.cancel()
                     return
                 }

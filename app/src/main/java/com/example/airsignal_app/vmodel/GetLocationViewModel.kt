@@ -11,14 +11,14 @@ import com.example.airsignal_app.repo.GetLocationRepo
  * @since : 2023-06-28 오전 10:27
  **/
 class GetLocationViewModel(private val repo: GetLocationRepo): BaseViewModel("주소 호출") {
-    private lateinit var getResultData: LiveData<BaseRepository.ApiState<GpsDataModel>>
+    private lateinit var getResultData: LiveData<GpsDataModel>
 
     fun loadDataResult(context: Context) : GetLocationViewModel {
         repo.loadDataResult(context)
         return this
     }
 
-    fun fetchData(): LiveData<BaseRepository.ApiState<GpsDataModel>> {
+    fun fetchData(): LiveData<GpsDataModel> {
         getResultData = repo._getLocationResult
         return getResultData
     }

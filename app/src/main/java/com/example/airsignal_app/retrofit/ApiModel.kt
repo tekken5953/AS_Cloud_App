@@ -298,9 +298,9 @@ class ApiModel {
         @SerializedName("sun")
         val sun: SunData,
         @SerializedName("sun2")
-        val sun_tomorrow: SunTomorrow,
+        val sun_tomorrow: SunTomorrow?,
         @SerializedName("today")
-        val today: TodayTemp,
+        val today: TodayTemp?,
         @SerializedName("yesterday")
         val yesterday: YesterdayTemp,
         @SerializedName("uv")
