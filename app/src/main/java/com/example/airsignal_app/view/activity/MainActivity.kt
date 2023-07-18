@@ -79,6 +79,7 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
+import com.example.airsignal_app.view.custom_view.AirQView
 import com.example.airsignal_app.view.custom_view.SegmentedProgressBar
 import com.example.airsignal_app.vmodel.GetLocationViewModel
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
@@ -269,9 +270,7 @@ class MainActivity
                 mVib()
                 val bottomSheet =
                     SearchDialog(
-                        this@MainActivity,
-                        0,
-                        supportFragmentManager,
+                        this@MainActivity, 0, supportFragmentManager,
                         BottomSheetDialogFragment().tag
                     )
                 bottomSheet.show(0)
@@ -446,7 +445,7 @@ class MainActivity
         binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter
         binding.mainUVLegendRv.adapter = uvLegendAdapter
         binding.mainUvCollapseRv.adapter = uvResponseAdapter
-        binding.nestedPmRv.adapter = airQAdapter
+        binding.nestedAirRv.adapter = airQAdapter
 
         binding.nestedReportViewpager.apply {
             adapter = reportViewPagerAdapter
@@ -567,21 +566,29 @@ class MainActivity
             }
         })
 
-        binding.nestedPmHelp.setOnClickListener {
-            if (binding.nestedPmHelpPopup.alpha == 0f) {
+        binding.nestedAirHelp.setOnClickListener {
+            if (binding.nestedAirHelpPopup.alpha == 0f) {
                 val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
-                binding.nestedPmHelpPopup.apply {
+                binding.nestedAirHelpPopup.apply {
                     bringToFront()
+                    airQList.forEach {
+                        if (it.isSelect)  {
+                            fetchData("초미세먼지는 미세먼지의 4분의 1크기밖에 되지 않는 아주 작은 먼지로, 사람의 눈에는 거의 보이지 않는다. 미세먼지와 마찬가지로 자동차나 화석연료에서 발생한다. 미세먼지보다 훨씬 작기 때문에 기도에서 걸러지지 못하고 대부분 폐포까지 침투해 심장질환과 호흡기 질병 등을 일으킨다.\n",
+                            ResourcesCompat.getDrawable(resources,R.drawable.ssssss,null)!!,
+                            it.name, it.nameKR)
+                            return@forEach
+                        }
+                    }
                     startAnimation(fadeIn)
                     alpha = 1f
                 }
             } else {
                 val fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
-                binding.nestedPmHelpPopup.apply {
+                binding.nestedAirHelpPopup.apply {
                     startAnimation(fadeOut)
                     alpha = 0f
                 }
-                binding.nestedPmRv.bringToFront()
+                binding.nestedAirRv.bringToFront()
             }
         }
     }
@@ -612,321 +619,370 @@ class MainActivity
         SubFCM().renewTopic(this, oldAddr, newAddr)
     }
 
+    // 현재 옵저버가 없으면 생성
+    private fun getDataObservers() {
+        if (!getDataViewModel.fetchData().hasActiveObservers())
+        {
+            applyGetDataViewModel()
+        } else {
+            Timber.tag("ReAddrTest").i("Already has applyGetDataViewModel")
+        }
+    }
+
+    // 현재 옵저버가 없으면 생성
+    private fun getLocationObservers() {
+        if (!getLocationViewModel.fetchData().hasActiveObservers())
+        {
+            applyGetLocationViewModel()
+        } else {
+            Timber.tag("ReAddrTest").i("Already has applyGetLocationViewModel")
+        }
+    }
+
     // 뷰모델에서 Observing 한 데이터 결과 적용
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel(): MainActivity {
-        if (!getDataViewModel.fetchData().hasObservers()) {
-            Timber.tag("ReAddrTest").i("applyGetDataViewModel")
-            getDataViewModel.fetchData().observe(this) { entireData ->
-                entireData?.let { eData ->
-                    when (eData) {
-                        is BaseRepository.ApiState.Success -> {
-                            try {
-                                val result = eData.data
-                                val metaAddr = result.meta.address!!
-                                reNewTopicInMain(metaAddr)
+        Timber.tag("ReAddrTest").i("applyGetDataViewModel")
+        getDataViewModel.fetchData().observe(this) { entireData ->
+            entireData?.let { eData ->
+                when (eData) {
+                    is BaseRepository.ApiState.Success -> {
+                        try {
+                            val result = eData.data
+                            val metaAddr = result.meta.address!!
+                            reNewTopicInMain(metaAddr)
 
-                                val realtime = result.realtime[0]
-                                val sun = result.sun
-                                val sunTomorrow = result.sun_tomorrow
-                                val air = result.quality
-                                val week = result.week
-                                val today = result.today
-                                val uv = result.uv!!
-                                val yesterday = result.yesterday
-                                val dateNow: LocalDateTime = LocalDateTime.now()
-                                val current = result.current
-                                val thunder = result.thunder!!
-                                currentSun = GetAppInfo.getCurrentSun(sun.sunrise!!, sun.sunset!!)
+                            val realtime = result.realtime[0]
+                            val sun = result.sun
+                            val sunTomorrow = result.sun_tomorrow
+                            val air = result.quality
+                            val week = result.week
+                            val today = result.today
+                            val uv = result.uv!!
+                            val yesterday = result.yesterday
+                            val dateNow: LocalDateTime = LocalDateTime.now()
+                            val current = result.current
+                            val thunder = result.thunder!!
+                            currentSun = GetAppInfo.getCurrentSun(sun.sunrise!!, sun.sunset!!)
 
-                                airQList.clear()
+                            airQList.clear()
 
-                                val wfMin = listOf(
-                                    week.wf0Am, week.wf1Am, week.wf2Am, week.wf3Am,
-                                    week.wf4Am, week.wf5Am, week.wf6Am, week.wf7Am
-                                )
-                                val wfMax = listOf(
-                                    week.wf0Pm, week.wf1Pm, week.wf2Pm, week.wf3Pm,
-                                    week.wf4Pm, week.wf5Pm, week.wf6Pm, week.wf7Pm
-                                )
-                                val taMin = listOf(
-                                    week.taMin0, week.taMin1, week.taMin2, week.taMin3,
-                                    week.taMin4, week.taMin5, week.taMin6, week.taMin7
-                                )
-                                val taMax = listOf(
-                                    week.taMax0, week.taMax1, week.taMax2, week.taMax3, week.taMax4,
-                                    week.taMax5, week.taMax6, week.taMax7
-                                )
+                            val wfMin = listOf(
+                                week.wf0Am, week.wf1Am, week.wf2Am, week.wf3Am,
+                                week.wf4Am, week.wf5Am, week.wf6Am, week.wf7Am
+                            )
+                            val wfMax = listOf(
+                                week.wf0Pm, week.wf1Pm, week.wf2Pm, week.wf3Pm,
+                                week.wf4Pm, week.wf5Pm, week.wf6Pm, week.wf7Pm
+                            )
+                            val taMin = listOf(
+                                week.taMin0, week.taMin1, week.taMin2, week.taMin3,
+                                week.taMin4, week.taMin5, week.taMin6, week.taMin7
+                            )
+                            val taMax = listOf(
+                                week.taMax0, week.taMax1, week.taMax2, week.taMax3, week.taMax4,
+                                week.taMax5, week.taMax6, week.taMax7
+                            )
 
-                                dailyWeatherList.clear()
-                                weeklyWeatherList.clear()
+                            dailyWeatherList.clear()
+                            weeklyWeatherList.clear()
 
-                                current.temperature?.let { currentTemp ->
-                                    realtime.let {
-                                        binding.mainLiveTempValue.text =
-                                            modifyCurrentTempType(
-                                                currentTemp,
-                                                realtime.temp
-                                            ).toString()
-                                        binding.mainLiveTempUnit.text = "˚"
-                                    }
-                                }
-
+                            current.temperature?.let { currentTemp ->
                                 realtime.let {
-                                    binding.mainSkyText.text = translateSky(
+                                    binding.mainLiveTempValue.text =
+                                        modifyCurrentTempType(
+                                            currentTemp,
+                                            realtime.temp
+                                        ).toString()
+                                    binding.mainLiveTempUnit.text = "˚"
+                                }
+                            }
+
+                            realtime.let {
+                                binding.mainSkyText.text = translateSky(
+                                    this,
+                                    applySkyText(
                                         this,
-                                        applySkyText(
+                                        modifyCurrentRainType(
+                                            current.rainType,
+                                            realtime.rainType
+                                        ),
+                                        realtime.sky,
+                                        thunder
+                                    )
+                                )
+
+                                binding.subAirHumid.fetchData(
+                                    "${
+                                        realtime.humid!!
+                                            .roundToInt()
+                                    }%", R.drawable.ico_main_humidity
+                                )
+
+                                binding.subAirWind.fetchData(
+                                    "${
+                                        realtime.windSpeed!!
+                                            .roundToInt()
+                                    }m/s", R.drawable.ico_main_wind
+                                )
+
+                                binding.subAirRainP.fetchData(
+                                    "${
+                                        realtime.rainP!!
+                                            .roundToInt()
+                                    }%", R.drawable.ico_main_rain
+                                )
+                            }
+
+                            today?.let {
+                                binding.mainMinMaxValue.text =
+                                    "${filteringNullData(it.min!!)}˚/${filteringNullData(it.max!!)}˚"
+                            }
+
+                            updateAirQData(
+                                PM2p5_INDEX, "초미세먼지", "PM2.5",
+                                "㎍/㎥", air.pm25Value!!.toInt().toString(), 151f, air.pm25Grade!!
+                            )
+                            updateAirQData(
+                                PM10_INDEX, "미세먼지", "PM10",
+                                "㎍/㎥", air.pm10Value!!.toInt().toString(), 76f, air.pm10Grade!!
+                            )
+                            updateAirQData(
+                                CO_INDEX, "일산화탄소", "CO",
+                                "ppm", air.coValue!!.toString(), 15.01f, air.coGrade!!
+                            )
+                            updateAirQData(
+                                SO2_INDEX, "아황산가스", "SO2",
+                                "ppm", air.so2Value!!.toString(), 0.151f, air.so2Grade!!
+                            )
+                            updateAirQData(
+                                NO2_INDEX, "이산화질소", "NO2",
+                                "㎍/㎥", air.no2Value!!.toString(), 0.201f, air.no2Grade!!
+                            )
+                            updateAirQData(
+                                O3_INDEX, "오존", "O3",
+                                "㎍/㎥", air.o3Value!!.toString(), 0.151f, air.o3Grade!!
+                            )
+
+                            applyAirQView(
+                                "초미세먼지", "PM2.5",
+                                air.pm25Grade, "㎍/m3", air.pm25Value.toInt().toString(), 151f
+                            )
+
+                            airQList[PM2p5_INDEX].isSelect = true
+
+                            // UV 값이 없으면 카드 없앰
+                            if ((uv.flag == null) || (uv.value == null) || (uv.flag == "null") || (uv.value.toString() == "null"))
+                                binding.mainUVBox.visibility = GONE
+                            else {
+                                binding.mainUVBox.visibility = VISIBLE
+                                applyUvResponseItem(uv.flag)   // 자외선 단계별 대응요령 추가
+                                setUvBackgroundColor(
+                                    this,
+                                    uv.flag,
+                                    binding.mainUVLegendCardView
+                                ) // UV 범주 색상 변경
+                                binding.mainUvValue.text =
+                                    translateUV(this, uv.flag) + "\n" + uv.value.toString()
+                            }
+
+                            val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
+                            val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
+                            sunTomorrow?.let {
+                                binding.mainSunBoxTomorrowTitle.visibility = VISIBLE
+                                val sbRiseTom = StringBuffer().append(it.sunrise).insert(2, ":")
+                                val sbSetTom = StringBuffer().append(it.sunset).insert(2, ":")
+                                binding.mainSunRiseTom.text = sbRiseTom
+                                binding.mainSunSetTom.text = sbSetTom
+                            }
+
+                            binding.mainSunRiseTime.text = sbRise
+                            binding.mainSunSetTime.text = sbSet
+
+                            getCompareTempText(
+                                yesterday.temp!!,
+                                modifyCurrentTempType(current.temperature, realtime.temp),
+                                binding.mainCompareTempTv
+                            )
+
+                            binding.mainSkyImg.setImageDrawable(
+                                applySkyImg(
+                                    this,
+                                    modifyCurrentRainType(current.rainType, realtime.rainType),
+                                    realtime.sky, thunder,
+                                    isLarge = true, isNight = getIsNight(currentSun)
+                                )
+                            )
+
+                            applyWindowBackground(
+                                currentSun,
+                                applySkyText(
+                                    this,
+                                    modifyCurrentRainType(current.rainType, realtime.rainType),
+                                    realtime.sky, thunder
+                                )
+                            )
+
+                            reportViewPagerItem.clear()
+                            result.summary?.let { sList ->
+                                sList.forEach { summary ->
+                                    addReportViewPagerItem(
+                                        summary.replace("○", "")
+                                            .replace("\n", "")
+                                            .trim()
+                                    )
+                                }
+                            }
+
+                            createIndicators(binding.nestedReportIndicator)
+                            reportViewPagerAdapter.notifyDataSetChanged()
+
+                            if (reportViewPagerItem.size == 0) {
+                                binding.nestedReportFrame.visibility = GONE
+                            } else {
+                                binding.nestedReportFrame.visibility = VISIBLE
+                            }
+
+
+                            for (i: Int in 0 until result.realtime.size) {
+                                val dailyIndex = result.realtime[i]
+                                val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
+                                val dailyTime =
+                                    millsToString(
+                                        convertLocalDateTimeToLong(forecastToday),
+                                        "HHmm"
+                                    )
+                                val dailySunProgress =
+                                    100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(
+                                        sun.sunrise
+                                    )) /
+                                            getEntireSun(sun.sunrise, sun.sunset)
+                                val isNight = getIsNight(dailySunProgress)
+                                if (i == result.realtime.lastIndex + 1) {
+                                    break
+                                } else if (i == 0) {
+                                    addDailyWeatherItem(
+                                        "${forecastToday.hour}${getString(R.string.hour)}",
+                                        applySkyImg(
                                             this,
                                             modifyCurrentRainType(
                                                 current.rainType,
                                                 realtime.rainType
                                             ),
-                                            realtime.sky,
-                                            thunder
-                                        )
+                                            dailyIndex.sky,
+                                            thunder,
+                                            isLarge = false,
+                                            isNight = isNight
+                                        )!!,
+                                        "${
+                                            modifyCurrentTempType(
+                                                current.temperature, realtime.temp
+                                            ).roundToInt()
+                                        }˚",
+                                        dailyIndex.forecast!!,
+                                        isRainyDay(dailyIndex.rainType),
+                                        dailyIndex.rainP!!
                                     )
-                                }
-
-                                today?.let {
-                                    binding.mainMinMaxValue.text =
-                                        "${filteringNullData(it.min!!)}˚/${filteringNullData(it.max!!)}˚"
-                                }
-
-                                updateAirQData(
-                                    PM2p5_INDEX, "초미세먼지", "PM2.5",
-                                    "㎍/㎥", air.pm25Value!!.toInt().toString(), 151f, air.pm25Grade!!
-                                )
-                                updateAirQData(
-                                    PM10_INDEX, "미세먼지", "PM10",
-                                    "㎍/㎥", air.pm10Value!!.toInt().toString(), 76f, air.pm10Grade!!
-                                )
-                                updateAirQData(
-                                    CO_INDEX, "일산화탄소", "CO",
-                                    "ppm", air.coValue!!.toString(), 15.01f, air.coGrade!!
-                                )
-                                updateAirQData(
-                                    SO2_INDEX, "아황산가스", "SO2",
-                                    "ppm", air.so2Value!!.toString(), 0.151f, air.so2Grade!!
-                                )
-                                updateAirQData(
-                                    NO2_INDEX, "이산화질소", "NO2",
-                                    "㎍/㎥", air.no2Value!!.toString(), 0.201f, air.no2Grade!!
-                                )
-                                updateAirQData(
-                                    O3_INDEX, "오존", "O3",
-                                    "㎍/㎥", air.o3Value!!.toString(), 0.151f, air.o3Grade!!
-                                )
-
-                                applyAirQView(
-                                    "초미세먼지", "PM2.5",
-                                    air.pm25Grade, "㎍/m3", air.pm25Value.toInt().toString(), 151f
-                                )
-
-                                airQList[PM2p5_INDEX].isSelect = true
-
-                                // UV 값이 없으면 카드 없앰
-                                if ((uv.flag == null) || (uv.value == null) || (uv.flag == "null") || (uv.value.toString() == "null"))
-                                    binding.mainUVBox.visibility = GONE
-                                else {
-                                    binding.mainUVBox.visibility = VISIBLE
-                                    applyUvResponseItem(uv.flag)   // 자외선 단계별 대응요령 추가
-                                    setUvBackgroundColor(
-                                        this,
-                                        uv.flag,
-                                        binding.mainUVLegendCardView
-                                    ) // UV 범주 색상 변경
-                                    binding.mainUvValue.text =
-                                        translateUV(this, uv.flag) + "\n" + uv.value.toString()
-                                }
-
-                                val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
-                                val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
-                                sunTomorrow?.let {
-                                    binding.mainSunBoxTomorrowTitle.visibility = VISIBLE
-                                    val sbRiseTom = StringBuffer().append(it.sunrise).insert(2, ":")
-                                    val sbSetTom = StringBuffer().append(it.sunset).insert(2, ":")
-                                    binding.mainSunRiseTom.text = sbRiseTom
-                                    binding.mainSunSetTom.text = sbSetTom
-                                }
-
-                                binding.mainSunRiseTime.text = sbRise
-                                binding.mainSunSetTime.text = sbSet
-
-                                getCompareTempText(
-                                    yesterday.temp!!,
-                                    modifyCurrentTempType(current.temperature, realtime.temp),
-                                    binding.mainCompareTempTv
-                                )
-
-                                binding.mainSkyImg.setImageDrawable(
-                                    applySkyImg(
-                                        this,
-                                        modifyCurrentRainType(current.rainType, realtime.rainType),
-                                        realtime.sky, thunder,
-                                        isLarge = true, isNight = getIsNight(currentSun)
-                                    )
-                                )
-
-                                applyWindowBackground(
-                                    currentSun,
-                                    applySkyText(
-                                        this,
-                                        modifyCurrentRainType(current.rainType, realtime.rainType),
-                                        realtime.sky, thunder
-                                    )
-                                )
-
-                                reportViewPagerItem.clear()
-                                result.summary?.let { sList ->
-                                    sList.forEach { summary ->
-                                        addReportViewPagerItem(
-                                            summary.replace("○", "")
-                                                .replace("\n", "")
-                                                .trim()
-                                        )
-                                    }
-                                }
-
-                                createIndicators(binding.nestedReportIndicator)
-                                reportViewPagerAdapter.notifyDataSetChanged()
-
-                                if (reportViewPagerItem.size == 0) {
-                                    binding.nestedReportFrame.visibility = GONE
                                 } else {
-                                    binding.nestedReportFrame.visibility = VISIBLE
-                                }
-
-
-                                for (i: Int in 0 until result.realtime.size) {
-                                    val dailyIndex = result.realtime[i]
-                                    val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
-                                    val dailyTime =
-                                        millsToString(
-                                            convertLocalDateTimeToLong(forecastToday),
-                                            "HHmm"
-                                        )
-                                    val dailySunProgress =
-                                        100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(
-                                            sun.sunrise
-                                        )) /
-                                                getEntireSun(sun.sunrise, sun.sunset)
-                                    val isNight = getIsNight(dailySunProgress)
-                                    if (i == result.realtime.lastIndex + 1) {
-                                        break
-                                    } else if (i == 0) {
-                                        addDailyWeatherItem(
-                                            "${forecastToday.hour}${getString(R.string.hour)}",
-                                            applySkyImg(
-                                                this,
-                                                modifyCurrentRainType(
-                                                    current.rainType,
-                                                    realtime.rainType
-                                                ),
-                                                dailyIndex.sky,
-                                                thunder,
-                                                isLarge = false,
-                                                isNight = isNight
-                                            )!!,
-                                            "${
-                                                modifyCurrentTempType(
-                                                    current.temperature, realtime.temp
-                                                ).roundToInt()
-                                            }˚",
-                                            dailyIndex.forecast!!,
-                                            isRainyDay(dailyIndex.rainType),
-                                            dailyIndex.rainP!!
-                                        )
-                                    } else {
-                                        addDailyWeatherItem(
-                                            "${forecastToday.hour}${getString(R.string.hour)}",
-                                            applySkyImg(
-                                                this,
-                                                dailyIndex.rainType, dailyIndex.sky, thunder,
-                                                isLarge = false, isNight = isNight
-                                            )!!,
-                                            "${dailyIndex.temp!!.roundToInt()}˚",
-                                            dailyIndex.forecast!!,
-                                            isRainyDay(dailyIndex.rainType),
-                                            dailyIndex.rainP!!
-                                        )
-                                    }
-                                }
-
-                                for (i: Int in 0 until (7)) {
-                                    try {
-                                        val formedDate = dateNow.plusDays(i.toLong())
-                                        val date: String = when (i) {
-                                            0 -> {
-                                                getString(R.string.today)
-                                            }
-                                            1 -> {
-                                                getString(R.string.tomorrow)
-                                            }
-                                            else -> {
-                                                "${
-                                                    convertDayOfWeekToKorean(
-                                                        this, dateNow.dayOfWeek.value + i
-                                                    )
-                                                }${getString(R.string.date)}"
-                                            }
-                                        }
-                                        addWeeklyWeatherItem(
-                                            date,
-                                            convertDateAppendZero(formedDate),
-                                            getSkyImgSmall(this, wfMin[i], false)!!,
-                                            getSkyImgSmall(this, wfMax[i], false)!!,
-                                            "${taMin[i]!!.roundToInt()}˚",
-                                            "${taMax[i]!!.roundToInt()}˚"
-                                        )
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                    }
-                                }
-
-                                weeklyWeatherAdapter.notifyDataSetChanged()
-                                dailyWeatherAdapter.notifyDataSetChanged()
-                                airQAdapter.notifyDataSetChanged()
-
-                                changeTextColorStyle(
-                                    applySkyText(
-                                        this,
-                                        modifyCurrentRainType(current.rainType, realtime.rainType),
-                                        realtime.sky, thunder
-                                    ),
-                                    getIsNight(currentSun)
-                                )
-                                runOnUiThread { hidePB() }
-                            } catch (e: java.lang.NullPointerException) {
-                                Logger.t(TAG_R).e("Null Point Error : ${e.stackTraceToString()}")
-                            } catch (e: IndexOutOfBoundsException) {
-                                binding.mainSkyImg.visibility = VISIBLE
-                                binding.mainSkyText.visibility = VISIBLE
-                                binding.mainSkyImg.setImageDrawable(
-                                    ResourcesCompat.getDrawable(
-                                        resources,
-                                        R.drawable.cancel, null
+                                    addDailyWeatherItem(
+                                        "${forecastToday.hour}${getString(R.string.hour)}",
+                                        applySkyImg(
+                                            this,
+                                            dailyIndex.rainType, dailyIndex.sky, thunder,
+                                            isLarge = false, isNight = isNight
+                                        )!!,
+                                        "${dailyIndex.temp!!.roundToInt()}˚",
+                                        dailyIndex.forecast!!,
+                                        isRainyDay(dailyIndex.rainType),
+                                        dailyIndex.rainP!!
                                     )
-                                )
-                                binding.mainSkyText.text = "데이터를 불러 올 수 없습니다"
-                                Logger.t(TAG_R)
-                                    .w("Index Out Of Bounds Error : ${e.stackTraceToString()}")
+                                }
                             }
-                        }
 
-                        is BaseRepository.ApiState.Error -> {
+                            for (i: Int in 0 until (7)) {
+                                try {
+                                    val formedDate = dateNow.plusDays(i.toLong())
+                                    val date: String = when (i) {
+                                        0 -> {
+                                            getString(R.string.today)
+                                        }
+                                        1 -> {
+                                            getString(R.string.tomorrow)
+                                        }
+                                        else -> {
+                                            "${
+                                                convertDayOfWeekToKorean(
+                                                    this, dateNow.dayOfWeek.value + i
+                                                )
+                                            }${getString(R.string.date)}"
+                                        }
+                                    }
+                                    addWeeklyWeatherItem(
+                                        date,
+                                        convertDateAppendZero(formedDate),
+                                        getSkyImgSmall(this, wfMin[i], false)!!,
+                                        getSkyImgSmall(this, wfMax[i], false)!!,
+                                        "${taMin[i]!!.roundToInt()}˚",
+                                        "${taMax[i]!!.roundToInt()}˚"
+                                    )
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+
+                            weeklyWeatherAdapter.notifyDataSetChanged()
+                            dailyWeatherAdapter.notifyDataSetChanged()
+                            airQAdapter.notifyDataSetChanged()
+
+                            changeTextColorStyle(
+                                applySkyText(
+                                    this,
+                                    modifyCurrentRainType(current.rainType, realtime.rainType),
+                                    realtime.sky, thunder
+                                ),
+                                getIsNight(currentSun)
+                            )
                             runOnUiThread { hidePB() }
-                            ToastUtils(this).showMessage("일시적인 오류로 데이터 호출에 실패했습니다")
+                        } catch (e: java.lang.NullPointerException) {
+                            Logger.t(TAG_R).e("Null Point Error : ${e.stackTraceToString()}")
+                        } catch (e: IndexOutOfBoundsException) {
+                            binding.mainSkyImg.visibility = VISIBLE
+                            binding.mainSkyText.visibility = VISIBLE
+                            binding.mainSkyImg.setImageDrawable(
+                                ResourcesCompat.getDrawable(
+                                    resources,
+                                    R.drawable.cancel, null
+                                )
+                            )
+                            binding.mainSkyText.text = "데이터 호출에 실패했습니다"
+                            Logger.t(TAG_R)
+                                .w("Index Out Of Bounds Error : ${e.stackTraceToString()}")
                         }
+                    }
 
-                        is BaseRepository.ApiState.Loading -> {
-                            runOnUiThread { showPB() }
+                    is BaseRepository.ApiState.Error -> {
+                        runOnUiThread { hidePB() }
+                        binding.mainSkyImg.visibility = VISIBLE
+                        binding.mainSkyText.visibility = VISIBLE
+                        binding.mainSkyImg.setImageDrawable(
+                            ResourcesCompat.getDrawable(
+                                resources,
+                                R.drawable.cancel, null
+                            )
+                        )
+                        if (eData.errorMessage == "NOT SERVICED Location") {
+                            binding.mainSkyText.text = getString(R.string.not_serviced_location)
+                        } else if (eData.errorMessage == "API ERROR OCCURRED") {
+                            binding.mainSkyText.text = "데이터 호출에 실패했습니다"
                         }
+                    }
+
+                    is BaseRepository.ApiState.Loading -> {
+                        runOnUiThread { showPB() }
+                    }
                     }
                 }
             }
-        } else {
-            Timber.tag("ReAddrTest").i("Already has applyGetDataViewModel")
-        }
         return this
     }
 
@@ -1123,87 +1179,81 @@ class MainActivity
     // 현재 위치정보를 받아오고 데이터 갱신
     @SuppressLint("MissingPermission", "SuspiciousIndentation")
     private fun applyGetLocationViewModel(): MainActivity {
-        if (!getLocationViewModel.fetchData().hasObservers()) {
-            Timber.tag("ReAddrTest").i("applyGetLocationViewModel")
-            getLocationViewModel.fetchData().observe(this) { location ->
-                location?.let { loc ->
-                    hidePB()
-                    val lat = loc.lat!!
-                    val lng = loc.lng!!
-                    val addr = loc.addr!!
-                    val formatAddr = addr
-                        .replaceFirst(" ", "")
-                        .replace(getString(R.string.korea), "")
-                        .replace("null", "")
+        Timber.tag("ReAddrTest").i("applyGetLocationViewModel")
+        getLocationViewModel.fetchData().observe(this) { location ->
+            location?.let { loc ->
+                hidePB()
+                val lat = loc.lat!!
+                val lng = loc.lng!!
+                val addr = loc.addr!!
+                val formatAddr = addr
+                    .replaceFirst(" ", "")
+                    .replace(getString(R.string.korea), "")
+                    .replace("null", "")
 
-                    if (loc.isGPS) {
-                        updateCurrentAddress(
-                            lat, lng,
-                            formatAddr
-                        )
+                if (loc.isGPS) {
+                    updateCurrentAddress(
+                        lat, lng,
+                        formatAddr
+                    )
 
-                        setNotificationAddress(this, formatAddr)
+                    setNotificationAddress(this, formatAddr)
 
-                        locationClass.writeRdbCurrentLog(
-                            lat, lng,
-                            formatAddr
-                        )
+                    locationClass.writeRdbCurrentLog(
+                        lat, lng,
+                        formatAddr
+                    )
 
-                        binding.mainGpsTitleTv.text = guardWordWrap(
-                            formatAddr
-                        )
+                    binding.mainGpsTitleTv.text = guardWordWrap(
+                        formatAddr
+                    )
 
-                        binding.mainTopBarGpsTitle.text =
-                            formatAddr
+                    binding.mainTopBarGpsTitle.text =
+                        formatAddr
 
-                        loadCurrentViewModelData(lat, lng)
-                    } else {
-                        updateCurrentAddress(
-                            lat, lng,
-                            formatAddr
-                        )
+                    loadCurrentViewModelData(lat, lng)
+                } else {
+                    updateCurrentAddress(
+                        lat, lng,
+                        formatAddr
+                    )
 
-                        locationClass.writeRdbCurrentLog(
-                            lat, lng, "NetWork - $addr"
-                        )
+                    locationClass.writeRdbCurrentLog(
+                        lat, lng, "NetWork - $addr"
+                    )
 
-                        setNotificationAddress(this, formatAddr)
+                    setNotificationAddress(this, formatAddr)
 
-                        binding.mainGpsTitleTv.text =
-                            formatAddr
-                        binding.mainTopBarGpsTitle.text = formatAddr
+                    binding.mainGpsTitleTv.text =
+                        formatAddr
+                    binding.mainTopBarGpsTitle.text = formatAddr
 
-                        loadCurrentViewModelData(lat, lng)
-
-                        ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
-                    }
+                    ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
+                    loadCurrentViewModelData(lat, lng)
                 }
             }
-        } else {
-            Timber.tag("ReAddrTest").i("Already has applyGetDataViewModel")
-            getLocationViewModel.loadDataResult(this)
         }
         return this
     }
 
     private fun loadCurrentViewModelData(lat: Double, lng: Double) {
-        applyGetDataViewModel()
+        getDataObservers()
         getDataViewModel.loadData(lat, lng, null)
     }
 
     private fun loadSavedViewModelData(addr: String) {
-        applyGetDataViewModel()
+        getDataObservers()
         getDataViewModel.loadData(null, null, addr)
     }
 
     private fun loadLocationData() {
-        applyGetLocationViewModel()
-        applyGetDataViewModel()
+        getLocationObservers()
+        getDataObservers()
         getLocationViewModel.loadDataResult(this)
     }
 
     private fun setAirCPV(barColor: Int, unit: String, grade: Int) {
-        binding.nestedPmCpv.apply {
+        binding.nestedAirCpv.apply {
             setBarColor(barColor)
             setUnit(unit)
             setTextColor(barColor)
@@ -1215,19 +1265,19 @@ class MainActivity
         kr: String, en: String, grade: Int, unit: String,
         value: String, maxValue: Float
     ) {
-        binding.nestedPmTitleKr.text = kr
-        binding.nestedPmTitleEn.text = en
+        binding.nestedAirTitleKr.text = kr
+        binding.nestedAirTitleEn.text = en
         setAirCPV(getDataColor(this, grade), unit, grade)
 
-        binding.nestedPmCpv.apply {
+        binding.nestedAirCpv.apply {
             setText(DataTypeParser.getDataText(grade))
             setMaxValue(maxValue)
         }
-        binding.nestedPmValue.text = value
-        binding.nestedPmValue.setTextColor(getDataColor(this@MainActivity, grade))
-        binding.nestedPmUnit.text = unit
+        binding.nestedAirValue.text = value
+        binding.nestedAirValue.setTextColor(getDataColor(this@MainActivity, grade))
+        binding.nestedAirUnit.text = unit
 
-        binding.nestedPmCpv.setValueAnimated(value.toFloat(), 500)
+        binding.nestedAirCpv.setValueAnimated(value.toFloat(), 500)
     }
 
     private fun addAirQItem(

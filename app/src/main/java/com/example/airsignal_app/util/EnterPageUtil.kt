@@ -53,5 +53,6 @@ class EnterPageUtil(private val activity: Activity) {
         val intent = Intent(activity, PermissionActivity::class.java)
         activity.startActivity(intent)
         activity.overridePendingTransition(0,0)
+        activity.finish()
     }
 }

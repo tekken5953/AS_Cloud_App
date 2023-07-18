@@ -489,6 +489,16 @@ class SettingActivity
             applyAppVersionResult()
             appVersionViewModel.loadDataResult()
         }
+
+        binding.settingNotificationText.setOnClickListener {
+            val notificationView: View =
+                LayoutInflater.from(this).inflate(R.layout.dialog_notification_setting,
+                    null)
+
+            ShowDialogClass(this)
+                .setBackPressed(notificationView.findViewById(R.id.notificationBack))
+                .show(notificationView, true)
+        }
     }
 
     private fun applyDeviceTheme() {
@@ -650,11 +660,7 @@ class SettingActivity
     }
 
     private fun applyNotification() {
-        if (RequestPermissionsUtil(this).isNotificationPermitted()) {
-            binding.notiPM.fetchData(getUserNotiPM(this))
-            binding.notiEvent.fetchData(getUserNotiEvent(this))
-            binding.notiNight.fetchData(getUserNotiNight(this))
-        } else {
+        if (!RequestPermissionsUtil(this).isNotificationPermitted()) {
             setUserNoti(this,notiPM,false)
             setUserNoti(this,notiEvent,false)
             setUserNoti(this,notiNight,false)

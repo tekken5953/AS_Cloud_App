@@ -10,10 +10,10 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userFontScale
 import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
-import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
+import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_LOC_PERMISSION
+import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_ADDRESS
-import com.example.airsignal_app.dao.StaticDataObject.WEATHER_ALL_NOTI
 import com.example.airsignal_app.db.SharedPreferenceManager
 
 /**
@@ -88,5 +88,13 @@ object SetAppInfo {
 
     fun setLastRefreshTime(context: Context, l: Long) {
         SharedPreferenceManager(context).setLong(LAST_REFRESH_WIDGET_TIME, l)
+    }
+
+    fun setInitLocPermission(context: Context, s: String) {
+        SharedPreferenceManager(context).setString(INITIALIZED_LOC_PERMISSION, s)
+    }
+
+    fun setInitNotiPermission(context: Context, s: String) {
+        SharedPreferenceManager(context).setString(INITIALIZED_NOTI_PERMISSION, s)
     }
 }

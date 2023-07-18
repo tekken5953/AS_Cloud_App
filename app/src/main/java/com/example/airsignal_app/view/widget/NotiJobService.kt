@@ -30,6 +30,7 @@ import com.example.airsignal_app.view.activity.RedirectActivity
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.RuntimeExecutionException
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -224,10 +225,16 @@ class NotiJobService : JobService() {
                 writeLog(false, "addOnCanceledListener", "Location is Not Available")
             }
             .addOnCompleteListener { task ->
-                writeLog(
-                    false, "addOnCompleteListener", "task isSuccess ${task.isSuccessful} " +
-                            "result is ${task.result}"
-                )
+                try {
+                    writeLog(
+                        false, "addOnCompleteListener", "task isSuccess ${task.isSuccessful} " +
+                                "result is ${task.result}"
+                    )
+                } catch(e : RuntimeExecutionException) {
+                    writeLog(
+                        true, "Fail to addOnCompleteListener", e.localizedMessage
+                    )
+                }
             }
     }
 
