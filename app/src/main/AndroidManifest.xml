@@ -27,6 +27,13 @@
         android:windowSoftInputMode="adjustNothing"
         tools:replace="android:icon,android:label">
         <activity
+            android:name=".view.widget.BackgroundPermissionActivity"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".view.activity.PermissionActivity"
             android:exported="false">
             <meta-data

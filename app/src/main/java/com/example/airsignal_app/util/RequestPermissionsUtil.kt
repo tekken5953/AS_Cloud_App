@@ -13,8 +13,8 @@ import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import com.example.airsignal_app.dao.StaticDataObject.REQUEST_LOCATION
 import com.example.airsignal_app.dao.StaticDataObject.REQUEST_NOTIFICATION
+import com.example.airsignal_app.dao.StaticDataObject.TAG_P
 import com.example.airsignal_app.util.`object`.GetAppInfo.getInitLocPermission
-import com.example.airsignal_app.util.`object`.SetAppInfo.setInitLocPermission
 import com.orhanobut.logger.Logger
 import timber.log.Timber
 
@@ -23,7 +23,6 @@ class RequestPermissionsUtil(private val context: Context) {
     private val permissionNetWork = Manifest.permission.INTERNET
 
     /** 위치 권한 SDK 버전 29 이상**/
-//    @RequiresApi(Build.VERSION_CODES.Q)
     private val permissionsLocation = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION
@@ -31,15 +30,7 @@ class RequestPermissionsUtil(private val context: Context) {
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private val permissionsLocationBackground =
-       Manifest.permission.ACCESS_BACKGROUND_LOCATION
-
-
-//    /** 위치 권한 SDK 버전 29 이하**/
-//    @TargetApi(Build.VERSION_CODES.P)
-//    private val permissionsLocationDownApi29Impl = arrayOf(
-//        Manifest.permission.ACCESS_FINE_LOCATION,
-//        Manifest.permission.ACCESS_COARSE_LOCATION
-//    )
+        Manifest.permission.ACCESS_BACKGROUND_LOCATION
 
     /** 알림 권한 SDK 버전 33 이상**/
     @TargetApi(Build.VERSION_CODES.TIRAMISU)
@@ -49,7 +40,7 @@ class RequestPermissionsUtil(private val context: Context) {
 
     /** 위치정보 권한 요청**/
     fun requestLocation() {
-        Log.d("TAG_P","Request Location")
+        Log.d(TAG_P, "Request Location")
         ActivityCompat.requestPermissions(
             context as Activity,
             permissionsLocation,
@@ -68,7 +59,7 @@ class RequestPermissionsUtil(private val context: Context) {
                     permissionNotification,
                     REQUEST_NOTIFICATION
                 )
-                Log.d("TAG_P","Request Notification Permission")
+                Log.d(TAG_P, "Request Notification Permission")
             }
         }
     }
@@ -79,11 +70,11 @@ class RequestPermissionsUtil(private val context: Context) {
             if (ContextCompat.checkSelfPermission(context, perm)
                 != PackageManager.PERMISSION_GRANTED
             ) {
-                Logger.t("TAG_P").i("Location is false")
+                Logger.t(TAG_P).i("Location is false")
                 return false
             }
         }
-        Logger.t("TAG_P").i("Location is true")
+        Logger.t(TAG_P).i("Location is true")
         return true
     }
 
@@ -108,7 +99,7 @@ class RequestPermissionsUtil(private val context: Context) {
             context,
             permissionNetWork
         ) == PackageManager.PERMISSION_GRANTED
-        Logger.t("TAG_P").i("Network is $result")
+        Logger.t(TAG_P).i("Network is $result")
         return result
     }
 
@@ -118,18 +109,18 @@ class RequestPermissionsUtil(private val context: Context) {
             if (ContextCompat.checkSelfPermission(context, perm)
                 != PackageManager.PERMISSION_DENIED
             ) {
-                Timber.tag("TAG_P").i(ContextCompat.checkSelfPermission(context, perm).toString())
+                Timber.tag(TAG_P).i(ContextCompat.checkSelfPermission(context, perm).toString())
                 return false
             }
         }
-        Timber.tag("TAG_P").i("isLocationDenied is True")
+        Timber.tag(TAG_P).i("isLocationDenied is True")
         return true
     }
 
     fun isNotiDenied(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             for (perm in permissionNotification) {
-                Timber.tag("TAG_P").i(ContextCompat.checkSelfPermission(context, perm).toString())
+                Timber.tag(TAG_P).i(ContextCompat.checkSelfPermission(context, perm).toString())
                 return ContextCompat.checkSelfPermission(
                     context,
                     perm
@@ -141,29 +132,42 @@ class RequestPermissionsUtil(private val context: Context) {
         return true
     }
 
-    fun isShouldShowRequestPermissionRationale(activity: Activity): Boolean {
+    fun isShouldShowRequestPermissionRationale(activity: Activity, perm: String): Boolean {
         return when (getInitLocPermission(activity)) {
             "" -> {
-                Log.d("TAG_P","isShouldShowRequestPermissionRationale is Second")
+                Log.d(TAG_P, "isShouldShowRequestPermissionRationale is Default")
                 true
             }
             "Second" -> {
-                Log.d("TAG_P","isShouldShowRequestPermissionRationale is Done")
+                Log.d(TAG_P, "isShouldShowRequestPermissionRationale is Second")
                 true
             }
             else -> {
-                Log.d("TAG_P","isShouldShowRequestPermissionRationale is False")
+                Log.d(TAG_P, "isShouldShowRequestPermissionRationale is Done")
                 shouldShowRequestPermissionRationale(
                     activity,
-                    Manifest.permission.ACCESS_FINE_LOCATION
+                    perm
                 )
+                false
             }
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    fun isPermissionsLocationBackground(): Boolean {
-        return ContextCompat.checkSelfPermission(context, permissionsLocationBackground)==
+    fun isBackgroundRequestLocation(): Boolean {
+        val isGranted = ContextCompat.checkSelfPermission(context, permissionsLocationBackground) ==
                 PackageManager.PERMISSION_GRANTED
+        Logger.t(TAG_P).i("Background Location Permission is $isGranted")
+
+        return isGranted
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun requestBackgroundLocation() {
+        ActivityCompat.requestPermissions(
+            context as Activity,
+            arrayOf(permissionsLocationBackground),
+            0
+        )
     }
 }

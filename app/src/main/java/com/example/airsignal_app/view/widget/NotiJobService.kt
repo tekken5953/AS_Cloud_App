@@ -10,8 +10,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.view.View
 import android.widget.RemoteViews
+import androidx.annotation.RequiresApi
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
 import com.example.airsignal_app.db.SharedPreferenceManager
@@ -19,12 +23,12 @@ import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient
+import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.example.airsignal_app.util.`object`.DataTypeParser
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentRainType
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentTempType
 import com.example.airsignal_app.util.`object`.GetAppInfo
-import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.SetAppInfo.setLastRefreshTime
 import com.example.airsignal_app.view.activity.RedirectActivity
 import com.google.android.gms.location.CurrentLocationRequest
@@ -64,7 +68,7 @@ class NotiJobService : JobService() {
         try {
             context.unregisterReceiver(WidgetProvider4x2.NotiJobScheduler())
         } catch (e: IllegalArgumentException) {
-           e.printStackTrace()
+            e.printStackTrace()
         }
         if (!WidgetProvider4x2().isJobScheduled(context)) {
             WidgetProvider4x2.NotiJobScheduler().scheduleJob(context)
@@ -147,10 +151,9 @@ class NotiJobService : JobService() {
                 )
             } else {
                 RDBLogcat.writeWidgetLog(
-                    getUserEmail(context),
+                    "",
                     "Widget",
-                    s1!!,
-                    s2!!
+                    s1!!
                 )
             }
         } catch (e: java.lang.NullPointerException) {
@@ -158,8 +161,7 @@ class NotiJobService : JobService() {
             RDBLogcat.writeWidgetLog(
                 "ANR 발생",
                 "NPE",
-                s1!!,
-                s2!!
+                s1!!
             )
         }
     }
@@ -171,9 +173,31 @@ class NotiJobService : JobService() {
 
         val refreshBtnIntent = Intent(context, WidgetProvider4x2::class.java)
         refreshBtnIntent.action = WidgetAction.WIDGET_UPDATE
+
+        val backgroundPermissionIntent: PendingIntent =
+            if (VERSION.SDK_INT >= VERSION_CODES.Q &&
+                RequestPermissionsUtil(context).isBackgroundRequestLocation()
+            ) {
+                Intent(
+                    context,
+                    BackgroundPermissionActivity::class.java
+                )
+                    .let { intent ->
+                        intent.action = "backgroundPermissionRequest"
+                        PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+                    }
+            } else {
+                PendingIntent.getBroadcast(
+                    context, 0,
+                    refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE
+                )
+            }
+
         val pendingRefresh: PendingIntent =
-            PendingIntent.getBroadcast(context, 0,
-                refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE)
+            PendingIntent.getBroadcast(
+                context, 0,
+                refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE
+            )
 
         val pendingIntent: PendingIntent = Intent(context, RedirectActivity::class.java)
             .let { intent ->
@@ -184,7 +208,7 @@ class NotiJobService : JobService() {
         views.apply {
             setOnClickPendingIntent(R.id.widget4x2MainLayout, pendingIntent)
             setOnClickPendingIntent(R.id.widget4x2Refresh, pendingRefresh)
-            setOnClickPendingIntent(R.id.widget4x2ReloadLayout, pendingRefresh)
+            setOnClickPendingIntent(R.id.widget4x2ReloadLayout, backgroundPermissionIntent)
         }
 
         appWidgetManager.updateAppWidget(componentName, views)
@@ -204,6 +228,7 @@ class NotiJobService : JobService() {
 
         return GetAppInfo.getIsNight(dailySunProgress)
     }
+
 
     @SuppressLint("MissingPermission")
     fun getWidgetLocation(context: Context) {
@@ -230,7 +255,7 @@ class NotiJobService : JobService() {
                         false, "addOnCompleteListener", "task isSuccess ${task.isSuccessful} " +
                                 "result is ${task.result}"
                     )
-                } catch(e : RuntimeExecutionException) {
+                } catch (e: RuntimeExecutionException) {
                     writeLog(
                         true, "Fail to addOnCompleteListener", e.localizedMessage
                     )
@@ -243,6 +268,11 @@ class NotiJobService : JobService() {
         writeLog(false, "Get Instance", httpClient.toString())
         val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
 
+        @RequiresApi(Build.VERSION_CODES.Q)
+        if (RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+            changeVisibility(context, views, false)
+        }
+
         GetLocation(context).getAddress(lat, lng)?.let { addr ->
             writeLog(false, "Address", addr)
             RDBLogcat.writeLogCause(
@@ -253,7 +283,7 @@ class NotiJobService : JobService() {
 
             SharedPreferenceManager(context).setLong("lastWidgetDataCall", getCurrentTime())
 
-            changeVisibility(context, views, false)
+//            changeVisibility(context, views, false)
 
             GetLocation(context).updateCurrentAddress(
                 lat, lng, addr
@@ -288,7 +318,7 @@ class NotiJobService : JobService() {
                             )
 
                             views.apply {
-                                setViewVisibility(R.id.widget4x2ReloadLayout, View.GONE)
+//                                setViewVisibility(R.id.widget4x2ReloadLayout, View.GONE)
 
                                 setInt(
                                     R.id.widget4x2MainLayout, "setBackgroundResource",
@@ -353,7 +383,7 @@ class NotiJobService : JobService() {
                                 fetch(context, views)
                             }
                         } catch (e: Exception) {
-                            changeVisibility(context, views, true)
+//                            changeVisibility(context, views, true)
                             failToFetchData(e, "onResponse - catch")
                             return
                         }

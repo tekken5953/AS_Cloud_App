@@ -16,7 +16,6 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getInitNotiPermission
 import com.example.airsignal_app.util.`object`.SetAppInfo
 import com.example.airsignal_app.view.LocPermCautionDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlin.system.exitProcess
 
 class PermissionActivity :
     BaseActivity<ActivityPermissionBinding>() {
@@ -48,19 +47,27 @@ class PermissionActivity :
 
         binding.permissionOkBtn.setOnClickListener {
             if (!perm.isLocationPermitted()) {
-                if (perm.isShouldShowRequestPermissionRationale(this)) {
-                    when(getInitLocPermission(this)) {
+                if (perm.isShouldShowRequestPermissionRationale(
+                        this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                    )
+                ) {
+                    when (getInitLocPermission(this)) {
                         "" -> {
                             SetAppInfo.setInitLocPermission(this, "Second")
-                            perm.requestLocation() }
-                        "Second" -> { LocPermCautionDialog(
-                            this,
-                            supportFragmentManager,
-                            BottomSheetDialogFragment().tag)
-                            .show() }
+                            perm.requestLocation()
+                        }
+                        "Second" -> {
+                            LocPermCautionDialog(
+                                this,
+                                supportFragmentManager,
+                                BottomSheetDialogFragment().tag
+                            )
+                                .show()
+                        }
                     }
                 } else {
-                    Log.d("TAG_P","Denied Permission")
+                    Log.d("TAG_P", "Denied Permission")
                     Toast.makeText(
                         this,
                         "위치 권한이 거부되어 있습니다\n서비스 이용을 위해 허용해주세요",
@@ -77,6 +84,6 @@ class PermissionActivity :
     }
 
     override fun onBackPressed() {
-        exitProcess(0)
+        EnterPageUtil(this).fullyExit()
     }
 }

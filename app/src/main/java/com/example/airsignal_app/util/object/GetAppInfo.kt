@@ -11,6 +11,7 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userFontScale
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
+import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_BACK_LOC_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_LOC_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME

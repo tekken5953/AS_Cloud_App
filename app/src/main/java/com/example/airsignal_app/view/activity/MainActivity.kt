@@ -1063,13 +1063,6 @@ class MainActivity
         this.weeklyWeatherList.add(item)
     }
 
-//    // 위젯 데이터 갱신
-//    private fun onUpdateWidgetData() {
-//        sendBroadcast(Intent(WIDGET_UPDATE_TIME).apply {
-//            component = ComponentName(this@MainActivity, WidgetProvider::class.java)
-//        })
-//    }
-
     // 날짜가 한자리일 때 앞에 0 붙이기
     private fun convertDateAppendZero(dateTime: LocalDateTime): String {
         return if (dateTime.monthValue / 10 == 0) {

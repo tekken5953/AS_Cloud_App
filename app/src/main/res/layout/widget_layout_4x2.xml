@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="@string/widget_reload"
+            android:text="권한이 거부되었습니다.\n눌러서 항상 허용으로 전환하세요"
             android:fontFamily="@font/spoqa_hansansneo_medium"
             android:textColor="@color/black"/>
     </LinearLayout>
