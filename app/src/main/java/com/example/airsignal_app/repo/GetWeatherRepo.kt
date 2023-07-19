@@ -1,9 +1,11 @@
 package com.example.airsignal_app.repo
 
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient.mMyAPIImpl
+import com.example.airsignal_app.view.ToastUtils
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,15 +33,18 @@ class GetWeatherRepo : BaseRepository() {
                         call: Call<ApiModel.GetEntireData>,
                         response: Response<ApiModel.GetEntireData>
                     ) {
-                        val responseBody = response.body()!!
-
-                        if (response.isSuccessful) {
-                            Logger.t(TAG_R).d("Success API : ${ApiState.Success(responseBody).data}")
-                            _getDataResult.postValue(ApiState.Success(responseBody))
-                        } else {
-                            Logger.t(TAG_R).e("Data Error API : ${ApiState.Success(responseBody).data}")
-                            _getDataResult.postValue(ApiState.Error("API ERROR OCCURRED"))
-                            call.cancel()
+                        try {
+                            if (response.isSuccessful) {
+                                val responseBody = response.body()!!
+                                Logger.t(TAG_R).d("Success API : ${ApiState.Success(responseBody).data}")
+                                _getDataResult.postValue(ApiState.Success(responseBody))
+                            } else {
+                                _getDataResult.postValue(ApiState.Error("API ERROR OCCURRED"))
+                                call.cancel()
+                            }
+                        } catch(e: NullPointerException) {
+                            e.printStackTrace()
+                            _getDataResult.postValue(ApiState.Error("NOT SERVICED Location"))
                         }
                     }
 

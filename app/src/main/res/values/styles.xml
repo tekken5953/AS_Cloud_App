@@ -63,6 +63,12 @@
         <item name="android:windowExitAnimation">@anim/trans_left_to_right</item>
     </style>
 
+    <style name="DialogAnimationBottom">
+        <item name="android:windowEnterAnimation">@anim/trans_bottom_to_top</item>
+        <item name="android:windowExitAnimation">@anim/trans_top_to_bottom</item>
+        <item name="background">@drawable/loc_perm_bg</item>
+    </style>
+
     <style name="DialogAnimationMenu">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowTitleStyle">@null</item>

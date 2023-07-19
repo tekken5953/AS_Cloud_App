@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.gps.GpsDataModel
+import com.example.airsignal_app.util.AddressFromRegex
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.google.android.gms.common.api.Api
 import com.google.android.gms.location.LocationServices
@@ -50,7 +51,7 @@ class GetLocationRepo : BaseRepository() {
                         "GPS 위치정보 갱신실패",
                         it.localizedMessage!!
                     )
-                    _getLocationResult.postValue(ApiState.Error(""))
+                    _getLocationResult.postValue(ApiState.Error("Get Location Error"))
                 }
         } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
             val lm =
@@ -65,7 +66,7 @@ class GetLocationRepo : BaseRepository() {
                 ))
             }
         } else {
-            _getLocationResult.postValue(ApiState.Error(""))
+            _getLocationResult.postValue(ApiState.Error("GPS Connect Error"))
             locationClass.requestSystemGPSEnable()
         }
     }

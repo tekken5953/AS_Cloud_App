@@ -11,10 +11,12 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userFontScale
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
-import com.example.airsignal_app.dao.StaticDataObject
+import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
+import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_BACK_LOC_PERMISSION
+import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_LOC_PERMISSION
+import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_ADDRESS
-import com.example.airsignal_app.dao.StaticDataObject.WEATHER_ALL_NOTI
 import com.example.airsignal_app.db.SharedPreferenceManager
 
 /**
@@ -98,5 +100,17 @@ object GetAppInfo {
 
     fun getLastRefreshTime(context: Context): Long {
         return SharedPreferenceManager(context).getLong(LAST_REFRESH_WIDGET_TIME)
+    }
+
+    fun getInitLocPermission(context: Context): String {
+        return SharedPreferenceManager(context).getString(INITIALIZED_LOC_PERMISSION)
+    }
+
+    fun getInitNotiPermission(context: Context): String {
+        return SharedPreferenceManager(context).getString(INITIALIZED_NOTI_PERMISSION)
+    }
+
+    fun getCurrentLocation(context: Context): String {
+        return SharedPreferenceManager(context).getString(CURRENT_GPS_ID)
     }
 }

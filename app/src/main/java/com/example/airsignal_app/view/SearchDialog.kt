@@ -21,6 +21,7 @@ import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.util.KeyboardController
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertAddress
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
+import com.example.airsignal_app.util.`object`.GetAppInfo.getCurrentLocation
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
@@ -93,7 +94,7 @@ class SearchDialog(
             GpsRepository(activity).findAll().forEach {
 //                Log.d(TAG_D, "검색리스트 아이템 추가 : ${it.id}, ${it.name}, ${it.addr}")
                 if (it.name == CURRENT_GPS_ID) {
-                    it.addr = getUserLastAddress(activity)
+                    it.addr = getCurrentLocation(activity)
                 }
                 addCurrentItem(it.addr.toString())
             }

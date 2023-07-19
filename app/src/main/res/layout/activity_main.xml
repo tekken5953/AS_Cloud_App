@@ -244,18 +244,71 @@
                 android:background="@color/view_line_color"
                 android:paddingBottom="55dp">
 
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/nested_report_frame"
+                <com.example.airsignal_app.view.custom_view.AirQView
+                    android:id="@+id/nested_air_help_popup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/nested_air_box"
+                    android:layout_centerHorizontal="true"
+                    android:alpha="0"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/help_bg"
+                    android:elevation="3.5dp"
+                    android:translationZ="2dp"
+                    android:gravity="center_horizontal" />
+
+                <RelativeLayout
+                    android:id="@+id/nested_subAir_frame"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_marginStart="12dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/scrolled_box_bg">
+
+                    <com.example.airsignal_app.view.custom_view.SubAirView
+                        android:id="@+id/subAirHumid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_toStartOf="@+id/subAirWind"
+                        ads:customImg="@drawable/ico_main_humidity"
+                        ads:customTitle="습도"
+                        ads:isLeftLine="false"/>
+
+                    <com.example.airsignal_app.view.custom_view.SubAirView
+                        android:id="@+id/subAirWind"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_centerHorizontal="true"
+                        ads:customImg="@drawable/ico_main_wind"
+                        ads:customTitle="바람"
+                        ads:isLeftLine="true"/>
+
+                    <com.example.airsignal_app.view.custom_view.SubAirView
+                        android:id="@+id/subAirRainP"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_toEndOf="@+id/subAirWind"
+                        ads:customImg="@drawable/ico_main_rain"
+                        ads:customTitle="강수확률"
+                        ads:isLeftLine="true"/>
+                </RelativeLayout>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/nested_report_frame"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/nested_subAir_frame"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="19dp"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/report_frame_bg"
                     android:nestedScrollingEnabled="false"
                     android:orientation="vertical"
-                    android:scrollIndicators="bottom">
+                    android:scrollIndicators="bottom"
+                    android:visibility="gone">
 
                     <androidx.viewpager2.widget.ViewPager2
                         android:id="@+id/nested_report_viewpager"
@@ -403,7 +456,7 @@
                         android:text="@string/weekly_weather"
                         android:textColor="#4F4F4F"
                         android:textSize="18sp"
-                        app:drawableStartCompat="@drawable/ico_week" />
+                        app:drawableStartCompat="@drawable/ico_weekly" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/mainWeeklyWeatherRv"
@@ -420,7 +473,7 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/nested_pm_box"
+                    android:id="@+id/nested_air_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/nested_weekly_box"
@@ -432,20 +485,20 @@
                     android:paddingEnd="20dp">
 
                     <TextView
-                        android:id="@+id/nested_pm_title"
+                        android:id="@+id/nested_air_title"
                         style="@style/basicMediumTextView"
                         android:layout_marginTop="24dp"
                         android:drawablePadding="5dp"
                         android:text="@string/live_air_quality"
                         android:textColor="#4F4F4F"
                         android:textSize="18sp"
-                        app:drawableStartCompat="@drawable/ico_flow" />
+                        app:drawableStartCompat="@drawable/ico_airquality" />
 
                     <at.grabner.circleprogress.CircleProgressView
-                        android:id="@+id/nested_pm_cpv"
+                        android:id="@+id/nested_air_cpv"
                         android:layout_width="125dp"
                         android:layout_height="125dp"
-                        android:layout_below="@+id/nested_pm_title"
+                        android:layout_below="@+id/nested_air_title"
                         android:layout_alignParentStart="true"
                         android:layout_marginStart="48dp"
                         android:layout_marginTop="47dp"
@@ -456,19 +509,19 @@
                         app:cpv_seekMode="false"
                         app:cpv_startAngle="190"
                         app:cpv_textMode="Text"
-                        app:cpv_textSize="20sp" />
+                        app:cpv_textSize="20sp"/>
 
                     <RelativeLayout
-                        android:id="@+id/nested_pm_right_linear"
+                        android:id="@+id/nested_air_right_linear"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/nested_pm_cpv"
+                        android:layout_alignTop="@+id/nested_air_cpv"
                         android:layout_marginStart="24dp"
                         android:layout_marginTop="10dp"
-                        android:layout_toEndOf="@+id/nested_pm_cpv">
+                        android:layout_toEndOf="@+id/nested_air_cpv">
 
                         <TextView
-                            android:id="@+id/nested_pm_title_en"
+                            android:id="@+id/nested_air_title_en"
                             style="@style/basicMediumTextView"
                             android:layout_alignParentTop="true"
                             android:layout_centerHorizontal="true"
@@ -477,9 +530,9 @@
                             android:textSize="18sp" />
 
                         <TextView
-                            android:id="@+id/nested_pm_title_kr"
+                            android:id="@+id/nested_air_title_kr"
                             style="@style/basicTextView"
-                            android:layout_below="@+id/nested_pm_title_en"
+                            android:layout_below="@+id/nested_air_title_en"
                             android:layout_centerHorizontal="true"
                             android:layout_marginBottom="10dp"
                             android:letterSpacing="-0.048"
@@ -487,26 +540,26 @@
                             android:textSize="14sp" />
 
                         <View
-                            android:id="@+id/nested_pm_line"
+                            android:id="@+id/nested_air_line"
                             android:layout_width="90dp"
                             android:layout_height="1dp"
-                            android:layout_below="@+id/nested_pm_title_kr"
+                            android:layout_below="@+id/nested_air_title_kr"
                             android:layout_marginTop="9dp"
                             android:background="#E1E1E1" />
 
                         <TextView
-                            android:id="@+id/nested_pm_value"
-                            style="@style/basicTextView"
-                            android:layout_below="@+id/nested_pm_line"
+                            android:id="@+id/nested_air_value"
+                            style="@style/basicMediumTextView"
+                            android:layout_below="@+id/nested_air_line"
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="8dp"
                             android:letterSpacing="-0.064"
                             android:textSize="24sp" />
 
                         <TextView
-                            android:id="@+id/nested_pm_unit"
+                            android:id="@+id/nested_air_unit"
                             style="@style/basicTextView"
-                            android:layout_below="@id/nested_pm_value"
+                            android:layout_below="@id/nested_air_value"
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="3dp"
                             android:letterSpacing="-0.064"
@@ -515,41 +568,24 @@
                     </RelativeLayout>
 
                     <ImageView
-                        android:id="@+id/nested_pm_help"
+                        android:id="@+id/nested_air_help"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:layout_alignTop="@+id/nested_pm_right_linear"
+                        android:layout_alignTop="@+id/nested_air_right_linear"
                         android:layout_marginTop="5dp"
-                        android:layout_toEndOf="@+id/nested_pm_right_linear"
+                        android:layout_toEndOf="@+id/nested_air_right_linear"
                         android:src="@drawable/help"
                         app:tint="#7C7C7C" />
 
-                    <LinearLayout
-                        android:id="@+id/nested_pm_help_popup"
-                        android:layout_width="250dp"
-                        android:layout_height="200dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginTop="-5dp"
-                        android:alpha="0"
-                        android:background="@drawable/bubble2"
-                        android:layout_alignTop="@+id/nested_pm_help"
-                        android:layout_toStartOf="@+id/nested_pm_help">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:text="도움말 팝업"/>
-                    </LinearLayout>
-
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/nested_pm_rv"
+                        android:id="@+id/nested_air_rv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/nested_pm_cpv"
+                        android:layout_below="@+id/nested_air_cpv"
                         android:layout_marginTop="47dp"
                         android:orientation="horizontal"
-                        android:scrollbars="none"
                         android:overScrollMode="never"
+                        android:scrollbars="none"
                         ads:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/list_item_pm_title" />
 
@@ -559,7 +595,7 @@
                     android:id="@+id/mainUVBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/nested_pm_box"
+                    android:layout_below="@+id/nested_air_box"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
@@ -805,11 +841,13 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/mainSunBoxTomorrowTitle"
                             style="@style/basicMediumTextView"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:text="@string/tomorrow"
                             android:textColor="@color/white"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/mainSunRiseTom"

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.location.LocationManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,13 +16,15 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.FaqAdapter
 import com.example.airsignal_app.adapter.NoticeAdapter
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiEvent
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiNight
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiPM
 import com.example.airsignal_app.databinding.ActivitySettingBinding
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.login.PhoneLogin
 import com.example.airsignal_app.repo.BaseRepository
-import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
@@ -39,6 +40,7 @@ import com.example.airsignal_app.util.`object`.GetSystemInfo.getApplicationVersi
 import com.example.airsignal_app.util.`object`.SetAppInfo.removeAllKeys
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserFontScale
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLocation
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserNoti
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserTheme
 import com.example.airsignal_app.view.ShowDialogClass
 import com.example.airsignal_app.vmodel.GetAppVersionViewModel
@@ -52,7 +54,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.system.exitProcess
 
 class SettingActivity
     : BaseActivity<ActivitySettingBinding>() {
@@ -488,6 +489,16 @@ class SettingActivity
             applyAppVersionResult()
             appVersionViewModel.loadDataResult()
         }
+
+        binding.settingNotificationText.setOnClickListener {
+            val notificationView: View =
+                LayoutInflater.from(this).inflate(R.layout.dialog_notification_setting,
+                    null)
+
+            ShowDialogClass(this)
+                .setBackPressed(notificationView.findViewById(R.id.notificationBack))
+                .show(notificationView, true)
+        }
     }
 
     private fun applyDeviceTheme() {
@@ -649,9 +660,11 @@ class SettingActivity
     }
 
     private fun applyNotification() {
-        binding.notiPM.fetchData(getUserNotiPM(this))
-        binding.notiEvent.fetchData(getUserNotiEvent(this))
-        binding.notiNight.fetchData(getUserNotiNight(this))
+        if (!RequestPermissionsUtil(this).isNotificationPermitted()) {
+            setUserNoti(this,notiPM,false)
+            setUserNoti(this,notiEvent,false)
+            setUserNoti(this,notiNight,false)
+        }
     }
 
     /** 이미지 드로어블 할당 **/
@@ -715,7 +728,7 @@ class SettingActivity
             // 라디오 버튼 체크
             radioGroup.check(radioButton.id)
             delay(300)
-            val intent = Intent(this@SettingActivity, RedirectPermissionActivity::class.java)
+            val intent = Intent(this@SettingActivity, RedirectActivity::class.java)
             startActivity(intent)
             overridePendingTransition(0, 0)
             finish()

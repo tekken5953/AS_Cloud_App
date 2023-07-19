@@ -9,7 +9,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.util.`object`.DataTypeParser.currentDateTimeString
@@ -98,7 +97,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
                         NotiJobScheduler().scheduleJob(context)
                     } else {
-                        ToastUtils(context).showMessage("마지막 갱신 뒤 1분 후에 가능합니다",1)
+                        ToastUtils(context).showMessage("마지막 갱신 후 1분 뒤에 가능합니다", 1)
                     }
                 }
                 WIDGET_OPTIONS_CHANGED
@@ -112,7 +111,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
     class NotiJobScheduler : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            NotiJobService().writeLog(false, "onReceive Action" ,intent.action)
+            NotiJobService().writeLog(false, "onReceive Action", intent.action)
             if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
                 // 재부팅 후 JobScheduler 다시 등록
                 scheduleJob(context)
@@ -121,7 +120,8 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 // 절전 모드에서 벗어났을 때의 동작을 여기에 구현합니다.
                 if (getCurrentTime() -
                     SharedPreferenceManager(context).getLong("lastWidgetDataCall")
-                 > (30 * 60 * 1000)) {
+                    > (30 * 60 * 1000)
+                ) {
                     scheduleJob(context)
                 }
             }
@@ -129,7 +129,8 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
         fun scheduleJob(context: Context) {
             // JobScheduler 생성 및 설정
-            val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+            val jobScheduler =
+                context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
 
             val componentName = ComponentName(context, NotiJobService::class.java)
             val jobInfo = JobInfo.Builder(JOB_ID, componentName)
@@ -139,11 +140,14 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
             if (!WidgetProvider4x2().isJobScheduled(context)) {
                 jobScheduler.schedule(jobInfo)
-                NotiJobService().writeLog(false,
-                    "JobScheduler 등록 성공", jobInfo.service.shortClassName)
+                NotiJobService().writeLog(
+                    false,
+                    "JobScheduler 등록 성공", jobInfo.service.shortClassName
+                )
                 Timber.tag("JobServices").d("JobScheduler 등록 성공 : ${jobInfo.intervalMillis}")
             } else {
-                Timber.tag("JobServices").d("JobScheduler 이미 존재 : ${jobScheduler.getPendingJob(JOB_ID)}")
+                Timber.tag("JobServices")
+                    .d("JobScheduler 이미 존재 : ${jobScheduler.getPendingJob(JOB_ID)}")
                 NotiJobService().getWidgetLocation(context)
             }
         }
@@ -154,12 +158,14 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         }
     }
 
-    fun isJobScheduled(context: Context) : Boolean {
+    fun isJobScheduled(context: Context): Boolean {
         val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
 
         val pendingJobs = jobScheduler.allPendingJobs
         for (jobInfo in pendingJobs) {
-            if (jobInfo.id == NotiJobScheduler.JOB_ID) { return true }
+            if (jobInfo.id == NotiJobScheduler.JOB_ID) {
+                return true
+            }
         }
 
         return false

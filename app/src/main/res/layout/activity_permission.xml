@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".view.activity.PermissionActivity">
+        
+        <TextView
+            android:id="@+id/permissionTitle"
+            style="@style/basicMediumTextView"
+            android:textSize="20sp"
+            android:text="@string/perm_title"
+            android:lineSpacingExtra="-1sp"
+            android:textColor="#4F4F4F"
+            android:layout_marginBottom="34dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/permissionLineTop"/>
+        
+        <View
+            android:id="@+id/permissionLineTop"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CFD1D2"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="33dp"
+            app:layout_constraintBottom_toTopOf="@+id/permissionItemLinear"/>
+
+        <LinearLayout
+            android:id="@+id/permissionItemLinear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="48dp"
+            app:layout_constraintBottom_toTopOf="@+id/permissionLineBottom">
+
+            <RelativeLayout
+                android:id="@+id/permissionNasItemLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/permissionItemNasTitle"
+                    style="@style/basicMediumTextView"
+                    android:textSize="14sp"
+                    android:textColor="#7C7C7C"
+                    android:text="@string/essential_perm"
+                    android:layout_marginStart="36dp"/>
+
+                <ImageView
+                    android:id="@+id/permissionItemLocImg"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_below="@+id/permissionItemNasTitle"
+                    android:layout_marginStart="36dp"
+                    android:src="@drawable/ico_gps"/>
+
+                <TextView
+                    android:id="@+id/permissionItemLocTitle"
+                    android:layout_toEndOf="@+id/permissionItemLocImg"
+                    style="@style/basicMediumTextView"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@+id/permissionItemNasTitle"
+                    android:textSize="16sp"
+                    android:textColor="#4F4F4F"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/location_perm"/>
+
+                <TextView
+                    android:id="@+id/permissionItemLocSubTitle"
+                    style="@style/basicMediumTextView"
+                    android:textSize="14sp"
+                    android:text="@string/essential"
+                    android:layout_marginStart="2dp"
+                    android:layout_alignBottom="@+id/permissionItemLocTitle"
+                    android:layout_toEndOf="@+id/permissionItemLocTitle"
+                    android:textColor="#5CC4FF"/>
+
+                <TextView
+                    android:id="@+id/permissionItemLocContent"
+                    style="@style/basicTextView"
+                    android:textColor="#7C7C7C"
+                    android:textSize="14sp"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/loc_perm_explain"
+                    android:layout_below="@+id/permissionItemLocTitle"
+                    android:layout_alignStart="@+id/permissionItemLocTitle"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/permissionUnNasItemLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp">
+                <TextView
+                    android:id="@+id/permissionItemUnNasTitle"
+                    style="@style/basicMediumTextView"
+                    android:textSize="14sp"
+                    android:textColor="#7C7C7C"
+                    android:text="@string/non_essential_perm"
+                    android:layout_marginStart="36dp"/>
+
+                <ImageView
+                    android:id="@+id/permissionItemNotiImg"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_below="@+id/permissionItemUnNasTitle"
+                    android:layout_marginStart="36dp"
+                    android:src="@drawable/ico_alarm"/>
+
+                <TextView
+                    android:id="@+id/permissionItemNotiTitle"
+                    android:layout_toEndOf="@+id/permissionItemNotiImg"
+                    style="@style/basicMediumTextView"
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@+id/permissionItemUnNasTitle"
+                    android:textSize="16sp"
+                    android:textColor="#4F4F4F"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/noti_perm"/>
+
+                <TextView
+                    android:id="@+id/permissionItemNotiSubTitle"
+                    style="@style/basicMediumTextView"
+                    android:textSize="14sp"
+                    android:text="@string/non_essential"
+                    android:textColor="#4F4F4F"
+                    android:layout_marginStart="2dp"
+                    android:layout_alignBottom="@+id/permissionItemNotiTitle"
+                    android:layout_toEndOf="@+id/permissionItemNotiTitle"/>
+
+                <TextView
+                    android:id="@+id/permissionItemNotiContent"
+                    style="@style/basicTextView"
+                    android:textColor="#7C7C7C"
+                    android:textSize="14sp"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/noti_perm_explain"
+                    android:layout_below="@+id/permissionItemNotiTitle"
+                    android:layout_alignStart="@+id/permissionItemNotiTitle"/>
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/permissionLineBottom"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CFD1D2"
+            app:layout_constraintBottom_toTopOf="@+id/permissionNotice"
+            android:layout_marginBottom="125dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"/>
+
+        <TextView
+            android:id="@+id/permissionNotice"
+            style="@style/basicTextView"
+            android:textColor="#4F4F4F"
+            android:textSize="12sp"
+            android:text="@string/perm_notice"
+            android:lineSpacingExtra="-1sp"
+            app:layout_constraintBottom_toTopOf="@+id/permissionOkBtn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="41dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/permissionOkBtn"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:elevation="0dp"
+            android:translationZ="0dp"
+            android:translationY="0dp"
+            android:translationX="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="52dp"
+            android:textSize="18sp"
+            android:background="@drawable/permission_ok_btn_bg"
+            android:textColor="@color/white"
+            android:text="@string/ok"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

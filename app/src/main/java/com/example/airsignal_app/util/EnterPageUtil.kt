@@ -5,6 +5,7 @@ import android.content.Intent
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLoginPlatform
 import com.example.airsignal_app.view.activity.LoginActivity
 import com.example.airsignal_app.view.activity.MainActivity
+import com.example.airsignal_app.view.activity.PermissionActivity
 import kotlin.system.exitProcess
 
 /**
@@ -46,5 +47,12 @@ class EnterPageUtil(private val activity: Activity) {
             System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
             exitProcess(0) // 현재의 액티비티를 종료
         }
+    }
+
+    fun toPermission() {
+        val intent = Intent(activity, PermissionActivity::class.java)
+        activity.startActivity(intent)
+        activity.overridePendingTransition(0,0)
+        activity.finish()
     }
 }

@@ -4,6 +4,7 @@ import android.app.Activity
 import com.example.airsignal_app.util.`object`.DataTypeParser.formatEmailToRDB
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.millsToString
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserEmail
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -83,9 +84,18 @@ object RDBLogcat {
             )
         }
 
+    fun writeWidgetLog(email: String?,s1: String?, s2: String?) {
+        myRef.child(formatEmailToRDB(email!!))
+            .child(s1!!)
+            .child(s2!!)
+            .child(millsToString(getCurrentTime(), "yyyy-MM-dd"))
+            .child(millsToString(getCurrentTime(), "HH:mm:ss"))
+            .setValue(s2)
+    }
+
         /** 경로를 탐색 가능한 실패로그 전송 **/
-        fun writeLogCause(email: String, isSuccess: String, log: String) {
-            myRef.child(formatEmailToRDB(email))
+        fun writeLogCause(email: String?, isSuccess: String, log: String) {
+            myRef.child(formatEmailToRDB(email!!))
                 .child(isSuccess)
                 .child(millsToString(getCurrentTime(), "yyyy-MM-dd"))
                 .child(millsToString(getCurrentTime(), "HH:mm:ss"))

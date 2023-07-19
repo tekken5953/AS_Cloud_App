@@ -14,6 +14,7 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
+import timber.log.Timber
 
 /**
  * @author : Lee Jae Young
@@ -60,6 +61,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
             val db = GpsRepository(context)
 
             address.text = dao
+
             if (dao == getUserLastAddress(context)) {
                 checked.visibility = View.VISIBLE
             } else {
@@ -67,6 +69,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
             }
 
             if (mList[adapterPosition] == db.findById(CURRENT_GPS_ID).addr) {
+                Timber.tag("testtest").d("user last addr is " + getUserLastAddress(context))
                 gpsImg.setImageDrawable(
                     ResourcesCompat.getDrawable(
                         context.resources,

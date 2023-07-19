@@ -9,8 +9,8 @@
     </declare-styleable>
 
     <declare-styleable name="AirQView">
-        <attr name="customSort" format="string"/>
-        <attr name="customUnit" format="string"/>
+        <attr name="explainText" format="string"/>
+        <attr name="graphImg" format="integer"/>
     </declare-styleable>
     
     <declare-styleable name="NotiSwitchView">
@@ -28,5 +28,11 @@
         <attr name="weight1" format="float"/>
         <attr name="weight2" format="float"/>
         <attr name="weight3" format="float"/>
+    </declare-styleable>
+
+    <declare-styleable name="SubAirView">
+        <attr name="customImg" format="reference"/>
+        <attr name="customTitle" format="string"/>
+        <attr name="isLeftLine" format="boolean"/>
     </declare-styleable>
 </resources>
