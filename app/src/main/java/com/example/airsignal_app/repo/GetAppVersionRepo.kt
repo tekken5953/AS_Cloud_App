@@ -47,7 +47,7 @@ class GetAppVersionRepo: BaseRepository() {
                 override fun onFailure(call: Call<ApiModel.AppVersion>, t: Throwable) {
                     Logger.t(TAG_R).d("Fail to get API : ${t.localizedMessage}")
 
-                    _getAppVersionResult.postValue(ApiState.Error(""))
+                    _getAppVersionResult.postValue(ApiState.Error("Network is Disable"))
                 }
             })
         }

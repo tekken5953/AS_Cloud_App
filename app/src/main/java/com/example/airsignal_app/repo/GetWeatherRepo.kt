@@ -34,17 +34,16 @@ class GetWeatherRepo : BaseRepository() {
                         response: Response<ApiModel.GetEntireData>
                     ) {
                         try {
-                            val responseBody = response.body()!!
-
                             if (response.isSuccessful) {
+                                val responseBody = response.body()!!
                                 Logger.t(TAG_R).d("Success API : ${ApiState.Success(responseBody).data}")
                                 _getDataResult.postValue(ApiState.Success(responseBody))
                             } else {
-                                Logger.t(TAG_R).e("Data Error API : ${ApiState.Success(responseBody).data}")
                                 _getDataResult.postValue(ApiState.Error("API ERROR OCCURRED"))
                                 call.cancel()
                             }
                         } catch(e: NullPointerException) {
+                            e.printStackTrace()
                             _getDataResult.postValue(ApiState.Error("NOT SERVICED Location"))
                         }
                     }

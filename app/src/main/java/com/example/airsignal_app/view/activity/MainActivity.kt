@@ -75,6 +75,7 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getTopicNotification
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.example.airsignal_app.util.`object`.SetAppInfo.removeSingleKey
+import com.example.airsignal_app.util.`object`.SetAppInfo.setCurrentLocation
 import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
@@ -572,10 +573,12 @@ class MainActivity
                 binding.nestedAirHelpPopup.apply {
                     bringToFront()
                     airQList.forEach {
-                        if (it.isSelect)  {
-                            fetchData("초미세먼지는 미세먼지의 4분의 1크기밖에 되지 않는 아주 작은 먼지로, 사람의 눈에는 거의 보이지 않는다. 미세먼지와 마찬가지로 자동차나 화석연료에서 발생한다. 미세먼지보다 훨씬 작기 때문에 기도에서 걸러지지 못하고 대부분 폐포까지 침투해 심장질환과 호흡기 질병 등을 일으킨다.\n",
-                            ResourcesCompat.getDrawable(resources,R.drawable.ssssss,null)!!,
-                            it.name, it.nameKR)
+                        if (it.isSelect) {
+                            fetchData(
+                                modifyDataSort(this@MainActivity, it.nameKR),
+                                modifyDataGraph(this@MainActivity, it.nameKR)!!,
+                                it.name, it.nameKR
+                            )
                             return@forEach
                         }
                     }
@@ -942,47 +945,37 @@ class MainActivity
                                 ),
                                 getIsNight(currentSun)
                             )
-                            runOnUiThread { hidePB() }
+                            runOnUiThread {
+                                hidePB()
+                                showAllViews()
+                            }
                         } catch (e: java.lang.NullPointerException) {
-                            Logger.t(TAG_R).e("Null Point Error : ${e.stackTraceToString()}")
+                            runOnUiThread {
+                                hidePB()
+                                hideAllViews(error = "NullPointerException")
+                            }
                         } catch (e: IndexOutOfBoundsException) {
-                            binding.mainSkyImg.visibility = VISIBLE
-                            binding.mainSkyText.visibility = VISIBLE
-                            binding.mainSkyImg.setImageDrawable(
-                                ResourcesCompat.getDrawable(
-                                    resources,
-                                    R.drawable.cancel, null
-                                )
-                            )
-                            binding.mainSkyText.text = "데이터 호출에 실패했습니다"
-                            Logger.t(TAG_R)
-                                .w("Index Out Of Bounds Error : ${e.stackTraceToString()}")
+                            runOnUiThread {
+                                hidePB()
+                                hideAllViews(error = "IndexOutOfBoundsException")
+                            }
                         }
                     }
 
                     is BaseRepository.ApiState.Error -> {
-                        runOnUiThread { hidePB() }
-                        binding.mainSkyImg.visibility = VISIBLE
-                        binding.mainSkyText.visibility = VISIBLE
-                        binding.mainSkyImg.setImageDrawable(
-                            ResourcesCompat.getDrawable(
-                                resources,
-                                R.drawable.cancel, null
-                            )
-                        )
-                        if (eData.errorMessage == "NOT SERVICED Location") {
-                            binding.mainSkyText.text = getString(R.string.not_serviced_location)
-                        } else if (eData.errorMessage == "API ERROR OCCURRED") {
-                            binding.mainSkyText.text = "데이터 호출에 실패했습니다"
+                        runOnUiThread {
+                            hidePB()
+                            hideAllViews(error = eData.errorMessage)
                         }
                     }
 
                     is BaseRepository.ApiState.Loading -> {
+                        Timber.tag("testtest").i("Loading...")
                         runOnUiThread { showPB() }
-                    }
                     }
                 }
             }
+        }
         return this
     }
 
@@ -1174,59 +1167,187 @@ class MainActivity
     private fun applyGetLocationViewModel(): MainActivity {
         Timber.tag("ReAddrTest").i("applyGetLocationViewModel")
         getLocationViewModel.fetchData().observe(this) { location ->
-            location?.let { loc ->
-                hidePB()
-                val lat = loc.lat!!
-                val lng = loc.lng!!
-                val addr = loc.addr!!
-                val formatAddr = addr
-                    .replaceFirst(" ", "")
-                    .replace(getString(R.string.korea), "")
-                    .replace("null", "")
+            when (location) {
+                is BaseRepository.ApiState.Success -> {
+                    val loc = location.data
+                    hidePB()
+                    val lat = loc.lat!!
+                    val lng = loc.lng!!
+                    val addr = loc.addr!!
+                    val formatAddr = addr
+                        .replaceFirst(" ", "")
+                        .replace(getString(R.string.korea), "")
+                        .replace("null", "")
+                    val formedAddr = AddressFromRegex(addr).getAddress().toString()
 
-                if (loc.isGPS) {
-                    updateCurrentAddress(
-                        lat, lng,
-                        formatAddr
-                    )
+                    setCurrentLocation(this, formatAddr)
 
-                    setNotificationAddress(this, formatAddr)
+                    if (loc.isGPS) {
+                        updateCurrentAddress(
+                            lat, lng,
+                            formatAddr
+                        )
 
-                    locationClass.writeRdbCurrentLog(
-                        lat, lng,
-                        formatAddr
-                    )
+                        setNotificationAddress(this, formatAddr)
 
-                    binding.mainGpsTitleTv.text = guardWordWrap(
-                        formatAddr
-                    )
+                        locationClass.writeRdbCurrentLog(
+                            lat, lng,
+                            formedAddr
+                        )
 
-                    binding.mainTopBarGpsTitle.text =
-                        formatAddr
+                        binding.mainGpsTitleTv.text = guardWordWrap(
+                            formedAddr
+                        )
 
-                    loadCurrentViewModelData(lat, lng)
-                } else {
-                    updateCurrentAddress(
-                        lat, lng,
-                        formatAddr
-                    )
+                        binding.mainTopBarGpsTitle.text =
+                            formedAddr
 
-                    locationClass.writeRdbCurrentLog(
-                        lat, lng, "NetWork - $addr"
-                    )
+                        loadCurrentViewModelData(lat, lng)
+                    } else {
+                        updateCurrentAddress(
+                            lat, lng,
+                            formatAddr
+                        )
 
-                    setNotificationAddress(this, formatAddr)
+                        locationClass.writeRdbCurrentLog(
+                            lat, lng, "NetWork - $addr"
+                        )
 
-                    binding.mainGpsTitleTv.text =
-                        formatAddr
-                    binding.mainTopBarGpsTitle.text = formatAddr
+                        setCurrentLocation(this, formatAddr)
 
-                    ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
-                    loadCurrentViewModelData(lat, lng)
+                        setNotificationAddress(this, formatAddr)
+
+                        binding.mainGpsTitleTv.text =
+                            formedAddr
+                        binding.mainTopBarGpsTitle.text = formedAddr
+
+                        ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
+                        loadCurrentViewModelData(lat, lng)
+                    }
                 }
+
+                is BaseRepository.ApiState.Error -> {
+                    runOnUiThread {
+                        hidePB()
+                        hideAllViews(error = location.errorMessage)
+                    }
+                }
+
+                else -> {}
             }
         }
         return this
+    }
+
+
+    // 통신에 실패할 경우 레이아웃 처리
+    private fun hideAllViews(error: String?) {
+        Logger.t("TAG_E").e("Error Msg is $error")
+        when (error) {
+            "API ERROR OCCURRED" -> {
+                binding.mainSkyText.text = "데이터 호출에 실패했습니다"
+            }
+            "NOT SERVICED Location" -> {
+                binding.mainSkyText.text = getString(R.string.not_serviced_location)
+            }
+            "Network Error" -> {
+                binding.mainSkyText.text = "인터넷 연결 필요"
+            }
+            "Timeout Error" -> {
+                binding.mainSkyText.text = "네트워크 오류, 재갱신 필요"
+            }
+            "Get Location Error" -> {
+                binding.mainSkyText.text = "주소 호출 실패"
+            }
+            "GPS Connect Error" -> {
+                binding.mainSkyText.text = "GPS 연결 불가"
+            }
+            else -> {
+                binding.mainSkyText.text = "알수없는 오류 발생"
+            }
+        }
+
+        // 주소, 갱신버튼, 현재기온, 기온비교, 최저/최고 기온, 날씨 정보 더보기, 모션 슬라이드 막기
+        binding.mainSkyImg.apply {
+            setImageDrawable(
+                ResourcesCompat.getDrawable(
+                    resources,
+                    R.drawable.refresh, null
+                )
+            )
+            imageTintList = ColorStateList.valueOf(getColor(R.color.main_blue_color))
+
+            setOnClickListener {
+                if (binding.mainSkyImg.imageTintList ==
+                    ColorStateList.valueOf(getColor(R.color.main_blue_color)
+                )) {
+                    mVib()
+                    showPB()
+                    loadLocationData()
+                }
+            }
+
+            setVisibilityForViews(GONE,error)
+        }
+    }
+
+    // 통신에 성공할 경우 레이아웃 처리
+    private fun showAllViews() {
+        setVisibilityForViews(VISIBLE,null)
+
+        binding.mainSkyImg.imageTintList = null
+    }
+
+    private fun setVisibilityForViews(visibility: Int, error: String?) {
+        val textViewArray = arrayListOf(
+            binding.mainGpsTitleTv,
+            binding.mainLiveTempValue,
+            binding.mainLiveTempUnit,
+            binding.mainCompareTempTv,
+            binding.mainMinMaxTitle,
+            binding.mainMinMaxValue,
+            binding.mainMotionSlideGuide,
+            binding.mainTopBarGpsTitle
+            )
+
+        if (visibility == GONE) {
+            if (error == "Network Error") {
+                binding.mainAddAddress.setImageDrawable(null)
+            }
+            textViewArray.forEach {
+                it.text = ""
+            }
+            binding.mainGpsFix.setImageDrawable(null)
+            binding.mainMotionSLideImg.setImageDrawable(null)
+            binding.mainRefreshData.setImageDrawable(null)
+            binding.mainSideMenuIv.setImageDrawable(null)
+
+            binding.mainMotionLayout.apply {
+                transitionToStart()
+                Thread.sleep(100)
+                isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
+            }
+
+        } else {
+            binding.mainMinMaxTitle.text = getString(R.string.min_max)
+            binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
+            binding.mainGpsFix.setImageDrawable(
+                ResourcesCompat.getDrawable(resources,R.drawable.gps_fix,null))
+            binding.mainMotionSLideImg.setImageDrawable(
+                ResourcesCompat.getDrawable(resources,R.drawable.drop_down_bottom,null)
+            )
+            binding.mainRefreshData.setImageDrawable(
+                ResourcesCompat.getDrawable(resources,R.drawable.refresh,null)
+            )
+            binding.mainAddAddress.setImageDrawable(
+                ResourcesCompat.getDrawable(resources,R.drawable.ico_add_w,null)
+            )
+            binding.mainSideMenuIv.setImageDrawable(
+                ResourcesCompat.getDrawable(resources,R.drawable.ico_hamb_w,null)
+            )
+            // 원래 상태로 복구하기 위해 제약 조건 변경
+            binding.mainMotionLayout.isInteractionEnabled = true
+        }
     }
 
     private fun loadCurrentViewModelData(lat: Double, lng: Double) {

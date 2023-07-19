@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="336dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         xmlns:tools="http://schemas.android.com/tools"
-
         tools:context=".view.activity.MainActivity">
 
         <ImageView
@@ -18,42 +17,32 @@
 
         <TextView
             android:id="@+id/airQName"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:textSize="20sp"
             android:textColor="#4F4F4F"
             android:layout_marginStart="18dp"
             android:layout_marginTop="24dp"/>
 
         <TextView
-            android:id="@+id/airQNameKR"
-            style="@style/basicTextView"
-            android:textSize="16sp"
-            android:textColor="#7C7C7C"
-            android:layout_toEndOf="@+id/airQName"
-            android:layout_alignTop="@+id/airQName"
-            android:layout_alignBottom="@+id/airQName"
-            android:layout_marginStart="12dp"/>
-
-        <TextView
             android:id="@+id/airQExplainText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="18dp"
-            android:layout_marginEnd="22dp"
             android:textSize="14sp"
             android:textColor="#4F4F4F"
+            android:lineHeight="20dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginEnd="22dp"
             android:layout_below="@+id/airQName"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="12dp"/>
 
         <ImageView
             android:id="@+id/airQGraphIv"
             android:layout_width="match_parent"
-            android:layout_height="53dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="26dp"
             android:layout_marginBottom="26dp"
-            android:layout_below="@+id/airQExplainText"
-            android:layout_alignStart="@+id/airQExplainText"
-            android:layout_alignEnd="@+id/airQExplainText"/>
+            android:layout_marginStart="2dp"
+            android:layout_below="@+id/airQExplainText"/>
 
     </RelativeLayout>
 </layout>

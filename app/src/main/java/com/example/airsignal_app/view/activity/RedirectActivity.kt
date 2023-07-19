@@ -1,5 +1,6 @@
 package com.example.airsignal_app.view.activity
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -16,6 +17,7 @@ import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.vmodel.GetAppVersionViewModel
 import com.google.firebase.database.FirebaseDatabase
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.system.exitProcess
 
 
 class RedirectActivity
@@ -94,14 +96,21 @@ class RedirectActivity
 //                                goToPlayStore()
                             }
                         }
-//                        is BaseRepository.ApiState.Error -> {
-//                            val builder = AlertDialog.Builder(this)
-//                            val alertDialog = builder.create()
-//                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL,"확인"
-//                            ) { _, _ ->
-//                                exitProcess(1)
-//                            }
-//                        }
+                        is BaseRepository.ApiState.Error -> {
+                            if (ver.errorMessage == "Network is Disable") {
+                                val builder = AlertDialog.Builder(this)
+                                val alertDialog = builder.create()
+                                alertDialog.apply {
+                                    setButton(AlertDialog.BUTTON_NEGATIVE,"확인"
+                                    ) { _, _ ->
+                                        exitProcess(1)
+                                    }
+                                    setTitle("네트워크 오류")
+                                    setMessage("인터넷 연결 상태를 확인 후 재실행 해주세요")
+                                    show()
+                                }
+                            }
+                        }
 
                         else -> {}
                     }

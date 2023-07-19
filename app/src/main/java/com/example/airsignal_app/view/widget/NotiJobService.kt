@@ -268,7 +268,7 @@ class NotiJobService : JobService() {
         writeLog(false, "Get Instance", httpClient.toString())
         val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
 
-        @RequiresApi(Build.VERSION_CODES.Q)
+        @RequiresApi(VERSION_CODES.Q)
         if (RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
             changeVisibility(context, views, false)
         }
