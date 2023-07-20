@@ -15,13 +15,14 @@ import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo
+import com.orhanobut.logger.Logger
 
 class BackgroundPermissionActivity : AppCompatActivity() {
-    @RequiresApi(Build.VERSION_CODES.Q)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_background_permission)
 
+    @RequiresApi(Build.VERSION_CODES.Q)
+    override fun onResume() {
+        super.onResume()
+        NotiJobService().getWidgetLocation(this)
         if (!RequestPermissionsUtil(this).isBackgroundRequestLocation()) {
             if (RequestPermissionsUtil(this).isShouldShowRequestPermissionRationale(
                     this,
@@ -55,6 +56,11 @@ class BackgroundPermissionActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_background_permission)
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -64,14 +70,15 @@ class BackgroundPermissionActivity : AppCompatActivity() {
         if (requestCode == REQUEST_BACKGROUND_LOCATION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "권한이 허용되었습니다", Toast.LENGTH_SHORT).show()
+                Logger.t("testtest").d("권한이 허용되었습니다")
                 callWidgetServiceBroadcast()
             } else {
                 Toast.makeText(this, "권한이 거부되었습니다", Toast.LENGTH_SHORT).show()
+                Logger.t("testtest").d("권한이 거부되었습니다")
                 callWidgetServiceBroadcast()
             }
         }
     }
-
 
     private fun callWidgetServiceBroadcast() {
         // 브로드캐스트 인텐트를 생성합니다.
@@ -84,6 +91,6 @@ class BackgroundPermissionActivity : AppCompatActivity() {
 //        sendBroadcast(intent)
 
         NotiJobService().getWidgetLocation(this)
-        EnterPageUtil(this).fullyExit()
+        EnterPageUtil(this).toPermission()
     }
 }

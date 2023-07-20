@@ -750,11 +750,11 @@ class MainActivity
 
                             updateAirQData(
                                 PM2p5_INDEX, "초미세먼지", "PM2.5",
-                                "㎍/㎥", air.pm25Value!!.toInt().toString(), 151f, air.pm25Grade!!
+                                "㎍/㎥", air.pm25Value!!.toInt().toString(), 76f, air.pm25Grade!!
                             )
                             updateAirQData(
                                 PM10_INDEX, "미세먼지", "PM10",
-                                "㎍/㎥", air.pm10Value!!.toInt().toString(), 76f, air.pm10Grade!!
+                                "㎍/㎥", air.pm10Value!!.toInt().toString(), 151f, air.pm10Grade!!
                             )
                             updateAirQData(
                                 CO_INDEX, "일산화탄소", "CO",
