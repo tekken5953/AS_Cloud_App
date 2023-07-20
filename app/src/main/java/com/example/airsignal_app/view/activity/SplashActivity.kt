@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.example.airsignal_app.R
-import com.example.airsignal_app.databinding.ActivityRedirectBinding
+import com.example.airsignal_app.databinding.ActivitySplashBinding
 import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.LoggerUtil
@@ -20,9 +20,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.system.exitProcess
 
 
-class RedirectActivity
-    : BaseActivity<ActivityRedirectBinding>() {
-    override val resID: Int get() = R.layout.activity_redirect
+class SplashActivity
+    : BaseActivity<ActivitySplashBinding>() {
+    override val resID: Int get() = R.layout.activity_splash
 
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
 
@@ -64,13 +64,13 @@ class RedirectActivity
     }
 
     private fun enterPage() {
-        if (RequestPermissionsUtil(this@RedirectActivity).isLocationPermitted()) {
-            EnterPageUtil(this@RedirectActivity)
+        if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
+            EnterPageUtil(this@SplashActivity)
                 .toMain(
                     getUserLoginPlatform(this)
                 )
         } else {
-            EnterPageUtil(this@RedirectActivity)
+            EnterPageUtil(this@SplashActivity)
                 .toPermission()
         }
     }

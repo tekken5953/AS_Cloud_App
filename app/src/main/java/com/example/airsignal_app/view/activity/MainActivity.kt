@@ -10,6 +10,7 @@ import android.os.*
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -80,7 +81,6 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
-import com.example.airsignal_app.view.custom_view.AirQView
 import com.example.airsignal_app.view.custom_view.SegmentedProgressBar
 import com.example.airsignal_app.vmodel.GetLocationViewModel
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
@@ -437,6 +437,12 @@ class MainActivity
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
+
+        val displayMetrics = DisplayMetrics()
+        @Suppress("DEPRECATION") windowManager.defaultDisplay.getMetrics(
+            displayMetrics
+        )
+
         addSideMenu()
 //        addExitDialog()
         // 자동 로그인
@@ -1178,7 +1184,7 @@ class MainActivity
                         .replaceFirst(" ", "")
                         .replace(getString(R.string.korea), "")
                         .replace("null", "")
-                    val formedAddr = AddressFromRegex(addr).getAddress().toString()
+                    val formedAddr = AddressFromRegex(addr).getAddress() ?: formatAddr
 
                     setCurrentLocation(this, formatAddr)
 
@@ -1188,7 +1194,7 @@ class MainActivity
                             formatAddr
                         )
 
-                        setNotificationAddress(this, formatAddr)
+                        setNotificationAddress(this, addr)
 
                         locationClass.writeRdbCurrentLog(
                             lat, lng,
@@ -1215,7 +1221,7 @@ class MainActivity
 
                         setCurrentLocation(this, formatAddr)
 
-                        setNotificationAddress(this, formatAddr)
+                        setNotificationAddress(this, addr)
 
                         binding.mainGpsTitleTv.text =
                             formedAddr

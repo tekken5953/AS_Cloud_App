@@ -10,7 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.drawable.BitmapDrawable
-import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.view.View
@@ -18,11 +17,11 @@ import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
-import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient
+import com.example.airsignal_app.util.AddressFromRegex
 import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.example.airsignal_app.util.`object`.DataTypeParser
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
@@ -30,7 +29,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentRainT
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentTempType
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.setLastRefreshTime
-import com.example.airsignal_app.view.activity.RedirectActivity
+import com.example.airsignal_app.view.activity.SplashActivity
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -102,7 +101,6 @@ class NotiJobService : JobService() {
                 R.id.widget4x2ReloadLayout,
                 View.VISIBLE
             )
-
             fetch(context, views)
         } else {
             list.forEach {
@@ -176,7 +174,7 @@ class NotiJobService : JobService() {
 
         val backgroundPermissionIntent: PendingIntent =
             if (VERSION.SDK_INT >= VERSION_CODES.Q &&
-                RequestPermissionsUtil(context).isBackgroundRequestLocation()
+                !RequestPermissionsUtil(context).isBackgroundRequestLocation()
             ) {
                 Intent(
                     context,
@@ -199,7 +197,7 @@ class NotiJobService : JobService() {
                 refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE
             )
 
-        val pendingIntent: PendingIntent = Intent(context, RedirectActivity::class.java)
+        val pendingIntent: PendingIntent = Intent(context, SplashActivity::class.java)
             .let { intent ->
                 intent.action = "enterApplication"
                 PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
@@ -269,7 +267,9 @@ class NotiJobService : JobService() {
         val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
 
         @RequiresApi(VERSION_CODES.Q)
-        if (RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+        if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+            changeVisibility(context, views, true)
+        } else {
             changeVisibility(context, views, false)
         }
 
@@ -281,9 +281,7 @@ class NotiJobService : JobService() {
                 addr
             )
 
-            SharedPreferenceManager(context).setLong("lastWidgetDataCall", getCurrentTime())
-
-//            changeVisibility(context, views, false)
+            setLastRefreshTime(context,getCurrentTime())
 
             GetLocation(context).updateCurrentAddress(
                 lat, lng, addr
@@ -375,10 +373,13 @@ class NotiJobService : JobService() {
                                             as BitmapDrawable).bitmap
                                 )
 
+                                val rawAddr = GetAppInfo.getNotificationAddress(context).trim()
+                                Timber.tag("widget_test").d("rawAddr : $rawAddr")
+
                                 setTextViewText(
                                     R.id.widget4x2Address,
-                                    GetAppInfo.getNotificationAddress(context).trim()
-                                )
+                                    getRegexAddr(rawAddr)
+                                    )
 
                                 fetch(context, views)
                             }
@@ -404,5 +405,29 @@ class NotiJobService : JobService() {
                 }
             })
         }
+    }
+
+    private fun getRegexAddr(rawAddr: String): String {
+        val list = AddressFromRegex(rawAddr).getAddress()?.trim()?.split(" ")
+        Timber.tag("widget_test").d("regexList : $list")
+
+        list?.let {
+            Timber.tag("widget_test").d("size : ${it.size}")
+            if (it.size >= 2) {
+                val sb = StringBuilder()
+                for (i: Int in it.lastIndex downTo(it.lastIndex - 1)) {
+                    sb.append(it[i]).append(" ")
+                    if (i == it.lastIndex - 1) {
+                        return sb.toString()
+                    }
+                }
+            } else {
+                val sb = StringBuilder()
+                sb.append(rawAddr)
+                return sb.toString()
+            }
+        }
+
+        return rawAddr
     }
 }

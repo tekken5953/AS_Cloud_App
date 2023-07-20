@@ -118,12 +118,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
             }
             if (intent.action == Intent.ACTION_SCREEN_ON) {
                 // 절전 모드에서 벗어났을 때의 동작을 여기에 구현합니다.
-                if (getCurrentTime() -
-                    SharedPreferenceManager(context).getLong("lastWidgetDataCall")
-                    > (30 * 60 * 1000)
-                ) {
-                    scheduleJob(context)
-                }
+                scheduleJob(context)
             }
         }
 

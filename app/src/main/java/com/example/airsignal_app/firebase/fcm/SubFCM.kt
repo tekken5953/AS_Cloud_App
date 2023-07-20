@@ -5,7 +5,7 @@ import android.content.Intent
 import com.example.airsignal_app.dao.StaticDataObject.TAG_N
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.util.`object`.SetAppInfo
-import com.example.airsignal_app.view.activity.RedirectActivity
+import com.example.airsignal_app.view.activity.SplashActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -34,7 +34,7 @@ class SubFCM : FirebaseMessagingService() {
             message.data.toString()
         )
 
-        val intent = Intent(this, RedirectActivity::class.java)
+        val intent = Intent(this, SplashActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP and Intent.FLAG_ACTIVITY_NEW_TASK)
         // 포그라운드 노티피케이션 발생
         NotificationBuilder().sendNotification(

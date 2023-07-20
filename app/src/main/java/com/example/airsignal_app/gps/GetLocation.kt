@@ -41,26 +41,20 @@ class GetLocation(private val context: Context) {
             val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
             @Suppress("DEPRECATION")
             address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
-            val notificationAddr = "${address[0].locality} ${address[0].subLocality}"
-                .replace("null","")
-            setNotificationAddress(context, notificationAddr)
+            setNotificationAddress(context, address[0].getAddressLine(0))
             setUserLastAddr(context, formattingFullAddress(address[0].getAddressLine(0)))
-//            renewTopic(SharedPreferenceManager(context).getString(WEATHER_ALL_NOTI), "test")
             return if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
-//                getAddressDefault(address[0])
                 address[0].getAddressLine(0)
             } else { "Null Address" }
         } catch (e: IOException) {
-            Toast.makeText(context, "주소를 가져오는 도중 오류가 발생했습니다", Toast.LENGTH_SHORT).show()
             writeLogCause(
                 getUserEmail(context),
                 "Background Location Exception",
                 "Error : ${e.localizedMessage}"
             )
-            return context.getString(R.string.address)
+            return null
         } catch (e: IndexOutOfBoundsException) {
-            Toast.makeText(context, "주소를 가져오는 도중 오류가 발생했습니다", Toast.LENGTH_SHORT).show()
-            return context.getString(R.string.address)
+            return null
         }
     }
 

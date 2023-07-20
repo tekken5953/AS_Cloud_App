@@ -12,7 +12,7 @@ import timber.log.Timber
 class AddressFromRegex(private val address: String) {
 
 
-    fun getAddress(): StringBuilder {
+    fun getAddress(): String? {
         Timber.tag("regexTest").d("Input address is $address")
         val result: StringBuilder = StringBuilder()
 
@@ -60,7 +60,11 @@ class AddressFromRegex(private val address: String) {
                 }
             }
         }
-        return result
+        return if (result.isEmpty()) {
+            null
+        } else {
+            result.toString()
+        }
     }
 
 

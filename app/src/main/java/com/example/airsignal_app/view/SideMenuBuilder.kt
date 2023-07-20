@@ -37,6 +37,7 @@ class SideMenuBuilder(private val context: Context) {
     }
 
     /** 다이얼로그 뒤로가기 버튼 후 액티비티 갱신 **/
+    // 현재는 미사용
     fun setBackPressRefresh(imageView: ImageView): SideMenuBuilder {
         imageView.setOnClickListener {
             dismiss()
@@ -117,9 +118,10 @@ class SideMenuBuilder(private val context: Context) {
     }
 
     private fun getWindowWidth(): Int {
-        // Calculate window height for fullscreen use
+        // 디바이스의 width 를 구한다
         val displayMetrics = DisplayMetrics()
-        @Suppress("DEPRECATION") (context as Activity).windowManager.defaultDisplay.getMetrics(
+        @Suppress("DEPRECATION")
+        (context as Activity).windowManager.defaultDisplay.getMetrics(
             displayMetrics
         )
         return displayMetrics.widthPixels
