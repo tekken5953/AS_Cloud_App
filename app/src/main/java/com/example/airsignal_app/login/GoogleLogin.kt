@@ -5,10 +5,9 @@ import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
+import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
 import com.example.airsignal_app.util.RefreshUtils
-import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserEmail
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserId
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLoginPlatform
@@ -65,7 +64,7 @@ class GoogleLogin(private val activity: Activity) {
     fun checkSilenceLogin() {
         client.silentSignIn()
             .addOnCompleteListener {
-                handleSignInResult(it,"자동")
+                handleSignInResult(it,isAuto = true)
                 Logger.t(TAG_LOGIN).d("자동 로그인 됨")
             }
             .addOnFailureListener {
@@ -86,24 +85,20 @@ class GoogleLogin(private val activity: Activity) {
     /** 사용자의 로그인 정보를 저장
      *
      * TODO 구글로그인은 아직 테스팅 단계라 임시로 파라미터를 설정**/
-    private fun saveLoginStatus(email: String, isAuto: String) {
+    private fun saveLoginStatus(email: String, isAuto: Boolean) {
         setUserLoginPlatform(activity, "google")
-        sendLogInWithEmail(isSuccess = "로그인 성공", email = email, sort = "구글", isAuto = isAuto)
+        writeLoginHistory(isLogin = true , sort = LOGIN_GOOGLE, email = email, isAuto = isAuto, isSuccess =true)
     }
 
     /** 사용자 로그아웃 정보를 저장
      *
      * TODO 임시로 번호를 지정해 놓음**/
     private fun saveLogoutStatus() {
-        sendLogOutWithEmail(
-            getUserEmail(activity),
-            "로그아웃 성공",
-            "구글",
-        )
+        writeLoginHistory(isLogin = false, sort = LOGIN_GOOGLE, email = lastLogin?.email, isAuto = null, isSuccess = true)
     }
 
     /** 로그인 이벤트 성공 **/
-    fun handleSignInResult(completedTask: Task<GoogleSignInAccount>, isAuto: String) {
+    fun handleSignInResult(completedTask: Task<GoogleSignInAccount>, isAuto: Boolean) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             val email = account.email!!.lowercase()

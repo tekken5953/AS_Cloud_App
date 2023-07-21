@@ -35,9 +35,8 @@ object HttpClient {
         } else {
             try {
                 instance = HttpClient
-                RDBLogcat.writeLogCause("Widget","Get Instance", instance.toString())
             } catch (e: Exception) {
-                e.localizedMessage?.let { RDBLogcat.writeLogCause("ANR 발생","Get Instance", it) }
+                RDBLogcat.writeErrorANR(thread = Thread.currentThread().name, msg = "인스턴스 생성 실패 - ${e.localizedMessage!!}")
             }
         }
         return instance!!

@@ -111,7 +111,6 @@ class MainActivity
     private val vib by lazy { VibrateUtil(this) }
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
     private val getLocationViewModel by viewModel<GetLocationViewModel>()
-    private val locationClass: GetLocation by inject()
 
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
@@ -330,7 +329,6 @@ class MainActivity
             }
         } catch (e: NullPointerException) {
             e.printStackTrace()
-            RDBLogcat.writeLogCause("ANR 발생", "Thread : ${Thread.currentThread()}", "SideMenu NPE")
         }
     }
 
@@ -391,8 +389,11 @@ class MainActivity
         addr?.let {
             loadSavedViewModelData(it)
 
-            Logger.t(TAG_R).i(it)
-            locationClass.writeRdbSearchLog(it)
+            RDBLogcat.writeGpsHistory(
+                this, isSearched = true,
+                gpsValue = addr,
+                responseData = null
+            )
 
             binding.mainGpsTitleTv.text = guardWordWrap(it)
             binding.mainTopBarGpsTitle.text = it
@@ -954,6 +955,13 @@ class MainActivity
                             runOnUiThread {
                                 hidePB()
                                 showAllViews()
+
+                                RDBLogcat.writeGpsHistory(
+                                    this,
+                                    isSearched = false,
+                                    gpsValue = metaAddr,
+                                    responseData = result.toString()
+                                )
                             }
                         } catch (e: java.lang.NullPointerException) {
                             runOnUiThread {
@@ -1196,11 +1204,6 @@ class MainActivity
 
                         setNotificationAddress(this, addr)
 
-                        locationClass.writeRdbCurrentLog(
-                            lat, lng,
-                            formedAddr
-                        )
-
                         binding.mainGpsTitleTv.text = guardWordWrap(
                             formedAddr
                         )
@@ -1213,10 +1216,6 @@ class MainActivity
                         updateCurrentAddress(
                             lat, lng,
                             formatAddr
-                        )
-
-                        locationClass.writeRdbCurrentLog(
-                            lat, lng, "NetWork - $addr"
                         )
 
                         setCurrentLocation(this, formatAddr)

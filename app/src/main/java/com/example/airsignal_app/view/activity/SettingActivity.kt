@@ -123,7 +123,7 @@ class SettingActivity
                                     KakaoLogin(this@SettingActivity).logout(email)
                                 }
                                 "naver" -> {
-                                    NaverLogin(this@SettingActivity).logout(email)
+                                    NaverLogin(this@SettingActivity).logout()
                                 }
                                 "google" -> {
                                     GoogleLogin(this@SettingActivity).logout()

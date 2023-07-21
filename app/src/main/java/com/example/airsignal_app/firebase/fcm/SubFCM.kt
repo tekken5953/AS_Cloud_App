@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import com.example.airsignal_app.dao.StaticDataObject.TAG_N
 import com.example.airsignal_app.firebase.db.RDBLogcat
+import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo
 import com.example.airsignal_app.view.activity.SplashActivity
 import com.google.android.gms.tasks.OnCompleteListener
@@ -28,9 +29,8 @@ class SubFCM : FirebaseMessagingService() {
                     "from : ${message.from}"
         )
 
-        RDBLogcat.writeLogCause(
-            "Notification",
-            message.from!!,
+        RDBLogcat.writeNotificationHistory(this,
+            GetAppInfo.getUserLastAddress(this),
             message.data.toString()
         )
 

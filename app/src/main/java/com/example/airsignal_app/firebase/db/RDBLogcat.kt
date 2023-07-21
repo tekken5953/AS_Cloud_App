@@ -1,18 +1,14 @@
 package com.example.airsignal_app.firebase.db
 
-import android.app.Activity
 import android.content.Context
-import com.example.airsignal_app.util.`object`.DataTypeParser.formatEmailToRDB
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.millsToString
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.example.airsignal_app.util.`object`.GetSystemInfo
-import com.example.airsignal_app.util.`object`.SetAppInfo.setUserEmail
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.kakao.sdk.user.UserApiClient
 
 /**
  * @author  Lee Jae Young
@@ -25,57 +21,86 @@ object RDBLogcat {
     const val LOGIN_OFF = "비로그인"
     const val USER_PREF_SETUP = "설치"
     const val USER_PREF_DEVICE = "디바이스"
+    const val USER_PREF_SETUP_INIT = "초기 설치"
+    const val USER_PREF_SETUP_LAST_LOGIN = "마지막 로그인 시간"
+    const val USER_PREF_SETUP_COUNT = "총 설치 횟수"
+    const val USER_PREF_DEVICE_APP_VERSION = "앱 버전"
+    const val USER_PREF_DEVICE_DEVICE_MODEL = "디바이스 모델"
+    const val USER_PREF_DEVICE_SDK_VERSION = "SDK 버전"
     const val LOGIN_PREF = "정보"
-    const val LOGIN_HISTORY = "로그인 시도"
     const val AUTO_LOGIN = "자동 로그인"
     const val OPTIONAL_LOGIN = "수동 로그인"
     const val SUCCESS_LOGIN = "로그인 성공"
     const val FAILED_LOGIN = "로그인 실패"
     const val GPS_HISTORY = "위치"
     const val GPS_SEARCHED = "검색된 주소"
-    const val GPS_NOT_SEARCHED = "실시간 주소"
+    const val GPS_NOT_SEARCHED = "실시간 데이터"
     const val WIDGET_HISTORY = "위젯"
     const val WIDGET_INSTANCE = "인스턴스"
     const val WIDGET_ACTION = "액션"
     const val WIDGET_SCHEDULE = "스케쥴"
+    const val WIDGET_ERROR = "위젯 에러"
+    const val LOGIN_GOOGLE = "구글"
+    const val LOGIN_KAKAO = "카카오"
+    const val LOGIN_KAKAO_EMAIL = "카카오 이메일"
+    const val LOGIN_NAVER = "네이버"
     const val NOTIFICATION_HISTORY = "알림"
     const val ERROR_HISTORY = "에러"
     const val ERROR_ANR = "ANR 에러"
+    const val ERROR_LOCATION_IOException = "네트워크 에러 - IOException"
+    const val ERROR_LOCATION_FAILED = "GPS 위치정보 갱신실패"
 
+    /** 유저 로그 레퍼런스 **/
     private val db = Firebase.database
     private val ref = db.getReference("User")
 
+    /** 날짜 변환 **/
     private fun getDate(): String {
         return millsToString(getCurrentTime(), "yyyy-MM-dd")
     }
 
+    /** 시간 변환 **/
     private fun getTime(): String {
         return millsToString(getCurrentTime(), "HH:mm:ss")
     }
 
+    /** 로그인 여부 확인 **/
     private fun isLogin(context: Context): String {
         return if (getUserEmail(context) != "") LOGIN_ON else LOGIN_OFF
     }
 
+    /** 유니크 아이디 받아오기 - 로그인(이메일) 비로그인(디바이스아이디) **/
     private fun getAndroidIdForLog(context: Context): String {
         return if (getUserEmail(context) != "") {
-            getUserEmail(context)
+            getUserEmail(context).replace(".","_")
         } else {
             GetSystemInfo.androidID(context)
         }
     }
 
+    /** 아이디까지의 레퍼런스 경로 **/
     private fun default(context: Context): DatabaseReference {
         return ref.child(isLogin(context))
             .child(getAndroidIdForLog(context))
     }
 
-    fun <T> writeUserPref(context: Context, isInstall: String, sort: String, value: T) {
-        default(context)
-            .child(isInstall)
-            .setValue("$sort - ${value.toString()}")
+    /** 유저 설치 정보 **/
+    fun <T> writeUserPref(context: Context, sort: String, title: String, value: T?) {
+        val userRef = default(context)
+            .child(sort)
+            .child(title)
+        if (sort == USER_PREF_SETUP_INIT) {
+            if (!userRef.get().isSuccessful) {
+                userRef.setValue(value.toString())
+            }
+        } else if (sort == USER_PREF_SETUP_COUNT) {
+            userRef.setValue(userRef.get().result.value.toString().toInt() + 1)
+        } else {
+            userRef.setValue(value.toString())
+        }
     }
 
+    /** 유저 로그인 정보 **/
     fun <T> writeLoginPref(context: Context, sort: String, value: T) {
         ref.child(LOGIN_ON)
             .child(getAndroidIdForLog(context))
@@ -84,16 +109,28 @@ object RDBLogcat {
             .setValue("$sort - ${value.toString()}")
     }
 
-    fun writeLoginHistory(context: Context, email: String?, isAuto: Boolean, isSuccess: Boolean) {
-        ref.child(LOGIN_ON)
-            .child(email ?: getUserLoginPlatform(context))
-            .child(getUserLoginPlatform(context))
-            .child(LOGIN_HISTORY)
-            .child(if (isAuto) AUTO_LOGIN else OPTIONAL_LOGIN)
-            .child(getDate()).child(getTime())
-            .setValue(if (isSuccess) SUCCESS_LOGIN else FAILED_LOGIN)
+    /** 로그인 기록 **/
+    fun writeLoginHistory(isLogin: Boolean, sort: String, email: String?,
+                          isAuto: Boolean?, isSuccess: Boolean) {
+        if (isLogin) {
+            ref .child(LOGIN_ON)
+                .child(email!!)
+                .child(sort)
+                .child(LOGIN_ON)
+                .child(if (isAuto!!) AUTO_LOGIN else OPTIONAL_LOGIN)
+                .child(getDate()).child(getTime())
+                .setValue(if (isSuccess) SUCCESS_LOGIN else FAILED_LOGIN)
+        } else {
+            ref .child(LOGIN_ON)
+                .child(email!!)
+                .child(sort)
+                .child(LOGIN_OFF)
+                .child(getDate()).child(getTime())
+                .setValue(if(isSuccess) "성공" else "실패")
+        }
     }
 
+    /** 위치 정보 기록 **/
     fun writeGpsHistory(
         context: Context,
         isSearched: Boolean,
@@ -103,16 +140,17 @@ object RDBLogcat {
         val gpsRef = default(context)
             .child(GPS_HISTORY)
             .child(getDate())
-            .child(getTime())
             .child(if (isSearched) GPS_SEARCHED else GPS_NOT_SEARCHED)
+            .child(getTime())
 
         if (responseData != null) {
-            gpsRef.child(gpsValue).setValue(responseData)
+            gpsRef.setValue("$responseData")
         } else {
             gpsRef.setValue(gpsValue)
         }
     }
 
+    /** 위젯 정보 **/
     fun writeWidgetPref(context: Context, sort: String, value: String) {
         default(context)
             .child(WIDGET_HISTORY)
@@ -122,6 +160,7 @@ object RDBLogcat {
             .setValue(value)
     }
 
+    /** 위젯 호출 기록 **/
     fun writeWidgetHistory(context: Context, sort: String, address: String, response: String?) {
         val widgetPref = default(context)
             .child(WIDGET_HISTORY)
@@ -140,6 +179,7 @@ object RDBLogcat {
         }
     }
 
+    /** 알림 기록 **/
     fun writeNotificationHistory(context: Context, topic: String, response: String?) {
         default(context)
             .child(NOTIFICATION_HISTORY)
@@ -149,6 +189,7 @@ object RDBLogcat {
             .setValue(response)
     }
 
+    /** 에러 로그 - 비정상 종료 **/
     fun writeErrorANR(thread: String, msg: String) {
         ref.child(ERROR_HISTORY)
             .child(getDate())
@@ -158,6 +199,7 @@ object RDBLogcat {
             .setValue(msg)
     }
 
+    /** 에러 로그 - 일반 **/
     fun writeErrorNotANR(context: Context, sort: String, msg: String) {
         default(context)
             .child(ERROR_HISTORY)
@@ -165,107 +207,5 @@ object RDBLogcat {
             .child(sort)
             .child(getTime())
             .setValue(msg)
-    }
-
-    /** 카카오 로그인 로그 저장 **/
-    fun sendLogInWithEmailForKakao(
-        activity: Activity,
-        isSuccess: String,
-        sort: String,
-        isAuto: String
-    ) {
-        UserApiClient.instance.me { user, _ ->
-            val email = user!!.kakaoAccount!!.email.toString()
-            setUserEmail(activity, email)
-            writeLog(
-                email,
-                isSuccess,
-                "$sort $isAuto"
-            )
-        }
-    }
-
-
-
-
-
-    private val myRef = db.getReference("Log")
-
-    /**
-     * @param tag error - 에러발생 로그 확인,  debug - 성공이벤트발생 로그 확인
-     * @param email 이메일
-     * @param log 로그 내용
-     */
-    private fun writeLog(email: String, tag: String, log: String) {
-        myRef.child(formatEmailToRDB(email))
-            .child(formatEmailToRDB(tag))
-            .child(millsToString(getCurrentTime(), "yyyy-MM-dd"))
-            .child(millsToString(getCurrentTime(), "HH:mm:ss"))
-            .setValue(log)
-    }
-
-    /**
-     * @param isSuccess 성공 or 실패
-     * @param sort 로그인 종류
-     * @param isAuto 자동 or 수동
-     */
-    fun sendLogInWithEmail(isSuccess: String, email: String, sort: String, isAuto: String) {
-        writeLog(
-            email,
-            isSuccess,
-            "$sort $isAuto"
-        )
-    }
-
-    /**
-     * 로그아웃 결과 저장
-     *
-     * TODO 네이밍 변경 필요
-     * @param email 이메일
-     * @param isSuccess 성공 or 실패
-     * @param sort 로그인 종류
-     */
-    fun sendLogOutWithEmail(email: String, isSuccess: String, sort: String) {
-        writeLog(
-            email,
-            isSuccess,
-            sort
-        )
-    }
-
-    /** 경로를 탐색할 수 없는 실패 로그 전송 **/
-    fun sendLogToFail(email: String, isSuccess: String, log: String) {
-        writeLogCause(
-            email = email,
-            isSuccess = isSuccess,
-            log = log
-        )
-    }
-
-    fun writeWidgetLog(email: String?, s1: String?, s2: String?) {
-        myRef.child(formatEmailToRDB(email!!))
-            .child(s1!!)
-            .child(s2!!)
-            .child(millsToString(getCurrentTime(), "yyyy-MM-dd"))
-            .child(millsToString(getCurrentTime(), "HH:mm:ss"))
-            .setValue(s2)
-    }
-
-    /** 경로를 탐색 가능한 실패로그 전송 **/
-    fun writeLogCause(email: String?, isSuccess: String, log: String) {
-        myRef.child(formatEmailToRDB(email!!))
-            .child(isSuccess)
-            .child(millsToString(getCurrentTime(), "yyyy-MM-dd"))
-            .child(millsToString(getCurrentTime(), "HH:mm:ss"))
-            .setValue(log)
-    }
-
-    fun writeLogNotLogin(email: String, androidId: String, isSuccess: String, log: String) {
-        myRef.child(formatEmailToRDB(email))
-            .child(androidId)
-            .child(isSuccess)
-            .child(millsToString(getCurrentTime(), "yyyy-MM-dd"))
-            .child(millsToString(getCurrentTime(), "HH:mm:ss"))
-            .setValue(log)
     }
 }
