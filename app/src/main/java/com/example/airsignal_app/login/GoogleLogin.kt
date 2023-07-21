@@ -7,6 +7,7 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
+import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginPref
 import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserEmail
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserId
@@ -85,16 +86,17 @@ class GoogleLogin(private val activity: Activity) {
     /** 사용자의 로그인 정보를 저장
      *
      * TODO 구글로그인은 아직 테스팅 단계라 임시로 파라미터를 설정**/
-    private fun saveLoginStatus(email: String, isAuto: Boolean) {
+    private fun saveLoginStatus(email: String, name: String?, profile: String?, isAuto: Boolean) {
         setUserLoginPlatform(activity, "google")
-        writeLoginHistory(isLogin = true , sort = LOGIN_GOOGLE, email = email, isAuto = isAuto, isSuccess =true)
+        writeLoginHistory(isLogin = true , platform = LOGIN_GOOGLE, email = email, isAuto = isAuto, isSuccess = true)
+        writeLoginPref(activity, platform =  LOGIN_GOOGLE, email = email, phone = null, name = name, profile = profile)
     }
 
     /** 사용자 로그아웃 정보를 저장
      *
      * TODO 임시로 번호를 지정해 놓음**/
     private fun saveLogoutStatus() {
-        writeLoginHistory(isLogin = false, sort = LOGIN_GOOGLE, email = lastLogin?.email, isAuto = null, isSuccess = true)
+        writeLoginHistory(isLogin = false, platform = LOGIN_GOOGLE, email = lastLogin?.email!!, isAuto = null, isSuccess = true)
     }
 
     /** 로그인 이벤트 성공 **/
@@ -121,7 +123,7 @@ class GoogleLogin(private val activity: Activity) {
             setUserProfile(activity, photo)
             setUserEmail(activity, email)
 
-            saveLoginStatus(email,isAuto)
+            saveLoginStatus(email, displayName, photo, isAuto)
         } catch (e: ApiException) {
             e.printStackTrace()
         }

@@ -29,7 +29,7 @@ class SilentLoginClass {
                 // 카카오 자동 로그인
                 val kakaoLogin = KakaoLogin(activity)
                 if (!kakaoLogin.getAccessToken()) {
-                    writeLoginHistory(isLogin = true, sort = LOGIN_KAKAO, email = email,
+                    writeLoginHistory(isLogin = true, platform = LOGIN_KAKAO, email = email,
                         isAuto = true, isSuccess = true)
                     kakaoLogin.isValidToken(pbLayout)
                 }
@@ -38,7 +38,7 @@ class SilentLoginClass {
                 // 네이버 자동 로그인
                 val naverLogin = NaverLogin(activity)
                 if (naverLogin.getAccessToken() == null) {
-                    writeLoginHistory(isLogin = true, sort = LOGIN_NAVER, email = email,
+                    writeLoginHistory(isLogin = true, platform = LOGIN_NAVER, email = email,
                         isAuto = true, isSuccess = true)
 
                     naverLogin.silentLogin()

@@ -4,7 +4,6 @@ import android.content.Context
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.millsToString
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
-import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
@@ -19,6 +18,7 @@ import com.google.firebase.ktx.Firebase
 object RDBLogcat {
     const val LOGIN_ON = "로그인"
     const val LOGIN_OFF = "비로그인"
+    const val SIGN_OUT = "로그아웃"
     const val USER_PREF_SETUP = "설치"
     const val USER_PREF_DEVICE = "디바이스"
     const val USER_PREF_SETUP_INIT = "초기 설치"
@@ -28,6 +28,10 @@ object RDBLogcat {
     const val USER_PREF_DEVICE_DEVICE_MODEL = "디바이스 모델"
     const val USER_PREF_DEVICE_SDK_VERSION = "SDK 버전"
     const val LOGIN_PREF = "정보"
+    const val LOGIN_PREF_EMAIL = "이메일"
+    const val LOGIN_PREF_PHONE = "핸드폰"
+    const val LOGIN_PREF_NAME = "이름"
+    const val LOGIN_PREF_PROFILE = "프로필 이미지"
     const val AUTO_LOGIN = "자동 로그인"
     const val OPTIONAL_LOGIN = "수동 로그인"
     const val SUCCESS_LOGIN = "로그인 성공"
@@ -101,30 +105,38 @@ object RDBLogcat {
     }
 
     /** 유저 로그인 정보 **/
-    fun <T> writeLoginPref(context: Context, sort: String, value: T) {
-        ref.child(LOGIN_ON)
+    fun writeLoginPref(context: Context, platform: String,
+        email: String, phone: String?, name: String?, profile: String?) {
+        val prefRef = ref.child(LOGIN_ON)
             .child(getAndroidIdForLog(context))
-            .child(getUserLoginPlatform(context))
+            .child(platform)
             .child(LOGIN_PREF)
-            .setValue("$sort - ${value.toString()}")
+
+        prefRef.run {
+            child(LOGIN_PREF_EMAIL).setValue(email)
+            child(LOGIN_PREF_PHONE).setValue(phone)
+            child(LOGIN_PREF_NAME).setValue(name)
+            child(LOGIN_PREF_PROFILE).setValue(profile)
+        }
     }
 
     /** 로그인 기록 **/
-    fun writeLoginHistory(isLogin: Boolean, sort: String, email: String?,
+    fun writeLoginHistory(isLogin: Boolean, platform: String, email: String,
                           isAuto: Boolean?, isSuccess: Boolean) {
+        val formedMail = email.replace(".","_")
         if (isLogin) {
             ref .child(LOGIN_ON)
-                .child(email!!)
-                .child(sort)
+                .child(formedMail)
+                .child(platform)
                 .child(LOGIN_ON)
                 .child(if (isAuto!!) AUTO_LOGIN else OPTIONAL_LOGIN)
                 .child(getDate()).child(getTime())
                 .setValue(if (isSuccess) SUCCESS_LOGIN else FAILED_LOGIN)
         } else {
             ref .child(LOGIN_ON)
-                .child(email!!)
-                .child(sort)
-                .child(LOGIN_OFF)
+                .child(formedMail)
+                .child(platform)
+                .child(SIGN_OUT)
                 .child(getDate()).child(getTime())
                 .setValue(if(isSuccess) "성공" else "실패")
         }

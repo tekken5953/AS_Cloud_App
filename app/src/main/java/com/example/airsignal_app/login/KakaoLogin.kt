@@ -80,10 +80,22 @@ class KakaoLogin(private val activity: Activity) {
                         loginSilenceKakao()
                         enterMainPage()
                     }
-                    writeLoginHistory(
-                        isLogin = true, sort = LOGIN_KAKAO, email = getUserEmail(activity),
-                        isAuto = false, isSuccess = true
-                    )
+                    UserApiClient.instance.me { user, _ ->
+                        user?.kakaoAccount?.let { account ->
+                            writeLoginHistory(
+                                isLogin = true, platform = LOGIN_KAKAO, email = account.email!!,
+                                isAuto = false, isSuccess = true
+                            )
+                            RDBLogcat.writeLoginPref(
+                                activity,
+                                platform = LOGIN_KAKAO,
+                                email = getUserEmail(activity),
+                                phone = null,
+                                name = account.name,
+                                profile = account.profile?.profileImageUrl
+                            )
+                        }
+                    }
                 }
             }
         } else {
@@ -96,8 +108,8 @@ class KakaoLogin(private val activity: Activity) {
     private val mCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
             Logger.t(TAG_LOGIN).e("로그인 실패 : Cause is $error")
-            RDBLogcat.writeLoginHistory(
-                isLogin = true, sort = LOGIN_KAKAO_EMAIL, email = getUserEmail(activity),
+            writeLoginHistory(
+                isLogin = false, platform = LOGIN_KAKAO_EMAIL, email = getUserEmail(activity),
                 isAuto = false, isSuccess = false
             )
         } else {
@@ -106,10 +118,22 @@ class KakaoLogin(private val activity: Activity) {
                 enterMainPage()
             }
 
-            writeLoginHistory(
-                isLogin = true, sort = LOGIN_KAKAO_EMAIL, email = getUserEmail(activity),
-                isAuto = false, isSuccess = true
-            )
+            UserApiClient.instance.me { user, _ ->
+                user?.kakaoAccount?.let { account ->
+                    writeLoginHistory(
+                        isLogin = true, platform = LOGIN_KAKAO_EMAIL, email = getUserEmail(activity),
+                        isAuto = false, isSuccess = true
+                    )
+                    RDBLogcat.writeLoginPref(
+                        activity,
+                        platform = LOGIN_KAKAO_EMAIL,
+                        email = getUserEmail(activity),
+                        phone = null,
+                        name = account.name,
+                        profile = account.profile?.profileImageUrl
+                    )
+                }
+            }
         }
     }
 
@@ -195,15 +219,15 @@ class KakaoLogin(private val activity: Activity) {
             UserApiClient.instance.logout { error ->
                 if (error != null) {
                     Logger.t(TAG_LOGIN).e("로그아웃에 실패함 : $error")
-                    RDBLogcat.writeLoginHistory(
-                        isLogin = false, sort = LOGIN_KAKAO, email = getUserEmail(activity),
+                    writeLoginHistory(
+                        isLogin = false, platform = LOGIN_KAKAO, email = getUserEmail(activity),
                         isAuto = null, isSuccess = false
                     )
                 } else {
                     Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
-                    RDBLogcat.writeLoginHistory(
+                    writeLoginHistory(
                         isLogin = false,
-                        sort = LOGIN_KAKAO,
+                        platform = LOGIN_KAKAO,
                         email = email,
                         isAuto = null,
                         isSuccess = true

@@ -12,6 +12,7 @@ import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_NAVER
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
+import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginPref
 import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
@@ -57,7 +58,7 @@ class NaverLogin(private val activity: Activity) {
         Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")
         writeLoginHistory(
             isLogin = false,
-            sort = LOGIN_NAVER,
+            platform = LOGIN_NAVER,
             email = getUserEmail(activity),
             isAuto = null,
             isSuccess = true
@@ -90,8 +91,17 @@ class NaverLogin(private val activity: Activity) {
                     .setString(userProfile, it.profileImage!!)
                     .setString(userEmail, it.email.toString())
 
-                writeLoginHistory(isLogin = true, sort = LOGIN_NAVER, email = it.email.toString(),
+                writeLoginHistory(isLogin = true, platform = LOGIN_NAVER, email = it.email.toString(),
                     isAuto = false, isSuccess = true)
+
+                writeLoginPref(activity,
+                    platform = LOGIN_NAVER,
+                    email = it.email.toString(),
+                    phone = it.mobile.toString(),
+                    name = it.name.toString(),
+                    profile = it.profileImage.toString()
+                )
+
                 EnterPageUtil(activity).toMain("naver")
             }
         }
@@ -104,7 +114,7 @@ class NaverLogin(private val activity: Activity) {
                         "errorDescription: $errorDescription"
             )
             writeLoginHistory(
-                isLogin = true, sort = LOGIN_NAVER, email = getUserEmail(activity),
+                isLogin = true, platform = LOGIN_NAVER, email = getUserEmail(activity),
                 isAuto = false, isSuccess = false
             )
         }
