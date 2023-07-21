@@ -10,6 +10,7 @@ import android.os.*
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -80,7 +81,6 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
-import com.example.airsignal_app.view.custom_view.AirQView
 import com.example.airsignal_app.view.custom_view.SegmentedProgressBar
 import com.example.airsignal_app.vmodel.GetLocationViewModel
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
@@ -111,7 +111,6 @@ class MainActivity
     private val vib by lazy { VibrateUtil(this) }
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
     private val getLocationViewModel by viewModel<GetLocationViewModel>()
-    private val locationClass: GetLocation by inject()
 
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
@@ -330,7 +329,6 @@ class MainActivity
             }
         } catch (e: NullPointerException) {
             e.printStackTrace()
-            RDBLogcat.writeLogCause("ANR 발생", "Thread : ${Thread.currentThread()}", "SideMenu NPE")
         }
     }
 
@@ -391,8 +389,11 @@ class MainActivity
         addr?.let {
             loadSavedViewModelData(it)
 
-            Logger.t(TAG_R).i(it)
-            locationClass.writeRdbSearchLog(it)
+            RDBLogcat.writeGpsHistory(
+                this, isSearched = true,
+                gpsValue = addr,
+                responseData = null
+            )
 
             binding.mainGpsTitleTv.text = guardWordWrap(it)
             binding.mainTopBarGpsTitle.text = it
@@ -437,6 +438,12 @@ class MainActivity
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
+
+        val displayMetrics = DisplayMetrics()
+        @Suppress("DEPRECATION") windowManager.defaultDisplay.getMetrics(
+            displayMetrics
+        )
+
         addSideMenu()
 //        addExitDialog()
         // 자동 로그인
@@ -744,11 +751,11 @@ class MainActivity
 
                             updateAirQData(
                                 PM2p5_INDEX, "초미세먼지", "PM2.5",
-                                "㎍/㎥", air.pm25Value!!.toInt().toString(), 151f, air.pm25Grade!!
+                                "㎍/㎥", air.pm25Value!!.toInt().toString(), 76f, air.pm25Grade!!
                             )
                             updateAirQData(
                                 PM10_INDEX, "미세먼지", "PM10",
-                                "㎍/㎥", air.pm10Value!!.toInt().toString(), 76f, air.pm10Grade!!
+                                "㎍/㎥", air.pm10Value!!.toInt().toString(), 151f, air.pm10Grade!!
                             )
                             updateAirQData(
                                 CO_INDEX, "일산화탄소", "CO",
@@ -948,6 +955,13 @@ class MainActivity
                             runOnUiThread {
                                 hidePB()
                                 showAllViews()
+
+                                RDBLogcat.writeGpsHistory(
+                                    this,
+                                    isSearched = false,
+                                    gpsValue = metaAddr,
+                                    responseData = result.toString()
+                                )
                             }
                         } catch (e: java.lang.NullPointerException) {
                             runOnUiThread {
@@ -1178,7 +1192,7 @@ class MainActivity
                         .replaceFirst(" ", "")
                         .replace(getString(R.string.korea), "")
                         .replace("null", "")
-                    val formedAddr = AddressFromRegex(addr).getAddress().toString()
+                    val formedAddr = AddressFromRegex(addr).getAddress() ?: formatAddr
 
                     setCurrentLocation(this, formatAddr)
 
@@ -1188,12 +1202,7 @@ class MainActivity
                             formatAddr
                         )
 
-                        setNotificationAddress(this, formatAddr)
-
-                        locationClass.writeRdbCurrentLog(
-                            lat, lng,
-                            formedAddr
-                        )
+                        setNotificationAddress(this, addr)
 
                         binding.mainGpsTitleTv.text = guardWordWrap(
                             formedAddr
@@ -1209,13 +1218,9 @@ class MainActivity
                             formatAddr
                         )
 
-                        locationClass.writeRdbCurrentLog(
-                            lat, lng, "NetWork - $addr"
-                        )
-
                         setCurrentLocation(this, formatAddr)
 
-                        setNotificationAddress(this, formatAddr)
+                        setNotificationAddress(this, addr)
 
                         binding.mainGpsTitleTv.text =
                             formedAddr

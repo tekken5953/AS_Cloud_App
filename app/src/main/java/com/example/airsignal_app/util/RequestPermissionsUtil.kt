@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
+import com.example.airsignal_app.dao.StaticDataObject
 import com.example.airsignal_app.dao.StaticDataObject.REQUEST_LOCATION
 import com.example.airsignal_app.dao.StaticDataObject.REQUEST_NOTIFICATION
 import com.example.airsignal_app.dao.StaticDataObject.TAG_P
@@ -167,7 +168,7 @@ class RequestPermissionsUtil(private val context: Context) {
         ActivityCompat.requestPermissions(
             context as Activity,
             arrayOf(permissionsLocationBackground),
-            0
+            StaticDataObject.REQUEST_BACKGROUND_LOCATION
         )
     }
 }

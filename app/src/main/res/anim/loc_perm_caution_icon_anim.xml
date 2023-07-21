@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set
+    android:startOffset="200"
+    android:duration="300"
+    android:interpolator="@android:anim/linear_interpolator"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <translate
+        android:fromYDelta="7dp"
+        android:toYDelta="-8dp"
+        android:startOffset="200"/>
+    <translate
+        android:fromYDelta="-8dp"
+        android:toYDelta="7dp"
+        android:startOffset="550"/>
+    <translate
+        android:fromYDelta="7dp"
+        android:toYDelta="-8dp"
+        android:startOffset="900"/>
+    <translate
+        android:fromYDelta="-8dp"
+        android:toYDelta="7dp"
+        android:startOffset="1250"/>
+
+</set>

@@ -100,7 +100,7 @@ class LoginActivity
             if (result.resultCode == RESULT_OK) {
                 val data = result.data
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                googleLogin.handleSignInResult(task, "수동")
+                googleLogin.handleSignInResult(task, isAuto = false)
                 EnterPageUtil(this).toMain("google")
             } else {
                 Logger.t(TAG_LOGIN).e("로그인 실패 $result")

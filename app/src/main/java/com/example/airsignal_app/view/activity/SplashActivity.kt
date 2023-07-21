@@ -3,11 +3,13 @@ package com.example.airsignal_app.view.activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.example.airsignal_app.R
-import com.example.airsignal_app.databinding.ActivityRedirectBinding
+import com.example.airsignal_app.databinding.ActivitySplashBinding
+import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.LoggerUtil
@@ -20,9 +22,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.system.exitProcess
 
 
-class RedirectActivity
-    : BaseActivity<ActivityRedirectBinding>() {
-    override val resID: Int get() = R.layout.activity_redirect
+class SplashActivity
+    : BaseActivity<ActivitySplashBinding>() {
+    override val resID: Int get() = R.layout.activity_splash
 
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
 
@@ -49,6 +51,18 @@ class RedirectActivity
         LoggerUtil().getInstance()
 
         applyAppVersionData()
+
+        RDBLogcat.writeUserPref(this, sort = RDBLogcat.USER_PREF_DEVICE,
+            title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
+            value = GetSystemInfo.getApplicationVersion(this))
+
+        RDBLogcat.writeUserPref(this, sort = RDBLogcat.USER_PREF_DEVICE,
+            title = RDBLogcat.USER_PREF_DEVICE_DEVICE_MODEL,
+            value = Build.MODEL)
+
+        RDBLogcat.writeUserPref(this, sort = RDBLogcat.USER_PREF_DEVICE,
+            title = RDBLogcat.USER_PREF_DEVICE_SDK_VERSION,
+            value = Build.VERSION.SDK_INT)
     }
 
     // 몰입모드로 전환됩니다
@@ -64,13 +78,13 @@ class RedirectActivity
     }
 
     private fun enterPage() {
-        if (RequestPermissionsUtil(this@RedirectActivity).isLocationPermitted()) {
-            EnterPageUtil(this@RedirectActivity)
+        if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
+            EnterPageUtil(this@SplashActivity)
                 .toMain(
                     getUserLoginPlatform(this)
                 )
         } else {
-            EnterPageUtil(this@RedirectActivity)
+            EnterPageUtil(this@SplashActivity)
                 .toPermission()
         }
     }

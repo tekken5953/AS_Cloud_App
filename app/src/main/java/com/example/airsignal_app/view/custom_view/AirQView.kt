@@ -52,7 +52,7 @@ class AirQView(context: Context, attrs: AttributeSet?)
         return when(krName) {
             "초미세먼지" -> ResourcesCompat.getDrawable(context.resources,R.drawable.graph_pm25,null)
             "미세먼지" -> ResourcesCompat.getDrawable(context.resources,R.drawable.graph_pm10,null)
-            "오존" -> ResourcesCompat.getDrawable(context.resources,R.drawable.graph_o3,null)
+            "오존" -> ResourcesCompat.getDrawable(context.resources,R.drawable.graph_03,null)
             "이산화질소" -> ResourcesCompat.getDrawable(context.resources,R.drawable.graph_no2,null)
             "아황산가스" -> ResourcesCompat.getDrawable(context.resources,R.drawable.graph_so2,null)
             "일산화탄소" -> ResourcesCompat.getDrawable(context.resources,R.drawable.graph_co,null)

@@ -31,9 +31,6 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
-import com.example.airsignal_app.util.`object`.GetAppInfo.getUserNotiEvent
-import com.example.airsignal_app.util.`object`.GetAppInfo.getUserNotiNight
-import com.example.airsignal_app.util.`object`.GetAppInfo.getUserNotiPM
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserTheme
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.GetSystemInfo.getApplicationVersion
@@ -126,7 +123,7 @@ class SettingActivity
                                     KakaoLogin(this@SettingActivity).logout(email)
                                 }
                                 "naver" -> {
-                                    NaverLogin(this@SettingActivity).logout(email)
+                                    NaverLogin(this@SettingActivity).logout()
                                 }
                                 "google" -> {
                                     GoogleLogin(this@SettingActivity).logout()
@@ -728,7 +725,7 @@ class SettingActivity
             // 라디오 버튼 체크
             radioGroup.check(radioButton.id)
             delay(300)
-            val intent = Intent(this@SettingActivity, RedirectActivity::class.java)
+            val intent = Intent(this@SettingActivity, SplashActivity::class.java)
             startActivity(intent)
             overridePendingTransition(0, 0)
             finish()

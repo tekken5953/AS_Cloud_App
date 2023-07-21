@@ -32,7 +32,7 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     }
 
     override fun uncaughtException(p0: Thread, p1: Throwable) {
-        RDBLogcat.writeLogCause("ANR 발생", "Thread : ${p0.name}", "Error Msg: ${p1.localizedMessage}")
+        RDBLogcat.writeErrorANR(thread = "Thread : ${p0.name}", msg = "Error Msg: ${p1.localizedMessage}" )
         if (p0.name == "WidgetProvider") {
             WidgetProvider4x2().onEnabled(applicationContext)
         } else {

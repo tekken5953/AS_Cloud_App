@@ -141,7 +141,7 @@ class PhoneLogin(
             .addOnSuccessListener { result ->
                 Log.d("phone_tag", "signInWithCredential:success")
                 Log.d("phone_tag", "success : ${result.user?.phoneNumber}")
-                setUserEmail(activity, result.user?.phoneNumber.toString())
+                setUserEmail(activity, result.user?.email.toString())
                 setUserProfile(activity, result.user?.photoUrl.toString())
                 Toast.makeText(activity, "$result", Toast.LENGTH_SHORT).show()
             }

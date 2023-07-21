@@ -8,19 +8,21 @@
 
         <ImageView
             android:id="@+id/airQCancel"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:src="@drawable/cancel"
             app:tint="#4F4F4F"
+            android:layout_marginEnd="18dp"
             android:layout_alignParentEnd="true"
-            android:layout_margin="15dp"/>
+            android:layout_alignTop="@+id/airQName"
+            android:layout_alignBottom="@+id/airQName"/>
 
         <TextView
             android:id="@+id/airQName"
             style="@style/basicMediumTextView"
             android:textSize="20sp"
             android:textColor="#4F4F4F"
-            android:layout_marginStart="18dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"/>
 
         <TextView
@@ -30,19 +32,27 @@
             android:textSize="14sp"
             android:textColor="#4F4F4F"
             android:lineHeight="20dp"
-            android:layout_marginStart="18dp"
-            android:layout_marginEnd="22dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_below="@+id/airQName"
             android:layout_marginTop="12dp"/>
 
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/airQLine"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#EBEBEB"
+            android:layout_below="@+id/airQExplainText"
+            android:layout_marginTop="24dp"/>
+
         <ImageView
             android:id="@+id/airQGraphIv"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="26dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="26dp"
-            android:layout_marginStart="2dp"
-            android:layout_below="@+id/airQExplainText"/>
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/airQLine"/>
 
     </RelativeLayout>
 </layout>

@@ -11,6 +11,8 @@ import android.content.Intent
 import android.os.Bundle
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.firebase.db.RDBLogcat
+import com.example.airsignal_app.firebase.db.RDBLogcat.WIDGET_ACTION
 import com.example.airsignal_app.util.`object`.DataTypeParser.currentDateTimeString
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo
@@ -111,19 +113,14 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
     class NotiJobScheduler : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            NotiJobService().writeLog(false, "onReceive Action", intent.action)
+            RDBLogcat.writeWidgetPref(context, sort = WIDGET_ACTION, value = intent.action.toString())
             if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
                 // 재부팅 후 JobScheduler 다시 등록
                 scheduleJob(context)
             }
             if (intent.action == Intent.ACTION_SCREEN_ON) {
                 // 절전 모드에서 벗어났을 때의 동작을 여기에 구현합니다.
-                if (getCurrentTime() -
-                    SharedPreferenceManager(context).getLong("lastWidgetDataCall")
-                    > (30 * 60 * 1000)
-                ) {
-                    scheduleJob(context)
-                }
+                scheduleJob(context)
             }
         }
 
@@ -140,10 +137,6 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
             if (!WidgetProvider4x2().isJobScheduled(context)) {
                 jobScheduler.schedule(jobInfo)
-                NotiJobService().writeLog(
-                    false,
-                    "JobScheduler 등록 성공", jobInfo.service.shortClassName
-                )
                 Timber.tag("JobServices").d("JobScheduler 등록 성공 : ${jobInfo.intervalMillis}")
             } else {
                 Timber.tag("JobServices")

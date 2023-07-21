@@ -41,7 +41,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.activity.RedirectActivity"
+            android:name=".view.activity.SplashActivity"
             android:exported="true"
             android:hardwareAccelerated="false">
             <meta-data

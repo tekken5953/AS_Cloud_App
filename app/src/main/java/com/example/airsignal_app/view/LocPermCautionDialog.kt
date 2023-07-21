@@ -10,6 +10,7 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
@@ -58,6 +59,19 @@ class LocPermCautionDialog(
         super.onViewCreated(view, savedInstanceState)
 
         val okBtn = view.findViewById<AppCompatButton>(R.id.permCautionBtn)
+        val locIcon = view.findViewById<ImageView>(R.id.permCautionImg)
+        val locShadow = view.findViewById<ImageView>(R.id.permCautionImgShadow)
+
+        locIcon.animation =
+            AnimationUtils.loadAnimation(context,R.anim.loc_perm_caution_icon_anim).apply {
+                start()
+            }
+
+        locShadow.animation =
+            AnimationUtils.loadAnimation(context,R.anim.loc_perm_caution_shadow_anim).apply {
+                start()
+            }
+
 
         okBtn.setOnClickListener {
             SetAppInfo.setInitLocPermission(activity, "Done")

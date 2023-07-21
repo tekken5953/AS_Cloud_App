@@ -10,7 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.drawable.BitmapDrawable
-import android.os.Build
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.view.View
@@ -18,11 +17,11 @@ import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
-import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient
+import com.example.airsignal_app.util.AddressFromRegex
 import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.example.airsignal_app.util.`object`.DataTypeParser
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
@@ -30,7 +29,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentRainT
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentTempType
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.setLastRefreshTime
-import com.example.airsignal_app.view.activity.RedirectActivity
+import com.example.airsignal_app.view.activity.SplashActivity
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -64,7 +63,6 @@ class NotiJobService : JobService() {
 
     override fun onStopJob(p0: JobParameters?): Boolean {
         Timber.tag(TAG_W).d("onStopJob : ${p0?.jobId}")
-        writeLog(false, "JobScheduler 정지", "onStopJob : ${p0?.jobId}")
         try {
             context.unregisterReceiver(WidgetProvider4x2.NotiJobScheduler())
         } catch (e: IllegalArgumentException) {
@@ -102,7 +100,6 @@ class NotiJobService : JobService() {
                 R.id.widget4x2ReloadLayout,
                 View.VISIBLE
             )
-
             fetch(context, views)
         } else {
             list.forEach {
@@ -126,45 +123,40 @@ class NotiJobService : JobService() {
             is Exception -> {
                 t.printStackTrace()
                 t.localizedMessage?.let { it1 ->
-                    writeLog(true, "Error - $title", it1)
+                    RDBLogcat.writeErrorNotANR(context,
+                    sort = title, msg = it1)
                 }
             }
             is Throwable -> {
                 t.printStackTrace()
                 t.localizedMessage?.let { it1 ->
-                    writeLog(true, "Error - $title", it1)
+                    RDBLogcat.writeErrorNotANR(context,
+                        sort = title, msg = it1)
                 }
             }
             else -> {
-                writeLog(true, "Error - $title", t.toString())
+                RDBLogcat.writeErrorNotANR(context,
+                    sort = title, msg = t.toString())
             }
         }
     }
 
-    fun writeLog(isANR: Boolean, s1: String?, s2: String?) {
-        try {
-            if (isANR) {
-                RDBLogcat.writeLogCause(
-                    "ANR 발생",
-                    s1!!,
-                    s2!!
-                )
-            } else {
-                RDBLogcat.writeWidgetLog(
-                    "",
-                    "Widget",
-                    s1!!
-                )
-            }
-        } catch (e: java.lang.NullPointerException) {
-            e.printStackTrace()
-            RDBLogcat.writeWidgetLog(
-                "ANR 발생",
-                "NPE",
-                s1!!
-            )
-        }
-    }
+//    fun writeLog(isANR: Boolean, s1: String?, s2: String?) {
+//        try {
+//            if (isANR) {
+//                RDBLogcat.writeLogCause(
+//                    "ANR 발생",
+//                    s1!!,
+//                    s2!!
+//                )
+//            } else {
+//                RDBLogcat.writeErrorNotANR(context, RDBLogcat.WIDGET_ERROR,s1!!)
+//            }
+//        } catch (e: java.lang.NullPointerException) {
+//            e.printStackTrace()
+//            RDBLogcat.writeErrorNotANR(context, RDBLogcat.WIDGET_ERROR,s1!!)
+//        }
+//    }
 
     private fun fetch(context: Context, views: RemoteViews) {
         val appWidgetManager = AppWidgetManager.getInstance(context)
@@ -176,7 +168,7 @@ class NotiJobService : JobService() {
 
         val backgroundPermissionIntent: PendingIntent =
             if (VERSION.SDK_INT >= VERSION_CODES.Q &&
-                RequestPermissionsUtil(context).isBackgroundRequestLocation()
+                !RequestPermissionsUtil(context).isBackgroundRequestLocation()
             ) {
                 Intent(
                     context,
@@ -199,7 +191,7 @@ class NotiJobService : JobService() {
                 refreshBtnIntent, PendingIntent.FLAG_IMMUTABLE
             )
 
-        val pendingIntent: PendingIntent = Intent(context, RedirectActivity::class.java)
+        val pendingIntent: PendingIntent = Intent(context, SplashActivity::class.java)
             .let { intent ->
                 intent.action = "enterApplication"
                 PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
@@ -244,46 +236,27 @@ class NotiJobService : JobService() {
                 loadWidgetData(context, location.latitude, location.longitude)
             }
             .addOnFailureListener { e ->
-                writeLog(false, "addOnFailureListener", e.localizedMessage)
+                RDBLogcat.writeErrorNotANR(context, sort = RDBLogcat.WIDGET_ERROR, msg = e.localizedMessage!!)
             }
             .addOnCanceledListener {
-                writeLog(false, "addOnCanceledListener", "Location is Not Available")
-            }
-            .addOnCompleteListener { task ->
-                try {
-                    writeLog(
-                        false, "addOnCompleteListener", "task isSuccess ${task.isSuccessful} " +
-                                "result is ${task.result}"
-                    )
-                } catch (e: RuntimeExecutionException) {
-                    writeLog(
-                        true, "Fail to addOnCompleteListener", e.localizedMessage
-                    )
-                }
+                RDBLogcat.writeErrorNotANR(context, sort = RDBLogcat.WIDGET_ERROR, msg = "Location is Not Available")
             }
     }
 
     private fun loadWidgetData(context: Context, lat: Double, lng: Double) {
         val httpClient = HttpClient.getInstance(true).setClientBuilder()
-        writeLog(false, "Get Instance", httpClient.toString())
         val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
 
         @RequiresApi(VERSION_CODES.Q)
-        if (RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+        if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+            changeVisibility(context, views, true)
+        } else {
             changeVisibility(context, views, false)
         }
 
         GetLocation(context).getAddress(lat, lng)?.let { addr ->
-            writeLog(false, "Address", addr)
-            RDBLogcat.writeLogCause(
-                "Widget",
-                "Address",
-                addr
-            )
 
-            SharedPreferenceManager(context).setLong("lastWidgetDataCall", getCurrentTime())
-
-//            changeVisibility(context, views, false)
+            setLastRefreshTime(context,getCurrentTime())
 
             GetLocation(context).updateCurrentAddress(
                 lat, lng, addr
@@ -300,10 +273,9 @@ class NotiJobService : JobService() {
                 ) {
                     if (response.isSuccessful) {
                         try {
-                            writeLog(
-                                false, "Success Call Data",
-                                response.body().toString()
-                            )
+                            RDBLogcat.writeWidgetHistory(context, sort = RDBLogcat.WIDGET_HISTORY,
+                            address = addr, response = response.body().toString())
+
                             val body = response.body()
                             val data = body!!
                             val current = data.current
@@ -375,10 +347,13 @@ class NotiJobService : JobService() {
                                             as BitmapDrawable).bitmap
                                 )
 
+                                val rawAddr = GetAppInfo.getNotificationAddress(context).trim()
+                                Timber.tag("widget_test").d("rawAddr : $rawAddr")
+
                                 setTextViewText(
                                     R.id.widget4x2Address,
-                                    GetAppInfo.getNotificationAddress(context).trim()
-                                )
+                                    getRegexAddr(rawAddr)
+                                    )
 
                                 fetch(context, views)
                             }
@@ -404,5 +379,29 @@ class NotiJobService : JobService() {
                 }
             })
         }
+    }
+
+    private fun getRegexAddr(rawAddr: String): String {
+        val list = AddressFromRegex(rawAddr).getAddress()?.trim()?.split(" ")
+        Timber.tag("widget_test").d("regexList : $list")
+
+        list?.let {
+            Timber.tag("widget_test").d("size : ${it.size}")
+            if (it.size >= 2) {
+                val sb = StringBuilder()
+                for (i: Int in it.lastIndex downTo(it.lastIndex - 1)) {
+                    sb.append(it[i]).append(" ")
+                    if (i == it.lastIndex - 1) {
+                        return sb.toString()
+                    }
+                }
+            } else {
+                val sb = StringBuilder()
+                sb.append(rawAddr)
+                return sb.toString()
+            }
+        }
+
+        return rawAddr
     }
 }

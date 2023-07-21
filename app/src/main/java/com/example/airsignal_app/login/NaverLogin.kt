@@ -10,9 +10,9 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.db.SharedPreferenceManager
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogInWithEmail
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogOutWithEmail
-import com.example.airsignal_app.firebase.db.RDBLogcat.sendLogToFail
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_NAVER
+import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
+import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginPref
 import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
@@ -53,10 +53,16 @@ class NaverLogin(private val activity: Activity) {
     }
 
     /** 로그아웃 + 기록 저장 */
-    fun logout(email: String) {
+    fun logout() {
         NaverIdLoginSDK.logout()
         Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")
-        sendLogOutWithEmail(email, "로그아웃 성공", "네이버")
+        writeLoginHistory(
+            isLogin = false,
+            platform = LOGIN_NAVER,
+            email = getUserEmail(activity),
+            isAuto = null,
+            isSuccess = true
+        )
         RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = null)
     }
 
@@ -85,7 +91,17 @@ class NaverLogin(private val activity: Activity) {
                     .setString(userProfile, it.profileImage!!)
                     .setString(userEmail, it.email.toString())
 
-                sendLogInWithEmail("로그인 성공", it.email.toString(), "네이버", "수동")
+                writeLoginHistory(isLogin = true, platform = LOGIN_NAVER, email = it.email.toString(),
+                    isAuto = false, isSuccess = true)
+
+                writeLoginPref(activity,
+                    platform = LOGIN_NAVER,
+                    email = it.email.toString(),
+                    phone = it.mobile.toString(),
+                    name = it.name.toString(),
+                    profile = it.profileImage.toString()
+                )
+
                 EnterPageUtil(activity).toMain("naver")
             }
         }
@@ -97,10 +113,10 @@ class NaverLogin(private val activity: Activity) {
                 "errorCode: $errorCode\n" +
                         "errorDescription: $errorDescription"
             )
-            sendLogToFail(
-                getUserEmail(activity),
-                "네이버 로그인 실패",
-                "$errorCode - $errorDescription")
+            writeLoginHistory(
+                isLogin = true, platform = LOGIN_NAVER, email = getUserEmail(activity),
+                isAuto = false, isSuccess = false
+            )
         }
 
         override fun onError(errorCode: Int, message: String) {

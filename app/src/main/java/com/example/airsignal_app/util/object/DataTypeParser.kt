@@ -370,20 +370,20 @@ object DataTypeParser {
     /** 등급에 따른 색상 변환 **/
     fun getDataColor(context: Context, grade: Int): Int {
         return when (grade) {
-            0 -> ResourcesCompat.getColor(context.resources, R.color.air_good, null)
-            1 -> ResourcesCompat.getColor(context.resources, R.color.air_normal, null)
-            2 -> ResourcesCompat.getColor(context.resources, R.color.air_bad, null)
-            3 -> ResourcesCompat.getColor(context.resources, R.color.air_very_bad, null)
+            1 -> ResourcesCompat.getColor(context.resources, R.color.air_good, null)
+            2 -> ResourcesCompat.getColor(context.resources, R.color.air_normal, null)
+            3 -> ResourcesCompat.getColor(context.resources, R.color.air_bad, null)
+            4 -> ResourcesCompat.getColor(context.resources, R.color.air_very_bad, null)
             else -> ResourcesCompat.getColor(context.resources, R.color.progressError, null)
         }
     }
 
     fun getDataOpacityColor(context: Context, grade: Int): Int {
         return when (grade) {
-            0 -> ResourcesCompat.getColor(context.resources, R.color.air_good_o, null)
-            1 -> ResourcesCompat.getColor(context.resources, R.color.air_normal_o, null)
-            2 -> ResourcesCompat.getColor(context.resources, R.color.air_bad_o, null)
-            3 -> ResourcesCompat.getColor(context.resources, R.color.air_very_bad_o, null)
+            1 -> ResourcesCompat.getColor(context.resources, R.color.air_good_o, null)
+            2 -> ResourcesCompat.getColor(context.resources, R.color.air_normal_o, null)
+            3 -> ResourcesCompat.getColor(context.resources, R.color.air_bad_o, null)
+            4 -> ResourcesCompat.getColor(context.resources, R.color.air_very_bad_o, null)
             else -> ResourcesCompat.getColor(context.resources, R.color.progressError, null)
         }
     }
@@ -391,10 +391,10 @@ object DataTypeParser {
     /** 등급에 따른 텍스트 변환 **/
     fun getDataText(grade: Int): String {
         return when (grade) {
-            0 -> "좋음"
-            1 -> "보통"
-            2 -> "나쁨"
-            3 -> "매우나쁨"
+            1 -> "좋음"
+            2 -> "보통"
+            3 -> "나쁨"
+            4 -> "매우나쁨"
             else -> "에러"
         }
     }
@@ -492,7 +492,7 @@ object DataTypeParser {
     }
 
     /** Long을 LocalDateTime으로 파싱 **/
-    private fun parseLongToLocalDateTime(long: Long): LocalDateTime {
+    fun parseLongToLocalDateTime(long: Long): LocalDateTime {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(long), ZoneId.systemDefault())
     }
 }
