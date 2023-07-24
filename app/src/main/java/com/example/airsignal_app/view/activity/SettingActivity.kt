@@ -41,6 +41,7 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setUserNoti
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserTheme
 import com.example.airsignal_app.view.ShowDialogClass
 import com.example.airsignal_app.vmodel.GetAppVersionViewModel
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -536,6 +537,7 @@ class SettingActivity
         val appInfoDownBtn: Button = viewAppInfo.findViewById(R.id.appInfoDownBtn)
         val appInfoReleaseDate: TextView = viewAppInfo.findViewById(R.id.appInfoReleaseDate)
         val appInfoPB: ProgressBar = viewAppInfo.findViewById(R.id.appInfoPB)
+        val appInfoLicense: TextView = viewAppInfo.findViewById(R.id.appInfoLicense)
 
         appVersionViewModel.fetchData().observe(this) { result ->
             result?.let { ver ->
@@ -571,6 +573,11 @@ class SettingActivity
                     else -> {}
                 }
             }
+        }
+
+        appInfoLicense.setOnClickListener {
+            startActivity(Intent(this, OssLicensesMenuActivity::class.java))
+            OssLicensesMenuActivity.setActivityTitle("오픈소스 라이센스 목록")
         }
 
         appInfoPB.visibility = View.GONE

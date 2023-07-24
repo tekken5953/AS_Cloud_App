@@ -342,7 +342,8 @@ class MainActivity
                     return SNAP_TO_START // 가장 첫 번째로 스크롤되도록 설정
                 }
             }
-            smoothScroller.targetPosition = position + 4
+            binding.mainDailyWeatherRv.setPadding(22,0,15,0)
+            smoothScroller.targetPosition = position + 5
             it.startSmoothScroll(smoothScroller)
         }
     }
@@ -545,6 +546,12 @@ class MainActivity
                             }
                         }
                     }
+                } else {
+                    setSectionTextColor(
+                        todaySection,
+                        tomorrowSection,
+                        afterTomorrowSection
+                    )
                 }
             }
         })

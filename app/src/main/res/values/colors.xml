@@ -50,4 +50,6 @@
 
     <color name="airQ_unSelected_text_color">#6D6D6D</color>
 
+    <color name="main_black_color">#4F4F4F</color>
+
 </resources>

@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="20dp"
         android:layout_centerVertical="true">
         <TextView
             android:id="@+id/weeklyDayText"
@@ -19,14 +19,15 @@
             android:textSize="14sp"
             android:letterSpacing="-0.04"
             android:fontFamily="@font/spoqa_hansansneo_medium"
-            android:textColor="#4F4F4F" />
+            android:textColor="@color/main_black_color" />
 
         <TextView
             android:id="@+id/weeklyDayDate"
             style="@style/basicMediumTextView"
+            android:layout_width="wrap_content"
+            android:letterSpacing="-0.04"
             android:textColor="#9E9E9E"
-            android:textSize="12sp"
-            android:letterSpacing="-0.04" />
+            android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -37,15 +38,14 @@
         android:gravity="center">
         <ImageView
             android:id="@+id/weeklyMinIv"
-            android:layout_width="32dp"
-            android:layout_height="32dp"/>
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
 
         <ImageView
             android:id="@+id/weeklyMaxIv"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="12dp"/>
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -60,7 +60,7 @@
             style="@style/basicMediumTextView"
             android:gravity="center"
             android:lines="1"
-            android:textColor="#4F4F4F"
+            android:textColor="@color/main_black_color"
             android:textSize="16sp"/>
 
         <TextView
@@ -69,17 +69,17 @@
             android:gravity="center"
             android:lines="1"
             android:textSize="16sp"
-            android:textColor="#4F4F4F"
-            android:layout_marginStart="3dp"/>
+            android:textColor="@color/main_black_color"
+            android:layout_marginStart="1dp"/>
 
         <TextView
             android:id="@+id/weeklyMaxText"
             style="@style/basicMediumTextView"
             android:gravity="center"
             android:lines="1"
-            android:textColor="#4F4F4F"
+            android:textColor="@color/main_black_color"
             android:textSize="16sp"
-            android:layout_marginStart="3dp"/>
+            android:layout_marginStart="1dp"/>
     </LinearLayout>
 
     <View
