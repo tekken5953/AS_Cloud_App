@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/listItemReportText"
-        style="@style/basicMediumTextView"
+        style="@style/basicTextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="32dp"
@@ -18,7 +18,7 @@
         android:maxEms="15"
         android:maxLines="3"
         android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -8,11 +8,14 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.firebase.db.RDBLogcat.WIDGET_ACTION
+import com.example.airsignal_app.firebase.db.RDBLogcat.WIDGET_DOZE_MODE
+import com.example.airsignal_app.firebase.db.RDBLogcat.writeWidgetHistory
 import com.example.airsignal_app.util.`object`.DataTypeParser.currentDateTimeString
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo
@@ -87,6 +90,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         intent.action?.let {
+            RDBLogcat.writeWidgetPref(context, sort = WIDGET_ACTION, value = intent.action.toString())
             when (it) {
                 WIDGET_ENABLE -> {
                     NotiJobService().getWidgetLocation(context)
@@ -113,14 +117,20 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
     class NotiJobScheduler : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            RDBLogcat.writeWidgetPref(context, sort = WIDGET_ACTION, value = intent.action.toString())
-            if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-                // 재부팅 후 JobScheduler 다시 등록
+            val isDozeMode = intent.getBooleanExtra(
+                "android.os.extra.IDLE_MODE",
+                false
+            )
+
+            RDBLogcat.writeWidgetPref(context, sort = WIDGET_DOZE_MODE, value = "${intent.action}, Doze Mode is $isDozeMode")
+            if (isDozeMode) {
                 scheduleJob(context)
-            }
-            if (intent.action == Intent.ACTION_SCREEN_ON) {
-                // 절전 모드에서 벗어났을 때의 동작을 여기에 구현합니다.
-                scheduleJob(context)
+            } else {
+                when(intent.action) {
+                    Intent.ACTION_BOOT_COMPLETED,Intent.ACTION_SCREEN_ON -> {
+                        scheduleJob(context)
+                    }
+                }
             }
         }
 

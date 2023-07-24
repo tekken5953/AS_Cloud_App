@@ -5,10 +5,12 @@ import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
+import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginPref
 import com.example.airsignal_app.util.RefreshUtils
+import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserEmail
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserId
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLoginPlatform

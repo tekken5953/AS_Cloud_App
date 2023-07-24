@@ -745,17 +745,18 @@ class MainActivity
                             }
 
                             today?.let {
+                                binding.mainMinMaxTitle.text = getString(R.string.min_max)
                                 binding.mainMinMaxValue.text =
                                     "${filteringNullData(it.min!!)}˚/${filteringNullData(it.max!!)}˚"
                             }
 
                             updateAirQData(
                                 PM2p5_INDEX, "초미세먼지", "PM2.5",
-                                "㎍/㎥", air.pm25Value!!.toInt().toString(), 76f, air.pm25Grade!!
+                                "㎍/㎥", air.pm25Value!!.toInt().toString(), 76f, air.pm25Grade1h!!
                             )
                             updateAirQData(
                                 PM10_INDEX, "미세먼지", "PM10",
-                                "㎍/㎥", air.pm10Value!!.toInt().toString(), 151f, air.pm10Grade!!
+                                "㎍/㎥", air.pm10Value!!.toInt().toString(), 151f, air.pm10Grade1h!!
                             )
                             updateAirQData(
                                 CO_INDEX, "일산화탄소", "CO",
@@ -776,7 +777,7 @@ class MainActivity
 
                             applyAirQView(
                                 "초미세먼지", "PM2.5",
-                                air.pm25Grade, "㎍/m3", air.pm25Value.toInt().toString(), 151f
+                                air.pm25Grade1h, "㎍/m3", air.pm25Value.toInt().toString(), 151f
                             )
 
                             airQList[PM2p5_INDEX].isSelect = true
@@ -853,6 +854,13 @@ class MainActivity
                                 binding.nestedReportFrame.visibility = VISIBLE
                             }
 
+                            binding.mainSensTitle.text = "체감온도"
+                            binding.mainSensValue.text =
+                                SensibleTempFormula().getSensibleTemp(
+                                    ta = current.temperature!!,
+                                    rh = current.humidity!!,
+                                    v = current.windSpeed!!
+                                ).roundToInt().toString() + "˚"
 
                             for (i: Int in 0 until result.realtime.size) {
                                 val dailyIndex = result.realtime[i]
@@ -997,8 +1005,12 @@ class MainActivity
     private fun applyWindowBackground(progress: Int, sky: String?) {
         if (getIsNight(progress)) {
             window.setBackgroundDrawableResource(R.drawable.main_bg_night)
+            binding.mainSkyStarImg.setImageDrawable(
+                ResourcesCompat.getDrawable(resources,R.drawable.bg_nightsky,null)
+            )
             changeTextColorStyle(sky!!, true)
         } else {
+            binding.mainSkyStarImg.setImageDrawable(null)
             when (sky) {
                 "맑음", "구름많음" -> window.setBackgroundDrawableResource(R.drawable.main_bg_clear)
 
@@ -1256,7 +1268,7 @@ class MainActivity
                 binding.mainSkyText.text = getString(R.string.not_serviced_location)
             }
             "Network Error" -> {
-                binding.mainSkyText.text = "인터넷 연결 필요"
+                binding.mainSkyText.text = "요청시간 지연, 재갱신 필요"
             }
             "Timeout Error" -> {
                 binding.mainSkyText.text = "네트워크 오류, 재갱신 필요"
@@ -1312,7 +1324,9 @@ class MainActivity
             binding.mainMinMaxTitle,
             binding.mainMinMaxValue,
             binding.mainMotionSlideGuide,
-            binding.mainTopBarGpsTitle
+            binding.mainTopBarGpsTitle,
+            binding.mainSensTitle,
+            binding.mainSensValue
             )
 
         if (visibility == GONE) {
@@ -1334,6 +1348,7 @@ class MainActivity
             }
 
         } else {
+            binding.mainSensTitle.text = "체감온도"
             binding.mainMinMaxTitle.text = getString(R.string.min_max)
             binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
             binding.mainGpsFix.setImageDrawable(
@@ -1518,7 +1533,9 @@ class MainActivity
         val changeColorTextViews = listOf(
             binding.mainLiveTempValue, binding.mainLiveTempUnit, binding.mainCompareTempTv,
             binding.mainTopBarGpsTitle, binding.mainMotionSlideGuide, binding.mainSkyText,
-            binding.mainGpsTitleTv
+            binding.mainGpsTitleTv, binding.mainSensTitle, binding.mainSensValue,
+            binding.mainMinMaxTitle,binding.mainMinMaxValue
+
         )
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
@@ -1537,8 +1554,6 @@ class MainActivity
                 it.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
             }
 
-            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#cccccc"))
-            binding.mainMinMaxValue.setTextColor(Color.parseColor("#cccccc"))
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
                 .setTint(ResourcesCompat.getColor(resources, R.color.white, null))
             window.decorView.systemUiVisibility =
@@ -1556,8 +1571,6 @@ class MainActivity
                 it.imageTintList = ColorStateList.valueOf(getColor(R.color.bg_black_color))
             }
 
-            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#4F4F4F"))
-            binding.mainMinMaxValue.setTextColor(Color.parseColor("#4F4F4F"))
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
                 .setTint(ResourcesCompat.getColor(resources, R.color.black, null))
             window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -1577,37 +1590,37 @@ class MainActivity
         }
     }
 
-    // 미세먼지 그래프 그리기
-    private fun drawingPmGraph(bar: SegmentedProgressBar, array: FloatArray) {
-        if (array.size == 4) {
-            bar.setContexts(
-                barContexts = listOf(
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(
-                            resources, R.color.air_good, null
-                        ), //gradient start
-                        ResourcesCompat.getColor(
-                            resources, R.color.air_good, null
-                        ), //gradient stop
-                        array[0] //percentage for segment
-                    ),
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.air_normal, null),
-                        ResourcesCompat.getColor(resources, R.color.air_normal, null),
-                        array[1]
-                    ),
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.air_bad, null),
-                        ResourcesCompat.getColor(resources, R.color.air_bad, null),
-                        array[2]
-                    ),
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.air_very_bad, null),
-                        ResourcesCompat.getColor(resources, R.color.air_very_bad, null),
-                        array[3]
-                    )
-                )
-            )
-        }
-    }
+//    // 미세먼지 그래프 그리기
+//    private fun drawingPmGraph(bar: SegmentedProgressBar, array: FloatArray) {
+//        if (array.size == 4) {
+//            bar.setContexts(
+//                barContexts = listOf(
+//                    SegmentedProgressBar.BarContext(
+//                        ResourcesCompat.getColor(
+//                            resources, R.color.air_good, null
+//                        ), //gradient start
+//                        ResourcesCompat.getColor(
+//                            resources, R.color.air_good, null
+//                        ), //gradient stop
+//                        array[0] //percentage for segment
+//                    ),
+//                    SegmentedProgressBar.BarContext(
+//                        ResourcesCompat.getColor(resources, R.color.air_normal, null),
+//                        ResourcesCompat.getColor(resources, R.color.air_normal, null),
+//                        array[1]
+//                    ),
+//                    SegmentedProgressBar.BarContext(
+//                        ResourcesCompat.getColor(resources, R.color.air_bad, null),
+//                        ResourcesCompat.getColor(resources, R.color.air_bad, null),
+//                        array[2]
+//                    ),
+//                    SegmentedProgressBar.BarContext(
+//                        ResourcesCompat.getColor(resources, R.color.air_very_bad, null),
+//                        ResourcesCompat.getColor(resources, R.color.air_very_bad, null),
+//                        array[3]
+//                    )
+//                )
+//            )
+//        }
+//    }
 }

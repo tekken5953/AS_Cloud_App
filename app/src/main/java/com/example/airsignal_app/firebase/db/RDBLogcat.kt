@@ -40,9 +40,8 @@ object RDBLogcat {
     const val GPS_SEARCHED = "검색된 주소"
     const val GPS_NOT_SEARCHED = "실시간 데이터"
     const val WIDGET_HISTORY = "위젯"
-    const val WIDGET_INSTANCE = "인스턴스"
     const val WIDGET_ACTION = "액션"
-    const val WIDGET_SCHEDULE = "스케쥴"
+    const val WIDGET_DOZE_MODE = "도즈모드"
     const val WIDGET_ERROR = "위젯 에러"
     const val LOGIN_GOOGLE = "구글"
     const val LOGIN_KAKAO = "카카오"
@@ -51,7 +50,7 @@ object RDBLogcat {
     const val NOTIFICATION_HISTORY = "알림"
     const val ERROR_HISTORY = "에러"
     const val ERROR_ANR = "ANR 에러"
-    const val ERROR_LOCATION_IOException = "네트워크 에러 - IOException"
+    const val ERROR_LOCATION_IOException = "주소 - IOException"
     const val ERROR_LOCATION_FAILED = "GPS 위치정보 갱신실패"
 
     /** 유저 로그 레퍼런스 **/
@@ -107,13 +106,15 @@ object RDBLogcat {
     /** 유저 로그인 정보 **/
     fun writeLoginPref(context: Context, platform: String,
         email: String, phone: String?, name: String?, profile: String?) {
+        val formEmail = email.replace(".","_")
         val prefRef = ref.child(LOGIN_ON)
             .child(getAndroidIdForLog(context))
+            .child(LOGIN_ON)
             .child(platform)
             .child(LOGIN_PREF)
 
         prefRef.run {
-            child(LOGIN_PREF_EMAIL).setValue(email)
+            child(LOGIN_PREF_EMAIL).setValue(formEmail)
             child(LOGIN_PREF_PHONE).setValue(phone)
             child(LOGIN_PREF_NAME).setValue(name)
             child(LOGIN_PREF_PROFILE).setValue(profile)
@@ -127,16 +128,16 @@ object RDBLogcat {
         if (isLogin) {
             ref .child(LOGIN_ON)
                 .child(formedMail)
-                .child(platform)
                 .child(LOGIN_ON)
+                .child(platform)
                 .child(if (isAuto!!) AUTO_LOGIN else OPTIONAL_LOGIN)
                 .child(getDate()).child(getTime())
                 .setValue(if (isSuccess) SUCCESS_LOGIN else FAILED_LOGIN)
         } else {
             ref .child(LOGIN_ON)
                 .child(formedMail)
-                .child(platform)
                 .child(SIGN_OUT)
+                .child(platform)
                 .child(getDate()).child(getTime())
                 .setValue(if(isSuccess) "성공" else "실패")
         }
@@ -173,20 +174,19 @@ object RDBLogcat {
     }
 
     /** 위젯 호출 기록 **/
-    fun writeWidgetHistory(context: Context, sort: String, address: String, response: String?) {
+    fun writeWidgetHistory(context: Context, address: String, response: String?) {
         val widgetPref = default(context)
             .child(WIDGET_HISTORY)
             .child(getDate())
-            .child(sort)
             .child(GPS_HISTORY)
-            .child(getTime())
 
         if (response != null) {
             widgetPref
-                .child(address)
-                .setValue(response)
+                .child(getTime())
+                .setValue("$address : $response")
         } else {
             widgetPref
+                .child(getTime())
                 .setValue(address)
         }
     }

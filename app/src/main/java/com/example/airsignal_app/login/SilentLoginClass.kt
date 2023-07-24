@@ -2,6 +2,7 @@ package com.example.airsignal_app.login
 
 import android.app.Activity
 import androidx.constraintlayout.motion.widget.MotionLayout
+import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_KAKAO
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_NAVER
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
@@ -23,6 +24,10 @@ class SilentLoginClass {
                 val googleLogin = GoogleLogin(activity)
                 if (!googleLogin.isValidToken()) {
                     googleLogin.checkSilenceLogin()
+                    writeLoginHistory(isLogin = true,
+                        platform = RDBLogcat.LOGIN_GOOGLE,
+                        email = email,
+                        isAuto = true, isSuccess = true)
                 }
             }
             "kakao" -> {

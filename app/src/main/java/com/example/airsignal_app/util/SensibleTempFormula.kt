@@ -31,7 +31,14 @@ class SensibleTempFormula {
         return 13.12 + (0.6215 * ta) - (11.37 * v.pow(0.16)) + (0.3965 * v.pow(0.16) * ta)
     }
 
-    /** 지금이 몇월인지에 따라 여름 및 겨울 계산공식 적용 **/
+    /**
+     * 지금이 몇월인지에 따라 여름 및 겨울 계산공식 적용
+     *
+     * @param ta 기온
+     * @param rh 상대습도
+     * @param v 10분 평균 풍속
+     * @return 체감온도
+     */
     fun getSensibleTemp(ta: Double, rh: Double, v: Double) : Double {
         return if (getCurrentSeason() in 5..9) getInSummer(ta, rh) else getInWinter(ta, v)
     }

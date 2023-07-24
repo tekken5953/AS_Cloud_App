@@ -16,6 +16,9 @@ import com.google.android.gms.common.api.Api
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.orhanobut.logger.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * @author : Lee Jae Young
@@ -32,23 +35,29 @@ class GetLocationRepo : BaseRepository() {
                 this.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null)
                     .addOnSuccessListener { location ->
                         location?.let { loc ->
-                            val addr = locationClass.getAddress(loc.latitude, loc.longitude)
-                            _getLocationResult.postValue(
-                                ApiState.Success(GpsDataModel(
-                                    loc.latitude, loc.longitude, addr, isGPS = true
-                                ))
-                            )
-                            Logger.t("Timber").d(
-                                GpsDataModel(
-                                    loc.latitude, loc.longitude, addr, isGPS = true
+                            CoroutineScope(Dispatchers.Default).launch {
+                                val addr = locationClass.getAddress(loc.latitude, loc.longitude)
+                                _getLocationResult.postValue(
+                                    ApiState.Success(
+                                        GpsDataModel(
+                                            loc.latitude, loc.longitude, addr, isGPS = true
+                                        )
+                                    )
                                 )
-                            )
+                                Logger.t("Timber").d(
+                                    GpsDataModel(
+                                        loc.latitude, loc.longitude, addr, isGPS = true
+                                    )
+                                )
+                            }
                         }
                     }
             }
                 .addOnFailureListener {
-                    RDBLogcat.writeErrorNotANR(context, sort = ERROR_LOCATION_FAILED,
-                    msg =  it.localizedMessage!!)
+                    RDBLogcat.writeErrorNotANR(
+                        context, sort = ERROR_LOCATION_FAILED,
+                        msg = it.localizedMessage!!
+                    )
 
                     _getLocationResult.postValue(ApiState.Error("Get Location Error"))
                 }

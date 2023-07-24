@@ -75,14 +75,15 @@
                 android:src="@drawable/ico_hamb_w"
                 app:tint="@color/mode_black_color" />
 
-
             <ImageView
                 android:id="@+id/mainRefreshData"
                 style="@style/BasicImageButtonIcon"
                 android:layout_marginEnd="15dp"
                 android:layout_toStartOf="@+id/mainAddAddress"
+                android:layout_centerVertical="true"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/refresh" />
+                android:src="@drawable/refresh"
+                app:tint="@color/mode_color_text"/>
 
             <ImageView
                 android:id="@+id/mainAddAddress"
@@ -114,7 +115,8 @@
             android:fontFamily="@font/spoqa_hansansneo_regular"
             android:gravity="start"
             android:textColor="@color/mode_black_color"
-            android:textSize="20sp"
+            android:textSize="18sp"
+            android:lineHeight="20dp"
             app:layout_constraintStart_toStartOf="@id/mainMotionLayout"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 
@@ -128,6 +130,16 @@
             app:layout_constraintStart_toEndOf="@+id/mainGpsTitleTv"
             app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv"
             app:tint="@color/mode_black_color" />
+
+        <ImageView
+            android:id="@+id/mainSkyStarImg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginBottom="47.5dp"/>
 
         <ImageView
             android:id="@+id/mainSkyImg"
@@ -147,7 +159,6 @@
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
-
         <TextView
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
@@ -172,21 +183,37 @@
         <TextView
             android:id="@+id/mainCompareTempTv"
             style="@style/basicTextView"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginTop="18dp"
             android:textColor="@color/mode_black_color"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
-            app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue" />
+            ads:layout_constraintStart_toStartOf="@+id/mainSkyText"
+            ads:layout_constraintEnd_toEndOf="@+id/mainSkyText"
+            ads:layout_constraintTop_toBottomOf="@+id/mainSkyText" />
+        
+        <TextView
+            android:id="@+id/mainSensTitle"
+            style="@style/basicMediumTextView"
+            android:textColor="#4F4F4F"
+            android:textSize="16sp"
+            android:layout_marginTop="12dp"
+            ads:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"
+            ads:layout_constraintEnd_toEndOf="@+id/mainMinMaxTitle"/>
+
+        <TextView
+            android:id="@+id/mainSensValue"
+            style="@style/basicTextView"
+            android:layout_marginTop="12dp"
+            android:textColor="#4F4F4F"
+            android:textSize="16sp"
+            ads:layout_constraintEnd_toStartOf="@+id/mainLiveTempUnit"
+            ads:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue" />
 
         <TextView
             android:id="@+id/mainMinMaxTitle"
-            style="@style/basicTextView"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="15dp"
-            android:text="@string/min_max"
+            style="@style/basicMediumTextView"
+            android:layout_marginEnd="22dp"
             android:textColor="#4F4F4F"
-            android:textSize="14sp"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@id/mainMinMaxValue"
             app:layout_constraintEnd_toStartOf="@id/mainMinMaxValue"
             app:layout_constraintTop_toTopOf="@+id/mainMinMaxValue" />
@@ -195,11 +222,10 @@
             android:id="@+id/mainMinMaxValue"
             style="@style/basicTextView"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="5dp"
             android:textColor="#4F4F4F"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
-            app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv" />
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempUnit"
+            app:layout_constraintTop_toBottomOf="@+id/mainSensValue" />
 
         <TextView
             android:id="@+id/mainMotionSlideGuide"
@@ -357,6 +383,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignBottom="@+id/mainDailyWeatherTitle"
                         android:layout_marginStart="10dp"
+                        android:layout_marginBottom="3dp"
                         android:layout_toEndOf="@+id/mainDailyWeatherTitle"
                         android:orientation="horizontal">
 

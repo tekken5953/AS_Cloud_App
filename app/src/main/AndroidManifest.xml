@@ -101,28 +101,16 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget4x2_provider" />
         </receiver>
-<!--        <receiver-->
-<!--            android:name=".view.widget.WidgetProvider3x3"-->
-<!--            android:exported="false"-->
-<!--            tools:ignore="Instantiatable">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
-<!--                <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />-->
-<!--                <action android:name="android.intent.action.DATE_CHANGED" />-->
-<!--            </intent-filter>-->
-
-<!--            <meta-data-->
-<!--                android:name="android.appwidget.provider"-->
-<!--                android:resource="@xml/widget3x3_provider" />-->
-<!--        </receiver>-->
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/adMobId" />
 
+
         <receiver
             android:name=".firebase.fcm.NotificationBuilder"
-            tools:ignore="Instantiatable" />
+            tools:ignore="Instantiatable" >
+        </receiver>
 
         <service
             android:name=".firebase.fcm.SubFCM"

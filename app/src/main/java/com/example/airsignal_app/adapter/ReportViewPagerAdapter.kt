@@ -10,6 +10,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.util.VibrateUtil
+import com.orhanobut.logger.Logger
 import timber.log.Timber
 
 /**
@@ -70,16 +71,17 @@ class ReportViewPagerAdapter(
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try {
-                        val count = textView.layout.lineCount
-                        val lastLineIndex: Int = count - 1
-                        val ellipsisCount: Int = textView.layout.getEllipsisCount(lastLineIndex) /
-                                textView.maxEms
+//                        val count = textView.layout.lineCount
+//                        val lastLineIndex: Int = count - 1
+//                        val ellipsisCount: Int = textView.layout.getEllipsisCount(lastLineIndex) /
+//                                textView.maxEms
+                        val ellipsisCount = textView.layout.getEllipsisCount(textView.lineCount - 1)
                         val isEllipsized = ellipsisCount > 0
 //                    onClickListener.onItemClick(it, position)
                         if (textView.maxLines == 3) {
                             if (isEllipsized) {
                                 mVib()
-                                val lineCount = textView.lineCount + ellipsisCount
+                                val lineCount = textView.lineCount + (textView.maxEms / ellipsisCount)
                                 textView.maxLines = lineCount
                                 val lineHeight = textView.lineHeight
                                 val desiredHeight = lineCount * lineHeight

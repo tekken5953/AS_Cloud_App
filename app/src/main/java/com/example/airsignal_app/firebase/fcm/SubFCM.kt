@@ -19,7 +19,7 @@ import java.util.*
 
 
 class SubFCM : FirebaseMessagingService() {
-    val instance = FirebaseMessaging.getInstance()
+    private val instance = FirebaseMessaging.getInstance()
 
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {

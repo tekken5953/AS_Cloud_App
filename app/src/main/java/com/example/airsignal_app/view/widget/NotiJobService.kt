@@ -30,10 +30,10 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentTempT
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.setLastRefreshTime
 import com.example.airsignal_app.view.activity.SplashActivity
+import com.example.airsignal_app.view.widget.WidgetAction.ACTION_DOZE_MODE_CHANGED
 import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.google.android.gms.tasks.RuntimeExecutionException
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -50,6 +50,7 @@ import kotlin.math.roundToInt
 class NotiJobService : JobService() {
     private val context = this@NotiJobService
     private val filter = IntentFilter(Intent.ACTION_SCREEN_ON)
+    private val dozeMode = IntentFilter(ACTION_DOZE_MODE_CHANGED)
 
     @SuppressLint("MissingPermission")
     override fun onStartJob(params: JobParameters?): Boolean {
@@ -58,6 +59,7 @@ class NotiJobService : JobService() {
         getWidgetLocation(context)
 
         context.registerReceiver(WidgetProvider4x2.NotiJobScheduler(), filter)
+        context.registerReceiver(WidgetProvider4x2.NotiJobScheduler(),dozeMode)
         return true
     }
 
@@ -141,23 +143,6 @@ class NotiJobService : JobService() {
         }
     }
 
-//    fun writeLog(isANR: Boolean, s1: String?, s2: String?) {
-//        try {
-//            if (isANR) {
-//                RDBLogcat.writeLogCause(
-//                    "ANR 발생",
-//                    s1!!,
-//                    s2!!
-//                )
-//            } else {
-//                RDBLogcat.writeErrorNotANR(context, RDBLogcat.WIDGET_ERROR,s1!!)
-//            }
-//        } catch (e: java.lang.NullPointerException) {
-//            e.printStackTrace()
-//            RDBLogcat.writeErrorNotANR(context, RDBLogcat.WIDGET_ERROR,s1!!)
-//        }
-//    }
-
     private fun fetch(context: Context, views: RemoteViews) {
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val componentName =
@@ -175,6 +160,7 @@ class NotiJobService : JobService() {
                     BackgroundPermissionActivity::class.java
                 )
                     .let { intent ->
+                        views.setViewVisibility(R.id.widget4x2Refresh, View.VISIBLE)
                         intent.action = "backgroundPermissionRequest"
                         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
                     }
@@ -209,7 +195,7 @@ class NotiJobService : JobService() {
     private fun getIsNight(forecastTime: String, sunRise: String, sunSet: String): Boolean {
         val forecastToday = LocalDateTime.parse(forecastTime)
         val dailyTime =
-            DataTypeParser.millsToString(
+            DataTypeParser.millsToString (
                 DataTypeParser.convertLocalDateTimeToLong(forecastToday),
                 "HHmm"
             )
@@ -273,7 +259,7 @@ class NotiJobService : JobService() {
                 ) {
                     if (response.isSuccessful) {
                         try {
-                            RDBLogcat.writeWidgetHistory(context, sort = RDBLogcat.WIDGET_HISTORY,
+                            RDBLogcat.writeWidgetHistory(context,
                             address = addr, response = response.body().toString())
 
                             val body = response.body()
@@ -389,9 +375,9 @@ class NotiJobService : JobService() {
             Timber.tag("widget_test").d("size : ${it.size}")
             if (it.size >= 2) {
                 val sb = StringBuilder()
-                for (i: Int in it.lastIndex downTo(it.lastIndex - 1)) {
+                for (i: Int in it.lastIndex - 1 ..it.lastIndex) {
                     sb.append(it[i]).append(" ")
-                    if (i == it.lastIndex - 1) {
+                    if (i == it.lastIndex) {
                         return sb.toString()
                     }
                 }

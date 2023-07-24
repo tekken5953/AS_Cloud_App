@@ -117,6 +117,16 @@
             motion:layout_constraintStart_toEndOf="@+id/mainGpsTitleTv"
             motion:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv" />
         <Constraint
+            android:id="@+id/mainSkyStarImg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="1"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toTopOf="parent"
+            android:layout_marginBottom="47.5dp"/>
+        <Constraint
             android:id="@+id/mainSkyImg"
             android:layout_width="184dp"
             android:layout_height="184dp"
@@ -156,31 +166,47 @@
         <Constraint
             android:id="@+id/mainCompareTempTv"
             style="@style/basicTextView"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="5dp"
-            android:alpha="1"
+            android:layout_marginTop="18dp"
             android:textColor="@color/mode_black_color"
             android:textSize="16sp"
-            motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
-            motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue" />
+            android:alpha="1"
+            motion:layout_constraintStart_toStartOf="@+id/mainSkyText"
+            motion:layout_constraintEnd_toEndOf="@+id/mainSkyText"
+            motion:layout_constraintTop_toBottomOf="@+id/mainSkyText"  />
+        <Constraint
+            android:id="@+id/mainSensTitle"
+            style="@style/basicMediumTextView"
+            android:textSize="14sp"
+            android:alpha="1"
+            android:text="체감온도"
+            android:layout_marginTop="12dp"
+            motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"
+            motion:layout_constraintEnd_toEndOf="@+id/mainMinMaxTitle"/>
+        <Constraint
+            android:id="@+id/mainSensValue"
+            style="@style/basicTextView"
+            android:layout_marginTop="12dp"
+            android:textSize="14sp"
+            android:alpha="1"
+            motion:layout_constraintEnd_toStartOf="@+id/mainLiveTempUnit"
+            motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"/>
         <Constraint
             android:id="@+id/mainMinMaxTitle"
-            style="@style/basicTextView"
-            android:layout_marginTop="3dp"
-            android:layout_marginEnd="15dp"
+            style="@style/basicMediumTextView"
+            android:layout_marginEnd="22dp"
+            android:textSize="14sp"
             android:alpha="1"
             motion:layout_constraintBottom_toBottomOf="@id/mainMinMaxValue"
             motion:layout_constraintEnd_toStartOf="@id/mainMinMaxValue"
-            motion:layout_constraintTop_toTopOf="@+id/mainMinMaxValue" />
+            motion:layout_constraintTop_toTopOf="@+id/mainMinMaxValue"  />
         <Constraint
             android:id="@+id/mainMinMaxValue"
             style="@style/basicTextView"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="5dp"
-            android:textColor="#7C7C7C"
             android:textSize="14sp"
-            motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempUnit"
-            motion:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv" />
+            android:alpha="1"
+            motion:layout_constraintEnd_toStartOf="@+id/mainLiveTempUnit"
+            motion:layout_constraintTop_toBottomOf="@+id/mainSensValue" />
         <Constraint
             android:id="@+id/mainNotiMsgTv"
             style="@style/basicTextView"
@@ -290,6 +316,11 @@
             android:layout_height="24dp"
             android:alpha="0" />
         <Constraint
+            android:id="@+id/mainSkyStarImg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0"/>
+        <Constraint
             android:id="@id/mainSkyImg"
             android:layout_width="132dp"
             android:layout_height="132dp"
@@ -336,10 +367,32 @@
         <Constraint
             android:id="@+id/mainCompareTempTv"
             style="@style/basicTextView"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="12dp"
             android:alpha="0"
             android:textColor="@color/mode_black_color"
+            motion:layout_constraintTop_toBottomOf="@+id/mainSkyText"
+            motion:layout_constraintStart_toStartOf="@id/mainSkyText"
+            motion:layout_constraintEnd_toEndOf="@id/mainSkyText"
             android:textSize="16sp" />
+        <Constraint
+            android:id="@+id/mainSensTitle"
+            style="@style/basicTextView"
+            android:layout_marginEnd="44dp"
+            android:textColor="#4F4F4F"
+            android:textSize="14sp"
+            android:alpha="0"
+            motion:layout_constraintTop_toBottomOf="@+id/mainSensValue"
+            motion:layout_constraintBottom_toBottomOf="@+id/mainSensValue"
+            motion:layout_constraintEnd_toStartOf="@+id/mainSensValue"/>
+        <Constraint
+            android:id="@+id/mainSensValue"
+            style="@style/basicTextView"
+            android:layout_marginTop="12dp"
+            android:textColor="#4F4F4F"
+            android:textSize="14sp"
+            android:alpha="0"
+            motion:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
+            motion:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"/>
         <Constraint
             android:id="@+id/mainMinMaxTitle"
             style="@style/basicTextView"

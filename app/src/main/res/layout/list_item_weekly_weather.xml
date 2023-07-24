@@ -14,16 +14,16 @@
         android:layout_centerVertical="true">
         <TextView
             android:id="@+id/weeklyDayText"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:lines="1"
             android:textSize="14sp"
             android:letterSpacing="-0.04"
             android:fontFamily="@font/spoqa_hansansneo_medium"
-            android:textColor="#2D3436" />
+            android:textColor="#4F4F4F" />
 
         <TextView
             android:id="@+id/weeklyDayDate"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:textColor="#9E9E9E"
             android:textSize="12sp"
             android:letterSpacing="-0.04" />
@@ -57,28 +57,28 @@
         android:layout_marginEnd="24dp">
         <TextView
             android:id="@+id/weeklyMinText"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:gravity="center"
             android:lines="1"
-            android:textColor="#7C7C7C"
-            android:textSize="14sp"/>
+            android:textColor="#4F4F4F"
+            android:textSize="16sp"/>
 
         <TextView
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:text="/"
             android:gravity="center"
             android:lines="1"
-            android:textSize="14sp"
-            android:textColor="#7C7C7C"
+            android:textSize="16sp"
+            android:textColor="#4F4F4F"
             android:layout_marginStart="3dp"/>
 
         <TextView
             android:id="@+id/weeklyMaxText"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:gravity="center"
             android:lines="1"
-            android:textColor="#7C7C7C"
-            android:textSize="14sp"
+            android:textColor="#4F4F4F"
+            android:textSize="16sp"
             android:layout_marginStart="3dp"/>
     </LinearLayout>
 
