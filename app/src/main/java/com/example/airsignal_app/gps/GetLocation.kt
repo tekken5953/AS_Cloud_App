@@ -13,9 +13,11 @@ import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
+import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.firebase.db.RDBLogcat.ERROR_LOCATION_IOException
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeErrorNotANR
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeGpsHistory
+import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress

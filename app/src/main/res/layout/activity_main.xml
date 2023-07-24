@@ -10,9 +10,6 @@
             name="dataVM"
             type="com.example.airsignal_app.vmodel.GetWeatherViewModel" />
 
-        <variable
-            name="locationVM"
-            type="com.example.airsignal_app.vmodel.GetLocationViewModel" />
     </data>
 
     <androidx.constraintlayout.motion.widget.MotionLayout

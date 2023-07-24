@@ -4,8 +4,8 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.location.LocationManager
 import android.os.*
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -40,7 +40,6 @@ import com.example.airsignal_app.dao.StaticDataObject.PM10_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.PM2p5_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.SO2_INDEX
-import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
@@ -81,14 +80,13 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
-import com.example.airsignal_app.view.custom_view.SegmentedProgressBar
-import com.example.airsignal_app.vmodel.GetLocationViewModel
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -110,7 +108,6 @@ class MainActivity
     private lateinit var indicators: Array<ImageView>
     private val vib by lazy { VibrateUtil(this) }
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
-    private val getLocationViewModel by viewModel<GetLocationViewModel>()
 
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
@@ -179,7 +176,6 @@ class MainActivity
 
         initBinding()
         binding.dataVM = getDataViewModel
-        binding.locationVM = getLocationViewModel
 
         initializing()
 
@@ -282,7 +278,7 @@ class MainActivity
             override fun onSingleClick(v: View?) {
                 mVib()
                 showPB()
-                loadLocationData()
+                getCurrentLocationData()
             }
         })
 
@@ -368,7 +364,8 @@ class MainActivity
                 if (addrArray.contains(lastAddress)) {
                     loadSavedAddr(lastAddress)
                 } else {
-                    loadLocationData()
+//                    loadLocationData()
+                    getCurrentLocationData()
                 }
                 // TimeOut
                 HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
@@ -639,15 +636,6 @@ class MainActivity
         }
     }
 
-    // 현재 옵저버가 없으면 생성
-    private fun getLocationObservers() {
-        if (!getLocationViewModel.fetchData().hasActiveObservers())
-        {
-            applyGetLocationViewModel()
-        } else {
-            Timber.tag("ReAddrTest").i("Already has applyGetLocationViewModel")
-        }
-    }
 
     // 뷰모델에서 Observing 한 데이터 결과 적용
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
@@ -1179,84 +1167,6 @@ class MainActivity
         }
     }
 
-//    // API 호출 TimeOut Exception Class
-//    class CustomTimeOutException : SocketTimeoutException() {
-//        override fun getLocalizedMessage(): String? {
-//            MainActivity().hidePB()
-//            Toast.makeText(MainActivity(), "TimeOut Exception", Toast.LENGTH_SHORT).show()
-//            return super.getLocalizedMessage()
-//        }
-//    }
-
-    // 현재 위치정보를 받아오고 데이터 갱신
-    @SuppressLint("MissingPermission", "SuspiciousIndentation")
-    private fun applyGetLocationViewModel(): MainActivity {
-        Timber.tag("ReAddrTest").i("applyGetLocationViewModel")
-        getLocationViewModel.fetchData().observe(this) { location ->
-            when (location) {
-                is BaseRepository.ApiState.Success -> {
-                    val loc = location.data
-                    hidePB()
-                    val lat = loc.lat!!
-                    val lng = loc.lng!!
-                    val addr = loc.addr!!
-                    val formatAddr = addr
-                        .replaceFirst(" ", "")
-                        .replace(getString(R.string.korea), "")
-                        .replace("null", "")
-                    val formedAddr = AddressFromRegex(addr).getAddress() ?: formatAddr
-
-                    setCurrentLocation(this, formatAddr)
-
-                    if (loc.isGPS) {
-                        updateCurrentAddress(
-                            lat, lng,
-                            formatAddr
-                        )
-
-                        setNotificationAddress(this, addr)
-
-                        binding.mainGpsTitleTv.text = guardWordWrap(
-                            formedAddr
-                        )
-
-                        binding.mainTopBarGpsTitle.text =
-                            formedAddr
-
-                        loadCurrentViewModelData(lat, lng)
-                    } else {
-                        updateCurrentAddress(
-                            lat, lng,
-                            formatAddr
-                        )
-
-                        setCurrentLocation(this, formatAddr)
-
-                        setNotificationAddress(this, addr)
-
-                        binding.mainGpsTitleTv.text =
-                            formedAddr
-                        binding.mainTopBarGpsTitle.text = formedAddr
-
-                        ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
-                        loadCurrentViewModelData(lat, lng)
-                    }
-                }
-
-                is BaseRepository.ApiState.Error -> {
-                    runOnUiThread {
-                        hidePB()
-                        hideAllViews(error = location.errorMessage)
-                    }
-                }
-
-                else -> {}
-            }
-        }
-        return this
-    }
-
-
     // 통신에 실패할 경우 레이아웃 처리
     private fun hideAllViews(error: String?) {
         Logger.t("TAG_E").e("Error Msg is $error")
@@ -1300,7 +1210,7 @@ class MainActivity
                 )) {
                     mVib()
                     showPB()
-                    loadLocationData()
+                    getCurrentLocationData()
                 }
             }
 
@@ -1380,11 +1290,11 @@ class MainActivity
         getDataViewModel.loadData(null, null, addr)
     }
 
-    private fun loadLocationData() {
-        getLocationObservers()
-        getDataObservers()
-        getLocationViewModel.loadDataResult(this)
-    }
+//    private fun loadLocationData() {
+//        getLocationObservers()
+//        getDataObservers()
+//        getLocationViewModel.loadDataResult(this)
+//    }
 
     private fun setAirCPV(barColor: Int, unit: String, grade: Int) {
         binding.nestedAirCpv.apply {
@@ -1590,37 +1500,58 @@ class MainActivity
         }
     }
 
-//    // 미세먼지 그래프 그리기
-//    private fun drawingPmGraph(bar: SegmentedProgressBar, array: FloatArray) {
-//        if (array.size == 4) {
-//            bar.setContexts(
-//                barContexts = listOf(
-//                    SegmentedProgressBar.BarContext(
-//                        ResourcesCompat.getColor(
-//                            resources, R.color.air_good, null
-//                        ), //gradient start
-//                        ResourcesCompat.getColor(
-//                            resources, R.color.air_good, null
-//                        ), //gradient stop
-//                        array[0] //percentage for segment
-//                    ),
-//                    SegmentedProgressBar.BarContext(
-//                        ResourcesCompat.getColor(resources, R.color.air_normal, null),
-//                        ResourcesCompat.getColor(resources, R.color.air_normal, null),
-//                        array[1]
-//                    ),
-//                    SegmentedProgressBar.BarContext(
-//                        ResourcesCompat.getColor(resources, R.color.air_bad, null),
-//                        ResourcesCompat.getColor(resources, R.color.air_bad, null),
-//                        array[2]
-//                    ),
-//                    SegmentedProgressBar.BarContext(
-//                        ResourcesCompat.getColor(resources, R.color.air_very_bad, null),
-//                        ResourcesCompat.getColor(resources, R.color.air_very_bad, null),
-//                        array[3]
-//                    )
-//                )
-//            )
-//        }
-//    }
+    @SuppressLint("MissingPermission")
+    private fun getCurrentLocationData() {
+        val locationClass = GetLocation(this)
+        if (locationClass.isGPSConnected()) {
+            LocationServices.getFusedLocationProviderClient(this).run {
+                this.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                    .addOnSuccessListener { location ->
+                        location?.let { loc ->
+                            hidePB()
+                            val addr = GetLocation(this@MainActivity)
+                                .getAddress(loc.latitude,loc.longitude)
+                            val formatAddr = addr!!
+                                .replaceFirst(" ", "")
+                                .replace(getString(R.string.korea), "")
+                                .replace("null", "")
+                            val formedAddr = AddressFromRegex(addr).getAddress() ?: formatAddr
+
+                            setCurrentLocation(this@MainActivity, formatAddr)
+
+                            updateCurrentAddress(
+                                loc.latitude, loc.longitude,
+                                formatAddr
+                            )
+
+                            setNotificationAddress(this@MainActivity, addr)
+
+                            binding.mainGpsTitleTv.text = guardWordWrap(
+                                formedAddr
+                            )
+
+                            binding.mainTopBarGpsTitle.text =
+                                formedAddr
+
+                            loadCurrentViewModelData(loc.latitude, loc.longitude)
+                        }
+                    }
+            }
+                .addOnFailureListener {
+                    RDBLogcat.writeErrorNotANR(
+                        this, sort = RDBLogcat.ERROR_LOCATION_FAILED,
+                        msg = it.localizedMessage!!
+                    )
+                }
+        } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
+            val lm =
+                this.getSystemService(LOCATION_SERVICE) as LocationManager
+            val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            location?.let { loc ->
+                loadCurrentViewModelData(loc.latitude, loc.longitude)
+            }
+        } else {
+            locationClass.requestSystemGPSEnable()
+        }
+    }
 }
