@@ -13,11 +13,9 @@ import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
-import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.firebase.db.RDBLogcat.ERROR_LOCATION_IOException
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeErrorNotANR
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeGpsHistory
-import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
@@ -36,11 +34,11 @@ class GetLocation(private val context: Context) {
 
     /** 현재 주소를 불러옵니다 **/
     fun getAddress(lat: Double, lng: Double): String? {
-        lateinit var address: List<Address>
         return try {
             val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
+
             @Suppress("DEPRECATION")
-            address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
+            val address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             setNotificationAddress(context, address[0].getAddressLine(0))
             setUserLastAddr(context, formattingFullAddress(address[0].getAddressLine(0)))
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {

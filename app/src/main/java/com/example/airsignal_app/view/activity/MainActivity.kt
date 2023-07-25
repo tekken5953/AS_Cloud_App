@@ -143,12 +143,10 @@ class MainActivity
         }
     }
 
-    private val gpsFix by lazy { binding.mainGpsFix }
-
     override fun onResume() {
         super.onResume()
         if (!isProgressed) {
-            showPB()
+//            showPB()
             isProgressed = true
         }
         getDataSingleTime()
@@ -277,7 +275,8 @@ class MainActivity
         binding.mainGpsFix.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 mVib()
-                showPB()
+//                showPB()
+                v!!.startAnimation(rotateAnim)
                 getCurrentLocationData()
             }
         })
@@ -365,7 +364,6 @@ class MainActivity
                 if (addrArray.contains(lastAddress)) {
                     loadSavedAddr(lastAddress)
                 } else {
-//                    loadLocationData()
                     getCurrentLocationData()
                 }
                 // TimeOut
@@ -416,7 +414,6 @@ class MainActivity
             binding.mainMotionLayout.alpha = SHOWING_LOADING_FLOAT
             binding.mainMotionLayout.isEnabled = false
         }
-        gpsFix.startAnimation(rotateAnim)
     }
 
     // 프로그래스 숨기기
@@ -1216,7 +1213,7 @@ class MainActivity
                     ColorStateList.valueOf(getColor(R.color.main_blue_color)
                 )) {
                     mVib()
-                    showPB()
+//                    showPB()
                     getCurrentLocationData()
                 }
             }
@@ -1296,12 +1293,6 @@ class MainActivity
         getDataObservers()
         getDataViewModel.loadData(null, null, addr)
     }
-
-//    private fun loadLocationData() {
-//        getLocationObservers()
-//        getDataObservers()
-//        getLocationViewModel.loadDataResult(this)
-//    }
 
     private fun setAirCPV(barColor: Int, unit: String, grade: Int) {
         binding.nestedAirCpv.apply {
@@ -1511,51 +1502,54 @@ class MainActivity
     private fun getCurrentLocationData() {
         val locationClass = GetLocation(this)
         if (locationClass.isGPSConnected()) {
-            LocationServices.getFusedLocationProviderClient(this).run {
-                this.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                    .addOnSuccessListener { location ->
-                        location?.let { loc ->
-                            hidePB()
-                            val addr = GetLocation(this@MainActivity)
-                                .getAddress(loc.latitude,loc.longitude)
-                            val formatAddr = addr!!
-                                .replaceFirst(" ", "")
-                                .replace(getString(R.string.korea), "")
-                                .replace("null", "")
-                            val formedAddr = AddressFromRegex(addr).getAddress() ?: formatAddr
+            CoroutineScope(Dispatchers.Default).launch {
+                LocationServices.getFusedLocationProviderClient(this@MainActivity).run {
+                    this.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                        .addOnSuccessListener { location ->
+                            location?.let { loc ->
+                                hidePB()
+                                val addr = GetLocation(this@MainActivity)
+                                    .getAddress(loc.latitude,loc.longitude)
+                                val formatAddr = addr!!
+                                    .replaceFirst(" ", "")
+                                    .replace(getString(R.string.korea), "")
+                                    .replace("null", "")
+                                val formedAddr = AddressFromRegex(addr).getAddress() ?: formatAddr
 
-                            setCurrentLocation(this@MainActivity, formatAddr)
+                                setCurrentLocation(this@MainActivity, formatAddr)
 
-                            updateCurrentAddress(
-                                loc.latitude, loc.longitude,
-                                formatAddr
-                            )
+                                updateCurrentAddress(
+                                    loc.latitude, loc.longitude,
+                                    formatAddr
+                                )
 
-                            setNotificationAddress(this@MainActivity, addr)
+                                setNotificationAddress(this@MainActivity, formedAddr)
 
-                            binding.mainGpsTitleTv.text = guardWordWrap(
-                                formedAddr
-                            )
+                                binding.mainGpsTitleTv.text = guardWordWrap(
+                                    formedAddr
+                                )
 
-                            binding.mainTopBarGpsTitle.text =
-                                formedAddr
+                                binding.mainTopBarGpsTitle.text =
+                                    formedAddr
 
-                            loadCurrentViewModelData(loc.latitude, loc.longitude)
+                                loadCurrentViewModelData(loc.latitude, loc.longitude)
+                            }
                         }
-                    }
-            }
-                .addOnFailureListener {
+                } .addOnFailureListener {
                     RDBLogcat.writeErrorNotANR(
-                        this, sort = RDBLogcat.ERROR_LOCATION_FAILED,
+                        this@MainActivity, sort = RDBLogcat.ERROR_LOCATION_FAILED,
                         msg = it.localizedMessage!!
                     )
                 }
+            }
         } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
-            val lm =
-                this.getSystemService(LOCATION_SERVICE) as LocationManager
-            val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            location?.let { loc ->
-                loadCurrentViewModelData(loc.latitude, loc.longitude)
+            CoroutineScope(Dispatchers.Default).launch {
+                val lm =
+                    getSystemService(LOCATION_SERVICE) as LocationManager
+                val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                location?.let { loc ->
+                    loadCurrentViewModelData(loc.latitude, loc.longitude)
+                }
             }
         } else {
             locationClass.requestSystemGPSEnable()

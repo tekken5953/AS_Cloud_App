@@ -8,15 +8,11 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import com.example.airsignal_app.dao.StaticDataObject.TAG_W
-import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.firebase.db.RDBLogcat.WIDGET_ACTION
 import com.example.airsignal_app.firebase.db.RDBLogcat.WIDGET_DOZE_MODE
-import com.example.airsignal_app.firebase.db.RDBLogcat.writeWidgetHistory
-import com.example.airsignal_app.util.`object`.DataTypeParser.currentDateTimeString
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.view.ToastUtils
@@ -33,6 +29,9 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
         Timber.tag(TAG_W).i("onEnabled")
+        if (!isJobScheduled(context)) {
+            NotiJobScheduler().scheduleJob(context)
+        }
     }
 
     // onEnabled() 와는 반대로 마지막의 최종 앱 위젯 인스턴스가 삭제 될 때 호출 됩니다
@@ -90,20 +89,35 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         intent.action?.let {
-            RDBLogcat.writeWidgetPref(context, sort = WIDGET_ACTION, value = intent.action.toString())
+            RDBLogcat.writeWidgetPref(
+                context,
+                sort = WIDGET_ACTION,
+                value = intent.action.toString()
+            )
             when (it) {
                 WIDGET_ENABLE -> {
                     NotiJobService().getWidgetLocation(context)
                 }
                 WIDGET_UPDATE
                 -> {
-                    if (isRefreshable(context)) {
-                        Timber.tag(TAG_W)
-                            .i("onReceive : ${currentDateTimeString(context)} intent : ${intent.action}")
+                    val isDozeMode = intent.getBooleanExtra(
+                        "android.os.extra.IDLE_MODE",
+                        false
+                    )
 
+                    RDBLogcat.writeWidgetPref(
+                        context,
+                        sort = WIDGET_DOZE_MODE,
+                        value = "Doze Mode is $isDozeMode"
+                    )
+                    if (isDozeMode) {
                         NotiJobScheduler().scheduleJob(context)
                     } else {
-                        ToastUtils(context).showMessage("마지막 갱신 후 1분 뒤에 가능합니다", 1)
+                        if (isRefreshable(context)) {
+                            NotiJobScheduler().scheduleJob(context)
+                        } else {
+                            ToastUtils(context).showMessage("마지막 갱신 후 1분 뒤에 가능합니다", 1)
+                        }
                     }
                 }
                 WIDGET_OPTIONS_CHANGED
@@ -117,19 +131,9 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
     class NotiJobScheduler : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val isDozeMode = intent.getBooleanExtra(
-                "android.os.extra.IDLE_MODE",
-                false
-            )
-
-            RDBLogcat.writeWidgetPref(context, sort = WIDGET_DOZE_MODE, value = "${intent.action}, Doze Mode is $isDozeMode")
-            if (isDozeMode) {
-                scheduleJob(context)
-            } else {
-                when(intent.action) {
-                    Intent.ACTION_BOOT_COMPLETED,Intent.ACTION_SCREEN_ON -> {
-                        scheduleJob(context)
-                    }
+            when (intent.action) {
+                Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_SCREEN_ON -> {
+                    scheduleJob(context)
                 }
             }
         }
@@ -147,10 +151,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
             if (!WidgetProvider4x2().isJobScheduled(context)) {
                 jobScheduler.schedule(jobInfo)
-                Timber.tag("JobServices").d("JobScheduler 등록 성공 : ${jobInfo.intervalMillis}")
             } else {
-                Timber.tag("JobServices")
-                    .d("JobScheduler 이미 존재 : ${jobScheduler.getPendingJob(JOB_ID)}")
                 NotiJobService().getWidgetLocation(context)
             }
         }

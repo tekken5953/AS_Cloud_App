@@ -546,7 +546,6 @@ class SettingActivity
                         val data = ver.data
                         val versionInfo = getApplicationVersion(this)
 
-                        //TODO 수정해야함 버전 명 보내면 최신버전이랑 날짜랑 그 버전의 배포날짜 받아오기로
                         appInfoReleaseDate.text =
                             "(최종 업데이트 : ${convertDateFormat(data.releaseDate)})"
                         appInfoVersionValue.text = versionInfo

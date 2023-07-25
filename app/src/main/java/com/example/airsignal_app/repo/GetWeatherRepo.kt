@@ -27,6 +27,7 @@ class GetWeatherRepo : BaseRepository() {
 
     fun loadDataResult(lat: Double?, lng: Double?, addr: String?) {
         CoroutineScope(Dispatchers.Default).launch {
+            _getDataResult.postValue(ApiState.Loading)
             mMyAPIImpl.getForecast(lat, lng, addr)
                 .enqueue(object : Callback<ApiModel.GetEntireData> {
                     override fun onResponse(

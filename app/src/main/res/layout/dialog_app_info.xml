@@ -29,7 +29,7 @@
 
     <TextView
         android:id="@+id/appInfoVersionTitle"
-        style="@style/basicTextView"
+        style="@style/basicMediumTextView"
         android:layout_marginTop="22dp"
         android:fontFamily="@font/spoqa_hansansneo_medium"
         android:gravity="start"
@@ -41,13 +41,13 @@
 
     <ProgressBar
         android:id="@+id/appInfoPB"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
         style="@android:style/Widget.Material.Light.ProgressBar.Small"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle"
-        app:layout_constraintStart_toStartOf="@+id/appInfoVersionTitle"
-        app:layout_constraintEnd_toEndOf="@+id/appInfoVersionTitle"
-        android:layout_marginTop="8dp"/>
+        app:layout_constraintStart_toEndOf="@+id/appInfoVersionTitle"
+        app:layout_constraintTop_toTopOf="@+id/appInfoVersionTitle"
+        app:layout_constraintBottom_toBottomOf="@+id/appInfoVersionTitle"/>
 
     <TextView
         android:id="@+id/appInfoVersionValue"
@@ -55,10 +55,11 @@
         android:layout_marginTop="5dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
         android:textColor="@color/main_blue_color"
-        android:textSize="12sp"
+        android:textSize="16sp"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@+id/appInfoVersionTitle"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle" />
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/appInfoVersionTitle"/>
 
     <TextView
         android:id="@+id/appInfoReleaseDate"
@@ -93,15 +94,106 @@
         app:layout_constraintStart_toStartOf="@+id/appInfoIsRecent"
         android:layout_marginTop="10dp"/>
 
+    <View
+        android:id="@+id/appInfoLine1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="#EBEBEB"
+        app:layout_constraintTop_toBottomOf="@+id/appInfoDownBtn"
+        android:layout_marginTop="16dp"/>
+
     <TextView
         android:id="@+id/appInfoLicense"
+        style="@style/basicMediumTextView"
+        android:layout_height="52dp"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="오픈소스 라이선스"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoDownBtn"
-        android:layout_marginTop="20dp"
-        android:paddingStart="20dp"
+        android:text="@string/open_source_license"
+        app:layout_constraintTop_toBottomOf="@+id/appInfoLine1"
+        android:paddingStart="24dp"
         android:paddingEnd="0dp"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
         android:gravity="center_vertical|start"/>
+
+    <View
+        android:id="@+id/appInfoLine2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="#EBEBEB"
+        app:layout_constraintTop_toBottomOf="@+id/appInfoLicense"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/appInfoTermsOfService"
+        style="@style/basicMediumTextView"
+        android:layout_height="52dp"
+        android:layout_width="match_parent"
+        android:text="@string/term_of_services"
+        app:layout_constraintTop_toBottomOf="@+id/appInfoLine2"
+        android:paddingStart="24dp"
+        android:paddingEnd="0dp"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical|start"/>
+
+    <View
+        android:id="@+id/appInfoLine3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="#EBEBEB"
+        app:layout_constraintTop_toBottomOf="@+id/appInfoTermsOfService"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/appInfoDataUsage"
+        style="@style/basicMediumTextView"
+        android:layout_height="52dp"
+        android:layout_width="match_parent"
+        android:text="@string/data_usages"
+        app:layout_constraintTop_toBottomOf="@+id/appInfoLine3"
+        android:paddingStart="24dp"
+        android:paddingEnd="0dp"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical|start"/>
+
+    <View
+        android:id="@+id/appInfoLine4"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="#EBEBEB"
+        app:layout_constraintTop_toBottomOf="@+id/appInfoDataUsage"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/appInfoCustomerService"
+        style="@style/basicMediumTextView"
+        android:layout_height="52dp"
+        android:layout_width="match_parent"
+        android:text="@string/customers_center"
+        app:layout_constraintTop_toBottomOf="@+id/appInfoLine4"
+        android:paddingStart="24dp"
+        android:paddingEnd="0dp"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical|start"/>
+
+    <View
+        android:id="@+id/appInfoLine5"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="#EBEBEB"
+        app:layout_constraintTop_toBottomOf="@+id/appInfoCustomerService"
+        android:layout_marginTop="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
