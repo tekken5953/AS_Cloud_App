@@ -49,11 +49,13 @@ class AirQTitleAdapter(private val context: Context, list: ArrayList<AdapterMode
 
         fun bind(dao: AdapterModel.AirQTitleItem) {
             title.text = dao.name
-            title.setTextColor(context.getColor(R.color.white))
+
 
             if (dao.isSelect) {
+                title.setTextColor(context.getColor(R.color.white))
                 title.setBackgroundResource(R.drawable.pm_rv_title_bg_s)
             } else {
+                title.setTextColor(context.getColor(R.color.theme_text_color))
                 title.setBackgroundResource(R.drawable.pm_rv_title_bg_ns)
             }
 

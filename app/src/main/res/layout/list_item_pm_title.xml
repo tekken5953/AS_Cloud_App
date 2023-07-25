@@ -11,7 +11,7 @@
         android:id="@+id/listItemCpvTitle"
         style="@style/basicTextView"
         android:textSize="12sp"
-        android:textColor="@color/white"
+        android:textColor="@color/theme_text_color"
         android:letterSpacing="-0.048"
         android:background="@drawable/pm_rv_title_bg_ns"/>
 

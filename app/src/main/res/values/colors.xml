@@ -62,5 +62,6 @@
     <color name="theme_main_bg_color">#EBEBEB</color>
     <color name="theme_indicator_empty_color">#eeeeee</color>
     <color name="theme_indicator_fill_color">#A6A6A6</color>
+    <color name="theme_pm_title_bg_color">#EBEBEB</color>
 
 </resources>
