@@ -34,6 +34,7 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserTheme
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.GetSystemInfo.getApplicationVersion
+import com.example.airsignal_app.util.`object`.GetSystemInfo.goToPlayStore
 import com.example.airsignal_app.util.`object`.SetAppInfo.removeAllKeys
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserFontScale
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLocation
@@ -82,8 +83,8 @@ class SettingActivity
 
         initBinding()
 
+        window.statusBarColor = getColor(R.color.theme_view_color)
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            window.statusBarColor = Color.BLACK
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility =
                 window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
@@ -91,7 +92,6 @@ class SettingActivity
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            window.statusBarColor = Color.WHITE
         }
 
         // 로그인 시 저장된 핸드폰 번호
@@ -535,7 +535,6 @@ class SettingActivity
         val appInfoVersionValue: TextView = viewAppInfo.findViewById(R.id.appInfoVersionValue)
         val appInfoIsRecent: TextView = viewAppInfo.findViewById(R.id.appInfoIsRecent)
         val appInfoDownBtn: Button = viewAppInfo.findViewById(R.id.appInfoDownBtn)
-        val appInfoReleaseDate: TextView = viewAppInfo.findViewById(R.id.appInfoReleaseDate)
         val appInfoPB: ProgressBar = viewAppInfo.findViewById(R.id.appInfoPB)
         val appInfoLicense: TextView = viewAppInfo.findViewById(R.id.appInfoLicense)
 
@@ -546,19 +545,18 @@ class SettingActivity
                         val data = ver.data
                         val versionInfo = getApplicationVersion(this)
 
-                        appInfoReleaseDate.text =
-                            "(최종 업데이트 : ${convertDateFormat(data.releaseDate)})"
                         appInfoVersionValue.text = versionInfo
                         if (data.version == versionInfo) {
                             appInfoIsRecent.text = "최신 소프트웨어입니다."
+                            appInfoIsRecent.setTextColor(getColor(R.color.sub_gray_color))
                             appInfoDownBtn.visibility = View.GONE
+                            appInfoVersionValue.visibility = View.VISIBLE
                         } else {
                             appInfoIsRecent.text =
-                                "최신 버전이 아닙니다. (최신버전 : ${data.version})"
-                            appInfoDownBtn.apply {
-                                visibility = View.VISIBLE
-                                text = "최신버전 ${getString(R.string.download)}"
-                            }
+                                "최신 버전이 있습니다"
+                            appInfoIsRecent.setTextColor(getColor(R.color.main_blue_color))
+                            appInfoDownBtn.visibility = View.VISIBLE
+                            appInfoVersionValue.visibility = View.GONE
                         }
                     }
                     is BaseRepository.ApiState.Error -> {
@@ -574,6 +572,10 @@ class SettingActivity
             }
         }
 
+        appInfoDownBtn.setOnClickListener {
+            goToPlayStore(this)
+        }
+
         appInfoLicense.setOnClickListener {
             startActivity(Intent(this, OssLicensesMenuActivity::class.java))
             OssLicensesMenuActivity.setActivityTitle("오픈소스 라이센스 목록")
@@ -581,8 +583,6 @@ class SettingActivity
 
         appInfoPB.visibility = View.GONE
         appInfoVersionValue.visibility = View.VISIBLE
-        appInfoIsRecent.visibility = View.VISIBLE
-        appInfoIsRecent.visibility = View.VISIBLE
 
         ShowDialogClass(this)
             .setBackPressed(viewAppInfo.findViewById(R.id.appInfoBack))

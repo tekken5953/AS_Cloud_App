@@ -51,5 +51,16 @@
     <color name="airQ_unSelected_text_color">#6D6D6D</color>
 
     <color name="main_black_color">#4F4F4F</color>
+    <color name="sub_gray_color">#7C7C7C</color>
+
+    <color name="theme_view_color">#FFFFFF</color>
+    <color name="theme_text_color">#4F4F4F</color>
+    <color name="theme_sub_color">#7C7C7C</color>
+    <color name="theme_line_color">#EBEBEB</color>
+    <color name="theme_box_solid_color">#FFFFFF</color>
+    <color name="theme_box_stroke_color">#F4F4F4</color>
+    <color name="theme_main_bg_color">#EBEBEB</color>
+    <color name="theme_indicator_empty_color">#eeeeee</color>
+    <color name="theme_indicator_fill_color">#A6A6A6</color>
 
 </resources>

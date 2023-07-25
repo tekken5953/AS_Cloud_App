@@ -22,7 +22,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
         android:fontFamily="@font/spoqa_hansansneo_bold"
-        android:textColor="@color/black"
+        android:textColor="@color/theme_text_color"
         android:textSize="14sp" />
 
     <ImageView
@@ -41,7 +41,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:textColor="@color/black"
+        android:textColor="@color/theme_text_color"
         android:textSize="16sp" />
 
     <TextView

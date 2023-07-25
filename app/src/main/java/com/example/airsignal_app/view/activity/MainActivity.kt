@@ -239,7 +239,7 @@ class MainActivity
                 window.navigationBarColor = getColor(android.R.color.transparent)
                 binding.nestedFab.apply { alpha = 0f }
             } else {
-                window.navigationBarColor = getColor(R.color.white)
+                window.navigationBarColor = getColor(R.color.theme_view_color)
                 binding.nestedFab.apply { alpha = 1f }
             }
         }

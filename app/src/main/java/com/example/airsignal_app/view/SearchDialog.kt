@@ -133,7 +133,7 @@ class SearchDialog(
         val searchItem = java.util.ArrayList<String>()
         val allTextArray = resources.getStringArray(R.array.address)
         val adapter =
-            ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, searchItem)
+            ArrayAdapter(requireContext(), R.layout.list_item_searced_address, searchItem)
         listView.adapter = adapter
 
         // 서치 뷰 텍스트 변환 콜벡

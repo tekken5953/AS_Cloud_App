@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@color/white">
+    android:background="@android:color/transparent">
 
     <LinearLayout
         android:layout_width="50dp"
@@ -19,14 +19,14 @@
             android:textSize="14sp"
             android:letterSpacing="-0.04"
             android:fontFamily="@font/spoqa_hansansneo_medium"
-            android:textColor="@color/main_black_color" />
+            android:textColor="@color/theme_text_color" />
 
         <TextView
             android:id="@+id/weeklyDayDate"
             style="@style/basicMediumTextView"
             android:layout_width="wrap_content"
             android:letterSpacing="-0.04"
-            android:textColor="#9E9E9E"
+            android:textColor="@color/theme_sub_color"
             android:textSize="12sp" />
     </LinearLayout>
 
@@ -60,7 +60,7 @@
             style="@style/basicMediumTextView"
             android:gravity="center"
             android:lines="1"
-            android:textColor="@color/main_black_color"
+            android:textColor="@color/theme_text_color"
             android:textSize="16sp"/>
 
         <TextView
@@ -69,7 +69,7 @@
             android:gravity="center"
             android:lines="1"
             android:textSize="16sp"
-            android:textColor="@color/main_black_color"
+            android:textColor="@color/theme_text_color"
             android:layout_marginStart="1dp"/>
 
         <TextView
@@ -77,7 +77,7 @@
             style="@style/basicMediumTextView"
             android:gravity="center"
             android:lines="1"
-            android:textColor="@color/main_black_color"
+            android:textColor="@color/theme_text_color"
             android:textSize="16sp"
             android:layout_marginStart="1dp"/>
     </LinearLayout>
@@ -87,7 +87,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/view_line_color"
+        android:background="@color/theme_line_color"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"/>
 </RelativeLayout>

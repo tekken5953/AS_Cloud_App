@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/mode_color_view">
+    android:background="@color/theme_view_color">
 
     <RelativeLayout
         android:id="@+id/faqTopBar"
@@ -18,14 +18,15 @@
             android:layout_marginStart="20dp"
             android:layout_centerVertical="true"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/back_arrow" />
+            android:src="@drawable/back_arrow"
+            app:tint="@color/theme_text_color"/>
 
         <TextView
             android:id="@+id/faqTitle"
             style="@style/basicMediumTextView"
             android:layout_centerInParent="true"
             android:text="@string/setting_faq"
-            android:textColor="@color/mode_color_text"
+            android:textColor="@color/theme_text_color"
             android:textSize="16sp" />
     </RelativeLayout>
 
@@ -39,7 +40,7 @@
         android:textSize="20sp"
         android:visibility="gone"
         android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:textColor="@color/mode_color_text"/>
+        android:textColor="@color/theme_text_color"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/faqRv"

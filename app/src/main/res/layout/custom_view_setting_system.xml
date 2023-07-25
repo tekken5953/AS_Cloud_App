@@ -10,6 +10,7 @@
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:weightSum="1"
+        android:backgroundTint="@color/theme_view_color"
         tools:context=".view.activity.SettingActivity">
 
         <TextView

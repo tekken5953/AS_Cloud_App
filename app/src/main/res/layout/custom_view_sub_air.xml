@@ -8,14 +8,14 @@
         android:layout_height="138dp"
         android:paddingTop="28dp"
         android:paddingBottom="23dp"
+        android:background="@android:color/transparent"
         tools:context=".view.activity.MainActivity">
 
         <ImageView
             android:id="@+id/customSubAirImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/ico_main_humidity"/>
+            android:layout_centerHorizontal="true"/>
 
         <TextView
             android:id="@+id/customSubAirTitle"
@@ -25,7 +25,7 @@
             android:textSize="13sp"
             android:layout_marginTop="8dp"
             android:layout_centerHorizontal="true"
-            android:textColor="#7C7C7C"/>
+            android:textColor="@color/theme_sub_color"/>
 
         <TextView
             android:id="@+id/customSubAirValue"
@@ -36,7 +36,7 @@
             android:layout_marginStart="43dp"
             android:layout_marginEnd="43dp"
             android:layout_marginTop="8dp"
-            android:textColor="#4F4F4F"/>
+            android:textColor="@color/theme_text_color"/>
 
         <View
             android:id="@+id/customSubAirLeftLine"
@@ -44,7 +44,7 @@
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_marginBottom="5dp"
-            android:background="#D9D9D9"/>
+            android:background="@color/theme_line_color"/>
 
     </RelativeLayout>
 </layout>

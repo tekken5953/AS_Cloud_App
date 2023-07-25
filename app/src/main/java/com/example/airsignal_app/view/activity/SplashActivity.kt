@@ -16,6 +16,8 @@ import com.example.airsignal_app.util.LoggerUtil
 import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.example.airsignal_app.util.`object`.GetSystemInfo
+import com.example.airsignal_app.util.`object`.GetSystemInfo.getPlayStoreURL
+import com.example.airsignal_app.util.`object`.GetSystemInfo.goToPlayStore
 import com.example.airsignal_app.vmodel.GetAppVersionViewModel
 import com.google.firebase.database.FirebaseDatabase
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -34,9 +36,17 @@ class SplashActivity
         if (RequestPermissionsUtil(this).isNetworkPermitted()) {
             appVersionViewModel.loadDataResult()
         } else {
-            Toast.makeText(this,
-                "인터넷 연결 상태를 확인해주세요",
-                Toast.LENGTH_SHORT).show()
+            val builder = AlertDialog.Builder(this)
+            val alertDialog = builder.create()
+            alertDialog.apply {
+                setButton(AlertDialog.BUTTON_NEGATIVE,"확인"
+                ) { _, _ ->
+                    exitProcess(1)
+                }
+                setTitle("네트워크 미연결")
+                setMessage("인터넷 연결 상태를 확인 후 재실행 해주세요")
+                show()
+            }
         }
     }
 
@@ -89,12 +99,6 @@ class SplashActivity
         }
     }
 
-    fun goToPlayStore() {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse("market://details?id=$packageName")
-        startActivity(intent)
-    }
-
     private fun applyAppVersionData() {
         if (!appVersionViewModel.fetchData().hasObservers()) {
             appVersionViewModel.fetchData().observe(this) { result ->
@@ -106,8 +110,16 @@ class SplashActivity
                             if (ver.data.version == versionInfo) {
                                 enterPage()
                             } else {
-                                //TODO 버전 업데이트로 유도
-//                                goToPlayStore()
+                                val builder = AlertDialog.Builder(this)
+                                val alertDialog = builder.create()
+                                alertDialog.apply {
+                                    setButton(AlertDialog.BUTTON_NEGATIVE,"다운로드"
+                                    ) { _, _ ->
+                                        goToPlayStore(this@SplashActivity)
+                                    }
+                                    setMessage("새로운 버전이 있습니다.")
+                                    show()
+                                }
                             }
                         }
                         is BaseRepository.ApiState.Error -> {

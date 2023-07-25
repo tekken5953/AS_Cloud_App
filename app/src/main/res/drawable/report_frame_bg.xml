@@ -6,7 +6,7 @@
         android:id="@android:id/background">
         <shape android:shape="rectangle">
             <corners android:radius="10dp" />
-            <solid android:color="@color/white" />
+            <solid android:color="@color/theme_box_solid_color" />
         </shape>
     </item>
 </ripple>

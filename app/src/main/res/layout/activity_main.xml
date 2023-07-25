@@ -80,7 +80,7 @@
                 android:layout_centerVertical="true"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/refresh"
-                app:tint="@color/mode_color_text"/>
+                app:tint="@color/mode_black_color"/>
 
             <ImageView
                 android:id="@+id/mainAddAddress"
@@ -252,7 +252,6 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="-30dp"
-            android:background="@color/white"
             android:clipToPadding="false"
             android:orientation="vertical"
             android:overScrollMode="never"
@@ -264,7 +263,7 @@
                 android:id="@+id/nested_main_linear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/view_line_color"
+                android:background="@color/theme_main_bg_color"
                 android:paddingBottom="55dp">
 
                 <com.example.airsignal_app.view.custom_view.AirQView
@@ -369,7 +368,7 @@
                         android:layout_marginTop="24dp"
                         android:drawablePadding="5dp"
                         android:text="@string/daily_weather"
-                        android:textColor="@color/main_black_color"
+                        android:textColor="@color/theme_text_color"
                         android:textSize="18sp"
                         app:drawableStartCompat="@drawable/ico_time" />
 
@@ -442,6 +441,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
                         android:src="@drawable/cancel"
+                        app:tint="@color/theme_text_color"
                         android:visibility="visible" />
 
                     <com.google.android.gms.ads.AdView
@@ -475,7 +475,7 @@
                         android:layout_marginTop="24dp"
                         android:drawablePadding="5dp"
                         android:text="@string/weekly_weather"
-                        android:textColor="@color/main_black_color"
+                        android:textColor="@color/theme_text_color"
                         android:textSize="18sp"
                         app:drawableStartCompat="@drawable/ico_weekly" />
 
@@ -511,7 +511,7 @@
                         android:layout_marginTop="24dp"
                         android:drawablePadding="5dp"
                         android:text="@string/live_air_quality"
-                        android:textColor="@color/main_black_color"
+                        android:textColor="@color/theme_text_color"
                         android:textSize="18sp"
                         app:drawableStartCompat="@drawable/ico_airquality" />
 
@@ -547,7 +547,7 @@
                             android:layout_alignParentTop="true"
                             android:layout_centerHorizontal="true"
                             android:letterSpacing="-0.064"
-                            android:textColor="@color/main_black_color"
+                            android:textColor="@color/theme_text_color"
                             android:textSize="18sp" />
 
                         <TextView
@@ -557,7 +557,7 @@
                             android:layout_centerHorizontal="true"
                             android:layout_marginBottom="10dp"
                             android:letterSpacing="-0.048"
-                            android:textColor="#7C7C7C"
+                            android:textColor="@color/theme_sub_color"
                             android:textSize="14sp" />
 
                         <View
@@ -566,7 +566,7 @@
                             android:layout_height="1dp"
                             android:layout_below="@+id/nested_air_title_kr"
                             android:layout_marginTop="9dp"
-                            android:background="#E1E1E1" />
+                            android:background="@color/theme_line_color" />
 
                         <TextView
                             android:id="@+id/nested_air_value"
@@ -575,7 +575,7 @@
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="8dp"
                             android:letterSpacing="-0.064"
-                            android:textSize="24sp" />
+                            android:textSize="24sp"/>
 
                         <TextView
                             android:id="@+id/nested_air_unit"
@@ -584,7 +584,7 @@
                             android:layout_centerHorizontal="true"
                             android:layout_marginTop="3dp"
                             android:letterSpacing="-0.064"
-                            android:textColor="#7C7C7C"
+                            android:textColor="@color/theme_sub_color"
                             android:textSize="12sp" />
                     </RelativeLayout>
 
@@ -597,7 +597,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_toEndOf="@+id/nested_air_right_linear"
                         android:src="@drawable/help"
-                        app:tint="#7C7C7C" />
+                        app:tint="@color/theme_sub_color" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/nested_air_rv"
@@ -632,7 +632,7 @@
                         android:layout_marginTop="24dp"
                         android:drawablePadding="5dp"
                         android:text="@string/uv_title"
-                        android:textColor="@color/main_black_color"
+                        android:textColor="@color/theme_text_color"
                         android:textSize="18sp"
                         app:drawableStartCompat="@drawable/ico_uv" />
 
@@ -646,7 +646,7 @@
                         android:layout_marginBottom="8dp"
                         android:padding="5dp"
                         android:src="@drawable/btn_down"
-                        app:tint="@color/black" />
+                        app:tint="@color/theme_text_color" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/mainUVLegendRv"
@@ -709,7 +709,7 @@
                             android:layout_marginStart="18dp"
                             android:layout_marginTop="13dp"
                             android:layout_marginEnd="18dp"
-                            android:background="#F3F3F3" />
+                            android:background="@color/theme_line_color" />
 
                         <TextView
                             android:id="@+id/mainUvCollapsedTitle"
@@ -718,7 +718,7 @@
                             android:layout_marginStart="20dp"
                             android:layout_marginTop="16dp"
                             android:text="@string/how_to_response_title"
-                            android:textColor="@color/black"
+                            android:textColor="@color/theme_text_color"
                             android:textSize="14sp" />
 
                         <androidx.recyclerview.widget.RecyclerView

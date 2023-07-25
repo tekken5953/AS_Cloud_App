@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mode_color_view">
+    android:background="@color/theme_view_color">
 
     <RelativeLayout
         android:id="@+id/appInfoTopBar"
@@ -16,184 +16,190 @@
             android:layout_marginStart="20dp"
             android:layout_centerVertical="true"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/back_arrow" />
+            android:src="@drawable/back_arrow"
+            app:tint="@color/theme_text_color"/>
 
 
         <TextView
             style="@style/basicMediumTextView"
             android:layout_centerInParent="true"
             android:text="@string/setting_app_data"
-            android:textColor="@color/mode_color_text"
+            android:textColor="@color/theme_text_color"
             android:textSize="16sp" />
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/appInfoVersionTitle"
-        style="@style/basicMediumTextView"
-        android:layout_marginTop="22dp"
-        android:fontFamily="@font/spoqa_hansansneo_medium"
-        android:gravity="start"
-        android:text="@string/app_version"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@+id/appInfoTopBar"
-        android:layout_marginStart="24dp"/>
+        app:layout_constraintBottom_toBottomOf="parent">
+        <TextView
+            android:id="@+id/appInfoVersionTitle"
+            style="@style/basicMediumTextView"
+            android:layout_marginTop="22dp"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:gravity="start"
+            android:text="@string/app_version"
+            android:textSize="16sp"
+            android:textColor="@color/theme_text_color"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="24dp"/>
 
-    <ProgressBar
-        android:id="@+id/appInfoPB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        style="@android:style/Widget.Material.Light.ProgressBar.Small"
-        app:layout_constraintStart_toEndOf="@+id/appInfoVersionTitle"
-        app:layout_constraintTop_toTopOf="@+id/appInfoVersionTitle"
-        app:layout_constraintBottom_toBottomOf="@+id/appInfoVersionTitle"/>
+        <ProgressBar
+            android:id="@+id/appInfoPB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            style="@android:style/Widget.Material.Light.ProgressBar.Small"
+            app:layout_constraintStart_toEndOf="@+id/appInfoVersionTitle"
+            app:layout_constraintTop_toTopOf="@+id/appInfoVersionTitle"
+            app:layout_constraintBottom_toBottomOf="@+id/appInfoVersionTitle"/>
 
-    <TextView
-        android:id="@+id/appInfoVersionValue"
-        style="@style/basicTextView"
-        android:layout_marginTop="5dp"
-        android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:textColor="@color/main_blue_color"
-        android:textSize="16sp"
-        android:visibility="gone"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/appInfoVersionTitle"/>
+        <TextView
+            android:id="@+id/appInfoVersionValue"
+            style="@style/basicTextView"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/spoqa_hansansneo_regular"
+            android:textColor="@color/main_blue_color"
+            android:textSize="16sp"
+            android:visibility="gone"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle"
+            app:layout_constraintBottom_toTopOf="@+id/appInfoIsRecent"/>
 
-    <TextView
-        android:id="@+id/appInfoReleaseDate"
-        style="@style/basicTextView"
-        android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:textColor="@color/main_blue_color"
-        android:textSize="12sp"
-        android:visibility="gone"
-        android:layout_marginStart="2dp"
-        app:layout_constraintStart_toEndOf="@+id/appInfoVersionValue"
-        app:layout_constraintTop_toTopOf="@+id/appInfoVersionValue"
-        app:layout_constraintBottom_toBottomOf="@+id/appInfoVersionValue"/>
+        <TextView
+            android:id="@+id/appInfoIsRecent"
+            style="@style/basicTextView"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/theme_sub_color"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@+id/appInfoVersionTitle"
+            app:layout_constraintTop_toBottomOf="@+id/appInfoVersionValue" />
 
-    <TextView
-        android:id="@+id/appInfoIsRecent"
-        style="@style/basicTextView"
-        android:layout_marginTop="5dp"
-        android:textColor="@color/option_title_color"
-        android:textSize="12sp"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@+id/appInfoVersionTitle"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoVersionValue" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/appInfoDownBtn"
+            style="@style/basicMediumTextView"
+            android:layout_width="60dp"
+            android:layout_height="35dp"
+            android:textSize="12sp"
+            android:text="업데이트"
+            android:textColor="@color/white"
+            android:background="@drawable/app_info_update_btn_bg"
+            android:visibility="gone"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle"
+            app:layout_constraintBottom_toTopOf="@+id/appInfoIsRecent"/>
 
-    <Button
-        android:id="@+id/appInfoDownBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:backgroundTint="@color/main_blue_color"
-        android:textSize="12sp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoIsRecent"
-        app:layout_constraintStart_toStartOf="@+id/appInfoIsRecent"
-        android:layout_marginTop="10dp"/>
+        <View
+            android:id="@+id/appInfoLine1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@color/theme_line_color"
+            app:layout_constraintTop_toBottomOf="@+id/appInfoIsRecent"
+            android:layout_marginTop="16dp"/>
 
-    <View
-        android:id="@+id/appInfoLine1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="#EBEBEB"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoDownBtn"
-        android:layout_marginTop="16dp"/>
+        <TextView
+            android:id="@+id/appInfoLicense"
+            style="@style/basicMediumTextView"
+            android:layout_height="52dp"
+            android:layout_width="match_parent"
+            android:text="@string/open_source_license"
+            android:textColor="@color/theme_text_color"
+            app:layout_constraintTop_toBottomOf="@+id/appInfoLine1"
+            android:paddingStart="24dp"
+            android:paddingEnd="0dp"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical|start"/>
 
-    <TextView
-        android:id="@+id/appInfoLicense"
-        style="@style/basicMediumTextView"
-        android:layout_height="52dp"
-        android:layout_width="match_parent"
-        android:text="@string/open_source_license"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoLine1"
-        android:paddingStart="24dp"
-        android:paddingEnd="0dp"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical|start"/>
+        <View
+            android:id="@+id/appInfoLine2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@color/theme_line_color"
+            app:layout_constraintTop_toBottomOf="@+id/appInfoLicense"
+            android:layout_marginTop="16dp"/>
 
-    <View
-        android:id="@+id/appInfoLine2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="#EBEBEB"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoLicense"
-        android:layout_marginTop="16dp"/>
+        <TextView
+            android:id="@+id/appInfoTermsOfService"
+            style="@style/basicMediumTextView"
+            android:layout_height="52dp"
+            android:layout_width="match_parent"
+            android:text="@string/term_of_services"
+            android:textColor="@color/theme_text_color"
+            app:layout_constraintTop_toBottomOf="@+id/appInfoLine2"
+            android:paddingStart="24dp"
+            android:paddingEnd="0dp"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical|start"/>
 
-    <TextView
-        android:id="@+id/appInfoTermsOfService"
-        style="@style/basicMediumTextView"
-        android:layout_height="52dp"
-        android:layout_width="match_parent"
-        android:text="@string/term_of_services"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoLine2"
-        android:paddingStart="24dp"
-        android:paddingEnd="0dp"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical|start"/>
+        <View
+            android:id="@+id/appInfoLine3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@color/theme_line_color"
+            app:layout_constraintTop_toBottomOf="@+id/appInfoTermsOfService"
+            android:layout_marginTop="16dp"/>
 
-    <View
-        android:id="@+id/appInfoLine3"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="#EBEBEB"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoTermsOfService"
-        android:layout_marginTop="16dp"/>
+        <TextView
+            android:id="@+id/appInfoDataUsage"
+            style="@style/basicMediumTextView"
+            android:layout_height="52dp"
+            android:layout_width="match_parent"
+            android:text="@string/data_usages"
+            android:textColor="@color/theme_text_color"
+            app:layout_constraintTop_toBottomOf="@+id/appInfoLine3"
+            android:paddingStart="24dp"
+            android:paddingEnd="0dp"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical|start"/>
 
-    <TextView
-        android:id="@+id/appInfoDataUsage"
-        style="@style/basicMediumTextView"
-        android:layout_height="52dp"
-        android:layout_width="match_parent"
-        android:text="@string/data_usages"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoLine3"
-        android:paddingStart="24dp"
-        android:paddingEnd="0dp"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical|start"/>
+        <View
+            android:id="@+id/appInfoLine4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@color/theme_line_color"
+            app:layout_constraintTop_toBottomOf="@+id/appInfoDataUsage"
+            android:layout_marginTop="16dp"/>
 
-    <View
-        android:id="@+id/appInfoLine4"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="#EBEBEB"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoDataUsage"
-        android:layout_marginTop="16dp"/>
+        <TextView
+            android:id="@+id/appInfoCustomerService"
+            style="@style/basicMediumTextView"
+            android:layout_height="52dp"
+            android:layout_width="match_parent"
+            android:text="@string/customers_center"
+            android:textColor="@color/theme_text_color"
+            app:layout_constraintTop_toBottomOf="@+id/appInfoLine4"
+            android:paddingStart="24dp"
+            android:paddingEnd="0dp"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical|start"/>
 
-    <TextView
-        android:id="@+id/appInfoCustomerService"
-        style="@style/basicMediumTextView"
-        android:layout_height="52dp"
-        android:layout_width="match_parent"
-        android:text="@string/customers_center"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoLine4"
-        android:paddingStart="24dp"
-        android:paddingEnd="0dp"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        android:gravity="center_vertical|start"/>
+        <View
+            android:id="@+id/appInfoLine5"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@color/theme_line_color"
+            app:layout_constraintTop_toBottomOf="@+id/appInfoCustomerService"
+            android:layout_marginTop="16dp"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
-        android:id="@+id/appInfoLine5"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="#EBEBEB"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoCustomerService"
-        android:layout_marginTop="16dp"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

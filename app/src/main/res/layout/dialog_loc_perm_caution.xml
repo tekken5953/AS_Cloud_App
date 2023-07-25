@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/loc_perm_bg">
 
     <TextView
         android:id="@+id/permCautionTitle"
         style="@style/basicMediumTextView"
-        android:textColor="#4F4F4F"
+        android:textColor="@color/theme_text_color"
         android:textSize="20sp"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/permCautionExplain"
@@ -21,7 +21,7 @@
         android:layout_above="@+id/permCautionImg"
         android:layout_marginBottom="40dp"
         android:textSize="14sp"
-        android:textColor="#7C7C7C"
+        android:textColor="@color/theme_sub_color"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:lineHeight="20dp"
@@ -43,6 +43,7 @@
         android:paddingStart="3dp"
         android:paddingEnd="0dp"
         android:src="@drawable/shadow_caution"
+        app:tint="@color/theme_text_color"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/permCautionBtn"
         android:layout_marginBottom="22dp"/>

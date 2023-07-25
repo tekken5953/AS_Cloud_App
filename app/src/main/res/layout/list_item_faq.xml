@@ -21,7 +21,8 @@
         android:fontFamily="@font/spoqa_hansansneo_regular"
         android:gravity="center_vertical"
         android:maxEms="18"
-        android:maxLines="2"/>
+        android:maxLines="2"
+        android:textColor="@color/theme_text_color"/>
 
     <ImageView
         android:id="@+id/itemfaqArrow"
@@ -31,12 +32,12 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="20dp"
         android:src="@drawable/right_arrow"
-        app:tint="@color/main_gray_color" />
+        app:tint="@color/theme_text_color" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.7dp"
-        android:background="@color/view_line_color"
+        android:background="@color/theme_line_color"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginTop="12dp"

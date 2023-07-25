@@ -8,4 +8,14 @@
     <color name="option_title_color">#90ffffff</color>
     <color name="main_gray_color">#D9D9D9</color>
 
+    <color name="theme_view_color">#262626</color>
+    <color name="theme_text_color">#FFFFFF</color>
+    <color name="theme_sub_color">#9C9C9C</color>
+    <color name="theme_line_color">#303236</color>
+    <color name="theme_box_solid_color">#2A2C2F</color>
+    <color name="theme_box_stroke_color">#303236</color>
+    <color name="theme_main_bg_color">#262626</color>
+    <color name="theme_indicator_empty_color">#A6A6A6</color>
+    <color name="theme_indicator_fill_color">#eeeeee</color>
+
 </resources>

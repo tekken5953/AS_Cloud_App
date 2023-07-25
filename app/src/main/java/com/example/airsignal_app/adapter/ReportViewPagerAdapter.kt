@@ -71,17 +71,12 @@ class ReportViewPagerAdapter(
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try {
-//                        val count = textView.layout.lineCount
-//                        val lastLineIndex: Int = count - 1
-//                        val ellipsisCount: Int = textView.layout.getEllipsisCount(lastLineIndex) /
-//                                textView.maxEms
                         val ellipsisCount = textView.layout.getEllipsisCount(textView.lineCount - 1)
                         val isEllipsized = ellipsisCount > 0
-//                    onClickListener.onItemClick(it, position)
                         if (textView.maxLines == 3) {
                             if (isEllipsized) {
                                 mVib()
-                                val lineCount = textView.lineCount + (textView.maxEms / ellipsisCount)
+                                val lineCount = textView.lineCount + (ellipsisCount / textView.maxEms + 1)
                                 textView.maxLines = lineCount
                                 val lineHeight = textView.lineHeight
                                 val desiredHeight = lineCount * lineHeight

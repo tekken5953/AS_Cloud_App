@@ -12,11 +12,12 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="24dp"
         android:src="@drawable/location"
-        app:tint="@color/mode_color_text" />
+        app:tint="@color/theme_text_color" />
 
     <TextView
         android:id="@+id/listCurrentAddressText"
         style="@style/basicTextView"
+        android:textColor="@color/theme_text_color"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/listCurrentAddressImg" />
@@ -31,7 +32,8 @@
         android:layout_toEndOf="@+id/listCurrentAddressText"
         android:background="@drawable/edit_delete_btn_bg"
         android:text="삭제"
-        android:textSize="11sp" />
+        android:textSize="11sp"
+        android:textColor="@color/white"/>
 
     <ImageView
         android:id="@+id/listCurrentAddressChecked"
@@ -42,7 +44,7 @@
         android:layout_marginEnd="24dp"
         android:src="@drawable/check_small"
         android:visibility="gone"
-        app:tint="@color/mode_color_text" />
+        app:tint="@color/theme_text_color" />
 
     <View
         android:layout_width="match_parent"
@@ -50,6 +52,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
-        android:background="@color/view_line_color" />
+        android:background="@color/theme_line_color" />
 
 </RelativeLayout>

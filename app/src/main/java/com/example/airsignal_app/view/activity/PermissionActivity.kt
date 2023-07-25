@@ -1,5 +1,6 @@
 package com.example.airsignal_app.view.activity
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -36,6 +37,8 @@ class PermissionActivity :
                     SetAppInfo.setInitNotiPermission(this, "Not Init")
                     perm.requestNotification()
                 } else {
+                    Toast.makeText(this, "알림은 앱 설정 -> 알림 항목에서 언제든 허용하실 수 있습니다.",
+                        Toast.LENGTH_SHORT).show()
                     EnterPageUtil(this).toMain(GetAppInfo.getUserLoginPlatform(this))
                 }
             } else {
@@ -84,17 +87,21 @@ class PermissionActivity :
                         }
                     }
                 } else {
-                    Log.d("TAG_P", "Denied Permission")
-                    Toast.makeText(
-                        this,
-                        "위치 권한이 거부되어 있습니다\n서비스 이용을 위해 허용해주세요",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    val uri: Uri = Uri.fromParts("package", packageName, null)
-                    intent.data = uri
-                    startActivity(intent)
+                    val builder = AlertDialog.Builder(this)
+                    val alertDialog = builder.create()
+                    alertDialog.apply {
+                        setButton(
+                            AlertDialog.BUTTON_NEGATIVE,"확인"
+                        ) { _, _ ->
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                            val uri: Uri = Uri.fromParts("package", packageName, null)
+                            intent.data = uri
+                            startActivity(intent)
+                        }
+                        setTitle("위치 권한 거부됨")
+                        setMessage("권한 -> 위치 -> 허용을 체크해주세요")
+                        show()
+                    }
                 }
             }
         }

@@ -5,7 +5,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/mode_color_view">
+        android:background="@color/theme_view_color">
 
         <RelativeLayout
             android:id="@+id/settingTopBarTr"
@@ -20,7 +20,7 @@
                 android:layout_marginStart="20dp"
                 android:src="@drawable/back_arrow"
                 android:layout_centerVertical="true"
-                app:tint="@color/mode_color_text"
+                app:tint="@color/theme_text_color"
                 android:layout_alignParentStart="true" />
 
             <TextView
@@ -29,6 +29,7 @@
                 android:layout_centerInParent="true"
                 android:fontFamily="@font/spoqa_hansansneo_regular"
                 android:text="@string/setting_title"
+                android:textColor="@color/theme_text_color"
                 android:textSize="16sp" />
         </RelativeLayout>
 
@@ -49,7 +50,7 @@
                     style="@style/basicTextView"
                     android:layout_marginStart="24dp"
                     android:text="@string/setting_account"
-                    android:textColor="@color/option_title_color"
+                    android:textColor="@color/theme_sub_color"
                     android:textSize="14sp"
                     android:fontFamily="@font/spoqa_hansansneo_bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -87,6 +88,7 @@
                         android:layout_centerVertical="true"
                         android:text="@string/please_login"
                         android:textSize="16sp"
+                        android:textColor="@color/theme_text_color"
                         android:layout_toEndOf="@+id/settingUserIcon"
                         android:layout_marginStart="6dp"
                         android:fontFamily="@font/spoqa_hansansneo_regular" />
@@ -108,7 +110,7 @@
                     style="@style/basicTextView"
                     android:layout_marginTop="40dp"
                     android:text="@string/system"
-                    android:textColor="@color/option_title_color"
+                    android:textColor="@color/theme_sub_color"
                     android:textSize="14sp"
                     android:fontFamily="@font/spoqa_hansansneo_bold"
                     app:layout_constraintStart_toStartOf="@+id/settingUserTitle"
@@ -121,7 +123,7 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="24dp"
-                    android:background="@color/view_line_color"
+                    android:background="@color/theme_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingThemeTitle" />
 
                 <com.example.airsignal_app.view.custom_view.SettingSystemView
@@ -153,7 +155,7 @@
                     style="@style/basicTextView"
                     android:layout_marginTop="25dp"
                     android:text="@string/setting_notify"
-                    android:textColor="@color/option_title_color"
+                    android:textColor="@color/theme_sub_color"
                     android:textSize="14sp"
                     android:fontFamily="@font/spoqa_hansansneo_bold"
                     app:layout_constraintStart_toStartOf="@+id/settingUserTitle"
@@ -166,7 +168,7 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="24dp"
-                    android:background="@color/view_line_color"
+                    android:background="@color/theme_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingNotiTitle" />
 
                 <com.example.airsignal_app.view.custom_view.SettingSystemView
@@ -182,7 +184,7 @@
                     style="@style/basicTextView"
                     android:layout_marginTop="25dp"
                     android:text="@string/setting_customer_service"
-                    android:textColor="@color/option_title_color"
+                    android:textColor="@color/theme_sub_color"
                     android:textSize="14sp"
                     android:fontFamily="@font/spoqa_hansansneo_bold"
                     app:layout_constraintStart_toStartOf="@+id/settingUserTitle"
@@ -195,7 +197,7 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="24dp"
-                    android:background="@color/view_line_color"
+                    android:background="@color/theme_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingCustomerTitle" />
 
                 <TextView
@@ -206,6 +208,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     style="@style/settingSingleTextView"
                     android:text="@string/setting_notice"
+                    android:textColor="@color/theme_text_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingLine4" />
 
                 <TextView
@@ -216,6 +219,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     android:paddingEnd="24dp"
                     android:text="@string/event"
+                    android:textColor="@color/theme_text_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingNotice" />
 
                 <TextView
@@ -227,6 +231,7 @@
                     android:paddingEnd="24dp"
                     android:background="?android:attr/selectableItemBackground"
                     android:text="@string/setting_faq"
+                    android:textColor="@color/theme_text_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingEvent" />
 
                 <TextView
@@ -236,6 +241,7 @@
                     android:paddingStart="24dp"
                     android:paddingEnd="24dp"
                     android:text="@string/setting_app_data"
+                    android:textColor="@color/theme_text_color"
                     android:background="?android:attr/selectableItemBackground"
                     app:layout_constraintTop_toBottomOf="@+id/settingFaq" />
 
