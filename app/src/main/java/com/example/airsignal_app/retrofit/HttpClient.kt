@@ -47,10 +47,10 @@ object HttpClient {
          *
          * 클라이언트 빌더 Interceptor 구분 **/
         val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
-            retryOnConnectionFailure(retryOnConnectionFailure = false)
+            retryOnConnectionFailure(retryOnConnectionFailure = true)
             connectTimeout(30, TimeUnit.SECONDS)
-            readTimeout(7, TimeUnit.SECONDS)
-            writeTimeout(7, TimeUnit.SECONDS)
+            readTimeout(12, TimeUnit.SECONDS)
+            writeTimeout(12, TimeUnit.SECONDS)
             addInterceptor {
                 val request = it.request().newBuilder()
                     .addHeader("Connection", "close")

@@ -293,11 +293,11 @@ object DataTypeParser {
     }
 
     /** 시간별 날씨 날짜 이름 **/
-    fun getDailyItemDate(localDateTime: LocalDateTime): String? {
+    fun getDailyItemDate(context: Context, localDateTime: LocalDateTime): String? {
         return when(localDateTime.toLocalDate().compareTo(parseLongToLocalDateTime(getCurrentTime()).toLocalDate())) {
-            0 -> { "오늘" }
-            1 -> { "내일" }
-            2 -> { "모레" }
+            0 -> { context.getString(R.string.daily_today)}
+            1 -> { context.getString(R.string.daily_tomorrow)}
+            2 -> { context.getString(R.string.daily_next_tomorrow)}
             else -> { null }
         }
     }

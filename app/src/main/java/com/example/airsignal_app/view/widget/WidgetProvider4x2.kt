@@ -16,6 +16,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.view.ToastUtils
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_ENABLE
+import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_OPTIONS_CHANGED
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE
 
 
@@ -25,9 +26,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        if (!isJobScheduled(context)) {
-            NotiJobScheduler().scheduleJob(context)
-        }
+        NotiJobScheduler().scheduleJob(context)
     }
 
     // onEnabled() 와는 반대로 마지막의 최종 앱 위젯 인스턴스가 삭제 될 때 호출 됩니다
@@ -61,9 +60,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        if (!isJobScheduled(context)) {
-            NotiJobScheduler().scheduleJob(context)
-        }
+        NotiJobScheduler().scheduleJob(context)
     }
 
     // 이 메소드는 앱 데이터가 구글 시스템에 백업 된 이후 복원 될 때 만약 위젯 데이터가 있다면 데이터가 복구 된 이후 호출 됩니다.
@@ -91,7 +88,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 WIDGET_ENABLE -> {
                     NotiJobService().getWidgetLocation(context)
                 }
-                WIDGET_UPDATE
+                WIDGET_UPDATE, WIDGET_OPTIONS_CHANGED
                 -> {
                     val isDozeMode = intent.getBooleanExtra(
                         "android.os.extra.IDLE_MODE",

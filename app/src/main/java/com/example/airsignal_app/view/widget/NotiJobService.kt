@@ -16,6 +16,8 @@ import android.view.View
 import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.StaticDataObject
+import com.example.airsignal_app.dao.StaticDataObject.IN_COMPLETE_ADDRESS
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.retrofit.ApiModel
@@ -330,12 +332,16 @@ class NotiJobService : JobService() {
                                             as BitmapDrawable).bitmap
                                 )
 
-                                val rawAddr = GetAppInfo.getNotificationAddress(context).trim()
-                                    .replace("대한민국", "")
+                                val rawAddr = addr.replace("대한민국", "")
+                                val regexAddr = if (getRegexAddr(rawAddr) == IN_COMPLETE_ADDRESS) {
+                                    rawAddr
+                                } else {
+                                    getRegexAddr(rawAddr)
+                                }
 
                                 setTextViewText(
                                     R.id.widget4x2Address,
-                                    getRegexAddr(rawAddr)
+                                    regexAddr
                                     )
 
                                 fetch(context, views)

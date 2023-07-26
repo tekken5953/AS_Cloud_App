@@ -27,6 +27,13 @@
         android:windowSoftInputMode="adjustNothing"
         tools:replace="android:icon,android:label">
         <activity
+            android:name=".view.activity.TermsOfServiceActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".view.widget.BackgroundPermissionActivity"
             android:exported="true">
             <meta-data
@@ -77,11 +84,9 @@
                     android:scheme="@string/kakaoOAuth" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".view.activity.LoginActivity"
             android:exported="true" />
-
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
             android:theme="@style/OpenSourceMenuTheme" />
@@ -107,11 +112,9 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/adMobId" />
 
-
         <receiver
             android:name=".firebase.fcm.NotificationBuilder"
-            tools:ignore="Instantiatable" >
-        </receiver>
+            tools:ignore="Instantiatable"></receiver>
 
         <service
             android:name=".firebase.fcm.SubFCM"

@@ -76,7 +76,7 @@ class DailyWeatherAdapter(
             time.text = dao.time
             image.setImageDrawable(dao.img)
             value.text = dao.value
-            date.text = getDailyItemDate(LocalDateTime.parse(dao.date))
+            date.text = getDailyItemDate(context, LocalDateTime.parse(dao.date))
             rain.text = "${dao.rainP?.toInt().toString()}%"
 
             if (adapterPosition == 0) {

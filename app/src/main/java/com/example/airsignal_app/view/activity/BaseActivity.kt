@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
+import com.example.airsignal_app.dao.StaticDataObject.LANG_KR
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserTheme
@@ -29,10 +31,10 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
 
         // 설정된 언어정보 불러오기
         when (getUserLocation(this)) {
-            "korean" -> {
+            LANG_KR -> {
                 SetSystemInfo.setLocaleToKorea(this)
             }
-            "english" -> {
+            LANG_EN -> {
                 SetSystemInfo.setLocaleToEnglish(this)
             }
             else -> {

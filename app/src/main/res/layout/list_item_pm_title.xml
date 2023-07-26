@@ -4,13 +4,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_marginEnd="12dp"
-    android:layout_marginBottom="15dp">
+    android:layout_marginEnd="10dp"
+    android:layout_marginBottom="12dp">
     
     <TextView
         android:id="@+id/listItemCpvTitle"
         style="@style/basicTextView"
-        android:textSize="12sp"
+        android:textSize="14sp"
         android:textColor="@color/theme_text_color"
         android:letterSpacing="-0.048"
         android:background="@drawable/pm_rv_title_bg_ns"/>

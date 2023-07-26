@@ -18,6 +18,8 @@
         android:id="@+id/listCurrentAddressText"
         style="@style/basicTextView"
         android:textColor="@color/theme_text_color"
+        android:maxEms="18"
+        android:ellipsize="start"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/listCurrentAddressImg" />

@@ -29,7 +29,7 @@
         android:fontFamily="@font/spoqa_hansansneo_regular"
         android:gravity="center_vertical|start"
         android:hint="동,읍,면으로 검색"
-        android:textColorHint="@color/theme_view_color"
+        android:textColorHint="@color/theme_text_color"
         android:inputType="text"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"

@@ -14,7 +14,7 @@
         android:layout_height="6dp"
         android:src="@drawable/dot"
         android:layout_marginTop="5dp"
-        app:tint="@color/theme_sub_color"/>
+        app:tint="@color/theme_text_color"/>
 
     <TextView
         android:id="@+id/listItemUvResponseText"
@@ -22,7 +22,7 @@
         android:layout_toEndOf="@+id/listItemUvResponseDot"
         android:gravity="start"
         android:textSize="14sp"
-        android:textColor="@color/theme_sub_color"
+        android:textColor="@color/theme_text_color"
         android:layout_marginStart="10dp" />
 
 </RelativeLayout>

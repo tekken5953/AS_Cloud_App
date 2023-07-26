@@ -31,17 +31,18 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/appInfoTopBar"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_marginTop="22dp"
+        app:layout_constraintTop_toBottomOf="@+id/appInfoTopBar">
         <TextView
             android:id="@+id/appInfoVersionTitle"
             style="@style/basicMediumTextView"
-            android:layout_marginTop="22dp"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/spoqa_hansansneo_medium"
             android:gravity="start"
             android:text="@string/app_version"
             android:textSize="16sp"
             android:textColor="@color/theme_text_color"
+            android:layout_marginTop="22dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="24dp"/>
@@ -67,12 +68,11 @@
             android:layout_marginEnd="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle"
-            app:layout_constraintBottom_toTopOf="@+id/appInfoIsRecent"/>
+            android:layout_marginBottom="3dp"/>
 
         <TextView
             android:id="@+id/appInfoIsRecent"
             style="@style/basicTextView"
-            android:layout_marginTop="5dp"
             android:textColor="@color/theme_sub_color"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="@+id/appInfoVersionTitle"
@@ -91,7 +91,7 @@
             android:layout_marginEnd="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle"
-            app:layout_constraintBottom_toTopOf="@+id/appInfoIsRecent"/>
+            android:layout_marginBottom="3dp"/>
 
         <View
             android:id="@+id/appInfoLine1"

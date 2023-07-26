@@ -31,6 +31,7 @@ object RDBLogcat {
     const val LOGIN_PREF_EMAIL = "이메일"
     const val LOGIN_PREF_PHONE = "핸드폰"
     const val LOGIN_PREF_NAME = "이름"
+    const val LOGIN_PREF_DEVICE_ID = "Android ID"
     const val LOGIN_PREF_PROFILE = "프로필 이미지"
     const val AUTO_LOGIN = "자동 로그인"
     const val OPTIONAL_LOGIN = "수동 로그인"
@@ -118,6 +119,7 @@ object RDBLogcat {
             child(LOGIN_PREF_PHONE).setValue(phone)
             child(LOGIN_PREF_NAME).setValue(name)
             child(LOGIN_PREF_PROFILE).setValue(profile)
+            child(LOGIN_PREF_DEVICE_ID).setValue(GetSystemInfo.androidID(context))
         }
     }
 

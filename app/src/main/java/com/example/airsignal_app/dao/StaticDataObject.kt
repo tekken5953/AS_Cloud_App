@@ -35,4 +35,7 @@ object StaticDataObject {
     const val NO2_INDEX = 4
     const val O3_INDEX = 5
     const val IN_COMPLETE_ADDRESS = "불완전한 주소"
+    const val LANG_KR = "korea"
+    const val LANG_EN = "english"
+    const val LANG_SYS = "system"
 }
