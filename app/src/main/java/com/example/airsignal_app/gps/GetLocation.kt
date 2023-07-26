@@ -34,11 +34,11 @@ class GetLocation(private val context: Context) {
 
     /** 현재 주소를 불러옵니다 **/
     fun getAddress(lat: Double, lng: Double): String? {
-        lateinit var address: List<Address>
         return try {
             val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
+
             @Suppress("DEPRECATION")
-            address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
+            val address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             setNotificationAddress(context, address[0].getAddressLine(0))
             setUserLastAddr(context, formattingFullAddress(address[0].getAddressLine(0)))
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
@@ -83,10 +83,8 @@ class GetLocation(private val context: Context) {
             model.timeStamp = getCurrentTime()
             if (roomDB.findAll().isEmpty()) {
                 roomDB.insert(model)
-                Logger.t(TAG_D).d("Insert GPS In GetLocation")
             } else {
                 roomDB.update(model)
-                Logger.t(TAG_D).d("Update GPS In GetLocation")
             }
         }
     }
@@ -119,16 +117,16 @@ class GetLocation(private val context: Context) {
     /** 디바이스 GPS 센서에 접근이 가능한지 확인 **/
     fun isGPSConnected(): Boolean {
         val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
-        Timber.tag("Location Enable")
-            .i("위치정보 호출 여부 :  ${lm.isProviderEnabled(LocationManager.GPS_PROVIDER)} ")
+//        Timber.tag("Location Enable")
+//            .i("위치정보 호출 여부 :  ${lm.isProviderEnabled(LocationManager.GPS_PROVIDER)} ")
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
     /** 디바이스 네트워크에 접근이 가능한지 확인 **/
     fun isNetWorkConnected(): Boolean {
         val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
-        Timber.tag("Location Enable")
-            .i("네트워크 호출 여부 : ${lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)}")
+//        Timber.tag("Location Enable")
+//            .i("네트워크 호출 여부 : ${lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)}")
         return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 

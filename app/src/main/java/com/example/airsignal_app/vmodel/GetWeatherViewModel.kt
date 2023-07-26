@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.repo.GetWeatherRepo
 import com.example.airsignal_app.retrofit.ApiModel
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.launch
 
 /**
@@ -20,8 +19,6 @@ class GetWeatherViewModel(private val repo: GetWeatherRepo) : BaseViewModel("날
     // MutableLiveData 값을 갱신하기 위한 함수
     fun loadData(lat: Double?, lng: Double?, addr: String?): GetWeatherViewModel {
 //        repo._getDataResult.value = BaseRepository.ApiState.Loading
-        Logger.t("Weather API").d("API Request : $lat , $lng , $addr")
-
         repo.loadDataResult(lat, lng, addr)
         return this
     }

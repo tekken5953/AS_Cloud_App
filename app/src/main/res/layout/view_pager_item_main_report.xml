@@ -2,11 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:id="@+id/listItemReportText"
-        style="@style/basicMediumTextView"
+        style="@style/basicTextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="32dp"
@@ -15,10 +16,10 @@
         android:gravity="start|center_vertical"
         android:letterSpacing="0"
         android:lineHeight="20dp"
-        android:maxEms="15"
+        android:maxEms="16"
         android:maxLines="3"
-        android:textColor="@color/black"
-        android:textSize="14sp"
+        android:textColor="@color/theme_text_color"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

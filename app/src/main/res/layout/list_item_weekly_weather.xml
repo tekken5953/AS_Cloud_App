@@ -3,30 +3,31 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@color/white">
+    android:background="@android:color/transparent">
 
     <LinearLayout
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="20dp"
         android:layout_centerVertical="true">
         <TextView
             android:id="@+id/weeklyDayText"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:lines="1"
             android:textSize="14sp"
             android:letterSpacing="-0.04"
             android:fontFamily="@font/spoqa_hansansneo_medium"
-            android:textColor="#2D3436" />
+            android:textColor="@color/theme_text_color" />
 
         <TextView
             android:id="@+id/weeklyDayDate"
-            style="@style/basicTextView"
-            android:textColor="#9E9E9E"
-            android:textSize="12sp"
-            android:letterSpacing="-0.04" />
+            style="@style/basicMediumTextView"
+            android:layout_width="wrap_content"
+            android:letterSpacing="-0.04"
+            android:textColor="@color/theme_sub_color"
+            android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -37,15 +38,14 @@
         android:gravity="center">
         <ImageView
             android:id="@+id/weeklyMinIv"
-            android:layout_width="32dp"
-            android:layout_height="32dp"/>
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
 
         <ImageView
             android:id="@+id/weeklyMaxIv"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="12dp"/>
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -57,29 +57,29 @@
         android:layout_marginEnd="24dp">
         <TextView
             android:id="@+id/weeklyMinText"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:gravity="center"
             android:lines="1"
-            android:textColor="#7C7C7C"
-            android:textSize="14sp"/>
+            android:textColor="@color/theme_text_color"
+            android:textSize="16sp"/>
 
         <TextView
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:text="/"
             android:gravity="center"
             android:lines="1"
-            android:textSize="14sp"
-            android:textColor="#7C7C7C"
-            android:layout_marginStart="3dp"/>
+            android:textSize="16sp"
+            android:textColor="@color/theme_text_color"
+            android:layout_marginStart="1dp"/>
 
         <TextView
             android:id="@+id/weeklyMaxText"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:gravity="center"
             android:lines="1"
-            android:textColor="#7C7C7C"
-            android:textSize="14sp"
-            android:layout_marginStart="3dp"/>
+            android:textColor="@color/theme_text_color"
+            android:textSize="16sp"
+            android:layout_marginStart="1dp"/>
     </LinearLayout>
 
     <View
@@ -87,7 +87,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/view_line_color"
+        android:background="@color/theme_line_color"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"/>
 </RelativeLayout>

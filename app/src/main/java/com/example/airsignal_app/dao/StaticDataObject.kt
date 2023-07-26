@@ -34,4 +34,5 @@ object StaticDataObject {
     const val SO2_INDEX = 3
     const val NO2_INDEX = 4
     const val O3_INDEX = 5
+    const val IN_COMPLETE_ADDRESS = "불완전한 주소"
 }

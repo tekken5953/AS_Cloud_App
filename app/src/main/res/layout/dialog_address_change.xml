@@ -5,7 +5,7 @@
     android:gravity="top"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/mode_color_view">
+    android:background="@color/theme_view_color">
 
     <View
         android:id="@+id/changeAddressTopView"
@@ -26,6 +26,8 @@
         android:layout_marginBottom="15dp"
         android:background="@drawable/search_bg"
         android:hint="새 주소를 입력해주세요"
+        android:textColorHint="@color/theme_view_color"
+        android:textColor="@color/theme_text_color"
         android:fontFamily="@font/spoqa_hansansneo_regular"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
@@ -44,6 +46,7 @@
         android:layout_below="@+id/changeAddressView"
         android:layout_alignParentEnd="true"
         android:textSize="14sp"
+        android:textColor="@color/theme_sub_color"
         android:layout_marginEnd="24dp"/>
 
     <androidx.recyclerview.widget.RecyclerView

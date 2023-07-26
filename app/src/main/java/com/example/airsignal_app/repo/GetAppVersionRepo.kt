@@ -34,18 +34,18 @@ class GetAppVersionRepo: BaseRepository() {
                     val responseBody = response.body()!!
 
                     if (response.isSuccessful) {
-                        Logger.t(TAG_R).d("Success to get API : ${ApiState.Success(responseBody).data}")
+//                        Logger.t(TAG_R).d("Success to get API : ${ApiState.Success(responseBody).data}")
 
                         _getAppVersionResult.postValue(ApiState.Success(responseBody))
                     } else {
-                        Logger.t(TAG_R).d("Fail to get API : ${ApiState.Success(responseBody).data}")
+//                        Logger.t(TAG_R).d("Fail to get API : ${ApiState.Success(responseBody).data}")
 
                         _getAppVersionResult.postValue(ApiState.Error(""))
                     }
                 }
 
                 override fun onFailure(call: Call<ApiModel.AppVersion>, t: Throwable) {
-                    Logger.t(TAG_R).d("Fail to get API : ${t.localizedMessage}")
+//                    Logger.t(TAG_R).d("Fail to get API : ${t.localizedMessage}")
 
                     _getAppVersionResult.postValue(ApiState.Error("Network is Disable"))
                 }

@@ -18,24 +18,20 @@ class GpsRepository(private val context: Context) {
         CoroutineScope(Dispatchers.Default).launch {
             getInstance(context)!!.gpsRepository().updateCurrentGPS(model)
             Logger.t(TAG_D).d("Update Model : $model")
-            Timber.tag("ReAddrTest").i("airQRepository update : ${model.addr}")
         }
     }
 
     fun insert(model: GpsEntity) {
         CoroutineScope(Dispatchers.Default).launch {
             getInstance(context)!!.gpsRepository().insertNewGPS(model)
-            Logger.t(TAG_D).d("insert Model : $model")
         }
     }
 
     fun findAll(): List<GpsEntity> {
-        Logger.t(TAG_D).d("findAll Model")
         return getInstance(context)!!.gpsRepository().findAll()
     }
 
     fun findById(name: String): GpsEntity {
-        Logger.t(TAG_D).d("findById Model : $name")
         return getInstance(context)!!.gpsRepository().findById(name)
     }
 
@@ -43,16 +39,13 @@ class GpsRepository(private val context: Context) {
         CoroutineScope(Dispatchers.Default).launch {
             getInstance(context)!!.gpsRepository().deleteFromAddr(addr)
         }
-        Logger.t(TAG_D).d("deleteFromAddress Model")
     }
 
     fun findByAddress(addr: String): GpsEntity {
-        Logger.t(TAG_D).d("findByAddr Model")
         return getInstance(context)!!.gpsRepository().findByAddress(addr)
     }
 
     fun clearDB() {
         getInstance(context)!!.gpsRepository().clearDB()
-        Logger.t(TAG_D).d("ClearDB Model")
     }
 }

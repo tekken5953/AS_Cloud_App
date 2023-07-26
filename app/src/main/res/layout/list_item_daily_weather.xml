@@ -2,12 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="30dp"
+    android:layout_marginEnd="24dp"
     android:background="@drawable/daily_box_bg">
 
     <TextView
         android:id="@+id/itemDailyDate"
-        style="@style/basicTextView"
+        style="@style/basicMediumTextView"
         android:layout_centerHorizontal="true"
         android:textColor="@color/white"
         android:background="@drawable/daily_date_bg_ns"
@@ -17,12 +17,12 @@
 
     <TextView
         android:id="@+id/itemDailyTime"
-        style="@style/basicTextView"
+        style="@style/basicMediumTextView"
         android:layout_below="@+id/itemDailyDate"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="5dp"
         android:fontFamily="@font/spoqa_hansansneo_bold"
-        android:textColor="@color/black"
+        android:textColor="@color/theme_text_color"
         android:textSize="14sp" />
 
     <ImageView
@@ -31,27 +31,27 @@
         android:layout_height="40dp"
         android:layout_below="@+id/itemDailyTime"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp" />
 
     <TextView
         android:id="@+id/itemDailyValue"
-        style="@style/basicTextView"
+        style="@style/basicMediumTextView"
         android:layout_below="@+id/itemDailySky"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:textColor="@color/black"
-        android:textSize="14sp" />
+        android:textColor="@color/theme_text_color"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/itemDailyRain"
-        style="@style/basicTextView"
+        style="@style/basicMediumTextView"
         android:textColor="@color/white"
         android:textSize="12sp"
         android:visibility="invisible"
         android:background="@drawable/daily_list_rain"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/itemDailyValue"
-        android:layout_marginBottom="25dp"/>
+        android:layout_marginBottom="12dp"/>
 </RelativeLayout>

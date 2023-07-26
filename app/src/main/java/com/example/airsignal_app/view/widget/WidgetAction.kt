@@ -13,6 +13,7 @@ object WidgetAction {
     const val WIDGET_ENABLE =  AppWidgetManager.ACTION_APPWIDGET_ENABLED
     const val WIDGET_UPDATE = AppWidgetManager.ACTION_APPWIDGET_UPDATE
     const val WIDGET_OPTIONS_CHANGED = AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED
+    const val ACTION_DOZE_MODE_CHANGED = "android.os.action.DEVICE_IDLE_MODE_CHANGED"
 
     fun calculateColumnCount(count: Int): Float {
         val deviceWidthInDp =

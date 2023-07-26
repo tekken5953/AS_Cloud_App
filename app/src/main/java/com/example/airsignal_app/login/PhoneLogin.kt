@@ -73,8 +73,6 @@ class PhoneLogin(
             // 2 - Auto-retrieval. On some devices Google Play services can automatically
             //     detect the incoming verification SMS and perform verification without
             //     user action.
-            Log.d("phone_tag", "onVerificationCompleted:${credential.signInMethod}")
-
             setLoginVerificationCode(activity,credential.smsCode.toString())
             setUserLoginPlatform(activity,"phone")
             signInWithPhoneAuthCredential(credential)
@@ -85,7 +83,6 @@ class PhoneLogin(
         override fun onVerificationFailed(e: FirebaseException) {
             // This callback is invoked in an invalid request for verification is made,
             // for instance if the the phone number format is not valid.
-            Log.w("phone_tag", "onVerificationFailed", e)
             btnEnable()
             msgEnable()
 
@@ -108,7 +105,6 @@ class PhoneLogin(
             // The SMS verification code has been sent to the provided phone number, we
             // now need to ask the user to enter the code and then construct a credential
             // by combining the code with a verification ID.
-            Log.d("phone_tag", "onCodeSent:$verificationId")
             btnDisable()
             msgDisable()
 
@@ -125,12 +121,9 @@ class PhoneLogin(
             .addOnCompleteListener(activity) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d("phone_tag", "signInWithCredential:complete")
-                    Log.d("phone_tag", "complete : ${task.result.user?.phoneNumber}")
 //                    val user = task.result?.user
                 } else {
                     // Sign in failed, display a message and update the UI
-                    Log.w("phone_tag", "signInWithCredential:failure", task.exception)
 //                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
 //                        // The verification code entered was invalid
 //                    }
@@ -139,8 +132,6 @@ class PhoneLogin(
             }
 
             .addOnSuccessListener { result ->
-                Log.d("phone_tag", "signInWithCredential:success")
-                Log.d("phone_tag", "success : ${result.user?.phoneNumber}")
                 setUserEmail(activity, result.user?.email.toString())
                 setUserProfile(activity, result.user?.photoUrl.toString())
                 Toast.makeText(activity, "$result", Toast.LENGTH_SHORT).show()

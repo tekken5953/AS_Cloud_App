@@ -2,17 +2,21 @@ package com.example.airsignal_app.login
 
 import android.app.Activity
 import android.content.Intent
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
+import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginPref
 import com.example.airsignal_app.util.RefreshUtils
+import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserEmail
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserId
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLoginPlatform
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserProfile
+import com.example.airsignal_app.view.ToastUtils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -52,12 +56,11 @@ class GoogleLogin(private val activity: Activity) {
     fun logout() {
         client.signOut()
             .addOnCompleteListener {
-                Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
                 saveLogoutStatus()
                 RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = null)
             }
             .addOnCanceledListener {
-                Logger.t(TAG_LOGIN).e("로그아웃에 실패했습니다")
+                ToastUtils(activity).showMessage("로그아웃에 실패했습니다",1)
             }
     }
 
@@ -66,10 +69,9 @@ class GoogleLogin(private val activity: Activity) {
         client.silentSignIn()
             .addOnCompleteListener {
                 handleSignInResult(it,isAuto = true)
-                Logger.t(TAG_LOGIN).d("자동 로그인 됨")
             }
             .addOnFailureListener {
-                Logger.t(TAG_LOGIN).w("마지막 로그인 세션을 찾을 수 없습니다")
+                ToastUtils(activity).showMessage("마지막 로그인 세션을 찾을 수 없습니다",1)
             }
     }
 

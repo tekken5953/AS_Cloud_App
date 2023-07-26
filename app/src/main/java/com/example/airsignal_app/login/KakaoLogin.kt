@@ -18,6 +18,7 @@ import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
 import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
+import com.example.airsignal_app.view.ToastUtils
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider
 import com.kakao.sdk.auth.model.OAuthToken
@@ -59,15 +60,12 @@ class KakaoLogin(private val activity: Activity) {
                 // 로그인 실패 부분
                 if (error != null) {
                     pb.visibility = View.GONE
-                    Logger.t(TAG_LOGIN).e("로그인 실패")
                     // 사용자가 취소
                     if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled)) {
-                        Logger.t(TAG_LOGIN).e("로그인 실패 원인 : 사용자가 취소 - $error")
                         return@loginWithKakaoTalk
                     }
                     // 다른 오류
                     else {
-                        Logger.t(TAG_LOGIN).e("로그인 실패 원인 : 다른 오류 - $error")
                         UserApiClient.instance.loginWithKakaoAccount(
                             activity,
                             callback = mCallback
@@ -107,7 +105,6 @@ class KakaoLogin(private val activity: Activity) {
     /** 카카오 이메일 로그인 콜백 **/
     private val mCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
-            Logger.t(TAG_LOGIN).e("로그인 실패 : Cause is $error")
             writeLoginHistory(
                 isLogin = false, platform = LOGIN_KAKAO_EMAIL, email = getUserEmail(activity),
                 isAuto = false, isSuccess = false
@@ -150,25 +147,25 @@ class KakaoLogin(private val activity: Activity) {
                 if (error != null) {
                     pb.visibility = View.GONE
                     if (error is KakaoSdkError && error.isInvalidTokenError()) {
-                        Logger.t(TAG_LOGIN).w("만료된 토큰입니다") // 만료된 토큰임 로그인 필요
+//                        Logger.t(TAG_LOGIN).w("만료된 토큰입니다") // 만료된 토큰임 로그인 필요
                     } else {
-                        Logger.t("TAG_LOG").e("기타 에러 발생 : $error") //기타 에러
+//                        Logger.t("TAG_LOG").e("기타 에러 발생 : $error") //기타 에러
                     }
                 } else {
                     //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
                     RefreshUtils(activity).refreshActivity()
                     tokenInfo?.let {
-                        Logger.t(TAG_LOGIN)
-                            .d(
-                                "카카오 자동로그인 성공\n" +
-                                        "user code is ${it}\n"
-                            )
+//                        Logger.t(TAG_LOGIN)
+//                            .d(
+//                                "카카오 자동로그인 성공\n" +
+//                                        "user code is ${it}\n"
+//                            )
                     }
                 }
             }
         } else {
             // 토큰이 없음 로그인 필요
-            Logger.t("TAG_LOG").w("토큰이 없음 로그인 필요")
+            ToastUtils(activity).showMessage("로그인이 필요합니다",1)
             pb.visibility = View.GONE
         }
     }
@@ -177,15 +174,15 @@ class KakaoLogin(private val activity: Activity) {
      * @return OAuthToken? **/
     private fun loginSilenceKakao(): OAuthToken? {
         val token = TokenManagerProvider.instance.manager.getToken()
-        token?.let {
-            Logger.t(TAG_LOGIN)
-                .d(
-                    "카카오 로그인 성공\n" +
-                            "user code is ${it.idToken}\n" +
-                            "access is ${it.accessToken}\naccess was expired at ${it.accessTokenExpiresAt}\n" +
-                            "refresh is ${it.refreshToken}\nrefresh was expired at ${it.refreshTokenExpiresAt}"
-                )
-        }
+//        token?.let {
+//            Logger.t(TAG_LOGIN)
+//                .d(
+//                    "카카오 로그인 성공\n" +
+//                            "user code is ${it.idToken}\n" +
+//                            "access is ${it.accessToken}\naccess was expired at ${it.accessTokenExpiresAt}\n" +
+//                            "refresh is ${it.refreshToken}\nrefresh was expired at ${it.refreshTokenExpiresAt}"
+//                )
+//        }
         return token
     }
 
@@ -208,9 +205,8 @@ class KakaoLogin(private val activity: Activity) {
             }
         }
     }
-//
 //    private fun refreshToken() {
-//        //TODO 토큰 갱신하기 https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#refresh-token
+//        //토큰 갱신하기 https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#refresh-token
 //    }
 
     /** 카카오 로그아웃 + 기록 **/
@@ -218,13 +214,12 @@ class KakaoLogin(private val activity: Activity) {
         try {
             UserApiClient.instance.logout { error ->
                 if (error != null) {
-                    Logger.t(TAG_LOGIN).e("로그아웃에 실패함 : $error")
+                    ToastUtils(activity).showMessage("로그아웃에 실패했습니다",1)
                     writeLoginHistory(
                         isLogin = false, platform = LOGIN_KAKAO, email = getUserEmail(activity),
                         isAuto = null, isSuccess = false
                     )
                 } else {
-                    Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
                     writeLoginHistory(
                         isLogin = false,
                         platform = LOGIN_KAKAO,
@@ -243,11 +238,8 @@ class KakaoLogin(private val activity: Activity) {
     /** 클라이언트와 완전히 연결 끊기 **/
     fun disconnectFromKakao() {
         UserApiClient.instance.unlink { error ->
-            if (error != null) {
-                Logger.t(TAG_LOGIN).e("연결 끊기 실패 : $error")
-            } else {
+            if (error == null) {
                 EnterPageUtil(activity).toLogin()
-                Logger.t(TAG_LOGIN).i("연결 끊기 성공. SDK 에서 토큰 삭제 됨")
             }
         }
     }

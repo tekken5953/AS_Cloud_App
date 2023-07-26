@@ -1,8 +1,6 @@
 package com.example.airsignal_app.vmodel
 
-import android.content.Context
 import androidx.lifecycle.LiveData
-import com.example.airsignal_app.gps.GpsDataModel
 import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.repo.GetAppVersionRepo
 import com.example.airsignal_app.retrofit.ApiModel

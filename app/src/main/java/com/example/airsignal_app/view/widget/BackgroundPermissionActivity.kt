@@ -15,7 +15,7 @@ import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo
-import com.orhanobut.logger.Logger
+import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE
 
 class BackgroundPermissionActivity : AppCompatActivity() {
 
@@ -70,27 +70,24 @@ class BackgroundPermissionActivity : AppCompatActivity() {
         if (requestCode == REQUEST_BACKGROUND_LOCATION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "권한이 허용되었습니다", Toast.LENGTH_SHORT).show()
-                Logger.t("testtest").d("권한이 허용되었습니다")
                 callWidgetServiceBroadcast()
             } else {
                 Toast.makeText(this, "권한이 거부되었습니다", Toast.LENGTH_SHORT).show()
-                Logger.t("testtest").d("권한이 거부되었습니다")
                 callWidgetServiceBroadcast()
             }
         }
     }
 
     private fun callWidgetServiceBroadcast() {
-        // 브로드캐스트 인텐트를 생성합니다.
-//        val intent = Intent(this, WidgetProvider4x2::class.java)
-//
-//        // 위젯 서비스의 액션을 설정합니다.
-//        intent.action = WIDGET_UPDATE
-//
-//        // 브로드캐스트를 전송합니다.
-//        sendBroadcast(intent)
+        val intent = Intent(this, WidgetProvider4x2::class.java)
+
+        // 위젯 서비스의 액션을 설정합니다.
+        intent.action = WIDGET_UPDATE
+
+        // 브로드캐스트를 전송합니다.
+        sendBroadcast(intent)
 
         NotiJobService().getWidgetLocation(this)
-        EnterPageUtil(this).toPermission()
+        EnterPageUtil(this).toMain(GetAppInfo.getUserLastAddress(this))
     }
 }

@@ -9,7 +9,6 @@ import com.example.airsignal_app.util.VibrateUtil
 import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
 import com.example.airsignal_app.util.`object`.SetSystemInfo
-import javax.inject.Singleton
 
 /**
  * @author : Lee Jae Young

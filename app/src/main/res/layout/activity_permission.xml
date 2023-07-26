@@ -7,7 +7,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@color/theme_view_color"
         tools:context=".view.activity.PermissionActivity">
         
         <TextView
@@ -16,7 +16,7 @@
             android:textSize="20sp"
             android:text="@string/perm_title"
             android:lineSpacingExtra="-1sp"
-            android:textColor="#4F4F4F"
+            android:textColor="@color/theme_text_color"
             android:layout_marginBottom="34dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -26,7 +26,7 @@
             android:id="@+id/permissionLineTop"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#CFD1D2"
+            android:background="@color/theme_line_color"
             android:layout_marginStart="25dp"
             android:layout_marginEnd="25dp"
             android:layout_marginBottom="33dp"
@@ -48,7 +48,7 @@
                     android:id="@+id/permissionItemNasTitle"
                     style="@style/basicMediumTextView"
                     android:textSize="14sp"
-                    android:textColor="#7C7C7C"
+                    android:textColor="@color/theme_sub_color"
                     android:text="@string/essential_perm"
                     android:layout_marginStart="36dp"/>
 
@@ -68,7 +68,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_below="@+id/permissionItemNasTitle"
                     android:textSize="16sp"
-                    android:textColor="#4F4F4F"
+                    android:textColor="@color/theme_text_color"
                     android:layout_marginStart="12dp"
                     android:text="@string/location_perm"/>
 
@@ -85,7 +85,7 @@
                 <TextView
                     android:id="@+id/permissionItemLocContent"
                     style="@style/basicTextView"
-                    android:textColor="#7C7C7C"
+                    android:textColor="@color/theme_sub_color"
                     android:textSize="14sp"
                     android:layout_marginTop="2dp"
                     android:text="@string/loc_perm_explain"
@@ -103,7 +103,7 @@
                     android:id="@+id/permissionItemUnNasTitle"
                     style="@style/basicMediumTextView"
                     android:textSize="14sp"
-                    android:textColor="#7C7C7C"
+                    android:textColor="@color/theme_sub_color"
                     android:text="@string/non_essential_perm"
                     android:layout_marginStart="36dp"/>
 
@@ -123,7 +123,7 @@
                     android:layout_marginTop="8dp"
                     android:layout_below="@+id/permissionItemUnNasTitle"
                     android:textSize="16sp"
-                    android:textColor="#4F4F4F"
+                    android:textColor="@color/theme_text_color"
                     android:layout_marginStart="12dp"
                     android:text="@string/noti_perm"/>
 
@@ -132,7 +132,7 @@
                     style="@style/basicMediumTextView"
                     android:textSize="14sp"
                     android:text="@string/non_essential"
-                    android:textColor="#4F4F4F"
+                    android:textColor="@color/theme_text_color"
                     android:layout_marginStart="2dp"
                     android:layout_alignBottom="@+id/permissionItemNotiTitle"
                     android:layout_toEndOf="@+id/permissionItemNotiTitle"/>
@@ -140,7 +140,7 @@
                 <TextView
                     android:id="@+id/permissionItemNotiContent"
                     style="@style/basicTextView"
-                    android:textColor="#7C7C7C"
+                    android:textColor="@color/theme_sub_color"
                     android:textSize="14sp"
                     android:layout_marginTop="2dp"
                     android:text="@string/noti_perm_explain"
@@ -154,7 +154,7 @@
             android:id="@+id/permissionLineBottom"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#CFD1D2"
+            android:background="@color/theme_line_color"
             app:layout_constraintBottom_toTopOf="@+id/permissionNotice"
             android:layout_marginBottom="125dp"
             android:layout_marginStart="25dp"
@@ -163,7 +163,7 @@
         <TextView
             android:id="@+id/permissionNotice"
             style="@style/basicTextView"
-            android:textColor="#4F4F4F"
+            android:textColor="@color/theme_text_color"
             android:textSize="12sp"
             android:text="@string/perm_notice"
             android:lineSpacingExtra="-1sp"

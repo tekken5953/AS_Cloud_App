@@ -69,7 +69,6 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
             }
 
             if (mList[adapterPosition] == db.findById(CURRENT_GPS_ID).addr) {
-                Timber.tag("testtest").d("user last addr is " + getUserLastAddress(context))
                 gpsImg.setImageDrawable(
                     ResourcesCompat.getDrawable(
                         context.resources,

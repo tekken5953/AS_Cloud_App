@@ -23,7 +23,6 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.convertAddress
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo.getCurrentLocation
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
-import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -134,7 +133,7 @@ class SearchDialog(
         val searchItem = java.util.ArrayList<String>()
         val allTextArray = resources.getStringArray(R.array.address)
         val adapter =
-            ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, searchItem)
+            ArrayAdapter(requireContext(), R.layout.list_item_searced_address, searchItem)
         listView.adapter = adapter
 
         // 서치 뷰 텍스트 변환 콜벡
@@ -220,7 +219,9 @@ class SearchDialog(
             model.timeStamp = getCurrentTime()
             db.update(model)
 
-            setUserLastAddr(activity, addr!!)
+            addr?.let {
+                setUserLastAddr(activity, it)
+            }
         }
     }
 

@@ -24,7 +24,6 @@ class NativeAdViewClass(private val activity: Activity) {
     fun load(nativeAdView: NativeAdView, title: TextView, description: ImageView) {
         adLoader = AdLoader.Builder(activity, activity.getString(R.string.adUnit_exit_Id))
             .forNativeAd { ad : NativeAd ->
-                Timber.tag(TAG_AD).d( "Native Ad forNativeAd - ${ad.body}\n${ad.icon}\n${ad.headline}\n${ad.price}")
                 nativeAdView.setNativeAd(ad)
                 ad.images.forEach {
                     description.setImageDrawable(it.drawable)
@@ -34,10 +33,10 @@ class NativeAdViewClass(private val activity: Activity) {
                 if (adLoader.isLoading) {
                     // The AdLoader is still loading ads.
                     // Expect more adLoaded or onAdFailedToLoad callbacks.
-                    Timber.tag(TAG_AD).d( "Native Ad forNativeAd is Loading")
+//                    Timber.tag(TAG_AD).d( "Native Ad forNativeAd is Loading")
                 } else {
                     // The AdLoader has finished loading ads.
-                    Timber.tag(TAG_AD).d("Native Ad forNativeAd is Ended")
+//                    Timber.tag(TAG_AD).d("Native Ad forNativeAd is Ended")
                 }
 
                 if (activity.isDestroyed) {
@@ -48,7 +47,7 @@ class NativeAdViewClass(private val activity: Activity) {
             .withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     // Handle the failure by logging, altering the UI, and so on.
-                    Timber.tag(TAG_AD).d("onAdFailedToLoad")
+//                    Timber.tag(TAG_AD).d("onAdFailedToLoad")
                 }
             })
             .withNativeAdOptions(NativeAdOptions.Builder()

@@ -20,7 +20,7 @@ abstract class GpsDataBase : RoomDatabase() {
         fun getInstance(context: Context): GpsDataBase? {
             if (INSTANCE == null) {
                 synchronized(GpsDataBase::class.java) {
-                    Timber.tag(TAG_D).d("DB 인스턴스 생성")
+//                    Timber.tag(TAG_D).d("DB 인스턴스 생성")
                     INSTANCE = Room.databaseBuilder(
                         context.applicationContext,
                         GpsDataBase::class.java, dbName

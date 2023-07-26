@@ -4,8 +4,8 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.location.LocationManager
 import android.os.*
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -33,6 +33,7 @@ import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CO_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
+import com.example.airsignal_app.dao.StaticDataObject.IN_COMPLETE_ADDRESS
 import com.example.airsignal_app.dao.StaticDataObject.NO2_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.NOT_SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.O3_INDEX
@@ -40,7 +41,6 @@ import com.example.airsignal_app.dao.StaticDataObject.PM10_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.PM2p5_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.SO2_INDEX
-import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.databinding.ActivityMainBinding
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
@@ -81,16 +81,14 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
-import com.example.airsignal_app.view.custom_view.SegmentedProgressBar
-import com.example.airsignal_app.vmodel.GetLocationViewModel
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
-import org.koin.android.ext.android.inject
+import okhttp3.internal.format
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -110,7 +108,6 @@ class MainActivity
     private lateinit var indicators: Array<ImageView>
     private val vib by lazy { VibrateUtil(this) }
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
-    private val getLocationViewModel by viewModel<GetLocationViewModel>()
 
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
@@ -146,12 +143,10 @@ class MainActivity
         }
     }
 
-    private val gpsFix by lazy { binding.mainGpsFix }
-
     override fun onResume() {
         super.onResume()
         if (!isProgressed) {
-            showPB()
+//            showPB()
             isProgressed = true
         }
         getDataSingleTime()
@@ -179,7 +174,6 @@ class MainActivity
 
         initBinding()
         binding.dataVM = getDataViewModel
-        binding.locationVM = getLocationViewModel
 
         initializing()
 
@@ -245,7 +239,7 @@ class MainActivity
                 window.navigationBarColor = getColor(android.R.color.transparent)
                 binding.nestedFab.apply { alpha = 0f }
             } else {
-                window.navigationBarColor = getColor(R.color.white)
+                window.navigationBarColor = getColor(R.color.theme_view_color)
                 binding.nestedFab.apply { alpha = 1f }
             }
         }
@@ -281,8 +275,9 @@ class MainActivity
         binding.mainGpsFix.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 mVib()
-                showPB()
-                loadLocationData()
+//                showPB()
+                v!!.startAnimation(rotateAnim)
+                getCurrentLocationData()
             }
         })
 
@@ -346,7 +341,8 @@ class MainActivity
                     return SNAP_TO_START // 가장 첫 번째로 스크롤되도록 설정
                 }
             }
-            smoothScroller.targetPosition = position + 4
+            binding.mainDailyWeatherRv.setPadding(22,0,15,0)
+            smoothScroller.targetPosition = position + 5
             it.startSmoothScroll(smoothScroller)
         }
     }
@@ -368,7 +364,7 @@ class MainActivity
                 if (addrArray.contains(lastAddress)) {
                     loadSavedAddr(lastAddress)
                 } else {
-                    loadLocationData()
+                    getCurrentLocationData()
                 }
                 // TimeOut
                 HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
@@ -418,7 +414,6 @@ class MainActivity
             binding.mainMotionLayout.alpha = SHOWING_LOADING_FLOAT
             binding.mainMotionLayout.isEnabled = false
         }
-        gpsFix.startAnimation(rotateAnim)
     }
 
     // 프로그래스 숨기기
@@ -548,6 +543,12 @@ class MainActivity
                             }
                         }
                     }
+                } else {
+                    setSectionTextColor(
+                        todaySection,
+                        tomorrowSection,
+                        afterTomorrowSection
+                    )
                 }
             }
         })
@@ -632,27 +633,13 @@ class MainActivity
     // 현재 옵저버가 없으면 생성
     private fun getDataObservers() {
         if (!getDataViewModel.fetchData().hasActiveObservers())
-        {
-            applyGetDataViewModel()
-        } else {
-            Timber.tag("ReAddrTest").i("Already has applyGetDataViewModel")
-        }
+        { applyGetDataViewModel() }
     }
 
-    // 현재 옵저버가 없으면 생성
-    private fun getLocationObservers() {
-        if (!getLocationViewModel.fetchData().hasActiveObservers())
-        {
-            applyGetLocationViewModel()
-        } else {
-            Timber.tag("ReAddrTest").i("Already has applyGetLocationViewModel")
-        }
-    }
 
     // 뷰모델에서 Observing 한 데이터 결과 적용
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel(): MainActivity {
-        Timber.tag("ReAddrTest").i("applyGetDataViewModel")
         getDataViewModel.fetchData().observe(this) { entireData ->
             entireData?.let { eData ->
                 when (eData) {
@@ -745,17 +732,18 @@ class MainActivity
                             }
 
                             today?.let {
+                                binding.mainMinMaxTitle.text = getString(R.string.min_max)
                                 binding.mainMinMaxValue.text =
                                     "${filteringNullData(it.min!!)}˚/${filteringNullData(it.max!!)}˚"
                             }
 
                             updateAirQData(
                                 PM2p5_INDEX, "초미세먼지", "PM2.5",
-                                "㎍/㎥", air.pm25Value!!.toInt().toString(), 76f, air.pm25Grade!!
+                                "㎍/㎥", air.pm25Value!!.toInt().toString(), 76f, air.pm25Grade1h!!
                             )
                             updateAirQData(
                                 PM10_INDEX, "미세먼지", "PM10",
-                                "㎍/㎥", air.pm10Value!!.toInt().toString(), 151f, air.pm10Grade!!
+                                "㎍/㎥", air.pm10Value!!.toInt().toString(), 151f, air.pm10Grade1h!!
                             )
                             updateAirQData(
                                 CO_INDEX, "일산화탄소", "CO",
@@ -776,7 +764,7 @@ class MainActivity
 
                             applyAirQView(
                                 "초미세먼지", "PM2.5",
-                                air.pm25Grade, "㎍/m3", air.pm25Value.toInt().toString(), 151f
+                                air.pm25Grade1h, "㎍/m3", air.pm25Value.toInt().toString(), 151f
                             )
 
                             airQList[PM2p5_INDEX].isSelect = true
@@ -853,6 +841,13 @@ class MainActivity
                                 binding.nestedReportFrame.visibility = VISIBLE
                             }
 
+                            binding.mainSensTitle.text = "체감온도"
+                            binding.mainSensValue.text =
+                                SensibleTempFormula().getSensibleTemp(
+                                    ta = current.temperature!!,
+                                    rh = current.humidity!!,
+                                    v = current.windSpeed!!
+                                ).roundToInt().toString() + "˚"
 
                             for (i: Int in 0 until result.realtime.size) {
                                 val dailyIndex = result.realtime[i]
@@ -984,7 +979,6 @@ class MainActivity
                     }
 
                     is BaseRepository.ApiState.Loading -> {
-                        Timber.tag("testtest").i("Loading...")
                         runOnUiThread { showPB() }
                     }
                 }
@@ -997,8 +991,12 @@ class MainActivity
     private fun applyWindowBackground(progress: Int, sky: String?) {
         if (getIsNight(progress)) {
             window.setBackgroundDrawableResource(R.drawable.main_bg_night)
+            binding.mainSkyStarImg.setImageDrawable(
+                ResourcesCompat.getDrawable(resources,R.drawable.bg_nightsky,null)
+            )
             changeTextColorStyle(sky!!, true)
         } else {
+            binding.mainSkyStarImg.setImageDrawable(null)
             when (sky) {
                 "맑음", "구름많음" -> window.setBackgroundDrawableResource(R.drawable.main_bg_clear)
 
@@ -1167,87 +1165,8 @@ class MainActivity
         }
     }
 
-//    // API 호출 TimeOut Exception Class
-//    class CustomTimeOutException : SocketTimeoutException() {
-//        override fun getLocalizedMessage(): String? {
-//            MainActivity().hidePB()
-//            Toast.makeText(MainActivity(), "TimeOut Exception", Toast.LENGTH_SHORT).show()
-//            return super.getLocalizedMessage()
-//        }
-//    }
-
-    // 현재 위치정보를 받아오고 데이터 갱신
-    @SuppressLint("MissingPermission", "SuspiciousIndentation")
-    private fun applyGetLocationViewModel(): MainActivity {
-        Timber.tag("ReAddrTest").i("applyGetLocationViewModel")
-        getLocationViewModel.fetchData().observe(this) { location ->
-            when (location) {
-                is BaseRepository.ApiState.Success -> {
-                    val loc = location.data
-                    hidePB()
-                    val lat = loc.lat!!
-                    val lng = loc.lng!!
-                    val addr = loc.addr!!
-                    val formatAddr = addr
-                        .replaceFirst(" ", "")
-                        .replace(getString(R.string.korea), "")
-                        .replace("null", "")
-                    val formedAddr = AddressFromRegex(addr).getAddress() ?: formatAddr
-
-                    setCurrentLocation(this, formatAddr)
-
-                    if (loc.isGPS) {
-                        updateCurrentAddress(
-                            lat, lng,
-                            formatAddr
-                        )
-
-                        setNotificationAddress(this, addr)
-
-                        binding.mainGpsTitleTv.text = guardWordWrap(
-                            formedAddr
-                        )
-
-                        binding.mainTopBarGpsTitle.text =
-                            formedAddr
-
-                        loadCurrentViewModelData(lat, lng)
-                    } else {
-                        updateCurrentAddress(
-                            lat, lng,
-                            formatAddr
-                        )
-
-                        setCurrentLocation(this, formatAddr)
-
-                        setNotificationAddress(this, addr)
-
-                        binding.mainGpsTitleTv.text =
-                            formedAddr
-                        binding.mainTopBarGpsTitle.text = formedAddr
-
-                        ToastUtils(this@MainActivity).showMessage(getString(R.string.canAccuracy))
-                        loadCurrentViewModelData(lat, lng)
-                    }
-                }
-
-                is BaseRepository.ApiState.Error -> {
-                    runOnUiThread {
-                        hidePB()
-                        hideAllViews(error = location.errorMessage)
-                    }
-                }
-
-                else -> {}
-            }
-        }
-        return this
-    }
-
-
     // 통신에 실패할 경우 레이아웃 처리
     private fun hideAllViews(error: String?) {
-        Logger.t("TAG_E").e("Error Msg is $error")
         when (error) {
             "API ERROR OCCURRED" -> {
                 binding.mainSkyText.text = "데이터 호출에 실패했습니다"
@@ -1256,7 +1175,7 @@ class MainActivity
                 binding.mainSkyText.text = getString(R.string.not_serviced_location)
             }
             "Network Error" -> {
-                binding.mainSkyText.text = "인터넷 연결 필요"
+                binding.mainSkyText.text = "요청시간 지연, 재갱신 필요"
             }
             "Timeout Error" -> {
                 binding.mainSkyText.text = "네트워크 오류, 재갱신 필요"
@@ -1287,8 +1206,8 @@ class MainActivity
                     ColorStateList.valueOf(getColor(R.color.main_blue_color)
                 )) {
                     mVib()
-                    showPB()
-                    loadLocationData()
+//                    showPB()
+                    getCurrentLocationData()
                 }
             }
 
@@ -1312,7 +1231,9 @@ class MainActivity
             binding.mainMinMaxTitle,
             binding.mainMinMaxValue,
             binding.mainMotionSlideGuide,
-            binding.mainTopBarGpsTitle
+            binding.mainTopBarGpsTitle,
+            binding.mainSensTitle,
+            binding.mainSensValue
             )
 
         if (visibility == GONE) {
@@ -1334,6 +1255,7 @@ class MainActivity
             }
 
         } else {
+            binding.mainSensTitle.text = "체감온도"
             binding.mainMinMaxTitle.text = getString(R.string.min_max)
             binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
             binding.mainGpsFix.setImageDrawable(
@@ -1363,12 +1285,6 @@ class MainActivity
     private fun loadSavedViewModelData(addr: String) {
         getDataObservers()
         getDataViewModel.loadData(null, null, addr)
-    }
-
-    private fun loadLocationData() {
-        getLocationObservers()
-        getDataObservers()
-        getLocationViewModel.loadDataResult(this)
     }
 
     private fun setAirCPV(barColor: Int, unit: String, grade: Int) {
@@ -1518,7 +1434,9 @@ class MainActivity
         val changeColorTextViews = listOf(
             binding.mainLiveTempValue, binding.mainLiveTempUnit, binding.mainCompareTempTv,
             binding.mainTopBarGpsTitle, binding.mainMotionSlideGuide, binding.mainSkyText,
-            binding.mainGpsTitleTv
+            binding.mainGpsTitleTv, binding.mainSensTitle, binding.mainSensValue,
+            binding.mainMinMaxTitle,binding.mainMinMaxValue
+
         )
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
@@ -1537,8 +1455,6 @@ class MainActivity
                 it.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
             }
 
-            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#cccccc"))
-            binding.mainMinMaxValue.setTextColor(Color.parseColor("#cccccc"))
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
                 .setTint(ResourcesCompat.getColor(resources, R.color.white, null))
             window.decorView.systemUiVisibility =
@@ -1556,8 +1472,6 @@ class MainActivity
                 it.imageTintList = ColorStateList.valueOf(getColor(R.color.bg_black_color))
             }
 
-            binding.mainMinMaxTitle.setTextColor(Color.parseColor("#4F4F4F"))
-            binding.mainMinMaxValue.setTextColor(Color.parseColor("#4F4F4F"))
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
                 .setTint(ResourcesCompat.getColor(resources, R.color.black, null))
             window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -1577,37 +1491,68 @@ class MainActivity
         }
     }
 
-    // 미세먼지 그래프 그리기
-    private fun drawingPmGraph(bar: SegmentedProgressBar, array: FloatArray) {
-        if (array.size == 4) {
-            bar.setContexts(
-                barContexts = listOf(
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(
-                            resources, R.color.air_good, null
-                        ), //gradient start
-                        ResourcesCompat.getColor(
-                            resources, R.color.air_good, null
-                        ), //gradient stop
-                        array[0] //percentage for segment
-                    ),
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.air_normal, null),
-                        ResourcesCompat.getColor(resources, R.color.air_normal, null),
-                        array[1]
-                    ),
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.air_bad, null),
-                        ResourcesCompat.getColor(resources, R.color.air_bad, null),
-                        array[2]
-                    ),
-                    SegmentedProgressBar.BarContext(
-                        ResourcesCompat.getColor(resources, R.color.air_very_bad, null),
-                        ResourcesCompat.getColor(resources, R.color.air_very_bad, null),
-                        array[3]
+    @SuppressLint("MissingPermission")
+    private fun getCurrentLocationData() {
+        val locationClass = GetLocation(this)
+        if (locationClass.isGPSConnected()) {
+            CoroutineScope(Dispatchers.Default).launch {
+                LocationServices.getFusedLocationProviderClient(this@MainActivity).run {
+                    this.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                        .addOnSuccessListener { location ->
+                            location?.let { loc ->
+                                hidePB()
+                                val addr = GetLocation(this@MainActivity)
+                                    .getAddress(loc.latitude,loc.longitude)
+                                val formatAddr = addr!!
+                                    .replaceFirst(" ", "")
+                                    .replace(getString(R.string.korea), "")
+                                    .replace("null", "")
+
+                                val regexAddr = AddressFromRegex(addr).getAddress()
+                                val formedAddr = if (regexAddr != null &&
+                                    regexAddr != IN_COMPLETE_ADDRESS) {
+                                    regexAddr
+                                } else {
+                                    formatAddr
+                                }
+
+                                setCurrentLocation(this@MainActivity, formatAddr)
+
+                                updateCurrentAddress(
+                                    loc.latitude, loc.longitude,
+                                    formatAddr
+                                )
+
+                                setNotificationAddress(this@MainActivity, formedAddr)
+
+                                binding.mainGpsTitleTv.text = guardWordWrap(
+                                    formedAddr
+                                )
+
+                                binding.mainTopBarGpsTitle.text =
+                                    formedAddr
+
+                                loadCurrentViewModelData(loc.latitude, loc.longitude)
+                            }
+                        }
+                } .addOnFailureListener {
+                    RDBLogcat.writeErrorNotANR(
+                        this@MainActivity, sort = RDBLogcat.ERROR_LOCATION_FAILED,
+                        msg = it.localizedMessage!!
                     )
-                )
-            )
+                }
+            }
+        } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
+            CoroutineScope(Dispatchers.Default).launch {
+                val lm =
+                    getSystemService(LOCATION_SERVICE) as LocationManager
+                val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                location?.let { loc ->
+                    loadCurrentViewModelData(loc.latitude, loc.longitude)
+                }
+            }
+        } else {
+            locationClass.requestSystemGPSEnable()
         }
     }
 }

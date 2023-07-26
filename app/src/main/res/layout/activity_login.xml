@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/loginMainLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/theme_view_color">
 
         <LinearLayout
             android:id="@+id/pbLayout"
@@ -38,7 +38,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="45dp"
                 android:src="@drawable/back_arrow"
-                app:tint="@color/mode_black_color"
+                app:tint="@color/theme_text_color"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,7 +49,7 @@
                 android:layout_marginStart="20dp"
                 android:fontFamily="@font/spoqa_hansansneo_medium"
                 android:text="@string/login_title"
-                android:textColor="@color/mode_black_color"
+                android:textColor="@color/theme_text_color"
                 android:textSize="23sp"
                 app:layout_constraintBottom_toBottomOf="@+id/loginMainBack"
                 app:layout_constraintStart_toEndOf="@+id/loginMainBack"
@@ -85,6 +85,7 @@
                 android:drawableStart="@drawable/naver_icon_small"
                 android:fontFamily="@font/spoqa_hansansneo_medium"
                 android:text="네이버 로그인"
+                android:textColor="#4F4F4F"
                 android:elevation="12dp"
                 android:translationZ="8dp"
                 app:layout_constraintBottom_toTopOf="@+id/phoneLoginButton" />
@@ -102,6 +103,7 @@
                 android:drawableStart="@drawable/email_icon_small"
                 android:fontFamily="@font/spoqa_hansansneo_medium"
                 android:text="전화번호로 로그인"
+                android:textColor="#4F4F4F"
                 app:layout_constraintBottom_toBottomOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

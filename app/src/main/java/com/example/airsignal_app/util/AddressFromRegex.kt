@@ -1,9 +1,7 @@
 package com.example.airsignal_app.util
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import timber.log.Timber
+import com.example.airsignal_app.dao.StaticDataObject.IN_COMPLETE_ADDRESS
+
 
 /**
  * @author : Lee Jae Young
@@ -11,9 +9,7 @@ import timber.log.Timber
  **/
 class AddressFromRegex(private val address: String) {
 
-
     fun getAddress(): String? {
-        Timber.tag("regexTest").d("Input address is $address")
         val result: StringBuilder = StringBuilder()
 
         generatePatternFirst().forEachIndexed { indexF, first ->
@@ -55,6 +51,8 @@ class AddressFromRegex(private val address: String) {
                                     }
                                 }
                             }
+                        } else {
+                            return IN_COMPLETE_ADDRESS
                         }
                     }
                 }
@@ -65,6 +63,19 @@ class AddressFromRegex(private val address: String) {
         } else {
             result.toString()
         }
+    }
+
+    fun getNotificationAddress(): String {
+        val result: StringBuilder = StringBuilder()
+        generatePatternThird().forEach { third ->
+            if (!third.findAll(address).none()) {
+                result.append(third.find(address)!!.value)
+                return result.toString()
+            } else {
+                getAddress()
+            }
+        }
+        return getAddress()!!
     }
 
 

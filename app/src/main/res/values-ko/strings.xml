@@ -127,4 +127,8 @@
 </string>
     <string name="airq_question_o3">오존에 반복 노출시에는 폐에 피해를 줄 수 있는데, 가슴의 통증, 기침, 메스꺼움, 목 자극, 소화 등에 영향을 미치며, 기관지염, 심장질환, 폐기종 및 천식을 악화시키고, 폐활량을 감소 시킬 수 있다. 특히 기관지 천식환자나 호흡기 질환자, 어린이, 노약자 등에게는 많은 영향을 미치므로 주의해야 할 필요가 있다. 또한 농작물과 식물에 직접적으로 영향을 미쳐 수확량이 감소되기도 하며 잎이 말라 죽기도 한다.
 </string>
+    <string name="open_source_license">오픈소스 라이선스</string>
+    <string name="data_usages">개인 정보 처리 방침</string>
+    <string name="term_of_services">이용약관</string>
+    <string name="customers_center">고객 센터</string>
 </resources>

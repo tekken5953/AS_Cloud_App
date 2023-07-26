@@ -128,7 +128,7 @@ object DataTypeParser {
                 R.drawable.moon_g
             }
             else -> {
-                R.drawable.main_moon
+                R.drawable.moon_bo
             }
         }
     }

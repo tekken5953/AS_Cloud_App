@@ -1,9 +1,12 @@
 package com.example.airsignal_app.util.`object`
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION
 import android.provider.Settings
@@ -78,5 +81,15 @@ object GetSystemInfo {
         }
 
         return ""
+    }
+
+    fun getPlayStoreURL(context: Context): String {
+        return "market://details?id=${context.packageName}"
+    }
+
+    fun goToPlayStore(activity: Activity) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(getPlayStoreURL(activity))
+        activity.startActivity(intent)
     }
 }

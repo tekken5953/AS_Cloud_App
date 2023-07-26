@@ -16,6 +16,7 @@ import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginPref
 import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
+import com.example.airsignal_app.view.ToastUtils
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
@@ -55,7 +56,6 @@ class NaverLogin(private val activity: Activity) {
     /** 로그아웃 + 기록 저장 */
     fun logout() {
         NaverIdLoginSDK.logout()
-        Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")
         writeLoginHistory(
             isLogin = false,
             platform = LOGIN_NAVER,
@@ -83,8 +83,6 @@ class NaverLogin(private val activity: Activity) {
     val profileCallback = object : NidProfileCallback<NidProfileResponse> {
         override fun onSuccess(result: NidProfileResponse) {
             result.profile?.let {
-                Logger.t(TAG_LOGIN).d("네이버 로그인 성공")
-
                 SharedPreferenceManager(activity)
                     .setString(lastLoginPhone, it.mobile.toString())
                     .setString(userId, it.name.toString())
@@ -109,10 +107,11 @@ class NaverLogin(private val activity: Activity) {
         override fun onFailure(httpStatus: Int, message: String) {
             val errorCode = NaverIdLoginSDK.getLastErrorCode().code
             val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
-            Logger.t(TAG_LOGIN).e(
-                "errorCode: $errorCode\n" +
-                        "errorDescription: $errorDescription"
-            )
+//            Logger.t(TAG_LOGIN).e(
+//                "errorCode: $errorCode\n" +
+//                        "errorDescription: $errorDescription"
+//            )
+            ToastUtils(activity).showMessage("프로필을 불러오는데 실패했습니다",1)
             writeLoginHistory(
                 isLogin = true, platform = LOGIN_NAVER, email = getUserEmail(activity),
                 isAuto = false, isSuccess = false
@@ -135,10 +134,7 @@ class NaverLogin(private val activity: Activity) {
         override fun onFailure(httpStatus: Int, message: String) {
             val errorCode = NaverIdLoginSDK.getLastErrorCode().code
             val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
-            Logger.t(TAG_LOGIN).e(
-                "errorCode: $errorCode\n" +
-                        "errorDescription: $errorDescription"
-            )
+            ToastUtils(activity).showMessage("로그인이 필요합니다",1)
         }
 
         override fun onError(errorCode: Int, message: String) {
@@ -161,7 +157,7 @@ class NaverLogin(private val activity: Activity) {
         NidOAuthLogin().callDeleteTokenApi(activity, object : OAuthLoginCallback {
             override fun onSuccess() {
                 //서버에서 토큰 삭제에 성공한 상태입니다.
-                Logger.t(TAG_LOGIN).d("네이버 로그인 서비스와의 연동을 해제하였습니다다")
+                ToastUtils(activity).showMessage("네이버 로그인 서비스와의 연동을 해제하였습니다다",1)
                 enterLoginPage()
             }
 

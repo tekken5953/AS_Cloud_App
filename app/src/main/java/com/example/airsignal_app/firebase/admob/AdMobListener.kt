@@ -12,36 +12,29 @@ import timber.log.Timber
 class AdMobListener : AdListener() {
     override fun onAdClicked() {
         super.onAdClicked()
-        Timber.tag(TAG_AD).d("onAdClicked")
     }
 
     override fun onAdClosed() {
         super.onAdClosed()
-        Timber.tag(TAG_AD).d("onAdClicked")
     }
 
     override fun onAdFailedToLoad(p0: LoadAdError) {
         super.onAdFailedToLoad(p0)
-        Timber.tag(TAG_AD).d("onAdFailedToLoad ${p0.responseInfo}")
     }
 
     override fun onAdImpression() {
         super.onAdImpression()
-        Timber.tag(TAG_AD).d("onAdImpression")
     }
 
     override fun onAdLoaded() {
         super.onAdLoaded()
-        Timber.tag(TAG_AD).d("onAdLoaded")
     }
 
     override fun onAdOpened() {
         super.onAdOpened()
-        Timber.tag(TAG_AD).d("onAdOpened")
     }
 
     override fun onAdSwipeGestureClicked() {
         super.onAdSwipeGestureClicked()
-        Timber.tag(TAG_AD).d("onAdSwipeGestureClicked")
     }
 }

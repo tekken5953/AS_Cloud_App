@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/theme_view_color">
 
-    <ImageView
-        android:id="@+id/notificationBack"
-        style="@style/BasicImageButtonIcon"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/back_arrow" />
+    <RelativeLayout
+        android:id="@+id/notificationTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+        <ImageView
+            android:id="@+id/notificationBack"
+            style="@style/BasicImageButtonIcon"
+            android:layout_marginStart="20dp"
+            android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/back_arrow"
+            app:tint="@color/theme_text_color"/>
 
-    <TextView
-        android:id="@+id/notificationTitle"
-        style="@style/basicTextView"
-        android:layout_alignTop="@+id/notificationBack"
-        android:layout_alignBottom="@+id/notificationBack"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="10dp"
-        android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:text="@string/setting_notify"
-        android:textColor="@color/mode_color_text"
-        android:textSize="16sp" />
+        <TextView
+            android:id="@+id/notificationTitle"
+            style="@style/basicMediumTextView"
+            android:layout_centerInParent="true"
+            android:text="@string/setting_notify"
+            android:textColor="@color/theme_text_color"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
 
 </RelativeLayout>

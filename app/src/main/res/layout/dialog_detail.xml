@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mode_color_view">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/theme_view_color">
 
     <ImageView
         android:id="@+id/detailBack"
@@ -11,7 +11,8 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/back_arrow"/>
+        android:src="@drawable/back_arrow"
+        app:tint="@color/theme_text_color"/>
 
     <TextView
         android:id="@+id/detailTitle"
@@ -21,7 +22,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="10dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:textColor="@color/mode_color_text"
+        android:textColor="@color/theme_text_color"
         android:textSize="16sp" />
 
     <TextView
@@ -35,7 +36,7 @@
         android:layout_marginEnd="37dp"
         android:fontFamily="@font/spoqa_hansansneo_medium"
         android:gravity="start"
-        android:textColor="@color/mode_color_text"
+        android:textColor="@color/theme_text_color"
         android:textSize="16sp" />
 
     <TextView
@@ -57,7 +58,7 @@
         android:layout_alignStart="@+id/detailHeadLine"
         android:layout_marginTop="20dp"
         android:layout_alignEnd="@+id/detailHeadLine"
-        android:background="@color/main_gray_color" />
+        android:background="@color/theme_line_color" />
 
     <TextView
         android:id="@+id/detailContent"
@@ -71,7 +72,7 @@
         android:layout_alignEnd="@+id/detailHeadLine"
         android:layout_marginBottom="40dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:textColor="@color/option_title_color"
+        android:textColor="@color/theme_sub_color"
         android:textSize="14sp" />
 
 </RelativeLayout>
