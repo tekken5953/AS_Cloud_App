@@ -254,11 +254,11 @@ class SettingActivity
 
             // 기존에 저장 된 언어로 라디오 버튼 체크
             when (getUserLocation(this)) {
-                getString(R.string.korean) -> {
+                LANG_KR -> {
                     radioGroup.check(koreanLang.id)
                     changeCheckIcon(koreanLang, englishLang, systemLang)
                 }
-                getString(R.string.english) -> {
+                LANG_EN -> {
                     radioGroup.check(englishLang.id)
                     changeCheckIcon(englishLang, koreanLang, systemLang)
                 }
