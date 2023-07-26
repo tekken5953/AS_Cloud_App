@@ -6,6 +6,7 @@ import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_KAKAO
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_NAVER
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
+import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 
@@ -49,9 +50,9 @@ class SilentLoginClass {
                     naverLogin.silentLogin()
                 }
             }
-//            "email" -> {
-//                EnterPage(activity).toMain("email")
-//            }
+            "email" -> {
+                EnterPageUtil(activity).toMain("email")
+            }
         }
     }
 }

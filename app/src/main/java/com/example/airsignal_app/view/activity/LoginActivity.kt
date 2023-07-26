@@ -11,7 +11,6 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.databinding.DataBindingUtil
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.databinding.ActivityLoginBinding
@@ -23,7 +22,6 @@ import com.example.airsignal_app.login.PhoneLogin
 import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.view.ShowDialogClass
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.orhanobut.logger.Logger
 
 class LoginActivity
     : BaseActivity<ActivityLoginBinding>() {
@@ -103,7 +101,6 @@ class LoginActivity
                 googleLogin.handleSignInResult(task, isAuto = false)
                 EnterPageUtil(this).toMain("google")
             } else {
-                Logger.t(TAG_LOGIN).e("로그인 실패 $result")
                 binding.googleLoginButton.isEnabled = true
             }
         }

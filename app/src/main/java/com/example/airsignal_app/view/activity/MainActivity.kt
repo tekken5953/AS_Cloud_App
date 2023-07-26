@@ -33,6 +33,7 @@ import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CO_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
+import com.example.airsignal_app.dao.StaticDataObject.IN_COMPLETE_ADDRESS
 import com.example.airsignal_app.dao.StaticDataObject.NO2_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.NOT_SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.O3_INDEX
@@ -85,10 +86,9 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
+import okhttp3.internal.format
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -633,18 +633,13 @@ class MainActivity
     // 현재 옵저버가 없으면 생성
     private fun getDataObservers() {
         if (!getDataViewModel.fetchData().hasActiveObservers())
-        {
-            applyGetDataViewModel()
-        } else {
-            Timber.tag("ReAddrTest").i("Already has applyGetDataViewModel")
-        }
+        { applyGetDataViewModel() }
     }
 
 
     // 뷰모델에서 Observing 한 데이터 결과 적용
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel(): MainActivity {
-        Timber.tag("ReAddrTest").i("applyGetDataViewModel")
         getDataViewModel.fetchData().observe(this) { entireData ->
             entireData?.let { eData ->
                 when (eData) {
@@ -984,7 +979,6 @@ class MainActivity
                     }
 
                     is BaseRepository.ApiState.Loading -> {
-                        Timber.tag("testtest").i("Loading...")
                         runOnUiThread { showPB() }
                     }
                 }
@@ -1173,7 +1167,6 @@ class MainActivity
 
     // 통신에 실패할 경우 레이아웃 처리
     private fun hideAllViews(error: String?) {
-        Logger.t("TAG_E").e("Error Msg is $error")
         when (error) {
             "API ERROR OCCURRED" -> {
                 binding.mainSkyText.text = "데이터 호출에 실패했습니다"
@@ -1514,7 +1507,14 @@ class MainActivity
                                     .replaceFirst(" ", "")
                                     .replace(getString(R.string.korea), "")
                                     .replace("null", "")
-                                val formedAddr = AddressFromRegex(addr).getAddress() ?: formatAddr
+
+                                val regexAddr = AddressFromRegex(addr).getAddress()
+                                val formedAddr = if (regexAddr != null &&
+                                    regexAddr != IN_COMPLETE_ADDRESS) {
+                                    regexAddr
+                                } else {
+                                    formatAddr
+                                }
 
                                 setCurrentLocation(this@MainActivity, formatAddr)
 

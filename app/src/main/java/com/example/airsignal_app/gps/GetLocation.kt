@@ -83,10 +83,8 @@ class GetLocation(private val context: Context) {
             model.timeStamp = getCurrentTime()
             if (roomDB.findAll().isEmpty()) {
                 roomDB.insert(model)
-                Logger.t(TAG_D).d("Insert GPS In GetLocation")
             } else {
                 roomDB.update(model)
-                Logger.t(TAG_D).d("Update GPS In GetLocation")
             }
         }
     }
@@ -119,16 +117,16 @@ class GetLocation(private val context: Context) {
     /** 디바이스 GPS 센서에 접근이 가능한지 확인 **/
     fun isGPSConnected(): Boolean {
         val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
-        Timber.tag("Location Enable")
-            .i("위치정보 호출 여부 :  ${lm.isProviderEnabled(LocationManager.GPS_PROVIDER)} ")
+//        Timber.tag("Location Enable")
+//            .i("위치정보 호출 여부 :  ${lm.isProviderEnabled(LocationManager.GPS_PROVIDER)} ")
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
     /** 디바이스 네트워크에 접근이 가능한지 확인 **/
     fun isNetWorkConnected(): Boolean {
         val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
-        Timber.tag("Location Enable")
-            .i("네트워크 호출 여부 : ${lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)}")
+//        Timber.tag("Location Enable")
+//            .i("네트워크 호출 여부 : ${lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)}")
         return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 

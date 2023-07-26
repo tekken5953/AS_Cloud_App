@@ -514,15 +514,12 @@ class SettingActivity
         when (getUserTheme(this)) {
             "dark" -> {
                 binding.settingSystemTheme.fetchData(getString(R.string.theme_dark))
-//                binding.settingSystemTheme.fetchData(getString(R.string.theme_dark))
             }
             "light" -> {
                 binding.settingSystemTheme.fetchData(getString(R.string.theme_light))
-//                binding.settingSystemTheme.fetchData(getString(R.string.theme_light))
             }
             else -> {
                 binding.settingSystemTheme.fetchData(getString(R.string.theme_system))
-//                binding.settingSystemFont.fetchData(getString(R.string.theme_system))
             }
         }
     }

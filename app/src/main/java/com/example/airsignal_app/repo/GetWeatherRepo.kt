@@ -37,7 +37,7 @@ class GetWeatherRepo : BaseRepository() {
                         try {
                             if (response.isSuccessful) {
                                 val responseBody = response.body()!!
-                                Logger.t(TAG_R).d("Success API : ${ApiState.Success(responseBody).data}")
+//                                Logger.t(TAG_R).d("Success API : ${ApiState.Success(responseBody).data}")
                                 _getDataResult.postValue(ApiState.Success(responseBody))
                             } else {
                                 _getDataResult.postValue(ApiState.Error("API ERROR OCCURRED"))
@@ -54,7 +54,7 @@ class GetWeatherRepo : BaseRepository() {
                         t: Throwable
                     ) {
                         try {
-                            Logger.t(TAG_R).e("API NetworkError : ${t.stackTraceToString()}")
+//                            Logger.t(TAG_R).e("API NetworkError : ${t.stackTraceToString()}")
                             _getDataResult.postValue(ApiState.Error("Network Error"))
                             call.cancel()
                         } catch (e: SocketTimeoutException) {

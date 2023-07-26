@@ -16,7 +16,6 @@ import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE
-import com.orhanobut.logger.Logger
 
 class BackgroundPermissionActivity : AppCompatActivity() {
 
@@ -71,11 +70,9 @@ class BackgroundPermissionActivity : AppCompatActivity() {
         if (requestCode == REQUEST_BACKGROUND_LOCATION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "권한이 허용되었습니다", Toast.LENGTH_SHORT).show()
-                Logger.t("testtest").d("권한이 허용되었습니다")
                 callWidgetServiceBroadcast()
             } else {
                 Toast.makeText(this, "권한이 거부되었습니다", Toast.LENGTH_SHORT).show()
-                Logger.t("testtest").d("권한이 거부되었습니다")
                 callWidgetServiceBroadcast()
             }
         }
@@ -91,6 +88,6 @@ class BackgroundPermissionActivity : AppCompatActivity() {
         sendBroadcast(intent)
 
         NotiJobService().getWidgetLocation(this)
-        EnterPageUtil(this).fullyExit()
+        EnterPageUtil(this).toMain(GetAppInfo.getUserLastAddress(this))
     }
 }

@@ -97,8 +97,6 @@ class ReportViewPagerAdapter(
                     } catch (e: NullPointerException) {
                         e.printStackTrace()
                     }
-                } else {
-                    Timber.tag("testtest").w("No Position")
                 }
             }
         }

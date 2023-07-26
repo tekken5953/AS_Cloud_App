@@ -29,7 +29,7 @@ object HttpClient {
             instance ?: synchronized(HttpClient::class.java) {   // 멀티스레드에서 동시생성하는 것을 막음
                 instance ?: HttpClient.also {
                     instance = it
-                    Logger.t(TAG_R).d("API Instance 생성 : Not Widget")
+//                    Logger.t(TAG_R).d("API Instance 생성 : Not Widget")
                 }
             }
         } else {
@@ -78,7 +78,7 @@ object HttpClient {
         else {
             instance = HttpClient
             mMyAPIImpl = retrofit.create(MyApiImpl::class.java) // API 인터페이스 형태로 레트로핏 클라이언트 생성
-            Logger.t(TAG_R).d("API Instance 재생성 : Widget")
+//            Logger.t(TAG_R).d("API Instance 재생성 : Widget")
         }
 
         return this

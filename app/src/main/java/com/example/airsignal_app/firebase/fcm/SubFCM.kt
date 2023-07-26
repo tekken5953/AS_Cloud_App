@@ -81,8 +81,8 @@ class SubFCM : FirebaseMessagingService() {
             .replace("=","").replace("+","")
 
         if (old != encodedStream) {
-            Logger.t(TAG_N)
-                .i("reNewTopic - old : $old , new : $new , encoded : $encodedStream")
+//            Logger.t(TAG_N)
+//                .i("reNewTopic - old : $old , new : $new , encoded : $encodedStream")
             SubFCM().unSubTopic(old).subTopic(encodedStream)
             SetAppInfo.setTopicNotification(context, encodedStream)
         }
@@ -93,8 +93,8 @@ class SubFCM : FirebaseMessagingService() {
         val token = withContext(Dispatchers.IO) {
             FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
-                    Timber.tag("Notification")
-                        .w("Fetching FCM registration token failed by $task.exception")
+//                    Timber.tag("Notification")
+//                        .w("Fetching FCM registration token failed by $task.exception")
                     return@OnCompleteListener
                 }
                 val token = task.result
@@ -107,7 +107,6 @@ class SubFCM : FirebaseMessagingService() {
     /** 새로운 토큰 발행 **/
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        //TODO 서버에 바뀐 토큰 보내기
-        Timber.tag(TAG_N).d("sendRegistrationTokenToServer($token)")
+//        Timber.tag(TAG_N).d("sendRegistrationTokenToServer($token)")
     }
 }

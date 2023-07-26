@@ -9,7 +9,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.example.airsignal_app.dao.StaticDataObject.TAG_W
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.firebase.db.RDBLogcat.WIDGET_ACTION
 import com.example.airsignal_app.firebase.db.RDBLogcat.WIDGET_DOZE_MODE
@@ -17,9 +16,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.view.ToastUtils
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_ENABLE
-import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_OPTIONS_CHANGED
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE
-import timber.log.Timber
 
 
 open class WidgetProvider4x2 : AppWidgetProvider() {
@@ -28,7 +25,6 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        Timber.tag(TAG_W).i("onEnabled")
         if (!isJobScheduled(context)) {
             NotiJobScheduler().scheduleJob(context)
         }
@@ -37,7 +33,6 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     // onEnabled() 와는 반대로 마지막의 최종 앱 위젯 인스턴스가 삭제 될 때 호출 됩니다
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        Timber.tag(TAG_W).i("onDisabled")
     }
 
     // android 4.1 에 추가 된 메소드 이며, 앱 위젯이 등록 될 때와 앱 위젯의 크기가 변경 될 때 호출 됩니다.
@@ -76,13 +71,11 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     // 위젯 ID 는 UID 별로 관리 되는데 이때 복원 시점에서 ID 가 변경 될 수 있으므로 백업 시점의 oldID 와 복원 후의 newID 를 전달합니다
     override fun onRestored(context: Context, oldWidgetIds: IntArray, newWidgetIds: IntArray) {
         super.onRestored(context, oldWidgetIds, newWidgetIds)
-        Timber.tag(TAG_W).i("onRestored")
     }
 
     // 해당 앱 위젯이 삭제 될 때 호출 됩니다
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         super.onDeleted(context, appWidgetIds)
-        Timber.tag(TAG_W).i("onDeleted")
     }
 
     // 앱의 브로드캐스트를 수신하며 해당 메서드를 통해 각 브로드캐스트에 맞게 메서드를 호출한다.
@@ -119,10 +112,6 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                             ToastUtils(context).showMessage("마지막 갱신 후 1분 뒤에 가능합니다", 1)
                         }
                     }
-                }
-                WIDGET_OPTIONS_CHANGED
-                -> {
-                    Timber.tag(TAG_W).i("onReceive : Options were changed")
                 }
                 else -> {}
             }

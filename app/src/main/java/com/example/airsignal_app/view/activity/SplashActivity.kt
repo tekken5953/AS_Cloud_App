@@ -1,12 +1,9 @@
 package com.example.airsignal_app.view.activity
 
 import android.app.AlertDialog
-import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import com.example.airsignal_app.R
 import com.example.airsignal_app.databinding.ActivitySplashBinding
 import com.example.airsignal_app.firebase.db.RDBLogcat
@@ -16,7 +13,6 @@ import com.example.airsignal_app.util.LoggerUtil
 import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.example.airsignal_app.util.`object`.GetSystemInfo
-import com.example.airsignal_app.util.`object`.GetSystemInfo.getPlayStoreURL
 import com.example.airsignal_app.util.`object`.GetSystemInfo.goToPlayStore
 import com.example.airsignal_app.vmodel.GetAppVersionViewModel
 import com.google.firebase.database.FirebaseDatabase
