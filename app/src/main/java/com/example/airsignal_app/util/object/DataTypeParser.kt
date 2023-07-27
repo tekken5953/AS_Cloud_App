@@ -436,6 +436,11 @@ object DataTypeParser {
             .replace("제주특별자치도", "제주도")
     }
 
+    fun convertAddressInv(addr: String): String {
+        return addr.replace("시", "특별시").replace("시", "광역시")
+            .replace("제주도", "제주특별자치도")
+    }
+
     /** HH:mm 포맷의 시간을 분으로 변환 **/
     fun convertTimeToMinutes(time: String): Int {
         return try {

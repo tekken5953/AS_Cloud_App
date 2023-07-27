@@ -25,7 +25,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="15dp"
         android:background="@drawable/search_bg"
-        android:hint="새 주소를 입력해주세요"
+        android:hint="새 주소를 등록하세요"
         android:textColorHint="@color/theme_text_color"
         android:textColor="@color/theme_text_color"
         android:fontFamily="@font/spoqa_hansansneo_regular"
@@ -55,6 +55,8 @@
         android:layout_height="600dp"
         android:layout_below="@+id/changeAddressEdit"
         android:layout_marginTop="5dp"
+        android:overScrollMode="never"
+        android:clipToPadding="false"
         tools:itemCount="1"
         tools:listitem="@layout/list_item_address_list"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>

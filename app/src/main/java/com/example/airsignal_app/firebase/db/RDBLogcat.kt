@@ -53,6 +53,8 @@ object RDBLogcat {
     const val ERROR_ANR = "ANR 에러"
     const val ERROR_LOCATION_IOException = "주소 - IOException"
     const val ERROR_LOCATION_FAILED = "GPS 위치정보 갱신실패"
+    const val WIDGET_INSTALL = "위젯 설치"
+    const val WIDGET_UNINSTALL = "위젯 삭제"
 
     /** 유저 로그 레퍼런스 **/
     private val db = Firebase.database
@@ -70,15 +72,23 @@ object RDBLogcat {
 
     /** 로그인 여부 확인 **/
     private fun isLogin(context: Context): String {
-        return if (getUserEmail(context) != "") LOGIN_ON else LOGIN_OFF
+        return try {
+            if (getUserEmail(context) != "") LOGIN_ON else LOGIN_OFF
+        } catch(e: java.lang.NullPointerException) {
+            LOGIN_OFF
+        }
     }
 
     /** 유니크 아이디 받아오기 - 로그인(이메일) 비로그인(디바이스아이디) **/
     private fun getAndroidIdForLog(context: Context): String {
-        return if (getUserEmail(context) != "") {
-            getUserEmail(context).replace(".","_")
-        } else {
-            GetSystemInfo.androidID(context)
+        return try {
+            if (getUserEmail(context) != "") {
+                getUserEmail(context).replace(".","_")
+            } else {
+                GetSystemInfo.androidID(context)
+            }
+        } catch (e: java.lang.NullPointerException) {
+            ""
         }
     }
 

@@ -140,4 +140,6 @@
     <string name="daily_tomorrow">Tom</string>
     <string name="daily_next_tomorrow">Next Tom</string>
     <string name="delete">Delete</string>
+    <string name="add">Add</string>
+    <string name="no_result">No result</string>
 </resources>

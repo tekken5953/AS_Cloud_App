@@ -139,4 +139,6 @@
     <string name="daily_tomorrow">내일</string>
     <string name="daily_next_tomorrow">모레</string>
     <string name="delete">삭제</string>
+    <string name="add">추가</string>
+    <string name="no_result">검색된 주소가 없습니다</string>
 </resources>

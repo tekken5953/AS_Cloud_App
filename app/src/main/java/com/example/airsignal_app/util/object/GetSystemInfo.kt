@@ -53,12 +53,14 @@ object GetSystemInfo {
 
     @SuppressLint("HardwareIds")
     fun androidID(context: Context): String {
-        val id = Settings.Secure.getString(
-            context.applicationContext.contentResolver,
-            Settings.Secure.ANDROID_ID
-        )
-        Timber.tag("buildUserInfo").i(id)
-        return id
+        return try {
+            Settings.Secure.getString(
+                context.applicationContext.contentResolver,
+                Settings.Secure.ANDROID_ID
+            )
+        } catch (e: java.lang.NullPointerException) {
+            ""
+        }
     }
 
     @Suppress("DEPRECATION")

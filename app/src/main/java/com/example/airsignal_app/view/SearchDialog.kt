@@ -3,14 +3,20 @@ package com.example.airsignal_app.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.*
 import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableStringBuilder
 import android.text.TextWatcher
+import android.text.style.ForegroundColorSpan
 import android.util.DisplayMetrics
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
+import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
@@ -20,6 +26,7 @@ import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.util.KeyboardController
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertAddress
+import com.example.airsignal_app.util.`object`.DataTypeParser.convertAddressInv
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo.getCurrentLocation
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
@@ -116,25 +123,44 @@ class SearchDialog(
         } else {
             val searchView: EditText = view.findViewById(R.id.searchAddressView)
             val searchBack: ImageView = view.findViewById(R.id.searchBack)
+            val noResult: TextView = view.findViewById(R.id.searchAddressNoResult)
             searchBack.setOnClickListener {
                 dismissNow()
                 show(0)
             }
             val listView: ListView = view.findViewById(R.id.searchAddressListView)
 
-            searchEditListener(listView, searchView)
+            searchEditListener(listView, searchView,noResult)
             KeyboardController().onKeyboardUp(requireContext(), searchView)
         }
     }
 
     // 검색창 리스너
-    private fun searchEditListener(listView: ListView, editText: EditText) {
+    @SuppressLint("ClickableViewAccessibility")
+    private fun searchEditListener(listView: ListView, editText: EditText, noResult: TextView) {
         @SuppressLint("InflateParams")
         val searchItem = java.util.ArrayList<String>()
         val allTextArray = resources.getStringArray(R.array.address)
         val adapter =
-            ArrayAdapter(requireContext(), R.layout.list_item_searced_address, searchItem)
+            CustomArrayAdapter(editText, dataList = searchItem)
         listView.adapter = adapter
+
+        editText.setOnTouchListener { _, motionEvent ->
+            try {
+                if (motionEvent.action == MotionEvent.ACTION_UP &&
+                    motionEvent.rawX >= editText.right - editText.compoundDrawablesRelative[2].bounds.width()
+                ) {
+                    // Clear the EditText when the clear button is clicked
+                    editText.text.clear()
+                    return@setOnTouchListener true
+                }
+
+            } catch (e: java.lang.NullPointerException) {
+                e.printStackTrace()
+            }
+
+            false
+        }
 
         // 서치 뷰 텍스트 변환 콜벡
         editText.addTextChangedListener(object : TextWatcher {
@@ -144,12 +170,16 @@ class SearchDialog(
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
-            override fun afterTextChanged(p0: Editable?) {
-                if (p0!!.isNotEmpty()) {
+            override fun afterTextChanged(s: Editable?) {
+                if (s!!.isNotEmpty()) {
                     searchItem.clear()
+                    editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        0, 0, R.drawable.ico_search_x, 0
+                    )
+                    noResult.visibility = View.GONE
 
                     allTextArray.forEach { allList ->
-                        val nonSpacing = p0.toString().replace(" ", "").lowercase()
+                        val nonSpacing = s.toString().replace(" ", "").lowercase()
                         if (allList.replace(" ", "").lowercase().contains(nonSpacing) ||
                             convertAddress(allList).replace(" ", "").lowercase()
                                 .contains(nonSpacing)
@@ -158,7 +188,11 @@ class SearchDialog(
                         }
                     }
                 } else {
+                    noResult.visibility = View.VISIBLE
                     searchItem.clear()
+                    editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        0, 0, android.R.color.transparent, 0
+                    )
                 }
                 adapter.notifyDataSetChanged()
             }
@@ -167,18 +201,53 @@ class SearchDialog(
         // 검색주소 리스트
         listView.onItemClickListener =
             AdapterView.OnItemClickListener { _, _, position, _ ->
-                CoroutineScope(Dispatchers.Default).launch {
-                    val model = GpsEntity()
-                    model.name = searchItem[position]
-                    model.addr = searchItem[position]
-                    db.insert(model)
-                    dbUpdate(model.addr)
+                val builder = Dialog(activity)
+                val viewSearched = LayoutInflater.from(activity.applicationContext)
+                    .inflate(R.layout.dialog_alert_double_btn, null)
+                builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                builder.setContentView(viewSearched)
+                builder.create()
 
-                    withContext(Dispatchers.Main) {
-                        dismissNow()
-                        activity.recreate()
+                val cancel = viewSearched.findViewById<AppCompatButton>(R.id.alertDoubleCancelBtn)
+                val apply = viewSearched.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
+                val title = viewSearched.findViewById<TextView>(R.id.alertDoubleTitle)
+
+                val span = SpannableStringBuilder("${searchItem[position]}을(를)\n추가하시겠습니까?")
+                span.setSpan(
+                    ForegroundColorSpan(
+                        ResourcesCompat.getColor(activity.resources,
+                            R.color.main_blue_color, null)),0,
+                    searchItem[position].length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                title.text = span
+                apply.text = activity.getString(R.string.add)
+                apply.backgroundTintList = ColorStateList.valueOf(
+                    activity.getColor(R.color.main_blue_color)
+                )
+                cancel.text = activity.getString(R.string.cancel)
+
+                apply.setOnClickListener {
+                    builder.dismiss()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val model = GpsEntity()
+                        model.name = searchItem[position]
+                        model.addr = searchItem[position]
+                        db.insert(model)
+                        dbUpdate(model.addr)
+
+                        withContext(Dispatchers.Main) {
+                            dismissNow()
+                            delay(100)
+                            activity.recreate()
+                        }
                     }
                 }
+
+                cancel.setOnClickListener {
+                    builder.dismiss()
+                }
+
+                builder.show()
             }
     }
 
@@ -255,5 +324,34 @@ class SearchDialog(
             displayMetrics
         )
         return displayMetrics.heightPixels
+    }
+
+    private inner class CustomArrayAdapter(private val editText: EditText, dataList: List<String>) :
+        ArrayAdapter<String>(activity, R.layout.list_item_searced_address, dataList) {
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view = super.getView(position, convertView, parent) as TextView
+            val fullText = getItem(position)!!
+//            val editableText = convertAddressInv(getItem(position)!!).lowercase()
+
+            // Find the starting index of the input text in the item's text
+            val startIndex = fullText.indexOf(editText.text.toString())
+
+            // If the input text is found in the item's text, set the color of the input text to red
+            if (startIndex != -1) {
+                val coloredText = android.text.SpannableString(getItem(position))
+                coloredText.setSpan(
+                    ForegroundColorSpan(activity.getColor(R.color.main_blue_color)),
+                    startIndex,
+                    startIndex + editText.text.toString().length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+                view.text = coloredText
+            } else {
+                view.text = fullText
+            }
+
+            return view
+        }
     }
 }

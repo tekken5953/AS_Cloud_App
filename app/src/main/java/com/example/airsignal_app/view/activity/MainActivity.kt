@@ -1229,7 +1229,7 @@ class MainActivity
                 )) {
                     mVib()
 //                    showPB()
-                    getCurrentLocationData()
+                    getDataSingleTime()
                 }
             }
 

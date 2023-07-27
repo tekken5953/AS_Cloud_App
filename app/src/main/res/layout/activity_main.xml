@@ -473,7 +473,7 @@
                         android:overScrollMode="never"
                         android:paddingStart="13dp"
                         android:paddingEnd="15dp"
-                        android:layout_marginStart="3dp"
+                        android:layout_marginStart="5dp"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/list_item_daily_weather" />
                 </RelativeLayout>
