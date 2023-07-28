@@ -42,7 +42,8 @@
         </activity>
         <activity
             android:name=".view.activity.PermissionActivity"
-            android:exported="false">
+            android:exported="false"
+            android:hardwareAccelerated="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -86,9 +87,7 @@
         </activity>
         <activity
             android:name=".view.activity.LoginActivity"
-            android:exported="true"
-            android:allowBackup="false"
-            />
+            android:exported="true" />
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
             android:theme="@style/OpenSourceMenuTheme" />

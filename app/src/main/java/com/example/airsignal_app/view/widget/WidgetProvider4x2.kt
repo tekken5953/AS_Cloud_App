@@ -93,34 +93,14 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
+
         for (appWidgetId in appWidgetIds) {
             Logger.t("testtest").i("On Update")
             val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
 
             // 위젯의 TextView에 업데이트된 텍스트 설정 예시
             if (isRefreshable(context)) {
-                if (GetLocation(context).isGPSConnected()) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        try {
-                            val locationRequest = CurrentLocationRequest.Builder()
-                            locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-
-                            val locationResult = withContext(Dispatchers.Default) {
-                                LocationServices.getFusedLocationProviderClient(context)
-                                    .getCurrentLocation(locationRequest.build(), null)
-                            }.await()
-
-                            val result = locationResult ?: throw Exception("Location not available")
-                            loadWidgetData(context, result.latitude, result.longitude)
-                        } catch (e: Exception) {
-                            RDBLogcat.writeErrorNotANR(
-                                context,
-                                sort = RDBLogcat.WIDGET_ERROR,
-                                msg = "Location is Not Available"
-                            )
-                        }
-                    }
-                }
+                getWidgetLocation(context)
             } else {
                 ToastUtils(context).showMessage("마지막 갱신 후 1분 뒤에 가능합니다", 1)
             }
@@ -161,6 +141,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                     RDBLogcat.writeWidgetPref(context, WIDGET_UNINSTALL, intent.action.toString() )
                 }
                 WIDGET_UPDATE -> {
+                    Logger.t("testtest").i("WIDGET_UPDATE")
                     val ids = AppWidgetManager.getInstance(context)
                         .getAppWidgetIds(ComponentName(context, WidgetProvider4x2::class.java))
                     onUpdate(context, AppWidgetManager.getInstance(context), ids)
@@ -308,58 +289,58 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         return GetAppInfo.getIsNight(dailySunProgress)
     }
 
-    @SuppressLint("MissingPermission")
-    fun getWidgetLocation(context: Context) {
-        CoroutineScope(Dispatchers.Default).launch {
-            LocationServices.getFusedLocationProviderClient(context).run {
-                this.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                    .addOnSuccessListener { location ->
-                        Logger.t("testtest").i("get Location : ${Thread.currentThread().name}")
-                        loadWidgetData(context, location.latitude, location.longitude)
-                    }
-                    .addOnFailureListener { e ->
-                        RDBLogcat.writeErrorNotANR(
-                            context,
-                            sort = RDBLogcat.WIDGET_ERROR,
-                            msg = e.localizedMessage!!
-                        )
-                    }
-                    .addOnCanceledListener {
-                        RDBLogcat.writeErrorNotANR(
-                            context,
-                            sort = RDBLogcat.WIDGET_ERROR,
-                            msg = "Location is Not Available"
-                        )
-                    }
-            }
-        }
-    }
-
 //    @SuppressLint("MissingPermission")
 //    fun getWidgetLocation(context: Context) {
-//        if (GetLocation(context).isGPSConnected()) {
-//            CoroutineScope(Dispatchers.Main).launch {
-//                try {
-//                    val locationRequest = CurrentLocationRequest.Builder()
-//                    locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-//
-//                    val locationResult = withContext(Dispatchers.IO) {
-//                        LocationServices.getFusedLocationProviderClient(context)
-//                            .getCurrentLocation(locationRequest.build(), null)
-//                    }.await()
-//
-//                    val result = locationResult ?: throw Exception("Location not available")
-//                    loadWidgetData(context, result.latitude, result.longitude)
-//                } catch (e: Exception) {
-//                    RDBLogcat.writeErrorNotANR(
-//                        context,
-//                        sort = RDBLogcat.WIDGET_ERROR,
-//                        msg = "Location is Not Available"
-//                    )
-//                }
+//        CoroutineScope(Dispatchers.Default).launch {
+//            LocationServices.getFusedLocationProviderClient(context).run {
+//                this.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+//                    .addOnSuccessListener { location ->
+//                        Logger.t("testtest").i("get Location : ${Thread.currentThread().name}")
+//                        loadWidgetData(context, location.latitude, location.longitude)
+//                    }
+//                    .addOnFailureListener { e ->
+//                        RDBLogcat.writeErrorNotANR(
+//                            context,
+//                            sort = RDBLogcat.WIDGET_ERROR,
+//                            msg = e.localizedMessage!!
+//                        )
+//                    }
+//                    .addOnCanceledListener {
+//                        RDBLogcat.writeErrorNotANR(
+//                            context,
+//                            sort = RDBLogcat.WIDGET_ERROR,
+//                            msg = "Location is Not Available"
+//                        )
+//                    }
 //            }
 //        }
 //    }
+
+    @SuppressLint("MissingPermission")
+    fun getWidgetLocation(context: Context) {
+        if (GetLocation(context).isGPSConnected()) {
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    val locationRequest = CurrentLocationRequest.Builder()
+                    locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+
+                    val locationResult = withContext(Dispatchers.IO) {
+                        LocationServices.getFusedLocationProviderClient(context)
+                            .getCurrentLocation(locationRequest.build(), null)
+                    }.await()
+
+                    val result = locationResult ?: throw Exception("Location not available")
+                    loadWidgetData(context, result.latitude, result.longitude)
+                } catch (e: Exception) {
+                    RDBLogcat.writeErrorNotANR(
+                        context,
+                        sort = RDBLogcat.WIDGET_ERROR,
+                        msg = "Location is Not Available"
+                    )
+                }
+            }
+        }
+    }
 
     private fun loadWidgetData(context: Context, lat: Double, lng: Double) {
         val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
