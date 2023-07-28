@@ -22,8 +22,13 @@ import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.login.PhoneLogin
 import com.example.airsignal_app.util.EnterPageUtil
+import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.view.ShowDialogClass
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.kakao.sdk.common.util.Utility.getKeyHash
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LoginActivity
     : BaseActivity<ActivityLoginBinding>() {
@@ -48,6 +53,8 @@ class LoginActivity
         binding.naverLoginButton.setOnClickListener {
             naverLogin.login()
         }
+
+        println(getKeyHash(this))
 
         binding.phoneLoginButton.setOnClickListener {
             val viewEmailLogin: View =
@@ -97,18 +104,30 @@ class LoginActivity
         registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
-            if (result.resultCode == RESULT_OK) {
-                val data = result.data
-                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            when (result.resultCode) {
+                RESULT_OK -> {
+                    val data = result.data
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                    Log.d("testtest", "Google Login is OK : ${result.resultCode},${result.data}")
 
-                if (task.result.email == "tekken5953@naver.com") {
-                    Log.d("testtest","sub topic admin")
-                    SubFCM().subAdminTopic()
+                    if (task.result.email == "tekken5953@naver.com") {
+                        SubFCM().subAdminTopic()
+                    }
+                    googleLogin.handleSignInResult(task, isAuto = false)
+                    EnterPageUtil(this).toMain("google")
                 }
-                googleLogin.handleSignInResult(task, isAuto = false)
-                EnterPageUtil(this).toMain("google")
-            } else {
-                binding.googleLoginButton.isEnabled = true
+                RESULT_CANCELED -> {
+                    Log.d("testtest", "Google Login is Canceled : ${result.resultCode}")
+                    binding.googleLoginButton.isEnabled = true
+                }
+                RESULT_FIRST_USER -> {
+                    Log.d("testtest", "Google Login is FIRST_USER : ${result.resultCode}")
+                    binding.googleLoginButton.isEnabled = true
+                }
+                else -> {
+                    Log.d("testtest", "Else : ${result.resultCode}")
+                    binding.googleLoginButton.isEnabled = true
+                }
             }
         }
 }

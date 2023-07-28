@@ -9,7 +9,6 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
-import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_KAKAO
@@ -62,15 +61,18 @@ class KakaoLogin(private val activity: Activity) {
                     pb.visibility = View.GONE
                     // 사용자가 취소
                     if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled)) {
+                        Logger.t("testtest").d("카카오 로그인 취소")
                         return@loginWithKakaoTalk
                     }
                     // 다른 오류
                     else {
+                        Logger.t("testtest").d("카카오 로그인 기타 오류 : ${error.localizedMessage}")
                         UserApiClient.instance.loginWithKakaoAccount(
                             activity,
                             callback = mCallback
                         )
                     }
+
                 }
                 else {
                     // 로그인 성공 부분
@@ -147,9 +149,9 @@ class KakaoLogin(private val activity: Activity) {
                 if (error != null) {
                     pb.visibility = View.GONE
                     if (error is KakaoSdkError && error.isInvalidTokenError()) {
-//                        Logger.t(TAG_LOGIN).w("만료된 토큰입니다") // 만료된 토큰임 로그인 필요
+                        Logger.t("testtest").w("만료된 토큰입니다") // 만료된 토큰임 로그인 필요
                     } else {
-//                        Logger.t("TAG_LOG").e("기타 에러 발생 : $error") //기타 에러
+                        Logger.t("testtest").e("기타 에러 발생 : $error") //기타 에러
                     }
                 } else {
                     //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
@@ -173,17 +175,7 @@ class KakaoLogin(private val activity: Activity) {
     /** 카카오 자동 로그인
      * @return OAuthToken? **/
     private fun loginSilenceKakao(): OAuthToken? {
-        val token = TokenManagerProvider.instance.manager.getToken()
-//        token?.let {
-//            Logger.t(TAG_LOGIN)
-//                .d(
-//                    "카카오 로그인 성공\n" +
-//                            "user code is ${it.idToken}\n" +
-//                            "access is ${it.accessToken}\naccess was expired at ${it.accessTokenExpiresAt}\n" +
-//                            "refresh is ${it.refreshToken}\nrefresh was expired at ${it.refreshTokenExpiresAt}"
-//                )
-//        }
-        return token
+        return TokenManagerProvider.instance.manager.getToken()
     }
 
     private fun enterMainPage() {

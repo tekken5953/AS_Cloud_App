@@ -1,6 +1,7 @@
 package com.example.airsignal_app.view.widget
 
 import android.appwidget.AppWidgetManager
+import android.content.Intent
 import android.content.res.Resources
 
 /**
@@ -15,6 +16,8 @@ object WidgetAction {
     const val WIDGET_OPTIONS_CHANGED = AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED
     const val ACTION_DOZE_MODE_CHANGED = "android.os.action.DEVICE_IDLE_MODE_CHANGED"
     const val WIDGET_DELETE = AppWidgetManager.ACTION_APPWIDGET_DELETED
+    const val WIDGET_SCREEN_ON = Intent.ACTION_SCREEN_ON
+    const val WIDGET_BOOT_COMPLETE = Intent.ACTION_BOOT_COMPLETED
 
     fun calculateColumnCount(count: Int): Float {
         val deviceWidthInDp =

@@ -22,7 +22,6 @@ class BackgroundPermissionActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onResume() {
         super.onResume()
-        NotiJobService().getWidgetLocation(this)
         if (!RequestPermissionsUtil(this).isBackgroundRequestLocation()) {
             if (RequestPermissionsUtil(this).isShouldShowRequestPermissionRationale(
                     this,
@@ -87,7 +86,7 @@ class BackgroundPermissionActivity : AppCompatActivity() {
         // 브로드캐스트를 전송합니다.
         sendBroadcast(intent)
 
-        NotiJobService().getWidgetLocation(this)
+        WidgetProvider4x2().getWidgetLocation(this)
         EnterPageUtil(this).toMain(GetAppInfo.getUserLastAddress(this))
     }
 }
