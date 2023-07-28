@@ -21,6 +21,7 @@ import android.widget.LinearLayout.VISIBLE
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -75,6 +76,7 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
 import com.example.airsignal_app.util.`object`.GetAppInfo.getTopicNotification
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
+import com.example.airsignal_app.util.`object`.GetSystemInfo.isThemeNight
 import com.example.airsignal_app.util.`object`.SetAppInfo.removeSingleKey
 import com.example.airsignal_app.util.`object`.SetAppInfo.setCurrentLocation
 import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
@@ -145,6 +147,7 @@ class MainActivity
 
     override fun onResume() {
         super.onResume()
+        addSideMenu()
         if (!isProgressed) {
 //            showPB()
             isProgressed = true
@@ -404,7 +407,7 @@ class MainActivity
             WrapTextClass().getFormedText(formS, 7)
         } catch (e: NoSuchElementException) {
             e.printStackTrace()
-            "주소 재갱신 필요"
+            return s
         }
     }
 
@@ -438,8 +441,6 @@ class MainActivity
         @Suppress("DEPRECATION") windowManager.defaultDisplay.getMetrics(
             displayMetrics
         )
-
-        addSideMenu()
 //        addExitDialog()
         // 자동 로그인
         SilentLoginClass().login(this@MainActivity, binding.mainMotionLayout)
@@ -575,6 +576,12 @@ class MainActivity
             }
         })
 
+        binding.nestedAirHelp.setImageDrawable(if (isThemeNight(this)) {
+            ResourcesCompat.getDrawable(resources,R.drawable.ico_question_b,null)
+        } else {
+            ResourcesCompat.getDrawable(resources,R.drawable.ico_question,null)
+        })
+
         binding.nestedAirHelp.setOnClickListener {
             if (binding.nestedAirHelpPopup.alpha == 0f) {
                 val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
@@ -692,6 +699,12 @@ class MainActivity
                                             realtime.temp
                                         ).toString()
                                     binding.mainLiveTempUnit.text = "˚"
+
+                                    binding.mainLiveTempValueC.text =
+                                        modifyCurrentTempType(
+                                            currentTemp,
+                                            realtime.temp
+                                        ).toString() + "˚"
                                 }
                             }
 
@@ -735,6 +748,8 @@ class MainActivity
                                 binding.mainMinMaxTitle.text = getString(R.string.min_max)
                                 binding.mainMinMaxValue.text =
                                     "${filteringNullData(it.min!!)}˚/${filteringNullData(it.max!!)}˚"
+                                binding.mainMinMaxValueC.text =
+                                    "${filteringNullData(it.min)}˚/${filteringNullData(it.max)}˚"
                             }
 
                             updateAirQData(
@@ -841,13 +856,20 @@ class MainActivity
                                 binding.nestedReportFrame.visibility = VISIBLE
                             }
 
-                            binding.mainSensTitle.text = "체감온도"
+                            binding.mainSensTitle.text = getString(R.string.sens_temp)
                             binding.mainSensValue.text =
                                 SensibleTempFormula().getSensibleTemp(
                                     ta = current.temperature!!,
                                     rh = current.humidity!!,
                                     v = current.windSpeed!!
                                 ).roundToInt().toString() + "˚"
+
+                            binding.mainSensValueC.text =
+                                SensibleTempFormula().getSensibleTemp(
+                                ta = current.temperature,
+                                rh = current.humidity,
+                                v = current.windSpeed
+                            ).roundToInt().toString() + "˚"
 
                             for (i: Int in 0 until result.realtime.size) {
                                 val dailyIndex = result.realtime[i]
@@ -955,7 +977,7 @@ class MainActivity
                                     this,
                                     isSearched = false,
                                     gpsValue = metaAddr,
-                                    responseData = result.toString()
+                                    responseData = "${getUserLastAddress(this)},${result.toString()}"
                                 )
                             }
                         } catch (e: java.lang.NullPointerException) {
@@ -1207,7 +1229,7 @@ class MainActivity
                 )) {
                     mVib()
 //                    showPB()
-                    getCurrentLocationData()
+                    getDataSingleTime()
                 }
             }
 
@@ -1255,7 +1277,7 @@ class MainActivity
             }
 
         } else {
-            binding.mainSensTitle.text = "체감온도"
+            binding.mainSensTitle.text = getString(R.string.sens_temp)
             binding.mainMinMaxTitle.text = getString(R.string.min_max)
             binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
             binding.mainGpsFix.setImageDrawable(
@@ -1435,7 +1457,9 @@ class MainActivity
             binding.mainLiveTempValue, binding.mainLiveTempUnit, binding.mainCompareTempTv,
             binding.mainTopBarGpsTitle, binding.mainMotionSlideGuide, binding.mainSkyText,
             binding.mainGpsTitleTv, binding.mainSensTitle, binding.mainSensValue,
-            binding.mainMinMaxTitle,binding.mainMinMaxValue
+            binding.mainMinMaxTitle,binding.mainMinMaxValue,binding.mainLiveTempTitleC,
+            binding.mainLiveTempValueC,binding.mainSensTitleC,binding.mainSensValueC,
+            binding.mainMinMaxTitleC,binding.mainMinMaxValueC
 
         )
         val changeTintImageViews = listOf(

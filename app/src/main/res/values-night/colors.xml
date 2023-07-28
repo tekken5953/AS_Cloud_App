@@ -18,5 +18,7 @@
     <color name="theme_indicator_empty_color">#A6A6A6</color>
     <color name="theme_indicator_fill_color">#eeeeee</color>
     <color name="theme_pm_title_bg_color">#9C9C9C</color>
+    <color name="theme_alert_double_cancel_color">#484C56</color>
+    <color name="theme_alert_double_apply_color">#F87171</color>
 
 </resources>

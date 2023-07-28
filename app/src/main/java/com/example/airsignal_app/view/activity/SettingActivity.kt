@@ -1,15 +1,18 @@
 package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.Window
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
@@ -19,6 +22,9 @@ import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiEvent
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiNight
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiPM
+import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
+import com.example.airsignal_app.dao.StaticDataObject.LANG_KR
+import com.example.airsignal_app.dao.StaticDataObject.LANG_SYS
 import com.example.airsignal_app.databinding.ActivitySettingBinding
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
@@ -112,37 +118,48 @@ class SettingActivity
         // 로그아웃 버튼 클릭
         binding.settingLogOut.setOnClickListener {
             if (binding.settingLogOut.text == getString(R.string.setting_logout)) {
-                val builder = AlertDialog.Builder(this)
-                builder.setTitle(getString(R.string.setting_logout))
-                    .setMessage(getString(R.string.logout_msg))
-                    .setPositiveButton(
-                        getString(R.string.yes)
-                    ) { _, _ ->
-                        CoroutineScope(Dispatchers.IO).launch {
-                            when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
-                                "kakao" -> {
-                                    KakaoLogin(this@SettingActivity).logout(email)
-                                }
-                                "naver" -> {
-                                    NaverLogin(this@SettingActivity).logout()
-                                }
-                                "google" -> {
-                                    GoogleLogin(this@SettingActivity).logout()
-                                }
-                                "phone" -> {
-                                    PhoneLogin(this@SettingActivity, null, null)
-                                }
+                val builder = Dialog(this)
+                val view = LayoutInflater.from(this)
+                    .inflate(R.layout.dialog_alert_double_btn,null)
+                builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                builder.setContentView(view)
+                builder.create()
+
+                val cancel = view.findViewById<AppCompatButton>(R.id.alertDoubleCancelBtn)
+                val apply = view.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
+                val title = view.findViewById<TextView>(R.id.alertDoubleTitle)
+                title.text = "로그아웃 하시겠습니까?"
+                cancel.text = getString(R.string.cancel)
+                apply.text = getString(R.string.setting_logout)
+
+                apply.setOnClickListener {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
+                            "kakao" -> {
+                                KakaoLogin(this@SettingActivity).logout(email)
                             }
-                            delay(100)
-
-                            removeAllKeys(this@SettingActivity)
+                            "naver" -> {
+                                NaverLogin(this@SettingActivity).logout()
+                            }
+                            "google" -> {
+                                GoogleLogin(this@SettingActivity).logout()
+                            }
+                            "phone" -> {
+                                PhoneLogin(this@SettingActivity, null, null)
+                            }
                         }
-                    }
-                    .setNegativeButton(
-                        getString(R.string.no)
-                    ) { dialog, _ -> dialog?.dismiss() }
+                        delay(100)
 
-                builder.create().show()
+                        removeAllKeys(this@SettingActivity)
+                    }
+                }
+
+                cancel.setOnClickListener {
+                    builder.dismiss()
+                }
+
+                builder.show()
             } else if (binding.settingLogOut.text == getString(R.string.login_title)) {
                 EnterPageUtil(this).toLogin()
             }
@@ -187,7 +204,7 @@ class SettingActivity
                     systemTheme.id -> {
                         changedThemeRadio(
                             mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
-                            dbData = "system",
+                            dbData = LANG_SYS,
                             radioGroup = radioGroup,
                             radioButton = systemTheme,
                             cancel
@@ -237,11 +254,11 @@ class SettingActivity
 
             // 기존에 저장 된 언어로 라디오 버튼 체크
             when (getUserLocation(this)) {
-                getString(R.string.korean) -> {
+                LANG_KR -> {
                     radioGroup.check(koreanLang.id)
                     changeCheckIcon(koreanLang, englishLang, systemLang)
                 }
-                getString(R.string.english) -> {
+                LANG_EN -> {
                     radioGroup.check(englishLang.id)
                     changeCheckIcon(englishLang, koreanLang, systemLang)
                 }
@@ -255,7 +272,7 @@ class SettingActivity
                 when (checkedId) {
                     systemLang.id -> {
                         changedLangRadio(
-                            lang = "system",
+                            lang = LANG_SYS,
                             radioGroup = radioGroup,
                             radioButton = systemLang,
                             cancelBtn
@@ -264,7 +281,7 @@ class SettingActivity
                     }
                     koreanLang.id -> {
                         changedLangRadio(
-                            lang = "korean",
+                            lang = LANG_KR,
                             radioGroup = radioGroup,
                             radioButton = koreanLang,
                             cancelBtn
@@ -273,7 +290,7 @@ class SettingActivity
                     }
                     englishLang.id -> {
                         changedLangRadio(
-                            lang = "english",
+                            lang = LANG_EN,
                             radioGroup = radioGroup,
                             radioButton = englishLang,
                             cancelBtn
@@ -486,6 +503,7 @@ class SettingActivity
         binding.settingAppInfo.setOnClickListener {
             applyAppVersionResult()
             appVersionViewModel.loadDataResult()
+
         }
 
         binding.settingNotificationText.setOnClickListener {
@@ -534,6 +552,7 @@ class SettingActivity
         val appInfoDownBtn: Button = viewAppInfo.findViewById(R.id.appInfoDownBtn)
         val appInfoPB: ProgressBar = viewAppInfo.findViewById(R.id.appInfoPB)
         val appInfoLicense: TextView = viewAppInfo.findViewById(R.id.appInfoLicense)
+        val appInfoTermsService: TextView = viewAppInfo.findViewById(R.id.appInfoTermsOfService)
 
         appVersionViewModel.fetchData().observe(this) { result ->
             result?.let { ver ->
@@ -578,6 +597,11 @@ class SettingActivity
             OssLicensesMenuActivity.setActivityTitle("오픈소스 라이센스 목록")
         }
 
+        appInfoTermsService.setOnClickListener {
+            val intent = Intent(this@SettingActivity, TermsOfServiceActivity::class.java)
+            startActivity(intent)
+        }
+
         appInfoPB.visibility = View.GONE
         appInfoVersionValue.visibility = View.VISIBLE
 
@@ -604,10 +628,10 @@ class SettingActivity
     private fun applyUserLanguage() {
         // 설정 페이지 언어 항목이름 바꾸기
         when (getUserLocation(this)) {
-            "english" -> {
+            LANG_EN -> {
                 binding.settingSystemLang.fetchData(getString(R.string.english))
             }
-            "korean" -> {
+            LANG_KR -> {
                 binding.settingSystemLang.fetchData(getString(R.string.korean))
             }
             else -> {
@@ -737,14 +761,27 @@ class SettingActivity
 
     /** 언어 설정 변경 후 어플리케이션 재시작 **/
     private fun saveLanguageChange() {
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage(getString(R.string.save_change))
-            .setPositiveButton(
-                getString(R.string.apply)
-            ) { _, _ ->
-                RefreshUtils(this).refreshApplication()
-            }
-            .show()
+        val builder = Dialog(this)
+        val view = LayoutInflater.from(this)
+            .inflate(R.layout.dialog_alert_single_btn,null)
+        builder.apply {
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(view)
+            setCancelable(false)
+        }
+
+        builder.create()
+
+        val title = view.findViewById<TextView>(R.id.alertSingleTitle)
+        val apply = view.findViewById<AppCompatButton>(R.id.alertSingleApplyBtn)
+
+        title.text = "설정을 저장하였습니다.\n앱을 다시 시작합니다."
+        apply.text = getString(R.string.ok)
+        apply.setOnClickListener {
+            RefreshUtils(this).refreshApplication()
+        }
+        builder.show()
     }
 
     /** 자주묻는질문 아이템 추가하기 **/

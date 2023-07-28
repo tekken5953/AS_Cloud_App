@@ -7,7 +7,6 @@ import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.repo.GetAppVersionRepo
 import com.example.airsignal_app.repo.GetWeatherRepo
 import com.example.airsignal_app.retrofit.HttpClient
-import com.example.airsignal_app.view.widget.NotiJobService
 import com.example.airsignal_app.view.widget.WidgetProvider4x2
 import com.example.airsignal_app.vmodel.GetAppVersionViewModel
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
@@ -33,7 +32,7 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     override fun uncaughtException(p0: Thread, p1: Throwable) {
         RDBLogcat.writeErrorANR(thread = "Thread : ${p0.name}", msg = "Error Msg: ${p1.stackTraceToString()}" )
         if (p0.name == "WidgetProvider") {
-            WidgetProvider4x2.NotiJobScheduler().scheduleJob(applicationContext)
+           HttpClient.getInstance(true).setClientBuilder()
         } else {
             Thread.sleep(100)
             exitProcess(1)

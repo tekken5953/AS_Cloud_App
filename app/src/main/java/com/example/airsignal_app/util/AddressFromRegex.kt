@@ -18,32 +18,40 @@ class AddressFromRegex(private val address: String) {
 //                Timber.tag("regexTest").d("append : ${first.find(address)!!.value}")
                 result.append(first.find(address)!!.value).append(" ")
                 if (indexF == generatePatternFirst().lastIndex) {
-                    generatePatternSecond().forEachIndexed { indexS, second ->
-                        if (!second.findAll(address).none()) {
+                    if (result.split(" ").isEmpty()) {
+                        return address
+                    } else {
+                        generatePatternSecond().forEachIndexed { indexS, second ->
+                            if (!second.findAll(address).none()) {
 //                            Timber.tag("regexTest").d("append : ${second.find(address)!!.value}")
-                            result.append(second.find(address)!!.value).append(" ")
-                            if (indexS == generatePatternSecond().lastIndex) {
-                                if (isRoadAddress()) {
+                                result.append(second.find(address)!!.value).append(" ")
+                                if (indexS == generatePatternSecond().lastIndex) {
+                                    if (result.split(" ").size < 2) {
+                                        return IN_COMPLETE_ADDRESS
+                                    } else {
+                                        if (isRoadAddress()) {
 //                                    Timber.tag("regexTest").d("Is road address")
-                                    generatePatternRoad().forEachIndexed { _, road ->
-                                        if (!road.findAll(address).none()) {
+                                            generatePatternRoad().forEachIndexed { _, road ->
+                                                if (!road.findAll(address).none()) {
 //                                            Timber.tag("regexTest").d("append : ${road.find(address)!!.value}")
-                                            result.append(road.find(address)!!.value).append(" ")
-                                        }
-                                    }
-                                } else {
+                                                    result.append(road.find(address)!!.value).append(" ")
+                                                }
+                                            }
+                                        } else {
 //                                    Timber.tag("regexTest").d("Is Not road address")
-                                    generatePatternThird().forEachIndexed { indexT, third ->
-                                        if (!third.findAll(address).none()) {
+                                            generatePatternThird().forEachIndexed { indexT, third ->
+                                                if (!third.findAll(address).none()) {
 //                                            Timber.tag("regexTest").d("append : ${third.find(address)!!.value}")
-                                            result.append(third.find(address)!!.value).append(" ")
-                                            if (indexT == generatePatternRoad().lastIndex) {
-                                                generatePatternFourth().forEachIndexed { _, fourth ->
-                                                    if (!fourth.findAll(address).none()) {
+                                                    result.append(third.find(address)!!.value).append(" ")
+                                                    if (indexT == generatePatternRoad().lastIndex) {
+                                                        generatePatternFourth().forEachIndexed { _, fourth ->
+                                                            if (!fourth.findAll(address).none()) {
 //                                                        Timber.tag("regexTest")
 //                                                            .d("Result : ${fourth.find(address)!!.value}")
-                                                        result.append(fourth.find(address)!!.value)
-                                                            .append(" ")
+                                                                result.append(fourth.find(address)!!.value)
+                                                                    .append(" ")
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
@@ -51,8 +59,6 @@ class AddressFromRegex(private val address: String) {
                                     }
                                 }
                             }
-                        } else {
-                            return IN_COMPLETE_ADDRESS
                         }
                     }
                 }
@@ -68,11 +74,11 @@ class AddressFromRegex(private val address: String) {
     fun getNotificationAddress(): String {
         val result: StringBuilder = StringBuilder()
         generatePatternThird().forEach { third ->
-            if (!third.findAll(address).none()) {
+            return if (!third.findAll(address).none()) {
                 result.append(third.find(address)!!.value)
-                return result.toString()
+                result.toString()
             } else {
-                getAddress()
+                getAddress()!!
             }
         }
         return getAddress()!!

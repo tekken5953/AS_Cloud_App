@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -15,6 +16,7 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.databinding.ActivityLoginBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
@@ -98,6 +100,11 @@ class LoginActivity
             if (result.resultCode == RESULT_OK) {
                 val data = result.data
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+
+                if (task.result.email == "tekken5953@naver.com") {
+                    Log.d("testtest","sub topic admin")
+                    SubFCM().subAdminTopic()
+                }
                 googleLogin.handleSignInResult(task, isAuto = false)
                 EnterPageUtil(this).toMain("google")
             } else {

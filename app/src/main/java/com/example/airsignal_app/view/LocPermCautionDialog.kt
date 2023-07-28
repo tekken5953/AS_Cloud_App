@@ -72,7 +72,6 @@ class LocPermCautionDialog(
                 start()
             }
 
-
         okBtn.setOnClickListener {
             SetAppInfo.setInitLocPermission(activity, "Done")
             RequestPermissionsUtil(activity).requestLocation()

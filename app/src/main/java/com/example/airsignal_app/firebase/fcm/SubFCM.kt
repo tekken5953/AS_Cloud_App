@@ -74,18 +74,21 @@ class SubFCM : FirebaseMessagingService() {
         return this
     }
 
+    fun subAdminTopic() {
+        val encoder: Base64.Encoder = Base64.getEncoder()
+        val encodedStream: String = encoder.encodeToString("admin".toByteArray())
+            .replace("=","").replace("+","")
+        SubFCM().unSubTopic(encodedStream).subTopic(encodedStream)
+    }
+
     /** 현재 위치 토픽 갱신 **/
     fun renewTopic(context: Context, old: String, new: String) {
         val encoder: Base64.Encoder = Base64.getEncoder()
         val encodedStream: String = encoder.encodeToString(new.toByteArray())
             .replace("=","").replace("+","")
 
-        if (old != encodedStream) {
-//            Logger.t(TAG_N)
-//                .i("reNewTopic - old : $old , new : $new , encoded : $encodedStream")
-            SubFCM().unSubTopic(old).subTopic(encodedStream)
-            SetAppInfo.setTopicNotification(context, encodedStream)
-        }
+        SubFCM().unSubTopic(old).subTopic(encodedStream)
+        SetAppInfo.setTopicNotification(context, encodedStream)
     }
 
     /** 현재 토큰정보 불러오기 **/

@@ -27,6 +27,13 @@
         android:windowSoftInputMode="adjustNothing"
         tools:replace="android:icon,android:label">
         <activity
+            android:name=".view.activity.TermsOfServiceActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".view.widget.BackgroundPermissionActivity"
             android:exported="true">
             <meta-data
@@ -77,14 +84,26 @@
                     android:scheme="@string/kakaoOAuth" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".view.activity.LoginActivity"
             android:exported="true" />
-
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
             android:theme="@style/OpenSourceMenuTheme" />
+
+        <receiver
+            android:name=".view.widget.WidgetProvider2x2"
+            android:exported="false"
+            tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_ENABLED"/>
+                <action android:name="android.intent.action.DATE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget2x2_provider" />
+        </receiver>
 
         <receiver
             android:name=".view.widget.WidgetProvider4x2"
@@ -103,15 +122,31 @@
                 android:resource="@xml/widget4x2_provider" />
         </receiver>
 
+        <receiver
+            android:name=".view.widget.WidgetProvider4x2$NotiJobScheduler"
+            android:enabled="true"
+            android:exported="true"
+            android:label="NotiBootService">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".view.widget.NotiJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            tools:ignore="Instantiatable" />
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/adMobId" />
 
-
         <receiver
             android:name=".firebase.fcm.NotificationBuilder"
-            tools:ignore="Instantiatable" >
-        </receiver>
+            tools:ignore="Instantiatable"/>
 
         <service
             android:name=".firebase.fcm.SubFCM"
@@ -123,21 +158,6 @@
             </intent-filter>
         </service>
 
-        <receiver
-            android:name=".view.widget.WidgetProvider4x2$NotiJobScheduler"
-            android:enabled="true"
-            android:exported="true"
-            android:label="NotiBootService">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.SCREEN_ON" />
-            </intent-filter>
-        </receiver>
-
-        <service
-            android:name=".view.widget.NotiJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            tools:ignore="Instantiatable" />
     </application>
 
 </manifest>

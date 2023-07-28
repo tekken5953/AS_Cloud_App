@@ -25,8 +25,8 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="15dp"
         android:background="@drawable/search_bg"
-        android:hint="새 주소를 입력해주세요"
-        android:textColorHint="@color/theme_view_color"
+        android:hint="새 주소를 등록하세요"
+        android:textColorHint="@color/theme_text_color"
         android:textColor="@color/theme_text_color"
         android:fontFamily="@font/spoqa_hansansneo_regular"
         android:paddingStart="15dp"
@@ -38,24 +38,98 @@
         app:drawableTint="@color/main_gray_color" />
 
     <TextView
+        android:id="@+id/changeAddressCurrentTitle"
+        style="@style/basicTextView"
+        android:text="@string/current_address"
+        android:textColor="@color/theme_sub_color"
+        android:layout_below="@+id/changeAddressView"
+        android:maxEms="20"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:textSize="12sp"/>
+
+    <View
+        android:id="@+id/changeAddressLine1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/changeAddressCurrentTitle"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="7dp"
+        android:background="@color/theme_line_color" />
+
+    <ImageView
+        android:id="@+id/changeAddressImg"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignTop="@+id/changeAddressText"
+        android:layout_alignBottom="@+id/changeAddressText"
+        android:layout_marginStart="24dp"
+        android:src="@drawable/gps_fix"
+        app:tint="@color/theme_text_color" />
+
+    <TextView
+        android:id="@+id/changeAddressText"
+        style="@style/basicTextView"
+        android:layout_height="65dp"
+        android:textColor="@color/theme_text_color"
+        android:maxEms="18"
+        android:ellipsize="start"
+        android:layout_below="@+id/changeAddressLine1"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/changeAddressImg" />
+
+    <ImageView
+        android:id="@+id/changeAddressChecked"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/changeAddressText"
+        android:layout_alignBottom="@+id/changeAddressText"
+        android:layout_marginEnd="24dp"
+        android:src="@drawable/check_small"
+        android:visibility="gone"
+        app:tint="@color/theme_text_color" />
+
+    <TextView
+        android:id="@+id/changeAddressSearchedTitle"
+        style="@style/basicTextView"
+        android:text="@string/searched_address"
+        android:textColor="@color/theme_sub_color"
+        android:layout_below="@+id/changeAddressText"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="24dp"
+        android:textSize="12sp"/>
+
+    <View
+        android:id="@+id/changeAddressLine3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/changeAddressSearchedTitle"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="7dp"
+        android:background="@color/theme_line_color" />
+
+    <TextView
         android:id="@+id/changeAddressEdit"
         style="@style/basicTextView"
-        android:text="편집"
+        android:text="@string/edit"
         android:padding="5dp"
         android:background="?android:attr/selectableItemBackground"
-        android:layout_below="@+id/changeAddressView"
+        android:layout_above="@+id/changeAddressLine3"
         android:layout_alignParentEnd="true"
         android:textSize="14sp"
-        android:textColor="@color/theme_sub_color"
+        android:textColor="@color/theme_text_color"
         android:layout_marginEnd="24dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/changeAddressRv"
         android:layout_width="match_parent"
-        android:layout_height="600dp"
-        android:layout_below="@+id/changeAddressEdit"
-        android:layout_marginTop="5dp"
-        tools:itemCount="1"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/changeAddressLine3"
+        android:overScrollMode="never"
+        android:clipToPadding="false"
         tools:listitem="@layout/list_item_address_list"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 

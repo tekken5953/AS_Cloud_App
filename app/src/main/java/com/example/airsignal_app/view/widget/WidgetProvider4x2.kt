@@ -12,22 +12,26 @@ import android.os.Bundle
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.firebase.db.RDBLogcat.WIDGET_ACTION
 import com.example.airsignal_app.firebase.db.RDBLogcat.WIDGET_DOZE_MODE
+import com.example.airsignal_app.firebase.db.RDBLogcat.WIDGET_INSTALL
+import com.example.airsignal_app.firebase.db.RDBLogcat.WIDGET_UNINSTALL
+import com.example.airsignal_app.retrofit.HttpClient
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo
+import com.example.airsignal_app.util.`object`.SetAppInfo
 import com.example.airsignal_app.view.ToastUtils
+import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_DELETE
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_ENABLE
+import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_OPTIONS_CHANGED
 import com.example.airsignal_app.view.widget.WidgetAction.WIDGET_UPDATE
+import com.orhanobut.logger.Logger
 
 
 open class WidgetProvider4x2 : AppWidgetProvider() {
 
-
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
-    override fun onEnabled(context: Context) {
+    override fun onEnabled(context: Context?) {
         super.onEnabled(context)
-        if (!isJobScheduled(context)) {
-            NotiJobScheduler().scheduleJob(context)
-        }
+        Logger.t("testtest").i("On Enable")
     }
 
     // onEnabled() 와는 반대로 마지막의 최종 앱 위젯 인스턴스가 삭제 될 때 호출 됩니다
@@ -44,6 +48,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         newOptions: Bundle
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+
         newOptions.putInt(
             AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH,
             newOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
@@ -61,9 +66,11 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        if (!isJobScheduled(context)) {
-            NotiJobScheduler().scheduleJob(context)
-        }
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
+
+        Logger.t("testtest").i("On Update")
+
+        NotiJobScheduler().scheduleJob(context)
     }
 
     // 이 메소드는 앱 데이터가 구글 시스템에 백업 된 이후 복원 될 때 만약 위젯 데이터가 있다면 데이터가 복구 된 이후 호출 됩니다.
@@ -81,6 +88,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     // 앱의 브로드캐스트를 수신하며 해당 메서드를 통해 각 브로드캐스트에 맞게 메서드를 호출한다.
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
+        Logger.t("testtest").i("On Receive : ${intent.action}")
         intent.action?.let {
             RDBLogcat.writeWidgetPref(
                 context,
@@ -89,9 +97,13 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
             )
             when (it) {
                 WIDGET_ENABLE -> {
-                    NotiJobService().getWidgetLocation(context)
+                    SetAppInfo.setLastRefreshTime(context, 0L)
+                    RDBLogcat.writeWidgetPref(context, WIDGET_INSTALL, intent.action.toString() )
                 }
-                WIDGET_UPDATE
+                WIDGET_DELETE -> {
+                    RDBLogcat.writeWidgetPref(context, WIDGET_UNINSTALL, intent.action.toString() )
+                }
+                WIDGET_UPDATE, WIDGET_OPTIONS_CHANGED
                 -> {
                     val isDozeMode = intent.getBooleanExtra(
                         "android.os.extra.IDLE_MODE",
@@ -120,6 +132,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
     class NotiJobScheduler : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            Logger.t("testtest").i("On Receive2 : ${intent.action}")
             when (intent.action) {
                 Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_SCREEN_ON -> {
                     scheduleJob(context)
@@ -138,30 +151,32 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 .setPersisted(true)
                 .build()
 
-            if (!WidgetProvider4x2().isJobScheduled(context)) {
+            if (isJobScheduled(context)) {
                 jobScheduler.schedule(jobInfo)
+                NotiJobService().getWidgetLocation(context)
             } else {
                 NotiJobService().getWidgetLocation(context)
             }
+        }
+
+        fun isJobScheduled(context: Context): Boolean {
+            val jobScheduler =
+                context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+
+            val pendingJobs = jobScheduler.allPendingJobs
+            for (jobInfo in pendingJobs) {
+                if (jobInfo.id == JOB_ID) {
+                    return true
+                }
+            }
+
+            return false
         }
 
         companion object {
             const val JOB_ID = 1001
             private const val INTERVAL_MILLISECONDS: Long = 30 * 60 * 1000
         }
-    }
-
-    fun isJobScheduled(context: Context): Boolean {
-        val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-
-        val pendingJobs = jobScheduler.allPendingJobs
-        for (jobInfo in pendingJobs) {
-            if (jobInfo.id == NotiJobScheduler.JOB_ID) {
-                return true
-            }
-        }
-
-        return false
     }
 
     private fun isRefreshable(context: Context): Boolean {

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="312dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/scrolled_box_bg">
+
+    <TextView
+        android:id="@+id/alertSingleTitle"
+        style="@style/basicMediumTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="72dp"
+        android:textSize="16sp"
+        android:lineHeight="24dp"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/alertSingleApplyBtn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:fontFamily="@font/spoqa_hansansneo_medium"
+        android:background="@drawable/single_btn_apply_bg"
+        android:textSize="14sp"
+        android:layout_below="@+id/alertSingleTitle"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:layout_marginBottom="16dp"/>
+</RelativeLayout>

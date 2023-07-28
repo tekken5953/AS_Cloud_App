@@ -310,7 +310,9 @@ class ApiModel {
         @SerializedName("thunder")
         val thunder: Double?,
         @SerializedName("summary")
-        val summary: List<String>?
+        val summary: List<String>?,
+        @SerializedName("term24")
+        val term24: String?
     )
 
     data class Widget4x2Quality(

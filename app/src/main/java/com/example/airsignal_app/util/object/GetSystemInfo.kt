@@ -14,6 +14,8 @@ import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.pm.PackageInfoCompat
+import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
+import com.example.airsignal_app.dao.StaticDataObject.LANG_KR
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
 import com.orhanobut.logger.Logger
@@ -37,11 +39,11 @@ object GetSystemInfo {
     /** 현재 설정된 국가를 반환 **/
     fun getLocale(context: Context): Locale {
         return when (getUserLocation(context)) {
-            "korean" -> {
-                Locale.KOREAN
+            LANG_KR -> {
+                Locale.KOREA
             }
-            "english" -> {
-                Locale.ENGLISH
+            LANG_EN -> {
+                Locale.US
             }
             else -> {
                 Locale.getDefault()
@@ -51,12 +53,14 @@ object GetSystemInfo {
 
     @SuppressLint("HardwareIds")
     fun androidID(context: Context): String {
-        val id = Settings.Secure.getString(
-            context.applicationContext.contentResolver,
-            Settings.Secure.ANDROID_ID
-        )
-        Timber.tag("buildUserInfo").i(id)
-        return id
+        return try {
+            Settings.Secure.getString(
+                context.applicationContext.contentResolver,
+                Settings.Secure.ANDROID_ID
+            )
+        } catch (e: java.lang.NullPointerException) {
+            ""
+        }
     }
 
     @Suppress("DEPRECATION")

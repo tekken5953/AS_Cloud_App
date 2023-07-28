@@ -15,7 +15,7 @@
         android:src="@drawable/back_arrow"
         app:tint="@color/theme_text_color" />
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/searchAddressView"
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -25,19 +25,26 @@
         android:layout_marginBottom="15dp"
         android:layout_toEndOf="@+id/searchBack"
         android:background="@drawable/search_bg"
-        android:drawablePadding="5dp"
         android:fontFamily="@font/spoqa_hansansneo_regular"
         android:gravity="center_vertical|start"
-        android:hint="동,읍,면으로 검색"
-        android:textColorHint="@color/theme_view_color"
+        android:hint="주소를 입력해주세요"
+        android:textColorHint="@color/theme_text_color"
         android:inputType="text"
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:textColor="@color/theme_text_color"
-        android:textSize="14sp"
-        app:drawableStartCompat="@drawable/search"
-        app:drawableTint="@color/main_gray_color" />
+        android:textSize="14sp"/>
 
+    <TextView
+        android:id="@+id/searchAddressNoResult"
+        style="@style/basicMediumTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        android:text="@string/no_result"
+        android:textSize="17sp"
+        android:textColor="@color/theme_text_color"
+        android:layout_below="@+id/searchAddressView"/>
     <ListView
         android:id="@+id/searchAddressListView"
         android:layout_width="match_parent"
@@ -45,5 +52,6 @@
         android:layout_below="@+id/searchAddressView"
         android:layout_marginTop="15dp"
         android:clipToPadding="false"
+        android:overScrollMode="never"
         android:scrollbars="none" />
 </RelativeLayout>

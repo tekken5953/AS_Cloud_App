@@ -2,14 +2,17 @@ package com.example.airsignal_app.login
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.firebase.db.RDBLogcat
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_FAILED
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginPref
+import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserEmail
@@ -42,9 +45,14 @@ class GoogleLogin(private val activity: Activity) {
 
     /** 로그인 진행 + 로그인 버튼 비활성화 **/
     fun login(mBtn: SignInButton, result: ActivityResultLauncher<Intent>) {
-        val signInIntent: Intent = client.signInIntent
-        result.launch(signInIntent)
-        mBtn.isEnabled = false
+        try {
+            val signInIntent: Intent = client.signInIntent
+            result.launch(signInIntent)
+            mBtn.isEnabled = false
+        } catch (e: Exception) {
+            e.printStackTrace()
+            RDBLogcat.writeErrorNotANR(activity, LOGIN_FAILED, e.localizedMessage!!)
+        }
     }
 
     /** 토큰 유효성 검사 **/

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="312dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/scrolled_box_bg">
+
+    <TextView
+        android:id="@+id/alertDoubleTitle"
+        style="@style/basicMediumTextView"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_marginStart="54dp"
+        android:layout_marginEnd="54dp"
+        android:layout_marginTop="72dp"
+        android:lineHeight="24dp"
+        android:textSize="16sp"/>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/alertDoubleTitle"
+        android:layout_marginTop="73dp"
+        android:gravity="center"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:layout_marginBottom="16dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/alertDoubleCancelBtn"
+            android:layout_width="134dp"
+            android:layout_height="50dp"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:background="@drawable/double_btn_cancel_bg"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:textColor="@color/white"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/alertDoubleApplyBtn"
+            android:layout_width="134dp"
+            android:layout_height="50dp"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:background="@drawable/double_btn_apply_bg"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/white"/>
+    </TableRow>
+
+</RelativeLayout>

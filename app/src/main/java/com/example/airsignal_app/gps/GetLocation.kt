@@ -16,6 +16,7 @@ import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.firebase.db.RDBLogcat.ERROR_LOCATION_IOException
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeErrorNotANR
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeGpsHistory
+import com.example.airsignal_app.util.AddressFromRegex
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
@@ -39,8 +40,10 @@ class GetLocation(private val context: Context) {
 
             @Suppress("DEPRECATION")
             val address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
-            setNotificationAddress(context, address[0].getAddressLine(0))
-            setUserLastAddr(context, formattingFullAddress(address[0].getAddressLine(0)))
+            val fullAddr = address[0].getAddressLine(0)
+            val regexAddr = AddressFromRegex(fullAddr).getNotificationAddress()
+            setNotificationAddress(context, regexAddr)
+            setUserLastAddr(context, formattingFullAddress(fullAddr))
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
             } else { "Null Address" }

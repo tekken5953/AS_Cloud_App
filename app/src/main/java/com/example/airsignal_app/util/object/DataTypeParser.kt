@@ -293,11 +293,11 @@ object DataTypeParser {
     }
 
     /** 시간별 날씨 날짜 이름 **/
-    fun getDailyItemDate(localDateTime: LocalDateTime): String? {
+    fun getDailyItemDate(context: Context, localDateTime: LocalDateTime): String? {
         return when(localDateTime.toLocalDate().compareTo(parseLongToLocalDateTime(getCurrentTime()).toLocalDate())) {
-            0 -> { "오늘" }
-            1 -> { "내일" }
-            2 -> { "모레" }
+            0 -> { context.getString(R.string.daily_today)}
+            1 -> { context.getString(R.string.daily_tomorrow)}
+            2 -> { context.getString(R.string.daily_next_tomorrow)}
             else -> { null }
         }
     }
@@ -434,6 +434,11 @@ object DataTypeParser {
     fun convertAddress(addr: String): String {
         return addr.replace("특별시", "시").replace("광역시", "시")
             .replace("제주특별자치도", "제주도")
+    }
+
+    fun convertAddressInv(addr: String): String {
+        return addr.replace("시", "특별시").replace("시", "광역시")
+            .replace("제주도", "제주특별자치도")
     }
 
     /** HH:mm 포맷의 시간을 분으로 변환 **/
