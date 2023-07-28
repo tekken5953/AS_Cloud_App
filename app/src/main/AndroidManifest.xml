@@ -92,6 +92,20 @@
             android:theme="@style/OpenSourceMenuTheme" />
 
         <receiver
+            android:name=".view.widget.WidgetProvider2x2"
+            android:exported="false"
+            tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.appwidget.action.APPWIDGET_ENABLED"/>
+                <action android:name="android.intent.action.DATE_CHANGED" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget2x2_provider" />
+        </receiver>
+
+        <receiver
             android:name=".view.widget.WidgetProvider4x2"
             android:exported="false"
             tools:ignore="Instantiatable">
@@ -143,7 +157,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
 
     </application>
 

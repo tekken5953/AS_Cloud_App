@@ -142,4 +142,7 @@
     <string name="delete">Delete</string>
     <string name="add">Add</string>
     <string name="no_result">No result</string>
+    <string name="edit">Edit</string>
+    <string name="searched_address">Registered address</string>
+    <string name="current_address">Current address</string>
 </resources>

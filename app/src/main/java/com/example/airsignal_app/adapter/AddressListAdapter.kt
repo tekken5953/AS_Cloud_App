@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.Layout
@@ -64,7 +65,6 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val address: TextView = itemView.findViewById(R.id.listCurrentAddressText)
-        private val checked: ImageView = itemView.findViewById(R.id.listCurrentAddressChecked)
         private val gpsImg: ImageView = itemView.findViewById(R.id.listCurrentAddressImg)
         private val delete: TextView = itemView.findViewById(R.id.listCurrentAddressDelete)
 
@@ -74,22 +74,26 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
             address.text = dao
 
             if (dao == getUserLastAddress(context)) {
-                checked.visibility = View.VISIBLE
+                address.setTextColor(context.getColor(R.color.main_blue_color))
+                gpsImg.imageTintList =
+                    ColorStateList.valueOf(context.getColor(R.color.main_blue_color))
             } else {
-                checked.visibility = View.GONE
+                address.setTextColor(context.getColor(R.color.theme_text_color))
+                gpsImg.imageTintList =
+                    ColorStateList.valueOf(context.getColor(R.color.theme_text_color))
             }
 
-            if (mList[adapterPosition] == db.findById(CURRENT_GPS_ID).addr) {
-                gpsImg.setImageDrawable(
-                    ResourcesCompat.getDrawable(
-                        context.resources,
-                        R.drawable.gps_fix,
-                        null
-                    )
-                )
-            }
+//            if (mList[adapterPosition] == db.findById(CURRENT_GPS_ID).addr) {
+//                gpsImg.setImageDrawable(
+//                    ResourcesCompat.getDrawable(
+//                        context.resources,
+//                        R.drawable.gps_fix,
+//                        null
+//                    )
+//                )
+//            }
 
-            if (adapterPosition != 0 && visible) {
+            if (visible) {
                 delete.animate().alpha(1f).duration = 500
                 delete.visibility = View.VISIBLE
             } else {

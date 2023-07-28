@@ -1,11 +1,13 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
+import android.util.Log
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_KAKAO
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_NAVER
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
+import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform

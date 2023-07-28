@@ -26,17 +26,16 @@ import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.util.KeyboardController
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertAddress
-import com.example.airsignal_app.util.`object`.DataTypeParser.convertAddressInv
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo.getCurrentLocation
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
-
 
 /**
  * @author : Lee Jae Young
@@ -80,6 +79,9 @@ class SearchDialog(
         }
         if (layoutId == 0) {
             val changeAddressView: TextView = view.findViewById(R.id.changeAddressView)
+            val currentAddress: TextView = view.findViewById(R.id.changeAddressText)
+            val currentGpsImg: ImageView = view.findViewById(R.id.changeAddressImg)
+
             changeAddressView.setOnClickListener {
                 changeAddressView.clearFocus()
                 dismissNow()
@@ -98,11 +100,23 @@ class SearchDialog(
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
             GpsRepository(activity).findAll().forEach {
-//                Log.d(TAG_D, "검색리스트 아이템 추가 : ${it.id}, ${it.name}, ${it.addr}")
                 if (it.name == CURRENT_GPS_ID) {
+                    currentAddress.text = getCurrentLocation(activity)
                     it.addr = getCurrentLocation(activity)
+
+                    if (it.addr == getUserLastAddress(activity)
+                    ) {
+                        currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))
+                        currentGpsImg.imageTintList =
+                            ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
+                    } else {
+                        currentAddress.setTextColor(activity.getColor(R.color.theme_text_color))
+                        currentGpsImg.imageTintList =
+                            ColorStateList.valueOf(activity.getColor(R.color.theme_text_color))
+                    }
+                } else {
+                    addCurrentItem(it.addr.toString())
                 }
-                addCurrentItem(it.addr.toString())
             }
 
             currentAdapter.setOnItemClickListener(object : AddressListAdapter.OnItemClickListener {
@@ -130,7 +144,7 @@ class SearchDialog(
             }
             val listView: ListView = view.findViewById(R.id.searchAddressListView)
 
-            searchEditListener(listView, searchView,noResult)
+            searchEditListener(listView, searchView, noResult)
             KeyboardController().onKeyboardUp(requireContext(), searchView)
         }
     }
@@ -216,9 +230,13 @@ class SearchDialog(
                 val span = SpannableStringBuilder("${searchItem[position]}을(를)\n추가하시겠습니까?")
                 span.setSpan(
                     ForegroundColorSpan(
-                        ResourcesCompat.getColor(activity.resources,
-                            R.color.main_blue_color, null)),0,
-                    searchItem[position].length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                        ResourcesCompat.getColor(
+                            activity.resources,
+                            R.color.main_blue_color, null
+                        )
+                    ), 0,
+                    searchItem[position].length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
                 title.text = span
                 apply.text = activity.getString(R.string.add)
                 apply.backgroundTintList = ColorStateList.valueOf(

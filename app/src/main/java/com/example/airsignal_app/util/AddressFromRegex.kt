@@ -74,11 +74,11 @@ class AddressFromRegex(private val address: String) {
     fun getNotificationAddress(): String {
         val result: StringBuilder = StringBuilder()
         generatePatternThird().forEach { third ->
-            if (!third.findAll(address).none()) {
+            return if (!third.findAll(address).none()) {
                 result.append(third.find(address)!!.value)
-                return result.toString()
+                result.toString()
             } else {
-                getAddress()
+                getAddress()!!
             }
         }
         return getAddress()!!
