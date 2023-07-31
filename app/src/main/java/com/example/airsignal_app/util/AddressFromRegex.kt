@@ -68,20 +68,19 @@ class AddressFromRegex(private val address: String) {
     }
 
     fun getNotificationAddress(): String {
-        return try {
-            var addr: String
+        val sb = StringBuilder()
+        try {
             generatePatternThird().forEach { third ->
                 if (!third.findAll(address).none()) {
-                    val value = third.find(address)!!.value
-                    addr = value
-                    return addr
+                    sb.append(third.find(address)!!.value)
+                    return sb.toString()
                 }
             }
-            getAddress()
-        } catch (e: java.lang.NullPointerException) {
+        } catch (e: Exception) {
             e.printStackTrace()
             address
         }
+        return getAddress()
     }
 
     private fun countSpacesInStringBuilder(s: String): Int {
