@@ -96,17 +96,12 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
         for (appWidgetId in appWidgetIds) {
             Logger.t("testtest").i("On Update")
-            val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
-
             // 위젯의 TextView에 업데이트된 텍스트 설정 예시
             if (isRefreshable(context)) {
                 getWidgetLocation(context)
             } else {
                 ToastUtils(context).showMessage("마지막 갱신 후 1분 뒤에 가능합니다", 1)
             }
-
-            // 위젯을 업데이트합니다.
-            appWidgetManager.updateAppWidget(appWidgetId, views)
         }
     }
 
@@ -132,6 +127,7 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 sort = WIDGET_ACTION,
                 value = intent.action.toString()
             )
+
             when (it) {
                 WIDGET_ENABLE -> {
                     SetAppInfo.setLastRefreshTime(context, 0L)
@@ -140,12 +136,12 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
                 WIDGET_DELETE -> {
                     RDBLogcat.writeWidgetPref(context, WIDGET_UNINSTALL, intent.action.toString() )
                 }
-                WIDGET_UPDATE -> {
-                    Logger.t("testtest").i("WIDGET_UPDATE")
-                    val ids = AppWidgetManager.getInstance(context)
-                        .getAppWidgetIds(ComponentName(context, WidgetProvider4x2::class.java))
-                    onUpdate(context, AppWidgetManager.getInstance(context), ids)
-                }
+//                WIDGET_UPDATE -> {
+//                    Logger.t("testtest").i("WIDGET_UPDATE")
+//                    val ids = AppWidgetManager.getInstance(context)
+//                        .getAppWidgetIds(ComponentName(context, WidgetProvider4x2::class.java))
+//                    onUpdate(context, AppWidgetManager.getInstance(context), ids)
+//                }
                 Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_SCREEN_ON -> {
                     RDBLogcat.writeWidgetPref(context, WIDGET_DOZE_MODE, intent.action.toString())
                     getWidgetLocation(context)
@@ -229,6 +225,8 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val componentName =
             ComponentName(context, WidgetProvider4x2::class.java)
+
+        SetAppInfo.setLastRefreshTime(context, getCurrentTime())
 
         val refreshBtnIntent = Intent(context, WidgetProvider4x2::class.java)
         refreshBtnIntent.action = WIDGET_UPDATE
@@ -318,31 +316,6 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
 
     @SuppressLint("MissingPermission")
     fun getWidgetLocation(context: Context) {
-        if (GetLocation(context).isGPSConnected()) {
-            CoroutineScope(Dispatchers.Main).launch {
-                try {
-                    val locationRequest = CurrentLocationRequest.Builder()
-                    locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-
-                    val locationResult = withContext(Dispatchers.IO) {
-                        LocationServices.getFusedLocationProviderClient(context)
-                            .getCurrentLocation(locationRequest.build(), null)
-                    }.await()
-
-                    val result = locationResult ?: throw Exception("Location not available")
-                    loadWidgetData(context, result.latitude, result.longitude)
-                } catch (e: Exception) {
-                    RDBLogcat.writeErrorNotANR(
-                        context,
-                        sort = RDBLogcat.WIDGET_ERROR,
-                        msg = "Location is Not Available"
-                    )
-                }
-            }
-        }
-    }
-
-    private fun loadWidgetData(context: Context, lat: Double, lng: Double) {
         val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
 
         @RequiresApi(Build.VERSION_CODES.Q)
@@ -350,18 +323,46 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
             changeVisibility(context, views, true)
         } else {
             changeVisibility(context, views, false)
+
+            try {
+                val locationRequest = CurrentLocationRequest.Builder()
+                locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+
+                CoroutineScope(Dispatchers.Default).launch {
+                    LocationServices.getFusedLocationProviderClient(context)
+                        .getCurrentLocation(locationRequest.build(), null)
+                        .addOnSuccessListener {
+                            loadWidgetData(context, it.latitude, it.longitude)
+                        }
+                        .addOnFailureListener {
+                            RDBLogcat.writeErrorNotANR(
+                                context,
+                                sort = RDBLogcat.WIDGET_ERROR,
+                                msg = "Location is Failed"
+                            )
+                        }
+                }
+            } catch (e: Exception) {
+                RDBLogcat.writeErrorNotANR(
+                    context,
+                    sort = RDBLogcat.WIDGET_ERROR,
+                    msg = "Location is Not Available"
+                )
+            }
         }
+    }
+
+    private fun loadWidgetData(context: Context, lat: Double, lng: Double) {
+        val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
 
         GetLocation(context).getAddress(lat, lng)?.let { addr ->
 
-            SetAppInfo.setLastRefreshTime(context, getCurrentTime())
 
             GetLocation(context).updateCurrentAddress(
                 lat, lng, addr
             )
 
             CoroutineScope(Dispatchers.Default).launch {
-
                 val getDataResponse: Call<ApiModel.Widget4x2Data> =
                     HttpClient.getInstance(true)
                         .setClientBuilder()

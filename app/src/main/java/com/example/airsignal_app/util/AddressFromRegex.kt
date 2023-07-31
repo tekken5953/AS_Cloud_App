@@ -73,15 +73,20 @@ class AddressFromRegex(private val address: String) {
 
     fun getNotificationAddress(): String {
         val result: StringBuilder = StringBuilder()
-        generatePatternThird().forEach { third ->
-            return if (!third.findAll(address).none()) {
-                result.append(third.find(address)!!.value)
-                result.toString()
-            } else {
-                getAddress()!!
+        try {
+            generatePatternThird().forEach { third ->
+                return if (!third.findAll(address).none()) {
+                    result.append(third.find(address)!!.value)
+                    result.toString()
+                } else {
+                    getAddress()!!
+                }
             }
+        } catch (e: java.lang.NullPointerException) {
+            return address
         }
-        return getAddress()!!
+
+        return address
     }
 
 
