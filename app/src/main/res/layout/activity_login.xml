@@ -33,10 +33,11 @@
             android:id="@+id/viewGroupLayout">
             <ImageView
                 android:id="@+id/loginMainBack"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="45dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="5dp"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="11dp"
                 android:src="@drawable/back_arrow"
                 app:tint="@color/theme_text_color"
                 app:layout_constraintStart_toStartOf="parent"
@@ -44,15 +45,13 @@
 
             <TextView
                 android:id="@+id/loginMainTitleText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:fontFamily="@font/spoqa_hansansneo_medium"
+                style="@style/basicMediumTextView"
                 android:text="@string/login_title"
                 android:textColor="@color/theme_text_color"
-                android:textSize="23sp"
+                android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/loginMainBack"
-                app:layout_constraintStart_toEndOf="@+id/loginMainBack"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/loginMainBack" />
 
             <com.google.android.gms.common.SignInButton

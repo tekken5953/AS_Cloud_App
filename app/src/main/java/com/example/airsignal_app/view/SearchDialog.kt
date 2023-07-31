@@ -36,6 +36,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
+import timber.log.Timber
 
 /**
  * @author : Lee Jae Young
@@ -99,13 +100,13 @@ class SearchDialog(
 
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
-            GpsRepository(activity).findAll().forEach {
-                if (it.name == CURRENT_GPS_ID) {
+            GpsRepository(activity).findAll().forEach { entity ->
+                if (entity.name == CURRENT_GPS_ID) {
                     currentAddress.text = getCurrentLocation(activity)
-                    it.addr = getCurrentLocation(activity)
 
-                    if (it.addr == getUserLastAddress(activity)
-                    ) {
+                    entity.addr = getCurrentLocation(activity)
+
+                    if (getCurrentLocation(activity) == getUserLastAddress(activity)) {
                         currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))
                         currentGpsImg.imageTintList =
                             ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
@@ -115,7 +116,7 @@ class SearchDialog(
                             ColorStateList.valueOf(activity.getColor(R.color.theme_text_color))
                     }
                 } else {
-                    addCurrentItem(it.addr.toString())
+                    addCurrentItem(entity.addr.toString())
                 }
             }
 
