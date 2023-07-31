@@ -24,7 +24,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            debuggable false
+            debuggable true
         }
     }
     compileOptions {
@@ -75,7 +75,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:31.2.0')
+    implementation platform('com.google.firebase:firebase-bom:32.2.0')
     implementation 'com.google.firebase:firebase-analytics-ktx' // Analytics
     implementation 'com.google.firebase:firebase-messaging' // FCM
     implementation 'com.google.firebase:firebase-messaging-directboot:23.1.2' // FCM

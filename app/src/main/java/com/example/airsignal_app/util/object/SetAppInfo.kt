@@ -84,8 +84,8 @@ object SetAppInfo {
         SharedPreferenceManager(context).setString("Notification_All", topic)
     }
 
-    fun setNotificationAddress(context: Context, addr: String?) {
-        SharedPreferenceManager(context).setString(NOTIFICATION_ADDRESS, addr!!)
+    fun setNotificationAddress(context: Context, addr: String) {
+        SharedPreferenceManager(context).setString(NOTIFICATION_ADDRESS, addr)
     }
 
     fun setLastRefreshTime(context: Context, l: Long) {

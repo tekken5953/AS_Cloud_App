@@ -26,6 +26,10 @@ import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
 import com.example.airsignal_app.dao.StaticDataObject.LANG_KR
 import com.example.airsignal_app.dao.StaticDataObject.LANG_SYS
 import com.example.airsignal_app.databinding.ActivitySettingBinding
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_KAKAO
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_NAVER
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_PHONE
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
@@ -666,16 +670,16 @@ class SettingActivity
 
         // 로그인 플랫폼 아이콘 설정
         when (lastLogin) {
-            "google" -> {
+            LOGIN_GOOGLE -> {
                 setImageDrawable(binding.settingUserIcon, R.drawable.google_icon)
             }
-            "kakao" -> {
+            LOGIN_KAKAO -> {
                 setImageDrawable(binding.settingUserIcon, R.drawable.kakao_icon)
             }
-            "naver" -> {
+            LOGIN_NAVER -> {
                 setImageDrawable(binding.settingUserIcon, R.drawable.naver_icon)
             }
-            "phone" -> {
+            LOGIN_PHONE -> {
                 setImageDrawable(binding.settingUserIcon, R.drawable.phone_icon)
             }
         }

@@ -16,6 +16,8 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.databinding.ActivityLoginBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_PHONE
 import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
@@ -23,6 +25,7 @@ import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.login.PhoneLogin
 import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.`object`.GetSystemInfo
+import com.example.airsignal_app.util.`object`.SetAppInfo
 import com.example.airsignal_app.view.ShowDialogClass
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.kakao.sdk.common.util.Utility.getKeyHash
@@ -54,8 +57,6 @@ class LoginActivity
             naverLogin.login()
         }
 
-        println(getKeyHash(this))
-
         binding.phoneLoginButton.setOnClickListener {
             val viewEmailLogin: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_phone_input, null)
@@ -82,7 +83,7 @@ class LoginActivity
                             Thread.sleep(100)
                             binding.pbLayout.visibility = View.VISIBLE
                             Handler(Looper.getMainLooper()).postDelayed({
-                                EnterPageUtil(this).toMain("email")
+                                EnterPageUtil(this).toMain(LOGIN_PHONE)
                                 binding.pbLayout.visibility = View.GONE
                             }, 2000)
                         } else {
@@ -108,24 +109,20 @@ class LoginActivity
                 RESULT_OK -> {
                     val data = result.data
                     val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                    Log.d("testtest", "Google Login is OK : ${result.resultCode},${result.data}")
 
                     if (task.result.email == "tekken5953@naver.com") {
                         SubFCM().subAdminTopic()
                     }
                     googleLogin.handleSignInResult(task, isAuto = false)
-                    EnterPageUtil(this).toMain("google")
+                    EnterPageUtil(this).toMain(LOGIN_GOOGLE)
                 }
                 RESULT_CANCELED -> {
-                    Log.d("testtest", "Google Login is Canceled : ${result.resultCode}")
                     binding.googleLoginButton.isEnabled = true
                 }
                 RESULT_FIRST_USER -> {
-                    Log.d("testtest", "Google Login is FIRST_USER : ${result.resultCode}")
                     binding.googleLoginButton.isEnabled = true
                 }
                 else -> {
-                    Log.d("testtest", "Else : ${result.resultCode}")
                     binding.googleLoginButton.isEnabled = true
                 }
             }

@@ -4,8 +4,10 @@ import android.app.Activity
 import android.util.Log
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.airsignal_app.firebase.db.RDBLogcat
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_KAKAO
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_NAVER
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_PHONE
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
 import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.util.EnterPageUtil
@@ -22,18 +24,18 @@ class SilentLoginClass {
         val email = getUserEmail(activity)
 
         when (getUserLoginPlatform(activity)) {
-            "google" -> {
+            LOGIN_GOOGLE -> {
                 // 구글 자동 로그인
                 val googleLogin = GoogleLogin(activity)
                 if (!googleLogin.isValidToken()) {
                     googleLogin.checkSilenceLogin()
                     writeLoginHistory(isLogin = true,
-                        platform = RDBLogcat.LOGIN_GOOGLE,
+                        platform = LOGIN_GOOGLE,
                         email = email,
                         isAuto = true, isSuccess = true)
                 }
             }
-            "kakao" -> {
+            LOGIN_KAKAO -> {
                 // 카카오 자동 로그인
                 val kakaoLogin = KakaoLogin(activity)
                 if (!kakaoLogin.getAccessToken()) {
@@ -42,7 +44,7 @@ class SilentLoginClass {
                     kakaoLogin.isValidToken(pbLayout)
                 }
             }
-            "naver" -> {
+            LOGIN_NAVER -> {
                 // 네이버 자동 로그인
                 val naverLogin = NaverLogin(activity)
                 if (naverLogin.getAccessToken() == null) {
@@ -52,8 +54,8 @@ class SilentLoginClass {
                     naverLogin.silentLogin()
                 }
             }
-            "email" -> {
-                EnterPageUtil(activity).toMain("email")
+            LOGIN_PHONE -> {
+                EnterPageUtil(activity).toMain(LOGIN_PHONE)
             }
         }
     }

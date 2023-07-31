@@ -41,8 +41,8 @@ class GetLocation(private val context: Context) {
             @Suppress("DEPRECATION")
             val address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             val fullAddr = address[0].getAddressLine(0)
-            val regexAddr = AddressFromRegex(fullAddr).getNotificationAddress()
-            setNotificationAddress(context, regexAddr)
+            val notiAddr = AddressFromRegex(fullAddr).getNotificationAddress()
+            setNotificationAddress(context, notiAddr)
             setUserLastAddr(context, formattingFullAddress(fullAddr))
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)

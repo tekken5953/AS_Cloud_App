@@ -45,7 +45,7 @@ class GetWeatherRepo : BaseRepository() {
                             }
                         } catch(e: NullPointerException) {
                             e.printStackTrace()
-                            _getDataResult.postValue(ApiState.Error("NOT SERVICED Location"))
+                            _getDataResult.postValue(ApiState.Error("Server Error OCCURRED"))
                         }
                     }
 

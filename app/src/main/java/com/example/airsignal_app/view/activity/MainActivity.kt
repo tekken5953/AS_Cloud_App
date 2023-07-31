@@ -291,6 +291,7 @@ class MainActivity
                 sideMenuBuilder.show(sideMenuView, true)
             }
         })
+
     }
 
     // 햄버거 메뉴 세팅
@@ -1190,7 +1191,7 @@ class MainActivity
     // 통신에 실패할 경우 레이아웃 처리
     private fun hideAllViews(error: String?) {
         when (error) {
-            "API ERROR OCCURRED" -> {
+            "API ERROR OCCURRED","Server Error OCCURRED" -> {
                 binding.mainSkyText.text = "데이터 호출에 실패했습니다"
             }
             "NOT SERVICED Location" -> {
@@ -1533,8 +1534,7 @@ class MainActivity
                                     .replace("null", "")
 
                                 val regexAddr = AddressFromRegex(addr).getAddress()
-                                val formedAddr = if (regexAddr != null &&
-                                    regexAddr != IN_COMPLETE_ADDRESS) {
+                                val formedAddr = if (regexAddr != IN_COMPLETE_ADDRESS) {
                                     regexAddr
                                 } else {
                                     formatAddr
@@ -1546,8 +1546,6 @@ class MainActivity
                                     loc.latitude, loc.longitude,
                                     formatAddr
                                 )
-
-                                setNotificationAddress(this@MainActivity, formedAddr)
 
                                 binding.mainGpsTitleTv.text = guardWordWrap(
                                     formedAddr

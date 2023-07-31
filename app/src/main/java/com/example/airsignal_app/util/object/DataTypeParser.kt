@@ -16,7 +16,9 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.Period
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import java.util.*
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 
@@ -293,12 +295,14 @@ object DataTypeParser {
     }
 
     /** 시간별 날씨 날짜 이름 **/
-    fun getDailyItemDate(context: Context, localDateTime: LocalDateTime): String? {
-        return when(localDateTime.toLocalDate().compareTo(parseLongToLocalDateTime(getCurrentTime()).toLocalDate())) {
-            0 -> { context.getString(R.string.daily_today)}
-            1 -> { context.getString(R.string.daily_tomorrow)}
-            2 -> { context.getString(R.string.daily_next_tomorrow)}
-            else -> { null }
+    fun getDailyItemDate(context: Context, localDateTime: LocalDateTime): String {
+
+        return when(ChronoUnit.DAYS.between(localDateTime.toLocalDate(),
+            parseLongToLocalDateTime(getCurrentTime()).toLocalDate()).absoluteValue) {
+            0L -> {context.getString(R.string.daily_today)}
+            1L -> {context.getString(R.string.daily_tomorrow)}
+            2L -> {context.getString(R.string.daily_next_tomorrow)}
+            else -> { "" }
         }
     }
 

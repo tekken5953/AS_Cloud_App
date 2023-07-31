@@ -46,6 +46,7 @@ object RDBLogcat {
     const val WIDGET_ERROR = "위젯 에러"
     const val LOGIN_GOOGLE = "구글"
     const val LOGIN_KAKAO = "카카오"
+    const val LOGIN_PHONE = "phone"
     const val LOGIN_KAKAO_EMAIL = "카카오 이메일"
     const val LOGIN_NAVER = "네이버"
     const val NOTIFICATION_HISTORY = "알림"

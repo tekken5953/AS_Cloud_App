@@ -182,7 +182,7 @@ class KakaoLogin(private val activity: Activity) {
         CoroutineScope(Dispatchers.IO).launch {
             saveUserSettings()
             delay(1000)
-            EnterPageUtil(activity).toMain("kakao")
+            EnterPageUtil(activity).toMain(LOGIN_KAKAO)
         }
     }
 

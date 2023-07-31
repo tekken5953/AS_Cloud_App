@@ -100,7 +100,7 @@ class NaverLogin(private val activity: Activity) {
                     profile = it.profileImage.toString()
                 )
 
-                EnterPageUtil(activity).toMain("naver")
+                EnterPageUtil(activity).toMain(LOGIN_NAVER)
             }
         }
 

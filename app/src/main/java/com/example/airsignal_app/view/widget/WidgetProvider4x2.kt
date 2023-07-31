@@ -497,24 +497,27 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
     }
 
     private fun getRegexAddr(rawAddr: String): String {
-        val list = AddressFromRegex(rawAddr).getAddress()?.trim()?.split(" ")
-
-        list?.let {
-            if (it.size >= 2) {
-                val sb = StringBuilder()
-                for (i: Int in it.lastIndex - 1 ..it.lastIndex) {
-                    sb.append(it[i]).append(" ")
-                    if (i == it.lastIndex) {
-                        return sb.toString()
+        val addr = AddressFromRegex(rawAddr).getAddress()
+        if (addr != StaticDataObject.IN_COMPLETE_ADDRESS) {
+            val list = addr.trim().split(" ")
+            list.let {
+                if (it.size >= 2) {
+                    val sb = StringBuilder()
+                    for (i: Int in it.lastIndex - 1 ..it.lastIndex) {
+                        sb.append(it[i]).append(" ")
+                        if (i == it.lastIndex) {
+                           return sb.toString()
+                        }
                     }
+                } else {
+                    val sb = StringBuilder()
+                    sb.append(rawAddr)
+                    return sb.toString()
                 }
-            } else {
-                val sb = StringBuilder()
-                sb.append(rawAddr)
-                return sb.toString()
             }
+            return rawAddr
+        } else {
+            return rawAddr
         }
-
-        return rawAddr
     }
 }
