@@ -445,7 +445,7 @@ class MainActivity
         )
 //        addExitDialog()
         // 자동 로그인
-        SilentLoginClass().login(this@MainActivity, binding.mainMotionLayout)
+        SilentLoginClass().login(this@MainActivity)
 
         binding.mainDailyWeatherRv.adapter = dailyWeatherAdapter
         binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter

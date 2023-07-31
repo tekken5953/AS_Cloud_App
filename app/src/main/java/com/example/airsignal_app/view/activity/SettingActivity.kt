@@ -133,23 +133,25 @@ class SettingActivity
                 val cancel = view.findViewById<AppCompatButton>(R.id.alertDoubleCancelBtn)
                 val apply = view.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
                 val title = view.findViewById<TextView>(R.id.alertDoubleTitle)
-                title.text = "로그아웃 하시겠습니까?"
+                title.text = getString(R.string.want_logout)
                 cancel.text = getString(R.string.cancel)
                 apply.text = getString(R.string.setting_logout)
 
                 apply.setOnClickListener {
                     CoroutineScope(Dispatchers.IO).launch {
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
-                            "kakao" -> {
-                                KakaoLogin(this@SettingActivity).logout(email)
+                            LOGIN_KAKAO -> {
+//                                KakaoLogin(this@SettingActivity).logout(email)
+                                KakaoLogin(this@SettingActivity).disconnectFromKakao()
                             }
-                            "naver" -> {
-                                NaverLogin(this@SettingActivity).logout()
+                            LOGIN_NAVER -> {
+//                                NaverLogin(this@SettingActivity).logout()
+                                NaverLogin(this@SettingActivity).disconnectFromNaver()
                             }
-                            "google" -> {
+                            LOGIN_GOOGLE -> {
                                 GoogleLogin(this@SettingActivity).logout()
                             }
-                            "phone" -> {
+                            LOGIN_PHONE -> {
                                 PhoneLogin(this@SettingActivity, null, null)
                             }
                         }

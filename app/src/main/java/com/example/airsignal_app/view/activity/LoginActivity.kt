@@ -46,7 +46,8 @@ class LoginActivity
         }
 
         binding.naverLoginButton.setOnClickListener {
-            naverLogin.login()
+            binding.naverLoginButton.alpha = 0.7f
+            naverLogin.login(binding.naverLoginButton)
         }
 
         binding.phoneLoginButton.setOnClickListener {

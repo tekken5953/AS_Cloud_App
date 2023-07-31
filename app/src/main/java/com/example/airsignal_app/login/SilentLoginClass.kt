@@ -2,6 +2,7 @@ package com.example.airsignal_app.login
 
 import android.app.Activity
 import android.util.Log
+import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
@@ -20,7 +21,7 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
  **/
 class SilentLoginClass {
     /** 플랫폼 별 자동로그인 **/
-    fun login(activity: Activity, pbLayout: MotionLayout) {
+    fun login(activity: Activity) {
         val email = getUserEmail(activity)
 
         when (getUserLoginPlatform(activity)) {
@@ -41,17 +42,15 @@ class SilentLoginClass {
                 if (!kakaoLogin.getAccessToken()) {
                     writeLoginHistory(isLogin = true, platform = LOGIN_KAKAO, email = email,
                         isAuto = true, isSuccess = true)
-                    kakaoLogin.isValidToken(pbLayout)
                 }
             }
             LOGIN_NAVER -> {
                 // 네이버 자동 로그인
                 val naverLogin = NaverLogin(activity)
                 if (naverLogin.getAccessToken() == null) {
+                    naverLogin.silentLogin()
                     writeLoginHistory(isLogin = true, platform = LOGIN_NAVER, email = email,
                         isAuto = true, isSuccess = true)
-
-                    naverLogin.silentLogin()
                 }
             }
             LOGIN_PHONE -> {

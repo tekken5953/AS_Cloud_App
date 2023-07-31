@@ -146,5 +146,7 @@
     <string name="searched_address">등록된 주소</string>
     <string name="current_address">현재 주소</string>
     <string name="login_with_kakao">카카오로 로그인</string>
-    <string name="kakao_google_login">구글로 로그인</string>
+    <string name="login_with_google">구글로 로그인</string>
+    <string name="want_logout">로그아웃 하시겠습니까?</string>
+    <string name="login_with_naver">네이버 로그인</string>
 </resources>

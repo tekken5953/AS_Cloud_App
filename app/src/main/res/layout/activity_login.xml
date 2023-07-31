@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/loginMainLayout"
         android:layout_width="match_parent"
@@ -9,20 +9,22 @@
         android:background="@color/theme_view_color">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/viewGroupLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/viewGroupLayout">
+            android:layout_marginTop="22dp">
+
             <ImageView
                 android:id="@+id/loginMainBack"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:padding="5dp"
                 android:layout_marginStart="18dp"
                 android:layout_marginTop="11dp"
+                android:padding="3dp"
                 android:src="@drawable/back_arrow"
-                app:tint="@color/theme_text_color"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/theme_text_color" />
 
             <TextView
                 android:id="@+id/loginMainTitleText"
@@ -31,26 +33,26 @@
                 android:textColor="@color/theme_text_color"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/loginMainBack"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/loginMainBack" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/googleLoginButton"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_marginBottom="30dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
-                android:text="@string/kakao_google_login"
-                android:textColor="#4F4F4F"
-                android:textSize="14sp"
-                android:fontFamily="@font/spoqa_hansansneo_medium"
+                android:background="@drawable/google_login_bg"
                 android:drawableStart="@drawable/ico_login_google"
+                android:fontFamily="@font/spoqa_hansansneo_medium"
                 android:paddingStart="24dp"
                 android:paddingEnd="24dp"
-                android:background="@drawable/google_login_bg"
-                app:layout_constraintBottom_toTopOf="@+id/kakakoLoginButton" />
+                android:text="@string/login_with_google"
+                android:textColor="#4F4F4F"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/loginMainBack" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/kakakoLoginButton"
@@ -58,48 +60,50 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/kakao_login_bg"
+                android:drawableStart="@drawable/ico_login_kakao"
+                android:fontFamily="@font/spoqa_hansansneo_medium"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
                 android:text="@string/login_with_kakao"
                 android:textColor="#3B1E1E"
                 android:textSize="14sp"
-                android:fontFamily="@font/spoqa_hansansneo_medium"
-                android:drawableStart="@drawable/ico_login_kakao"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
-                android:layout_marginBottom="30dp"
-                android:background="@drawable/kakao_login_bg"
-                app:layout_constraintBottom_toTopOf="@+id/naverLoginButton" />
+                app:layout_constraintBottom_toTopOf="@+id/googleLoginButton" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/naverLoginButton"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="30dp"
-                android:layout_marginBottom="30dp"
-                android:background="@drawable/pm_box_bg"
-                android:drawableStart="@drawable/naver_icon_small"
+                android:layout_height="48dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/naver_login_bg"
+                android:drawableStart="@drawable/ico_login_naver"
                 android:fontFamily="@font/spoqa_hansansneo_medium"
-                android:text="네이버 로그인"
-                android:textColor="#4F4F4F"
-                android:elevation="12dp"
-                android:translationZ="8dp"
-                app:layout_constraintBottom_toTopOf="@+id/phoneLoginButton" />
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:text="@string/login_with_naver"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@+id/googleLoginButton" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/phoneLoginButton"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="30dp"
-                android:layout_marginBottom="50dp"
-                android:elevation="12dp"
-                android:translationZ="8dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
                 android:background="@drawable/pm_box_bg"
                 android:drawableStart="@drawable/email_icon_small"
                 android:fontFamily="@font/spoqa_hansansneo_medium"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
                 android:text="전화번호로 로그인"
                 android:textColor="#4F4F4F"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                android:textSize="14sp"
+                app:layout_constraintTop_toBottomOf="@+id/naverLoginButton" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

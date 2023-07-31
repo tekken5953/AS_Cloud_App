@@ -141,13 +141,11 @@ class KakaoLogin(private val activity: Activity) {
     }
 
     /** 자동 로그인 **/
-    fun isValidToken(pb: MotionLayout) {
-        pb.visibility = View.VISIBLE
-        pb.bringToFront()
+    fun isValidToken(btn: AppCompatButton) {
         if (AuthApiClient.instance.hasToken()) {
             UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
                 if (error != null) {
-                    pb.visibility = View.GONE
+                    btn.alpha = 1f
                     if (error is KakaoSdkError && error.isInvalidTokenError()) {
                         Logger.t("testtest").w("만료된 토큰입니다") // 만료된 토큰임 로그인 필요
                     } else {
@@ -168,7 +166,7 @@ class KakaoLogin(private val activity: Activity) {
         } else {
             // 토큰이 없음 로그인 필요
             ToastUtils(activity).showMessage("로그인이 필요합니다",1)
-            pb.visibility = View.GONE
+            btn.alpha = 1f
         }
     }
 

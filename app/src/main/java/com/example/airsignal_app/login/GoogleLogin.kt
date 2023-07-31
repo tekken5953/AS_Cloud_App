@@ -11,6 +11,7 @@ import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_FAILED
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginPref
+import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserEmail
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserId
@@ -62,7 +63,7 @@ class GoogleLogin(private val activity: Activity) {
         client.signOut()
             .addOnCompleteListener {
                 saveLogoutStatus()
-                RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = null)
+                EnterPageUtil(activity).toLogin()
             }
             .addOnCanceledListener {
                 ToastUtils(activity).showMessage("로그아웃에 실패했습니다",1)

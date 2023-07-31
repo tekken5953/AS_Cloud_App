@@ -1,6 +1,7 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
+import androidx.appcompat.widget.AppCompatButton
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientId
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientName
@@ -45,7 +46,8 @@ class NaverLogin(private val activity: Activity) {
      *
      * TODO 로그인 기록 저장
      * **/
-    fun login() {
+    fun login(btn: AppCompatButton) {
+        btn.alpha = 1f
         NaverIdLoginSDK.authenticate(activity, oauthLoginCallback)
     }
 
