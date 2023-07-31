@@ -3,6 +3,7 @@ package com.example.airsignal_app.login
 import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
+import androidx.appcompat.widget.AppCompatButton
 import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.firebase.db.RDBLogcat
@@ -40,11 +41,11 @@ class GoogleLogin(private val activity: Activity) {
     }
 
     /** 로그인 진행 + 로그인 버튼 비활성화 **/
-    fun login(mBtn: SignInButton, result: ActivityResultLauncher<Intent>) {
+    fun login(mBtn: AppCompatButton, result: ActivityResultLauncher<Intent>) {
         try {
             val signInIntent: Intent = client.signInIntent
             result.launch(signInIntent)
-            mBtn.isEnabled = false
+            mBtn.alpha = 0.7f
         } catch (e: Exception) {
             e.printStackTrace()
             RDBLogcat.writeErrorNotANR(activity, LOGIN_FAILED, e.localizedMessage!!)

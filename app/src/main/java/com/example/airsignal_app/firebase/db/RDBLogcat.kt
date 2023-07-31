@@ -89,7 +89,7 @@ object RDBLogcat {
             } else {
                 GetSystemInfo.androidID(context)
             }
-        } catch (e: java.lang.NullPointerException) {
+        } catch (e: NullPointerException) {
             ""
         }
     }

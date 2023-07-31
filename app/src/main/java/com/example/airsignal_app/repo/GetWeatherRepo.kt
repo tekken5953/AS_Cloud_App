@@ -1,12 +1,8 @@
 package com.example.airsignal_app.repo
 
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient.mMyAPIImpl
-import com.example.airsignal_app.view.ToastUtils
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,6 +50,7 @@ class GetWeatherRepo : BaseRepository() {
                         t: Throwable
                     ) {
                         try {
+                            t.printStackTrace()
 //                            Logger.t(TAG_R).e("API NetworkError : ${t.stackTraceToString()}")
                             _getDataResult.postValue(ApiState.Error("Network Error"))
                             call.cancel()

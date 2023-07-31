@@ -8,25 +8,6 @@
         android:layout_height="match_parent"
         android:background="@color/theme_view_color">
 
-        <LinearLayout
-            android:id="@+id/pbLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#66000000"
-            android:clickable="false"
-            android:gravity="center"
-            android:visibility="gone">
-
-            <ProgressBar
-                android:id="@+id/loginPb"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </LinearLayout>
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -54,23 +35,38 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/loginMainBack" />
 
-            <com.google.android.gms.common.SignInButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/googleLoginButton"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_margin="30dp"
+                android:layout_height="48dp"
+                android:layout_marginBottom="30dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:text="@string/kakao_google_login"
+                android:textColor="#4F4F4F"
+                android:textSize="14sp"
+                android:fontFamily="@font/spoqa_hansansneo_medium"
+                android:drawableStart="@drawable/ico_login_google"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
+                android:background="@drawable/google_login_bg"
                 app:layout_constraintBottom_toTopOf="@+id/kakakoLoginButton" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/kakakoLoginButton"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="30dp"
-                android:elevation="12dp"
-                android:translationZ="12dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:text="@string/login_with_kakao"
+                android:textColor="#3B1E1E"
+                android:textSize="14sp"
+                android:fontFamily="@font/spoqa_hansansneo_medium"
+                android:drawableStart="@drawable/ico_login_kakao"
+                android:paddingStart="24dp"
+                android:paddingEnd="24dp"
                 android:layout_marginBottom="30dp"
-                android:background="@drawable/kakao_login_large_wide"
+                android:background="@drawable/kakao_login_bg"
                 app:layout_constraintBottom_toTopOf="@+id/naverLoginButton" />
 
             <androidx.appcompat.widget.AppCompatButton

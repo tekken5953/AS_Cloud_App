@@ -91,6 +91,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import okhttp3.internal.format
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -345,7 +346,7 @@ class MainActivity
                     return SNAP_TO_START // 가장 첫 번째로 스크롤되도록 설정
                 }
             }
-            binding.mainDailyWeatherRv.setPadding(22,0,15,0)
+            binding.mainDailyWeatherRv.setPadding(22, 0, 15, 0)
             smoothScroller.targetPosition = position + 5
             it.startSmoothScroll(smoothScroller)
         }
@@ -577,11 +578,13 @@ class MainActivity
             }
         })
 
-        binding.nestedAirHelp.setImageDrawable(if (isThemeNight(this)) {
-            ResourcesCompat.getDrawable(resources,R.drawable.ico_question_b,null)
-        } else {
-            ResourcesCompat.getDrawable(resources,R.drawable.ico_question,null)
-        })
+        binding.nestedAirHelp.setImageDrawable(
+            if (isThemeNight(this)) {
+                ResourcesCompat.getDrawable(resources, R.drawable.ico_question_b, null)
+            } else {
+                ResourcesCompat.getDrawable(resources, R.drawable.ico_question, null)
+            }
+        )
 
         binding.nestedAirHelp.setOnClickListener {
             if (binding.nestedAirHelpPopup.alpha == 0f) {
@@ -640,8 +643,9 @@ class MainActivity
 
     // 현재 옵저버가 없으면 생성
     private fun getDataObservers() {
-        if (!getDataViewModel.fetchData().hasActiveObservers())
-        { applyGetDataViewModel() }
+        if (!getDataViewModel.fetchData().hasActiveObservers()) {
+            applyGetDataViewModel()
+        }
     }
 
 
@@ -867,10 +871,10 @@ class MainActivity
 
                             binding.mainSensValueC.text =
                                 SensibleTempFormula().getSensibleTemp(
-                                ta = current.temperature,
-                                rh = current.humidity,
-                                v = current.windSpeed
-                            ).roundToInt().toString() + "˚"
+                                    ta = current.temperature,
+                                    rh = current.humidity,
+                                    v = current.windSpeed
+                                ).roundToInt().toString() + "˚"
 
                             for (i: Int in 0 until result.realtime.size) {
                                 val dailyIndex = result.realtime[i]
@@ -1015,7 +1019,7 @@ class MainActivity
         if (getIsNight(progress)) {
             window.setBackgroundDrawableResource(R.drawable.main_bg_night)
             binding.mainSkyStarImg.setImageDrawable(
-                ResourcesCompat.getDrawable(resources,R.drawable.bg_nightsky,null)
+                ResourcesCompat.getDrawable(resources, R.drawable.bg_nightsky, null)
             )
             changeTextColorStyle(sky!!, true)
         } else {
@@ -1191,7 +1195,7 @@ class MainActivity
     // 통신에 실패할 경우 레이아웃 처리
     private fun hideAllViews(error: String?) {
         when (error) {
-            "API ERROR OCCURRED","Server Error OCCURRED" -> {
+            "API ERROR OCCURRED", "Server Error OCCURRED" -> {
                 binding.mainSkyText.text = "데이터 호출에 실패했습니다"
             }
             "NOT SERVICED Location" -> {
@@ -1209,7 +1213,11 @@ class MainActivity
             "GPS Connect Error" -> {
                 binding.mainSkyText.text = "GPS 연결 불가"
             }
+            "IndexOutOfBoundsException" -> {
+                binding.mainSkyText.text = "알수없는 오류 발생"
+            }
             else -> {
+                Timber.tag("testtees").e(error)
                 binding.mainSkyText.text = "알수없는 오류 발생"
             }
         }
@@ -1226,21 +1234,23 @@ class MainActivity
 
             setOnClickListener {
                 if (binding.mainSkyImg.imageTintList ==
-                    ColorStateList.valueOf(getColor(R.color.main_blue_color)
-                )) {
+                    ColorStateList.valueOf(
+                        getColor(R.color.main_blue_color)
+                    )
+                ) {
                     mVib()
 //                    showPB()
                     getDataSingleTime()
                 }
             }
 
-            setVisibilityForViews(GONE,error)
+            setVisibilityForViews(GONE, error)
         }
     }
 
     // 통신에 성공할 경우 레이아웃 처리
     private fun showAllViews() {
-        setVisibilityForViews(VISIBLE,null)
+        setVisibilityForViews(VISIBLE, null)
 
         binding.mainSkyImg.imageTintList = null
     }
@@ -1257,10 +1267,11 @@ class MainActivity
             binding.mainTopBarGpsTitle,
             binding.mainSensTitle,
             binding.mainSensValue
-            )
+        )
 
         if (visibility == GONE) {
-            if (error == "Network Error") {
+            if (error == "Network Error" ||
+                error == "IndexOutOfBoundsException") {
                 binding.mainAddAddress.setImageDrawable(null)
             }
             textViewArray.forEach {
@@ -1282,18 +1293,19 @@ class MainActivity
             binding.mainMinMaxTitle.text = getString(R.string.min_max)
             binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
             binding.mainGpsFix.setImageDrawable(
-                ResourcesCompat.getDrawable(resources,R.drawable.gps_fix,null))
+                ResourcesCompat.getDrawable(resources, R.drawable.gps_fix, null)
+            )
             binding.mainMotionSLideImg.setImageDrawable(
-                ResourcesCompat.getDrawable(resources,R.drawable.drop_down_bottom,null)
+                ResourcesCompat.getDrawable(resources, R.drawable.drop_down_bottom, null)
             )
             binding.mainRefreshData.setImageDrawable(
-                ResourcesCompat.getDrawable(resources,R.drawable.refresh,null)
+                ResourcesCompat.getDrawable(resources, R.drawable.refresh, null)
             )
             binding.mainAddAddress.setImageDrawable(
-                ResourcesCompat.getDrawable(resources,R.drawable.ico_add_w,null)
+                ResourcesCompat.getDrawable(resources, R.drawable.ico_add_w, null)
             )
             binding.mainSideMenuIv.setImageDrawable(
-                ResourcesCompat.getDrawable(resources,R.drawable.ico_hamb_w,null)
+                ResourcesCompat.getDrawable(resources, R.drawable.ico_hamb_w, null)
             )
             // 원래 상태로 복구하기 위해 제약 조건 변경
             binding.mainMotionLayout.isInteractionEnabled = true
@@ -1458,9 +1470,9 @@ class MainActivity
             binding.mainLiveTempValue, binding.mainLiveTempUnit, binding.mainCompareTempTv,
             binding.mainTopBarGpsTitle, binding.mainMotionSlideGuide, binding.mainSkyText,
             binding.mainGpsTitleTv, binding.mainSensTitle, binding.mainSensValue,
-            binding.mainMinMaxTitle,binding.mainMinMaxValue,binding.mainLiveTempTitleC,
-            binding.mainLiveTempValueC,binding.mainSensTitleC,binding.mainSensValueC,
-            binding.mainMinMaxTitleC,binding.mainMinMaxValueC
+            binding.mainMinMaxTitle, binding.mainMinMaxValue, binding.mainLiveTempTitleC,
+            binding.mainLiveTempValueC, binding.mainSensTitleC, binding.mainSensValueC,
+            binding.mainMinMaxTitleC, binding.mainMinMaxValueC
 
         )
         val changeTintImageViews = listOf(
@@ -1527,7 +1539,7 @@ class MainActivity
                             location?.let { loc ->
                                 hidePB()
                                 val addr = GetLocation(this@MainActivity)
-                                    .getAddress(loc.latitude,loc.longitude)
+                                    .getAddress(loc.latitude, loc.longitude)
                                 val formatAddr = addr!!
                                     .replaceFirst(" ", "")
                                     .replace(getString(R.string.korea), "")
@@ -1557,7 +1569,7 @@ class MainActivity
                                 loadCurrentViewModelData(loc.latitude, loc.longitude)
                             }
                         }
-                } .addOnFailureListener {
+                }.addOnFailureListener {
                     RDBLogcat.writeErrorNotANR(
                         this@MainActivity, sort = RDBLogcat.ERROR_LOCATION_FAILED,
                         msg = it.localizedMessage!!

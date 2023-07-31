@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -13,7 +12,6 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.databinding.ActivityLoginBinding
 import com.example.airsignal_app.db.SharedPreferenceManager
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
@@ -24,14 +22,8 @@ import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.login.PhoneLogin
 import com.example.airsignal_app.util.EnterPageUtil
-import com.example.airsignal_app.util.`object`.GetSystemInfo
-import com.example.airsignal_app.util.`object`.SetAppInfo
 import com.example.airsignal_app.view.ShowDialogClass
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.kakao.sdk.common.util.Utility.getKeyHash
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class LoginActivity
     : BaseActivity<ActivityLoginBinding>() {
@@ -50,7 +42,7 @@ class LoginActivity
         }
 
         binding.kakakoLoginButton.setOnClickListener {
-            kakaoLogin.checkInstallKakaoTalk(binding.pbLayout)
+            kakaoLogin.checkInstallKakaoTalk(binding.kakakoLoginButton)
         }
 
         binding.naverLoginButton.setOnClickListener {
@@ -81,10 +73,8 @@ class LoginActivity
                         ) {
                             dialog.dismiss()
                             Thread.sleep(100)
-                            binding.pbLayout.visibility = View.VISIBLE
                             Handler(Looper.getMainLooper()).postDelayed({
                                 EnterPageUtil(this).toMain(LOGIN_PHONE)
-                                binding.pbLayout.visibility = View.GONE
                             }, 2000)
                         } else {
                             inputErrorText.visibility = View.VISIBLE
@@ -116,14 +106,8 @@ class LoginActivity
                     googleLogin.handleSignInResult(task, isAuto = false)
                     EnterPageUtil(this).toMain(LOGIN_GOOGLE)
                 }
-                RESULT_CANCELED -> {
-                    binding.googleLoginButton.isEnabled = true
-                }
-                RESULT_FIRST_USER -> {
-                    binding.googleLoginButton.isEnabled = true
-                }
                 else -> {
-                    binding.googleLoginButton.isEnabled = true
+                    binding.googleLoginButton.alpha = 1f
                 }
             }
         }

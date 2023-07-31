@@ -3,6 +3,7 @@ package com.example.airsignal_app.login
 import android.app.Activity
 import android.view.View
 import android.widget.LinearLayout
+import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.airsignal_app.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
@@ -50,15 +51,14 @@ class KakaoLogin(private val activity: Activity) {
     }
 
     /** 카카오톡 설치 확인 후 로그인**/
-    fun checkInstallKakaoTalk(pb: LinearLayout) {
+    fun checkInstallKakaoTalk(btn: AppCompatButton) {
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(activity)) {
-            pb.visibility = View.VISIBLE
-            pb.bringToFront()
+            btn.alpha = 0.7f
             // 카카오톡 로그인
             UserApiClient.instance.loginWithKakaoTalk(activity) { token, error ->
                 // 로그인 실패 부분
                 if (error != null) {
-                    pb.visibility = View.GONE
+                    btn.alpha = 1f
                     // 사용자가 취소
                     if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled)) {
                         Logger.t("testtest").d("카카오 로그인 취소")

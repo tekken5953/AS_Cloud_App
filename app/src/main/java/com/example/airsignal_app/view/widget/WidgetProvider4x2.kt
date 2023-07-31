@@ -323,32 +323,32 @@ open class WidgetProvider4x2 : AppWidgetProvider() {
             changeVisibility(context, views, true)
         } else {
             changeVisibility(context, views, false)
+        }
 
-            try {
-                val locationRequest = CurrentLocationRequest.Builder()
-                locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+        try {
+            val locationRequest = CurrentLocationRequest.Builder()
+            locationRequest.setPriority(Priority.PRIORITY_HIGH_ACCURACY)
 
-                CoroutineScope(Dispatchers.Default).launch {
-                    LocationServices.getFusedLocationProviderClient(context)
-                        .getCurrentLocation(locationRequest.build(), null)
-                        .addOnSuccessListener {
-                            loadWidgetData(context, it.latitude, it.longitude)
-                        }
-                        .addOnFailureListener {
-                            RDBLogcat.writeErrorNotANR(
-                                context,
-                                sort = RDBLogcat.WIDGET_ERROR,
-                                msg = "Location is Failed"
-                            )
-                        }
-                }
-            } catch (e: Exception) {
-                RDBLogcat.writeErrorNotANR(
-                    context,
-                    sort = RDBLogcat.WIDGET_ERROR,
-                    msg = "Location is Not Available"
-                )
+            CoroutineScope(Dispatchers.Default).launch {
+                LocationServices.getFusedLocationProviderClient(context)
+                    .getCurrentLocation(locationRequest.build(), null)
+                    .addOnSuccessListener {
+                        loadWidgetData(context, it.latitude, it.longitude)
+                    }
+                    .addOnFailureListener {
+                        RDBLogcat.writeErrorNotANR(
+                            context,
+                            sort = RDBLogcat.WIDGET_ERROR,
+                            msg = "Location is Failed"
+                        )
+                    }
             }
+        } catch (e: Exception) {
+            RDBLogcat.writeErrorNotANR(
+                context,
+                sort = RDBLogcat.WIDGET_ERROR,
+                msg = "Location is Not Available"
+            )
         }
     }
 
