@@ -157,7 +157,6 @@ class KakaoLogin(private val activity: Activity) {
             }
         } else {
             // 토큰이 없음 로그인 필요
-            ToastUtils(activity).showMessage("로그인이 필요합니다",1)
             btn.alpha = 1f
         }
     }

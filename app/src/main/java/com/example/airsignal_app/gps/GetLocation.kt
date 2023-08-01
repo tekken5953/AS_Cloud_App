@@ -9,10 +9,10 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.ErrorCode.ERROR_LOCATION_IOException
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
-import com.example.airsignal_app.firebase.db.RDBLogcat.ERROR_LOCATION_IOException
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeErrorNotANR
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeGpsHistory
 import com.example.airsignal_app.util.AddressFromRegex
@@ -45,7 +45,7 @@ class GetLocation(private val context: Context) {
             }
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
-            } else { "Null Address" }
+            } else { "No Address" }
         } catch (e: IOException) {
             writeErrorNotANR(context, sort = ERROR_LOCATION_IOException, msg = e.localizedMessage!!)
             null

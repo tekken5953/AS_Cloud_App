@@ -26,6 +26,15 @@ import androidx.work.*
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.*
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.dao.ErrorCode.ERROR_API_PROTOCOL
+import com.example.airsignal_app.dao.ErrorCode.ERROR_GET_DATA
+import com.example.airsignal_app.dao.ErrorCode.ERROR_GET_LOCATION_FAILED
+import com.example.airsignal_app.dao.ErrorCode.ERROR_GPS_CONNECTED
+import com.example.airsignal_app.dao.ErrorCode.ERROR_LOCATION_FAILED
+import com.example.airsignal_app.dao.ErrorCode.ERROR_NETWORK
+import com.example.airsignal_app.dao.ErrorCode.ERROR_NOT_SERVICED_LOCATION
+import com.example.airsignal_app.dao.ErrorCode.ERROR_SERVER_CONNECTING
+import com.example.airsignal_app.dao.ErrorCode.ERROR_TIMEOUT
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CO_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
@@ -83,7 +92,6 @@ import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -961,7 +969,7 @@ class MainActivity
                         } catch (e: IndexOutOfBoundsException) {
                             runOnUiThread {
                                 hidePB()
-                                hideAllViews(error = "IndexOutOfBoundsException")
+                                hideAllViews(error = ERROR_GET_DATA)
                             }
                         }
                     }
@@ -1121,29 +1129,29 @@ class MainActivity
     // 통신에 실패할 경우 레이아웃 처리
     private fun hideAllViews(error: String?) {
         when (error) {
-            "API ERROR OCCURRED", "Server Error OCCURRED" -> {
+            ERROR_API_PROTOCOL, ERROR_SERVER_CONNECTING -> {
                 binding.mainSkyText.text = "데이터 호출에 실패했습니다"
             }
-            "NOT SERVICED Location" -> {
+            ERROR_NOT_SERVICED_LOCATION -> {
                 binding.mainSkyText.text = getString(R.string.not_serviced_location)
             }
-            "Network Error" -> {
-                binding.mainSkyText.text = "요청시간 지연, 재갱신 필요"
+            ERROR_TIMEOUT -> {
+                binding.mainSkyText.text = "요청시간 지연, 재 갱신 필요"
             }
-            "Timeout Error" -> {
-                binding.mainSkyText.text = "네트워크 오류, 재갱신 필요"
+            ERROR_NETWORK -> {
+                binding.mainSkyText.text = "네트워크 확인 후 갱신필요"
             }
-            "Get Location Error" -> {
+            ERROR_GET_LOCATION_FAILED -> {
                 binding.mainSkyText.text = "주소 호출 실패"
             }
-            "GPS Connect Error" -> {
+            ERROR_GPS_CONNECTED -> {
                 binding.mainSkyText.text = "GPS 연결 불가"
             }
-            "IndexOutOfBoundsException" -> {
-                binding.mainSkyText.text = "알수없는 오류 발생"
+            ERROR_GET_DATA -> {
+                binding.mainSkyText.text = "데이터 호출 실패"
             }
             else -> {
-                Timber.tag("testtees").e(error)
+                RDBLogcat.writeErrorNotANR(this, ERROR_LOCATION_FAILED, error!!)
                 binding.mainSkyText.text = "알수없는 오류 발생"
             }
         }
@@ -1196,8 +1204,8 @@ class MainActivity
         )
 
         if (visibility == GONE) {
-            if (error == "Network Error" ||
-                error == "IndexOutOfBoundsException") {
+            if (error == ERROR_NETWORK ||
+                error == ERROR_GET_DATA) {
                 binding.mainAddAddress.setImageDrawable(null)
             }
             textViewArray.forEach {
@@ -1470,12 +1478,12 @@ class MainActivity
                             }
                     }.addOnFailureListener {
                         RDBLogcat.writeErrorNotANR(
-                            this@MainActivity, sort = RDBLogcat.ERROR_LOCATION_FAILED,
+                            this@MainActivity, sort = ERROR_LOCATION_FAILED,
                             msg = it.localizedMessage!!
                         )
                     }
                 } catch (e: NullPointerException) {
-                    setVisibilityForViews(INVISIBLE, "Get Location Error")
+                    setVisibilityForViews(INVISIBLE, ERROR_GET_LOCATION_FAILED)
                 }
             }
         } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {

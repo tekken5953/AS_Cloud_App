@@ -52,8 +52,6 @@ object RDBLogcat {
     const val NOTIFICATION_HISTORY = "알림"
     const val ERROR_HISTORY = "에러"
     const val ERROR_ANR = "ANR 에러"
-    const val ERROR_LOCATION_IOException = "주소 - IOException"
-    const val ERROR_LOCATION_FAILED = "GPS 위치정보 갱신실패"
     const val WIDGET_INSTALL = "위젯 설치"
     const val WIDGET_UNINSTALL = "위젯 삭제"
     const val LOGIN_FAILED = "로그인 시도 실패"

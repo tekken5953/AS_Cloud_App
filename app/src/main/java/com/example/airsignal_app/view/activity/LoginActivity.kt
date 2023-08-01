@@ -10,6 +10,7 @@ import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import com.example.airsignal_app.firebase.fcm.SubFCM
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
+import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.util.EnterPageUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 
@@ -19,7 +20,7 @@ class LoginActivity
 
     private val googleLogin by lazy { GoogleLogin(this) }   // 구글 로그인
     private val kakaoLogin by lazy { KakaoLogin(this) }     // 카카오 로그인
-//    private val naverLogin by lazy { NaverLogin(this) }     // 네이버 로그인
+    private val naverLogin by lazy { NaverLogin(this) }     // 네이버 로그인
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,46 +34,10 @@ class LoginActivity
             kakaoLogin.checkInstallKakaoTalk(binding.kakakoLoginButton)
         }
 
-//        binding.naverLoginButton.setOnClickListener {
-//            binding.naverLoginButton.alpha = 0.7f
-//            naverLogin.login(binding.naverLoginButton)
-//        }
-
-/*        binding.phoneLoginButton.setOnClickListener {
-            val viewEmailLogin: View =
-                LayoutInflater.from(this).inflate(R.layout.dialog_phone_input, null)
-            val dialog = ShowDialogClass(this)
-            dialog.show(viewEmailLogin, true)
-            val inputEt: EditText = viewEmailLogin.findViewById(R.id.inputEt)
-            val inputSendBtn: Button = viewEmailLogin.findViewById(R.id.inputSendBtn)
-            val inputVerifyEt: EditText = viewEmailLogin.findViewById(R.id.inputNumberEt)
-            val inputErrorText: TextView =
-                viewEmailLogin.findViewById(R.id.inputResultText)
-
-            inputSendBtn.setOnClickListener {
-                if (inputSendBtn.isEnabled) {
-                    if (inputSendBtn.text == "Send") {
-                        inputVerifyEt.visibility = View.VISIBLE
-                        inputSendBtn.text = "Verify"
-                        PhoneLogin(this, inputSendBtn, inputErrorText)
-                            .login(inputEt.text.toString().replaceFirst("0", "+82"))
-                    } else if (inputSendBtn.text == "Verify") {
-                        if (inputVerifyEt.text.toString() ==
-                            SharedPreferenceManager(this).getString("verificationCode")
-                        ) {
-                            dialog.dismiss()
-                            Thread.sleep(100)
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                EnterPageUtil(this).toMain(LOGIN_PHONE)
-                            }, 2000)
-                        } else {
-                            inputErrorText.visibility = View.VISIBLE
-                            inputErrorText.text = "인증번호가 일치하지 않습니다"
-                        }
-                    }
-                }
-            }
-        }*/
+        binding.naverLoginButton.setOnClickListener {
+            binding.naverLoginButton.alpha = 0.7f
+            naverLogin.login(binding.naverLoginButton)
+        }
 
         binding.loginMainBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
