@@ -42,11 +42,6 @@ class KakaoLogin(private val activity: Activity) {
         KakaoSdk.init(activity, KAKAO_NATIVE_APP_KEY)
     }
 
-    /** 앱 히시키 받아오기 **/
-    fun getKeyHash(): String {
-        return Utility.getKeyHash(activity)
-    }
-
     /** 카카오톡 설치 확인 후 로그인**/
     fun checkInstallKakaoTalk(btn: AppCompatButton) {
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(activity)) {
@@ -124,7 +119,7 @@ class KakaoLogin(private val activity: Activity) {
                         activity,
                         platform = LOGIN_KAKAO_EMAIL,
                         email = getUserEmail(activity),
-                        phone = null,
+                        phone = account.phoneNumber,
                         name = account.name,
                         profile = account.profile?.profileImageUrl
                     )
