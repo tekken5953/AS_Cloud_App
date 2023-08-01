@@ -121,4 +121,11 @@
     <string name="login_with_google">Sign in with Google</string>
     <string name="want_logout">Do sign out?</string>
     <string name="login_with_naver">Sign in with Naver</string>
+    <string name="data_call_error">데이터 호출 실패</string>
+    <string name="gps_call_error">GPS 연결 불가</string>
+    <string name="address_call_error">주소 호출 실패</string>
+    <string name="network_error">네트워크 확인 후 갱신필요</string>
+    <string name="timeout_error">요청시간 지연, 재 갱신 필요</string>
+    <string name="api_call_error">데이터 호출에 실패했습니다</string>
+    <string name="unkown_error">알수없는 오류 발생</string>
 </resources>

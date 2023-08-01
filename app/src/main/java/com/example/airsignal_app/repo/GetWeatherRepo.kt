@@ -2,6 +2,7 @@ package com.example.airsignal_app.repo
 
 import androidx.lifecycle.MutableLiveData
 import com.example.airsignal_app.dao.ErrorCode.ERROR_API_PROTOCOL
+import com.example.airsignal_app.dao.ErrorCode.ERROR_NETWORK
 import com.example.airsignal_app.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import com.example.airsignal_app.dao.ErrorCode.ERROR_TIMEOUT
 import com.example.airsignal_app.retrofit.ApiModel
@@ -54,7 +55,7 @@ class GetWeatherRepo : BaseRepository() {
                         try {
                             t.printStackTrace()
 //                            Logger.t(TAG_R).e("API NetworkError : ${t.stackTraceToString()}")
-                            _getDataResult.postValue(ApiState.Error("Network Error"))
+                            _getDataResult.postValue(ApiState.Error(ERROR_NETWORK))
                             call.cancel()
                         } catch (e: SocketTimeoutException) {
                             _getDataResult.postValue(ApiState.Error(ERROR_TIMEOUT))

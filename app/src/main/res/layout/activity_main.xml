@@ -128,6 +128,25 @@
             app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv"
             app:tint="@color/mode_black_color" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/mainErrorRenewBtn"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:text="다시 불러오기"
+            android:alpha="0"
+            android:clickable="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:elevation="0dp"
+            android:translationZ="0dp"
+            android:letterSpacing="-0.072"
+            android:background="@drawable/single_btn_apply_bg"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            ads:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="52dp"/>
+
         <ImageView
             android:id="@+id/mainSkyStarImg"
             android:layout_width="match_parent"
@@ -140,8 +159,8 @@
 
         <ImageView
             android:id="@+id/mainSkyImg"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -714,18 +733,6 @@
                         android:textSize="18sp"
                         app:drawableStartCompat="@drawable/ico_uv" />
 
-                    <ImageView
-                        android:id="@+id/mainUvCollapseArrow"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:layout_alignTop="@+id/mainUvTitle"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="17dp"
-                        android:layout_marginBottom="8dp"
-                        android:padding="5dp"
-                        android:src="@drawable/btn_down"
-                        app:tint="@color/theme_text_color" />
-
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/mainUVLegendRv"
                         android:layout_width="wrap_content"
@@ -777,7 +784,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/mainUVLegendRv"
-                        android:visibility="gone">
+                        android:visibility="visible">
 
                         <View
                             android:id="@+id/mainUvLine"

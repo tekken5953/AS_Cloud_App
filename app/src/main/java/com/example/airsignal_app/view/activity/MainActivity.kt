@@ -3,6 +3,7 @@ package com.example.airsignal_app.view.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.location.LocationManager
 import android.os.*
@@ -10,6 +11,7 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
+import android.view.ViewTreeObserver
 import android.view.animation.*
 import android.widget.*
 import android.widget.LinearLayout.LayoutParams
@@ -92,6 +94,7 @@ import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -197,24 +200,6 @@ class MainActivity
         )
         addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
-        // 자외선 지수 접고 펴기 화살표
-        binding.mainUVBox.apply {
-            this.setOnClickListener {
-                mVib()
-                if (binding.mainUvCollapsedLayout.visibility == VISIBLE) {
-                    binding.mainUvCollapseArrow.setImageDrawable(
-                        ResourcesCompat.getDrawable(resources, R.drawable.btn_down, null)
-                    )
-                    binding.mainUvCollapsedLayout.apply { this.visibility = GONE }
-                } else {
-                    binding.mainUvCollapseArrow.setImageDrawable(
-                        ResourcesCompat.getDrawable(resources, R.drawable.btn_up, null)
-                    )
-                    binding.mainUvCollapsedLayout.apply { this.visibility = VISIBLE }
-                }
-            }
-        }
-
         // 스크롤 최상단으로 올리기 버튼
         binding.nestedFab.setOnClickListener {
             binding.nestedScrollview.smoothScrollTo(0, 0, 500)
@@ -276,7 +261,6 @@ class MainActivity
                 sideMenuBuilder.show(sideMenuView, true)
             }
         })
-
     }
 
     // 햄버거 메뉴 세팅
@@ -765,12 +749,12 @@ class MainActivity
                             )
                             updateAirQData(
                                 O3_INDEX, "오존", "O3",
-                                "㎍/㎥", air.o3Value!!.toString(),  air.o3Grade!!
+                                "㎍/㎥", air.o3Value!!.toString(), air.o3Grade!!
                             )
 
                             applyAirQView(
-                                air.pm25Grade1h, "PM2.5","초미세먼지",
-                                air.pm25Value.toInt().toString(),"㎍/m3"
+                                air.pm25Grade1h, "PM2.5", "초미세먼지",
+                                air.pm25Value.toInt().toString(), "㎍/m3"
                             )
 
                             airQList[PM2p5_INDEX].isSelect = true
@@ -964,7 +948,7 @@ class MainActivity
                         } catch (e: java.lang.NullPointerException) {
                             runOnUiThread {
                                 hidePB()
-                                hideAllViews(error = "NullPointerException")
+                                hideAllViews(error = ERROR_API_PROTOCOL)
                             }
                         } catch (e: IndexOutOfBoundsException) {
                             runOnUiThread {
@@ -990,14 +974,20 @@ class MainActivity
         return this
     }
 
-    private fun applyAirQView(grade: Int, name: String, nameKR: String, value: String, unit: String) {
-        binding.nestedAirCpvCard.setCardBackgroundColor(getDataColor(this,grade))
+    private fun applyAirQView(
+        grade: Int,
+        name: String,
+        nameKR: String,
+        value: String,
+        unit: String
+    ) {
+        binding.nestedAirCpvCard.setCardBackgroundColor(getDataColor(this, grade))
         binding.nestedAirCpvText.text = getDataText(grade)
         binding.nestedAirValue.text = value
         binding.nestedAirTitleEn.text = name
         binding.nestedAirTitleKr.text = nameKR
         binding.nestedAirUnit.text = unit
-        binding.nestedAirValue.setTextColor(getDataColor(this,grade))
+        binding.nestedAirValue.setTextColor(getDataColor(this, grade))
     }
 
     // 하늘상태에 따라 윈도우 배경 변경
@@ -1127,55 +1117,67 @@ class MainActivity
     }
 
     // 통신에 실패할 경우 레이아웃 처리
+    @SuppressLint("SetTextI18n")
     private fun hideAllViews(error: String?) {
         when (error) {
             ERROR_API_PROTOCOL, ERROR_SERVER_CONNECTING -> {
-                binding.mainSkyText.text = "데이터 호출에 실패했습니다"
+                binding.mainSkyText.text = getString(R.string.api_call_error)
             }
             ERROR_NOT_SERVICED_LOCATION -> {
                 binding.mainSkyText.text = getString(R.string.not_serviced_location)
             }
             ERROR_TIMEOUT -> {
-                binding.mainSkyText.text = "요청시간 지연, 재 갱신 필요"
+                binding.mainSkyText.text = getString(R.string.timeout_error)
             }
             ERROR_NETWORK -> {
-                binding.mainSkyText.text = "네트워크 확인 후 갱신필요"
+                binding.mainSkyText.text = getString(R.string.network_error)
             }
             ERROR_GET_LOCATION_FAILED -> {
-                binding.mainSkyText.text = "주소 호출 실패"
+                binding.mainSkyText.text = getString(R.string.address_call_error)
             }
             ERROR_GPS_CONNECTED -> {
-                binding.mainSkyText.text = "GPS 연결 불가"
+                binding.mainSkyText.text = getString(R.string.gps_call_error)
             }
             ERROR_GET_DATA -> {
-                binding.mainSkyText.text = "데이터 호출 실패"
+                binding.mainSkyText.text = getString(R.string.data_call_error)
             }
             else -> {
                 RDBLogcat.writeErrorNotANR(this, ERROR_LOCATION_FAILED, error!!)
-                binding.mainSkyText.text = "알수없는 오류 발생"
+                binding.mainSkyText.text = getString(R.string.unkown_error)
             }
+        }
+
+        binding.mainSkyText.apply {
+            textSize = 20f
+            typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_medium.ttf")
+            setPadding(0, 50, 0, 0)
+            setTextColor(getColor(R.color.theme_text_color))
+        }
+
+        binding.mainErrorRenewBtn.setOnClickListener {
+            mVib()
+            getDataSingleTime()
         }
 
         // 주소, 갱신버튼, 현재기온, 기온비교, 최저/최고 기온, 날씨 정보 더보기, 모션 슬라이드 막기
         binding.mainSkyImg.apply {
-            setImageDrawable(
-                ResourcesCompat.getDrawable(
-                    resources,
-                    R.drawable.refresh, null
-                )
-            )
-            imageTintList = ColorStateList.valueOf(getColor(R.color.main_blue_color))
 
-            setOnClickListener {
-                if (binding.mainSkyImg.imageTintList ==
-                    ColorStateList.valueOf(
-                        getColor(R.color.main_blue_color)
+            if (isThemeNight(this@MainActivity)) {
+                window.setBackgroundDrawableResource(R.color.black)
+                this.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ico_error_b, null
                     )
-                ) {
-                    mVib()
-//                    showPB()
-                    getDataSingleTime()
-                }
+                )
+            } else {
+                window.setBackgroundDrawableResource(R.color.white)
+                this.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ico_error_w, null
+                    )
+                )
             }
 
             setVisibilityForViews(GONE, error)
@@ -1185,8 +1187,6 @@ class MainActivity
     // 통신에 성공할 경우 레이아웃 처리
     private fun showAllViews() {
         setVisibilityForViews(VISIBLE, null)
-
-        binding.mainSkyImg.imageTintList = null
     }
 
     private fun setVisibilityForViews(visibility: Int, error: String?) {
@@ -1205,12 +1205,16 @@ class MainActivity
 
         if (visibility == GONE) {
             if (error == ERROR_NETWORK ||
-                error == ERROR_GET_DATA) {
+                error == ERROR_GET_DATA
+            ) {
                 binding.mainAddAddress.setImageDrawable(null)
+            } else {
+                binding.mainAddAddress.imageTintList = ColorStateList.valueOf(getColor(R.color.theme_text_color))
             }
             textViewArray.forEach {
                 it.text = ""
             }
+
             binding.mainGpsFix.setImageDrawable(null)
             binding.mainMotionSLideImg.setImageDrawable(null)
             binding.mainRefreshData.setImageDrawable(null)
@@ -1222,13 +1226,26 @@ class MainActivity
                 isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
             }
 
+            binding.mainErrorRenewBtn.alpha = 1f
+            binding.mainErrorRenewBtn.isClickable = true
+
         } else {
             binding.mainSensTitle.text = getString(R.string.sens_temp)
             binding.mainMinMaxTitle.text = getString(R.string.min_max)
             binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
+
+            binding.mainSkyText.textSize = 14f
+            binding.mainSkyText.typeface =
+                Typeface.createFromAsset(assets, "spoqa_hansansneo_regular.ttf")
+
+            binding.mainErrorRenewBtn.alpha = 0f
+            binding.mainErrorRenewBtn.isClickable = false
+
+
             binding.mainGpsFix.setImageDrawable(
                 ResourcesCompat.getDrawable(resources, R.drawable.gps_fix, null)
             )
+
             binding.mainMotionSLideImg.setImageDrawable(
                 ResourcesCompat.getDrawable(resources, R.drawable.drop_down_bottom, null)
             )
@@ -1434,69 +1451,92 @@ class MainActivity
         }
     }
 
+    private fun isKorea(lat: Double, lng: Double): Boolean {
+        return lng in 127.0..132.0 && lat in 33.0..39.0
+    }
+
     @SuppressLint("MissingPermission")
     private fun getCurrentLocationData() {
         val locationClass = GetLocation(this)
-        if (locationClass.isGPSConnected()) {
-            CoroutineScope(Dispatchers.Default).launch {
-                try {
-                    LocationServices.getFusedLocationProviderClient(this@MainActivity).run {
-                        this.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                            .addOnSuccessListener { location ->
-                                location?.let { loc ->
-                                    hidePB()
-                                    val addr = GetLocation(this@MainActivity)
-                                        .getAddress(loc.latitude, loc.longitude)
-                                    val formatAddr = addr!!
-                                        .replaceFirst(" ", "")
-                                        .replace(getString(R.string.korea), "")
-                                        .replace("null", "")
+        if (locationClass.isNetWorkConnected()) {
+            if (locationClass.isGPSConnected()) {
+                CoroutineScope(Dispatchers.Default).launch {
+                    try {
+                        LocationServices.getFusedLocationProviderClient(this@MainActivity).run {
+                            this.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                                .addOnSuccessListener { location ->
+                                    location?.let { loc ->
+                                        hidePB()
+                                        if (isKorea(loc.latitude, loc.longitude)) {
+                                            val addr = GetLocation(this@MainActivity)
+                                                .getAddress(loc.latitude, loc.longitude)
+                                            addr?.let {
+                                                it.replaceFirst(" ", "")
+                                                it.replace(getString(R.string.korea), "")
+                                                it.replace("null", "")
 
-                                    val regexAddr = AddressFromRegex(addr).getAddress()
-                                    val formedAddr = if (regexAddr != IN_COMPLETE_ADDRESS) {
-                                        regexAddr
-                                    } else {
-                                        formatAddr
+                                                val regexAddr = AddressFromRegex(addr).getAddress()
+                                                val formedAddr =
+                                                    if (regexAddr != IN_COMPLETE_ADDRESS) {
+                                                        regexAddr
+                                                    } else {
+                                                        it
+                                                    }
+
+                                                setCurrentLocation(this@MainActivity, it)
+
+                                                updateCurrentAddress(
+                                                    loc.latitude, loc.longitude,
+                                                    it
+                                                )
+
+                                                binding.mainGpsTitleTv.text = guardWordWrap(
+                                                    formedAddr
+                                                )
+
+                                                binding.mainTopBarGpsTitle.text =
+                                                    formedAddr
+
+                                                loadCurrentViewModelData(
+                                                    loc.latitude,
+                                                    loc.longitude
+                                                )
+                                            }
+                                        } else {
+                                            hideAllViews(
+                                                ERROR_NOT_SERVICED_LOCATION
+                                            )
+                                        }
                                     }
-
-                                    setCurrentLocation(this@MainActivity, formatAddr)
-
-                                    updateCurrentAddress(
-                                        loc.latitude, loc.longitude,
-                                        formatAddr
-                                    )
-
-                                    binding.mainGpsTitleTv.text = guardWordWrap(
-                                        formedAddr
-                                    )
-
-                                    binding.mainTopBarGpsTitle.text =
-                                        formedAddr
-
-                                    loadCurrentViewModelData(loc.latitude, loc.longitude)
                                 }
-                            }
-                    }.addOnFailureListener {
-                        RDBLogcat.writeErrorNotANR(
-                            this@MainActivity, sort = ERROR_LOCATION_FAILED,
-                            msg = it.localizedMessage!!
-                        )
+                        }.addOnFailureListener {
+                            RDBLogcat.writeErrorNotANR(
+                                this@MainActivity, sort = ERROR_LOCATION_FAILED,
+                                msg = it.localizedMessage!!
+                            )
+                        }
+                    } catch (e: NullPointerException) {
+                        hideAllViews(ERROR_GET_LOCATION_FAILED)
                     }
-                } catch (e: NullPointerException) {
-                    setVisibilityForViews(INVISIBLE, ERROR_GET_LOCATION_FAILED)
                 }
-            }
-        } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
-            CoroutineScope(Dispatchers.Default).launch {
-                val lm =
-                    getSystemService(LOCATION_SERVICE) as LocationManager
-                val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                location?.let { loc ->
-                    loadCurrentViewModelData(loc.latitude, loc.longitude)
+            } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
+                CoroutineScope(Dispatchers.Default).launch {
+                    val lm =
+                        getSystemService(LOCATION_SERVICE) as LocationManager
+                    val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                    location?.let { loc ->
+                        loadCurrentViewModelData(loc.latitude, loc.longitude)
+                    }
                 }
+            } else {
+                locationClass.requestSystemGPSEnable()
             }
         } else {
-            locationClass.requestSystemGPSEnable()
+            MakeSingleDialog(this).netWorkIsNotConnectedDialog(
+                "인터넷 연결 상태를 확인 후 재실행 해주세요",
+                getColor(R.color.theme_alert_double_apply_color),
+                getString(R.string.ok)
+            )
         }
     }
 }
