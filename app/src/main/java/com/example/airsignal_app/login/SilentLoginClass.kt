@@ -3,6 +3,7 @@ package com.example.airsignal_app.login
 import android.app.Activity
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_KAKAO
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_NAVER
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
@@ -36,15 +37,15 @@ class SilentLoginClass {
                         isAuto = true, isSuccess = true)
                 }
             }
-//            LOGIN_NAVER -> {
-//                // 네이버 자동 로그인
-//                val naverLogin = NaverLogin(activity)
-//                if (naverLogin.getAccessToken() == null) {
-//                    naverLogin.silentLogin()
-//                    writeLoginHistory(isLogin = true, platform = LOGIN_NAVER, email = email,
-//                        isAuto = true, isSuccess = true)
-//                }
-//            }
+            LOGIN_NAVER -> {
+                // 네이버 자동 로그인
+                val naverLogin = NaverLogin(activity)
+                if (naverLogin.getAccessToken() == null) {
+                    naverLogin.silentLogin()
+                    writeLoginHistory(isLogin = true, platform = LOGIN_NAVER, email = email,
+                        isAuto = true, isSuccess = true)
+                }
+            }
         }
     }
 }

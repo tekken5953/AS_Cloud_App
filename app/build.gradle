@@ -70,6 +70,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:20.6.0' // 구글 어스
     // Kakao Login
     implementation 'com.kakao.sdk:v2-user:2.10.0'
+    // Naver Login - JDK 11 이상
+    implementation 'com.navercorp.nid:oauth:5.4.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:32.2.0')

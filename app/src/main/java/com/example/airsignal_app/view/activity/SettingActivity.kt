@@ -32,6 +32,7 @@ import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_NAVER
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_PHONE
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
+import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.retrofit.HttpClient
 import com.example.airsignal_app.util.*
@@ -143,10 +144,10 @@ class SettingActivity
 //                                KakaoLogin(this@SettingActivity).logout(email)
                                 KakaoLogin(this@SettingActivity).disconnectFromKakao()
                             }
-//                            LOGIN_NAVER -> {
-////                                NaverLogin(this@SettingActivity).logout()
-//                                NaverLogin(this@SettingActivity).disconnectFromNaver()
-//                            }
+                            LOGIN_NAVER -> {
+//                                NaverLogin(this@SettingActivity).logout()
+                                NaverLogin(this@SettingActivity).disconnectFromNaver()
+                            }
                             LOGIN_GOOGLE -> {
                                 GoogleLogin(this@SettingActivity).logout()
                             }
