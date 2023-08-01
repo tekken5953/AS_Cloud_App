@@ -1431,47 +1431,51 @@ class MainActivity
         val locationClass = GetLocation(this)
         if (locationClass.isGPSConnected()) {
             CoroutineScope(Dispatchers.Default).launch {
-                LocationServices.getFusedLocationProviderClient(this@MainActivity).run {
-                    this.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                        .addOnSuccessListener { location ->
-                            location?.let { loc ->
-                                hidePB()
-                                val addr = GetLocation(this@MainActivity)
-                                    .getAddress(loc.latitude, loc.longitude)
-                                val formatAddr = addr!!
-                                    .replaceFirst(" ", "")
-                                    .replace(getString(R.string.korea), "")
-                                    .replace("null", "")
+                try {
+                    LocationServices.getFusedLocationProviderClient(this@MainActivity).run {
+                        this.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                            .addOnSuccessListener { location ->
+                                location?.let { loc ->
+                                    hidePB()
+                                    val addr = GetLocation(this@MainActivity)
+                                        .getAddress(loc.latitude, loc.longitude)
+                                    val formatAddr = addr!!
+                                        .replaceFirst(" ", "")
+                                        .replace(getString(R.string.korea), "")
+                                        .replace("null", "")
 
-                                val regexAddr = AddressFromRegex(addr).getAddress()
-                                val formedAddr = if (regexAddr != IN_COMPLETE_ADDRESS) {
-                                    regexAddr
-                                } else {
-                                    formatAddr
+                                    val regexAddr = AddressFromRegex(addr).getAddress()
+                                    val formedAddr = if (regexAddr != IN_COMPLETE_ADDRESS) {
+                                        regexAddr
+                                    } else {
+                                        formatAddr
+                                    }
+
+                                    setCurrentLocation(this@MainActivity, formatAddr)
+
+                                    updateCurrentAddress(
+                                        loc.latitude, loc.longitude,
+                                        formatAddr
+                                    )
+
+                                    binding.mainGpsTitleTv.text = guardWordWrap(
+                                        formedAddr
+                                    )
+
+                                    binding.mainTopBarGpsTitle.text =
+                                        formedAddr
+
+                                    loadCurrentViewModelData(loc.latitude, loc.longitude)
                                 }
-
-                                setCurrentLocation(this@MainActivity, formatAddr)
-
-                                updateCurrentAddress(
-                                    loc.latitude, loc.longitude,
-                                    formatAddr
-                                )
-
-                                binding.mainGpsTitleTv.text = guardWordWrap(
-                                    formedAddr
-                                )
-
-                                binding.mainTopBarGpsTitle.text =
-                                    formedAddr
-
-                                loadCurrentViewModelData(loc.latitude, loc.longitude)
                             }
-                        }
-                }.addOnFailureListener {
-                    RDBLogcat.writeErrorNotANR(
-                        this@MainActivity, sort = RDBLogcat.ERROR_LOCATION_FAILED,
-                        msg = it.localizedMessage!!
-                    )
+                    }.addOnFailureListener {
+                        RDBLogcat.writeErrorNotANR(
+                            this@MainActivity, sort = RDBLogcat.ERROR_LOCATION_FAILED,
+                            msg = it.localizedMessage!!
+                        )
+                    }
+                } catch (e: NullPointerException) {
+                    setVisibilityForViews(INVISIBLE, "Get Location Error")
                 }
             }
         } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
