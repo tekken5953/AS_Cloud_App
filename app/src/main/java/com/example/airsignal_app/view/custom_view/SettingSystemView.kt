@@ -3,10 +3,8 @@ package com.example.airsignal_app.view.custom_view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import androidx.databinding.DataBindingUtil
 import com.example.airsignal_app.R
 import com.example.airsignal_app.databinding.CustomViewSettingSystemBinding
 

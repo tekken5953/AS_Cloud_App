@@ -2,10 +2,8 @@ package com.example.airsignal_app.retrofit
 
 import android.annotation.SuppressLint
 import com.example.airsignal_app.dao.IgnoredKeyFile.hostingServerURL
-import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.google.gson.GsonBuilder
-import com.orhanobut.logger.Logger
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

@@ -36,7 +36,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 /**
  * @author : Lee Jae Young
@@ -151,7 +150,7 @@ class SearchDialog(
     }
 
     // 검색창 리스너
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "InflateParams")
     private fun searchEditListener(listView: ListView, editText: EditText, noResult: TextView) {
         @SuppressLint("InflateParams")
         val searchItem = java.util.ArrayList<String>()

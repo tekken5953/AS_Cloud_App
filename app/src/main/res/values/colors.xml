@@ -13,11 +13,7 @@
     <color name="mode_color_view">#FFFFFFFF</color>
     <color name="main_blue_color">#00C2FF</color>
     <color name="main_gray_color">#A7A7A7</color>
-    <color name="mode_dark_color">#000000</color>
 
-    <color name="view_line_color">#F3F3F3</color>
-    <color name="option_title_color">#5D5D5D</color>
-    <color name="view_pager_box">#ffffff</color>
 
     <color name="progressBad">#DADE20</color>// 프로그래스 바 양호도 나쁨 컬러
     <color name="progressWorst">#FF2929</color>// 프로그래스 바 양호도 매우나쁨 컬러
@@ -35,8 +31,6 @@
     <color name="air_bad_o">#20FACC15</color>
     <color name="air_very_bad_o">#20F87171</color>
 
-    <color name="black_overlay">#66000000</color>
-
     <color name="mode_black_color">#000000</color>
 
     <color name="uv_low">#94F532</color>
@@ -47,8 +41,6 @@
 
     <color name="bg_black_color">#3D3D3D</color>
     <color name="ripple_white">#B4cccccc</color>
-
-    <color name="airQ_unSelected_text_color">#6D6D6D</color>
 
     <color name="main_black_color">#4F4F4F</color>
     <color name="sub_gray_color">#7C7C7C</color>

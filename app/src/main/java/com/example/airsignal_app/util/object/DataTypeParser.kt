@@ -9,12 +9,9 @@ import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
 import com.orhanobut.logger.Logger
-import timber.log.Timber
 import java.text.SimpleDateFormat
-import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.Period
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -354,19 +351,6 @@ object DataTypeParser {
                 } else {
                     ResourcesCompat.getDrawable(context.resources, R.drawable.sm_rainy_th, null)
                 }
-            }
-        }
-    }
-
-    /** 위젯 하늘에 따른 배경 **/
-    fun getSkyImgWidget(sky: String?, progress: Int): Int {
-        return when (sky) {
-            "맑음", "구름많음" -> {
-                if (getIsNight(progress)) R.drawable.widget_bg_night
-                else R.drawable.widget_bg_clear
-            }
-            else -> {
-                R.drawable.widget_bg_cloudy
             }
         }
     }

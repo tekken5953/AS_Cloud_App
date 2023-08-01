@@ -12,7 +12,6 @@ import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginPref
 import com.example.airsignal_app.util.EnterPageUtil
-import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserEmail
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserId
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLoginPlatform
@@ -22,7 +21,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.orhanobut.logger.Logger

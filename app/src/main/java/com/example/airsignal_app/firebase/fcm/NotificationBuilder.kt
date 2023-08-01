@@ -1,31 +1,22 @@
 package com.example.airsignal_app.firebase.fcm
 
 import android.app.Notification
-import android.app.Notification.BADGE_ICON_SMALL
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationCompat.BADGE_ICON_SMALL
-import androidx.core.app.NotificationCompat.BadgeIconType
-import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_CHANNEL_ID
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_CHANNEL_NAME
-import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyText
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgLarge
-import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.GetAppInfo.getNotificationAddress
-import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import kotlin.math.roundToInt
 
 class NotificationBuilder {

@@ -131,12 +131,12 @@ class AddressFromRegex(private val address: String) {
         )
     }
 
-    private fun generatePatternOthers(): ArrayList<Regex> {
-        return arrayListOf(
-            Regex("\\b\\d+\\S*"),
-            Regex("\\b\\w+\\S*")
-        )
-    }
+//    private fun generatePatternOthers(): ArrayList<Regex> {
+//        return arrayListOf(
+//            Regex("\\b\\d+\\S*"),
+//            Regex("\\b\\w+\\S*")
+//        )
+//    }
 
     private fun generatePatternRoad(): ArrayList<Regex> {
         return arrayListOf(

@@ -1,32 +1,18 @@
 <resources>
     <string name="app__name">AirSignal</string>
-    <string name="my_device_title">내 기기</string>
-    <string name="as_eye">AS_Eye</string>
-    <string name="aqi">공기질 통합지수</string>
-    <string name="virus">바이러스 위험지수</string>
     <string name="setting_title">앱 설정</string>
     <string name="setting_account">계정</string>
     <string name="setting_theme_left">테마 설정</string>
     <string name="setting_lang">언어 설정</string>
     <string name="setting_notify">알림</string>
-    <string name="setting_notify_pm">미세먼지 알림 받기</string>
-    <string name="setting_notify_night">야간 알림 허용\n야간시간(12:00~06:00)알림 허용 여부</string>
-    <string name="setting_notify_event">이벤트 알림 받기</string>
     <string name="setting_customer_service">고객센터</string>
     <string name="setting_faq">자주 묻는 질문</string>
     <string name="setting_notice">공지사항</string>
     <string name="setting_app_data">앱 정보</string>
     <string name="setting_logout">로그아웃</string>
     <string name="login_title">로그인</string>
-    <string name="new_device">제품 등록</string>
-    <string name="register_product">제품을 등록해주세요</string>
     <string name="theme_light">라이트 테마</string>
     <string name="theme_dark">다크 테마</string>
-    <string name="complete_register">제품 등록이\n완료되었습니다</string>
-    <string name="complete">완료</string>
-    <string name="input_serial">제품 시리얼 번호 입력</string>
-    <string name="next">다음</string>
-    <string name="progress_server">서버에 등록 중입니다.\n잠시만 기다려주세요.</string>
     <string name="please_login">로그인 해주세요</string>
     <string name="english">English</string>
     <string name="korean">한국어</string>
@@ -36,10 +22,6 @@
     <string name="ok">확인</string>
     <string name="theme_system">시스템 테마</string>
     <string name="event">이벤트</string>
-    <string name="logout_msg">로그아웃 하시겠습니까?</string>
-    <string name="yes">예</string>
-    <string name="no">아니오</string>
-    <string name="apply">적용</string>
     <string name="mon">월</string>
     <string name="tue">화</string>
     <string name="wen">수</string>
@@ -48,12 +30,10 @@
     <string name="sat">토</string>
     <string name="sun">일</string>
     <string name="back_press">버튼을 한번 더 누르면 앱이 종료됩니다</string>
-    <string name="night">야간</string>
     <string name="allowed_noti">알림을 허용하였습니다</string>
     <string name="denied_noti">알림을 거부하였습니다</string>
     <string name="hour">시</string>
     <string name="widget_time_format">MM월 dd일 HH시 mm분</string>
-    <string name="delete_item">를 삭제하시겠습니까?</string>
     <string name="system">시스템</string>
     <string name="live_air_quality">실시간 공기질</string>
     <string name="uv_title">자외선 지수</string>
@@ -73,8 +53,6 @@
     <string name="uv_caution">위험</string>
     <string name="slide_more">날씨 정보 더보기</string>
     <string name="korea">대한민국</string>
-    <string name="address">주소</string>
-    <string name="canAccuracy">현재 위치와의 오차가 존재 할 수 있습니다</string>
     <string name="sky_sunny">맑음</string>
     <string name="sky_sunny_cloudy">구름많음</string>
     <string name="sky_cloudy">흐림</string>
@@ -97,13 +75,7 @@
     <string name="font_scale">폰트 크기 설정</string>
     <string name="thunder_sunny">번개,뇌우</string>
     <string name="thunder_rainy">비/번개</string>
-    <string name="widget_pm">미세먼지 :</string>
-    <string name="widget_reload">데이터를 가져오지 못했습니다\n눌러서 갱신하세요</string>
-    <string name="pm">미세먼지</string>
-    <string name="widget_rainPer">강수확률 :</string>
-    <string name="theDayAfterTomorrow">모레</string>
     <string name="error_network">네트워크 연결이 불안정합니다.</string>
-    <string name="download">다운로드</string>
     <string name="app_version">앱 버전</string>
     <string name="location_perm">위치 권한</string>
     <string name="essential">(필수)</string>
@@ -147,5 +119,4 @@
     <string name="login_with_kakao">카카오로 로그인</string>
     <string name="login_with_google">구글로 로그인</string>
     <string name="want_logout">로그아웃 하시겠습니까?</string>
-    <string name="login_with_naver">네이버 로그인</string>
 </resources>

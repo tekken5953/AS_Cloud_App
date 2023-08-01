@@ -200,39 +200,39 @@
                     android:background="@color/theme_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingCustomerTitle" />
 
-                <TextView
-                    android:id="@+id/settingNotice"
-                    android:layout_width="match_parent"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    style="@style/settingSingleTextView"
-                    android:text="@string/setting_notice"
-                    android:textColor="@color/theme_text_color"
-                    app:layout_constraintTop_toBottomOf="@+id/settingLine4" />
+<!--                <TextView-->
+<!--                    android:id="@+id/settingNotice"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:paddingStart="24dp"-->
+<!--                    android:paddingEnd="24dp"-->
+<!--                    android:background="?android:attr/selectableItemBackground"-->
+<!--                    style="@style/settingSingleTextView"-->
+<!--                    android:text="@string/setting_notice"-->
+<!--                    android:textColor="@color/theme_text_color"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/settingLine4" />-->
 
-                <TextView
-                    android:id="@+id/settingEvent"
-                    android:layout_width="match_parent"
-                    style="@style/settingSingleTextView"
-                    android:paddingStart="24dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:paddingEnd="24dp"
-                    android:text="@string/event"
-                    android:textColor="@color/theme_text_color"
-                    app:layout_constraintTop_toBottomOf="@+id/settingNotice" />
+<!--                <TextView-->
+<!--                    android:id="@+id/settingEvent"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    style="@style/settingSingleTextView"-->
+<!--                    android:paddingStart="24dp"-->
+<!--                    android:background="?android:attr/selectableItemBackground"-->
+<!--                    android:paddingEnd="24dp"-->
+<!--                    android:text="@string/event"-->
+<!--                    android:textColor="@color/theme_text_color"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/settingNotice" />-->
 
-                <TextView
-                    android:id="@+id/settingFaq"
-                    android:layout_width="match_parent"
-                    style="@style/settingSingleTextView"
-                    android:layout_marginBottom="30dp"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:text="@string/setting_faq"
-                    android:textColor="@color/theme_text_color"
-                    app:layout_constraintTop_toBottomOf="@+id/settingEvent" />
+<!--                <TextView-->
+<!--                    android:id="@+id/settingFaq"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    style="@style/settingSingleTextView"-->
+<!--                    android:layout_marginBottom="30dp"-->
+<!--                    android:paddingStart="24dp"-->
+<!--                    android:paddingEnd="24dp"-->
+<!--                    android:background="?android:attr/selectableItemBackground"-->
+<!--                    android:text="@string/setting_faq"-->
+<!--                    android:textColor="@color/theme_text_color"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/settingEvent" />-->
 
                 <TextView
                     android:id="@+id/settingAppInfo"
@@ -243,7 +243,7 @@
                     android:text="@string/setting_app_data"
                     android:textColor="@color/theme_text_color"
                     android:background="?android:attr/selectableItemBackground"
-                    app:layout_constraintTop_toBottomOf="@+id/settingFaq" />
+                    app:layout_constraintTop_toBottomOf="@+id/settingLine4" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

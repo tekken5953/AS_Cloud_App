@@ -628,24 +628,42 @@
                                 style="@style/basicTextView"
                                 android:layout_below="@id/nested_air_value"
                                 android:layout_centerHorizontal="true"
-                                android:layout_marginTop="3dp"
-                                android:letterSpacing="-0.064"
+                                android:layout_marginTop="5dp"
                                 android:textColor="@color/theme_sub_color"
                                 android:textSize="12sp" />
                         </RelativeLayout>
 
-                         <at.grabner.circleprogress.CircleProgressView
-                            android:id="@+id/nested_air_cpv"
-                            android:layout_width="130dp"
-                            android:layout_height="130dp"
-                            app:cpv_innerContourColor="@android:color/transparent"
-                            app:cpv_outerContourColor="@android:color/transparent"
-                            app:cpv_barWidth="25dp"
-                            app:cpv_rimWidth="25dp"
-                            app:cpv_seekMode="false"
-                            app:cpv_startAngle="190"
-                            app:cpv_textMode="Text"
-                            app:cpv_textSize="20sp"/>
+<!--                         <at.grabner.circleprogress.CircleProgressView-->
+<!--                            android:id="@+id/nested_air_cpv"-->
+<!--                            android:layout_width="130dp"-->
+<!--                            android:layout_height="130dp"-->
+<!--                            app:cpv_innerContourColor="@android:color/transparent"-->
+<!--                            app:cpv_outerContourColor="@android:color/transparent"-->
+<!--                            app:cpv_barWidth="25dp"-->
+<!--                            app:cpv_rimWidth="25dp"-->
+<!--                            app:cpv_seekMode="false"-->
+<!--                            app:cpv_startAngle="190"-->
+<!--                            app:cpv_textMode="Text"-->
+<!--                            app:cpv_textSize="20sp"/>-->
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/nested_air_cpv_card"
+                            android:layout_width="110dp"
+                            android:layout_height="110dp"
+                            android:layout_marginStart="18dp"
+                            android:translationZ="0dp"
+                            app:cardCornerRadius="55dp"
+                            app:cardElevation="0dp">
+
+                        <TextView
+                            android:id="@+id/nested_air_cpv_text"
+                            style="@style/basicMediumTextView"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:textColor="@color/white"
+                            android:textSize="20sp" />
+
+                        </androidx.cardview.widget.CardView>
 
                         <ImageView
                             android:id="@+id/nested_air_help"
@@ -797,156 +815,6 @@
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             tools:listitem="@layout/list_item_uv_collapsed" />
                     </RelativeLayout>
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/mainSunBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="180dp"
-                    android:layout_below="@+id/mainUVBox"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="12dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@drawable/sun_box_bg">
-
-                    <com.triggertrap.seekarc.SeekArc
-                        android:id="@+id/seekArc"
-                        android:layout_width="135dp"
-                        android:layout_height="70dp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="90dp"
-                        android:padding="15dp"
-                        android:scaleX="2.3"
-                        android:scaleY="2.3"
-                        app:arcColor="#60FFFFFF"
-                        app:arcWidth="3dp"
-                        app:max="100"
-                        app:progress="50"
-                        app:progressColor="@color/white"
-                        app:progressWidth="3dp"
-                        app:rotation="180"
-                        app:roundEdges="true"
-                        app:startAngle="90"
-                        app:sweepAngle="180"
-                        app:thumb="@drawable/ico_sun_graph"
-                        app:touchInside="false" />
-
-                    <ImageView
-                        android:id="@+id/mainSunRiseImg"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_above="@+id/mainSunRiseTitle"
-                        android:layout_alignStart="@+id/mainSunRiseTitle"
-                        android:layout_alignEnd="@+id/mainSunRiseTitle"
-                        android:layout_marginBottom="10dp"
-                        android:src="@drawable/ico_sun"
-                        app:tint="@color/white" />
-
-                    <TextView
-                        android:id="@+id/mainSunRiseTitle"
-                        style="@style/basicTextView"
-                        android:layout_above="@+id/mainSunSetTime"
-                        android:layout_alignStart="@+id/mainSunRiseTime"
-                        android:layout_alignEnd="@+id/mainSunRiseTime"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        android:text="@string/sunrise"
-                        android:textColor="@color/white"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/mainSunRiseTime"
-                        style="@style/basicMediumTextView"
-                        android:layout_width="55dp"
-                        android:layout_above="@+id/mainSunLine"
-                        android:layout_marginEnd="30dp"
-                        android:layout_marginBottom="12dp"
-                        android:layout_toStartOf="@+id/seekArc"
-                        android:textColor="@color/white"
-                        android:textSize="18sp" />
-
-                    <ImageView
-                        android:id="@+id/mainSunSetImg"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_above="@+id/mainSunSetTitle"
-                        android:layout_alignStart="@+id/mainSunSetTime"
-                        android:layout_alignEnd="@+id/mainSunSetTime"
-                        android:layout_marginBottom="10dp"
-                        android:src="@drawable/ico_moon"
-                        app:tint="@color/white" />
-
-                    <TextView
-                        android:id="@+id/mainSunSetTitle"
-                        style="@style/basicTextView"
-                        android:layout_above="@+id/mainSunSetTime"
-                        android:layout_alignStart="@+id/mainSunSetTime"
-                        android:layout_alignEnd="@+id/mainSunSetTime"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:ellipsize="end"
-                        android:lines="1"
-                        android:text="@string/sunset"
-                        android:textColor="@color/white"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/mainSunSetTime"
-                        style="@style/basicMediumTextView"
-                        android:layout_width="55dp"
-                        android:layout_above="@+id/mainSunLine"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginBottom="12dp"
-                        android:layout_toEndOf="@+id/seekArc"
-                        android:textColor="@color/white"
-                        android:textSize="18sp" />
-
-                    <View
-                        android:id="@+id/mainSunLine"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_above="@+id/mainSunTr"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginEnd="30dp"
-                        android:layout_marginBottom="12dp"
-                        android:background="#20FFFFFF" />
-
-                    <TableRow
-                        android:id="@+id/mainSunTr"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="20dp"
-                        android:gravity="center">
-
-                        <TextView
-                            android:id="@+id/mainSunBoxTomorrowTitle"
-                            style="@style/basicMediumTextView"
-                            android:fontFamily="@font/spoqa_hansansneo_medium"
-                            android:text="@string/tomorrow"
-                            android:textColor="@color/white"
-                            android:textSize="14sp"
-                            android:visibility="gone" />
-
-                        <TextView
-                            android:id="@+id/mainSunRiseTom"
-                            style="@style/basicTextView"
-                            android:layout_marginStart="16dp"
-                            android:fontFamily="@font/spoqa_hansansneo_medium"
-                            android:textColor="@color/white"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/mainSunSetTom"
-                            style="@style/basicTextView"
-                            android:layout_marginStart="16dp"
-                            android:fontFamily="@font/spoqa_hansansneo_medium"
-                            android:textColor="@color/white"
-                            android:textSize="14sp" />
-                    </TableRow>
                 </RelativeLayout>
             </RelativeLayout>
         </androidx.core.widget.NestedScrollView>

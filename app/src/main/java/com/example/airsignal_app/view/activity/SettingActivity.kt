@@ -32,8 +32,6 @@ import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_NAVER
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_PHONE
 import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
-import com.example.airsignal_app.login.NaverLogin
-import com.example.airsignal_app.login.PhoneLogin
 import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.retrofit.HttpClient
 import com.example.airsignal_app.util.*
@@ -88,6 +86,7 @@ class SettingActivity
 
     }
 
+    @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -126,7 +125,7 @@ class SettingActivity
                 val view = LayoutInflater.from(this)
                     .inflate(R.layout.dialog_alert_double_btn,null)
                 builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
                 builder.setContentView(view)
                 builder.create()
 
@@ -144,15 +143,12 @@ class SettingActivity
 //                                KakaoLogin(this@SettingActivity).logout(email)
                                 KakaoLogin(this@SettingActivity).disconnectFromKakao()
                             }
-                            LOGIN_NAVER -> {
-//                                NaverLogin(this@SettingActivity).logout()
-                                NaverLogin(this@SettingActivity).disconnectFromNaver()
-                            }
+//                            LOGIN_NAVER -> {
+////                                NaverLogin(this@SettingActivity).logout()
+//                                NaverLogin(this@SettingActivity).disconnectFromNaver()
+//                            }
                             LOGIN_GOOGLE -> {
                                 GoogleLogin(this@SettingActivity).logout()
-                            }
-                            LOGIN_PHONE -> {
-                                PhoneLogin(this@SettingActivity, null, null)
                             }
                         }
                         delay(100)
@@ -362,154 +358,153 @@ class SettingActivity
         val detailHeadLine: TextView = detailView.findViewById(R.id.detailHeadLine)
 
         // 공지사항 클릭
-        binding.settingNotice.setOnClickListener {
-            val noticeMainView: View =
-                LayoutInflater.from(this).inflate(R.layout.dialog_notice, null)
-            val noticeAdapter = NoticeAdapter(this, noticeItem)
-            val recyclerView: RecyclerView = noticeMainView.findViewById(R.id.noticeRv)
-            val noticeTitle: TextView = noticeMainView.findViewById(R.id.noticeTitle)
-            val nullText = noticeMainView.findViewById<TextView>(R.id.noticeNullText)
-
-            recyclerView.adapter = noticeAdapter
-            noticeItem.clear()
-
-            CoroutineScope(Dispatchers.IO).launch {
-                HttpClient
-                    .getInstance(false)
-                    .setClientBuilder()
-                    .mMyAPIImpl
-                    .notice.enqueue(object : Callback<List<AdapterModel.NoticeItem>> {
-                        @SuppressLint("NotifyDataSetChanged")
-                        override fun onResponse(
-                            call: Call<List<AdapterModel.NoticeItem>>,
-                            response: Response<List<AdapterModel.NoticeItem>>
-                        ) {
-                            try {
-                                val list = response.body()!!
-                                list.forEach {
-                                    addNoticeItem(convertDateFormat(it.created),
-                                        convertDateFormat(it.modified),
-                                        it.title,
-                                        it.content)
-                                }
-
-                                noticeAdapter.notifyDataSetChanged()
-                                if (list.isEmpty()) {
-                                    nullText.visibility = View.VISIBLE
-                                } else {
-                                    nullText.visibility = View.GONE
-                                }
-                            } catch(e: Exception) {
-                                nullText.visibility = View.VISIBLE
-                                e.printStackTrace()
-                            }
-                        }
-
-                        override fun onFailure(
-                            call: Call<List<AdapterModel.NoticeItem>>,
-                            t: Throwable
-                        ) {
-                            nullText.visibility = View.VISIBLE
-                            Toast.makeText(this@SettingActivity,
-                                "공지사항을 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
-
-                            t.printStackTrace()
-                        }
-                    })
-            }
-
-            ShowDialogClass(this)
-                .setBackPressed(noticeMainView.findViewById(R.id.noticeBack))
-                .show(noticeMainView, true)
-
-            noticeAdapter.setOnItemClickListener(object : NoticeAdapter.OnItemClickListener {
-                override fun onItemClick(v: View, position: Int) {
-                    detailDate.text = noticeItem[position].created
-                    detailDate.visibility = View.VISIBLE
-                    detailTitle.text = noticeTitle.text.toString()
-                    detailContent.text = noticeItem[position].content
-                    detailHeadLine.text = noticeItem[position].title
-                    ShowDialogClass(this@SettingActivity)
-                        .setBackPressed(detailView.findViewById(R.id.detailBack))
-                        .show(detailView, true)
-                }
-            })
-        }
-
-        // 자주묻는질문 클릭
-        binding.settingFaq.setOnClickListener {
-            val faqMainView: View = LayoutInflater.from(this).inflate(R.layout.dialog_faq, null)
-            val faqAdapter = FaqAdapter(this, faqItem)
-            val recyclerView = faqMainView.findViewById<RecyclerView>(R.id.faqRv)
-            val faqTitle: TextView = faqMainView.findViewById(R.id.faqTitle)
-            val faqNullText: TextView = faqMainView.findViewById(R.id.faqNullText)
-            faqItem.clear()
-            recyclerView.adapter = faqAdapter
-
-            CoroutineScope(Dispatchers.IO).launch {
-                HttpClient.getInstance(false)
-                    .setClientBuilder()
-                    .mMyAPIImpl.faq.enqueue(object : Callback<List<AdapterModel.FaqItem>>{
-                        @SuppressLint("NotifyDataSetChanged")
-                        override fun onResponse(
-                            call: Call<List<AdapterModel.FaqItem>>,
-                            response: Response<List<AdapterModel.FaqItem>>
-                        ) {
-                            try {
-                                val list = response.body()!!
-                                list.forEach {
-                                    addFaqItem(it.title,it.content)
-                                }
-
-                                faqAdapter.notifyDataSetChanged()
-
-                                if (list.isEmpty()) {
-                                    faqNullText.visibility = View.VISIBLE
-                                } else {
-                                    faqNullText.visibility = View.GONE
-                                }
-                            } catch (e: Exception) {
-                                faqNullText.visibility = View.VISIBLE
-                                e.printStackTrace()
-                            }
-                        }
-
-                        override fun onFailure(
-                            call: Call<List<AdapterModel.FaqItem>>,
-                            t: Throwable
-                        ) {
-                            faqNullText.visibility = View.VISIBLE
-                            Toast.makeText(this@SettingActivity,
-                                "자주 묻는 질문을 불러오는데 실패했습니다",
-                                Toast.LENGTH_SHORT).show()
-
-                            t.printStackTrace()
-                        }
-                    })
-            }
-
-            ShowDialogClass(this)
-                .setBackPressed(faqMainView.findViewById(R.id.faqBack))
-                .show(faqMainView, true)
-
-            faqAdapter.setOnItemClickListener(object : FaqAdapter.OnItemClickListener {
-                override fun onItemClick(v: View, position: Int) {
-                    detailDate.visibility = View.GONE
-                    detailTitle.text = faqTitle.text.toString()
-                    detailContent.text = faqItem[position].content
-                    detailHeadLine.text = faqItem[position].title
-                    ShowDialogClass(this@SettingActivity)
-                        .setBackPressed(detailView.findViewById(R.id.detailBack))
-                        .show(detailView, true)
-                }
-            })
-        }
+//        binding.settingNotice.setOnClickListener {
+//            val noticeMainView: View =
+//                LayoutInflater.from(this).inflate(R.layout.dialog_notice, null)
+//            val noticeAdapter = NoticeAdapter(this, noticeItem)
+//            val recyclerView: RecyclerView = noticeMainView.findViewById(R.id.noticeRv)
+//            val noticeTitle: TextView = noticeMainView.findViewById(R.id.noticeTitle)
+//            val nullText = noticeMainView.findViewById<TextView>(R.id.noticeNullText)
+//
+//            recyclerView.adapter = noticeAdapter
+//            noticeItem.clear()
+//
+//            CoroutineScope(Dispatchers.IO).launch {
+//                HttpClient
+//                    .getInstance(false)
+//                    .setClientBuilder()
+//                    .mMyAPIImpl
+//                    .notice.enqueue(object : Callback<List<AdapterModel.NoticeItem>> {
+//                        @SuppressLint("NotifyDataSetChanged")
+//                        override fun onResponse(
+//                            call: Call<List<AdapterModel.NoticeItem>>,
+//                            response: Response<List<AdapterModel.NoticeItem>>
+//                        ) {
+//                            try {
+//                                val list = response.body()!!
+//                                list.forEach {
+//                                    addNoticeItem(convertDateFormat(it.created),
+//                                        convertDateFormat(it.modified),
+//                                        it.title,
+//                                        it.content)
+//                                }
+//
+//                                noticeAdapter.notifyDataSetChanged()
+//                                if (list.isEmpty()) {
+//                                    nullText.visibility = View.VISIBLE
+//                                } else {
+//                                    nullText.visibility = View.GONE
+//                                }
+//                            } catch(e: Exception) {
+//                                nullText.visibility = View.VISIBLE
+//                                e.printStackTrace()
+//                            }
+//                        }
+//
+//                        override fun onFailure(
+//                            call: Call<List<AdapterModel.NoticeItem>>,
+//                            t: Throwable
+//                        ) {
+//                            nullText.visibility = View.VISIBLE
+//                            Toast.makeText(this@SettingActivity,
+//                                "공지사항을 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+//
+//                            t.printStackTrace()
+//                        }
+//                    })
+//            }
+//
+//            ShowDialogClass(this)
+//                .setBackPressed(noticeMainView.findViewById(R.id.noticeBack))
+//                .show(noticeMainView, true)
+//
+//            noticeAdapter.setOnItemClickListener(object : NoticeAdapter.OnItemClickListener {
+//                override fun onItemClick(v: View, position: Int) {
+//                    detailDate.text = noticeItem[position].created
+//                    detailDate.visibility = View.VISIBLE
+//                    detailTitle.text = noticeTitle.text.toString()
+//                    detailContent.text = noticeItem[position].content
+//                    detailHeadLine.text = noticeItem[position].title
+//                    ShowDialogClass(this@SettingActivity)
+//                        .setBackPressed(detailView.findViewById(R.id.detailBack))
+//                        .show(detailView, true)
+//                }
+//            })
+//        }
+//
+//        // 자주묻는질문 클릭
+//        binding.settingFaq.setOnClickListener {
+//            val faqMainView: View = LayoutInflater.from(this).inflate(R.layout.dialog_faq, null)
+//            val faqAdapter = FaqAdapter(this, faqItem)
+//            val recyclerView = faqMainView.findViewById<RecyclerView>(R.id.faqRv)
+//            val faqTitle: TextView = faqMainView.findViewById(R.id.faqTitle)
+//            val faqNullText: TextView = faqMainView.findViewById(R.id.faqNullText)
+//            faqItem.clear()
+//            recyclerView.adapter = faqAdapter
+//
+//            CoroutineScope(Dispatchers.IO).launch {
+//                HttpClient.getInstance(false)
+//                    .setClientBuilder()
+//                    .mMyAPIImpl.faq.enqueue(object : Callback<List<AdapterModel.FaqItem>>{
+//                        @SuppressLint("NotifyDataSetChanged")
+//                        override fun onResponse(
+//                            call: Call<List<AdapterModel.FaqItem>>,
+//                            response: Response<List<AdapterModel.FaqItem>>
+//                        ) {
+//                            try {
+//                                val list = response.body()!!
+//                                list.forEach {
+//                                    addFaqItem(it.title,it.content)
+//                                }
+//
+//                                faqAdapter.notifyDataSetChanged()
+//
+//                                if (list.isEmpty()) {
+//                                    faqNullText.visibility = View.VISIBLE
+//                                } else {
+//                                    faqNullText.visibility = View.GONE
+//                                }
+//                            } catch (e: Exception) {
+//                                faqNullText.visibility = View.VISIBLE
+//                                e.printStackTrace()
+//                            }
+//                        }
+//
+//                        override fun onFailure(
+//                            call: Call<List<AdapterModel.FaqItem>>,
+//                            t: Throwable
+//                        ) {
+//                            faqNullText.visibility = View.VISIBLE
+//                            Toast.makeText(this@SettingActivity,
+//                                "자주 묻는 질문을 불러오는데 실패했습니다",
+//                                Toast.LENGTH_SHORT).show()
+//
+//                            t.printStackTrace()
+//                        }
+//                    })
+//            }
+//
+//            ShowDialogClass(this)
+//                .setBackPressed(faqMainView.findViewById(R.id.faqBack))
+//                .show(faqMainView, true)
+//
+//            faqAdapter.setOnItemClickListener(object : FaqAdapter.OnItemClickListener {
+//                override fun onItemClick(v: View, position: Int) {
+//                    detailDate.visibility = View.GONE
+//                    detailTitle.text = faqTitle.text.toString()
+//                    detailContent.text = faqItem[position].content
+//                    detailHeadLine.text = faqItem[position].title
+//                    ShowDialogClass(this@SettingActivity)
+//                        .setBackPressed(detailView.findViewById(R.id.detailBack))
+//                        .show(detailView, true)
+//                }
+//            })
+//        }
 
         // 앱 정보 클릭
         binding.settingAppInfo.setOnClickListener {
             applyAppVersionResult()
             appVersionViewModel.loadDataResult()
-
         }
 
         binding.settingNotificationText.setOnClickListener {
@@ -559,6 +554,7 @@ class SettingActivity
         val appInfoPB: ProgressBar = viewAppInfo.findViewById(R.id.appInfoPB)
         val appInfoLicense: TextView = viewAppInfo.findViewById(R.id.appInfoLicense)
         val appInfoTermsService: TextView = viewAppInfo.findViewById(R.id.appInfoTermsOfService)
+        val appInfoCustomerService: TextView = viewAppInfo.findViewById(R.id.appInfoCustomerService)
 
         appVersionViewModel.fetchData().observe(this) { result ->
             result?.let { ver ->
@@ -782,7 +778,7 @@ class SettingActivity
         val title = view.findViewById<TextView>(R.id.alertSingleTitle)
         val apply = view.findViewById<AppCompatButton>(R.id.alertSingleApplyBtn)
 
-        title.text = "설정을 저장하였습니다.\n앱을 다시 시작합니다."
+        title.text = getString(R.string.save_change)
         apply.text = getString(R.string.ok)
         apply.setOnClickListener {
             RefreshUtils(this).refreshApplication()

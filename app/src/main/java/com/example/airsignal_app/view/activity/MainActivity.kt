@@ -1,15 +1,11 @@
 package com.example.airsignal_app.view.activity
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.location.LocationManager
 import android.os.*
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.AbsoluteSizeSpan
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +17,6 @@ import android.widget.LinearLayout.VISIBLE
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -52,7 +47,6 @@ import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.login.SilentLoginClass
 import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.util.*
-import com.example.airsignal_app.util.`object`.DataTypeParser
 import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyImg
 import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyText
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertDayOfWeekToKorean
@@ -61,7 +55,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.convertTimeToMinut
 import com.example.airsignal_app.util.`object`.DataTypeParser.getComparedTemp
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.getDataColor
-import com.example.airsignal_app.util.`object`.DataTypeParser.getDataOpacityColor
+import com.example.airsignal_app.util.`object`.DataTypeParser.getDataText
 import com.example.airsignal_app.util.`object`.DataTypeParser.getHourCountToTomorrow
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgSmall
 import com.example.airsignal_app.util.`object`.DataTypeParser.isRainyDay
@@ -79,7 +73,6 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.example.airsignal_app.util.`object`.GetSystemInfo.isThemeNight
 import com.example.airsignal_app.util.`object`.SetAppInfo.removeSingleKey
 import com.example.airsignal_app.util.`object`.SetAppInfo.setCurrentLocation
-import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
@@ -89,7 +82,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
-import okhttp3.internal.format
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -197,8 +189,6 @@ class MainActivity
         )
         addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
-        binding.seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지
-
         // 자외선 지수 접고 펴기 화살표
         binding.mainUVBox.apply {
             this.setOnClickListener {
@@ -223,20 +213,6 @@ class MainActivity
         }
 
         binding.nestedScrollview.setOnScrollChangeListener { v, _, _, _, _ ->
-            // 스크롤이 최하단일 경우 최초 한번만 일출/일몰 그래프 애니메이션
-            if (!v.canScrollVertically(1)) {
-                if (!isSunAnimated) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        binding.seekArc.progress = 0
-                        delay(100)
-                        val animatorSun =
-                            ObjectAnimator.ofInt(binding.seekArc, "progress", currentSun)
-                        animatorSun.duration = 800
-                        animatorSun.start()
-                    }
-                    isSunAnimated = true
-                }
-            }
 
             // 하단 스크롤시 네비게이션 바 색상 하얀색으로 변경
             if (v.scrollY == 0) {
@@ -364,6 +340,7 @@ class MainActivity
         if (RequestPermissionsUtil(this).isNetworkPermitted()) {
             if (RequestPermissionsUtil(this).isLocationPermitted()) {
                 binding.mainDailyWeatherRv.scrollToPosition(0)
+                binding.nestedReportViewpager.currentItem = 0
                 val addrArray = resources.getStringArray(R.array.address)
                 val lastAddress = getUserLastAddress(this)
                 if (addrArray.contains(lastAddress)) {
@@ -561,9 +538,10 @@ class MainActivity
             override fun onItemClick(v: View, position: Int) {
                 try {
                     val model = airQList[position]
+
                     applyAirQView(
-                        model.nameKR, model.name, model.grade,
-                        model.unit, model.value, model.maxValue
+                        model.grade, model.name, model.nameKR,
+                        model.value, model.unit
                     )
 
                     airQList.forEach {
@@ -759,32 +737,32 @@ class MainActivity
 
                             updateAirQData(
                                 PM2p5_INDEX, "초미세먼지", "PM2.5",
-                                "㎍/㎥", air.pm25Value!!.toInt().toString(), 76f, air.pm25Grade1h!!
+                                "㎍/㎥", air.pm25Value!!.toInt().toString(), air.pm25Grade1h!!
                             )
                             updateAirQData(
                                 PM10_INDEX, "미세먼지", "PM10",
-                                "㎍/㎥", air.pm10Value!!.toInt().toString(), 151f, air.pm10Grade1h!!
+                                "㎍/㎥", air.pm10Value!!.toInt().toString(), air.pm10Grade1h!!
                             )
                             updateAirQData(
                                 CO_INDEX, "일산화탄소", "CO",
-                                "ppm", air.coValue!!.toString(), 15.01f, air.coGrade!!
+                                "ppm", air.coValue!!.toString(), air.coGrade!!
                             )
                             updateAirQData(
                                 SO2_INDEX, "아황산가스", "SO2",
-                                "ppm", air.so2Value!!.toString(), 0.151f, air.so2Grade!!
+                                "ppm", air.so2Value!!.toString(), air.so2Grade!!
                             )
                             updateAirQData(
                                 NO2_INDEX, "이산화질소", "NO2",
-                                "㎍/㎥", air.no2Value!!.toString(), 0.201f, air.no2Grade!!
+                                "㎍/㎥", air.no2Value!!.toString(), air.no2Grade!!
                             )
                             updateAirQData(
                                 O3_INDEX, "오존", "O3",
-                                "㎍/㎥", air.o3Value!!.toString(), 0.151f, air.o3Grade!!
+                                "㎍/㎥", air.o3Value!!.toString(),  air.o3Grade!!
                             )
 
                             applyAirQView(
-                                "초미세먼지", "PM2.5",
-                                air.pm25Grade1h, "㎍/m3", air.pm25Value.toInt().toString(), 151f
+                                air.pm25Grade1h, "PM2.5","초미세먼지",
+                                air.pm25Value.toInt().toString(),"㎍/m3"
                             )
 
                             airQList[PM2p5_INDEX].isSelect = true
@@ -806,16 +784,6 @@ class MainActivity
 
                             val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
                             val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
-                            sunTomorrow?.let {
-                                binding.mainSunBoxTomorrowTitle.visibility = VISIBLE
-                                val sbRiseTom = StringBuffer().append(it.sunrise).insert(2, ":")
-                                val sbSetTom = StringBuffer().append(it.sunset).insert(2, ":")
-                                binding.mainSunRiseTom.text = sbRiseTom
-                                binding.mainSunSetTom.text = sbSetTom
-                            }
-
-                            binding.mainSunRiseTime.text = sbRise
-                            binding.mainSunSetTime.text = sbSet
 
                             getCompareTempText(
                                 yesterday.temp!!,
@@ -982,7 +950,7 @@ class MainActivity
                                     this,
                                     isSearched = false,
                                     gpsValue = metaAddr,
-                                    responseData = "${getUserLastAddress(this)},${result.toString()}"
+                                    responseData = "${getUserLastAddress(this)},${result}"
                                 )
                             }
                         } catch (e: java.lang.NullPointerException) {
@@ -1012,6 +980,16 @@ class MainActivity
             }
         }
         return this
+    }
+
+    private fun applyAirQView(grade: Int, name: String, nameKR: String, value: String, unit: String) {
+        binding.nestedAirCpvCard.setCardBackgroundColor(getDataColor(this,grade))
+        binding.nestedAirCpvText.text = getDataText(grade)
+        binding.nestedAirValue.text = value
+        binding.nestedAirTitleEn.text = name
+        binding.nestedAirTitleKr.text = nameKR
+        binding.nestedAirUnit.text = unit
+        binding.nestedAirValue.setTextColor(getDataColor(this,grade))
     }
 
     // 하늘상태에 따라 윈도우 배경 변경
@@ -1108,58 +1086,6 @@ class MainActivity
                 "${dateTime.monthValue}.0${dateTime.dayOfMonth}"
             } else {
                 "${dateTime.monthValue}.${dateTime.dayOfMonth}"
-            }
-        }
-    }
-
-    // 마지막 기호 크기 줄이기
-    private fun spanUnit(tv: TextView, s: String) {
-        val span = SpannableStringBuilder(s)
-        span.setSpan(
-            AbsoluteSizeSpan(35),
-            s.length - 1, s.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        tv.text = span
-    }
-
-    // 미세먼지 그래프 화살표 색상 변경
-    private fun setPm2p5ArrowTint(value: Int): Int {
-        return when (value) {
-            in 0..15 -> {
-                ResourcesCompat.getColor(resources, R.color.air_good, null)
-            }
-            in 16..35 -> {
-                ResourcesCompat.getColor(resources, R.color.air_normal, null)
-            }
-            in 36..75 -> {
-                ResourcesCompat.getColor(resources, R.color.air_bad, null)
-            }
-            in 76..125 -> {
-                ResourcesCompat.getColor(resources, R.color.air_very_bad, null)
-            }
-            else -> {
-                ResourcesCompat.getColor(resources, com.aslib.R.color.progressError, null)
-            }
-        }
-    }
-
-    // 초미세먼지 그래프 화살표 색상 변경
-    private fun setPm10ArrowTint(value: Int): Int {
-        return when (value) {
-            in 0..30 -> {
-                ResourcesCompat.getColor(resources, R.color.air_good, null)
-            }
-            in 31..79 -> {
-                ResourcesCompat.getColor(resources, R.color.air_normal, null)
-            }
-            in 80..150 -> {
-                ResourcesCompat.getColor(resources, R.color.air_bad, null)
-            }
-            in 151..200 -> {
-                ResourcesCompat.getColor(resources, R.color.air_very_bad, null)
-            }
-            else -> {
-                ResourcesCompat.getColor(resources, com.aslib.R.color.progressError, null)
             }
         }
     }
@@ -1322,41 +1248,13 @@ class MainActivity
         getDataViewModel.loadData(null, null, addr)
     }
 
-    private fun setAirCPV(barColor: Int, unit: String, grade: Int) {
-        binding.nestedAirCpv.apply {
-            setBarColor(barColor)
-            setUnit(unit)
-            setTextColor(barColor)
-            rimColor = getDataOpacityColor(this@MainActivity, grade)
-        }
-    }
-
-    private fun applyAirQView(
-        kr: String, en: String, grade: Int, unit: String,
-        value: String, maxValue: Float
-    ) {
-        binding.nestedAirTitleKr.text = kr
-        binding.nestedAirTitleEn.text = en
-        setAirCPV(getDataColor(this, grade), unit, grade)
-
-        binding.nestedAirCpv.apply {
-            setText(DataTypeParser.getDataText(grade))
-            setMaxValue(maxValue)
-        }
-        binding.nestedAirValue.text = value
-        binding.nestedAirValue.setTextColor(getDataColor(this@MainActivity, grade))
-        binding.nestedAirUnit.text = unit
-
-        binding.nestedAirCpv.setValueAnimated(value.toFloat(), 500)
-    }
-
     private fun addAirQItem(
         position: Int, nameKR: String, name: String, unit: String,
-        value: String, maxValue: Float, grade: Int
+        value: String, grade: Int
     ) {
         val item = AdapterModel.AirQTitleItem(
             false, position, nameKR,
-            name, unit, value, maxValue, grade
+            name, unit, value, grade
         )
 
         this.airQList.add(position, item)
@@ -1365,19 +1263,19 @@ class MainActivity
 
     private fun updateAirQData(
         position: Int, nameKR: String, name: String, unit: String,
-        value: String, maxValue: Float, grade: Int
+        value: String, grade: Int
     ) {
 
         if (!airQList.contains(
                 AdapterModel.AirQTitleItem(
                     false, position, nameKR,
-                    name, unit, value, maxValue, grade
+                    name, unit, value, grade
                 )
             )
         ) {
             addAirQItem(
                 position, nameKR,
-                name, unit, value, maxValue, grade
+                name, unit, value, grade
             )
         }
     }

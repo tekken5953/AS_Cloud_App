@@ -7,7 +7,6 @@ import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.repo.GetAppVersionRepo
 import com.example.airsignal_app.repo.GetWeatherRepo
 import com.example.airsignal_app.retrofit.HttpClient
-import com.example.airsignal_app.view.widget.WidgetProvider4x2
 import com.example.airsignal_app.vmodel.GetAppVersionViewModel
 import com.example.airsignal_app.vmodel.GetWeatherViewModel
 import org.koin.android.ext.koin.androidContext
@@ -46,7 +45,6 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     private val myModule = module {
         single<Context> { applicationContext }
         single { GetLocation(get()) }
-        single { WidgetProvider4x2() }
         single { HttpClient }
         single { GetWeatherRepo() }
         single { GetAppVersionRepo() }

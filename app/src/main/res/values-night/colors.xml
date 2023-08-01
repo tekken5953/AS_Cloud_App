@@ -2,10 +2,6 @@
 <resources>
     <color name="mode_color_text">#FFFFFF</color>
     <color name="mode_color_view">#FF000000</color>
-    <color name="mode_dark_color">#FFFFFF</color>
-
-    <color name="view_pager_box">#88ffffff</color>
-    <color name="option_title_color">#90ffffff</color>
     <color name="main_gray_color">#D9D9D9</color>
 
     <color name="theme_view_color">#262626</color>

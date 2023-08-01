@@ -83,7 +83,6 @@ object AdapterModel {
         val name: String,
         val unit: String,
         val value: String,
-        val maxValue: Float,
         val grade: Int
     )
 }

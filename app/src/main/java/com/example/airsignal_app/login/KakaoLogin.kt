@@ -1,10 +1,7 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
-import android.view.View
-import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatButton
-import androidx.constraintlayout.motion.widget.MotionLayout
 import com.example.airsignal_app.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail

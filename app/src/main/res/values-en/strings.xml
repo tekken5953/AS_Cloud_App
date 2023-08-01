@@ -1,33 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app__name">AirSignal</string>
-    <string name="my_device_title">My Product</string>
-    <string name="as_eye">AS_Eye</string>
-    <string name="aqi">Air Quality Index</string>
-    <string name="virus">Virus Risk Index</string>
     <string name="setting_title">Settings</string>
     <string name="setting_account">Account</string>
     <string name="setting_theme_left">Theme</string>
     <string name="setting_lang">Language</string>
     <string name="setting_notify">Notification</string>
-    <string name="setting_notify_pm">Get a PM notification</string>
-    <string name="setting_notify_night">Allow night alerts\nPM12:00~AM06:00</string>
-    <string name="setting_notify_event">Receive event notifications</string>
     <string name="setting_customer_service">Customer Service</string>
     <string name="setting_faq">faq</string>
     <string name="setting_notice">Notice</string>
     <string name="setting_app_data">About</string>
     <string name="setting_logout">Logout</string>
     <string name="login_title">login</string>
-    <string name="new_device">New Product</string>
-    <string name="register_product">Please register the product</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
-    <string name="complete_register">Product registration\nCompleted</string>
-    <string name="complete">Complete</string>
-    <string name="input_serial">Please enter the serial number\nOf the product</string>
-    <string name="next">Next</string>
-    <string name="progress_server">Registering with server\nPlease wait a moment</string>
     <string name="please_login">Please log in</string>
     <string name="english">English</string>
     <string name="korean">한국어</string>
@@ -37,10 +23,6 @@
     <string name="ok">OK</string>
     <string name="theme_system">System Theme</string>
     <string name="event">Event</string>
-    <string name="logout_msg">Do you want to log out?</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
-    <string name="apply">Apply</string>
     <string name="mon">Mon</string>
     <string name="tue">Tue</string>
     <string name="wen">Wen</string>
@@ -49,12 +31,10 @@
     <string name="sat">Sat</string>
     <string name="sun">Sun</string>
     <string name="back_press">Press the button one more time to exit the app</string>
-    <string name="night">Night</string>
     <string name="allowed_noti">Notification allowed</string>
     <string name="denied_noti">Notification denied</string>
     <string name="hour">H</string>
     <string name="widget_time_format">HH:mm MM.dd</string>
-    <string name="delete_item">will be deleted</string>
     <string name="system">System</string>
     <string name="live_air_quality">Realtime air quality</string>
     <string name="uv_title">UV index</string>
@@ -74,8 +54,6 @@
     <string name="uv_caution">Dangerous</string>
     <string name="slide_more">More View</string>
     <string name="korea">Republic of Korea</string>
-    <string name="address">Address</string>
-    <string name="canAccuracy">May be an mistake from the current position</string>
     <string name="sky_sunny">Sunny</string>
     <string name="sky_sunny_cloudy">Sunny&amp;Cloudy</string>
     <string name="sky_cloudy">Cloudy</string>
@@ -98,13 +76,7 @@
     <string name="font_scale">Font Scale</string>
     <string name="thunder_sunny">Rainy,Thunder</string>
     <string name="thunder_rainy">Rain/Thunder</string>
-    <string name="widget_pm">PM :</string>
-    <string name="widget_reload">Fail to get data\nPlease press to update</string>
-    <string name="pm">pm</string>
-    <string name="widget_rainPer">Rain :</string>
-    <string name="theDayAfterTomorrow">Next tomorrow</string>
     <string name="error_network">Please check network status</string>
-    <string name="download">Download</string>
     <string name="app_version">App Version</string>
     <string name="location_perm">Location permission</string>
     <string name="essential">(Required)</string>
@@ -148,5 +120,4 @@
     <string name="login_with_kakao">Sign in with Kakao</string>
     <string name="login_with_google">Sign in with Google</string>
     <string name="want_logout">Do sign out?</string>
-    <string name="login_with_naver">Sign in with Naver</string>
 </resources>
