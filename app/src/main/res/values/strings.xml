@@ -31,8 +31,8 @@
     <string name="sat">토</string>
     <string name="sun">일</string>
     <string name="back_press">버튼을 한번 더 누르면 앱이 종료됩니다</string>
-    <string name="allowed_noti">알림을 허용하였습니다</string>
-    <string name="denied_noti">알림을 거부하였습니다</string>
+    <string name="allowed_noti">설정을 허용하였습니다</string>
+    <string name="denied_noti">설정을 거부하였습니다</string>
     <string name="hour">시</string>
     <string name="widget_time_format">MM월 dd일 HH시 mm분</string>
     <string name="system">시스템</string>

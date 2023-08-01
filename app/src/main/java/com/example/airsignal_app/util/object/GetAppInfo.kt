@@ -4,9 +4,9 @@ import android.content.Context
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
-import com.example.airsignal_app.dao.IgnoredKeyFile.notiEvent
-import com.example.airsignal_app.dao.IgnoredKeyFile.notiNight
-import com.example.airsignal_app.dao.IgnoredKeyFile.notiPM
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiEnable
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiSound
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiVibrate
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userFontScale
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
@@ -39,16 +39,16 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getString(userFontScale)
     }
 
-    fun getUserNotiPM(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(notiPM)
+    fun getUserNotiEnable(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(notiEnable)
     }
 
-    fun getUserNotiEvent(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(notiEvent)
+    fun getUserNotiVibrate(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(notiVibrate)
     }
 
-    fun getUserNotiNight(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(notiNight)
+    fun getUserNotiSound(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(notiSound)
     }
 
     fun getUserLoginPlatform(context: Context): String {

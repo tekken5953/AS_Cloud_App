@@ -1,30 +1,43 @@
 package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.provider.Settings
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
-import com.example.airsignal_app.adapter.FaqAdapter
-import com.example.airsignal_app.adapter.NoticeAdapter
 import com.example.airsignal_app.dao.AdapterModel
-import com.example.airsignal_app.dao.IgnoredKeyFile.notiEvent
-import com.example.airsignal_app.dao.IgnoredKeyFile.notiNight
-import com.example.airsignal_app.dao.IgnoredKeyFile.notiPM
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiEnable
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiSound
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiVibrate
+import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_BACK_LOC_PERMISSION
+import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_LOC_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
 import com.example.airsignal_app.dao.StaticDataObject.LANG_KR
 import com.example.airsignal_app.dao.StaticDataObject.LANG_SYS
+import com.example.airsignal_app.dao.StaticDataObject.REQUEST_BACKGROUND_LOCATION
 import com.example.airsignal_app.databinding.ActivitySettingBinding
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_KAKAO
@@ -34,32 +47,36 @@ import com.example.airsignal_app.login.GoogleLogin
 import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.repo.BaseRepository
-import com.example.airsignal_app.retrofit.HttpClient
 import com.example.airsignal_app.util.*
+import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserNotiEnable
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserNotiSound
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserNotiVibrate
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserTheme
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.GetSystemInfo.getApplicationVersion
 import com.example.airsignal_app.util.`object`.GetSystemInfo.goToPlayStore
+import com.example.airsignal_app.util.`object`.SetAppInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.removeAllKeys
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserFontScale
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLocation
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserNoti
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserTheme
+import com.example.airsignal_app.view.LocPermCautionDialog
 import com.example.airsignal_app.view.ShowDialogClass
+import com.example.airsignal_app.view.custom_view.SnackBarUtils
 import com.example.airsignal_app.vmodel.GetAppVersionViewModel
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.time.LocalDateTime
 import java.util.*
 
@@ -71,6 +88,7 @@ class SettingActivity
     private val noticeItem = arrayListOf<AdapterModel.NoticeItem>()
     private var isInit = true
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
+    private var isBackAllow = false
 
     override fun onResume() {
         super.onResume()
@@ -82,9 +100,6 @@ class SettingActivity
         applyUserLanguage()
 
         applyFontScale()
-
-        applyNotification()
-
     }
 
     @SuppressLint("InflateParams")
@@ -103,9 +118,6 @@ class SettingActivity
             window.decorView.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
-
-        // 로그인 시 저장된 핸드폰 번호
-        val email = getUserEmail(this)
 
         if (isInit) {
             isInit = false
@@ -508,15 +520,160 @@ class SettingActivity
             appVersionViewModel.loadDataResult()
         }
 
+        // 알림 클릭
         binding.settingNotificationText.setOnClickListener {
             val notificationView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_notification_setting,
                     null)
 
+            val notiVibrateTr: TableRow = notificationView.findViewById(R.id.notiVibrateView)
+            val notiSoundTr: TableRow = notificationView.findViewById(R.id.notiSoundView)
+            val notiBackTr: TableRow = notificationView.findViewById(R.id.notiBackView)
+            val notiSettingTitle: TextView = notificationView.findViewById(R.id.notiSettingTitle)
+            val notiBackTitle: TextView = notificationView.findViewById(R.id.notiBackTitle)
+            val notiSettingSwitch: SwitchCompat = notificationView.findViewById(R.id.notiSettingSwitch)
+            val notiVibrateSwitch: SwitchCompat = notificationView.findViewById(R.id.notiVibrateSwitch)
+            val notiBackContent: TextView = notificationView.findViewById(R.id.notiBackContent)
+            val notiSoundSwitch: SwitchCompat = notificationView.findViewById(R.id.notiSoundSwitch)
+            val notiLine2: View = notificationView.findViewById(R.id.notificationLine2)
+            val notiLine3: View = notificationView.findViewById(R.id.notificationLine3)
+
+            fun setVisibility(isChecked: Boolean) {
+                if (isChecked) {
+                    notiVibrateTr.visibility = View.VISIBLE
+                    notiSoundTr.visibility = View.VISIBLE
+                    notiLine2.visibility = View.VISIBLE
+                    notiLine3.visibility = View.VISIBLE
+                } else {
+                    notiVibrateTr.visibility = View.GONE
+                    notiSoundTr.visibility = View.GONE
+                    notiLine2.visibility = View.GONE
+                    notiLine3.visibility = View.GONE
+                }
+            }
+
+            fun applyBack(isChecked: Boolean) {
+                if (VERSION.SDK_INT >= 29) {
+                    if (isChecked) {
+                        notiBackTr.visibility = View.VISIBLE
+                        isBackAllow = RequestPermissionsUtil(this).isBackgroundRequestLocation()
+                        notiBackContent.text = if (isBackAllow) "허용됨" else "허용하기"
+                        notiBackTr.setOnClickListener {
+                            if (!isBackAllow) {
+                                if (RequestPermissionsUtil(this)
+                                        .isShouldShowRequestPermissionRationale(
+                                            this,
+                                            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                                        )
+                                ) {
+                                    when (GetAppInfo.getInitLocPermission(this)) {
+                                        "" -> {
+                                            SetAppInfo.setInitLocPermission(this, "Second")
+                                            RequestPermissionsUtil(this).requestBackgroundLocation()
+                                        }
+                                        "Second" -> {
+                                            SetAppInfo.setInitLocPermission(this, "Done")
+                                            RequestPermissionsUtil(this).requestBackgroundLocation()
+                                        }
+                                    }
+                                } else {
+                                    val builder = AlertDialog.Builder(this)
+                                    val alertDialog = builder.create()
+                                    alertDialog.apply {
+                                        setButton(
+                                            AlertDialog.BUTTON_NEGATIVE,"확인"
+                                        ) { _, _ ->
+                                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                            val uri: Uri = Uri.fromParts("package", packageName, null)
+                                            intent.data = uri
+                                            startActivity(intent)
+                                        }
+                                        setTitle("위치 권한 거부됨")
+                                        setMessage("권한 -> 위치 -> 항상 허용을 체크해주세요")
+                                        show()
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        notiBackTr.visibility = View.GONE
+                    }
+                } else {
+                    notiBackTr.visibility = View.GONE
+                }
+            }
+
+            setNightAlertsSpan(notiSettingTitle)
+            setNightAlertsSpan(notiBackTitle)
+            notiSettingSwitch.isChecked = getUserNotiEnable(this)
+            notiVibrateSwitch.isChecked = getUserNotiVibrate(this)
+            notiSoundSwitch.isChecked = getUserNotiSound(this)
+
+            setVisibility(notiSettingSwitch.isChecked)
+            applyBack(notiSettingSwitch.isChecked)
+
+            notiSettingSwitch.setOnCheckedChangeListener { _, isChecked ->
+                setUserNoti(this, notiEnable,isChecked)
+                showSnackBar(notificationView, isChecked)
+                setVisibility(isChecked)
+                applyBack(isChecked)
+            }
+            notiVibrateSwitch.setOnCheckedChangeListener { _, isChecked ->
+                setUserNoti(this, notiVibrate,isChecked)
+                showSnackBar(notificationView, isChecked)
+            }
+            notiSoundSwitch.setOnCheckedChangeListener { _, isChecked ->
+                setUserNoti(this, notiSound,isChecked)
+                showSnackBar(notificationView, isChecked)
+            }
+
             ShowDialogClass(this)
                 .setBackPressed(notificationView.findViewById(R.id.notificationBack))
                 .show(notificationView, true)
         }
+    }
+
+    /** 알림 커스텀 스낵바 세팅 **/
+    private fun showSnackBar(view: View, isAllow: Boolean) {
+        val alertOn = ContextCompat.getDrawable(this, R.drawable.alert_on)!!
+        val alertOff = ContextCompat.getDrawable(this, R.drawable.alert_off)!!
+        alertOn.setTint(getColor(R.color.mode_color_view))
+        alertOff.setTint(getColor(R.color.mode_color_view))
+        if (isAllow) {
+            if (!isInit) {
+                SnackBarUtils.make(
+                    view,
+                    getString(R.string.allowed_noti), alertOn
+                ).show()
+            }
+        } else {
+            if (!isInit) {
+                SnackBarUtils.make(
+                    view,
+                    getString(R.string.denied_noti), alertOff
+                ).show()
+            }
+        }
+    }
+
+    private fun setNightAlertsSpan(textView: TextView) {
+        val span = SpannableStringBuilder(textView.text)
+        val formatText = textView.text.split(System.lineSeparator())
+        formatText.forEach {
+            span.setSpan(
+                ForegroundColorSpan(getColor(R.color.theme_sub_color)),
+                it.length, span.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            // 크기변경
+            span.setSpan(
+                AbsoluteSizeSpan(30),
+                it.length, span.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+
+        textView.text = span
     }
 
     private fun applyDeviceTheme() {
@@ -684,14 +841,6 @@ class SettingActivity
         }
 
         return lastLogin
-    }
-
-    private fun applyNotification() {
-        if (!RequestPermissionsUtil(this).isNotificationPermitted()) {
-            setUserNoti(this,notiPM,false)
-            setUserNoti(this,notiEvent,false)
-            setUserNoti(this,notiNight,false)
-        }
     }
 
     /** 이미지 드로어블 할당 **/

@@ -29,8 +29,8 @@ class SnackBarUtils(view: View, private val message: String, private val drawabl
     }
 
     private val context = view.context
-    private val snackBar = Snackbar.make(view, "", 2000)
-    private val snackBarLayout = snackBar.view as Snackbar.SnackbarLayout
+    private val snackBar by lazy {Snackbar.make(view, "", 2000)}
+    private val snackBarLayout by lazy { snackBar.view as Snackbar.SnackbarLayout }
     private val inflater = LayoutInflater.from(context)
     private val snackBarBinding =
         DataBindingUtil.inflate(inflater, R.layout.custom_view_snackbar, null, false)
