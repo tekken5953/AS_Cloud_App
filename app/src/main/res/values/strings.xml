@@ -1,5 +1,5 @@
 <resources>
-    <string name="app__name">AirSignal</string>
+    <string name="app__name">에어시그널</string>
     <string name="setting_title">앱 설정</string>
     <string name="setting_account">계정</string>
     <string name="setting_theme_left">테마 설정</string>

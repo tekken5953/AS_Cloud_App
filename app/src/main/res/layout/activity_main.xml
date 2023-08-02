@@ -842,8 +842,8 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="95dp"
                         android:padding="15dp"
-                        android:scaleX="2.3"
-                        android:scaleY="2.3"
+                        android:scaleX="2.8"
+                        android:scaleY="2.8"
                         app:arcColor="#E1E1E1"
                         app:arcWidth="4dp"
                         app:max="100"
@@ -853,6 +853,7 @@
                         app:roundEdges="true"
                         app:startAngle="90"
                         app:sweepAngle="180"
+                        ads:thumbOffset="30dp"
                         app:thumb="@drawable/ico_sun_graph"
                         app:touchInside="false" />
 

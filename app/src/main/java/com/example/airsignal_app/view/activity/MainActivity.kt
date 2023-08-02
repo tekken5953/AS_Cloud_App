@@ -401,6 +401,7 @@ class MainActivity
     private fun showPB() {
         if (binding.mainMotionLayout.alpha == NOT_SHOWING_LOADING_FLOAT) {
             binding.mainMotionLayout.alpha = SHOWING_LOADING_FLOAT
+            binding.mainMotionLayout.isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
             binding.mainMotionLayout.isEnabled = false
         }
     }
@@ -409,6 +410,7 @@ class MainActivity
     private fun hidePB() {
         if (binding.mainMotionLayout.alpha == SHOWING_LOADING_FLOAT) {
             binding.mainMotionLayout.alpha = NOT_SHOWING_LOADING_FLOAT
+            binding.mainMotionLayout.isInteractionEnabled = true // 모션 레이아웃의 스와이프를 허용
             binding.mainMotionLayout.isEnabled = true
         }
         binding.mainRefreshData.clearAnimation()
