@@ -15,7 +15,8 @@
 
         <TextView
             android:id="@+id/customSettingLeft"
-            style="@style/settingMultiTextView" />
+            style="@style/settingMultiTextView"
+            android:textColor="@color/theme_text_color"/>
 
         <TextView
             android:id="@+id/customSettingSystemRight"

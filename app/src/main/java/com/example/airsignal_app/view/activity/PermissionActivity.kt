@@ -3,11 +3,8 @@ package com.example.airsignal_app.view.activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
-import android.os.Build.VERSION
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import com.example.airsignal_app.R
 import com.example.airsignal_app.databinding.ActivityPermissionBinding
@@ -107,6 +104,12 @@ class PermissionActivity :
         }
     }
 
+    @Deprecated(
+        "Deprecated in Java", ReplaceWith(
+            "EnterPageUtil(this).fullyExit()",
+            "com.example.airsignal_app.util.EnterPageUtil"
+        )
+    )
     override fun onBackPressed() {
         EnterPageUtil(this).fullyExit()
     }

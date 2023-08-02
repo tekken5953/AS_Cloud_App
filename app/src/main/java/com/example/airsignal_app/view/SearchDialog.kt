@@ -99,13 +99,13 @@ class SearchDialog(
 
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
-            GpsRepository(activity).findAll().forEach {
-                if (it.name == CURRENT_GPS_ID) {
+            GpsRepository(activity).findAll().forEach { entity ->
+                if (entity.name == CURRENT_GPS_ID) {
                     currentAddress.text = getCurrentLocation(activity)
-                    it.addr = getCurrentLocation(activity)
 
-                    if (it.addr == getUserLastAddress(activity)
-                    ) {
+                    entity.addr = getCurrentLocation(activity)
+
+                    if (getCurrentLocation(activity) == getUserLastAddress(activity)) {
                         currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))
                         currentGpsImg.imageTintList =
                             ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
@@ -115,7 +115,7 @@ class SearchDialog(
                             ColorStateList.valueOf(activity.getColor(R.color.theme_text_color))
                     }
                 } else {
-                    addCurrentItem(it.addr.toString())
+                    addCurrentItem(entity.addr.toString())
                 }
             }
 
@@ -150,7 +150,7 @@ class SearchDialog(
     }
 
     // 검색창 리스너
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "InflateParams")
     private fun searchEditListener(listView: ListView, editText: EditText, noResult: TextView) {
         @SuppressLint("InflateParams")
         val searchItem = java.util.ArrayList<String>()

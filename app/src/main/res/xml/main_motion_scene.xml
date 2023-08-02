@@ -181,6 +181,26 @@
             android:textSize="20sp"
             app:layout_constraintStart_toStartOf="@id/mainMotionLayout"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
+
+        <Constraint
+            android:id="@+id/mainErrorRenewBtn"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:text="다시 불러오기"
+            android:clickable="false"
+            android:alpha="0"
+            android:elevation="0dp"
+            android:translationZ="0dp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:background="@drawable/single_btn_apply_bg"
+            android:letterSpacing="-0.072"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="52dp"/>
+
         <Constraint
             android:id="@+id/mainGpsFix"
             android:layout_width="24dp"
@@ -202,8 +222,8 @@
             android:layout_marginBottom="47.5dp"/>
         <Constraint
             android:id="@+id/mainSkyImg"
-            android:layout_width="184dp"
-            android:layout_height="184dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -432,7 +452,7 @@
         <Constraint
             android:id="@+id/mainMotionLinear"
             android:layout_width="match_parent"
-            android:layout_height="168dp"
+            android:layout_height="144dp"
             android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
         <!--        <Constraint-->
@@ -572,9 +592,10 @@
         <Constraint
             android:id="@+id/mainLiveTempTitleC"
             style="@style/basicTextView"
-            android:layout_marginStart="17dp"
+            android:layout_marginStart="25dp"
             android:layout_marginBottom="23dp"
             app:layout_constraintStart_toEndOf="@+id/mainSkyImg"
+            app:layout_constraintEnd_toStartOf="@+id/mainSensTitleC"
             app:layout_constraintBottom_toBottomOf="@+id/mainSkyImg" />
 
         <Constraint
@@ -588,10 +609,9 @@
         <Constraint
             android:id="@+id/mainSensTitleC"
             style="@style/basicTextView"
-            android:layout_marginStart="18dp"
             android:textSize="14sp"
-            android:text="@string/live_temp"
-            app:layout_constraintStart_toEndOf="@+id/mainLiveTempTitleC"
+            app:layout_constraintStart_toEndOf="@+id/mainSkyImg"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/mainLiveTempTitleC"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempTitleC"/>
 
@@ -606,10 +626,10 @@
         <Constraint
             android:id="@+id/mainMinMaxTitleC"
             style="@style/basicTextView"
-            android:layout_marginStart="18dp"
             android:textSize="14sp"
-            android:text="@string/live_temp"
+            android:layout_marginEnd="25dp"
             app:layout_constraintStart_toEndOf="@+id/mainSensTitleC"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/mainSensTitleC"
             app:layout_constraintBottom_toBottomOf="@+id/mainSensTitleC" />
 

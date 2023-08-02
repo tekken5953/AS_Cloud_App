@@ -1,14 +1,10 @@
 package com.example.airsignal_app.repo
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
-import com.example.airsignal_app.dao.StaticDataObject.TAG_R
-import com.example.airsignal_app.gps.GetLocation
+import com.example.airsignal_app.dao.ErrorCode.ERROR_NETWORK
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient.mMyAPIImpl
-import com.google.android.gms.common.api.Api
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,7 +43,7 @@ class GetAppVersionRepo: BaseRepository() {
                 override fun onFailure(call: Call<ApiModel.AppVersion>, t: Throwable) {
 //                    Logger.t(TAG_R).d("Fail to get API : ${t.localizedMessage}")
 
-                    _getAppVersionResult.postValue(ApiState.Error("Network is Disable"))
+                    _getAppVersionResult.postValue(ApiState.Error(ERROR_NETWORK))
                 }
             })
         }

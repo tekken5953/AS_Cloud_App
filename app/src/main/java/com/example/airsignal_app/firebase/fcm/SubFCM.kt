@@ -11,7 +11,6 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -107,9 +106,9 @@ class SubFCM : FirebaseMessagingService() {
         return token
     }
 
-    /** 새로운 토큰 발행 **/
-    override fun onNewToken(token: String) {
-        super.onNewToken(token)
-//        Timber.tag(TAG_N).d("sendRegistrationTokenToServer($token)")
-    }
+//    /** 새로운 토큰 발행 **/
+//    override fun onNewToken(token: String) {
+//        super.onNewToken(token)
+////        Timber.tag(TAG_N).d("sendRegistrationTokenToServer($token)")
+//    }
 }

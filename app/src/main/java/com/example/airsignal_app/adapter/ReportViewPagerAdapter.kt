@@ -10,8 +10,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.util.VibrateUtil
-import com.orhanobut.logger.Logger
-import timber.log.Timber
 
 /**
  * @author : Lee Jae Young

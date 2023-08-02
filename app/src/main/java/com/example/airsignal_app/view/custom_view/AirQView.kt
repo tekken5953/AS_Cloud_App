@@ -1,5 +1,6 @@
 package com.example.airsignal_app.view.custom_view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
@@ -97,6 +98,7 @@ class AirQView(context: Context, attrs: AttributeSet?)
         }
     }
 
+    @SuppressLint("SetTextI18n")
     fun fetchData(explain: String, graph: Drawable, nameEN: String, nameKR: String): AirQView {
         airBinding.airQExplainText.text = explain
         airBinding.airQName.text = "${nameEN}(${nameKR})"

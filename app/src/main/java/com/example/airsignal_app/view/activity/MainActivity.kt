@@ -4,12 +4,10 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.location.LocationManager
 import android.os.*
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.AbsoluteSizeSpan
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +19,6 @@ import android.widget.LinearLayout.VISIBLE
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -31,6 +28,15 @@ import androidx.work.*
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.*
 import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.dao.ErrorCode.ERROR_API_PROTOCOL
+import com.example.airsignal_app.dao.ErrorCode.ERROR_GET_DATA
+import com.example.airsignal_app.dao.ErrorCode.ERROR_GET_LOCATION_FAILED
+import com.example.airsignal_app.dao.ErrorCode.ERROR_GPS_CONNECTED
+import com.example.airsignal_app.dao.ErrorCode.ERROR_LOCATION_FAILED
+import com.example.airsignal_app.dao.ErrorCode.ERROR_NETWORK
+import com.example.airsignal_app.dao.ErrorCode.ERROR_NOT_SERVICED_LOCATION
+import com.example.airsignal_app.dao.ErrorCode.ERROR_SERVER_CONNECTING
+import com.example.airsignal_app.dao.ErrorCode.ERROR_TIMEOUT
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CO_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
@@ -52,7 +58,6 @@ import com.example.airsignal_app.gps.GetLocation
 import com.example.airsignal_app.login.SilentLoginClass
 import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.util.*
-import com.example.airsignal_app.util.`object`.DataTypeParser
 import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyImg
 import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyText
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertDayOfWeekToKorean
@@ -61,7 +66,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.convertTimeToMinut
 import com.example.airsignal_app.util.`object`.DataTypeParser.getComparedTemp
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.getDataColor
-import com.example.airsignal_app.util.`object`.DataTypeParser.getDataOpacityColor
+import com.example.airsignal_app.util.`object`.DataTypeParser.getDataText
 import com.example.airsignal_app.util.`object`.DataTypeParser.getHourCountToTomorrow
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgSmall
 import com.example.airsignal_app.util.`object`.DataTypeParser.isRainyDay
@@ -79,7 +84,6 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.example.airsignal_app.util.`object`.GetSystemInfo.isThemeNight
 import com.example.airsignal_app.util.`object`.SetAppInfo.removeSingleKey
 import com.example.airsignal_app.util.`object`.SetAppInfo.setCurrentLocation
-import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo.setUvBackgroundColor
 import com.example.airsignal_app.view.*
@@ -89,8 +93,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
-import okhttp3.internal.format
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -184,7 +188,7 @@ class MainActivity
         val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
         binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
 
-        //UV 범주 아이템 추가
+        // UV 범주 아이템 추가
         addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
         addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
         addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
@@ -195,26 +199,6 @@ class MainActivity
             getString(R.string.uv_very_high)
         )
         addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
-
-        binding.seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지
-
-        // 자외선 지수 접고 펴기 화살표
-        binding.mainUVBox.apply {
-            this.setOnClickListener {
-                mVib()
-                if (binding.mainUvCollapsedLayout.visibility == VISIBLE) {
-                    binding.mainUvCollapseArrow.setImageDrawable(
-                        ResourcesCompat.getDrawable(resources, R.drawable.btn_down, null)
-                    )
-                    binding.mainUvCollapsedLayout.apply { this.visibility = GONE }
-                } else {
-                    binding.mainUvCollapseArrow.setImageDrawable(
-                        ResourcesCompat.getDrawable(resources, R.drawable.btn_up, null)
-                    )
-                    binding.mainUvCollapsedLayout.apply { this.visibility = VISIBLE }
-                }
-            }
-        }
 
         // 스크롤 최상단으로 올리기 버튼
         binding.nestedFab.setOnClickListener {
@@ -236,6 +220,7 @@ class MainActivity
                     isSunAnimated = true
                 }
             }
+
 
             // 하단 스크롤시 네비게이션 바 색상 하얀색으로 변경
             if (v.scrollY == 0) {
@@ -344,7 +329,7 @@ class MainActivity
                     return SNAP_TO_START // 가장 첫 번째로 스크롤되도록 설정
                 }
             }
-            binding.mainDailyWeatherRv.setPadding(22,0,15,0)
+            binding.mainDailyWeatherRv.setPadding(22, 0, 15, 0)
             smoothScroller.targetPosition = position + 5
             it.startSmoothScroll(smoothScroller)
         }
@@ -362,6 +347,7 @@ class MainActivity
         if (RequestPermissionsUtil(this).isNetworkPermitted()) {
             if (RequestPermissionsUtil(this).isLocationPermitted()) {
                 binding.mainDailyWeatherRv.scrollToPosition(0)
+                binding.nestedReportViewpager.currentItem = 0
                 val addrArray = resources.getStringArray(R.array.address)
                 val lastAddress = getUserLastAddress(this)
                 if (addrArray.contains(lastAddress)) {
@@ -415,6 +401,7 @@ class MainActivity
     private fun showPB() {
         if (binding.mainMotionLayout.alpha == NOT_SHOWING_LOADING_FLOAT) {
             binding.mainMotionLayout.alpha = SHOWING_LOADING_FLOAT
+            binding.mainMotionLayout.isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
             binding.mainMotionLayout.isEnabled = false
         }
     }
@@ -423,6 +410,7 @@ class MainActivity
     private fun hidePB() {
         if (binding.mainMotionLayout.alpha == SHOWING_LOADING_FLOAT) {
             binding.mainMotionLayout.alpha = NOT_SHOWING_LOADING_FLOAT
+            binding.mainMotionLayout.isInteractionEnabled = true // 모션 레이아웃의 스와이프를 허용
             binding.mainMotionLayout.isEnabled = true
         }
         binding.mainRefreshData.clearAnimation()
@@ -443,7 +431,7 @@ class MainActivity
         )
 //        addExitDialog()
         // 자동 로그인
-        SilentLoginClass().login(this@MainActivity, binding.mainMotionLayout)
+        SilentLoginClass().login(this@MainActivity)
 
         binding.mainDailyWeatherRv.adapter = dailyWeatherAdapter
         binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter
@@ -559,9 +547,10 @@ class MainActivity
             override fun onItemClick(v: View, position: Int) {
                 try {
                     val model = airQList[position]
+
                     applyAirQView(
-                        model.nameKR, model.name, model.grade,
-                        model.unit, model.value, model.maxValue
+                        model.grade, model.name, model.nameKR,
+                        model.value, model.unit
                     )
 
                     airQList.forEach {
@@ -576,11 +565,13 @@ class MainActivity
             }
         })
 
-        binding.nestedAirHelp.setImageDrawable(if (isThemeNight(this)) {
-            ResourcesCompat.getDrawable(resources,R.drawable.ico_question_b,null)
-        } else {
-            ResourcesCompat.getDrawable(resources,R.drawable.ico_question,null)
-        })
+        binding.nestedAirHelp.setImageDrawable(
+            if (isThemeNight(this)) {
+                ResourcesCompat.getDrawable(resources, R.drawable.ico_question_b, null)
+            } else {
+                ResourcesCompat.getDrawable(resources, R.drawable.ico_question, null)
+            }
+        )
 
         binding.nestedAirHelp.setOnClickListener {
             if (binding.nestedAirHelpPopup.alpha == 0f) {
@@ -639,8 +630,9 @@ class MainActivity
 
     // 현재 옵저버가 없으면 생성
     private fun getDataObservers() {
-        if (!getDataViewModel.fetchData().hasActiveObservers())
-        { applyGetDataViewModel() }
+        if (!getDataViewModel.fetchData().hasActiveObservers()) {
+            applyGetDataViewModel()
+        }
     }
 
 
@@ -754,32 +746,32 @@ class MainActivity
 
                             updateAirQData(
                                 PM2p5_INDEX, "초미세먼지", "PM2.5",
-                                "㎍/㎥", air.pm25Value!!.toInt().toString(), 76f, air.pm25Grade1h!!
+                                "㎍/㎥", air.pm25Value!!.toInt().toString(), air.pm25Grade1h!!
                             )
                             updateAirQData(
                                 PM10_INDEX, "미세먼지", "PM10",
-                                "㎍/㎥", air.pm10Value!!.toInt().toString(), 151f, air.pm10Grade1h!!
+                                "㎍/㎥", air.pm10Value!!.toInt().toString(), air.pm10Grade1h!!
                             )
                             updateAirQData(
                                 CO_INDEX, "일산화탄소", "CO",
-                                "ppm", air.coValue!!.toString(), 15.01f, air.coGrade!!
+                                "ppm", air.coValue!!.toString(), air.coGrade!!
                             )
                             updateAirQData(
                                 SO2_INDEX, "아황산가스", "SO2",
-                                "ppm", air.so2Value!!.toString(), 0.151f, air.so2Grade!!
+                                "ppm", air.so2Value!!.toString(), air.so2Grade!!
                             )
                             updateAirQData(
                                 NO2_INDEX, "이산화질소", "NO2",
-                                "㎍/㎥", air.no2Value!!.toString(), 0.201f, air.no2Grade!!
+                                "㎍/㎥", air.no2Value!!.toString(), air.no2Grade!!
                             )
                             updateAirQData(
                                 O3_INDEX, "오존", "O3",
-                                "㎍/㎥", air.o3Value!!.toString(), 0.151f, air.o3Grade!!
+                                "㎍/㎥", air.o3Value!!.toString(), air.o3Grade!!
                             )
 
                             applyAirQView(
-                                "초미세먼지", "PM2.5",
-                                air.pm25Grade1h, "㎍/m3", air.pm25Value.toInt().toString(), 151f
+                                air.pm25Grade1h, "PM2.5", "초미세먼지",
+                                air.pm25Value.toInt().toString(), "㎍/m3"
                             )
 
                             airQList[PM2p5_INDEX].isSelect = true
@@ -801,16 +793,13 @@ class MainActivity
 
                             val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
                             val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
-                            sunTomorrow?.let {
-                                binding.mainSunBoxTomorrowTitle.visibility = VISIBLE
-                                val sbRiseTom = StringBuffer().append(it.sunrise).insert(2, ":")
-                                val sbSetTom = StringBuffer().append(it.sunset).insert(2, ":")
-                                binding.mainSunRiseTom.text = sbRiseTom
-                                binding.mainSunSetTom.text = sbSetTom
-                            }
-
+                            val sbRiseTom = StringBuffer().append(sunTomorrow!!.sunrise).insert(2, ":")
+                            val sbSetTom = StringBuffer().append(sunTomorrow.sunset).insert(2, ":")
                             binding.mainSunRiseTime.text = sbRise
                             binding.mainSunSetTime.text = sbSet
+                            binding.mainSunRiseTom.text = sbRiseTom
+                            binding.mainSunSetTom.text = sbSetTom
+
 
                             getCompareTempText(
                                 yesterday.temp!!,
@@ -866,10 +855,10 @@ class MainActivity
 
                             binding.mainSensValueC.text =
                                 SensibleTempFormula().getSensibleTemp(
-                                ta = current.temperature,
-                                rh = current.humidity,
-                                v = current.windSpeed
-                            ).roundToInt().toString() + "˚"
+                                    ta = current.temperature,
+                                    rh = current.humidity,
+                                    v = current.windSpeed
+                                ).roundToInt().toString() + "˚"
 
                             for (i: Int in 0 until result.realtime.size) {
                                 val dailyIndex = result.realtime[i]
@@ -977,18 +966,19 @@ class MainActivity
                                     this,
                                     isSearched = false,
                                     gpsValue = metaAddr,
-                                    responseData = "${getUserLastAddress(this)},${result.toString()}"
+                                    responseData = "${getUserLastAddress(this)},${result}"
                                 )
                             }
                         } catch (e: java.lang.NullPointerException) {
                             runOnUiThread {
                                 hidePB()
-                                hideAllViews(error = "NullPointerException")
+                                hideAllViews(error = ERROR_API_PROTOCOL)
                             }
                         } catch (e: IndexOutOfBoundsException) {
+                            Timber.tag("testtest").e(entireData.toString())
                             runOnUiThread {
                                 hidePB()
-                                hideAllViews(error = "IndexOutOfBoundsException")
+                                hideAllViews(error = ERROR_GET_DATA)
                             }
                         }
                     }
@@ -1009,12 +999,28 @@ class MainActivity
         return this
     }
 
+    private fun applyAirQView(
+        grade: Int,
+        name: String,
+        nameKR: String,
+        value: String,
+        unit: String
+    ) {
+        binding.nestedAirCpvCard.setCardBackgroundColor(getDataColor(this, grade))
+        binding.nestedAirCpvText.text = getDataText(grade)
+        binding.nestedAirValue.text = value
+        binding.nestedAirTitleEn.text = name
+        binding.nestedAirTitleKr.text = nameKR
+        binding.nestedAirUnit.text = unit
+        binding.nestedAirValue.setTextColor(getDataColor(this, grade))
+    }
+
     // 하늘상태에 따라 윈도우 배경 변경
     private fun applyWindowBackground(progress: Int, sky: String?) {
         if (getIsNight(progress)) {
             window.setBackgroundDrawableResource(R.drawable.main_bg_night)
             binding.mainSkyStarImg.setImageDrawable(
-                ResourcesCompat.getDrawable(resources,R.drawable.bg_nightsky,null)
+                ResourcesCompat.getDrawable(resources, R.drawable.bg_nightsky, null)
             )
             changeTextColorStyle(sky!!, true)
         } else {
@@ -1107,58 +1113,6 @@ class MainActivity
         }
     }
 
-    // 마지막 기호 크기 줄이기
-    private fun spanUnit(tv: TextView, s: String) {
-        val span = SpannableStringBuilder(s)
-        span.setSpan(
-            AbsoluteSizeSpan(35),
-            s.length - 1, s.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        tv.text = span
-    }
-
-    // 미세먼지 그래프 화살표 색상 변경
-    private fun setPm2p5ArrowTint(value: Int): Int {
-        return when (value) {
-            in 0..15 -> {
-                ResourcesCompat.getColor(resources, R.color.air_good, null)
-            }
-            in 16..35 -> {
-                ResourcesCompat.getColor(resources, R.color.air_normal, null)
-            }
-            in 36..75 -> {
-                ResourcesCompat.getColor(resources, R.color.air_bad, null)
-            }
-            in 76..125 -> {
-                ResourcesCompat.getColor(resources, R.color.air_very_bad, null)
-            }
-            else -> {
-                ResourcesCompat.getColor(resources, com.aslib.R.color.progressError, null)
-            }
-        }
-    }
-
-    // 초미세먼지 그래프 화살표 색상 변경
-    private fun setPm10ArrowTint(value: Int): Int {
-        return when (value) {
-            in 0..30 -> {
-                ResourcesCompat.getColor(resources, R.color.air_good, null)
-            }
-            in 31..79 -> {
-                ResourcesCompat.getColor(resources, R.color.air_normal, null)
-            }
-            in 80..150 -> {
-                ResourcesCompat.getColor(resources, R.color.air_bad, null)
-            }
-            in 151..200 -> {
-                ResourcesCompat.getColor(resources, R.color.air_very_bad, null)
-            }
-            else -> {
-                ResourcesCompat.getColor(resources, com.aslib.R.color.progressError, null)
-            }
-        }
-    }
-
     // 어제와 기온 비교
     @SuppressLint("SetTextI18n")
     private fun getCompareTempText(y: Double?, t: Double?, tv: TextView) {
@@ -1188,60 +1142,76 @@ class MainActivity
     }
 
     // 통신에 실패할 경우 레이아웃 처리
+    @SuppressLint("SetTextI18n")
     private fun hideAllViews(error: String?) {
         when (error) {
-            "API ERROR OCCURRED" -> {
-                binding.mainSkyText.text = "데이터 호출에 실패했습니다"
+            ERROR_API_PROTOCOL, ERROR_SERVER_CONNECTING -> {
+                binding.mainSkyText.text = getString(R.string.api_call_error)
             }
-            "NOT SERVICED Location" -> {
+            ERROR_NOT_SERVICED_LOCATION -> {
                 binding.mainSkyText.text = getString(R.string.not_serviced_location)
             }
-            "Network Error" -> {
-                binding.mainSkyText.text = "요청시간 지연, 재갱신 필요"
+            ERROR_TIMEOUT -> {
+                binding.mainSkyText.text = getString(R.string.timeout_error)
             }
-            "Timeout Error" -> {
-                binding.mainSkyText.text = "네트워크 오류, 재갱신 필요"
+            ERROR_NETWORK -> {
+                binding.mainSkyText.text = getString(R.string.network_error)
             }
-            "Get Location Error" -> {
-                binding.mainSkyText.text = "주소 호출 실패"
+            ERROR_GET_LOCATION_FAILED -> {
+                binding.mainSkyText.text = getString(R.string.address_call_error)
             }
-            "GPS Connect Error" -> {
-                binding.mainSkyText.text = "GPS 연결 불가"
+            ERROR_GPS_CONNECTED -> {
+                binding.mainSkyText.text = getString(R.string.gps_call_error)
+            }
+            ERROR_GET_DATA -> {
+                binding.mainSkyText.text = getString(R.string.data_call_error)
             }
             else -> {
-                binding.mainSkyText.text = "알수없는 오류 발생"
+                RDBLogcat.writeErrorNotANR(this, ERROR_LOCATION_FAILED, error!!)
+                binding.mainSkyText.text = getString(R.string.unkown_error)
             }
+        }
+
+        binding.mainSkyText.apply {
+            textSize = 20f
+            typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_medium.ttf")
+            setPadding(0, 50, 0, 0)
+            setTextColor(getColor(R.color.theme_text_color))
+        }
+
+        binding.mainErrorRenewBtn.setOnClickListener {
+            mVib()
+            getDataSingleTime()
         }
 
         // 주소, 갱신버튼, 현재기온, 기온비교, 최저/최고 기온, 날씨 정보 더보기, 모션 슬라이드 막기
         binding.mainSkyImg.apply {
-            setImageDrawable(
-                ResourcesCompat.getDrawable(
-                    resources,
-                    R.drawable.refresh, null
-                )
-            )
-            imageTintList = ColorStateList.valueOf(getColor(R.color.main_blue_color))
 
-            setOnClickListener {
-                if (binding.mainSkyImg.imageTintList ==
-                    ColorStateList.valueOf(getColor(R.color.main_blue_color)
-                )) {
-                    mVib()
-//                    showPB()
-                    getDataSingleTime()
-                }
+            if (isThemeNight(this@MainActivity)) {
+                window.setBackgroundDrawableResource(R.color.black)
+                this.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ico_error_b, null
+                    )
+                )
+            } else {
+                window.setBackgroundDrawableResource(R.color.white)
+                this.setImageDrawable(
+                    ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.ico_error_w, null
+                    )
+                )
             }
 
-            setVisibilityForViews(GONE,error)
+            setVisibilityForViews(GONE, error)
         }
     }
 
     // 통신에 성공할 경우 레이아웃 처리
     private fun showAllViews() {
-        setVisibilityForViews(VISIBLE,null)
-
-        binding.mainSkyImg.imageTintList = null
+        setVisibilityForViews(VISIBLE, null)
     }
 
     private fun setVisibilityForViews(visibility: Int, error: String?) {
@@ -1256,15 +1226,20 @@ class MainActivity
             binding.mainTopBarGpsTitle,
             binding.mainSensTitle,
             binding.mainSensValue
-            )
+        )
 
         if (visibility == GONE) {
-            if (error == "Network Error") {
+            if (error == ERROR_NETWORK ||
+                error == ERROR_GET_DATA
+            ) {
                 binding.mainAddAddress.setImageDrawable(null)
+            } else {
+                binding.mainAddAddress.imageTintList = ColorStateList.valueOf(getColor(R.color.theme_text_color))
             }
             textViewArray.forEach {
                 it.text = ""
             }
+
             binding.mainGpsFix.setImageDrawable(null)
             binding.mainMotionSLideImg.setImageDrawable(null)
             binding.mainRefreshData.setImageDrawable(null)
@@ -1276,23 +1251,37 @@ class MainActivity
                 isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
             }
 
+            binding.mainErrorRenewBtn.alpha = 1f
+            binding.mainErrorRenewBtn.isClickable = true
+
         } else {
             binding.mainSensTitle.text = getString(R.string.sens_temp)
             binding.mainMinMaxTitle.text = getString(R.string.min_max)
             binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
+
+            binding.mainSkyText.textSize = 14f
+            binding.mainSkyText.typeface =
+                Typeface.createFromAsset(assets, "spoqa_hansansneo_regular.ttf")
+
+            binding.mainErrorRenewBtn.alpha = 0f
+            binding.mainErrorRenewBtn.isClickable = false
+
+
             binding.mainGpsFix.setImageDrawable(
-                ResourcesCompat.getDrawable(resources,R.drawable.gps_fix,null))
+                ResourcesCompat.getDrawable(resources, R.drawable.gps_fix, null)
+            )
+
             binding.mainMotionSLideImg.setImageDrawable(
-                ResourcesCompat.getDrawable(resources,R.drawable.drop_down_bottom,null)
+                ResourcesCompat.getDrawable(resources, R.drawable.drop_down_bottom, null)
             )
             binding.mainRefreshData.setImageDrawable(
-                ResourcesCompat.getDrawable(resources,R.drawable.refresh,null)
+                ResourcesCompat.getDrawable(resources, R.drawable.refresh, null)
             )
             binding.mainAddAddress.setImageDrawable(
-                ResourcesCompat.getDrawable(resources,R.drawable.ico_add_w,null)
+                ResourcesCompat.getDrawable(resources, R.drawable.ico_add_w, null)
             )
             binding.mainSideMenuIv.setImageDrawable(
-                ResourcesCompat.getDrawable(resources,R.drawable.ico_hamb_w,null)
+                ResourcesCompat.getDrawable(resources, R.drawable.ico_hamb_w, null)
             )
             // 원래 상태로 복구하기 위해 제약 조건 변경
             binding.mainMotionLayout.isInteractionEnabled = true
@@ -1309,41 +1298,13 @@ class MainActivity
         getDataViewModel.loadData(null, null, addr)
     }
 
-    private fun setAirCPV(barColor: Int, unit: String, grade: Int) {
-        binding.nestedAirCpv.apply {
-            setBarColor(barColor)
-            setUnit(unit)
-            setTextColor(barColor)
-            rimColor = getDataOpacityColor(this@MainActivity, grade)
-        }
-    }
-
-    private fun applyAirQView(
-        kr: String, en: String, grade: Int, unit: String,
-        value: String, maxValue: Float
-    ) {
-        binding.nestedAirTitleKr.text = kr
-        binding.nestedAirTitleEn.text = en
-        setAirCPV(getDataColor(this, grade), unit, grade)
-
-        binding.nestedAirCpv.apply {
-            setText(DataTypeParser.getDataText(grade))
-            setMaxValue(maxValue)
-        }
-        binding.nestedAirValue.text = value
-        binding.nestedAirValue.setTextColor(getDataColor(this@MainActivity, grade))
-        binding.nestedAirUnit.text = unit
-
-        binding.nestedAirCpv.setValueAnimated(value.toFloat(), 500)
-    }
-
     private fun addAirQItem(
         position: Int, nameKR: String, name: String, unit: String,
-        value: String, maxValue: Float, grade: Int
+        value: String, grade: Int
     ) {
         val item = AdapterModel.AirQTitleItem(
             false, position, nameKR,
-            name, unit, value, maxValue, grade
+            name, unit, value, grade
         )
 
         this.airQList.add(position, item)
@@ -1352,19 +1313,19 @@ class MainActivity
 
     private fun updateAirQData(
         position: Int, nameKR: String, name: String, unit: String,
-        value: String, maxValue: Float, grade: Int
+        value: String, grade: Int
     ) {
 
         if (!airQList.contains(
                 AdapterModel.AirQTitleItem(
                     false, position, nameKR,
-                    name, unit, value, maxValue, grade
+                    name, unit, value, grade
                 )
             )
         ) {
             addAirQItem(
                 position, nameKR,
-                name, unit, value, maxValue, grade
+                name, unit, value, grade
             )
         }
     }
@@ -1457,9 +1418,9 @@ class MainActivity
             binding.mainLiveTempValue, binding.mainLiveTempUnit, binding.mainCompareTempTv,
             binding.mainTopBarGpsTitle, binding.mainMotionSlideGuide, binding.mainSkyText,
             binding.mainGpsTitleTv, binding.mainSensTitle, binding.mainSensValue,
-            binding.mainMinMaxTitle,binding.mainMinMaxValue,binding.mainLiveTempTitleC,
-            binding.mainLiveTempValueC,binding.mainSensTitleC,binding.mainSensValueC,
-            binding.mainMinMaxTitleC,binding.mainMinMaxValueC
+            binding.mainMinMaxTitle, binding.mainMinMaxValue, binding.mainLiveTempTitleC,
+            binding.mainLiveTempValueC, binding.mainSensTitleC, binding.mainSensValueC,
+            binding.mainMinMaxTitleC, binding.mainMinMaxValueC
 
         )
         val changeTintImageViews = listOf(
@@ -1515,68 +1476,92 @@ class MainActivity
         }
     }
 
+    private fun isKorea(lat: Double, lng: Double): Boolean {
+        return lng in 127.0..132.0 && lat in 33.0..39.0
+    }
+
     @SuppressLint("MissingPermission")
     private fun getCurrentLocationData() {
         val locationClass = GetLocation(this)
-        if (locationClass.isGPSConnected()) {
-            CoroutineScope(Dispatchers.Default).launch {
-                LocationServices.getFusedLocationProviderClient(this@MainActivity).run {
-                    this.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                        .addOnSuccessListener { location ->
-                            location?.let { loc ->
-                                hidePB()
-                                val addr = GetLocation(this@MainActivity)
-                                    .getAddress(loc.latitude,loc.longitude)
-                                val formatAddr = addr!!
-                                    .replaceFirst(" ", "")
-                                    .replace(getString(R.string.korea), "")
-                                    .replace("null", "")
+        if (locationClass.isNetWorkConnected()) {
+            if (locationClass.isGPSConnected()) {
+                CoroutineScope(Dispatchers.Default).launch {
+                    try {
+                        LocationServices.getFusedLocationProviderClient(this@MainActivity).run {
+                            this.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                                .addOnSuccessListener { location ->
+                                    location?.let { loc ->
+                                        hidePB()
+                                        if (isKorea(loc.latitude, loc.longitude)) {
+                                            val addr = GetLocation(this@MainActivity)
+                                                .getAddress(loc.latitude, loc.longitude)
+                                            addr?.let {
+                                                it.replaceFirst(" ", "")
+                                                it.replace(getString(R.string.korea), "")
+                                                it.replace("null", "")
 
-                                val regexAddr = AddressFromRegex(addr).getAddress()
-                                val formedAddr = if (regexAddr != null &&
-                                    regexAddr != IN_COMPLETE_ADDRESS) {
-                                    regexAddr
-                                } else {
-                                    formatAddr
+                                                val regexAddr = AddressFromRegex(addr).getAddress()
+                                                val formedAddr =
+                                                    if (regexAddr != IN_COMPLETE_ADDRESS) {
+                                                        regexAddr
+                                                    } else {
+                                                        it
+                                                    }
+
+                                                setCurrentLocation(this@MainActivity, it)
+
+                                                updateCurrentAddress(
+                                                    loc.latitude, loc.longitude,
+                                                    it
+                                                )
+
+                                                binding.mainGpsTitleTv.text = guardWordWrap(
+                                                    formedAddr
+                                                )
+
+                                                binding.mainTopBarGpsTitle.text =
+                                                    formedAddr
+
+                                                loadCurrentViewModelData(
+                                                    loc.latitude,
+                                                    loc.longitude
+                                                )
+                                            }
+                                        } else {
+                                            hideAllViews(
+                                                ERROR_NOT_SERVICED_LOCATION
+                                            )
+                                        }
+                                    }
                                 }
-
-                                setCurrentLocation(this@MainActivity, formatAddr)
-
-                                updateCurrentAddress(
-                                    loc.latitude, loc.longitude,
-                                    formatAddr
-                                )
-
-                                setNotificationAddress(this@MainActivity, formedAddr)
-
-                                binding.mainGpsTitleTv.text = guardWordWrap(
-                                    formedAddr
-                                )
-
-                                binding.mainTopBarGpsTitle.text =
-                                    formedAddr
-
-                                loadCurrentViewModelData(loc.latitude, loc.longitude)
-                            }
+                        }.addOnFailureListener {
+                            RDBLogcat.writeErrorNotANR(
+                                this@MainActivity, sort = ERROR_LOCATION_FAILED,
+                                msg = it.localizedMessage!!
+                            )
                         }
-                } .addOnFailureListener {
-                    RDBLogcat.writeErrorNotANR(
-                        this@MainActivity, sort = RDBLogcat.ERROR_LOCATION_FAILED,
-                        msg = it.localizedMessage!!
-                    )
+                    } catch (e: NullPointerException) {
+                        hideAllViews(ERROR_GET_LOCATION_FAILED)
+                    }
                 }
-            }
-        } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
-            CoroutineScope(Dispatchers.Default).launch {
-                val lm =
-                    getSystemService(LOCATION_SERVICE) as LocationManager
-                val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                location?.let { loc ->
-                    loadCurrentViewModelData(loc.latitude, loc.longitude)
+            } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
+                CoroutineScope(Dispatchers.Default).launch {
+                    val lm =
+                        getSystemService(LOCATION_SERVICE) as LocationManager
+                    val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                    location?.let { loc ->
+                        loadCurrentViewModelData(loc.latitude, loc.longitude)
+                    }
                 }
+            } else {
+                locationClass.requestSystemGPSEnable()
             }
         } else {
-            locationClass.requestSystemGPSEnable()
+            MakeSingleDialog(this).netWorkIsNotConnectedDialog(
+                "인터넷 연결 상태를 확인 후 재실행 해주세요",
+                getColor(R.color.theme_alert_double_apply_color),
+                getString(R.string.ok)
+            )
         }
     }
 }

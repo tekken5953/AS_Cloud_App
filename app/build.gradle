@@ -40,6 +40,9 @@ android {
     buildFeatures {
         viewBinding true
     }
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
 }
 
 dependencies {
@@ -75,12 +78,11 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:31.2.0')
+    implementation platform('com.google.firebase:firebase-bom:32.2.0')
     implementation 'com.google.firebase:firebase-analytics-ktx' // Analytics
     implementation 'com.google.firebase:firebase-messaging' // FCM
     implementation 'com.google.firebase:firebase-messaging-directboot:23.1.2' // FCM
     implementation 'com.google.firebase:firebase-database-ktx' // RDB
-    implementation 'com.google.firebase:firebase-auth-ktx' // 이메일 로그인
 
     //server
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'

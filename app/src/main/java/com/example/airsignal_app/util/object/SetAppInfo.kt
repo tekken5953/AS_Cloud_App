@@ -11,7 +11,6 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
-import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_BACK_LOC_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_LOC_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
@@ -84,8 +83,8 @@ object SetAppInfo {
         SharedPreferenceManager(context).setString("Notification_All", topic)
     }
 
-    fun setNotificationAddress(context: Context, addr: String?) {
-        SharedPreferenceManager(context).setString(NOTIFICATION_ADDRESS, addr!!)
+    fun setNotificationAddress(context: Context, addr: String) {
+        SharedPreferenceManager(context).setString(NOTIFICATION_ADDRESS, addr)
     }
 
     fun setLastRefreshTime(context: Context, l: Long) {

@@ -1,7 +1,5 @@
 package com.example.airsignal_app.util
 
-import com.example.airsignal_app.dao.StaticDataObject.IN_COMPLETE_ADDRESS
-
 
 /**
  * @author : Lee Jae Young
@@ -9,81 +7,91 @@ import com.example.airsignal_app.dao.StaticDataObject.IN_COMPLETE_ADDRESS
  **/
 class AddressFromRegex(private val address: String) {
 
-    fun getAddress(): String? {
-        val result: StringBuilder = StringBuilder()
+    fun getAddress(): String {
+        val s1: StringBuilder = StringBuilder()
+        val s2: StringBuilder = StringBuilder()
+        val s3: StringBuilder = StringBuilder()
+        val s4: StringBuilder = StringBuilder()
+        val sr: StringBuilder = StringBuilder()
 
-        generatePatternFirst().forEachIndexed { indexF, first ->
-//            Timber.tag("regexTest").d("First is $first")
+        generatePatternFirst().forEach { first ->
             if (!first.findAll(address).none()) {
-//                Timber.tag("regexTest").d("append : ${first.find(address)!!.value}")
-                result.append(first.find(address)!!.value).append(" ")
-                if (indexF == generatePatternFirst().lastIndex) {
-                    if (result.split(" ").isEmpty()) {
-                        return address
-                    } else {
-                        generatePatternSecond().forEachIndexed { indexS, second ->
-                            if (!second.findAll(address).none()) {
-//                            Timber.tag("regexTest").d("append : ${second.find(address)!!.value}")
-                                result.append(second.find(address)!!.value).append(" ")
-                                if (indexS == generatePatternSecond().lastIndex) {
-                                    if (result.split(" ").size < 2) {
-                                        return IN_COMPLETE_ADDRESS
-                                    } else {
-                                        if (isRoadAddress()) {
-//                                    Timber.tag("regexTest").d("Is road address")
-                                            generatePatternRoad().forEachIndexed { _, road ->
-                                                if (!road.findAll(address).none()) {
-//                                            Timber.tag("regexTest").d("append : ${road.find(address)!!.value}")
-                                                    result.append(road.find(address)!!.value).append(" ")
-                                                }
-                                            }
-                                        } else {
-//                                    Timber.tag("regexTest").d("Is Not road address")
-                                            generatePatternThird().forEachIndexed { indexT, third ->
-                                                if (!third.findAll(address).none()) {
-//                                            Timber.tag("regexTest").d("append : ${third.find(address)!!.value}")
-                                                    result.append(third.find(address)!!.value).append(" ")
-                                                    if (indexT == generatePatternRoad().lastIndex) {
-                                                        generatePatternFourth().forEachIndexed { _, fourth ->
-                                                            if (!fourth.findAll(address).none()) {
-//                                                        Timber.tag("regexTest")
-//                                                            .d("Result : ${fourth.find(address)!!.value}")
-                                                                result.append(fourth.find(address)!!.value)
-                                                                    .append(" ")
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                val value = first.find(address)!!.value
+                if (!s1.contains(value))
+                    s1.append("$value ")
             }
         }
-        return if (result.isEmpty()) {
-            null
+        generatePatternSecond().forEach { second ->
+            if (!second.findAll(address).none()) {
+                val value = second.find(address)!!.value
+                if (!s1.contains(value))
+                    s2.append("$value ")
+            }
+        }
+        generatePatternThird().forEach { third ->
+            if (!third.findAll(address).none()) {
+                val value = third.find(address)!!.value
+                if (!s1.contains(value) && !s2.contains(value))
+                    s3.append("$value ")
+            }
+        }
+        generatePatternFourth().forEach { fourth ->
+            if (!fourth.findAll(address).none()) {
+                val value = fourth.find(address)!!.value
+                if (!s1.contains(value) && !s2.contains(value) && !s3.contains(value))
+                    s4.append(value)
+            }
+        }
+        generatePatternRoad().forEach { road ->
+            if (!road.findAll(address).none()) {
+                val value = road.find(address)!!.value
+                if (!s1.contains(value) && !s2.contains(value))
+                    sr.append(value)
+            }
+        }
+
+        return if (isRoadAddress()) {
+            val addr = "${s1}${s2}${sr}"
+            if (countSpacesInStringBuilder(addr) < 2) {
+                address
+            } else {
+                addr
+            }
         } else {
-            result.toString()
+            val addr = "${s1}${s2}${s3}${s4}"
+            if (countSpacesInStringBuilder(addr) < 2) {
+                address
+            } else {
+                addr
+            }
         }
     }
 
     fun getNotificationAddress(): String {
-        val result: StringBuilder = StringBuilder()
-        generatePatternThird().forEach { third ->
-            return if (!third.findAll(address).none()) {
-                result.append(third.find(address)!!.value)
-                result.toString()
-            } else {
-                getAddress()!!
+        val sb = StringBuilder()
+        try {
+            generatePatternThird().forEach { third ->
+                if (!third.findAll(address).none()) {
+                    sb.append(third.find(address)!!.value)
+                    return sb.toString()
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            address
         }
-        return getAddress()!!
+        return getAddress()
     }
 
+    private fun countSpacesInStringBuilder(s: String): Int {
+        var count = 0
+        for (element in s) {
+            if (element == ' ') {
+                count++
+            }
+        }
+        return count
+    }
 
     private fun isRoadAddress(): Boolean {
         val roadList = generatePatternRoad()
@@ -95,8 +103,8 @@ class AddressFromRegex(private val address: String) {
 
     private fun generatePatternFirst(): ArrayList<Regex> {
         return arrayListOf(
-            Regex("\\b\\S+특별시\\b"),
             Regex("\\b\\S+광역시\\b"),
+            Regex("\\b\\S+특별시\\b"),
             Regex("\\b\\S+도\\b")
         )
     }
@@ -104,31 +112,31 @@ class AddressFromRegex(private val address: String) {
     private fun generatePatternSecond(): ArrayList<Regex> {
         return arrayListOf(
             Regex("\\b\\S+시\\b"),
-            Regex("\\b\\S+군\\b"),
-            Regex("\\b\\S+구\\b")
+            Regex("\\b\\S+구\\b"),
+            Regex("\\b\\S+군\\b")
         )
     }
 
     private fun generatePatternThird(): ArrayList<Regex> {
         return arrayListOf(
-            Regex( "\\b\\S+읍\\b"),
-            Regex( "\\b\\S+면\\b"),
-            Regex( "\\b\\S+동\\b")
+            Regex("\\b\\S+읍\\b"),
+            Regex("\\b\\S+면\\b"),
+            Regex("\\b\\S+동\\b")
         )
     }
 
     private fun generatePatternFourth(): ArrayList<Regex> {
         return arrayListOf(
-            Regex( "\\b\\S+리\\b")
+            Regex("\\b\\S+리\\b")
         )
     }
 
-    private fun generatePatternOthers(): ArrayList<Regex> {
-        return arrayListOf(
-            Regex( "\\b\\d+\\S*"),
-            Regex("\\b\\w+\\S*")
-        )
-    }
+//    private fun generatePatternOthers(): ArrayList<Regex> {
+//        return arrayListOf(
+//            Regex("\\b\\d+\\S*"),
+//            Regex("\\b\\w+\\S*")
+//        )
+//    }
 
     private fun generatePatternRoad(): ArrayList<Regex> {
         return arrayListOf(

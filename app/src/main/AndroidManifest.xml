@@ -9,8 +9,9 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+<!--    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
+<!--    <uses-permission android:name="android.permission.WAKE_LOCK" />-->
+
     <uses-permission
         android:name="android.permission.BIND_REMOTEVIEWS"
         tools:ignore="ProtectedPermissions" />
@@ -34,16 +35,11 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.widget.BackgroundPermissionActivity"
-            android:exported="true">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".view.activity.PermissionActivity"
             android:exported="false"
-            android:hardwareAccelerated="false">
+            android:attributionTags="SLocationService"
+            android:hardwareAccelerated="false"
+            tools:targetApi="s">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -69,7 +65,9 @@
         <activity
             android:name=".view.activity.MainActivity"
             android:exported="false"
-            android:hardwareAccelerated="true" />
+            android:attributionTags="SLocationService"
+            android:hardwareAccelerated="true"
+            tools:targetApi="s" />
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true"
@@ -92,39 +90,39 @@
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
             android:theme="@style/OpenSourceMenuTheme" />
 
-        <receiver
-            android:name=".view.widget.WidgetProvider2x2"
-            android:exported="false"
-            tools:ignore="Instantiatable">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="android.appwidget.action.APPWIDGET_ENABLED"/>
-                <action android:name="android.intent.action.DATE_CHANGED" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget2x2_provider" />
-        </receiver>
+<!--        <receiver-->
+<!--            android:name=".view.widget.WidgetProvider2x2"-->
+<!--            android:exported="false"-->
+<!--            tools:ignore="Instantiatable">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
+<!--                <action android:name="android.appwidget.action.APPWIDGET_ENABLED"/>-->
+<!--                <action android:name="android.intent.action.DATE_CHANGED" />-->
+<!--            </intent-filter>-->
+<!--            <meta-data-->
+<!--                android:name="android.appwidget.provider"-->
+<!--                android:resource="@xml/widget2x2_provider" />-->
+<!--        </receiver>-->
 
-        <receiver
-            android:name=".view.widget.WidgetProvider4x2"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            tools:ignore="Instantiatable">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.SCREEN_ON" />
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
-                <action android:name="android.intent.action.DATE_CHANGED" />
+<!--        <receiver-->
+<!--            android:name=".view.widget.WidgetProvider4x2"-->
+<!--            android:exported="false"-->
+<!--            android:permission="android.permission.BIND_JOB_SERVICE"-->
+<!--            tools:ignore="Instantiatable">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.BOOT_COMPLETED" />-->
+<!--                <action android:name="android.intent.action.SCREEN_ON" />-->
+<!--                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
+<!--                <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />-->
+<!--                <action android:name="android.intent.action.DATE_CHANGED" />-->
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--            </intent-filter>-->
 
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget4x2_provider" />
-        </receiver>
+<!--            <meta-data-->
+<!--                android:name="android.appwidget.provider"-->
+<!--                android:resource="@xml/widget4x2_provider" />-->
+<!--        </receiver>-->
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

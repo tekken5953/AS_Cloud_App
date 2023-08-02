@@ -128,6 +128,25 @@
             app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv"
             app:tint="@color/mode_black_color" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/mainErrorRenewBtn"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:text="다시 불러오기"
+            android:alpha="0"
+            android:clickable="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:elevation="0dp"
+            android:translationZ="0dp"
+            android:letterSpacing="-0.072"
+            android:background="@drawable/single_btn_apply_bg"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            ads:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="52dp"/>
+
         <ImageView
             android:id="@+id/mainSkyStarImg"
             android:layout_width="match_parent"
@@ -140,8 +159,8 @@
 
         <ImageView
             android:id="@+id/mainSkyImg"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -343,7 +362,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_marginStart="12dp"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/scrolled_box_bg">
 
@@ -628,24 +647,42 @@
                                 style="@style/basicTextView"
                                 android:layout_below="@id/nested_air_value"
                                 android:layout_centerHorizontal="true"
-                                android:layout_marginTop="3dp"
-                                android:letterSpacing="-0.064"
+                                android:layout_marginTop="5dp"
                                 android:textColor="@color/theme_sub_color"
                                 android:textSize="12sp" />
                         </RelativeLayout>
 
-                         <at.grabner.circleprogress.CircleProgressView
-                            android:id="@+id/nested_air_cpv"
-                            android:layout_width="130dp"
-                            android:layout_height="130dp"
-                            app:cpv_innerContourColor="@android:color/transparent"
-                            app:cpv_outerContourColor="@android:color/transparent"
-                            app:cpv_barWidth="25dp"
-                            app:cpv_rimWidth="25dp"
-                            app:cpv_seekMode="false"
-                            app:cpv_startAngle="190"
-                            app:cpv_textMode="Text"
-                            app:cpv_textSize="20sp"/>
+<!--                         <at.grabner.circleprogress.CircleProgressView-->
+<!--                            android:id="@+id/nested_air_cpv"-->
+<!--                            android:layout_width="130dp"-->
+<!--                            android:layout_height="130dp"-->
+<!--                            app:cpv_innerContourColor="@android:color/transparent"-->
+<!--                            app:cpv_outerContourColor="@android:color/transparent"-->
+<!--                            app:cpv_barWidth="25dp"-->
+<!--                            app:cpv_rimWidth="25dp"-->
+<!--                            app:cpv_seekMode="false"-->
+<!--                            app:cpv_startAngle="190"-->
+<!--                            app:cpv_textMode="Text"-->
+<!--                            app:cpv_textSize="20sp"/>-->
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/nested_air_cpv_card"
+                            android:layout_width="110dp"
+                            android:layout_height="110dp"
+                            android:layout_marginStart="26dp"
+                            android:translationZ="0dp"
+                            app:cardCornerRadius="55dp"
+                            app:cardElevation="0dp">
+
+                        <TextView
+                            android:id="@+id/nested_air_cpv_text"
+                            style="@style/basicMediumTextView"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:textColor="@color/white"
+                            android:textSize="20sp" />
+
+                        </androidx.cardview.widget.CardView>
 
                         <ImageView
                             android:id="@+id/nested_air_help"
@@ -695,18 +732,6 @@
                         android:textColor="@color/theme_text_color"
                         android:textSize="18sp"
                         app:drawableStartCompat="@drawable/ico_uv" />
-
-                    <ImageView
-                        android:id="@+id/mainUvCollapseArrow"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:layout_alignTop="@+id/mainUvTitle"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="17dp"
-                        android:layout_marginBottom="8dp"
-                        android:padding="5dp"
-                        android:src="@drawable/btn_down"
-                        app:tint="@color/theme_text_color" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/mainUVLegendRv"
@@ -759,7 +784,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/mainUVLegendRv"
-                        android:visibility="gone">
+                        android:visibility="visible">
 
                         <View
                             android:id="@+id/mainUvLine"
@@ -802,7 +827,7 @@
                 <RelativeLayout
                     android:id="@+id/mainSunBox"
                     android:layout_width="match_parent"
-                    android:layout_height="180dp"
+                    android:layout_height="200dp"
                     android:layout_below="@+id/mainUVBox"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="16dp"
@@ -815,33 +840,32 @@
                         android:layout_width="135dp"
                         android:layout_height="70dp"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="90dp"
+                        android:layout_marginTop="95dp"
                         android:padding="15dp"
-                        android:scaleX="2.3"
-                        android:scaleY="2.3"
-                        app:arcColor="#60FFFFFF"
-                        app:arcWidth="3dp"
+                        android:scaleX="2.8"
+                        android:scaleY="2.8"
+                        app:arcColor="#E1E1E1"
+                        app:arcWidth="4dp"
                         app:max="100"
-                        app:progress="50"
-                        app:progressColor="@color/white"
-                        app:progressWidth="3dp"
+                        app:progressColor="#FFB991"
+                        app:progressWidth="4dp"
                         app:rotation="180"
                         app:roundEdges="true"
                         app:startAngle="90"
                         app:sweepAngle="180"
+                        ads:thumbOffset="30dp"
                         app:thumb="@drawable/ico_sun_graph"
                         app:touchInside="false" />
 
                     <ImageView
                         android:id="@+id/mainSunRiseImg"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_above="@+id/mainSunRiseTitle"
                         android:layout_alignStart="@+id/mainSunRiseTitle"
                         android:layout_alignEnd="@+id/mainSunRiseTitle"
                         android:layout_marginBottom="10dp"
-                        android:src="@drawable/ico_sun"
-                        app:tint="@color/white" />
+                        android:src="@drawable/ico_sun"/>
 
                     <TextView
                         android:id="@+id/mainSunRiseTitle"
@@ -854,8 +878,8 @@
                         android:ellipsize="end"
                         android:lines="1"
                         android:text="@string/sunrise"
-                        android:textColor="@color/white"
-                        android:textSize="16sp" />
+                        android:textColor="@color/theme_text_color"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/mainSunRiseTime"
@@ -865,19 +889,18 @@
                         android:layout_marginEnd="30dp"
                         android:layout_marginBottom="12dp"
                         android:layout_toStartOf="@+id/seekArc"
-                        android:textColor="@color/white"
+                        android:textColor="@color/theme_text_color"
                         android:textSize="18sp" />
 
                     <ImageView
                         android:id="@+id/mainSunSetImg"
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:layout_above="@+id/mainSunSetTitle"
                         android:layout_alignStart="@+id/mainSunSetTime"
                         android:layout_alignEnd="@+id/mainSunSetTime"
                         android:layout_marginBottom="10dp"
-                        android:src="@drawable/ico_moon"
-                        app:tint="@color/white" />
+                        android:src="@drawable/ico_moon" />
 
                     <TextView
                         android:id="@+id/mainSunSetTitle"
@@ -890,8 +913,8 @@
                         android:ellipsize="end"
                         android:lines="1"
                         android:text="@string/sunset"
-                        android:textColor="@color/white"
-                        android:textSize="16sp" />
+                        android:textColor="@color/theme_text_color"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/mainSunSetTime"
@@ -901,7 +924,7 @@
                         android:layout_marginStart="30dp"
                         android:layout_marginBottom="12dp"
                         android:layout_toEndOf="@+id/seekArc"
-                        android:textColor="@color/white"
+                        android:textColor="@color/theme_text_color"
                         android:textSize="18sp" />
 
                     <View
@@ -912,7 +935,7 @@
                         android:layout_marginStart="30dp"
                         android:layout_marginEnd="30dp"
                         android:layout_marginBottom="12dp"
-                        android:background="#20FFFFFF" />
+                        android:background="@color/theme_line_color" />
 
                     <TableRow
                         android:id="@+id/mainSunTr"
@@ -923,20 +946,18 @@
                         android:gravity="center">
 
                         <TextView
-                            android:id="@+id/mainSunBoxTomorrowTitle"
                             style="@style/basicMediumTextView"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:text="@string/tomorrow"
-                            android:textColor="@color/white"
-                            android:textSize="14sp"
-                            android:visibility="gone" />
+                            android:textColor="@color/theme_text_color"
+                            android:textSize="14sp" />
 
                         <TextView
                             android:id="@+id/mainSunRiseTom"
                             style="@style/basicTextView"
                             android:layout_marginStart="16dp"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
-                            android:textColor="@color/white"
+                            android:textColor="@color/theme_sun_tomorrow_day"
                             android:textSize="14sp" />
 
                         <TextView
@@ -944,10 +965,11 @@
                             style="@style/basicTextView"
                             android:layout_marginStart="16dp"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
-                            android:textColor="@color/white"
+                            android:textColor="@color/theme_sun_tomorrow_night"
                             android:textSize="14sp" />
                     </TableRow>
                 </RelativeLayout>
+
             </RelativeLayout>
         </androidx.core.widget.NestedScrollView>
 

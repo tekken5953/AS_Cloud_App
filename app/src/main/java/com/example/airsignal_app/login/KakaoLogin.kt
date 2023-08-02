@@ -1,9 +1,7 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
-import android.view.View
-import android.widget.LinearLayout
-import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.appcompat.widget.AppCompatButton
 import com.example.airsignal_app.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
@@ -44,21 +42,15 @@ class KakaoLogin(private val activity: Activity) {
         KakaoSdk.init(activity, KAKAO_NATIVE_APP_KEY)
     }
 
-    /** 앱 히시키 받아오기 **/
-    fun getKeyHash(): String {
-        return Utility.getKeyHash(activity)
-    }
-
     /** 카카오톡 설치 확인 후 로그인**/
-    fun checkInstallKakaoTalk(pb: LinearLayout) {
+    fun checkInstallKakaoTalk(btn: AppCompatButton) {
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(activity)) {
-            pb.visibility = View.VISIBLE
-            pb.bringToFront()
+            btn.alpha = 0.7f
             // 카카오톡 로그인
             UserApiClient.instance.loginWithKakaoTalk(activity) { token, error ->
                 // 로그인 실패 부분
                 if (error != null) {
-                    pb.visibility = View.GONE
+                    btn.alpha = 1f
                     // 사용자가 취소
                     if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled)) {
                         Logger.t("testtest").d("카카오 로그인 취소")
@@ -127,7 +119,7 @@ class KakaoLogin(private val activity: Activity) {
                         activity,
                         platform = LOGIN_KAKAO_EMAIL,
                         email = getUserEmail(activity),
-                        phone = null,
+                        phone = account.phoneNumber,
                         name = account.name,
                         profile = account.profile?.profileImageUrl
                     )
@@ -141,13 +133,11 @@ class KakaoLogin(private val activity: Activity) {
     }
 
     /** 자동 로그인 **/
-    fun isValidToken(pb: MotionLayout) {
-        pb.visibility = View.VISIBLE
-        pb.bringToFront()
+    fun isValidToken(btn: AppCompatButton) {
         if (AuthApiClient.instance.hasToken()) {
             UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
                 if (error != null) {
-                    pb.visibility = View.GONE
+                    btn.alpha = 1f
                     if (error is KakaoSdkError && error.isInvalidTokenError()) {
                         Logger.t("testtest").w("만료된 토큰입니다") // 만료된 토큰임 로그인 필요
                     } else {
@@ -167,8 +157,7 @@ class KakaoLogin(private val activity: Activity) {
             }
         } else {
             // 토큰이 없음 로그인 필요
-            ToastUtils(activity).showMessage("로그인이 필요합니다",1)
-            pb.visibility = View.GONE
+            btn.alpha = 1f
         }
     }
 
@@ -182,7 +171,7 @@ class KakaoLogin(private val activity: Activity) {
         CoroutineScope(Dispatchers.IO).launch {
             saveUserSettings()
             delay(1000)
-            EnterPageUtil(activity).toMain("kakao")
+            EnterPageUtil(activity).toMain(LOGIN_KAKAO)
         }
     }
 

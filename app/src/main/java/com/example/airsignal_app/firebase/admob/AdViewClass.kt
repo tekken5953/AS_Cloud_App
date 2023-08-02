@@ -2,12 +2,10 @@ package com.example.airsignal_app.firebase.admob
 
 import android.content.Context
 import com.example.airsignal_app.dao.IgnoredKeyFile.adMobTestDeviceId
-import com.example.airsignal_app.dao.StaticDataObject.TAG_AD
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.RequestConfiguration
-import timber.log.Timber
 
 /**
  * @author : Lee Jae Young
@@ -21,11 +19,9 @@ class AdViewClass(private val context: Context) {
     fun loadAdView(adView: AdView) {
         MobileAds.initialize(context) {}
 //        Timber.tag(TAG_AD).d("Google Mobile Ads SDK Version:  ${MobileAds.getVersion()}")
-        val deviceId = MobileAds.getVersion()
         val testDeviceIds = listOf(adMobTestDeviceId)
         val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
         MobileAds.setRequestConfiguration(configuration)
-        adView.adListener = AdMobListener()
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
     }

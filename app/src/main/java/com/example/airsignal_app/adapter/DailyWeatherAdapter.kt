@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.util.`object`.DataTypeParser.getDailyItemDate
-import timber.log.Timber
 import java.time.LocalDateTime
 
 /**

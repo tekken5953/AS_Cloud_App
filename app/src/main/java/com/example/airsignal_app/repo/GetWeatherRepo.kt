@@ -1,19 +1,18 @@
 package com.example.airsignal_app.repo
 
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
-import com.example.airsignal_app.dao.StaticDataObject.TAG_R
+import com.example.airsignal_app.dao.ErrorCode.ERROR_API_PROTOCOL
+import com.example.airsignal_app.dao.ErrorCode.ERROR_NETWORK
+import com.example.airsignal_app.dao.ErrorCode.ERROR_SERVER_CONNECTING
+import com.example.airsignal_app.dao.ErrorCode.ERROR_TIMEOUT
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient.mMyAPIImpl
-import com.example.airsignal_app.view.ToastUtils
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import timber.log.Timber
 import java.net.SocketTimeoutException
 
 /**
@@ -40,12 +39,12 @@ class GetWeatherRepo : BaseRepository() {
 //                                Logger.t(TAG_R).d("Success API : ${ApiState.Success(responseBody).data}")
                                 _getDataResult.postValue(ApiState.Success(responseBody))
                             } else {
-                                _getDataResult.postValue(ApiState.Error("API ERROR OCCURRED"))
+                                _getDataResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
                                 call.cancel()
                             }
                         } catch(e: NullPointerException) {
                             e.printStackTrace()
-                            _getDataResult.postValue(ApiState.Error("NOT SERVICED Location"))
+                            _getDataResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
                         }
                     }
 
@@ -54,11 +53,12 @@ class GetWeatherRepo : BaseRepository() {
                         t: Throwable
                     ) {
                         try {
+                            t.printStackTrace()
 //                            Logger.t(TAG_R).e("API NetworkError : ${t.stackTraceToString()}")
-                            _getDataResult.postValue(ApiState.Error("Network Error"))
+                            _getDataResult.postValue(ApiState.Error(ERROR_NETWORK))
                             call.cancel()
                         } catch (e: SocketTimeoutException) {
-                            _getDataResult.postValue(ApiState.Error("Timeout Error"))
+                            _getDataResult.postValue(ApiState.Error(ERROR_TIMEOUT))
                         }
                     }
                 })

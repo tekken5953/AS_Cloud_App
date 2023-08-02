@@ -17,7 +17,6 @@
         <attr name="notiTitle" format="string"/>
         <attr name="enableSubTitle" format="boolean"/>
         <attr name="topicTitle" format="string"/>
-        <attr name="basicTitle" format="string"/>
     </declare-styleable>
 
     <declare-styleable name="SegmentSectionView">
@@ -33,6 +32,7 @@
     <declare-styleable name="SubAirView">
         <attr name="customImg" format="reference"/>
         <attr name="customTitle" format="string"/>
+        <attr name="customSubText" format="string"/>
         <attr name="isLeftLine" format="boolean"/>
     </declare-styleable>
 </resources>

@@ -9,14 +9,13 @@ import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
 import com.orhanobut.logger.Logger
-import timber.log.Timber
 import java.text.SimpleDateFormat
-import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.Period
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import java.util.*
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 
@@ -293,12 +292,14 @@ object DataTypeParser {
     }
 
     /** 시간별 날씨 날짜 이름 **/
-    fun getDailyItemDate(context: Context, localDateTime: LocalDateTime): String? {
-        return when(localDateTime.toLocalDate().compareTo(parseLongToLocalDateTime(getCurrentTime()).toLocalDate())) {
-            0 -> { context.getString(R.string.daily_today)}
-            1 -> { context.getString(R.string.daily_tomorrow)}
-            2 -> { context.getString(R.string.daily_next_tomorrow)}
-            else -> { null }
+    fun getDailyItemDate(context: Context, localDateTime: LocalDateTime): String {
+
+        return when(ChronoUnit.DAYS.between(localDateTime.toLocalDate(),
+            parseLongToLocalDateTime(getCurrentTime()).toLocalDate()).absoluteValue) {
+            0L -> {context.getString(R.string.daily_today)}
+            1L -> {context.getString(R.string.daily_tomorrow)}
+            2L -> {context.getString(R.string.daily_next_tomorrow)}
+            else -> { "" }
         }
     }
 
@@ -350,19 +351,6 @@ object DataTypeParser {
                 } else {
                     ResourcesCompat.getDrawable(context.resources, R.drawable.sm_rainy_th, null)
                 }
-            }
-        }
-    }
-
-    /** 위젯 하늘에 따른 배경 **/
-    fun getSkyImgWidget(sky: String?, progress: Int): Int {
-        return when (sky) {
-            "맑음", "구름많음" -> {
-                if (getIsNight(progress)) R.drawable.widget_bg_night
-                else R.drawable.widget_bg_clear
-            }
-            else -> {
-                R.drawable.widget_bg_cloudy
             }
         }
     }

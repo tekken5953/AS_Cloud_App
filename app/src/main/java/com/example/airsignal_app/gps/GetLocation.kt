@@ -9,11 +9,10 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.ErrorCode.ERROR_LOCATION_IOException
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
-import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
-import com.example.airsignal_app.firebase.db.RDBLogcat.ERROR_LOCATION_IOException
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeErrorNotANR
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeGpsHistory
 import com.example.airsignal_app.util.AddressFromRegex
@@ -22,11 +21,9 @@ import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.setNotificationAddress
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.google.android.gms.location.*
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.io.IOException
 import java.util.*
 
@@ -38,15 +35,17 @@ class GetLocation(private val context: Context) {
         return try {
             val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
 
-            @Suppress("DEPRECATION")
+            @Suppress( "DEPRECATION")
             val address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             val fullAddr = address[0].getAddressLine(0)
-            val regexAddr = AddressFromRegex(fullAddr).getNotificationAddress()
-            setNotificationAddress(context, regexAddr)
-            setUserLastAddr(context, formattingFullAddress(fullAddr))
+            val notiAddr = AddressFromRegex(fullAddr).getNotificationAddress()
+            CoroutineScope(Dispatchers.IO).launch {
+                setNotificationAddress(context, notiAddr)
+                setUserLastAddr(context, formattingFullAddress(fullAddr))
+            }
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
-            } else { "Null Address" }
+            } else { "No Address" }
         } catch (e: IOException) {
             writeErrorNotANR(context, sort = ERROR_LOCATION_IOException, msg = e.localizedMessage!!)
             null

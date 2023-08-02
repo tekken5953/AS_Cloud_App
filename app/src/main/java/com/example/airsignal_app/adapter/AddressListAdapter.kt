@@ -1,17 +1,14 @@
 package com.example.airsignal_app.adapter
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.text.Layout
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
-import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,11 +19,8 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
-import org.koin.core.component.getScopeId
-import timber.log.Timber
 
 /**
  * @author : Lee Jae Young
@@ -68,6 +62,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
         private val gpsImg: ImageView = itemView.findViewById(R.id.listCurrentAddressImg)
         private val delete: TextView = itemView.findViewById(R.id.listCurrentAddressDelete)
 
+        @SuppressLint("InflateParams")
         fun bind(dao: String) {
             val db = GpsRepository(context)
 
@@ -106,7 +101,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
                 val view = LayoutInflater.from(context)
                     .inflate(R.layout.dialog_alert_double_btn, null)
                 builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
                 builder.setContentView(view)
                 builder.create()
 

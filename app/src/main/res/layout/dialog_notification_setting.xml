@@ -3,12 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/theme_view_color">
+    android:background="@color/mode_color_view">
 
     <RelativeLayout
         android:id="@+id/notificationTopBar"
         android:layout_width="match_parent"
-        android:layout_height="56dp">
+        android:layout_height="56dp"
+        app:layout_constraintTop_toTopOf="parent">
         <ImageView
             android:id="@+id/notificationBack"
             style="@style/BasicImageButtonIcon"
@@ -19,7 +20,7 @@
             app:tint="@color/theme_text_color"/>
 
         <TextView
-            android:id="@+id/notificationTitle"
+            android:id="@+id/noticeTitle"
             style="@style/basicMediumTextView"
             android:layout_centerInParent="true"
             android:text="@string/setting_notify"
@@ -27,5 +28,175 @@
             android:textSize="16sp" />
     </RelativeLayout>
 
+    <TableRow
+        android:id="@+id/notiSettingView"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="22dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:layout_below="@+id/notificationTopBar">
+        <TextView
+            android:id="@+id/notiSettingTitle"
+            style="@style/settingMultiTextView"
+            android:layout_weight="0.95"
+            android:textSize="16sp"
+            android:text="알림 설정\n날씨 알림 및 이벤트 정보 제공"
+            android:lineHeight="20.03dp"
+            android:background="?selectableItemBackground" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/notiSettingSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.05"
+            android:gravity="center_vertical|end"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:thumb="@drawable/switch_thumb"
+            app:track="@drawable/switch_selector" />
+    </TableRow>
+
+    <View
+        android:id="@+id/notificationLine1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/theme_line_color"
+        android:layout_below="@+id/notiSettingView"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"/>
+
+    <TableRow
+        android:id="@+id/notiBackView"
+        android:layout_width="match_parent"
+        android:layout_height="76dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:visibility="gone"
+        android:animateLayoutChanges="true"
+        android:layout_below="@+id/notificationLine1">
+        <TextView
+            android:id="@+id/notiBackTitle"
+            style="@style/settingMultiTextView"
+            android:layout_weight="0.6"
+            android:textSize="16sp"
+            android:lineHeight="20.03sp"
+            android:background="?selectableItemBackground" />
+
+        <TextView
+            android:id="@+id/notiBackContent"
+            style="@style/basicMediumTextView"
+            android:layout_weight="0.4"
+            android:textSize="16sp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|end"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"/>
+    </TableRow>
+
+    <View
+        android:id="@+id/notificationLine11"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/theme_line_color"
+        android:layout_below="@+id/notiBackView"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"/>
+
+
+    <TableRow
+        android:id="@+id/notiVibrateView"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:visibility="gone"
+        android:animateLayoutChanges="true"
+        android:layout_below="@+id/notificationLine11">
+
+        <TextView
+            android:id="@+id/notiVibrateTitle"
+            style="@style/settingMultiTextView"
+            android:layout_weight="0.95"
+            android:textSize="16sp"
+            android:text="진동 설정"
+            android:lineHeight="20.03sp"
+            android:background="?selectableItemBackground" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/notiVibrateSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.05"
+            android:gravity="center_vertical|end"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:thumb="@drawable/switch_thumb"
+            app:track="@drawable/switch_selector" />
+    </TableRow>
+
+    <View
+        android:id="@+id/notificationLine2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/theme_line_color"
+        android:layout_below="@+id/notiVibrateView"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"/>
+
+    <TableRow
+        android:id="@+id/notiSoundView"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:topicTitle="notification_sound"
+        app:enableSubTitle="false"
+        app:notiTitle="소리 설정"
+        android:animateLayoutChanges="true"
+        android:visibility="gone"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:layout_below="@+id/notificationLine2">
+        <TextView
+            android:id="@+id/notiSoundTitle"
+            style="@style/settingMultiTextView"
+            android:layout_weight="0.95"
+            android:textSize="16sp"
+            android:text="소리 설정"
+            android:lineHeight="20.03sp"
+            android:background="?selectableItemBackground" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/notiSoundSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.05"
+            android:gravity="center_vertical|end"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:thumb="@drawable/switch_thumb"
+            app:track="@drawable/switch_selector" />
+    </TableRow>
+
+    <View
+        android:id="@+id/notificationLine3"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/theme_line_color"
+        android:layout_below="@+id/notiSoundView"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"/>
+
+    <TextView
+        android:id="@+id/notificationExplainText"
+        style="@style/basicTextView"
+        android:layout_width="match_parent"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/theme_sub_color"
+        android:gravity="start"
+        android:lineHeight="15dp"
+        android:layout_below="@+id/notificationLine3"
+        android:text="기본 알림은 하루 총 2회 순차적으로 발송됩니다.\n(오전은 07시 이후,  오후는 18시 이후)\n\n실시간 위치 권한이 허용되지 않은 경우\n마지막으로 앱에 접속한 위치로 알림이 발송됩니다."/>
 
 </RelativeLayout>
