@@ -1,5 +1,6 @@
 package com.example.airsignal_app.view.activity
 
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -93,6 +94,7 @@ import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -204,6 +206,21 @@ class MainActivity
         }
 
         binding.nestedScrollview.setOnScrollChangeListener { v, _, _, _, _ ->
+            // 스크롤이 최하단일 경우 최초 한번만 일출/일몰 그래프 애니메이션
+            if (!v.canScrollVertically(1)) {
+                if (!isSunAnimated) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        binding.seekArc.progress = 0
+                        delay(100)
+                        val animatorSun =
+                            ObjectAnimator.ofInt(binding.seekArc, "progress", currentSun)
+                        animatorSun.duration = 800
+                        animatorSun.start()
+                    }
+                    isSunAnimated = true
+                }
+            }
+
 
             // 하단 스크롤시 네비게이션 바 색상 하얀색으로 변경
             if (v.scrollY == 0) {
@@ -774,6 +791,13 @@ class MainActivity
 
                             val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
                             val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
+                            val sbRiseTom = StringBuffer().append(sunTomorrow!!.sunrise).insert(2, ":")
+                            val sbSetTom = StringBuffer().append(sunTomorrow.sunset).insert(2, ":")
+                            binding.mainSunRiseTime.text = sbRise
+                            binding.mainSunSetTime.text = sbSet
+                            binding.mainSunRiseTom.text = sbRiseTom
+                            binding.mainSunSetTom.text = sbSetTom
+
 
                             getCompareTempText(
                                 yesterday.temp!!,
@@ -949,6 +973,7 @@ class MainActivity
                                 hideAllViews(error = ERROR_API_PROTOCOL)
                             }
                         } catch (e: IndexOutOfBoundsException) {
+                            Timber.tag("testtest").e(entireData.toString())
                             runOnUiThread {
                                 hidePB()
                                 hideAllViews(error = ERROR_GET_DATA)

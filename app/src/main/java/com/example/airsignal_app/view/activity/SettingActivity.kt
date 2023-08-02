@@ -557,7 +557,19 @@ class SettingActivity
                     if (isChecked) {
                         notiBackTr.visibility = View.VISIBLE
                         isBackAllow = RequestPermissionsUtil(this).isBackgroundRequestLocation()
-                        notiBackContent.text = if (isBackAllow) "허용됨" else "허용하기"
+
+                        if (isBackAllow) {
+                            notiBackTitle.text = "실시간 위치 권한 설정"
+                            setNightAlertsSpan(notiBackTitle)
+                            notiBackContent.text = "허용됨"
+                            setNightAlertsSpan(notiBackContent)
+                        } else {
+                            notiBackTitle.text = "실시간 위치 권한 설정\n권한 > 위치 > 항상 허용을 체크해주세요"
+                            setNightAlertsSpan(notiBackTitle)
+                            notiBackContent.text = "허용하기"
+                            setNightAlertsSpan(notiBackContent)
+                        }
+
                         notiBackTr.setOnClickListener {
                             if (!isBackAllow) {
                                 if (RequestPermissionsUtil(this)
@@ -589,7 +601,7 @@ class SettingActivity
                                             startActivity(intent)
                                         }
                                         setTitle("위치 권한 거부됨")
-                                        setMessage("권한 -> 위치 -> 항상 허용을 체크해주세요")
+                                        setMessage("권한 > 위치 > 항상 허용을 체크해주세요")
                                         show()
                                     }
                                 }
@@ -604,7 +616,6 @@ class SettingActivity
             }
 
             setNightAlertsSpan(notiSettingTitle)
-            setNightAlertsSpan(notiBackTitle)
             notiSettingSwitch.isChecked = getUserNotiEnable(this)
             notiVibrateSwitch.isChecked = getUserNotiVibrate(this)
             notiSoundSwitch.isChecked = getUserNotiSound(this)
@@ -671,9 +682,32 @@ class SettingActivity
                 it.length, span.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
+            if (textView.text.contains("항상 허용")) {
+                try {
+                    span.setSpan(ForegroundColorSpan(getColor(R.color.main_blue_color)),
+                        findCharacterIndex(textView.text as String, '\n'),
+                        findCharacterIndex(textView.text as String, '을'),
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                } catch(e: IndexOutOfBoundsException) {
+                    e.printStackTrace()
+                }
+            }
+
+            if (textView.text == "허용됨") {
+                textView.setTextColor(getColor(R.color.main_blue_color))
+            }
         }
 
         textView.text = span
+    }
+
+    private fun findCharacterIndex(input: String, targetChar: Char): Int {
+        for (index in input.indices) {
+            if (input[index] == targetChar) {
+                return index
+            }
+        }
+        return -1 // 문자가 없는 경우 -1을 반환
     }
 
     private fun applyDeviceTheme() {

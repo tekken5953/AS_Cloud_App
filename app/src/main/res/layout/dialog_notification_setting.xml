@@ -42,7 +42,7 @@
             android:layout_weight="0.95"
             android:textSize="16sp"
             android:text="알림 설정\n날씨 알림 및 이벤트 정보 제공"
-            android:lineHeight="20.03sp"
+            android:lineHeight="20.03dp"
             android:background="?selectableItemBackground" />
 
         <androidx.appcompat.widget.SwitchCompat
@@ -80,7 +80,6 @@
             style="@style/settingMultiTextView"
             android:layout_weight="0.6"
             android:textSize="16sp"
-            android:text="실시간 위치 권한 설정\n실시간 위치 권한을 설정하시면 실시간으로\n위치가 업데이트 됩니다"
             android:lineHeight="20.03sp"
             android:background="?selectableItemBackground" />
 
@@ -92,8 +91,7 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical|end"
             android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:text="허용하기"/>
+            android:paddingEnd="10dp"/>
     </TableRow>
 
     <View
@@ -196,7 +194,9 @@
         android:layout_marginEnd="24dp"
         android:layout_marginTop="16dp"
         android:textColor="@color/theme_sub_color"
+        android:gravity="start"
+        android:lineHeight="15dp"
         android:layout_below="@+id/notificationLine3"
-        android:text="알림에 대한 설명 알림에 대한 설명 알림에 대한 설명 알림에 대한 설명 알림에 대한 설명 알림에 대한 설명 알림에 대한 설명 알림에 대한 설명 알림에 대한 설명 알림에 대한 설명 알림에 대한 설명 알림에 대한 설명 알림에 대한 설명 알림에 대한 설명 알림에 대한 설명"/>
+        android:text="기본 알림은 하루 총 2회 순차적으로 발송됩니다.\n(오전은 07시 이후,  오후는 18시 이후)\n\n실시간 위치 권한이 허용되지 않은 경우\n마지막으로 앱에 접속한 위치로 알림이 발송됩니다."/>
 
 </RelativeLayout>
