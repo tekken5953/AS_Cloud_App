@@ -372,7 +372,7 @@
                         android:layout_height="match_parent"
                         android:layout_toStartOf="@+id/subAirWind"
                         ads:customImg="@drawable/ico_main_humidity"
-                        ads:customTitle="습도"
+                        ads:customTitle="@string/humidity"
                         ads:isLeftLine="false"/>
 
                     <com.example.airsignal_app.view.custom_view.SubAirView
@@ -381,7 +381,7 @@
                         android:layout_height="match_parent"
                         android:layout_centerHorizontal="true"
                         ads:customImg="@drawable/ico_main_wind"
-                        ads:customTitle="바람"
+                        ads:customTitle="@string/wind"
                         ads:isLeftLine="true"/>
 
                     <com.example.airsignal_app.view.custom_view.SubAirView
@@ -390,7 +390,7 @@
                         android:layout_height="match_parent"
                         android:layout_toEndOf="@+id/subAirWind"
                         ads:customImg="@drawable/ico_main_rain"
-                        ads:customTitle="강수확률"
+                        ads:customTitle="@string/rainPer"
                         ads:isLeftLine="true"/>
                 </RelativeLayout>
 

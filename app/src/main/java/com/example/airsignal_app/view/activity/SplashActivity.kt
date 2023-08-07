@@ -13,7 +13,9 @@ import android.view.Window
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.ErrorCode
 import com.example.airsignal_app.dao.ErrorCode.ERROR_NETWORK
+import com.example.airsignal_app.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import com.example.airsignal_app.databinding.ActivitySplashBinding
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.repo.BaseRepository
@@ -32,8 +34,7 @@ import kotlin.system.exitProcess
 
 
 @SuppressLint("CustomSplashScreen")
-class SplashActivity
-    : BaseActivity<ActivitySplashBinding>() {
+class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override val resID: Int get() = R.layout.activity_splash
 
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
@@ -47,7 +48,7 @@ class SplashActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        fullScreenMode()
+//        fullScreenMode()
 
         initBinding()
 
@@ -56,40 +57,35 @@ class SplashActivity
 
         applyAppVersionData()
 
-        RDBLogcat.writeUserPref(this, sort = RDBLogcat.USER_PREF_DEVICE,
+        RDBLogcat.writeUserPref(
+            this,
+            sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
-            value = GetSystemInfo.getApplicationVersion(this))
+            value = GetSystemInfo.getApplicationVersion(this)
+        )
 
-        RDBLogcat.writeUserPref(this, sort = RDBLogcat.USER_PREF_DEVICE,
+        RDBLogcat.writeUserPref(
+            this,
+            sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_DEVICE_MODEL,
-            value = Build.MODEL)
+            value = Build.MODEL
+        )
 
-        RDBLogcat.writeUserPref(this, sort = RDBLogcat.USER_PREF_DEVICE,
+        RDBLogcat.writeUserPref(
+            this,
+            sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_SDK_VERSION,
-            value = Build.VERSION.SDK_INT)
-    }
-
-    // 몰입모드로 전환됩니다
-    private fun fullScreenMode() {
-        @Suppress("DEPRECATION")
-        window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                )
+            value = Build.VERSION.SDK_INT
+        )
     }
 
     private fun enterPage() {
         if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
-            EnterPageUtil(this@SplashActivity)
-                .toMain(
+            EnterPageUtil(this@SplashActivity).toMain(
                     getUserLoginPlatform(this)
                 )
         } else {
-            EnterPageUtil(this@SplashActivity)
-                .toPermission()
+            EnterPageUtil(this@SplashActivity).toPermission()
         }
     }
 
@@ -97,17 +93,18 @@ class SplashActivity
         if (!appVersionViewModel.fetchData().hasObservers()) {
             appVersionViewModel.fetchData().observe(this) { result ->
                 result?.let { ver ->
-                    when(ver) {
+                    when (ver) {
                         is BaseRepository.ApiState.Success -> {
-                            val versionInfo =
-                                GetSystemInfo.getApplicationVersion(this)
+                            binding.splashPB.visibility = View.GONE
+                            val versionInfo = GetSystemInfo.getApplicationVersion(this)
                             if (ver.data.version == versionInfo) {
                                 enterPage()
                             } else {
                                 val builder = AlertDialog.Builder(this)
                                 val alertDialog = builder.create()
                                 alertDialog.apply {
-                                    setButton(AlertDialog.BUTTON_NEGATIVE,"다운로드"
+                                    setButton(
+                                        AlertDialog.BUTTON_NEGATIVE, "다운로드"
                                     ) { _, _ ->
                                         goToPlayStore(this@SplashActivity)
                                     }
@@ -117,19 +114,30 @@ class SplashActivity
                             }
                         }
                         is BaseRepository.ApiState.Error -> {
-                            if (ver.errorMessage == ERROR_NETWORK) {
-                                MakeSingleDialog(this).netWorkIsNotConnectedDialog(
-                                    "인터넷 연결 상태를 확인 후 재실행 해주세요",
-                                    getColor(R.color.theme_alert_double_apply_color),
-                                    getString(R.string.ok)
-                                )
+                            binding.splashPB.visibility = View.GONE
+                            when (ver.errorMessage) {
+                                ERROR_NETWORK -> {
+                                    makeDialog("인터넷 연결 상태를 확인 후 재실행 해주세요")
+                                }
+
+                                ERROR_SERVER_CONNECTING -> {
+                                    makeDialog("현재 서버가 점검중입니다.")
+                                }
                             }
                         }
 
-                        else -> {}
+                        is BaseRepository.ApiState.Loading -> {
+                            binding.splashPB.visibility = View.VISIBLE
+                        }
                     }
                 }
             }
         }
+    }
+
+    private fun makeDialog(s: String) {
+        MakeSingleDialog(this).netWorkIsNotConnectedDialog(
+            s, getColor(R.color.theme_alert_double_apply_color), getString(R.string.ok)
+        )
     }
 }

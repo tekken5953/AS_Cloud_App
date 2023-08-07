@@ -1,6 +1,8 @@
 package com.example.airsignal_app.util.`object`
 
+import android.app.Activity
 import android.content.Context
+import android.view.View
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
@@ -22,6 +24,18 @@ import com.example.airsignal_app.db.SharedPreferenceManager
  * @since : 2023-06-12 오후 2:28
  **/
 object SetAppInfo {
+
+    // 몰입모드로 전환됩니다
+    fun fullScreenMode(activity: Activity) {
+        @Suppress("DEPRECATION")
+        activity.window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_IMMERSIVE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                )
+    }
 
     fun setUserFontScale(context: Context, type: String) {
         SharedPreferenceManager(context).setString(userFontScale, type)

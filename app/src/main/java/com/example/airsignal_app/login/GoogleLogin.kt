@@ -46,7 +46,7 @@ class GoogleLogin(private val activity: Activity) {
             result.launch(signInIntent)
             mBtn.alpha = 0.7f
         } catch (e: Exception) {
-            e.printStackTrace()
+            Logger.t(TAG_LOGIN).e(e.stackTraceToString())
             RDBLogcat.writeErrorNotANR(activity, LOGIN_FAILED, e.localizedMessage!!)
         }
     }
@@ -131,6 +131,7 @@ class GoogleLogin(private val activity: Activity) {
 
             saveLoginStatus(email, displayName, photo, isAuto)
         } catch (e: ApiException) {
+            Logger.t(TAG_LOGIN).e(e.stackTraceToString())
             e.printStackTrace()
         }
     }

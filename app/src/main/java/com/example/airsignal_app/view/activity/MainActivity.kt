@@ -63,6 +63,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyText
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertDayOfWeekToKorean
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertLocalDateTimeToLong
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertTimeToMinutes
+import com.example.airsignal_app.util.`object`.DataTypeParser.convertValueToGrade
 import com.example.airsignal_app.util.`object`.DataTypeParser.getComparedTemp
 import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.getDataColor
@@ -183,6 +184,8 @@ class MainActivity
         binding.dataVM = getDataViewModel
 
         initializing()
+
+        binding.seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지
 
         // 메인 하단 스크롤 유도 화살표 애니메이션 적용
         val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
@@ -549,7 +552,7 @@ class MainActivity
                     val model = airQList[position]
 
                     applyAirQView(
-                        model.grade, model.name, model.nameKR,
+                        model.name, model.nameKR,
                         model.value, model.unit
                     )
 
@@ -745,32 +748,32 @@ class MainActivity
                             }
 
                             updateAirQData(
-                                PM2p5_INDEX, "초미세먼지", "PM2.5",
-                                "㎍/㎥", air.pm25Value!!.toInt().toString(), air.pm25Grade1h!!
+                                PM2p5_INDEX, getString(R.string.pm2_5), "PM2.5",
+                                "㎍/㎥", air.pm25Value!!.toInt().toString()
                             )
                             updateAirQData(
-                                PM10_INDEX, "미세먼지", "PM10",
-                                "㎍/㎥", air.pm10Value!!.toInt().toString(), air.pm10Grade1h!!
+                                PM10_INDEX, getString(R.string.pm10), "PM10",
+                                "㎍/㎥", air.pm10Value!!.toInt().toString()
                             )
                             updateAirQData(
-                                CO_INDEX, "일산화탄소", "CO",
-                                "ppm", air.coValue!!.toString(), air.coGrade!!
+                                CO_INDEX, getString(R.string.co), "CO",
+                                "ppm", air.coValue!!.toString()
                             )
                             updateAirQData(
-                                SO2_INDEX, "아황산가스", "SO2",
-                                "ppm", air.so2Value!!.toString(), air.so2Grade!!
+                                SO2_INDEX, getString(R.string.so2), "SO2",
+                                "ppm", air.so2Value!!.toString()
                             )
                             updateAirQData(
-                                NO2_INDEX, "이산화질소", "NO2",
-                                "㎍/㎥", air.no2Value!!.toString(), air.no2Grade!!
+                                NO2_INDEX, getString(R.string.no2), "NO2",
+                                "ppm", air.no2Value!!.toString()
                             )
                             updateAirQData(
-                                O3_INDEX, "오존", "O3",
-                                "㎍/㎥", air.o3Value!!.toString(), air.o3Grade!!
+                                O3_INDEX, getString(R.string.o3), "O3",
+                                "ppm", air.o3Value!!.toString()
                             )
 
                             applyAirQView(
-                                air.pm25Grade1h, "PM2.5", "초미세먼지",
+                                 "PM2.5", getString(R.string.pm2_5),
                                 air.pm25Value.toInt().toString(), "㎍/m3"
                             )
 
@@ -1000,14 +1003,14 @@ class MainActivity
     }
 
     private fun applyAirQView(
-        grade: Int,
         name: String,
         nameKR: String,
         value: String,
         unit: String
     ) {
+        val grade = convertValueToGrade(name,value.toDouble())
         binding.nestedAirCpvCard.setCardBackgroundColor(getDataColor(this, grade))
-        binding.nestedAirCpvText.text = getDataText(grade)
+        binding.nestedAirCpvText.text = getDataText(this, grade)
         binding.nestedAirValue.text = value
         binding.nestedAirTitleEn.text = name
         binding.nestedAirTitleKr.text = nameKR
@@ -1073,7 +1076,7 @@ class MainActivity
 
     // 필드값이 없을 때 -100 출력 됨
     private fun filteringNullData(data: Double): String {
-        return if (data != -100.0) data.roundToInt().toString() else ""
+        return if (data != -100.0 && data != 100.0) data.roundToInt().toString() else ""
     }
 
     // 시간별 날씨 리사이클러뷰 아이템 추가
@@ -1313,19 +1316,19 @@ class MainActivity
 
     private fun updateAirQData(
         position: Int, nameKR: String, name: String, unit: String,
-        value: String, grade: Int
+        value: String
     ) {
 
         if (!airQList.contains(
                 AdapterModel.AirQTitleItem(
                     false, position, nameKR,
-                    name, unit, value, grade
+                    name, unit, value, convertValueToGrade(name,value.toDouble())
                 )
             )
         ) {
             addAirQItem(
                 position, nameKR,
-                name, unit, value, grade
+                name, unit, value, convertValueToGrade(name,value.toDouble())
             )
         }
     }

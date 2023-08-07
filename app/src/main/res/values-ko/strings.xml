@@ -127,4 +127,24 @@
     <string name="timeout_error">요청시간 지연, 재 갱신 필요</string>
     <string name="api_call_error">데이터 호출에 실패했습니다</string>
     <string name="unkown_error">알수없는 오류 발생</string>
+    <string name="humidity">습도</string>
+    <string name="wind">바람</string>
+    <string name="rainPer">강수확률</string>
+    <string name="pm2.5">초미세먼지</string>
+    <string name="pm10">미세먼지</string>
+    <string name="co">일산화탄소</string>
+    <string name="so2">아황산가스</string>
+    <string name="no2">이산화질소</string>
+    <string name="o3">오존</string>
+    <string name="add_new_address">새 주소를 등록하세요</string>
+    <string name="input_address">주소를 입력해주세요</string>
+    <string name="last_software">최신 소프트웨어입니다.</string>
+    <string name="not_latest_version">최신 버전이 있습니다</string>
+    <string name="fail_to_get_version">앱 정보를 불러오는데 실패했습니다</string>
+    <string name="list_of_open_source">오픈소스 라이센스 목록</string>
+    <string name="good">좋음</string>
+    <string name="normal">보통</string>
+    <string name="bad">나쁨</string>
+    <string name="worst">매우나쁨</string>
+    <string name="error">에러</string>
 </resources>

@@ -757,13 +757,13 @@ class SettingActivity
 
                         appInfoVersionValue.text = versionInfo
                         if (data.version == versionInfo) {
-                            appInfoIsRecent.text = "최신 소프트웨어입니다."
+                            appInfoIsRecent.text = getString(R.string.last_software)
                             appInfoIsRecent.setTextColor(getColor(R.color.sub_gray_color))
                             appInfoDownBtn.visibility = View.GONE
                             appInfoVersionValue.visibility = View.VISIBLE
                         } else {
                             appInfoIsRecent.text =
-                                "최신 버전이 있습니다"
+                                getString(R.string.not_latest_version)
                             appInfoIsRecent.setTextColor(getColor(R.color.main_blue_color))
                             appInfoDownBtn.visibility = View.VISIBLE
                             appInfoVersionValue.visibility = View.GONE
@@ -772,7 +772,7 @@ class SettingActivity
                     is BaseRepository.ApiState.Error -> {
                         Toast.makeText(
                             this@SettingActivity,
-                            "앱 정보를 불러오는데 실패했습니다",
+                            getString(R.string.fail_to_get_version),
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -788,7 +788,7 @@ class SettingActivity
 
         appInfoLicense.setOnClickListener {
             startActivity(Intent(this, OssLicensesMenuActivity::class.java))
-            OssLicensesMenuActivity.setActivityTitle("오픈소스 라이센스 목록")
+            OssLicensesMenuActivity.setActivityTitle(getString(R.string.list_of_open_source))
         }
 
         appInfoTermsService.setOnClickListener {

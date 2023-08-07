@@ -13,6 +13,7 @@ class AddressFromRegex(private val address: String) {
         val s3: StringBuilder = StringBuilder()
         val s4: StringBuilder = StringBuilder()
         val sr: StringBuilder = StringBuilder()
+        address.replace("대한민국","").replace("South Korea","")
 
         generatePatternFirst().forEach { first ->
             if (!first.findAll(address).none()) {

@@ -377,13 +377,13 @@ object DataTypeParser {
     }
 
     /** 등급에 따른 텍스트 변환 **/
-    fun getDataText(grade: Int): String {
+    fun getDataText(context: Context, grade: Int): String {
         return when (grade) {
-            1 -> "좋음"
-            2 -> "보통"
-            3 -> "나쁨"
-            4 -> "매우나쁨"
-            else -> "에러"
+            1 -> context.getString(R.string.good)
+            2 -> context.getString(R.string.normal)
+            3 -> context.getString(R.string.bad)
+            4 -> context.getString(R.string.worst)
+            else -> context.getString(R.string.error)
         }
     }
 
@@ -487,5 +487,109 @@ object DataTypeParser {
     /** Long을 LocalDateTime으로 파싱 **/
     fun parseLongToLocalDateTime(long: Long): LocalDateTime {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(long), ZoneId.systemDefault())
+    }
+
+    /** 공기질 데이터 등급변환 **/
+    fun convertValueToGrade(s: String, v: Double): Int {
+        return when(s) {
+            "SO2" -> {
+                when(v) {
+                    in 0.0..0.02 -> {
+                        1
+                    }
+                    in 0.021..0.05 -> {
+                        2
+                    }
+                    in 0.051..0.15 -> {
+                        3
+                    }
+                    else -> {
+                        4
+                    }
+                }
+            }
+            "CO" -> {
+                when(v) {
+                    in 0.0..2.0 -> {
+                        1
+                    }
+                    in 2.01..9.0 -> {
+                        2
+                    }
+                    in 9.01..15.0 -> {
+                        3
+                    }
+                    else -> {
+                        4
+                    }
+                }
+            }
+            "O3" -> {
+                when(v) {
+                    in 0.0..0.03 -> {
+                        1
+                    }
+                    in 0.031..0.09 -> {
+                        2
+                    }
+                    in 0.091..0.15 -> {
+                        3
+                    }
+                    else -> {
+                        4
+                    }
+                }
+            }
+            "NO2" -> {
+                when(v) {
+                    in 0.0..0.03 -> {
+                        1
+                    }
+                    in 0.031..0.06 -> {
+                        2
+                    }
+                    in 0.061..0.2 -> {
+                        3
+                    }
+                    else -> {
+                        4
+                    }
+                }
+            }
+            "PM2.5" -> {
+                when(v) {
+                    in 0.0..15.0 -> {
+                        1
+                    }
+                    in 16.0..35.0 -> {
+                        2
+                    }
+                    in 36.0..75.0 -> {
+                        3
+                    }
+                    else -> {
+                        4
+                    }
+                }
+            }
+
+            "PM10" -> {
+                when(v) {
+                    in 0.0..30.0 -> {
+                        1
+                    }
+                    in 31.0..80.0 -> {
+                        2
+                    }
+                    in 81.0..150.0 -> {
+                        3
+                    }
+                    else -> {
+                        4
+                    }
+                }
+            }
+            else -> {0}
+        }
     }
 }

@@ -2,7 +2,9 @@ package com.example.airsignal_app.repo
 
 import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
+import com.example.airsignal_app.dao.ErrorCode.ERROR_API_PROTOCOL
 import com.example.airsignal_app.dao.ErrorCode.ERROR_NETWORK
+import com.example.airsignal_app.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient.mMyAPIImpl
 import kotlinx.coroutines.CoroutineScope
@@ -22,6 +24,7 @@ class GetAppVersionRepo: BaseRepository() {
     @SuppressLint("MissingPermission")
     fun loadDataResult() {
         CoroutineScope(Dispatchers.Default).launch {
+            _getAppVersionResult.postValue(ApiState.Loading)
             mMyAPIImpl.version.enqueue(object : Callback<ApiModel.AppVersion> {
                 override fun onResponse(
                     call: Call<ApiModel.AppVersion>,
@@ -29,14 +32,18 @@ class GetAppVersionRepo: BaseRepository() {
                 ) {
                     val responseBody = response.body()!!
 
-                    if (response.isSuccessful) {
+                    try {
+                        if (response.isSuccessful) {
 //                        Logger.t(TAG_R).d("Success to get API : ${ApiState.Success(responseBody).data}")
 
-                        _getAppVersionResult.postValue(ApiState.Success(responseBody))
-                    } else {
+                            _getAppVersionResult.postValue(ApiState.Success(responseBody))
+                        } else {
 //                        Logger.t(TAG_R).d("Fail to get API : ${ApiState.Success(responseBody).data}")
 
-                        _getAppVersionResult.postValue(ApiState.Error(""))
+                            _getAppVersionResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
+                        }
+                    } catch(e: Exception) {
+                        _getAppVersionResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
                     }
                 }
 

@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.databinding.ActivityLoginBinding
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import com.example.airsignal_app.firebase.fcm.SubFCM
@@ -13,6 +14,8 @@ import com.example.airsignal_app.login.KakaoLogin
 import com.example.airsignal_app.login.NaverLogin
 import com.example.airsignal_app.util.EnterPageUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import timber.log.Timber
+
 
 class LoginActivity
     : BaseActivity<ActivityLoginBinding>() {
@@ -59,6 +62,10 @@ class LoginActivity
                     }
                     googleLogin.handleSignInResult(task, isAuto = false)
                     EnterPageUtil(this).toMain(LOGIN_GOOGLE)
+                }
+                RESULT_CANCELED -> {
+                    Timber.tag(TAG_LOGIN).w("Cancel Google Login")
+                    binding.googleLoginButton.alpha = 1f
                 }
                 else -> {
                     binding.googleLoginButton.alpha = 1f
