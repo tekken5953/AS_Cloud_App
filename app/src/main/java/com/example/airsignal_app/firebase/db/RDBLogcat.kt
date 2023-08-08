@@ -5,6 +5,7 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.millsToString
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetSystemInfo
+import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -162,16 +163,20 @@ object RDBLogcat {
         gpsValue: String,
         responseData: String?
     ) {
-        val gpsRef = default(context)
-            .child(GPS_HISTORY)
-            .child(getDate())
-            .child(if (isSearched) GPS_SEARCHED else GPS_NOT_SEARCHED)
-            .child(getTime())
+        try {
+            val gpsRef = default(context)
+                .child(GPS_HISTORY)
+                .child(getDate())
+                .child(if (isSearched) GPS_SEARCHED else GPS_NOT_SEARCHED)
+                .child(getTime())
 
-        if (responseData != null) {
-            gpsRef.setValue("$responseData")
-        } else {
-            gpsRef.setValue(gpsValue)
+            if (responseData != null) {
+                gpsRef.setValue("$responseData")
+            } else {
+                gpsRef.setValue(gpsValue)
+            }
+        }catch (e: DatabaseException) {
+            e.printStackTrace()
         }
     }
 
@@ -205,12 +210,16 @@ object RDBLogcat {
 
     /** 알림 기록 **/
     fun writeNotificationHistory(context: Context, topic: String, response: String?) {
-        default(context)
-            .child(NOTIFICATION_HISTORY)
-            .child(getDate())
-            .child(topic)
-            .child(getTime())
-            .setValue(response)
+        try {
+            default(context)
+                .child(NOTIFICATION_HISTORY)
+                .child(getDate())
+                .child(topic)
+                .child(getTime())
+                .setValue(response)
+        } catch (e: DatabaseException) {
+            e.printStackTrace()
+        }
     }
 
     /** 에러 로그 - 비정상 종료 **/

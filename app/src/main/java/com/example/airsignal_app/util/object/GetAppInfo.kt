@@ -79,14 +79,8 @@ object GetAppInfo {
 
     fun getCurrentSun(sunRise: String, sunSet: String): Int {
         val currentTime = DataTypeParser.millsToString(DataTypeParser.getCurrentTime(), "HHmm")
-        var currentSun =
-            (100 * (DataTypeParser.convertTimeToMinutes(currentTime) - DataTypeParser.convertTimeToMinutes(
-                sunRise
-            ))) / getEntireSun(sunRise,sunSet)
-
-        if (currentSun > 100) { currentSun = 100 }
-
-        return currentSun
+        return (100 * (DataTypeParser.convertTimeToMinutes(currentTime) - DataTypeParser.convertTimeToMinutes(
+            sunRise))) / getEntireSun(sunRise, sunSet)
     }
 
     fun getIsNight(progress: Int): Boolean {

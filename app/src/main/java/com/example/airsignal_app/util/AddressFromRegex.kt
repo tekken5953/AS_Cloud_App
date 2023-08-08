@@ -70,18 +70,21 @@ class AddressFromRegex(private val address: String) {
 
     fun getNotificationAddress(): String {
         val sb = StringBuilder()
-        try {
+        return try {
             generatePatternThird().forEach { third ->
                 if (!third.findAll(address).none()) {
                     sb.append(third.find(address)!!.value)
-                    return sb.toString()
                 }
+            }
+            if (sb.isEmpty()) {
+                getAddress().split(" ").last()
+            } else {
+                sb.toString()
             }
         } catch (e: Exception) {
             e.printStackTrace()
             address
         }
-        return getAddress()
     }
 
     private fun countSpacesInStringBuilder(s: String): Int {

@@ -39,7 +39,7 @@ object GetSystemInfo {
                 Locale.KOREA
             }
             LANG_EN -> {
-                Locale.US
+                Locale.ENGLISH
             }
             else -> {
                 Locale.getDefault()

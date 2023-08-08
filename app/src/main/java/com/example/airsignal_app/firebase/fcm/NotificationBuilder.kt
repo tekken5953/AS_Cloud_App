@@ -1,15 +1,12 @@
 package com.example.airsignal_app.firebase.fcm
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
-import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.view.View
 import androidx.core.app.NotificationCompat
@@ -17,6 +14,7 @@ import com.example.airsignal_app.R
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_CHANNEL_ID
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_CHANNEL_NAME
 import com.example.airsignal_app.firebase.db.RDBLogcat
+import com.example.airsignal_app.util.VibrateUtil
 import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyText
 import com.example.airsignal_app.util.`object`.DataTypeParser.getSkyImgLarge
 import com.example.airsignal_app.util.`object`.GetAppInfo
@@ -33,22 +31,6 @@ class NotificationBuilder {
 //        val notificationLayout = RemoteViews(context.packageName, R.layout.notification_small)
 //        val notificationLayoutExpanded = RemoteViews(context.packageName, R.layout.notification_large)
 //        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-//
-//        // Apply the layouts to the notification
-//        val customNotification = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-//            .setAutoCancel(true)
-//            .setDefaults(Notification.DEFAULT_ALL)
-//            .setWhen(System.currentTimeMillis())
-////            .setSilent(true)
-//            .setSubText("${data["location"]}시 중원구")
-//            .setSmallIcon(R.drawable.app_icon)
-//            .setPriority(NotificationManager.IMPORTANCE_HIGH)
-//            .setContentIntent(pendingIntent)
-//            .setContentTitle("${data["temp"].toString().toDouble().roundToInt()}˚")
-//            .setContentText("최대 : ${data["max"]}˚ 최소 : ${data["min"]}˚")
-//            .setLargeIcon((ResourcesCompat.getDrawable(context.resources,R.drawable.ico_sunny,
-//                null) as BitmapDrawable).bitmap)
-
 
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
@@ -56,27 +38,23 @@ class NotificationBuilder {
         val notificationChannel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
             NOTIFICATION_CHANNEL_NAME,
-            NotificationManager.IMPORTANCE_HIGH
+            NotificationManager.IMPORTANCE_LOW
         ).apply {
             description = "Channel description"
-            enableLights(true)
-            lightColor = Color.BLUE
-            setSound(if (getUserNotiSound(context)) RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION) else null, AudioAttributes.Builder().build())
-            vibrationPattern = if (getUserNotiVibrate(context)) longArrayOf(0, 100, 200, 300) else null
             lockscreenVisibility = View.VISIBLE
-            enableVibration(true)
+            enableVibration(false)
         }
 
         val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+        val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val ringtone = RingtoneManager.getRingtone(context, sound)
 
         notificationBuilder
             .setAutoCancel(true)
-            .setDefaults(Notification.DEFAULT_ALL)
             .setWhen(System.currentTimeMillis())
 //            .setSilent(true)
             .setSubText(getNotificationAddress(context))
             .setSmallIcon(R.drawable.app_icon)
-            .setPriority(NotificationManager.IMPORTANCE_HIGH)
             .setContentIntent(pendingIntent)
             .setContentTitle("${parseStringToDoubleToInt(data["temp"].toString())}˚ ·" +
                     " ${applySkyText(context,data["rainType"],data["sky"],data["thunder"]!!.toDouble())}")
@@ -89,6 +67,16 @@ class NotificationBuilder {
             notificationManager!!.run {
                 createNotificationChannel(notificationChannel)
                 notify(1, notificationBuilder.build())
+                if (getUserNotiSound(context)) {
+                    if (ringtone.isPlaying) {
+                        ringtone.stop()
+                    }
+                    ringtone.play()
+                }
+
+                if (getUserNotiVibrate(context)) {
+                    VibrateUtil(context).noti(longArrayOf(0, 100, 200, 300))
+                }
             }
         } else {
             RDBLogcat.writeNotificationHistory(context, "체크 해제로 인한 알림 미발송",

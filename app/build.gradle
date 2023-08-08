@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
     id 'kotlin-kapt'
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -131,4 +132,7 @@ dependencies {
     //oss licenses plugin
     implementation 'com.google.android.gms:play-services-oss-licenses-license:12.0.1'
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.1'
+
+    //Google Crashlytics
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
 }

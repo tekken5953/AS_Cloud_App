@@ -13,9 +13,11 @@ import com.example.airsignal_app.R
 import kotlin.system.exitProcess
 
 class MakeSingleDialog(private val context: Context) {
+    lateinit var apply: AppCompatButton
+    lateinit var builder: Dialog
 
-    fun netWorkIsNotConnectedDialog(t: String,c: Int, b: String) {
-        val builder = Dialog(context)
+    fun makeDialog(textTitle: String, color: Int, buttonText: String): AppCompatButton {
+        builder = Dialog(context)
         val view = LayoutInflater.from(context)
             .inflate(R.layout.dialog_alert_single_btn,null)
         builder.apply {
@@ -28,15 +30,21 @@ class MakeSingleDialog(private val context: Context) {
         builder.create()
 
         val title = view.findViewById<TextView>(R.id.alertSingleTitle)
-        val apply = view.findViewById<AppCompatButton>(R.id.alertSingleApplyBtn)
+        apply = view.findViewById(R.id.alertSingleApplyBtn)
 
-        apply.backgroundTintList = ColorStateList.valueOf(c)
+        apply.backgroundTintList = ColorStateList.valueOf(color)
 
-        title.text = t
-        apply.text = b
+        title.text = textTitle
+        apply.text = buttonText
         apply.setOnClickListener {
             exitProcess(0)
         }
         builder.show()
+
+        return apply
+    }
+
+    fun dismiss() {
+        builder.dismiss()
     }
 }

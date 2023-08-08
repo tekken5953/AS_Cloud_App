@@ -7,6 +7,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
 import com.example.airsignal_app.dao.StaticDataObject.LANG_KR
+import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_DEFAULT
+import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_SMALL
+import com.example.airsignal_app.dao.StaticDataObject.THEME_DARK
+import com.example.airsignal_app.dao.StaticDataObject.THEME_LIGHT
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserTheme
@@ -44,10 +48,10 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
 
         // 설정된 폰트크기 불러오기
         when (getUserFontScale(this)) {
-            "small" -> {
+            TEXT_SCALE_SMALL -> {
                 SetSystemInfo.setTextSizeSmall(this)
             }
-            "big" -> {
+            TEXT_SCALE_DEFAULT -> {
                 SetSystemInfo.setTextSizeLarge(this)
             }
             else -> {
@@ -57,10 +61,10 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
 
         // 설정된 테마 정보 불러오기
         when (getUserTheme(this)) {
-            "dark" -> {
+            THEME_DARK -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             }
-            "light" -> {
+            THEME_LIGHT -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
             else -> {

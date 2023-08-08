@@ -1,6 +1,5 @@
 package com.example.airsignal_app.view.activity
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -12,6 +11,7 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
+import android.view.ViewGroup
 import android.view.animation.*
 import android.widget.*
 import android.widget.LinearLayout.LayoutParams
@@ -138,6 +138,7 @@ class MainActivity
     private var currentSun = 0
     private var isSunAnimated = false
     private var isProgressed = false
+    private val sunPb by lazy { SunProgress(binding.seekArc)}
     private val rotateAnim by lazy {
         RotateAnimation(
             0f, 360f,
@@ -185,7 +186,8 @@ class MainActivity
 
         initializing()
 
-        binding.seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지
+
+        sunPb.disableTouch()
 
         // 메인 하단 스크롤 유도 화살표 애니메이션 적용
         val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
@@ -212,14 +214,7 @@ class MainActivity
             // 스크롤이 최하단일 경우 최초 한번만 일출/일몰 그래프 애니메이션
             if (!v.canScrollVertically(1)) {
                 if (!isSunAnimated) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        binding.seekArc.progress = 0
-                        delay(100)
-                        val animatorSun =
-                            ObjectAnimator.ofInt(binding.seekArc, "progress", currentSun)
-                        animatorSun.duration = 800
-                        animatorSun.start()
-                    }
+                    sunPb.animate(currentSun)
                     isSunAnimated = true
                 }
             }
@@ -803,7 +798,6 @@ class MainActivity
                             binding.mainSunRiseTom.text = sbRiseTom
                             binding.mainSunSetTom.text = sbSetTom
 
-
                             getCompareTempText(
                                 yesterday.temp!!,
                                 modifyCurrentTempType(current.temperature, realtime.temp),
@@ -874,8 +868,8 @@ class MainActivity
                                 val dailySunProgress =
                                     100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(
                                         sun.sunrise
-                                    )) /
-                                            getEntireSun(sun.sunrise, sun.sunset)
+                                    )) / getEntireSun(sun.sunrise, sun.sunset)
+
                                 val isNight = getIsNight(dailySunProgress)
                                 if (i == result.realtime.lastIndex + 1) {
                                     break
@@ -1480,7 +1474,8 @@ class MainActivity
     }
 
     private fun isKorea(lat: Double, lng: Double): Boolean {
-        return lng in 127.0..132.0 && lat in 33.0..39.0
+        RDBLogcat.writeGpsHistory(this, false, "서비스 지역 밖","${lat},${lng}")
+        return lng in 125.0..132.0 && lat in 33.0..39.0
     }
 
     @SuppressLint("MissingPermission")
@@ -1560,8 +1555,8 @@ class MainActivity
                 locationClass.requestSystemGPSEnable()
             }
         } else {
-            MakeSingleDialog(this).netWorkIsNotConnectedDialog(
-                "인터넷 연결 상태를 확인 후 재실행 해주세요",
+            MakeSingleDialog(this).makeDialog(
+                getString(R.string.error_network_connect),
                 getColor(R.color.theme_alert_double_apply_color),
                 getString(R.string.ok)
             )

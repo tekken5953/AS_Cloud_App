@@ -1,16 +1,13 @@
 package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Build
 import android.os.Build.VERSION
-import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Spannable
@@ -21,7 +18,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.SwitchCompat
@@ -32,12 +28,14 @@ import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiEnable
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiSound
 import com.example.airsignal_app.dao.IgnoredKeyFile.notiVibrate
-import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_BACK_LOC_PERMISSION
-import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_LOC_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
 import com.example.airsignal_app.dao.StaticDataObject.LANG_KR
 import com.example.airsignal_app.dao.StaticDataObject.LANG_SYS
-import com.example.airsignal_app.dao.StaticDataObject.REQUEST_BACKGROUND_LOCATION
+import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_BIG
+import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_DEFAULT
+import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_SMALL
+import com.example.airsignal_app.dao.StaticDataObject.THEME_DARK
+import com.example.airsignal_app.dao.StaticDataObject.THEME_LIGHT
 import com.example.airsignal_app.databinding.ActivitySettingBinding
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_KAKAO
@@ -66,12 +64,11 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setUserFontScale
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLocation
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserNoti
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserTheme
-import com.example.airsignal_app.view.LocPermCautionDialog
+import com.example.airsignal_app.view.MakeSingleDialog
 import com.example.airsignal_app.view.ShowDialogClass
 import com.example.airsignal_app.view.custom_view.SnackBarUtils
 import com.example.airsignal_app.vmodel.GetAppVersionViewModel
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -136,7 +133,7 @@ class SettingActivity
             if (binding.settingLogOut.text == getString(R.string.setting_logout)) {
                 val builder = Dialog(this)
                 val view = LayoutInflater.from(this)
-                    .inflate(R.layout.dialog_alert_double_btn,null)
+                    .inflate(R.layout.dialog_alert_double_btn, null)
                 builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
                 builder.setContentView(view)
@@ -197,11 +194,11 @@ class SettingActivity
 
             // 현재 저장된 테마에 따라서 라디오버튼 체크
             when (getUserTheme(this)) {
-                "dark" -> {
+                THEME_DARK -> {
                     radioGroup.check(darkTheme.id)
                     changeCheckIcon(darkTheme, lightTheme, systemTheme)
                 }
-                "light" -> {
+                THEME_LIGHT -> {
                     radioGroup.check(lightTheme.id)
                     changeCheckIcon(lightTheme, systemTheme, darkTheme)
                 }
@@ -230,7 +227,7 @@ class SettingActivity
                     lightTheme.id -> {
                         changedThemeRadio(
                             mode = AppCompatDelegate.MODE_NIGHT_NO,
-                            dbData = "light",
+                            dbData = THEME_LIGHT,
                             radioGroup = radioGroup,
                             radioButton = lightTheme,
                             cancel
@@ -241,7 +238,7 @@ class SettingActivity
                     darkTheme.id -> {
                         changedThemeRadio(
                             mode = AppCompatDelegate.MODE_NIGHT_YES,
-                            dbData = "dark",
+                            dbData = THEME_DARK,
                             radioGroup = radioGroup,
                             radioButton = darkTheme,
                             cancel
@@ -331,10 +328,10 @@ class SettingActivity
 
             // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크
             when (getUserFontScale(this)) {
-                "small" -> {
+                TEXT_SCALE_SMALL -> {
                     rg.check(small.id)
                 }
-                "big" -> {
+                TEXT_SCALE_BIG -> {
                     rg.check(big.id)
                 }
                 else -> {
@@ -345,17 +342,17 @@ class SettingActivity
             rg.setOnCheckedChangeListener { radioGroup, i ->
                 when (i) {
                     small.id -> {
-                        setUserFontScale(this, "small")
+                        setUserFontScale(this, TEXT_SCALE_SMALL)
                         radioGroup.check(small.id)
                         this.goMain()
                     }
                     big.id -> {
-                        setUserFontScale(this, "big")
+                        setUserFontScale(this, TEXT_SCALE_BIG)
                         radioGroup.check(big.id)
                         this.goMain()
                     }
                     default.id -> {
-                        setUserFontScale(this, "default")
+                        setUserFontScale(this, TEXT_SCALE_DEFAULT)
                         radioGroup.check(default.id)
                         this.goMain()
                     }
@@ -523,16 +520,20 @@ class SettingActivity
         // 알림 클릭
         binding.settingNotificationText.setOnClickListener {
             val notificationView: View =
-                LayoutInflater.from(this).inflate(R.layout.dialog_notification_setting,
-                    null)
+                LayoutInflater.from(this).inflate(
+                    R.layout.dialog_notification_setting,
+                    null
+                )
 
             val notiVibrateTr: TableRow = notificationView.findViewById(R.id.notiVibrateView)
             val notiSoundTr: TableRow = notificationView.findViewById(R.id.notiSoundView)
             val notiBackTr: TableRow = notificationView.findViewById(R.id.notiBackView)
             val notiSettingTitle: TextView = notificationView.findViewById(R.id.notiSettingTitle)
             val notiBackTitle: TextView = notificationView.findViewById(R.id.notiBackTitle)
-            val notiSettingSwitch: SwitchCompat = notificationView.findViewById(R.id.notiSettingSwitch)
-            val notiVibrateSwitch: SwitchCompat = notificationView.findViewById(R.id.notiVibrateSwitch)
+            val notiSettingSwitch: SwitchCompat =
+                notificationView.findViewById(R.id.notiSettingSwitch)
+            val notiVibrateSwitch: SwitchCompat =
+                notificationView.findViewById(R.id.notiVibrateSwitch)
             val notiBackContent: TextView = notificationView.findViewById(R.id.notiBackContent)
             val notiSoundSwitch: SwitchCompat = notificationView.findViewById(R.id.notiSoundSwitch)
             val notiLine2: View = notificationView.findViewById(R.id.notificationLine2)
@@ -559,14 +560,14 @@ class SettingActivity
                         isBackAllow = RequestPermissionsUtil(this).isBackgroundRequestLocation()
 
                         if (isBackAllow) {
-                            notiBackTitle.text = "실시간 위치 권한 설정"
+                            notiBackTitle.text = getString(R.string.perm_back_setting)
                             setNightAlertsSpan(notiBackTitle)
-                            notiBackContent.text = "허용됨"
+                            notiBackContent.text = getString(R.string.allowed)
                             setNightAlertsSpan(notiBackContent)
                         } else {
-                            notiBackTitle.text = "실시간 위치 권한 설정\n권한 > 위치 > 항상 허용을 체크해주세요"
+                            notiBackTitle.text = getString(R.string.perm_self_msg)
                             setNightAlertsSpan(notiBackTitle)
-                            notiBackContent.text = "허용하기"
+                            notiBackContent.text = getString(R.string.do_allow)
                             setNightAlertsSpan(notiBackContent)
                         }
 
@@ -578,6 +579,7 @@ class SettingActivity
                                             android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
                                         )
                                 ) {
+                                    onResume()
                                     when (GetAppInfo.getInitLocPermission(this)) {
                                         "" -> {
                                             SetAppInfo.setInitLocPermission(this, "Second")
@@ -589,21 +591,20 @@ class SettingActivity
                                         }
                                     }
                                 } else {
-                                    val builder = AlertDialog.Builder(this)
-                                    val alertDialog = builder.create()
-                                    alertDialog.apply {
-                                        setButton(
-                                            AlertDialog.BUTTON_NEGATIVE,"확인"
-                                        ) { _, _ ->
-                                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                            val uri: Uri = Uri.fromParts("package", packageName, null)
+                                    MakeSingleDialog(this)
+                                        .makeDialog(
+                                            getString(R.string.perm_self_msg),
+                                            getColor(R.color.main_blue_color),
+                                            getString(R.string.ok)
+                                        ).setOnClickListener {
+                                            val intent =
+                                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                            val uri: Uri =
+                                                Uri.fromParts("package", packageName, null)
                                             intent.data = uri
                                             startActivity(intent)
+                                            MakeSingleDialog(this).dismiss()
                                         }
-                                        setTitle("위치 권한 거부됨")
-                                        setMessage("권한 > 위치 > 항상 허용을 체크해주세요")
-                                        show()
-                                    }
                                 }
                             }
                         }
@@ -624,17 +625,17 @@ class SettingActivity
             applyBack(notiSettingSwitch.isChecked)
 
             notiSettingSwitch.setOnCheckedChangeListener { _, isChecked ->
-                setUserNoti(this, notiEnable,isChecked)
+                setUserNoti(this, notiEnable, isChecked)
                 showSnackBar(notificationView, isChecked)
                 setVisibility(isChecked)
                 applyBack(isChecked)
             }
             notiVibrateSwitch.setOnCheckedChangeListener { _, isChecked ->
-                setUserNoti(this, notiVibrate,isChecked)
+                setUserNoti(this, notiVibrate, isChecked)
                 showSnackBar(notificationView, isChecked)
             }
             notiSoundSwitch.setOnCheckedChangeListener { _, isChecked ->
-                setUserNoti(this, notiSound,isChecked)
+                setUserNoti(this, notiSound, isChecked)
                 showSnackBar(notificationView, isChecked)
             }
 
@@ -682,18 +683,20 @@ class SettingActivity
                 it.length, span.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
-            if (textView.text.contains("항상 허용")) {
+            if (textView.text.contains(getString(R.string.always_allowed))) {
                 try {
-                    span.setSpan(ForegroundColorSpan(getColor(R.color.main_blue_color)),
+                    span.setSpan(
+                        ForegroundColorSpan(getColor(R.color.main_blue_color)),
                         findCharacterIndex(textView.text as String, '\n'),
                         findCharacterIndex(textView.text as String, '을'),
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                } catch(e: IndexOutOfBoundsException) {
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                } catch (e: IndexOutOfBoundsException) {
                     e.printStackTrace()
                 }
             }
 
-            if (textView.text == "허용됨") {
+            if (textView.text == getString(R.string.allowed)) {
                 textView.setTextColor(getColor(R.color.main_blue_color))
             }
         }
@@ -746,7 +749,8 @@ class SettingActivity
         val appInfoPB: ProgressBar = viewAppInfo.findViewById(R.id.appInfoPB)
         val appInfoLicense: TextView = viewAppInfo.findViewById(R.id.appInfoLicense)
         val appInfoTermsService: TextView = viewAppInfo.findViewById(R.id.appInfoTermsOfService)
-        val appInfoCustomerService: TextView = viewAppInfo.findViewById(R.id.appInfoCustomerService)
+        val appInfoCustomerService: TextView =
+            viewAppInfo.findViewById(R.id.appInfoCustomerService)
 
         appVersionViewModel.fetchData().observe(this) { result ->
             result?.let { ver ->
@@ -949,7 +953,7 @@ class SettingActivity
     private fun saveLanguageChange() {
         val builder = Dialog(this)
         val view = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_alert_single_btn,null)
+            .inflate(R.layout.dialog_alert_single_btn, null)
         builder.apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -977,8 +981,13 @@ class SettingActivity
     }
 
     /** 공지사항 아이템 추가하기 **/
-    private fun addNoticeItem(created: String, modified: String, title: String, content: String) {
-        val item = AdapterModel.NoticeItem(created,modified,title,content)
+    private fun addNoticeItem(
+        created: String,
+        modified: String,
+        title: String,
+        content: String
+    ) {
+        val item = AdapterModel.NoticeItem(created, modified, title, content)
         noticeItem.add(item)
     }
 }

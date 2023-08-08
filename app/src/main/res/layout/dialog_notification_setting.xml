@@ -41,7 +41,7 @@
             style="@style/settingMultiTextView"
             android:layout_weight="0.95"
             android:textSize="16sp"
-            android:text="알림 설정\n날씨 알림 및 이벤트 정보 제공"
+            android:text="@string/noti_setting_enable"
             android:lineHeight="20.03dp"
             android:background="?selectableItemBackground" />
 
@@ -119,7 +119,7 @@
             style="@style/settingMultiTextView"
             android:layout_weight="0.95"
             android:textSize="16sp"
-            android:text="진동 설정"
+            android:text="@string/vibrate_setting"
             android:lineHeight="20.03sp"
             android:background="?selectableItemBackground" />
 
@@ -150,7 +150,7 @@
         android:layout_height="56dp"
         app:topicTitle="notification_sound"
         app:enableSubTitle="false"
-        app:notiTitle="소리 설정"
+        app:notiTitle="@string/noti_sound_setting"
         android:animateLayoutChanges="true"
         android:visibility="gone"
         android:paddingStart="24dp"
@@ -161,7 +161,7 @@
             style="@style/settingMultiTextView"
             android:layout_weight="0.95"
             android:textSize="16sp"
-            android:text="소리 설정"
+            android:text="@string/noti_sound_setting"
             android:lineHeight="20.03sp"
             android:background="?selectableItemBackground" />
 
@@ -197,6 +197,6 @@
         android:gravity="start"
         android:lineHeight="15dp"
         android:layout_below="@+id/notificationLine3"
-        android:text="기본 알림은 하루 총 2회 순차적으로 발송됩니다.\n(오전은 07시 이후,  오후는 18시 이후)\n\n실시간 위치 권한이 허용되지 않은 경우\n마지막으로 앱에 접속한 위치로 알림이 발송됩니다."/>
+        android:text="@string/notification_explain_text"/>
 
 </RelativeLayout>

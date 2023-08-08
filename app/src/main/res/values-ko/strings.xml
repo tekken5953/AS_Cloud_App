@@ -147,4 +147,17 @@
     <string name="bad">나쁨</string>
     <string name="worst">매우나쁨</string>
     <string name="error">에러</string>
+    <string name="perm_self_msg"><![CDATA[위치 권한 거부됨\n권한 -> 위치 -> 허용을 체크해주세요]]></string>
+    <string name="noti_always_can"><![CDATA[알림은 앱 설정 -> 알림 항목에서 언제든 허용하실 수 있습니다.]]></string>
+    <string name="noti_setting_enable">알림 설정\n날씨 알림 및 이벤트 정보 제공</string>
+    <string name="vibrate_setting">진동 설정</string>
+    <string name="noti_sound_setting">소리 설정</string>
+    <string name="notification_explain_text">기본 알림은 하루 총 2회 순차적으로 발송됩니다.\n(오전은 07시 이후, 오후는 18시 이후)\n\n실시간 위치 권한이 허용되지 않은 경우\n마지막으로 앱에 접속한 위치로 알림이 발송됩니다.</string>
+    <string name="allowed">허용됨</string>
+    <string name="perm_back_setting">실시간 위치 권한 설정</string>
+    <string name="do_allow">허용하기</string>
+    <string name="always_allowed">항상 허용</string>
+    <string name="error_server_down">현재 서버가 점검중입니다.</string>
+    <string name="error_network_connect">인터넷 연결 상태를 확인 후 재실행 해주세요</string>
+    <string name="download">다운로드</string>
 </resources>

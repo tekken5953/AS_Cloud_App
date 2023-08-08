@@ -9,6 +9,8 @@ import android.view.*
 import android.widget.*
 import com.bumptech.glide.Glide
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_BIG
+import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_SMALL
 import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
@@ -87,10 +89,10 @@ class SideMenuBuilder(private val context: Context) {
 
     private fun setFontScale(): SideMenuBuilder {
         when (getUserFontScale(context)) {
-            "small" -> {
+            TEXT_SCALE_SMALL -> {
                 SetSystemInfo.setTextSizeSmall(builder.context)
             }
-            "big" -> {
+            TEXT_SCALE_BIG -> {
                 SetSystemInfo.setTextSizeLarge(builder.context)
             }
             else -> {

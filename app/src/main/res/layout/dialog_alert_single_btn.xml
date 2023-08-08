@@ -9,7 +9,7 @@
         android:id="@+id/alertSingleTitle"
         style="@style/basicMediumTextView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="72dp"
+        android:layout_marginTop="62dp"
         android:textSize="16sp"
         android:lineHeight="24dp"/>
 

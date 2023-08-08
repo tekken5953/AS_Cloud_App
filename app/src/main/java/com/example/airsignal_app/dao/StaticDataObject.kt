@@ -38,4 +38,9 @@ object StaticDataObject {
     const val LANG_KR = "korea"
     const val LANG_EN = "english"
     const val LANG_SYS = "system"
+    const val TEXT_SCALE_BIG = "big"
+    const val TEXT_SCALE_SMALL = "small"
+    const val TEXT_SCALE_DEFAULT = "default"
+    const val THEME_LIGHT = "light"
+    const val THEME_DARK = "dark"
 }

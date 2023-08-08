@@ -148,4 +148,17 @@
     <string name="bad">Bad</string>
     <string name="worst">Very Bad</string>
     <string name="error">Error</string>
+    <string name="perm_self_msg"><![CDATA[Permission is Denied\nPermission -> Location Check the Always]]></string>
+    <string name="noti_always_can"><![CDATA[Notification always can agree in App Settings -> Notification]]></string>
+    <string name="noti_setting_enable">Notification settings\nProvides weather notifications and event information</string>
+    <string name="vibrate_setting">Vibration Settings</string>
+    <string name="noti_sound_setting">Sound Settings</string>
+    <string name="notification_explain_text">Default notifications are sent twice a day in total.\n(After 07:00KST in the morning, after 18:00KST in the afternoon)\n\nIf Live Location permissions are not allowed\nA notification will be sent to the location where you last accessed the app.</string>
+    <string name="allowed">Allowed</string>
+    <string name="perm_back_setting">Set real-time location permissions</string>
+    <string name="do_allow">Allow</string>
+    <string name="always_allowed">Always allow</string>
+    <string name="error_server_down">The server is currently being checked</string>
+    <string name="error_network_connect">Please check the internet and re-run it</string>
+    <string name="download">Download</string>
 </resources>

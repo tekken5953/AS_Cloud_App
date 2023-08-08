@@ -22,6 +22,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.AddressListAdapter
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
+import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
+import com.example.airsignal_app.dao.StaticDataObject.LANG_KR
+import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_BIG
+import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_SMALL
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.util.KeyboardController
@@ -30,12 +34,17 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.GetAppInfo.getCurrentLocation
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
+import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.math.absoluteValue
 
 /**
  * @author : Lee Jae Young
@@ -67,10 +76,10 @@ class SearchDialog(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         when (getUserFontScale(activity)) {
-            "small" -> {
+            TEXT_SCALE_SMALL -> {
                 SetSystemInfo.setTextSizeSmall(activity)
             }
-            "big" -> {
+            TEXT_SCALE_BIG -> {
                 SetSystemInfo.setTextSizeLarge(activity)
             }
             else -> {
@@ -94,6 +103,19 @@ class SearchDialog(
                     currentAdapter.updateCheckBoxVisible(true)
                 } else {
                     currentAdapter.updateCheckBoxVisible(false)
+                }
+            }
+
+            currentAddress.setOnClickListener {
+                dismissNow()
+                CoroutineScope(Dispatchers.IO).launch {
+                    dbUpdate(db.findById(CURRENT_GPS_ID).addr)
+
+                    withContext(Dispatchers.Main) {
+                        dismissNow()
+                        delay(100)
+                        activity.recreate()
+                    }
                 }
             }
 
@@ -227,16 +249,34 @@ class SearchDialog(
                 val apply = viewSearched.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
                 val title = viewSearched.findViewById<TextView>(R.id.alertDoubleTitle)
 
-                val span = SpannableStringBuilder("${searchItem[position]}을(를)\n추가하시겠습니까?")
-                span.setSpan(
-                    ForegroundColorSpan(
-                        ResourcesCompat.getColor(
-                            activity.resources,
-                            R.color.main_blue_color, null
-                        )
-                    ), 0,
-                    searchItem[position].length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+                val span =    if (resources.configuration.locales[0] == Locale.KOREA) {
+                    SpannableStringBuilder("${searchItem[position]}을(를)\n추가하시겠습니까?")
+                } else {
+                    SpannableStringBuilder("Add ${searchItem[position]}?")
+                }
+
+                if (getUserLocation(activity) == LANG_KR) {
+                    span.setSpan(
+                        ForegroundColorSpan(
+                            ResourcesCompat.getColor(
+                                activity.resources,
+                                R.color.main_blue_color, null
+                            )
+                        ), 0,
+                        searchItem[position].length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                } else if (getUserLocation(activity) == LANG_EN) {
+                    span.setSpan(
+                        ForegroundColorSpan(
+                            ResourcesCompat.getColor(
+                                activity.resources,
+                                R.color.main_blue_color, null
+                            )
+                        ), 4,
+                        4 + searchItem[position].length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                }
+
                 title.text = span
                 apply.text = activity.getString(R.string.add)
                 apply.backgroundTintList = ColorStateList.valueOf(

@@ -27,4 +27,10 @@ class VibrateUtil(private val context: Context) {
             )
         )
     }
+
+    fun noti(array: LongArray) {
+        vib.vibrate(
+            VibrationEffect.createWaveform(array, -1)
+        )
+    }
 }

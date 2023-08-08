@@ -19,8 +19,10 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
 
 /**
  * @author : Lee Jae Young
@@ -109,11 +111,32 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
                 val apply = view.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
                 val title = view.findViewById<TextView>(R.id.alertDoubleTitle)
 
-                val span = SpannableStringBuilder("${address.text}을(를)\n삭제하시겠습니까?")
-                span.setSpan(ForegroundColorSpan(ResourcesCompat.getColor(context.resources,
-                    R.color.theme_alert_double_apply_color, null)),0,
-                    address.text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                title.text = span
+                if (getUserLocation(context) == LANG_EN) {
+                    val span = SpannableStringBuilder("Delete ${address.text}?")
+                    span.setSpan(
+                        ForegroundColorSpan(
+                            ResourcesCompat.getColor(
+                                context.resources,
+                                R.color.theme_alert_double_apply_color, null
+                            )
+                        ), 7,
+                        7 + address.text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    title.text = span
+                } else {
+                    val span = SpannableStringBuilder("${address.text}을(를)\n삭제하시겠습니까?")
+                    span.setSpan(
+                        ForegroundColorSpan(
+                            ResourcesCompat.getColor(
+                                context.resources,
+                                R.color.theme_alert_double_apply_color, null
+                            )
+                        ), 0,
+                        address.text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    title.text = span
+                }
+
                 apply.text = context.getString(R.string.delete)
                 cancel.text = context.getString(R.string.cancel)
                 apply.setOnClickListener {
