@@ -161,4 +161,9 @@
     <string name="error_server_down">The server is currently being checked</string>
     <string name="error_network_connect">Please check the internet and re-run it</string>
     <string name="download">Download</string>
+    <string name="customer_call_title">Call</string>
+    <string name="email">Email</string>
+    <string name="home_page">Website</string>
+    <string name="open_source_lisence">The data shown on the screen above is provided and used by Air Korea, the Korea Meteorological Administration, and the Korea Astronomy and Space Science Institute.</string>
+    <string name="phone_airsignal">+8270–4912–9321</string>
 </resources>

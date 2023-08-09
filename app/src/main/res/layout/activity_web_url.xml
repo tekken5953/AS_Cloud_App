@@ -8,7 +8,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.activity.TermsOfServiceActivity">
+        tools:context=".view.activity.WebURLActivity">
 
         <LinearLayout
             android:id="@+id/termsServiceLinear"
@@ -31,7 +31,6 @@
                 android:id="@+id/termsServiceTitle"
                 android:layout_width="match_parent"
                 style="@style/basicMediumTextView"
-                android:text="@string/term_of_services"
                 android:textSize="20sp"
                 android:textColor="@color/theme_text_color"
                 android:gravity="start"

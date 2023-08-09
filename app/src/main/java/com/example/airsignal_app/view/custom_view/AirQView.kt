@@ -10,7 +10,6 @@ import android.widget.RelativeLayout
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import com.example.airsignal_app.databinding.CustomViewMainAirBinding
-import com.example.airsignal_app.util.`object`.GetSystemInfo
 
 /**
  * @author : Lee Jae Young
@@ -40,59 +39,35 @@ class AirQView(context: Context, attrs: AttributeSet?)
 
     fun modifyDataSort(context: Context, krName: String): String {
         return when(krName) {
-            "초미세먼지" -> context.getString(R.string.airq_question_pm2p5)
-            "미세먼지" -> context.getString(R.string.airq_question_pm10)
-            "오존" -> context.getString(R.string.airq_question_o3)
-            "이산화질소" -> context.getString(R.string.airq_question_no2)
-            "아황산가스" -> context.getString(R.string.airq_question_so2)
-            "일산화탄소" -> context.getString(R.string.airq_question_co)
+            context.getString(R.string.pm2_5) -> context.getString(R.string.airq_question_pm2p5)
+            context.getString(R.string.pm10) -> context.getString(R.string.airq_question_pm10)
+            context.getString(R.string.o3) -> context.getString(R.string.airq_question_o3)
+            context.getString(R.string.no2) -> context.getString(R.string.airq_question_no2)
+            context.getString(R.string.so2) -> context.getString(R.string.airq_question_so2)
+            context.getString(R.string.co) -> context.getString(R.string.airq_question_co)
             else -> ""
         }
     }
 
     fun modifyDataGraph(context: Context, krName: String): Drawable? {
         return when(krName) {
-            "초미세먼지" -> {
-                if (GetSystemInfo.isThemeNight(context)) {
-                    ResourcesCompat.getDrawable(context.resources,R.drawable.graph_pm25_b,null)
-                } else {
-                    ResourcesCompat.getDrawable(context.resources,R.drawable.graph_pm25,null)
-                }
+            context.getString(R.string.pm2_5) -> {
+                ResourcesCompat.getDrawable(context.resources,R.drawable.graph_pm25,null)
             }
-            "미세먼지" -> {
-                if (GetSystemInfo.isThemeNight(context)) {
-                    ResourcesCompat.getDrawable(context.resources,R.drawable.graph_pm10_b,null)
-                } else {
-                    ResourcesCompat.getDrawable(context.resources,R.drawable.graph_pm10,null)
-                }
+            context.getString(R.string.pm10) -> {
+                ResourcesCompat.getDrawable(context.resources,R.drawable.graph_pm10,null)
             }
-            "오존" -> {
-                if (GetSystemInfo.isThemeNight(context)) {
-                    ResourcesCompat.getDrawable(context.resources,R.drawable.graph_03_b,null)
-                } else {
-                    ResourcesCompat.getDrawable(context.resources,R.drawable.graph_03,null)
-                }
+            context.getString(R.string.o3) -> {
+                ResourcesCompat.getDrawable(context.resources,R.drawable.graph_03,null)
             }
-            "이산화질소" -> {
-                if (GetSystemInfo.isThemeNight(context)) {
-                    ResourcesCompat.getDrawable(context.resources,R.drawable.graph_no2_b,null)
-                } else {
-                    ResourcesCompat.getDrawable(context.resources,R.drawable.graph_no2,null)
-                }
+            context.getString(R.string.no2) -> {
+                ResourcesCompat.getDrawable(context.resources,R.drawable.graph_no2,null)
             }
-            "아황산가스" ->  {
-                if (GetSystemInfo.isThemeNight(context)) {
-                    ResourcesCompat.getDrawable(context.resources,R.drawable.graph_so2_b,null)
-                } else {
-                    ResourcesCompat.getDrawable(context.resources,R.drawable.graph_so2,null)
-                }
+            context.getString(R.string.so2) ->  {
+                ResourcesCompat.getDrawable(context.resources,R.drawable.graph_so2,null)
             }
-            "일산화탄소" -> {
-                if (GetSystemInfo.isThemeNight(context)) {
-                    ResourcesCompat.getDrawable(context.resources,R.drawable.graph_co_b,null)
-                } else {
-                    ResourcesCompat.getDrawable(context.resources,R.drawable.graph_co,null)
-                }
+            context.getString(R.string.co)-> {
+                ResourcesCompat.getDrawable(context.resources,R.drawable.graph_co,null)
             }
             else -> null
         }

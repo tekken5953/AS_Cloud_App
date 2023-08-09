@@ -74,6 +74,7 @@
         android:layout_height="65dp"
         android:textColor="@color/theme_text_color"
         android:maxEms="18"
+        android:gravity="start|center_vertical"
         android:ellipsize="start"
         android:layout_below="@+id/changeAddressLine1"
         android:layout_marginStart="10dp"

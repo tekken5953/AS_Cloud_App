@@ -160,4 +160,9 @@
     <string name="error_server_down">현재 서버가 점검중입니다.</string>
     <string name="error_network_connect">인터넷 연결 상태를 확인 후 재실행 해주세요</string>
     <string name="download">다운로드</string>
+    <string name="customer_call_title">에어시그널 고객센터</string>
+    <string name="email">이메일</string>
+    <string name="home_page">홈페이지</string>
+    <string name="open_source_lisence">위 화면에서 보여지는 데이터는 에어코리아, 기상청, 한국천문연구원에서 제공받아 사용됩니다.</string>
+    <string name="phone_airsignal">070-4912-9321</string>
 </resources>

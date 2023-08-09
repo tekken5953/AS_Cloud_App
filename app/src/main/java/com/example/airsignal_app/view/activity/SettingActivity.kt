@@ -66,6 +66,7 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setUserNoti
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserTheme
 import com.example.airsignal_app.view.MakeSingleDialog
 import com.example.airsignal_app.view.ShowDialogClass
+import com.example.airsignal_app.view.custom_view.CustomerServiceView
 import com.example.airsignal_app.view.custom_view.SnackBarUtils
 import com.example.airsignal_app.vmodel.GetAppVersionViewModel
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
@@ -751,6 +752,8 @@ class SettingActivity
         val appInfoTermsService: TextView = viewAppInfo.findViewById(R.id.appInfoTermsOfService)
         val appInfoCustomerService: TextView =
             viewAppInfo.findViewById(R.id.appInfoCustomerService)
+        val appInfoDataUsage: TextView = viewAppInfo.findViewById(R.id.appInfoDataUsage)
+
 
         appVersionViewModel.fetchData().observe(this) { result ->
             result?.let { ver ->
@@ -796,8 +799,32 @@ class SettingActivity
         }
 
         appInfoTermsService.setOnClickListener {
-            val intent = Intent(this@SettingActivity, TermsOfServiceActivity::class.java)
+            val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
+            intent.putExtra("sort","termsOfService")
             startActivity(intent)
+        }
+
+        appInfoDataUsage.setOnClickListener {
+            val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
+            intent.putExtra("sort","dataUsage")
+            startActivity(intent)
+        }
+
+        appInfoCustomerService.setOnClickListener {
+            val customerView: View = LayoutInflater.from(this)
+                .inflate(R.layout.dialog_customer_service,null)
+
+            val customerCall: CustomerServiceView = customerView.findViewById(R.id.customerCall)
+            val customerHomePage: CustomerServiceView = customerView.findViewById(R.id.customerHomePage)
+            val customerEmail: CustomerServiceView = customerView.findViewById(R.id.customerEmail)
+
+            customerCall.fetchData(R.drawable.ico_cs_phone)
+            customerEmail.fetchData(R.drawable.ico_cs_mail)
+            customerHomePage.fetchData(R.drawable.ico_cs_web)
+
+            ShowDialogClass(this@SettingActivity)
+                .setBackPressed(customerView.findViewById(R.id.customerBack))
+                .show(customerView, true)
         }
 
         appInfoPB.visibility = View.GONE

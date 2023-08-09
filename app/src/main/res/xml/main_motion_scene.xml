@@ -17,7 +17,8 @@
 
         <OnClick
             app:clickAction="transitionToEnd"
-            app:targetId="@id/mainMotionSlideGuide" />
+            app:targetId="@id/mainMotionSlideGuide"/>
+
 
         <KeyFrameSet>
             <KeyAttribute

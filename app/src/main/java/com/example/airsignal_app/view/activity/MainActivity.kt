@@ -11,7 +11,6 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
-import android.view.ViewGroup
 import android.view.animation.*
 import android.widget.*
 import android.widget.LinearLayout.LayoutParams
@@ -41,6 +40,8 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.StaticDataObject.CO_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
 import com.example.airsignal_app.dao.StaticDataObject.IN_COMPLETE_ADDRESS
+import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
+import com.example.airsignal_app.dao.StaticDataObject.LANG_KR
 import com.example.airsignal_app.dao.StaticDataObject.NO2_INDEX
 import com.example.airsignal_app.dao.StaticDataObject.NOT_SHOWING_LOADING_FLOAT
 import com.example.airsignal_app.dao.StaticDataObject.O3_INDEX
@@ -81,6 +82,7 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getEntireSun
 import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
 import com.example.airsignal_app.util.`object`.GetAppInfo.getTopicNotification
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.example.airsignal_app.util.`object`.GetSystemInfo.isThemeNight
 import com.example.airsignal_app.util.`object`.SetAppInfo.removeSingleKey
@@ -138,7 +140,7 @@ class MainActivity
     private var currentSun = 0
     private var isSunAnimated = false
     private var isProgressed = false
-    private val sunPb by lazy { SunProgress(binding.seekArc)}
+    private val sunPb by lazy { SunProgress(binding.seekArc) }
     private val rotateAnim by lazy {
         RotateAnimation(
             0f, 360f,
@@ -185,7 +187,6 @@ class MainActivity
         binding.dataVM = getDataViewModel
 
         initializing()
-
 
         sunPb.disableTouch()
 
@@ -564,11 +565,7 @@ class MainActivity
         })
 
         binding.nestedAirHelp.setImageDrawable(
-            if (isThemeNight(this)) {
-                ResourcesCompat.getDrawable(resources, R.drawable.ico_question_b, null)
-            } else {
-                ResourcesCompat.getDrawable(resources, R.drawable.ico_question, null)
-            }
+            ResourcesCompat.getDrawable(resources, R.drawable.ico_question, null)
         )
 
         binding.nestedAirHelp.setOnClickListener {
@@ -577,13 +574,17 @@ class MainActivity
                 binding.nestedAirHelpPopup.apply {
                     bringToFront()
                     airQList.forEach {
-                        if (it.isSelect) {
-                            fetchData(
-                                modifyDataSort(this@MainActivity, it.nameKR),
-                                modifyDataGraph(this@MainActivity, it.nameKR)!!,
-                                it.name, it.nameKR
-                            )
-                            return@forEach
+                        try {
+                            if (it.isSelect) {
+                                fetchData(
+                                    modifyDataSort(this@MainActivity, it.nameKR),
+                                    modifyDataGraph(this@MainActivity, it.nameKR)!!,
+                                    it.name, it.nameKR
+                                )
+                                return@forEach
+                            }
+                        } catch (e: NullPointerException) {
+                            e.printStackTrace()
                         }
                     }
                     startAnimation(fadeIn)
@@ -657,6 +658,7 @@ class MainActivity
                             val dateNow: LocalDateTime = LocalDateTime.now()
                             val current = result.current
                             val thunder = result.thunder!!
+
                             currentSun = GetAppInfo.getCurrentSun(sun.sunrise!!, sun.sunset!!)
 
                             airQList.clear()
@@ -768,7 +770,7 @@ class MainActivity
                             )
 
                             applyAirQView(
-                                 "PM2.5", getString(R.string.pm2_5),
+                                "PM2.5", getString(R.string.pm2_5),
                                 air.pm25Value.toInt().toString(), "㎍/m3"
                             )
 
@@ -791,7 +793,8 @@ class MainActivity
 
                             val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
                             val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
-                            val sbRiseTom = StringBuffer().append(sunTomorrow!!.sunrise).insert(2, ":")
+                            val sbRiseTom =
+                                StringBuffer().append(sunTomorrow!!.sunrise).insert(2, ":")
                             val sbSetTom = StringBuffer().append(sunTomorrow.sunset).insert(2, ":")
                             binding.mainSunRiseTime.text = sbRise
                             binding.mainSunSetTime.text = sbSet
@@ -837,6 +840,12 @@ class MainActivity
                             reportViewPagerAdapter.notifyDataSetChanged()
 
                             if (reportViewPagerItem.size == 0) {
+                                binding.nestedReportFrame.visibility = GONE
+                            } else {
+                                binding.nestedReportFrame.visibility = VISIBLE
+                            }
+
+                            if (getUserLocation(this@MainActivity) == LANG_EN) {
                                 binding.nestedReportFrame.visibility = GONE
                             } else {
                                 binding.nestedReportFrame.visibility = VISIBLE
@@ -1002,7 +1011,7 @@ class MainActivity
         value: String,
         unit: String
     ) {
-        val grade = convertValueToGrade(name,value.toDouble())
+        val grade = convertValueToGrade(name, value.toDouble())
         binding.nestedAirCpvCard.setCardBackgroundColor(getDataColor(this, grade))
         binding.nestedAirCpvText.text = getDataText(this, grade)
         binding.nestedAirValue.text = value
@@ -1231,7 +1240,8 @@ class MainActivity
             ) {
                 binding.mainAddAddress.setImageDrawable(null)
             } else {
-                binding.mainAddAddress.imageTintList = ColorStateList.valueOf(getColor(R.color.theme_text_color))
+                binding.mainAddAddress.imageTintList =
+                    ColorStateList.valueOf(getColor(R.color.theme_text_color))
             }
             textViewArray.forEach {
                 it.text = ""
@@ -1316,13 +1326,13 @@ class MainActivity
         if (!airQList.contains(
                 AdapterModel.AirQTitleItem(
                     false, position, nameKR,
-                    name, unit, value, convertValueToGrade(name,value.toDouble())
+                    name, unit, value, convertValueToGrade(name, value.toDouble())
                 )
             )
         ) {
             addAirQItem(
                 position, nameKR,
-                name, unit, value, convertValueToGrade(name,value.toDouble())
+                name, unit, value, convertValueToGrade(name, value.toDouble())
             )
         }
     }
@@ -1474,7 +1484,7 @@ class MainActivity
     }
 
     private fun isKorea(lat: Double, lng: Double): Boolean {
-        RDBLogcat.writeGpsHistory(this, false, "서비스 지역 밖","${lat},${lng}")
+        RDBLogcat.writeGpsHistory(this, false, "서비스 지역 밖", "${lat},${lng}")
         return lng in 125.0..132.0 && lat in 33.0..39.0
     }
 
@@ -1494,11 +1504,24 @@ class MainActivity
                                             val addr = GetLocation(this@MainActivity)
                                                 .getAddress(loc.latitude, loc.longitude)
                                             addr?.let {
+                                                CoroutineScope(Dispatchers.IO).launch {
+                                                    setUserLastAddr(this@MainActivity, it)
+                                                    setCurrentLocation(this@MainActivity, it)
+                                                    updateCurrentAddress(
+                                                        loc.latitude, loc.longitude,
+                                                        it
+                                                    )
+                                                }
+
                                                 it.replaceFirst(" ", "")
                                                 it.replace(getString(R.string.korea), "")
                                                 it.replace("null", "")
 
-                                                val regexAddr = AddressFromRegex(addr).getAddress()
+                                                val regexAddr =
+                                                    if (getUserLocation(this@MainActivity) == LANG_KR)
+                                                        AddressFromRegex(it).getAddress()
+                                                    else it.replace("South Korea", "")
+
                                                 val formedAddr =
                                                     if (regexAddr != IN_COMPLETE_ADDRESS) {
                                                         regexAddr
@@ -1506,12 +1529,7 @@ class MainActivity
                                                         it
                                                     }
 
-                                                setCurrentLocation(this@MainActivity, it)
 
-                                                updateCurrentAddress(
-                                                    loc.latitude, loc.longitude,
-                                                    it
-                                                )
 
                                                 binding.mainGpsTitleTv.text = guardWordWrap(
                                                     formedAddr

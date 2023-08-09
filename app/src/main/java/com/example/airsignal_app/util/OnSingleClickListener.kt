@@ -17,7 +17,7 @@ abstract class OnSingleClickListener : View.OnClickListener {
     }
 
     companion object {
-        //중복 클릭 방지 시간 설정 ( 해당 시간 이후에 다시 클릭 가능 )
+        // 중복 클릭 방지 시간 설정 ( 해당 시간 이후에 다시 클릭 가능 )
         private const val MIN_CLICK_INTERVAL: Long = 1000
     }
 }

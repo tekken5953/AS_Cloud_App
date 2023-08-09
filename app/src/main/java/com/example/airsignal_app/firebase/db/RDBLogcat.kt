@@ -7,8 +7,7 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.FirebaseDatabase
 
 /**
  * @author  Lee Jae Young
@@ -58,7 +57,7 @@ object RDBLogcat {
     const val LOGIN_FAILED = "로그인 시도 실패"
 
     /** 유저 로그 레퍼런스 **/
-    private val db = Firebase.database
+    private val db = FirebaseDatabase.getInstance()
     private val ref = db.getReference("User")
 
     /** 날짜 변환 **/

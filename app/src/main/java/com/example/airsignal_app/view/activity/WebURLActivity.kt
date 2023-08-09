@@ -8,10 +8,10 @@ import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.airsignal_app.R
-import com.example.airsignal_app.databinding.ActivityTermsOfServiceBinding
+import com.example.airsignal_app.databinding.ActivityWebUrlBinding
 
-class TermsOfServiceActivity : BaseActivity<ActivityTermsOfServiceBinding>() {
-    override val resID: Int get() = R.layout.activity_terms_of_service
+class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
+    override val resID: Int get() = R.layout.activity_web_url
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,8 +49,22 @@ class TermsOfServiceActivity : BaseActivity<ActivityTermsOfServiceBinding>() {
             webViewClient = WebViewClient()
         }
 
-        val pdfUrl = "https://docs.google.com/document/d/e/2PACX-1vTmaf0Wg9zhNZfe-_S-4eWDj1XLwbYlUcoONys3MzzTEAx-_QLlJOuTGo7uQjl5FbyGlWPL6d9tp8JV/pub"
-//        val url = "http://docs.google.com/gview?embedded=true&url=$pdfUrl"
+        val pdfUrl: String
+        when(intent.extras!!.getString("sort")) {
+            "termsOfService" -> {
+                binding.termsServiceTitle.text = getString(R.string.term_of_services)
+                pdfUrl = "https://docs.google.com/document/d/e/2PACX-1vTmaf0Wg9zhNZfe-_S-4eWDj1XLwbYlUcoONys3MzzTEAx-_QLlJOuTGo7uQjl5FbyGlWPL6d9tp8JV/pub"
+            }
+            "dataUsage" -> {
+                binding.termsServiceTitle.text = getString(R.string.data_usages)
+                pdfUrl = "file:///android_asset/airsignal_user_data_usage.html"
+            }
+            else -> {
+                binding.termsServiceTitle.text = ""
+                pdfUrl = "about:blank"
+            }
+
+        }
         binding.termsServiceWebView.loadUrl(pdfUrl)
     }
 }

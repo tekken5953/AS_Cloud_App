@@ -1,5 +1,7 @@
 package com.example.airsignal_app.util
 
+import com.example.airsignal_app.util.`object`.GetAppInfo
+
 
 /**
  * @author : Lee Jae Young
@@ -13,7 +15,6 @@ class AddressFromRegex(private val address: String) {
         val s3: StringBuilder = StringBuilder()
         val s4: StringBuilder = StringBuilder()
         val sr: StringBuilder = StringBuilder()
-        address.replace("대한민국","").replace("South Korea","")
 
         generatePatternFirst().forEach { first ->
             if (!first.findAll(address).none()) {
@@ -54,14 +55,14 @@ class AddressFromRegex(private val address: String) {
         return if (isRoadAddress()) {
             val addr = "${s1}${s2}${sr}"
             if (countSpacesInStringBuilder(addr) < 2) {
-                address
+                address.replace("대한민국","").replace("South Korea","")
             } else {
                 addr
             }
         } else {
             val addr = "${s1}${s2}${s3}${s4}"
             if (countSpacesInStringBuilder(addr) < 2) {
-                address
+                address.replace("대한민국","").replace("South Korea","")
             } else {
                 addr
             }
@@ -83,7 +84,7 @@ class AddressFromRegex(private val address: String) {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            address
+            address.replace("대한민국","").replace("South Korea","")
         }
     }
 

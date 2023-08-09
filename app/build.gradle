@@ -3,7 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
     id 'kotlin-kapt'
-    id("com.google.firebase.crashlytics")
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -80,10 +80,10 @@ dependencies {
 
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:32.2.0')
-    implementation 'com.google.firebase:firebase-analytics-ktx' // Analytics
+    implementation 'com.google.firebase:firebase-analytics' // Analytics
     implementation 'com.google.firebase:firebase-messaging' // FCM
     implementation 'com.google.firebase:firebase-messaging-directboot:23.1.2' // FCM
-    implementation 'com.google.firebase:firebase-database-ktx' // RDB
+    implementation 'com.google.firebase:firebase-database' // RDB
 
     //server
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
@@ -121,7 +121,7 @@ dependencies {
 
     // Firebase ui auth
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
-    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-auth'
 
     // SeekArc - Sun Graph
     implementation 'com.github.Triggertrap:SeekArc:v1.1'
@@ -134,5 +134,5 @@ dependencies {
     implementation 'com.google.android.gms:play-services-oss-licenses:17.0.1'
 
     //Google Crashlytics
-    implementation("com.google.firebase:firebase-crashlytics-ktx")
+    implementation 'com.google.firebase:firebase-crashlytics'
 }

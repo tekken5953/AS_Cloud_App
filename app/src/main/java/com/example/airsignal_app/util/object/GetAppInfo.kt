@@ -17,6 +17,7 @@ import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSIO
 import com.example.airsignal_app.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.orhanobut.logger.Logger
 
 /**
  * @author : Lee Jae Young
@@ -78,9 +79,20 @@ object GetAppInfo {
     }
 
     fun getCurrentSun(sunRise: String, sunSet: String): Int {
-        val currentTime = DataTypeParser.millsToString(DataTypeParser.getCurrentTime(), "HHmm")
-        return (100 * (DataTypeParser.convertTimeToMinutes(currentTime) - DataTypeParser.convertTimeToMinutes(
-            sunRise))) / getEntireSun(sunRise, sunSet)
+        val currentTime = DataTypeParser.millsToString(
+            DataTypeParser.getCurrentTime(),
+            "HHmm"
+        )
+        val degreeToSunRise =
+            DataTypeParser.convertTimeToMinutes(currentTime) - DataTypeParser.convertTimeToMinutes(
+                sunRise
+            )
+        val currentSun = if (degreeToSunRise < 0) {
+            ((100 * (degreeToSunRise + 2400)) / getEntireSun(sunRise, sunSet)) % 100 + 100
+        } else {
+            (100 * degreeToSunRise) / getEntireSun(sunRise, sunSet)
+        }
+        return currentSun
     }
 
     fun getIsNight(progress: Int): Boolean {

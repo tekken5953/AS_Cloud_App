@@ -28,7 +28,7 @@
         android:windowSoftInputMode="adjustNothing"
         tools:replace="android:icon,android:label">
         <activity
-            android:name=".view.activity.TermsOfServiceActivity"
+            android:name=".view.activity.WebURLActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
