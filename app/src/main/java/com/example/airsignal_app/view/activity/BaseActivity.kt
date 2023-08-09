@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
 import com.example.airsignal_app.dao.StaticDataObject.LANG_KR
+import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_BIG
 import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_DEFAULT
 import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_SMALL
 import com.example.airsignal_app.dao.StaticDataObject.THEME_DARK
@@ -51,7 +52,7 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
             TEXT_SCALE_SMALL -> {
                 SetSystemInfo.setTextSizeSmall(this)
             }
-            TEXT_SCALE_DEFAULT -> {
+            TEXT_SCALE_BIG -> {
                 SetSystemInfo.setTextSizeLarge(this)
             }
             else -> {

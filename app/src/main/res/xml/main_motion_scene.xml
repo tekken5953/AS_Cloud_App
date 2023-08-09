@@ -7,6 +7,15 @@
         app:constraintSetStart="@id/start"
         app:duration="500">
 
+        <OnClick
+            app:clickAction="transitionToEnd"
+            app:targetId="@id/mainMotionSLideImg"/>
+    </Transition>
+    <Transition
+        app:constraintSetEnd="@+id/end"
+        app:constraintSetStart="@id/start"
+        app:duration="500">
+
         <OnSwipe
             app:dragDirection="dragUp"
             app:dragScale="2.5"
