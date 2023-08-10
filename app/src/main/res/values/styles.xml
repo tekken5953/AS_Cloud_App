@@ -36,6 +36,15 @@
         <item name="fontFamily">@font/spoqa_hansansneo_regular</item>
     </style>
 
+    <style name="basicBoldTextView">
+        <item name="android:letterSpacing">-0.04</item>
+        <item name="android:textColor">@color/theme_text_color</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_bold</item>
+    </style>
+
     <style name="settingMultiTextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>

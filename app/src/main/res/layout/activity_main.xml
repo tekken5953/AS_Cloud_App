@@ -571,10 +571,50 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/nested_air_box"
+                    android:id="@+id/nested_terms24_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/nested_weekly_box"
+                    android:background="@drawable/scrolled_box_bg"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="12dp"
+                    android:paddingTop="36dp"
+                    android:paddingBottom="36dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/mainTermsTitle"
+                        style="@style/basicBoldTextView"
+                        android:layout_centerHorizontal="true"
+                        android:textColor="@color/theme_text_color"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/mainTermsDate"
+                        style="@style/basicTextView"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/mainTermsTitle"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/theme_sub_color"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/mainTermsExplain"
+                        style="@style/basicMediumTextView"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/mainTermsDate"
+                        android:layout_marginTop="21dp"
+                        android:textColor="@color/theme_text_color"
+                        android:textSize="16sp"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/nested_air_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/nested_terms24_box"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
@@ -1000,7 +1040,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginStart="24dp"
                     android:layout_marginEnd="24dp"
-                    android:text="@string/open_source_lisence"
+                    android:text="@string/data_api_license"
                     android:textColor="@color/sub_gray_color"
                     android:textSize="11sp"
                     android:textStyle="italic" />

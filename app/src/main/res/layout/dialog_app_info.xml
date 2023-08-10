@@ -84,7 +84,7 @@
             android:layout_width="60dp"
             android:layout_height="35dp"
             android:textSize="12sp"
-            android:text="업데이트"
+            android:text="@string/update"
             android:textColor="@color/white"
             android:background="@drawable/app_info_update_btn_bg"
             android:visibility="gone"

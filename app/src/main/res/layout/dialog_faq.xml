@@ -36,7 +36,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/faqTopBar"
         android:gravity="center"
-        android:text="자주 묻는 질문이 없습니다"
+        android:text="@string/faq_no_result"
         android:textSize="20sp"
         android:visibility="gone"
         android:fontFamily="@font/spoqa_hansansneo_regular"

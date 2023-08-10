@@ -61,6 +61,7 @@ import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyImg
 import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyText
+import com.example.airsignal_app.util.`object`.DataTypeParser.convertDateAppendZero
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertDayOfWeekToKorean
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertLocalDateTimeToLong
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertTimeToMinutes
@@ -658,6 +659,7 @@ class MainActivity
                             val dateNow: LocalDateTime = LocalDateTime.now()
                             val current = result.current
                             val thunder = result.thunder!!
+                            val terms24 = result.term24
 
                             currentSun = GetAppInfo.getCurrentSun(sun.sunrise!!, sun.sunset!!)
 
@@ -956,6 +958,20 @@ class MainActivity
                             dailyWeatherAdapter.notifyDataSetChanged()
                             airQAdapter.notifyDataSetChanged()
 
+                            terms24?.let { term ->
+                                val bundle = Term24Class().getTerms24Bundle(term)
+                                bundle?.let { b ->
+                                    binding.nestedTerms24Box.visibility = VISIBLE
+                                    binding.mainTermsTitle.text = b.getString("title")
+                                    binding.mainTermsDate.text = b.getString("date")
+                                    binding.mainTermsExplain.text = b.getString("explain")
+                                } ?: run {
+                                    binding.nestedTerms24Box.visibility = GONE
+                                }
+                            } ?: run {
+                                binding.nestedTerms24Box.visibility = GONE
+                            }
+
                             changeTextColorStyle(
                                 applySkyText(
                                     this,
@@ -1100,23 +1116,6 @@ class MainActivity
         val item = AdapterModel.WeeklyWeatherItem(day, date, minImg, maxImg, minText, maxText)
 
         this.weeklyWeatherList.add(item)
-    }
-
-    // 날짜가 한자리일 때 앞에 0 붙이기
-    private fun convertDateAppendZero(dateTime: LocalDateTime): String {
-        return if (dateTime.monthValue / 10 == 0) {
-            if (dateTime.dayOfMonth / 10 == 0) {
-                "0${dateTime.monthValue}.0${dateTime.dayOfMonth}"
-            } else {
-                "0${dateTime.monthValue}.${dateTime.dayOfMonth}"
-            }
-        } else {
-            if (dateTime.dayOfMonth / 10 == 0) {
-                "${dateTime.monthValue}.0${dateTime.dayOfMonth}"
-            } else {
-                "${dateTime.monthValue}.${dateTime.dayOfMonth}"
-            }
-        }
     }
 
     // 어제와 기온 비교

@@ -13,7 +13,7 @@
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/permCautionExplain"
         android:layout_marginBottom="16dp"
-        android:text="위치 권한은 꼭 필요해요"/>
+        android:text="@string/loc_caution_title"/>
 
     <TextView
         android:id="@+id/permCautionExplain"
@@ -25,8 +25,9 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:lineHeight="20dp"
-        android:text="현재 디바이스의 위치를 측정하고 해당 위치에\n
-기반한 실시간 날씨 정보를 불러오기 위해 사용합니다"/>
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/loc_caution_explain"/>
 
     <ImageView
         android:id="@+id/permCautionImg"
