@@ -188,8 +188,8 @@
             android:fontFamily="@font/spoqa_hansansneo_regular"
             android:gravity="start"
             android:textColor="@color/mode_black_color"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="@id/mainMotionLayout"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="@id/mainMotionLayout" 
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 
         <Constraint
@@ -238,16 +238,16 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-        <Constraint
-            android:id="@+id/mainSkyText"
-            style="@style/basicTextView"
-            android:layout_marginTop="5dp"
-            android:alpha="1"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
+<!--        <Constraint-->
+<!--            android:id="@+id/mainSkyText"-->
+<!--            style="@style/basicTextView"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:alpha="1"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />-->
         <Constraint
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
@@ -273,13 +273,13 @@
         <Constraint
             android:id="@+id/mainCompareTempTv"
             style="@style/basicTextView"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="8dp"
             android:textColor="@color/mode_black_color"
             android:textSize="16sp"
             android:alpha="1"
-            app:layout_constraintStart_toStartOf="@+id/mainSkyText"
-            app:layout_constraintEnd_toEndOf="@+id/mainSkyText"
-            app:layout_constraintTop_toBottomOf="@+id/mainSkyText"  />
+            app:layout_constraintStart_toStartOf="@+id/mainSkyImg"
+            app:layout_constraintEnd_toEndOf="@+id/mainSkyImg"
+            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg"  />
         <Constraint
             android:id="@+id/mainSensTitle"
             style="@style/basicMediumTextView"
@@ -317,21 +317,6 @@
             android:alpha="1"
             app:layout_constraintEnd_toStartOf="@+id/mainLiveTempUnit"
             app:layout_constraintTop_toBottomOf="@+id/mainSensValue" />
-
-        <Constraint
-            android:id="@+id/mainNotiMsgTv"
-            style="@style/basicTextView"
-            android:layout_width="match_parent"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginEnd="50dp"
-            android:alpha="1"
-            android:background="@drawable/main_noti_text"
-            android:text="도움말 테스트 텍스트"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@+id/mainSkyText"
-            app:motionProgress="1" />
         <Constraint
             android:id="@+id/mainPmBoxTL"
             android:layout_width="match_parent"
@@ -478,7 +463,7 @@
             android:fontFamily="@font/spoqa_hansansneo_regular"
             android:gravity="start"
             android:textColor="@color/mode_black_color"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
         <Constraint
             android:id="@+id/mainGpsFix"
             android:layout_width="24dp"
@@ -497,15 +482,15 @@
             app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
-        <Constraint
-            android:id="@+id/mainSkyText"
-            style="@style/basicTextView"
-            android:alpha="0"
-            android:textColor="@color/mode_black_color"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="@+id/mainSkyImg"
-            app:layout_constraintStart_toStartOf="@+id/mainSkyImg"
-            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
+<!--        <Constraint-->
+<!--            android:id="@+id/mainSkyText"-->
+<!--            style="@style/basicTextView"-->
+<!--            android:alpha="0"-->
+<!--            android:textColor="@color/mode_black_color"-->
+<!--            android:textSize="15sp"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/mainSkyImg"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/mainSkyImg"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />-->
 
         <Constraint
             android:id="@+id/mainLiveTempValue"
@@ -518,12 +503,12 @@
         <Constraint
             android:id="@+id/mainCompareTempTv"
             style="@style/basicTextView"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:alpha="0"
             android:textColor="@color/mode_black_color"
-            app:layout_constraintTop_toBottomOf="@+id/mainSkyText"
-            app:layout_constraintStart_toStartOf="@id/mainSkyText"
-            app:layout_constraintEnd_toEndOf="@id/mainSkyText"
+            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg"
+            app:layout_constraintStart_toStartOf="@id/mainSkyImg"
+            app:layout_constraintEnd_toEndOf="@id/mainSkyImg"
             android:textSize="16sp" />
         <Constraint
             android:id="@+id/mainSensTitle"
@@ -573,20 +558,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             app:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLayout" />
-        <Constraint
-            android:id="@+id/mainNotiMsgTv"
-            style="@style/basicTextView"
-            android:layout_width="match_parent"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginEnd="50dp"
-            android:alpha="0"
-            android:background="@drawable/main_noti_text"
-            android:text="도움말 테스트 텍스트"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintTop_toBottomOf="@+id/mainSkyText"
-            app:motionProgress="1" />
 
         <Constraint
             android:id="@+id/nested_fab"

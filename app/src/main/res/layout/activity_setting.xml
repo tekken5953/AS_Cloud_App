@@ -241,7 +241,6 @@
                     android:paddingStart="24dp"
                     android:paddingEnd="24dp"
                     android:text="@string/setting_app_data"
-                    android:fontFamily="@font/spoqa_hansansneo_medium"
                     android:textColor="@color/theme_text_color"
                     android:background="?android:attr/selectableItemBackground"
                     app:layout_constraintTop_toBottomOf="@+id/settingLine4" />

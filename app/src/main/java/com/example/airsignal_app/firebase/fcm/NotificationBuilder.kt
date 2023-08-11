@@ -50,13 +50,12 @@ class NotificationBuilder {
         val ringtone = RingtoneManager.getRingtone(context, sound)
 
         notificationBuilder
-            .setAutoCancel(true)
             .setWhen(System.currentTimeMillis())
 //            .setSilent(true)
             .setSubText(getNotificationAddress(context))
             .setSmallIcon(R.drawable.app_icon)
             .setContentIntent(pendingIntent)
-            .setContentTitle("${parseStringToDoubleToInt(data["temp"].toString())}˚ ·" +
+            .setContentTitle("${parseStringToDoubleToInt(data["temp"].toString())}˚" +
                     " ${applySkyText(context,data["rainType"],data["sky"],data["thunder"]!!.toDouble())}")
             .setContentText("최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
                     "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚")
