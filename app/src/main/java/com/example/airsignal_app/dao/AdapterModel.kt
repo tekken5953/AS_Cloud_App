@@ -85,4 +85,9 @@ object AdapterModel {
         val value: String,
         val grade: Int
     )
+
+    data class AddressListItem(
+        val kr: String?,
+        val en: String?
+    )
 }

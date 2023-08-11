@@ -21,8 +21,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.AddressListAdapter
+import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
-import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
 import com.example.airsignal_app.dao.StaticDataObject.LANG_KR
 import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_BIG
 import com.example.airsignal_app.dao.StaticDataObject.TEXT_SCALE_SMALL
@@ -35,7 +35,6 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getCurrentLocation
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
-import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLastAddr
 import com.example.airsignal_app.util.`object`.SetSystemInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -43,8 +42,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.math.absoluteValue
 
 /**
  * @author : Lee Jae Young
@@ -56,7 +53,7 @@ class SearchDialog(
 ) : BottomSheetDialogFragment() {
     private val activity = mActivity
     private val layoutId = lId
-    val currentList = ArrayList<String>()
+    val currentList = ArrayList<AdapterModel.AddressListItem>()
     private val currentAdapter = AddressListAdapter(activity, currentList)
     private val db by lazy { GpsRepository(activity) }
 
@@ -109,7 +106,7 @@ class SearchDialog(
             currentAddress.setOnClickListener {
                 dismissNow()
                 CoroutineScope(Dispatchers.IO).launch {
-                    dbUpdate(db.findById(CURRENT_GPS_ID).addr)
+                    dbUpdate(db.findById(CURRENT_GPS_ID).addrKr,db.findById(CURRENT_GPS_ID).addrEn)
 
                     withContext(Dispatchers.Main) {
                         dismissNow()
@@ -125,8 +122,6 @@ class SearchDialog(
                 if (entity.name == CURRENT_GPS_ID) {
                     currentAddress.text = getCurrentLocation(activity)
 
-                    entity.addr = getCurrentLocation(activity)
-
                     if (getCurrentLocation(activity) == getUserLastAddress(activity)) {
                         currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))
                         currentGpsImg.imageTintList =
@@ -137,15 +132,15 @@ class SearchDialog(
                             ColorStateList.valueOf(activity.getColor(R.color.theme_text_color))
                     }
                 } else {
-                    addCurrentItem(entity.addr.toString())
+                    addCurrentItem(entity.addrKr.toString(), entity.addrEn.toString())
                 }
             }
 
             currentAdapter.setOnItemClickListener(object : AddressListAdapter.OnItemClickListener {
                 override fun onItemClick(v: View, position: Int) {
                     CoroutineScope(Dispatchers.Default).launch {
-                        val currentAddr = currentList[position].replace("null", "")
-                        dbUpdate(currentAddr)
+                        val currentAddr = currentList[position]
+                        dbUpdate(currentAddr.kr,currentAddr.en)
 
                         withContext(Dispatchers.Main) {
                             dismissNow()
@@ -255,7 +250,7 @@ class SearchDialog(
                     SpannableStringBuilder("Add ${searchItem[position]}?")
                 }
 
-                if (getUserLocation(activity) == LANG_KR) {
+                if (isKorea()) {
                     span.setSpan(
                         ForegroundColorSpan(
                             ResourcesCompat.getColor(
@@ -265,7 +260,7 @@ class SearchDialog(
                         ), 0,
                         searchItem[position].length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                } else if (getUserLocation(activity) == LANG_EN) {
+                } else if (!isKorea()) {
                     span.setSpan(
                         ForegroundColorSpan(
                             ResourcesCompat.getColor(
@@ -289,9 +284,21 @@ class SearchDialog(
                     CoroutineScope(Dispatchers.IO).launch {
                         val model = GpsEntity()
                         model.name = searchItem[position]
-                        model.addr = searchItem[position]
+
+                        val addrArray =  if (!isKorea()) {
+                            resources.getStringArray(R.array.address_english)
+                        } else {
+                            resources.getStringArray(R.array.address_korean)
+                        }
+                        addrArray.forEachIndexed { index, s ->
+                            if(s == searchItem[position]) {
+                                model.position = index
+                                model.addrEn = resources.getStringArray(R.array.address_english)[index]
+                                model.addrKr = resources.getStringArray(R.array.address_korean)[index]
+                            }
+                        }
                         db.insert(model)
-                        dbUpdate(model.addr)
+                        dbUpdate(model.addrKr,model.addrEn)
 
                         withContext(Dispatchers.Main) {
                             dismissNow()
@@ -338,23 +345,30 @@ class SearchDialog(
         SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId)
     }
 
-    private suspend fun dbUpdate(addr: String?) {
+    private suspend fun dbUpdate(addrKr: String?, addrEn: String?) {
         withContext(Dispatchers.Default) {
             val model = GpsEntity()
             model.name = CURRENT_GPS_ID
-            model.addr = addr
+            model.addrKr = addrKr
+            model.addrEn = addrEn
             model.timeStamp = getCurrentTime()
             db.update(model)
 
-            addr?.let {
-                setUserLastAddr(activity, it)
-            }
+            setUserLastAddr(activity, addrKr!!)
         }
     }
 
+    private fun isKorea(): Boolean {
+        return getUserLocation(activity) == LANG_KR
+    }
+
     // 리스트 아이템 추가
-    private fun addCurrentItem(address: String): SearchDialog {
-        currentList.add(address.replace("null", ""))
+    private fun addCurrentItem(addrKr: String?, addrEn: String?): SearchDialog {
+        val item = AdapterModel.AddressListItem(
+            addrKr!!.replace("null", ""),
+            addrEn!!.replace("null", "")
+        )
+        currentList.add(item)
         return this
     }
 
@@ -392,10 +406,8 @@ class SearchDialog(
             val fullText = getItem(position)!!
 //            val editableText = convertAddressInv(getItem(position)!!).lowercase()
 
-            // Find the starting index of the input text in the item's text
             val startIndex = fullText.indexOf(editText.text.toString())
 
-            // If the input text is found in the item's text, set the color of the input text to red
             if (startIndex != -1) {
                 val coloredText = android.text.SpannableString(getItem(position))
                 coloredText.setSpan(

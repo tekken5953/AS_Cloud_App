@@ -1,6 +1,7 @@
 package com.example.airsignal_app.adapter
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,20 +16,21 @@ import com.example.airsignal_app.util.VibrateUtil
  * @author : Lee Jae Young
  * @since : 2023-06-013 오후 2:35
  **/
-class ReportViewPagerAdapter(
+class WarningViewPagerAdapter(
     private val context: Context,
     list: ArrayList<AdapterModel.ReportItem>,
     private val viewPager2: ViewPager2
 ) :
-    RecyclerView.Adapter<ReportViewPagerAdapter.ViewHolder>() {
+    RecyclerView.Adapter<WarningViewPagerAdapter.ViewHolder>() {
     private val mList = list
+    private var textColor: Int = Color.WHITE
 
     private lateinit var onClickListener: OnItemClickListener
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ReportViewPagerAdapter.ViewHolder {
+    ): WarningViewPagerAdapter.ViewHolder {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val view: View = inflater.inflate(R.layout.view_pager_item_main_report, parent, false)
@@ -53,11 +55,16 @@ class ReportViewPagerAdapter(
         VibrateUtil(context).make(20)
     }
 
+    fun changeTextColor(color: Int) {
+        textColor = color
+    }
+
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val textView = view.findViewById<TextView>(R.id.listItemReportText)
+        private val textView = view.findViewById<TextView>(R.id.vpWarningText)
 
         fun bind(dao: AdapterModel.ReportItem) {
             textView.text = dao.text
+            textView.setTextColor(textColor)
 
             if (mList.size == 0) {
                 viewPager2.visibility = View.GONE
@@ -69,29 +76,7 @@ class ReportViewPagerAdapter(
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try {
-                        val ellipsisCount = textView.layout.getEllipsisCount(textView.lineCount - 1)
-                        val isEllipsized = ellipsisCount > 0
-                        if (textView.maxLines == 2) {
-                            if (isEllipsized) {
-                                mVib()
-                                val lineCount = textView.lineCount + (ellipsisCount / textView.maxEms + 1)
-                                textView.maxLines = lineCount
-                                val lineHeight = textView.lineHeight
-                                val desiredHeight = lineCount * lineHeight
-                                textView.layoutParams.height = desiredHeight
-                                viewPager2.layoutParams.height = desiredHeight
-                                textView.requestLayout()
-                            }
-                        } else {
-                            mVib()
-                            val lineCount = 2
-                            textView.maxLines = 2
-                            val lineHeight = textView.lineHeight
-                            val desiredHeight = lineCount * lineHeight
-                            textView.layoutParams.height = desiredHeight
-                            viewPager2.layoutParams.height = desiredHeight
-                            textView.requestLayout()
-                        }
+
                     } catch (e: NullPointerException) {
                         e.printStackTrace()
                     }

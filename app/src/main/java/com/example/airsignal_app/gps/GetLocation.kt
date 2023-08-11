@@ -79,9 +79,10 @@ class GetLocation(private val context: Context) {
             setUserLastAddr(context, addr)
             val model = GpsEntity()
             model.name = CURRENT_GPS_ID
+            model.position = -1
             model.lat = lat
             model.lng = lng
-            model.addr = addr
+            model.addrKr = addr
             model.timeStamp = getCurrentTime()
             if (roomDB.findAll().isEmpty()) {
                 roomDB.insert(model)

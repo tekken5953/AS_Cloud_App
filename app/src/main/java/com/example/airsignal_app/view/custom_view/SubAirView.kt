@@ -1,14 +1,18 @@
 package com.example.airsignal_app.view.custom_view
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
 import com.example.airsignal_app.databinding.CustomViewSubAirBinding
+import org.w3c.dom.Text
 
 /**
  * @author : Lee Jae Young
@@ -24,22 +28,23 @@ class SubAirView(context: Context, attrs: AttributeSet?)
 
         attrs?.let {
             val typedArray = context.obtainStyledAttributes(it, R.styleable.SubAirView)
-            val title = typedArray.getString(R.styleable.SubAirView_customTitle)
-            val isLeftLine = typedArray.getBoolean(R.styleable.SubAirView_isLeftLine, false)
             typedArray.recycle()
 
-            subAirBinding.customSubAirTitle.text = title
-
-            if (isLeftLine) {
-                subAirBinding.customSubAirLeftLine.visibility = View.VISIBLE
-            } else {
-                subAirBinding.customSubAirLeftLine.visibility = View.GONE
-            }
         }
     }
 
+    fun getTitle(): TextView {
+        return subAirBinding.customSubAirTitle
+    }
+
+    fun getValue(): TextView {
+        return subAirBinding.customSubAirValue
+    }
+
+    @SuppressLint("UseCompatTextViewDrawableApis")
     private fun applyVector(vector: String?) {
         vector?.let { v ->
+            subAirBinding.customSubAirValue.setPadding(0,0,15,0)
             subAirBinding.customSubAirValue.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 when(v) {
                     "북" -> { drawable(R.drawable.ico_wind_n) }

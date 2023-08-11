@@ -18,6 +18,7 @@ import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSIO
 import com.example.airsignal_app.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.orhanobut.logger.Logger
 
 /**
  * @author : Lee Jae Young

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.activity.WarningDetailActivity">
+
+        <RelativeLayout
+            android:id="@+id/warningTopBar"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/warningBack"
+                style="@style/BasicImageButtonIcon"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="20dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/back_arrow"
+                app:tint="@color/theme_text_color" />
+
+            <TextView
+                style="@style/basicMediumTextView"
+                android:layout_centerInParent="true"
+                android:text="@string/warning_title"
+                android:textColor="@color/theme_text_color"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/warningAddr"
+            style="@style/basicMediumTextView"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="22dp"
+            app:drawableStartCompat="@drawable/ico_warning"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/warningTopBar" />
+
+        <View
+            android:id="@+id/warningLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:backgroundTint="@color/theme_sub_color"
+            app:layout_constraintTop_toBottomOf="@+id/warningAddr"/>
+
+        <ListView
+            android:id="@+id/warningListView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/warningLine"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:orientation="vertical"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

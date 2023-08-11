@@ -3,8 +3,10 @@ package com.example.airsignal_app.view.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.location.LocationManager
 import android.os.*
 import android.util.DisplayMetrics
@@ -18,6 +20,7 @@ import android.widget.LinearLayout.VISIBLE
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
+import androidx.core.view.size
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -114,7 +117,6 @@ class MainActivity
     private val sideMenuView: View by lazy {
         LayoutInflater.from(this@MainActivity).inflate(R.layout.side_menu, null)
     }
-    private lateinit var indicators: Array<ImageView>
     private val vib by lazy { VibrateUtil(this) }
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
 
@@ -124,19 +126,19 @@ class MainActivity
     private val uvResponseList = ArrayList<AdapterModel.UVResponseItem>()
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(this, dailyWeatherList) }
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
-    private val reportViewPagerAdapter by lazy {
-        ReportViewPagerAdapter(
+    private val reportViewPagerItem = ArrayList<AdapterModel.ReportItem>()
+    private val warningViewPagerAdapter by lazy {
+        WarningViewPagerAdapter(
             this,
             reportViewPagerItem,
-            binding.nestedReportViewpager
+            binding.mainWarningVp
         )
     }
+    private val reportArrayList = ArrayList<AdapterModel.ReportItem>()
     private val uvLegendAdapter = UVLegendAdapter(this, uvLegendList)
     private val uvResponseAdapter = UVResponseAdapter(this, uvResponseList)
-    private val reportViewPagerItem = ArrayList<AdapterModel.ReportItem>()
     private val airQList = ArrayList<AdapterModel.AirQTitleItem>()
     private val airQAdapter = AirQTitleAdapter(this, airQList)
-
     private var currentSun = 0
     private var isSunAnimated = false
     private var isProgressed = false
@@ -156,12 +158,9 @@ class MainActivity
     override fun onResume() {
         super.onResume()
         addSideMenu()
-        if (!isProgressed) {
-//            showPB()
-            isProgressed = true
-        }
-        getDataSingleTime()
+        getDataSingleTime(isCurrent = false)
         Thread.sleep(100)
+
         binding.nestedAdView.resume()
     }
 
@@ -235,7 +234,7 @@ class MainActivity
             override fun onSingleClick(v: View?) {
                 v!!.startAnimation(rotateAnim)
                 mVib()
-                getDataSingleTime()
+                getDataSingleTime(isCurrent = false)
             }
         })
 
@@ -262,9 +261,8 @@ class MainActivity
         binding.mainGpsFix.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 mVib()
-//                showPB()
                 v!!.startAnimation(rotateAnim)
-                getCurrentLocationData()
+                getDataSingleTime(isCurrent = true)
             }
         })
 
@@ -275,6 +273,18 @@ class MainActivity
                 sideMenuBuilder.show(sideMenuView, true)
             }
         })
+
+        binding.mainWarningBox.setOnClickListener {
+            val intent = Intent(this@MainActivity, WarningDetailActivity::class.java)
+            val list = ArrayList<String>()
+            reportArrayList.forEachIndexed { index, s ->
+                list.add(s.text)
+
+                if (index == reportArrayList.lastIndex) {
+                    intent.putExtra("warning", list)
+                }
+            }
+        }
     }
 
     // 햄버거 메뉴 세팅
@@ -342,18 +352,30 @@ class MainActivity
     }
 
     // 날씨 데이터 API 호출
-    private fun getDataSingleTime() {
+    private fun getDataSingleTime(isCurrent: Boolean) {
         if (RequestPermissionsUtil(this).isNetworkPermitted()) {
             if (RequestPermissionsUtil(this).isLocationPermitted()) {
                 binding.mainDailyWeatherRv.scrollToPosition(0)
-                binding.nestedReportViewpager.currentItem = 0
-                val addrArray = resources.getStringArray(R.array.address)
+                binding.mainWarningVp.currentItem = 0
                 val lastAddress = getUserLastAddress(this)
-                if (addrArray.contains(lastAddress)) {
-                    loadSavedAddr(lastAddress)
+                if (!isCurrent) {
+                    val addrArray = resources.getStringArray(R.array.address_korean)
+                    if (addrArray.contains(lastAddress)) {
+                        addrArray.forEachIndexed { index, s ->
+                            if (lastAddress == s) {
+                                loadSavedAddr(
+                                    addrArray[index],
+                                    resources.getStringArray(R.array.address_english)[index]
+                                )
+                            }
+                        }
+                    } else {
+                        getCurrentLocationData()
+                    }
                 } else {
                     getCurrentLocationData()
                 }
+
                 // TimeOut
                 HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
                     if (isProgressed()) {
@@ -369,7 +391,7 @@ class MainActivity
     }
 
     // 저장된 주소로 데이터 호출
-    private fun loadSavedAddr(addr: String?) {
+    private fun loadSavedAddr(addr: String?, enAddr: String?) {
         addr?.let {
             loadSavedViewModelData(it)
 
@@ -379,8 +401,10 @@ class MainActivity
                 responseData = null
             )
 
-            binding.mainGpsTitleTv.text = guardWordWrap(it)
-            binding.mainTopBarGpsTitle.text = it
+            val gps = if (getUserLocation(this) == LANG_EN) enAddr else addr
+
+            binding.mainGpsTitleTv.text = gps
+            binding.mainTopBarGpsTitle.text = gps
         }
     }
 
@@ -389,7 +413,7 @@ class MainActivity
         return try {
             val formS = if (s.first().toString() == " ")
                 s.replaceFirst(" ", "") else s
-            WrapTextClass().getFormedText(formS, 7)
+            WrapTextClass().getFormedText(formS, 20)
         } catch (e: NoSuchElementException) {
             e.printStackTrace()
             return s
@@ -438,19 +462,11 @@ class MainActivity
         binding.mainUvCollapseRv.adapter = uvResponseAdapter
         binding.nestedAirRv.adapter = airQAdapter
 
-        binding.nestedReportViewpager.apply {
-            adapter = reportViewPagerAdapter
-            isClickable = false
+        binding.mainWarningVp.apply {
+            adapter = warningViewPagerAdapter
+            isClickable = true
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             offscreenPageLimit = 3
-
-            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    updateIndicators(position)
-                    binding.nestedReportViewpager.requestLayout()
-                }
-            })
         }
 
         binding.mainUvCollapseRv.isClickable = false
@@ -741,9 +757,8 @@ class MainActivity
                             }
 
                             today?.let {
-                                binding.mainMinMaxTitle.text = getString(R.string.min_max)
-                                binding.mainMinMaxValue.text =
-                                    "${filteringNullData(it.min!!)}˚/${filteringNullData(it.max!!)}˚"
+                                binding.mainMinValue.text = filteringNullData(it.min!!)+"˚"
+                                binding.mainMaxValue.text = filteringNullData(it.max!!)+"˚"
                                 binding.mainMinMaxValueC.text =
                                     "${filteringNullData(it.min)}˚/${filteringNullData(it.max)}˚"
                             }
@@ -829,31 +844,42 @@ class MainActivity
                                 )
                             )
 
+                            changeStrokeColor(binding.subAirPM25,
+                                getDataColor(this,
+                                convertValueToGrade("PM2.5",air.pm25Value.toDouble())))
+
+                            changeStrokeColor(binding.subAirPM10,
+                                getDataColor(this,
+                                    convertValueToGrade("PM10",air.pm10Value.toDouble())))
+
                             reportViewPagerItem.clear()
+                            reportArrayList.clear()
                             result.summary?.let { sList ->
-                                sList.forEach { summary ->
-                                    addReportViewPagerItem(
-                                        summary.replace("○", "")
-                                            .replace("\n", "")
-                                            .trim()
-                                    )
+                                sList.forEachIndexed { index, summary ->
+                                   reportArrayList.add(AdapterModel.ReportItem(summary.replace("○", "")
+                                       .replace("\n", "")
+                                       .trim()))
+
+                                    if (index == sList.lastIndex) {
+                                        warningSlideAuto()
+                                    }
                                 }
                             }
 
-                            createIndicators(binding.nestedReportIndicator)
-                            reportViewPagerAdapter.notifyDataSetChanged()
-
                             if (reportViewPagerItem.size == 0) {
-                                binding.nestedReportFrame.visibility = GONE
+                                binding.mainWarningBox.visibility = GONE
                             } else {
-                                binding.nestedReportFrame.visibility = VISIBLE
+                                binding.mainWarningBox.visibility = VISIBLE
                             }
 
                             if (getUserLocation(this@MainActivity) == LANG_EN) {
-                                binding.nestedReportFrame.visibility = GONE
+                                binding.mainWarningBox.visibility = GONE
                             } else {
-                                binding.nestedReportFrame.visibility = VISIBLE
+                                binding.mainWarningBox.visibility = VISIBLE
                             }
+
+                            binding.subAirPM25.text = "초미세먼지  " + air.pm25Value.toInt().toString()
+                            binding.subAirPM10.text = "미세먼지  " + air.pm10Value.toInt().toString()
 
                             binding.mainSensTitle.text = getString(R.string.sens_temp)
                             binding.mainSensValue.text =
@@ -929,8 +955,12 @@ class MainActivity
                                 try {
                                     val formedDate = dateNow.plusDays(i.toLong())
                                     val date: String = when (i) {
-                                        0 -> { getString(R.string.today) }
-                                        1 -> { getString(R.string.tomorrow) }
+                                        0 -> {
+                                            getString(R.string.today)
+                                        }
+                                        1 -> {
+                                            getString(R.string.tomorrow)
+                                        }
                                         else -> {
                                             "${
                                                 convertDayOfWeekToKorean(
@@ -990,6 +1020,7 @@ class MainActivity
                                 )
                             }
                         } catch (e: java.lang.NullPointerException) {
+                            Timber.tag("testtest").e(e.stackTraceToString())
                             runOnUiThread {
                                 hidePB()
                                 hideAllViews(error = ERROR_API_PROTOCOL)
@@ -1004,6 +1035,7 @@ class MainActivity
                     }
 
                     is BaseRepository.ApiState.Error -> {
+                        Timber.tag("testtesttest").e(entireData.toString())
                         runOnUiThread {
                             hidePB()
                             hideAllViews(error = eData.errorMessage)
@@ -1059,36 +1091,6 @@ class MainActivity
                 else -> window.setBackgroundDrawableResource(R.drawable.main_bg_snow)
             }
         }
-    }
-
-    // 뷰페이저 인디케이터 업데이트
-    private fun updateIndicators(position: Int) {
-        if (!indicators.indices.isEmpty()) {
-            for (i in indicators.indices) {
-                indicators[i].setImageResource(
-                    if (i == position) R.drawable.indicator_fill // 선택된 원 이미지
-                    else R.drawable.indicator_empty // 선택되지 않은 원 이미지
-                )
-            }
-        }
-    }
-
-    // 뷰페이저 인디케이터 생성
-    private fun createIndicators(indicator: LinearLayout) {
-        binding.nestedReportIndicator.removeAllViews()
-        indicators = Array(reportViewPagerItem.size) {
-            val indicatorView = ImageView(this)
-            val params = LayoutParams(
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT
-            )
-            params.setMargins(8, 0, 8, 0)
-            indicatorView.layoutParams = params
-            indicatorView.setImageResource(R.drawable.indicator_empty) // 선택되지 않은 원 이미지
-            indicator.addView(indicatorView)
-            indicatorView
-        }
-        updateIndicators(binding.nestedReportViewpager.currentItem)
     }
 
     // 필드값이 없을 때 -100 출력 됨
@@ -1184,12 +1186,11 @@ class MainActivity
 
         binding.mainErrorRenewBtn.setOnClickListener {
             mVib()
-            getDataSingleTime()
+            getDataSingleTime(isCurrent = false)
         }
 
         // 주소, 갱신버튼, 현재기온, 기온비교, 최저/최고 기온, 날씨 정보 더보기, 모션 슬라이드 막기
         binding.mainSkyImg.apply {
-
             if (isThemeNight(this@MainActivity)) {
                 window.setBackgroundDrawableResource(R.color.black)
                 this.setImageDrawable(
@@ -1222,12 +1223,19 @@ class MainActivity
             binding.mainGpsTitleTv,
             binding.mainLiveTempValue,
             binding.mainLiveTempUnit,
-            binding.mainMinMaxTitle,
-            binding.mainMinMaxValue,
             binding.mainMotionSlideGuide,
             binding.mainTopBarGpsTitle,
             binding.mainSensTitle,
-            binding.mainSensValue
+            binding.mainSensValue,
+            binding.mainMinValue,
+            binding.mainMaxTitle,
+            binding.mainMinValue,
+            binding.mainMinTitle,
+            binding.subAirPM25,
+            binding.subAirPM10,
+            binding.subAirHumid.getTitle(),
+            binding.subAirWind.getTitle(),
+            binding.subAirRainP.getTitle()
         )
 
         if (visibility == GONE) {
@@ -1257,18 +1265,26 @@ class MainActivity
             binding.mainErrorRenewBtn.alpha = 1f
             binding.mainErrorRenewBtn.isClickable = true
 
+            changeStrokeColor(binding.subAirPM10, getColor(android.R.color.transparent))
+            changeStrokeColor(binding.subAirPM25, getColor(android.R.color.transparent))
+
         } else {
             binding.mainSensTitle.text = getString(R.string.sens_temp)
-            binding.mainMinMaxTitle.text = getString(R.string.min_max)
             binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
 
             binding.mainCompareTempTv.textSize = 16f
             binding.mainCompareTempTv.typeface =
                 Typeface.createFromAsset(assets, "spoqa_hansansneo_regular.ttf")
 
+            binding.subAirHumid.getTitle().text = getString(R.string.humidity)
+            binding.subAirWind.getTitle().text = getString(R.string.wind)
+            binding.subAirRainP.getTitle().text = getString(R.string.rainPer)
+
             binding.mainErrorRenewBtn.alpha = 0f
             binding.mainErrorRenewBtn.isClickable = false
 
+            binding.mainMinTitle.text = getString(R.string.min)
+            binding.mainMaxTitle.text = getString(R.string.max)
 
             binding.mainGpsFix.setImageDrawable(
                 ResourcesCompat.getDrawable(resources, R.drawable.gps_fix, null)
@@ -1288,6 +1304,16 @@ class MainActivity
             )
             // 원래 상태로 복구하기 위해 제약 조건 변경
             binding.mainMotionLayout.isInteractionEnabled = true
+        }
+    }
+
+    private fun changeStrokeColor(textView: TextView, color: Int) {
+        // 특정 상황에 맞게 원하는 색상으로 변경
+        textView.setTextColor(color)
+        textView.background.mutate().let { background ->
+            if (background is GradientDrawable) {
+                background.setStroke(3, color) // 테두리 두께와 색상 변경
+            }
         }
     }
 
@@ -1342,9 +1368,11 @@ class MainActivity
         val model = GpsEntity()
 
         model.name = CURRENT_GPS_ID
+        model.position = -1
         model.lat = lat
         model.lng = lng
-        model.addr = addr
+        model.addrKr = addr
+        model.addrEn = addr
         model.timeStamp = getCurrentTime()
         if (gpsDbIsEmpty(roomDB)) {
             roomDB.insert(model)
@@ -1371,13 +1399,6 @@ class MainActivity
         val item = AdapterModel.UVResponseItem(text)
 
         uvResponseList.add(item)
-    }
-
-    // 날씨특보 아이템 추가
-    private fun addReportViewPagerItem(text: String) {
-        val item = AdapterModel.ReportItem(text)
-
-        reportViewPagerItem.add(item)
     }
 
     // 자외선 지수에 따른 대처요령 불러오기
@@ -1416,15 +1437,17 @@ class MainActivity
     }
 
     // 메인화면 배경에 따라 텍스트의 색상을 변경
+    @SuppressLint("UseCompatTextViewDrawableApis","NotifyDataSetChanged")
     private fun changeTextColorStyle(sky: String, isNight: Boolean) {
         val changeColorTextViews = listOf(
             binding.mainLiveTempValue, binding.mainLiveTempUnit, binding.mainCompareTempTv,
             binding.mainTopBarGpsTitle, binding.mainMotionSlideGuide,
             binding.mainGpsTitleTv, binding.mainSensTitle, binding.mainSensValue,
-            binding.mainMinMaxTitle, binding.mainMinMaxValue, binding.mainLiveTempTitleC,
+            binding.mainLiveTempTitleC,binding.subAirWind.getTitle(),
+            binding.subAirRainP.getTitle(),binding.subAirHumid.getTitle(),binding.subAirWind.getValue(),
+            binding.subAirRainP.getValue(),binding.subAirHumid.getValue(),
             binding.mainLiveTempValueC, binding.mainSensTitleC, binding.mainSensValueC,
-            binding.mainMinMaxTitleC, binding.mainMinMaxValueC
-
+            binding.mainMinMaxTitleC, binding.mainMinMaxValueC,
         )
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
@@ -1435,6 +1458,11 @@ class MainActivity
         // 글자색 white로 변경
         @Suppress("DEPRECATION")
         fun white() {
+            binding.mainWarningBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#10000000"))
+            binding.nestedSubAirFrame.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#10000000"))
+            binding.subAirWind.getValue().compoundDrawableTintList =
+                ColorStateList.valueOf(getColor(R.color.white))
+
             changeColorTextViews.forEach {
                 it.setTextColor(getColor(R.color.white))
             }
@@ -1447,11 +1475,20 @@ class MainActivity
                 .setTint(ResourcesCompat.getColor(resources, R.color.white, null))
             window.decorView.systemUiVisibility =
                 window.decorView.systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+
+            warningViewPagerAdapter.changeTextColor(Color.WHITE)
+            reportViewPagerItem.addAll(reportArrayList)
+            warningViewPagerAdapter.notifyDataSetChanged()
         }
 
         // 글자색 black으로 변경
         @Suppress("DEPRECATION")
         fun black() {
+            binding.mainWarningBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#50FFFFFF"))
+            binding.nestedSubAirFrame.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#50FFFFFF"))
+            binding.subAirWind.getValue().compoundDrawableTintList =
+                ColorStateList.valueOf(getColor(R.color.black))
+
             changeColorTextViews.forEach {
                 it.setTextColor(getColor(R.color.bg_black_color))
             }
@@ -1463,6 +1500,10 @@ class MainActivity
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
                 .setTint(ResourcesCompat.getColor(resources, R.color.black, null))
             window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
+            warningViewPagerAdapter.changeTextColor(Color.BLACK)
+            reportViewPagerItem.addAll(reportArrayList)
+            warningViewPagerAdapter.notifyDataSetChanged()
         }
 
         if (!isNight) {
@@ -1476,6 +1517,17 @@ class MainActivity
             }
         } else {
             white()
+        }
+    }
+
+    private fun warningSlideAuto() {
+        val vp = binding.mainWarningVp
+        val handler = Handler(Looper.getMainLooper())
+        if (reportArrayList.size > 1) {
+            vp.currentItem = if (vp.currentItem + 1 < reportArrayList.size) vp.currentItem + 1 else 0
+            handler.postDelayed({
+                warningSlideAuto()
+            },5000)
         }
     }
 
@@ -1526,10 +1578,7 @@ class MainActivity
                                                     }
 
 
-
-                                                binding.mainGpsTitleTv.text = guardWordWrap(
-                                                    formedAddr
-                                                )
+                                                binding.mainGpsTitleTv.text = formedAddr
 
                                                 binding.mainTopBarGpsTitle.text =
                                                     formedAddr
