@@ -5,8 +5,10 @@ import com.example.airsignal_app.dao.ErrorCode.ERROR_API_PROTOCOL
 import com.example.airsignal_app.dao.ErrorCode.ERROR_NETWORK
 import com.example.airsignal_app.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import com.example.airsignal_app.dao.ErrorCode.ERROR_TIMEOUT
+import com.example.airsignal_app.dao.StaticDataObject.TAG_R
 import com.example.airsignal_app.retrofit.ApiModel
 import com.example.airsignal_app.retrofit.HttpClient.mMyAPIImpl
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,7 +38,7 @@ class GetWeatherRepo : BaseRepository() {
                         try {
                             if (response.isSuccessful) {
                                 val responseBody = response.body()!!
-//                                Logger.t(TAG_R).d("Success API : ${ApiState.Success(responseBody).data}")
+                                Logger.t(TAG_R).d("Success API : ${ApiState.Success(responseBody).data}")
                                 _getDataResult.postValue(ApiState.Success(responseBody))
                             } else {
                                 _getDataResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))

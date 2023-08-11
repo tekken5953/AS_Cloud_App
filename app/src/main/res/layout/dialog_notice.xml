@@ -35,7 +35,7 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/noticeTopBar"
         android:gravity="center"
-        android:text="공지사항이 없습니다"
+        android:text="@string/no_result_notice"
         android:textSize="20sp"
         android:visibility="gone"
         android:fontFamily="@font/spoqa_hansansneo_regular"

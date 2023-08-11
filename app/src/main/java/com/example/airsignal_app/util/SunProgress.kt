@@ -23,6 +23,7 @@ class SunProgress(private val seekArc: SeekArc) {
                     arcRotation = 90
                     progressColor = Color.parseColor("#7E5DFF")
 
+
                     val animatorSun =
                         ObjectAnimator.ofInt(seekArc, "progress", currentSun - 100)
                     animatorSun.duration = 800

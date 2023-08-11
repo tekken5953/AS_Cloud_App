@@ -7,7 +7,6 @@ import android.icu.util.ChineseCalendar
 import android.location.Address
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
-import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
 import com.orhanobut.logger.Logger
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -48,12 +47,12 @@ object DataTypeParser {
     }
 
     /** 위젯용 현재시간 타임포멧 **/
-    fun currentDateTimeString(context: Context): String {
-        @SuppressLint("SimpleDateFormat") val format =
-            SimpleDateFormat(context.getString(R.string.widget_time_format))
+    fun currentDateTimeString(format: String): String {
+        @SuppressLint("SimpleDateFormat") val mFormat =
+            SimpleDateFormat(format)
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
-        return format.format(calendar.time)
+        return mFormat.format(calendar.time)
     }
 
     /** 데이터 포멧에 맞춰서 시간변환 **/
@@ -70,15 +69,15 @@ object DataTypeParser {
 
     /** Current의 rainType의 에러 방지 **/
     fun modifyCurrentRainType(rainTypeCurrent: String?, rainTypeReal: String?): String? {
-        return if (rainTypeCurrent != null) {
-            when(rainTypeCurrent) {
+        rainTypeCurrent?.let { current ->
+           return when(current) {
                 "비","눈","비/눈","소나기","없음" -> {
-                    rainTypeCurrent
+                    current
                 }
                 else -> rainTypeReal
             }
-        } else {
-            rainTypeReal
+        } ?: run {
+            return rainTypeReal
         }
     }
 
@@ -592,4 +591,39 @@ object DataTypeParser {
             else -> {0}
         }
     }
+
+    /** 날짜가 한자리일 때 앞에 0 붙이기 **/
+    fun convertDateAppendZero(dateTime: LocalDateTime): String {
+        return if (dateTime.monthValue / 10 == 0) {
+            if (dateTime.dayOfMonth / 10 == 0) {
+                "0${dateTime.monthValue}.0${dateTime.dayOfMonth}"
+            } else {
+                "0${dateTime.monthValue}.${dateTime.dayOfMonth}"
+            }
+        } else {
+            if (dateTime.dayOfMonth / 10 == 0) {
+                "${dateTime.monthValue}.0${dateTime.dayOfMonth}"
+            } else {
+                "${dateTime.monthValue}.${dateTime.dayOfMonth}"
+            }
+        }
+    }
+
+//    fun convertVectorDrawable(vector: String?): Drawable {
+//        return when(vector) {
+//            "남" -> {
+//
+//            }
+//            "북" -> {
+//
+//            }
+//            "동" -> {
+//
+//            }
+//            "서" -> {
+//
+//            }
+//
+//        }
+//    }
 }

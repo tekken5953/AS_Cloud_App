@@ -164,6 +164,11 @@
     <string name="customer_call_title">Call</string>
     <string name="email">Email</string>
     <string name="home_page">Website</string>
-    <string name="open_source_lisence">The data shown on the screen above is provided and used by Air Korea, the Korea Meteorological Administration, and the Korea Astronomy and Space Science Institute.</string>
+    <string name="data_api_license">The data shown on the screen above is provided and used by Air Korea, the Korea Meteorological Administration, and the Korea Astronomy and Space Science Institute.</string>
     <string name="phone_airsignal">+8270–4912–9321</string>
+    <string name="faq_no_result">No result for FAQ</string>
+    <string name="no_result_notice">No result for Notice</string>
+    <string name="loc_caution_title">Location permissions are necessary</string>
+    <string name="loc_caution_explain">Measure the location of the current device and place it at that location Used to retrieve real-time weather information based on</string>
+    <string name="update">Update</string>
 </resources>

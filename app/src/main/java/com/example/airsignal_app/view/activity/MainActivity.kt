@@ -61,6 +61,7 @@ import com.example.airsignal_app.repo.BaseRepository
 import com.example.airsignal_app.util.*
 import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyImg
 import com.example.airsignal_app.util.`object`.DataTypeParser.applySkyText
+import com.example.airsignal_app.util.`object`.DataTypeParser.convertDateAppendZero
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertDayOfWeekToKorean
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertLocalDateTimeToLong
 import com.example.airsignal_app.util.`object`.DataTypeParser.convertTimeToMinutes
@@ -75,7 +76,6 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.isRainyDay
 import com.example.airsignal_app.util.`object`.DataTypeParser.millsToString
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentRainType
 import com.example.airsignal_app.util.`object`.DataTypeParser.modifyCurrentTempType
-import com.example.airsignal_app.util.`object`.DataTypeParser.translateSky
 import com.example.airsignal_app.util.`object`.DataTypeParser.translateUV
 import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.util.`object`.GetAppInfo.getEntireSun
@@ -658,6 +658,7 @@ class MainActivity
                             val dateNow: LocalDateTime = LocalDateTime.now()
                             val current = result.current
                             val thunder = result.thunder!!
+                            val terms24 = result.term24
 
                             currentSun = GetAppInfo.getCurrentSun(sun.sunrise!!, sun.sunset!!)
 
@@ -701,38 +702,41 @@ class MainActivity
                             }
 
                             realtime.let {
-                                binding.mainSkyText.text = translateSky(
-                                    this,
-                                    applySkyText(
-                                        this,
-                                        modifyCurrentRainType(
-                                            current.rainType,
-                                            realtime.rainType
-                                        ),
-                                        realtime.sky,
-                                        thunder
-                                    )
-                                )
+//                                binding.mainSkyText.text = translateSky(
+//                                    this,
+//                                    applySkyText(
+//                                        this,
+//                                        modifyCurrentRainType(
+//                                            current.rainType,
+//                                            realtime.rainType
+//                                        ),
+//                                        realtime.sky,
+//                                        thunder
+//                                    )
+//                                )
 
                                 binding.subAirHumid.fetchData(
                                     "${
                                         realtime.humid!!
                                             .roundToInt()
-                                    }%", R.drawable.ico_main_humidity
+                                    }%", R.drawable.ico_main_humidity,
+                                    null
                                 )
 
                                 binding.subAirWind.fetchData(
                                     "${
                                         realtime.windSpeed!!
                                             .roundToInt()
-                                    }m/s", R.drawable.ico_main_wind
+                                    }m/s", R.drawable.ico_main_wind,
+                                    realtime.vector
                                 )
 
                                 binding.subAirRainP.fetchData(
                                     "${
                                         realtime.rainP!!
                                             .roundToInt()
-                                    }%", R.drawable.ico_main_rain
+                                    }%", R.drawable.ico_main_rain,
+                                    null
                                 )
                             }
 
@@ -925,12 +929,8 @@ class MainActivity
                                 try {
                                     val formedDate = dateNow.plusDays(i.toLong())
                                     val date: String = when (i) {
-                                        0 -> {
-                                            getString(R.string.today)
-                                        }
-                                        1 -> {
-                                            getString(R.string.tomorrow)
-                                        }
+                                        0 -> { getString(R.string.today) }
+                                        1 -> { getString(R.string.tomorrow) }
                                         else -> {
                                             "${
                                                 convertDayOfWeekToKorean(
@@ -955,6 +955,20 @@ class MainActivity
                             weeklyWeatherAdapter.notifyDataSetChanged()
                             dailyWeatherAdapter.notifyDataSetChanged()
                             airQAdapter.notifyDataSetChanged()
+
+                            terms24?.let { term ->
+                                val bundle = Term24Class().getTerms24Bundle(term)
+                                bundle?.let { b ->
+                                    binding.nestedTerms24Box.visibility = VISIBLE
+                                    binding.mainTermsTitle.text = b.getString("title")
+                                    binding.mainTermsDate.text = b.getString("date")
+                                    binding.mainTermsExplain.text = b.getString("explain")
+                                } ?: run {
+                                    binding.nestedTerms24Box.visibility = GONE
+                                }
+                            } ?: run {
+                                binding.nestedTerms24Box.visibility = GONE
+                            }
 
                             changeTextColorStyle(
                                 applySkyText(
@@ -1102,23 +1116,6 @@ class MainActivity
         this.weeklyWeatherList.add(item)
     }
 
-    // 날짜가 한자리일 때 앞에 0 붙이기
-    private fun convertDateAppendZero(dateTime: LocalDateTime): String {
-        return if (dateTime.monthValue / 10 == 0) {
-            if (dateTime.dayOfMonth / 10 == 0) {
-                "0${dateTime.monthValue}.0${dateTime.dayOfMonth}"
-            } else {
-                "0${dateTime.monthValue}.${dateTime.dayOfMonth}"
-            }
-        } else {
-            if (dateTime.dayOfMonth / 10 == 0) {
-                "${dateTime.monthValue}.0${dateTime.dayOfMonth}"
-            } else {
-                "${dateTime.monthValue}.${dateTime.dayOfMonth}"
-            }
-        }
-    }
-
     // 어제와 기온 비교
     @SuppressLint("SetTextI18n")
     private fun getCompareTempText(y: Double?, t: Double?, tv: TextView) {
@@ -1152,33 +1149,33 @@ class MainActivity
     private fun hideAllViews(error: String?) {
         when (error) {
             ERROR_API_PROTOCOL, ERROR_SERVER_CONNECTING -> {
-                binding.mainSkyText.text = getString(R.string.api_call_error)
+                binding.mainCompareTempTv.text = getString(R.string.api_call_error)
             }
             ERROR_NOT_SERVICED_LOCATION -> {
-                binding.mainSkyText.text = getString(R.string.not_serviced_location)
+                binding.mainCompareTempTv.text = getString(R.string.not_serviced_location)
             }
             ERROR_TIMEOUT -> {
-                binding.mainSkyText.text = getString(R.string.timeout_error)
+                binding.mainCompareTempTv.text = getString(R.string.timeout_error)
             }
             ERROR_NETWORK -> {
-                binding.mainSkyText.text = getString(R.string.network_error)
+                binding.mainCompareTempTv.text = getString(R.string.network_error)
             }
             ERROR_GET_LOCATION_FAILED -> {
-                binding.mainSkyText.text = getString(R.string.address_call_error)
+                binding.mainCompareTempTv.text = getString(R.string.address_call_error)
             }
             ERROR_GPS_CONNECTED -> {
-                binding.mainSkyText.text = getString(R.string.gps_call_error)
+                binding.mainCompareTempTv.text = getString(R.string.gps_call_error)
             }
             ERROR_GET_DATA -> {
-                binding.mainSkyText.text = getString(R.string.data_call_error)
+                binding.mainCompareTempTv.text = getString(R.string.data_call_error)
             }
             else -> {
                 RDBLogcat.writeErrorNotANR(this, ERROR_LOCATION_FAILED, error!!)
-                binding.mainSkyText.text = getString(R.string.unkown_error)
+                binding.mainCompareTempTv.text = getString(R.string.unkown_error)
             }
         }
 
-        binding.mainSkyText.apply {
+        binding.mainCompareTempTv.apply {
             textSize = 20f
             typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_medium.ttf")
             setPadding(0, 50, 0, 0)
@@ -1225,7 +1222,6 @@ class MainActivity
             binding.mainGpsTitleTv,
             binding.mainLiveTempValue,
             binding.mainLiveTempUnit,
-            binding.mainCompareTempTv,
             binding.mainMinMaxTitle,
             binding.mainMinMaxValue,
             binding.mainMotionSlideGuide,
@@ -1266,8 +1262,8 @@ class MainActivity
             binding.mainMinMaxTitle.text = getString(R.string.min_max)
             binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
 
-            binding.mainSkyText.textSize = 14f
-            binding.mainSkyText.typeface =
+            binding.mainCompareTempTv.textSize = 16f
+            binding.mainCompareTempTv.typeface =
                 Typeface.createFromAsset(assets, "spoqa_hansansneo_regular.ttf")
 
             binding.mainErrorRenewBtn.alpha = 0f
@@ -1423,7 +1419,7 @@ class MainActivity
     private fun changeTextColorStyle(sky: String, isNight: Boolean) {
         val changeColorTextViews = listOf(
             binding.mainLiveTempValue, binding.mainLiveTempUnit, binding.mainCompareTempTv,
-            binding.mainTopBarGpsTitle, binding.mainMotionSlideGuide, binding.mainSkyText,
+            binding.mainTopBarGpsTitle, binding.mainMotionSlideGuide,
             binding.mainGpsTitleTv, binding.mainSensTitle, binding.mainSensValue,
             binding.mainMinMaxTitle, binding.mainMinMaxValue, binding.mainLiveTempTitleC,
             binding.mainLiveTempValueC, binding.mainSensTitleC, binding.mainSensValueC,

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -38,8 +37,8 @@
             android:overScrollMode="ifContentScrolls"
             android:scrollbars="none"
             app:layout_constraintBottom_toBottomOf="@id/topBarLinear"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/topBarLinear">
 
             <TextView
@@ -111,7 +110,7 @@
             android:layout_marginTop="40dp"
             android:fontFamily="@font/spoqa_hansansneo_regular"
             android:gravity="start"
-            android:lineHeight="28dp"
+            android:lineHeight="24dp"
             android:textColor="@color/mode_black_color"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="@id/mainMotionLayout"
@@ -145,7 +144,7 @@
             android:textColor="@color/white"
             android:textSize="18sp"
             android:translationZ="0dp"
-            ads:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <ImageView
             android:id="@+id/mainSkyStarImg"
@@ -166,15 +165,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/mainSkyText"
-            style="@style/basicTextView"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/mode_black_color"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
+<!--        <TextView-->
+<!--            android:id="@+id/mainSkyText"-->
+<!--            style="@style/basicTextView"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:textColor="@color/mode_black_color"-->
+<!--            android:textSize="14sp"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />-->
 
         <TextView
             android:id="@+id/mainLiveTempValue"
@@ -257,12 +256,12 @@
         <TextView
             android:id="@+id/mainCompareTempTv"
             style="@style/basicTextView"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:textColor="@color/mode_black_color"
             android:textSize="16sp"
-            ads:layout_constraintEnd_toEndOf="@+id/mainSkyText"
-            ads:layout_constraintStart_toStartOf="@+id/mainSkyText"
-            ads:layout_constraintTop_toBottomOf="@+id/mainSkyText" />
+            app:layout_constraintEnd_toEndOf="@+id/mainSkyImg"
+            app:layout_constraintStart_toStartOf="@+id/mainSkyImg"
+            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
 
         <TextView
             android:id="@+id/mainSensTitle"
@@ -270,8 +269,8 @@
             android:layout_marginTop="12dp"
             android:textColor="#3D3D3D"
             android:textSize="16sp"
-            ads:layout_constraintEnd_toEndOf="@+id/mainMinMaxTitle"
-            ads:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue" />
+            app:layout_constraintEnd_toEndOf="@+id/mainMinMaxTitle"
+            app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue" />
 
         <TextView
             android:id="@+id/mainSensValue"
@@ -279,8 +278,8 @@
             android:layout_marginTop="12dp"
             android:textColor="#3D3D3D"
             android:textSize="16sp"
-            ads:layout_constraintEnd_toStartOf="@+id/mainLiveTempUnit"
-            ads:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue" />
+            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempUnit"
+            app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue" />
 
         <TextView
             android:id="@+id/mainMinMaxTitle"
@@ -372,27 +371,27 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_toStartOf="@+id/subAirWind"
-                        ads:customImg="@drawable/ico_main_humidity"
-                        ads:customTitle="@string/humidity"
-                        ads:isLeftLine="false" />
+                        app:customImg="@drawable/ico_main_humidity"
+                        app:customTitle="@string/humidity"
+                        app:isLeftLine="false" />
 
                     <com.example.airsignal_app.view.custom_view.SubAirView
                         android:id="@+id/subAirWind"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_centerHorizontal="true"
-                        ads:customImg="@drawable/ico_main_wind"
-                        ads:customTitle="@string/wind"
-                        ads:isLeftLine="true" />
+                        app:customImg="@drawable/ico_main_wind"
+                        app:customTitle="@string/wind"
+                        app:isLeftLine="true" />
 
                     <com.example.airsignal_app.view.custom_view.SubAirView
                         android:id="@+id/subAirRainP"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_toEndOf="@+id/subAirWind"
-                        ads:customImg="@drawable/ico_main_rain"
-                        ads:customTitle="@string/rainPer"
-                        ads:isLeftLine="true" />
+                        app:customImg="@drawable/ico_main_rain"
+                        app:customTitle="@string/rainPer"
+                        app:isLeftLine="true" />
                 </RelativeLayout>
 
                 <androidx.appcompat.widget.LinearLayoutCompat
@@ -413,8 +412,8 @@
                         android:id="@+id/nested_report_viewpager"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="10dp"
                         android:animateLayoutChanges="true" />
 
                     <LinearLayout
@@ -532,8 +531,8 @@
                         android:layout_marginBottom="5dp"
                         android:layout_toStartOf="@+id/adViewCancelIv"
                         android:visibility="visible"
-                        ads:adSize="FULL_BANNER"
-                        ads:adUnitId="@string/adUnit_main_Id" />
+                        app:adSize="FULL_BANNER"
+                        app:adUnitId="@string/adUnit_main_Id" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -572,10 +571,50 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/nested_air_box"
+                    android:id="@+id/nested_terms24_box"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/nested_weekly_box"
+                    android:background="@drawable/scrolled_box_bg"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="12dp"
+                    android:paddingTop="36dp"
+                    android:paddingBottom="36dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/mainTermsTitle"
+                        style="@style/basicBoldTextView"
+                        android:layout_centerHorizontal="true"
+                        android:textColor="@color/theme_text_color"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/mainTermsDate"
+                        style="@style/basicTextView"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/mainTermsTitle"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/theme_sub_color"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/mainTermsExplain"
+                        style="@style/basicMediumTextView"
+                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/mainTermsDate"
+                        android:layout_marginTop="21dp"
+                        android:textColor="@color/theme_text_color"
+                        android:textSize="16sp"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/nested_air_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/nested_terms24_box"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
@@ -705,8 +744,8 @@
                         android:layout_marginBottom="12dp"
                         android:overScrollMode="never"
                         android:scrollbars="none"
-                        ads:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                        ads:spanCount="3"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:spanCount="3"
                         tools:listitem="@layout/list_item_pm_title" />
 
                 </RelativeLayout>
@@ -856,7 +895,7 @@
                             android:paddingTop="20dp"
                             android:paddingStart="20dp"
                             android:paddingEnd="20dp"
-                            ads:thumb="@drawable/ico_sun_graph"
+                            app:thumb="@drawable/ico_sun_graph"
                             app:arcColor="#E1E1E1"
                             app:arcWidth="9dp"
                             app:max="100"
@@ -903,7 +942,12 @@
                             android:layout_marginStart="3dp"
                             android:layout_marginBottom="12dp"
                             android:textColor="@color/theme_text_color"
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            android:maxLines="1"
+                            android:padding="0.5dp"
+                            android:autoSizeTextType="uniform"
+                            android:autoSizeMinTextSize="14sp"
+                            android:autoSizeMaxTextSize="18sp"/>
 
                     </LinearLayout>
 
@@ -941,7 +985,12 @@
                             android:layout_marginStart="3dp"
                             android:layout_marginBottom="12dp"
                             android:textColor="@color/theme_text_color"
-                            android:textSize="18sp" />
+                            android:textSize="18sp"
+                            android:maxLines="1"
+                            android:padding="0.5dp"
+                            android:autoSizeTextType="uniform"
+                            android:autoSizeMinTextSize="14sp"
+                            android:autoSizeMaxTextSize="18sp"/>
                     </LinearLayout>
 
                     <View
@@ -991,7 +1040,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginStart="24dp"
                     android:layout_marginEnd="24dp"
-                    android:text="@string/open_source_lisence"
+                    android:text="@string/data_api_license"
                     android:textColor="@color/sub_gray_color"
                     android:textSize="11sp"
                     android:textStyle="italic" />
