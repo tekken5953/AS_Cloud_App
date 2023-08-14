@@ -60,4 +60,6 @@
 
     <color name="theme_sun_tomorrow_night">#30159C</color>
     <color name="theme_sun_tomorrow_day">#FF8A48</color>
+
+    <color name="theme_opacity30_view_color">#30FFFFFF</color>
 </resources>

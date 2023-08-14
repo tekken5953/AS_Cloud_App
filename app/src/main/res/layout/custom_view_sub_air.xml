@@ -5,7 +5,6 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="28dp"
         android:paddingBottom="23dp"
         android:background="@android:color/transparent"
         tools:context=".view.activity.MainActivity">
@@ -17,36 +16,37 @@
             android:layout_centerHorizontal="true"/>
 
         <TextView
-            android:id="@+id/customSubAirTitle"
-            style="@style/basicTextView"
-            android:layout_below="@+id/customSubAirImg"
-            android:autoSizeMaxTextSize="14sp"
-            android:textSize="13sp"
-            android:layout_marginTop="8dp"
-            android:layout_centerHorizontal="true"
-            android:textColor="@color/theme_sub_color"/>
-
-        <TextView
             android:id="@+id/customSubAirValue"
             style="@style/basicMediumTextView"
-            android:layout_below="@+id/customSubAirTitle"
             android:textSize="17sp"
             android:maxLines="1"
             android:autoSizeTextType="uniform"
             android:autoSizeMinTextSize="14sp"
             android:autoSizeMaxTextSize="17sp"
-            android:layout_marginStart="43dp"
-            android:layout_marginEnd="43dp"
+            android:layout_below="@+id/customSubAirImg"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="8dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="25dp"
             android:textColor="@color/theme_text_color"/>
 
-        <View
-            android:id="@+id/customSubAirLeftLine"
-            android:layout_width="1.5dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignTop="@+id/customSubAirImg"
-            android:layout_alignBottom="@+id/customSubAirValue"
-            android:background="@color/theme_line_color"/>
+        <TextView
+            android:id="@+id/customSubAirTitle"
+            style="@style/basicTextView"
+            android:layout_below="@+id/customSubAirValue"
+            android:autoSizeMaxTextSize="14sp"
+            android:textSize="13sp"
+            android:layout_marginTop="8dp"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/theme_text_color"/>
+
+<!--        <View-->
+<!--            android:id="@+id/customSubAirLeftLine"-->
+<!--            android:layout_width="1.5dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_alignParentStart="true"-->
+<!--            android:layout_alignTop="@+id/customSubAirImg"-->
+<!--            android:layout_alignBottom="@+id/customSubAirValue"-->
+<!--            android:background="@color/theme_line_color"/>-->
     </RelativeLayout>
 </layout>

@@ -171,4 +171,7 @@
     <string name="loc_caution_title">Location permissions are necessary</string>
     <string name="loc_caution_explain">Measure the location of the current device and place it at that location Used to retrieve real-time weather information based on</string>
     <string name="update">Update</string>
+    <string name="max">최고</string>
+    <string name="min">최저</string>
+    <string name="warning_title">기상 특보</string>
 </resources>

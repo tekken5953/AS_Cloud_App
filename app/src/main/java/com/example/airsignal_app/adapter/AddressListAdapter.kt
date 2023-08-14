@@ -19,7 +19,8 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
+import com.example.airsignal_app.dao.AdapterModel
+import com.example.airsignal_app.dao.StaticDataObject.LANG_KR
 import com.example.airsignal_app.db.room.repository.GpsRepository
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
@@ -28,7 +29,7 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
  * @author : Lee Jae Young
  * @since : 2023-04-11 오후 14:01
  **/
-class AddressListAdapter(private val context: Context, list: ArrayList<String>) :
+class AddressListAdapter(private val context: Context, list: ArrayList<AdapterModel.AddressListItem>) :
     RecyclerView.Adapter<AddressListAdapter.ViewHolder>() {
     private val mList = list
     private var visible = false
@@ -59,15 +60,10 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(mList[position])
 
-        if (mList[position] == getUserLastAddress(context)) {
-            holder.address.setTextColor(context.getColor(R.color.main_blue_color))
-            holder.gpsImg.imageTintList =
-                ColorStateList.valueOf(context.getColor(R.color.main_blue_color))
-        } else {
-            holder.address.setTextColor(context.getColor(R.color.theme_text_color))
-            holder.gpsImg.imageTintList =
-                ColorStateList.valueOf(context.getColor(R.color.theme_text_color))
-        }
+        applyColorFirstIndex(
+            mList[position].kr == getUserLastAddress(context),
+            holder.address,
+            holder.gpsImg)
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -76,9 +72,9 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
         val delete: TextView = itemView.findViewById(R.id.listCurrentAddressDelete)
 
         @SuppressLint("InflateParams")
-        fun bind(dao: String) {
+        fun bind(dao: AdapterModel.AddressListItem) {
 
-            address.text = dao
+            address.text = if (!isKorea()) dao.en else dao.kr
 
             if (visible) {
                 delete.animate().alpha(1f).duration = 500
@@ -101,7 +97,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
                 val apply = view.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
                 val title = view.findViewById<TextView>(R.id.alertDoubleTitle)
 
-                if (getUserLocation(context) == LANG_EN) {
+                if (!isKorea()) {
                     val span = SpannableStringBuilder("Delete ${address.text}?")
                     span.setSpan(
                         ForegroundColorSpan(
@@ -157,6 +153,19 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
         }
     }
 
+    // 첫번째 인덱스 색상 변경
+    fun applyColorFirstIndex(isChecked: Boolean, textView: TextView, imgView: ImageView) {
+        if (isChecked) {
+            textView.setTextColor(context.getColor(R.color.main_blue_color))
+            imgView.imageTintList =
+                ColorStateList.valueOf(context.getColor(R.color.main_blue_color))
+        } else {
+            textView.setTextColor(context.getColor(R.color.theme_text_color))
+            imgView.imageTintList =
+                ColorStateList.valueOf(context.getColor(R.color.theme_text_color))
+        }
+    }
+
     // 삭제버튼 보이기/숨기기
     @SuppressLint("NotifyDataSetChanged")
     fun updateCheckBoxVisible(b: Boolean) {
@@ -167,5 +176,9 @@ class AddressListAdapter(private val context: Context, list: ArrayList<String>) 
     // 삭제버튼 현재 상태 불러오기
     fun getCheckBoxVisible(): Boolean {
         return visible
+    }
+
+    fun isKorea(): Boolean {
+        return getUserLocation(context) == LANG_KR
     }
 }
