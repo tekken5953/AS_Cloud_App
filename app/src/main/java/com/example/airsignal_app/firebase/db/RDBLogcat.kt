@@ -5,9 +5,9 @@ import com.example.airsignal_app.util.`object`.DataTypeParser.getCurrentTime
 import com.example.airsignal_app.util.`object`.DataTypeParser.millsToString
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
 import com.example.airsignal_app.util.`object`.GetSystemInfo
+import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.FirebaseDatabase
 
 /**
  * @author  Lee Jae Young
@@ -46,19 +46,18 @@ object RDBLogcat {
     const val WIDGET_ERROR = "위젯 에러"
     const val LOGIN_GOOGLE = "구글"
     const val LOGIN_KAKAO = "카카오"
+    const val LOGIN_PHONE = "phone"
     const val LOGIN_KAKAO_EMAIL = "카카오 이메일"
     const val LOGIN_NAVER = "네이버"
     const val NOTIFICATION_HISTORY = "알림"
     const val ERROR_HISTORY = "에러"
     const val ERROR_ANR = "ANR 에러"
-    const val ERROR_LOCATION_IOException = "주소 - IOException"
-    const val ERROR_LOCATION_FAILED = "GPS 위치정보 갱신실패"
     const val WIDGET_INSTALL = "위젯 설치"
     const val WIDGET_UNINSTALL = "위젯 삭제"
     const val LOGIN_FAILED = "로그인 시도 실패"
 
     /** 유저 로그 레퍼런스 **/
-    private val db = Firebase.database
+    private val db = FirebaseDatabase.getInstance()
     private val ref = db.getReference("User")
 
     /** 날짜 변환 **/
@@ -88,7 +87,7 @@ object RDBLogcat {
             } else {
                 GetSystemInfo.androidID(context)
             }
-        } catch (e: java.lang.NullPointerException) {
+        } catch (e: NullPointerException) {
             ""
         }
     }
@@ -163,16 +162,20 @@ object RDBLogcat {
         gpsValue: String,
         responseData: String?
     ) {
-        val gpsRef = default(context)
-            .child(GPS_HISTORY)
-            .child(getDate())
-            .child(if (isSearched) GPS_SEARCHED else GPS_NOT_SEARCHED)
-            .child(getTime())
+        try {
+            val gpsRef = default(context)
+                .child(GPS_HISTORY)
+                .child(getDate())
+                .child(if (isSearched) GPS_SEARCHED else GPS_NOT_SEARCHED)
+                .child(getTime())
 
-        if (responseData != null) {
-            gpsRef.setValue("$responseData")
-        } else {
-            gpsRef.setValue(gpsValue)
+            if (responseData != null) {
+                gpsRef.setValue("$responseData")
+            } else {
+                gpsRef.setValue(gpsValue)
+            }
+        }catch (e: DatabaseException) {
+            e.printStackTrace()
         }
     }
 
@@ -206,12 +209,16 @@ object RDBLogcat {
 
     /** 알림 기록 **/
     fun writeNotificationHistory(context: Context, topic: String, response: String?) {
-        default(context)
-            .child(NOTIFICATION_HISTORY)
-            .child(getDate())
-            .child(topic)
-            .child(getTime())
-            .setValue(response)
+        try {
+            default(context)
+                .child(NOTIFICATION_HISTORY)
+                .child(getDate())
+                .child(topic)
+                .child(getTime())
+                .setValue(response)
+        } catch (e: DatabaseException) {
+            e.printStackTrace()
+        }
     }
 
     /** 에러 로그 - 비정상 종료 **/

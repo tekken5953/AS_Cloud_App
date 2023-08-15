@@ -78,7 +78,7 @@ class SharedPreferenceManager(private val context: Context) {
         return prefs.getString(
             key,
             DEFAULT_VALUE_STRING
-        )!!
+        ) ?: ""
     }
 
     /**Boolean 값 호출**/

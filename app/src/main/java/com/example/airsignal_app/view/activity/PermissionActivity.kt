@@ -1,18 +1,16 @@
 package com.example.airsignal_app.view.activity
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
-import android.os.Build.VERSION
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.databinding.ActivityPermissionBinding
 import com.example.airsignal_app.firebase.db.RDBLogcat
 import com.example.airsignal_app.util.EnterPageUtil
+import com.example.airsignal_app.util.RefreshUtils
 import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.example.airsignal_app.util.`object`.DataTypeParser
 import com.example.airsignal_app.util.`object`.GetAppInfo
@@ -20,7 +18,9 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getInitLocPermission
 import com.example.airsignal_app.util.`object`.GetAppInfo.getInitNotiPermission
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.SetAppInfo
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserNoti
 import com.example.airsignal_app.view.LocPermCautionDialog
+import com.example.airsignal_app.view.MakeSingleDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PermissionActivity :
@@ -30,18 +30,21 @@ class PermissionActivity :
 
     override fun onResume() {
         super.onResume()
-
         if (perm.isLocationPermitted()) {
             if (!perm.isNotificationPermitted()) {
                 if (getInitNotiPermission(this) == "") {
                     SetAppInfo.setInitNotiPermission(this, "Not Init")
                     perm.requestNotification()
                 } else {
-                    Toast.makeText(this, "알림은 앱 설정 -> 알림 항목에서 언제든 허용하실 수 있습니다.",
-                        Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this, getString(R.string.noti_always_can),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     EnterPageUtil(this).toMain(GetAppInfo.getUserLoginPlatform(this))
                 }
             } else {
+                setUserNoti(this, IgnoredKeyFile.notiEnable, true)
+                setUserNoti(this, IgnoredKeyFile.notiVibrate, true)
                 EnterPageUtil(this).toMain(GetAppInfo.getUserLoginPlatform(this))
             }
         }
@@ -53,17 +56,23 @@ class PermissionActivity :
 
         initBinding()
 
-        RDBLogcat.writeUserPref(this, sort = RDBLogcat.USER_PREF_SETUP,
+        RDBLogcat.writeUserPref(
+            this, sort = RDBLogcat.USER_PREF_SETUP,
             title = RDBLogcat.USER_PREF_SETUP_INIT,
-        value = "${DataTypeParser.parseLongToLocalDateTime(DataTypeParser.getCurrentTime())}")
+            value = "${DataTypeParser.parseLongToLocalDateTime(DataTypeParser.getCurrentTime())}"
+        )
 
-        RDBLogcat.writeUserPref(this, sort = RDBLogcat.USER_PREF_SETUP,
+        RDBLogcat.writeUserPref(
+            this, sort = RDBLogcat.USER_PREF_SETUP,
             title = RDBLogcat.USER_PREF_SETUP_LAST_LOGIN,
-            value = "${DataTypeParser.parseLongToLocalDateTime(DataTypeParser.getCurrentTime())}")
+            value = "${DataTypeParser.parseLongToLocalDateTime(DataTypeParser.getCurrentTime())}"
+        )
 
-        RDBLogcat.writeUserPref(this, sort = RDBLogcat.USER_PREF_DEVICE,
+        RDBLogcat.writeUserPref(
+            this, sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
-            value = GetSystemInfo.getApplicationVersion(this))
+            value = GetSystemInfo.getApplicationVersion(this)
+        )
 
         binding.permissionOkBtn.setOnClickListener {
             if (!perm.isLocationPermitted()) {
@@ -87,27 +96,30 @@ class PermissionActivity :
                         }
                     }
                 } else {
-                    val builder = AlertDialog.Builder(this)
-                    val alertDialog = builder.create()
-                    alertDialog.apply {
-                        setButton(
-                            AlertDialog.BUTTON_NEGATIVE,"확인"
-                        ) { _, _ ->
+                    MakeSingleDialog(this).makeDialog(
+                        textTitle = getString(R.string.perm_self_msg),
+                        color = getColor(R.color.main_blue_color),
+                        buttonText = getString(R.string.ok)
+                    )
+                        .setOnClickListener {
+                            RefreshUtils(this).refreshActivity()
                             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                             val uri: Uri = Uri.fromParts("package", packageName, null)
                             intent.data = uri
                             startActivity(intent)
                         }
-                        setTitle("위치 권한 거부됨")
-                        setMessage("권한 -> 위치 -> 허용을 체크해주세요")
-                        show()
-                    }
+                }
                 }
             }
         }
-    }
 
-    override fun onBackPressed() {
-        EnterPageUtil(this).fullyExit()
+        @Deprecated(
+            "Deprecated in Java", ReplaceWith(
+                "EnterPageUtil(this).fullyExit()",
+                "com.example.airsignal_app.util.EnterPageUtil"
+            )
+        )
+        override fun onBackPressed() {
+            EnterPageUtil(this).fullyExit()
+        }
     }
-}

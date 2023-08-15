@@ -1,6 +1,7 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
+import androidx.appcompat.widget.AppCompatButton
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientId
 import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientName
@@ -45,7 +46,8 @@ class NaverLogin(private val activity: Activity) {
      *
      * TODO 로그인 기록 저장
      * **/
-    fun login() {
+    fun login(naverLoginButton: AppCompatButton) {
+        naverLoginButton.alpha = 1f
         NaverIdLoginSDK.authenticate(activity, oauthLoginCallback)
     }
 
@@ -100,17 +102,11 @@ class NaverLogin(private val activity: Activity) {
                     profile = it.profileImage.toString()
                 )
 
-                EnterPageUtil(activity).toMain("naver")
+                EnterPageUtil(activity).toMain(LOGIN_NAVER)
             }
         }
 
         override fun onFailure(httpStatus: Int, message: String) {
-            val errorCode = NaverIdLoginSDK.getLastErrorCode().code
-            val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
-//            Logger.t(TAG_LOGIN).e(
-//                "errorCode: $errorCode\n" +
-//                        "errorDescription: $errorDescription"
-//            )
             ToastUtils(activity).showMessage("프로필을 불러오는데 실패했습니다",1)
             writeLoginHistory(
                 isLogin = true, platform = LOGIN_NAVER, email = getUserEmail(activity),
@@ -149,7 +145,7 @@ class NaverLogin(private val activity: Activity) {
 
     /** 로그인 세션 유지 확인 **/
     fun isLogin() : Boolean {
-       return NidOAuthLogin().callProfileApi(profileCallback).isCompleted
+        return NidOAuthLogin().callProfileApi(profileCallback).isCompleted
     }
 
     /** 네이버 클라이언트와 연동 해제 **/

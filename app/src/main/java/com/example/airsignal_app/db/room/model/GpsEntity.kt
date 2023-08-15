@@ -12,17 +12,19 @@ import com.example.airsignal_app.util.`object`.DataTypeParser
  * @property name
  * @property lat
  * @property lng
- * @property addr
+ * @property addrKr
  * @property timeStamp
  */
 @Entity
 data class GpsEntity(
     @PrimaryKey(autoGenerate = true) val id: Int? = 0,
+    var position: Int,
     var name: String = "",
+    var addrEn: String? = "",
     var lat: Double?,
     var lng: Double?,
-    var addr: String?,
+    var addrKr: String? = "",
     var timeStamp: Long = DataTypeParser.getCurrentTime()
 ) {
-    constructor() : this(null,"",null,null,null, DataTypeParser.getCurrentTime())
+    constructor() : this(null,-1,"", "",null,null,null, DataTypeParser.getCurrentTime())
 }

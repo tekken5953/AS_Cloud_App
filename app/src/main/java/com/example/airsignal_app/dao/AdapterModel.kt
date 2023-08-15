@@ -70,11 +70,6 @@ object AdapterModel {
         val text: String
     )
 
-    // 날씨 특보 뷰페이저 아이템
-    data class ReportItem(
-        val text: String
-    )
-
     // 실시간 공기질 타이틀 아이템
     data class AirQTitleItem(
         var isSelect: Boolean = false,
@@ -83,7 +78,11 @@ object AdapterModel {
         val name: String,
         val unit: String,
         val value: String,
-        val maxValue: Float,
         val grade: Int
+    )
+
+    data class AddressListItem(
+        val kr: String?,
+        val en: String?
     )
 }

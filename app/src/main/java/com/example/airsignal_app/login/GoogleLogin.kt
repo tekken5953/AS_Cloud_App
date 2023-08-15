@@ -3,6 +3,7 @@ package com.example.airsignal_app.login
 import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
+import androidx.appcompat.widget.AppCompatButton
 import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
 import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
 import com.example.airsignal_app.firebase.db.RDBLogcat
@@ -10,7 +11,7 @@ import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_FAILED
 import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
 import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginPref
-import com.example.airsignal_app.util.RefreshUtils
+import com.example.airsignal_app.util.EnterPageUtil
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserEmail
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserId
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLoginPlatform
@@ -20,7 +21,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.orhanobut.logger.Logger
@@ -40,13 +40,13 @@ class GoogleLogin(private val activity: Activity) {
     }
 
     /** 로그인 진행 + 로그인 버튼 비활성화 **/
-    fun login(mBtn: SignInButton, result: ActivityResultLauncher<Intent>) {
+    fun login(mBtn: AppCompatButton, result: ActivityResultLauncher<Intent>) {
         try {
             val signInIntent: Intent = client.signInIntent
             result.launch(signInIntent)
-            mBtn.isEnabled = false
+            mBtn.alpha = 0.7f
         } catch (e: Exception) {
-            e.printStackTrace()
+            Logger.t(TAG_LOGIN).e(e.stackTraceToString())
             RDBLogcat.writeErrorNotANR(activity, LOGIN_FAILED, e.localizedMessage!!)
         }
     }
@@ -61,7 +61,7 @@ class GoogleLogin(private val activity: Activity) {
         client.signOut()
             .addOnCompleteListener {
                 saveLogoutStatus()
-                RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = null)
+                EnterPageUtil(activity).toLogin()
             }
             .addOnCanceledListener {
                 ToastUtils(activity).showMessage("로그아웃에 실패했습니다",1)
@@ -131,6 +131,7 @@ class GoogleLogin(private val activity: Activity) {
 
             saveLoginStatus(email, displayName, photo, isAuto)
         } catch (e: ApiException) {
+            Logger.t(TAG_LOGIN).e(e.stackTraceToString())
             e.printStackTrace()
         }
     }

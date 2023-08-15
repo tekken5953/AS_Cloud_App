@@ -5,8 +5,9 @@ import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.db.database.GpsDataBase.Companion.getInstance
 import com.example.airsignal_app.db.room.model.GpsEntity
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.*
-import timber.log.Timber
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * @author : Lee Jae Young

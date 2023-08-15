@@ -1,6 +1,8 @@
 package com.example.airsignal_app.util.`object`
 
+import android.app.Activity
 import android.content.Context
+import android.view.View
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
@@ -11,18 +13,30 @@ import com.example.airsignal_app.dao.IgnoredKeyFile.userId
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
-import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_BACK_LOC_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_LOC_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import com.example.airsignal_app.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import com.example.airsignal_app.db.SharedPreferenceManager
+import com.orhanobut.logger.Logger
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-06-12 오후 2:28
  **/
 object SetAppInfo {
+
+    // 몰입모드로 전환됩니다
+    fun fullScreenMode(activity: Activity) {
+        @Suppress("DEPRECATION")
+        activity.window.decorView.systemUiVisibility = (
+                View.SYSTEM_UI_FLAG_IMMERSIVE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        or View.SYSTEM_UI_FLAG_FULLSCREEN
+                )
+    }
 
     fun setUserFontScale(context: Context, type: String) {
         SharedPreferenceManager(context).setString(userFontScale, type)
@@ -84,8 +98,8 @@ object SetAppInfo {
         SharedPreferenceManager(context).setString("Notification_All", topic)
     }
 
-    fun setNotificationAddress(context: Context, addr: String?) {
-        SharedPreferenceManager(context).setString(NOTIFICATION_ADDRESS, addr!!)
+    fun setNotificationAddress(context: Context, addr: String) {
+        SharedPreferenceManager(context).setString(NOTIFICATION_ADDRESS, addr)
     }
 
     fun setLastRefreshTime(context: Context, l: Long) {

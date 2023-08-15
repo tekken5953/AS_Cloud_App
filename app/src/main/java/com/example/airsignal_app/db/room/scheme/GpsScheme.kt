@@ -17,11 +17,11 @@ interface GpsScheme {
     @Query("SELECT * FROM GpsEntity WHERE name= :name")
     fun findById(name: String) : GpsEntity
 
-    @Query("DELETE FROM GpsEntity WHERE addr= :addr")
-    fun deleteFromAddr(addr: String)
+    @Query("DELETE FROM GpsEntity WHERE addrKr= :addrKr")
+    fun deleteFromAddr(addrKr: String)
 
-    @Query("SELECT * FROM GpsEntity WHERE addr= :addr")
-    fun findByAddress(addr: String) : GpsEntity
+    @Query("SELECT * FROM GpsEntity WHERE addrKr= :addrKr")
+    fun findByAddress(addrKr: String) : GpsEntity
 
     @Query("DELETE FROM GpsEntity")
     fun clearDB()

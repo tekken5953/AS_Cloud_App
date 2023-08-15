@@ -4,15 +4,14 @@ import android.content.Context
 import com.example.airsignal_app.dao.IgnoredKeyFile
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastAddress
 import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPlatform
-import com.example.airsignal_app.dao.IgnoredKeyFile.notiEvent
-import com.example.airsignal_app.dao.IgnoredKeyFile.notiNight
-import com.example.airsignal_app.dao.IgnoredKeyFile.notiPM
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiEnable
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiSound
+import com.example.airsignal_app.dao.IgnoredKeyFile.notiVibrate
 import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
 import com.example.airsignal_app.dao.IgnoredKeyFile.userFontScale
 import com.example.airsignal_app.dao.IgnoredKeyFile.userLocation
 import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
 import com.example.airsignal_app.dao.StaticDataObject.CURRENT_GPS_ID
-import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_BACK_LOC_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_LOC_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSION
 import com.example.airsignal_app.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
@@ -40,16 +39,16 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getString(userFontScale)
     }
 
-    fun getUserNotiPM(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(notiPM)
+    fun getUserNotiEnable(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(notiEnable)
     }
 
-    fun getUserNotiEvent(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(notiEvent)
+    fun getUserNotiVibrate(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(notiVibrate)
     }
 
-    fun getUserNotiNight(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(notiNight)
+    fun getUserNotiSound(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(notiSound)
     }
 
     fun getUserLoginPlatform(context: Context): String {
@@ -79,14 +78,19 @@ object GetAppInfo {
     }
 
     fun getCurrentSun(sunRise: String, sunSet: String): Int {
-        val currentTime = DataTypeParser.millsToString(DataTypeParser.getCurrentTime(), "HHmm")
-        var currentSun =
-            (100 * (DataTypeParser.convertTimeToMinutes(currentTime) - DataTypeParser.convertTimeToMinutes(
+        val currentTime = DataTypeParser.millsToString(
+            DataTypeParser.getCurrentTime(),
+            "HHmm"
+        )
+        val degreeToSunRise =
+            DataTypeParser.convertTimeToMinutes(currentTime) - DataTypeParser.convertTimeToMinutes(
                 sunRise
-            ))) / getEntireSun(sunRise,sunSet)
-
-        if (currentSun > 100) { currentSun = 100 }
-
+            )
+        val currentSun = if (degreeToSunRise < 0) {
+            ((100 * (degreeToSunRise + 2400)) / getEntireSun(sunRise, sunSet)) % 100 + 100
+        } else {
+            (100 * degreeToSunRise) / getEntireSun(sunRise, sunSet)
+        }
         return currentSun
     }
 

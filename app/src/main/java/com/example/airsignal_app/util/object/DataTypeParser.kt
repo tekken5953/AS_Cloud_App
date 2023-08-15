@@ -7,16 +7,14 @@ import android.icu.util.ChineseCalendar
 import android.location.Address
 import androidx.core.content.res.ResourcesCompat
 import com.example.airsignal_app.R
-import com.example.airsignal_app.util.`object`.GetAppInfo.getIsNight
 import com.orhanobut.logger.Logger
-import timber.log.Timber
 import java.text.SimpleDateFormat
-import java.time.Duration
 import java.time.Instant
 import java.time.LocalDateTime
-import java.time.Period
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import java.util.*
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 
@@ -49,12 +47,12 @@ object DataTypeParser {
     }
 
     /** 위젯용 현재시간 타임포멧 **/
-    fun currentDateTimeString(context: Context): String {
-        @SuppressLint("SimpleDateFormat") val format =
-            SimpleDateFormat(context.getString(R.string.widget_time_format))
+    fun currentDateTimeString(format: String): String {
+        @SuppressLint("SimpleDateFormat") val mFormat =
+            SimpleDateFormat(format)
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
-        return format.format(calendar.time)
+        return mFormat.format(calendar.time)
     }
 
     /** 데이터 포멧에 맞춰서 시간변환 **/
@@ -71,15 +69,15 @@ object DataTypeParser {
 
     /** Current의 rainType의 에러 방지 **/
     fun modifyCurrentRainType(rainTypeCurrent: String?, rainTypeReal: String?): String? {
-        return if (rainTypeCurrent != null) {
-            when(rainTypeCurrent) {
+        rainTypeCurrent?.let { current ->
+           return when(current) {
                 "비","눈","비/눈","소나기","없음" -> {
-                    rainTypeCurrent
+                    current
                 }
                 else -> rainTypeReal
             }
-        } else {
-            rainTypeReal
+        } ?: run {
+            return rainTypeReal
         }
     }
 
@@ -293,12 +291,14 @@ object DataTypeParser {
     }
 
     /** 시간별 날씨 날짜 이름 **/
-    fun getDailyItemDate(context: Context, localDateTime: LocalDateTime): String? {
-        return when(localDateTime.toLocalDate().compareTo(parseLongToLocalDateTime(getCurrentTime()).toLocalDate())) {
-            0 -> { context.getString(R.string.daily_today)}
-            1 -> { context.getString(R.string.daily_tomorrow)}
-            2 -> { context.getString(R.string.daily_next_tomorrow)}
-            else -> { null }
+    fun getDailyItemDate(context: Context, localDateTime: LocalDateTime): String {
+
+        return when(ChronoUnit.DAYS.between(localDateTime.toLocalDate(),
+            parseLongToLocalDateTime(getCurrentTime()).toLocalDate()).absoluteValue) {
+            0L -> {context.getString(R.string.daily_today)}
+            1L -> {context.getString(R.string.daily_tomorrow)}
+            2L -> {context.getString(R.string.daily_next_tomorrow)}
+            else -> { "" }
         }
     }
 
@@ -354,19 +354,6 @@ object DataTypeParser {
         }
     }
 
-    /** 위젯 하늘에 따른 배경 **/
-    fun getSkyImgWidget(sky: String?, progress: Int): Int {
-        return when (sky) {
-            "맑음", "구름많음" -> {
-                if (getIsNight(progress)) R.drawable.widget_bg_night
-                else R.drawable.widget_bg_clear
-            }
-            else -> {
-                R.drawable.widget_bg_cloudy
-            }
-        }
-    }
-
     /** 등급에 따른 색상 변환 **/
     fun getDataColor(context: Context, grade: Int): Int {
         return when (grade) {
@@ -389,13 +376,13 @@ object DataTypeParser {
     }
 
     /** 등급에 따른 텍스트 변환 **/
-    fun getDataText(grade: Int): String {
+    fun getDataText(context: Context, grade: Int): String {
         return when (grade) {
-            1 -> "좋음"
-            2 -> "보통"
-            3 -> "나쁨"
-            4 -> "매우나쁨"
-            else -> "에러"
+            1 -> context.getString(R.string.good)
+            2 -> context.getString(R.string.normal)
+            3 -> context.getString(R.string.bad)
+            4 -> context.getString(R.string.worst)
+            else -> context.getString(R.string.error)
         }
     }
 
@@ -500,4 +487,143 @@ object DataTypeParser {
     fun parseLongToLocalDateTime(long: Long): LocalDateTime {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(long), ZoneId.systemDefault())
     }
+
+    /** 공기질 데이터 등급변환 **/
+    fun convertValueToGrade(s: String, v: Double): Int {
+        return when(s) {
+            "SO2" -> {
+                when(v) {
+                    in 0.0..0.02 -> {
+                        1
+                    }
+                    in 0.021..0.05 -> {
+                        2
+                    }
+                    in 0.051..0.15 -> {
+                        3
+                    }
+                    else -> {
+                        4
+                    }
+                }
+            }
+            "CO" -> {
+                when(v) {
+                    in 0.0..2.0 -> {
+                        1
+                    }
+                    in 2.01..9.0 -> {
+                        2
+                    }
+                    in 9.01..15.0 -> {
+                        3
+                    }
+                    else -> {
+                        4
+                    }
+                }
+            }
+            "O3" -> {
+                when(v) {
+                    in 0.0..0.03 -> {
+                        1
+                    }
+                    in 0.031..0.09 -> {
+                        2
+                    }
+                    in 0.091..0.15 -> {
+                        3
+                    }
+                    else -> {
+                        4
+                    }
+                }
+            }
+            "NO2" -> {
+                when(v) {
+                    in 0.0..0.03 -> {
+                        1
+                    }
+                    in 0.031..0.06 -> {
+                        2
+                    }
+                    in 0.061..0.2 -> {
+                        3
+                    }
+                    else -> {
+                        4
+                    }
+                }
+            }
+            "PM2.5" -> {
+                when(v) {
+                    in 0.0..15.0 -> {
+                        1
+                    }
+                    in 16.0..35.0 -> {
+                        2
+                    }
+                    in 36.0..75.0 -> {
+                        3
+                    }
+                    else -> {
+                        4
+                    }
+                }
+            }
+
+            "PM10" -> {
+                when(v) {
+                    in 0.0..30.0 -> {
+                        1
+                    }
+                    in 31.0..80.0 -> {
+                        2
+                    }
+                    in 81.0..150.0 -> {
+                        3
+                    }
+                    else -> {
+                        4
+                    }
+                }
+            }
+            else -> {0}
+        }
+    }
+
+    /** 날짜가 한자리일 때 앞에 0 붙이기 **/
+    fun convertDateAppendZero(dateTime: LocalDateTime): String {
+        return if (dateTime.monthValue / 10 == 0) {
+            if (dateTime.dayOfMonth / 10 == 0) {
+                "0${dateTime.monthValue}.0${dateTime.dayOfMonth}"
+            } else {
+                "0${dateTime.monthValue}.${dateTime.dayOfMonth}"
+            }
+        } else {
+            if (dateTime.dayOfMonth / 10 == 0) {
+                "${dateTime.monthValue}.0${dateTime.dayOfMonth}"
+            } else {
+                "${dateTime.monthValue}.${dateTime.dayOfMonth}"
+            }
+        }
+    }
+
+//    fun convertVectorDrawable(vector: String?): Drawable {
+//        return when(vector) {
+//            "남" -> {
+//
+//            }
+//            "북" -> {
+//
+//            }
+//            "동" -> {
+//
+//            }
+//            "서" -> {
+//
+//            }
+//
+//        }
+//    }
 }

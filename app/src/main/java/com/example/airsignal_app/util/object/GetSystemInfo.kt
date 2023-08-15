@@ -7,19 +7,15 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
-import android.os.Build.VERSION
 import android.provider.Settings
 import android.util.DisplayMetrics
 import android.view.WindowManager
-import androidx.annotation.RequiresApi
 import androidx.core.content.pm.PackageInfoCompat
 import com.example.airsignal_app.dao.StaticDataObject.LANG_EN
 import com.example.airsignal_app.dao.StaticDataObject.LANG_KR
 import com.example.airsignal_app.dao.StaticDataObject.TAG_D
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
 import com.orhanobut.logger.Logger
-import timber.log.Timber
 import java.util.*
 
 
@@ -43,7 +39,7 @@ object GetSystemInfo {
                 Locale.KOREA
             }
             LANG_EN -> {
-                Locale.US
+                Locale.ENGLISH
             }
             else -> {
                 Locale.getDefault()
@@ -87,7 +83,7 @@ object GetSystemInfo {
         return ""
     }
 
-    fun getPlayStoreURL(context: Context): String {
+    private fun getPlayStoreURL(context: Context): String {
         return "market://details?id=${context.packageName}"
     }
 

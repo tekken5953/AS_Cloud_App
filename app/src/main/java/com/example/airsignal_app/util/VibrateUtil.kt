@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import java.time.Duration
 
 class VibrateUtil(private val context: Context) {
     private val vib by lazy {
@@ -26,6 +25,12 @@ class VibrateUtil(private val context: Context) {
             VibrationEffect.createOneShot(
                 duration.toLong(), VibrationEffect.DEFAULT_AMPLITUDE
             )
+        )
+    }
+
+    fun noti(array: LongArray) {
+        vib.vibrate(
+            VibrationEffect.createWaveform(array, -1)
         )
     }
 }
