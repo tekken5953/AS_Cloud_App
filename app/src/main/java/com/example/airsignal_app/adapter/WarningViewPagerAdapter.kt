@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.airsignal_app.R
 import com.example.airsignal_app.util.VibrateUtil
+import com.example.airsignal_app.util.`object`.GetAppInfo
 import com.example.airsignal_app.view.activity.WarningDetailActivity
 
 /**
@@ -80,6 +81,7 @@ class WarningViewPagerAdapter(
                     try {
                         val intent = Intent(context, WarningDetailActivity::class.java)
                         intent.putExtra("warning", mList)
+                        intent.putExtra("address", GetAppInfo.getNotificationAddress(context))
                         context.startActivity(intent)
                     } catch (e: NullPointerException) {
                         e.printStackTrace()

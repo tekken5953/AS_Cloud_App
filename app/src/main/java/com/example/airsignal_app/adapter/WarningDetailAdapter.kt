@@ -28,7 +28,7 @@ class WarningDetailAdapter(
     ): WarningDetailAdapter.ViewHolder {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
-        val view: View = inflater.inflate(R.layout.view_pager_item_main_report, parent, false)
+        val view: View = inflater.inflate(R.layout.list_item_warning_detail, parent, false)
         return ViewHolder(view)
     }
 

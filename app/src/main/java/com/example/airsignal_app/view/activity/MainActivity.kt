@@ -160,11 +160,6 @@ class MainActivity
         addSideMenu()
         getDataSingleTime(isCurrent = false)
         Thread.sleep(100)
-
-        if (!isProgressed) {
-            warningSlideAuto()
-            isProgressed = true
-        }
         binding.nestedAdView.resume()
     }
 
@@ -406,7 +401,7 @@ class MainActivity
         return try {
             val formS = if (s.first().toString() == " ")
                 s.replaceFirst(" ", "") else s
-            WrapTextClass().getFormedText(formS, 20)
+            WrapTextClass().getFormedText(formS, 40)
         } catch (e: NoSuchElementException) {
             e.printStackTrace()
             return s
@@ -854,13 +849,19 @@ class MainActivity
                                         .trim()
                                     reportArrayList.add(item)
                                     warningList.add(item)
-                                }
-                            }
 
-                            if (reportViewPagerItem.size == 0) {
-                                binding.mainWarningBox.visibility = GONE
-                            } else {
-                                binding.mainWarningBox.visibility = VISIBLE
+                                    if (index == sList.lastIndex) {
+                                        if (reportViewPagerItem.size == 0) {
+                                            binding.mainWarningBox.visibility = GONE
+                                        } else {
+                                            binding.mainWarningBox.visibility = VISIBLE
+                                            if (!isProgressed) {
+                                                warningSlideAuto()
+                                                isProgressed = true
+                                            }
+                                        }
+                                    }
+                                }
                             }
 
                             if (getUserLocation(this@MainActivity) == LANG_EN) {

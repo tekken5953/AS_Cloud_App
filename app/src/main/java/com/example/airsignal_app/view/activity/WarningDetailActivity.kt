@@ -13,7 +13,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     override val resID: Int get() = R.layout.activity_warning_detail
 
     val warningList = ArrayList<String>()
-    val warningAdapter by lazy { WarningDetailAdapter(this,warningList) }
+    val warningAdapter = WarningDetailAdapter(this, warningList)
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,10 +23,13 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
         binding.warningListView.adapter = warningAdapter
 
         val dataList = intent.getStringArrayListExtra("warning")
+        val dataAddress = intent.extras!!.getString("address")
+        binding.warningAddr.text = dataAddress
 
-        dataList!!.forEach { s ->
-            Timber.tag("testtest").d(s)
-            warningList.add(s)
+        dataList?.let {
+            warningList.addAll(it)
+            warningAdapter.notifyDataSetChanged()
+        } ?: apply {
             warningAdapter.notifyDataSetChanged()
         }
     }

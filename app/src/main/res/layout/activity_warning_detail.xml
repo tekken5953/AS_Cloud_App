@@ -2,7 +2,8 @@
 <layout>
     <data/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -38,6 +39,8 @@
             style="@style/basicMediumTextView"
             android:layout_marginStart="24dp"
             android:layout_marginTop="22dp"
+            android:drawablePadding="5dp"
+            android:textSize="16sp"
             android:textColor="@color/theme_text_color"
             app:drawableStartCompat="@drawable/ico_warning"
             app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +53,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
-            android:backgroundTint="@color/theme_line_color"
+            android:background="@color/theme_sub_color"
             app:layout_constraintTop_toBottomOf="@+id/warningAddr"/>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -64,6 +67,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/list_item_warning_detail"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
