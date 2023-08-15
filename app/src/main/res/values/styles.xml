@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
-        <item name="bottomSheetStyle">@style/AppModalStyle</item>
-    </style>
 
-    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/add_device_dialog_bottom_radius</item>
-        <item name="android:windowFullscreen">true</item>
-    </style>
-
-    <style name="DialogAnimation">
+    <style name="DialogAnimationUp">
         <item name="android:windowEnterAnimation">@anim/trans_bottom_to_top</item>
         <item name="android:windowExitAnimation">@anim/trans_top_to_bottom</item>
     </style>
@@ -18,10 +10,103 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowTitleStyle">@null</item>
         <item name="android:windowFrame">@null</item>
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:background">@color/white</item>
     </style>
 
+    <style name="basicMediumTextView">
+        <item name="android:letterSpacing">-0.04</item>
+        <item name="android:textColor">@color/theme_text_color</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_medium</item>
+    </style>
+
+    <style name="basicTextView">
+        <item name="android:letterSpacing">-0.04</item>
+        <item name="android:textColor">@color/theme_text_color</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_regular</item>
+    </style>
+
+    <style name="basicBoldTextView">
+        <item name="android:letterSpacing">-0.04</item>
+        <item name="android:textColor">@color/theme_text_color</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_bold</item>
+    </style>
+
+    <style name="settingMultiTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:letterSpacing">-0.04</item>
+        <item name="android:textColor">@color/theme_text_color</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_weight">0.5</item>
+    </style>
+
+    <style name="settingSingleTextView">
+        <item name="android:layout_height">50dp</item>
+        <item name="android:letterSpacing">-0.04</item>
+        <item name="android:textColor">@color/theme_text_color</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="background">?selectableItemBackground</item>
+        <item name="android:layout_marginTop">5dp</item>
+    </style>
+
+    <style name="DialogAnimationSide">
+        <item name="android:windowEnterAnimation">@anim/trans_right_to_left</item>
+        <item name="android:windowExitAnimation">@anim/trans_left_to_right</item>
+    </style>
+
+    <style name="DialogAnimationBottom">
+        <item name="android:windowEnterAnimation">@anim/trans_bottom_to_top</item>
+        <item name="android:windowExitAnimation">@anim/trans_top_to_bottom</item>
+        <item name="background">@drawable/loc_perm_bg</item>
+    </style>
+
+    <style name="DialogAnimationMenu">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@color/theme_text_color</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:background">@color/theme_view_color</item>
+    </style>
+
+    <style name="DialogAnimationMenuAnim">
+        <item name="android:windowEnterAnimation">@anim/sidebar_show</item>
+        <item name="android:windowExitAnimation">@anim/sidebar_hidden</item>
+    </style>
+
+    <style name="BasicImageButtonIcon">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:padding">3dp</item>
+    </style>
+
+    <style name="OpenSourceMenuTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/main_black_color</item>
+        <item name="android:textColorPrimary">@color/main_black_color</item>
+        <item name="android:windowBackground">@color/white</item>
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
 </resources>

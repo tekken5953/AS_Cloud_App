@@ -3,21 +3,24 @@ package com.example.airsignal_app.login
 import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
-import com.example.airsignal_app.IgnoredKeyFile.TAG_LOGIN
-import com.example.airsignal_app.IgnoredKeyFile.googleDefaultClientId
-import com.example.airsignal_app.IgnoredKeyFile.lastLoginPlatform
-import com.example.airsignal_app.IgnoredKeyFile.temporalPhoneNumber
-import com.example.airsignal_app.TestPageActivity
-import com.example.airsignal_app.SignInActivity
-import com.example.airsignal_app.firebase.RDBLogcat
-import com.example.airsignal_app.util.EnterPage
-import com.example.airsignal_app.util.LoggerUtil
-import com.example.airsignal_app.util.SharedPreferenceManager
+import androidx.appcompat.widget.AppCompatButton
+import com.example.airsignal_app.dao.IgnoredKeyFile.googleDefaultClientId
+import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
+import com.example.airsignal_app.firebase.db.RDBLogcat
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_FAILED
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_GOOGLE
+import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
+import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginPref
+import com.example.airsignal_app.util.EnterPageUtil
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserEmail
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserId
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLoginPlatform
+import com.example.airsignal_app.util.`object`.SetAppInfo.setUserProfile
+import com.example.airsignal_app.view.ToastUtils
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.SignInButton
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.orhanobut.logger.Logger
@@ -27,38 +30,41 @@ import com.orhanobut.logger.Logger
  * @since : 2023-03-08 오후 3:47
  **/
 
-class GoogleLogin(mActivity: Activity) {
-
-    private val activity = mActivity
+class GoogleLogin(private val activity: Activity) {
     private var client: GoogleSignInClient
     private var lastLogin: GoogleSignInAccount? = null
-    private val rdbLog = RDBLogcat("Log")
 
     init {
-        LoggerUtil().getInstance()
         client = GoogleSignIn.getClient(activity, getGoogleSignInOptions())
         lastLogin = GoogleSignIn.getLastSignedInAccount(activity)
     }
 
     /** 로그인 진행 + 로그인 버튼 비활성화 **/
-    fun login(mBtn: SignInButton, result: ActivityResultLauncher<Intent>) {
-        val signInIntent: Intent = client.signInIntent
-        result.launch(signInIntent)
-        mBtn.isEnabled = false
+    fun login(mBtn: AppCompatButton, result: ActivityResultLauncher<Intent>) {
+        try {
+            val signInIntent: Intent = client.signInIntent
+            result.launch(signInIntent)
+            mBtn.alpha = 0.7f
+        } catch (e: Exception) {
+            Logger.t(TAG_LOGIN).e(e.stackTraceToString())
+            RDBLogcat.writeErrorNotANR(activity, LOGIN_FAILED, e.localizedMessage!!)
+        }
+    }
+
+    /** 토큰 유효성 검사 **/
+    fun isValidToken() : Boolean {
+        return lastLogin?.idToken != null
     }
 
     /** 로그아웃 진행 + 로그아웃 로그 저장 **/
     fun logout() {
         client.signOut()
             .addOnCompleteListener {
-                Logger.t(TAG_LOGIN).d("정상적으로 로그아웃 성공")
                 saveLogoutStatus()
-                val intent = Intent(activity, SignInActivity::class.java)
-                activity.startActivity(intent)
-                activity.finish()
+                EnterPageUtil(activity).toLogin()
             }
             .addOnCanceledListener {
-                Logger.t(TAG_LOGIN).e("로그아웃에 실패했습니다")
+                ToastUtils(activity).showMessage("로그아웃에 실패했습니다",1)
             }
     }
 
@@ -66,12 +72,10 @@ class GoogleLogin(mActivity: Activity) {
     fun checkSilenceLogin() {
         client.silentSignIn()
             .addOnCompleteListener {
-                handleSignInResult(it)
-                Logger.t(TAG_LOGIN).d("자동 로그인 됨")
-                saveLoginStatus()
+                handleSignInResult(it,isAuto = true)
             }
             .addOnFailureListener {
-                Logger.t(TAG_LOGIN).w("마지막 로그인 세션을 찾을 수 없습니다")
+                ToastUtils(activity).showMessage("마지막 로그인 세션을 찾을 수 없습니다",1)
             }
     }
 
@@ -88,20 +92,21 @@ class GoogleLogin(mActivity: Activity) {
     /** 사용자의 로그인 정보를 저장
      *
      * TODO 구글로그인은 아직 테스팅 단계라 임시로 파라미터를 설정**/
-    private fun saveLoginStatus() {
-        SharedPreferenceManager(activity).setString(lastLoginPlatform,"구글")
-        rdbLog.sendLogInWithPhone("로그인 성공", temporalPhoneNumber, "구글", "수동")
+    private fun saveLoginStatus(email: String, name: String?, profile: String?, isAuto: Boolean) {
+        setUserLoginPlatform(activity, "google")
+        writeLoginHistory(isLogin = true , platform = LOGIN_GOOGLE, email = email, isAuto = isAuto, isSuccess = true)
+        writeLoginPref(activity, platform =  LOGIN_GOOGLE, email = email, phone = null, name = name, profile = profile)
     }
 
     /** 사용자 로그아웃 정보를 저장
      *
      * TODO 임시로 번호를 지정해 놓음**/
     private fun saveLogoutStatus() {
-        rdbLog.sendLogOutWithPhone("로그아웃 성공",temporalPhoneNumber,"구글")
+        writeLoginHistory(isLogin = false, platform = LOGIN_GOOGLE, email = lastLogin?.email!!, isAuto = null, isSuccess = true)
     }
 
     /** 로그인 이벤트 성공 **/
-    fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+    fun handleSignInResult(completedTask: Task<GoogleSignInAccount>, isAuto: Boolean) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             val email = account.email!!.lowercase()
@@ -119,15 +124,15 @@ class GoogleLogin(mActivity: Activity) {
                 profile : $photo
                 """.trimIndent()
             )
-            saveLoginStatus()
-            enterMainPage()
+
+            setUserId(activity, displayName.toString())
+            setUserProfile(activity, photo)
+            setUserEmail(activity, email)
+
+            saveLoginStatus(email, displayName, photo, isAuto)
         } catch (e: ApiException) {
+            Logger.t(TAG_LOGIN).e(e.stackTraceToString())
             e.printStackTrace()
         }
-    }
-
-    /** 메인 페이지로 이동 **/
-    private fun enterMainPage() {
-        EnterPage(activity).toLogin()
     }
 }

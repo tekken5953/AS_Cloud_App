@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data/>
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="78dp"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".view.activity.SettingActivity">
+        <ImageView
+            android:id="@+id/customCustomerImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="29dp"
+            android:layout_centerVertical="true"/>
+        <TextView
+            android:id="@+id/customCustomerTitle"
+            style="@style/basicMediumTextView"
+            android:layout_marginStart="16dp"
+            android:textSize="16sp"
+            android:textColor="@color/theme_text_color"
+            android:layout_marginBottom="4dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="16.5dp"
+            android:layout_toEndOf="@+id/customCustomerImg"/>
+        <TextView
+            android:id="@+id/customCustomerValue"
+            style="@style/basicMediumTextView"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:textColor="@color/theme_sub_color"
+            android:layout_alignStart="@+id/customCustomerTitle"
+            android:layout_below="@+id/customCustomerTitle"/>
+        <View
+            android:id="@+id/customCustomerLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignStart="@+id/customCustomerTitle"
+            android:layout_marginEnd="24dp"
+            android:background="@color/theme_line_color"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
+
+</layout>

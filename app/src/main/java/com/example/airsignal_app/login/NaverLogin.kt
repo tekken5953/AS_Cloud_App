@@ -1,14 +1,23 @@
 package com.example.airsignal_app.login
 
 import android.app.Activity
-import com.example.airsignal_app.IgnoredKeyFile.TAG_LOGIN
-import com.example.airsignal_app.IgnoredKeyFile.lastLoginPhone
-import com.example.airsignal_app.IgnoredKeyFile.naverDefaultClientId
-import com.example.airsignal_app.IgnoredKeyFile.naverDefaultClientName
-import com.example.airsignal_app.IgnoredKeyFile.naverDefaultClientSecret
-import com.example.airsignal_app.firebase.RDBLogcat
-import com.example.airsignal_app.util.EnterPage
-import com.example.airsignal_app.util.SharedPreferenceManager
+import androidx.appcompat.widget.AppCompatButton
+import com.example.airsignal_app.dao.IgnoredKeyFile.lastLoginPhone
+import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientId
+import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientName
+import com.example.airsignal_app.dao.IgnoredKeyFile.naverDefaultClientSecret
+import com.example.airsignal_app.dao.IgnoredKeyFile.userEmail
+import com.example.airsignal_app.dao.IgnoredKeyFile.userId
+import com.example.airsignal_app.dao.IgnoredKeyFile.userProfile
+import com.example.airsignal_app.dao.StaticDataObject.TAG_LOGIN
+import com.example.airsignal_app.db.SharedPreferenceManager
+import com.example.airsignal_app.firebase.db.RDBLogcat.LOGIN_NAVER
+import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginHistory
+import com.example.airsignal_app.firebase.db.RDBLogcat.writeLoginPref
+import com.example.airsignal_app.util.EnterPageUtil
+import com.example.airsignal_app.util.RefreshUtils
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserEmail
+import com.example.airsignal_app.view.ToastUtils
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
@@ -16,36 +25,47 @@ import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
 import com.orhanobut.logger.Logger
 
+
 /**
  * @author : Lee Jae Young
  * @since : 2023-03-09 오후 2:56
  **/
 
-class NaverLogin(mActivity: Activity) {
-    private val activity = mActivity
-    private val rdbLog = RDBLogcat("Log")
+class NaverLogin(private val activity: Activity) {
 
-    fun initialize() {
-        //TODO 정식버전이 되면 동적할당
-        NaverIdLoginSDK.initialize(activity, naverDefaultClientId, naverDefaultClientSecret, naverDefaultClientName)
+    init {
+        NaverIdLoginSDK.initialize(
+            activity,
+            naverDefaultClientId,
+            naverDefaultClientSecret,
+            naverDefaultClientName
+        )
     }
 
     /** 로그인
      *
      * TODO 로그인 기록 저장
      * **/
-    fun login() {
+    fun login(naverLoginButton: AppCompatButton) {
+        naverLoginButton.alpha = 1f
+        NaverIdLoginSDK.authenticate(activity, oauthLoginCallback)
+    }
+
+    fun silentLogin() {
         NaverIdLoginSDK.authenticate(activity, oauthLoginCallback)
     }
 
     /** 로그아웃 + 기록 저장 */
-    fun logout(phone: String) {
-        if (getAccessToken() != null) {
-            NaverIdLoginSDK.logout()
-            enterLoginPage()
-            Logger.t(TAG_LOGIN).d("네이버 아이디 로그아웃 성공")
-            rdbLog.sendLogOutWithPhone("로그아웃 성공", phone, "네이버")
-        }
+    fun logout() {
+        NaverIdLoginSDK.logout()
+        writeLoginHistory(
+            isLogin = false,
+            platform = LOGIN_NAVER,
+            email = getUserEmail(activity),
+            isAuto = null,
+            isSuccess = true
+        )
+        RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = null)
     }
 
     /** 엑세스 토큰 불러오기
@@ -64,32 +84,34 @@ class NaverLogin(mActivity: Activity) {
     // 프로필 콜벡 메서드
     val profileCallback = object : NidProfileCallback<NidProfileResponse> {
         override fun onSuccess(result: NidProfileResponse) {
-            val userId = result.profile?.id
-            val phone = result.profile?.mobile.toString()
-            SharedPreferenceManager(activity).setString(lastLoginPhone,phone)
-            Logger.t(TAG_LOGIN).d("네이버 로그인 성공")
-            Logger.t(TAG_LOGIN).d(
-                "user id : $userId\n" +
-                        "mobile : $phone\n" +
-                        "token Type : ${NaverIdLoginSDK.getTokenType()}\n" +
-                        "access : $NaverIdLoginSDK.getAccessToken()\n" +
-                        "refresh : ${NaverIdLoginSDK.getRefreshToken()}\n" +
-                        "expired at : ${NaverIdLoginSDK.getExpiresAt()}\n" +
-                        "state : ${NaverIdLoginSDK.getState()}"
-            )
+            result.profile?.let {
+                SharedPreferenceManager(activity)
+                    .setString(lastLoginPhone, it.mobile.toString())
+                    .setString(userId, it.name.toString())
+                    .setString(userProfile, it.profileImage!!)
+                    .setString(userEmail, it.email.toString())
 
-            rdbLog.sendLogInWithPhone("로그인 성공",phone,"네이버","수동")
-            enterMainPage()
+                writeLoginHistory(isLogin = true, platform = LOGIN_NAVER, email = it.email.toString(),
+                    isAuto = false, isSuccess = true)
+
+                writeLoginPref(activity,
+                    platform = LOGIN_NAVER,
+                    email = it.email.toString(),
+                    phone = it.mobile.toString(),
+                    name = it.name.toString(),
+                    profile = it.profileImage.toString()
+                )
+
+                EnterPageUtil(activity).toMain(LOGIN_NAVER)
+            }
         }
 
         override fun onFailure(httpStatus: Int, message: String) {
-            val errorCode = NaverIdLoginSDK.getLastErrorCode().code
-            val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
-            Logger.t(TAG_LOGIN).e(
-                "errorCode: $errorCode\n" +
-                        "errorDescription: $errorDescription"
+            ToastUtils(activity).showMessage("프로필을 불러오는데 실패했습니다",1)
+            writeLoginHistory(
+                isLogin = true, platform = LOGIN_NAVER, email = getUserEmail(activity),
+                isAuto = false, isSuccess = false
             )
-            rdbLog.sendLogToFail("네이버 로그인 실패", "$errorCode - $errorDescription")
         }
 
         override fun onError(errorCode: Int, message: String) {
@@ -97,7 +119,7 @@ class NaverLogin(mActivity: Activity) {
         }
     }
 
-    // 로그인 콜벡 메서드
+    /** 로그인 콜벡 메서드 **/
     private val oauthLoginCallback = object : OAuthLoginCallback {
         override fun onSuccess() {
             // 네이버 로그인 인증이 성공했을 때 수행할 코드 추가
@@ -108,10 +130,7 @@ class NaverLogin(mActivity: Activity) {
         override fun onFailure(httpStatus: Int, message: String) {
             val errorCode = NaverIdLoginSDK.getLastErrorCode().code
             val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
-            Logger.t(TAG_LOGIN).e(
-                "errorCode: $errorCode\n" +
-                        "errorDescription: $errorDescription"
-            )
+            ToastUtils(activity).showMessage("로그인이 필요합니다",1)
         }
 
         override fun onError(errorCode: Int, message: String) {
@@ -119,20 +138,23 @@ class NaverLogin(mActivity: Activity) {
         }
     }
 
-    private fun enterMainPage() {
-       EnterPage(activity).toMain("네이버")
+    /** 로그인 페이지로 이동 **/
+    private fun enterLoginPage() {
+        EnterPageUtil(activity).toLogin()
     }
 
-    private fun enterLoginPage() {
-       EnterPage(activity).toLogin()
+    /** 로그인 세션 유지 확인 **/
+    fun isLogin() : Boolean {
+        return NidOAuthLogin().callProfileApi(profileCallback).isCompleted
     }
 
     /** 네이버 클라이언트와 연동 해제 **/
-    private fun disconnectFromNaver() {
+    fun disconnectFromNaver() {
         NidOAuthLogin().callDeleteTokenApi(activity, object : OAuthLoginCallback {
             override fun onSuccess() {
                 //서버에서 토큰 삭제에 성공한 상태입니다.
-                Logger.t(TAG_LOGIN).d("네이버 로그인 서비스와의 연동을 해제하였습니다다")
+                ToastUtils(activity).showMessage("네이버 로그인 서비스와의 연동을 해제하였습니다다",1)
+                enterLoginPage()
             }
 
             override fun onFailure(httpStatus: Int, message: String) {

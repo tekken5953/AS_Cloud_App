@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/itemNoticeDate"
+        style="@style/basicTextView"
+        android:layout_marginStart="24dp"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:layout_centerVertical="true"
+        android:textColor="@color/theme_text_color"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/itemNoticeHeader"
+        style="@style/basicTextView"
+        android:layout_width="match_parent"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="35dp"
+        android:layout_toEndOf="@+id/itemNoticeDate"
+        android:ellipsize="end"
+        android:lineSpacingExtra="5dp"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:gravity="start"
+        android:maxLines="2"
+        android:layout_centerVertical="true"
+        android:textColor="@color/theme_text_color"
+        android:textSize="14sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.7dp"
+        android:background="@color/theme_line_color"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="12dp"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

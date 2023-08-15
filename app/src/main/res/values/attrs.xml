@@ -1,0 +1,43 @@
+<resources>
+    <declare-styleable name="FullscreenAttrs">
+        <attr name="fullscreenBackgroundColor" format="color" />
+        <attr name="fullscreenTextColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="SettingSystemView">
+        <attr name="left" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="AirQView">
+        <attr name="explainText" format="string"/>
+        <attr name="graphImg" format="integer"/>
+    </declare-styleable>
+    
+    <declare-styleable name="NotiSwitchView">
+        <attr name="notiTitle" format="string"/>
+        <attr name="enableSubTitle" format="boolean"/>
+        <attr name="topicTitle" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="SegmentSectionView">
+        <attr name="section1" format="string"/>
+        <attr name="section2" format="string"/>
+        <attr name="section3" format="string"/>
+        <attr name="weight0" format="float"/>
+        <attr name="weight1" format="float"/>
+        <attr name="weight2" format="float"/>
+        <attr name="weight3" format="float"/>
+    </declare-styleable>
+
+    <declare-styleable name="SubAirView">
+        <attr name="customImg" format="reference"/>
+        <attr name="customTitle" format="string"/>
+        <attr name="customSubText" format="string"/>
+        <attr name="isLeftLine" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="CustomerServiceView">
+        <attr name="customerTitle" format="string"/>
+        <attr name="customerValue" format="string"/>
+    </declare-styleable>
+</resources>

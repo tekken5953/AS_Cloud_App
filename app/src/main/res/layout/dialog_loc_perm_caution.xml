@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/loc_perm_bg">
+
+    <TextView
+        android:id="@+id/permCautionTitle"
+        style="@style/basicMediumTextView"
+        android:textColor="@color/theme_text_color"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/permCautionExplain"
+        android:layout_marginBottom="16dp"
+        android:text="@string/loc_caution_title"/>
+
+    <TextView
+        android:id="@+id/permCautionExplain"
+        style="@style/basicTextView"
+        android:layout_above="@+id/permCautionImg"
+        android:layout_marginBottom="40dp"
+        android:textSize="14sp"
+        android:textColor="@color/theme_sub_color"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:lineHeight="20dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/loc_caution_explain"/>
+
+    <ImageView
+        android:id="@+id/permCautionImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ico_gps_big"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/permCautionImgShadow"/>
+
+    <ImageView
+        android:id="@+id/permCautionImgShadow"
+        android:layout_width="70dp"
+        android:layout_height="20dp"
+        android:paddingStart="3dp"
+        android:paddingEnd="0dp"
+        android:src="@drawable/shadow_caution"
+        app:tint="@color/theme_text_color"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/permCautionBtn"
+        android:layout_marginBottom="22dp"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/permCautionBtn"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/permission_ok_btn_bg"
+        android:text="@string/ok"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:fontFamily="@font/spoqa_hansansneo_medium"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="52dp"/>
+</RelativeLayout>

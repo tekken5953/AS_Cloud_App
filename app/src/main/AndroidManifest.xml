@@ -4,26 +4,79 @@
     package="com.example.airsignal_app">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" /> <!-- <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> -->
+    <!-- <uses-permission android:name="android.permission.WAKE_LOCK" /> -->
     <uses-permission
         android:name="android.permission.BIND_REMOTEVIEWS"
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:name=".koin.BaseApplication"
+        android:hardwareAccelerated="true"
+        android:icon="@drawable/app_icon"
+        android:label="@string/app__name"
+        android:networkSecurityConfig="@xml/network_security_work"
+        android:roundIcon="@drawable/app_icon"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AirSignal_App">
+        android:theme="@style/Theme.AirSignal_App"
+        android:windowSoftInputMode="adjustNothing"
+        tools:replace="android:icon,android:label">
         <activity
-            android:name=".MyDeviceActivity"
-            android:exported="false" />
+            android:name=".view.activity.WarningDetailActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+            android:name=".view.activity.WebURLActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.activity.PermissionActivity"
+            android:attributionTags="SLocationService"
+            android:exported="false"
+            android:hardwareAccelerated="false"
+            tools:targetApi="s">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.activity.SplashActivity"
+            android:exported="true"
+            android:hardwareAccelerated="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".view.activity.SettingActivity"
+            android:exported="false"
+            android:hardwareAccelerated="false" />
+        <activity
+            android:name=".view.activity.MainActivity"
+            android:attributionTags="SLocationService"
+            android:exported="false"
+            android:hardwareAccelerated="true"
+            tools:targetApi="s" />
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
-            android:exported="true">
+            android:exported="true"
+            android:hardwareAccelerated="false">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -32,21 +85,61 @@
 
                 <data
                     android:host="oauth"
-                    android:scheme="kakaoc6eb5158a7c0293e81b5ffdd83abadf0" />
+                    android:scheme="@string/kakaoOAuth" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignInActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:name=".view.activity.LoginActivity"
+            android:exported="true" />
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/OpenSourceMenuTheme" /> <!-- <receiver -->
+        <!-- android:name=".view.widget.WidgetProvider2x2" -->
+        <!-- android:exported="false" -->
+        <!-- tools:ignore="Instantiatable"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.appwidget.action.APPWIDGET_UPDATE" /> -->
+        <!-- <action android:name="android.appwidget.action.APPWIDGET_ENABLED"/> -->
+        <!-- <action android:name="android.intent.action.DATE_CHANGED" /> -->
+        <!-- </intent-filter> -->
+        <!-- <meta-data -->
+        <!-- android:name="android.appwidget.provider" -->
+        <!-- android:resource="@xml/widget2x2_provider" /> -->
+        <!-- </receiver> -->
+        <!-- <receiver -->
+        <!-- android:name=".view.widget.WidgetProvider4x2" -->
+        <!-- android:exported="false" -->
+        <!-- android:permission="android.permission.BIND_JOB_SERVICE" -->
+        <!-- tools:ignore="Instantiatable"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.intent.action.BOOT_COMPLETED" /> -->
+        <!-- <action android:name="android.intent.action.SCREEN_ON" /> -->
+        <!-- <action android:name="android.appwidget.action.APPWIDGET_UPDATE" /> -->
+        <!-- <action android:name="android.appwidget.action.APPWIDGET_ENABLED" /> -->
+        <!-- <action android:name="android.intent.action.DATE_CHANGED" /> -->
+        <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+        <!-- </intent-filter> -->
+        <!-- <meta-data -->
+        <!-- android:name="android.appwidget.provider" -->
+        <!-- android:resource="@xml/widget4x2_provider" /> -->
+        <!-- </receiver> -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/adMobId" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+        <receiver
+            android:name=".firebase.fcm.NotificationBuilder"
+            tools:ignore="Instantiatable" />
+
+        <service
+            android:name=".firebase.fcm.SubFCM"
+            android:directBootAware="true"
+            android:exported="false"
+            tools:ignore="Instantiatable">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".TestPageActivity"
-            android:exported="false" />
+        </service>
     </application>
 
 </manifest>

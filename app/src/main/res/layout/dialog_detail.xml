@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/mode_color_view">
+
+    <ImageView
+        android:id="@+id/detailBack"
+        style="@style/BasicImageButtonIcon"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/back_arrow"
+        app:tint="@color/theme_text_color"/>
+
+    <TextView
+        android:id="@+id/detailTitle"
+        style="@style/basicTextView"
+        android:layout_alignTop="@+id/detailBack"
+        android:layout_alignBottom="@+id/detailBack"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="10dp"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:textColor="@color/theme_text_color"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/detailHeadLine"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:letterSpacing="-0.04"
+        android:layout_below="@+id/detailTitle"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="37dp"
+        android:fontFamily="@font/spoqa_hansansneo_medium"
+        android:gravity="start"
+        android:textColor="@color/theme_text_color"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/detailNoticeDate"
+        style="@style/basicTextView"
+        android:layout_below="@+id/detailHeadLine"
+        android:layout_alignStart="@+id/detailHeadLine"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:textColor="@color/main_blue_color"
+        android:textSize="12sp" />
+
+    <View
+        android:id="@+id/detailView"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/detailNoticeDate"
+        android:layout_alignStart="@+id/detailHeadLine"
+        android:layout_marginTop="20dp"
+        android:layout_alignEnd="@+id/detailHeadLine"
+        android:background="@color/theme_line_color" />
+
+    <TextView
+        android:id="@+id/detailContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/detailView"
+        android:layout_alignStart="@+id/detailHeadLine"
+        android:layout_marginTop="20dp"
+        android:letterSpacing="-0.04"
+        android:lineSpacingExtra="7dp"
+        android:layout_alignEnd="@+id/detailHeadLine"
+        android:layout_marginBottom="40dp"
+        android:fontFamily="@font/spoqa_hansansneo_regular"
+        android:textColor="@color/theme_sub_color"
+        android:textSize="14sp" />
+
+</RelativeLayout>

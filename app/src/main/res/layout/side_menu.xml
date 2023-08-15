@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <ImageView
+        android:id="@+id/headerCancel"
+        style="@style/BasicImageButtonIcon"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="24dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/cancel"
+        app:tint="@color/theme_text_color" />
+
+    <TableRow
+        android:id="@+id/headerTr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/headerCancel"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="7dp"
+            android:background="@color/theme_view_color"
+            app:cardCornerRadius="50dp">
+
+            <ImageView
+                android:id="@+id/navHeaderProfileImg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                tools:src="@tools:sample/avatars"/>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/navHeaderUserId"
+            style="@style/basicTextView"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="30dp"
+            android:textColor="@color/theme_text_color"
+            android:textSize="16sp"/>
+    </TableRow>
+
+    <View
+        android:id="@+id/navHeaderView1"
+        android:layout_width="match_parent"
+        android:layout_height="0.7dp"
+        android:layout_below="@+id/headerTr"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="24dp"
+        android:background="@color/theme_line_color" />
+
+    <TextView
+        android:id="@+id/navMenuWeather"
+        style="@style/basicTextView"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@+id/navHeaderView1"
+        android:layout_marginTop="30dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="start|center_vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:text="@string/weather"
+        android:textColor="@color/theme_text_color"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/navMenuSetting"
+        style="@style/basicTextView"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@+id/navMenuWeather"
+        android:layout_marginTop="20dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="start|center_vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:text="@string/setting_title"
+        android:textColor="@color/theme_text_color"
+        android:textSize="17sp" />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/navMenuAdview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="visible"
+        ads:adSize="FULL_BANNER"
+        ads:adUnitId="@string/adUnit_side_menu_Id" />
+
+</RelativeLayout>

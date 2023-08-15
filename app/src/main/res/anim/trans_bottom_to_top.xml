@@ -4,4 +4,4 @@
     android:startOffset="100"
     android:fromYDelta="100%p"
     android:toYDelta="0%p"
-    android:duration="700"/>
+    android:duration="@android:integer/config_mediumAnimTime"/>

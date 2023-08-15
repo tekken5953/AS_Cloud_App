@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="65dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/listCurrentAddressImg"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="24dp"
+        android:src="@drawable/location"
+        app:tint="@color/theme_text_color" />
+
+    <TextView
+        android:id="@+id/listCurrentAddressText"
+        style="@style/basicTextView"
+        android:textColor="@color/theme_text_color"
+        android:maxEms="20"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/listCurrentAddressImg" />
+
+    <TextView
+        android:id="@+id/listCurrentAddressDelete"
+        style="@style/basicTextView"
+        android:layout_alignTop="@+id/listCurrentAddressText"
+        android:layout_alignBottom="@+id/listCurrentAddressText"
+        android:visibility="gone"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/edit_delete_btn_bg"
+        android:text="@string/delete"
+        android:textSize="11sp"
+        android:textColor="@color/white"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:background="@color/theme_line_color" />
+
+</RelativeLayout>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginBottom="3dp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/listItemUvLegendCardView"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        app:cardCornerRadius="50dp"
+        app:cardElevation="0dp"
+        android:translationZ="0dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true">
+        <View
+            android:id="@+id/listItemUvLegendColor"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_gravity="center_vertical"/>
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/listitemUvLegendGrade"
+        style="@style/basicTextView"
+        android:textColor="@color/theme_text_color"
+        android:textSize="14sp"
+        android:gravity="start"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/listItemUvLegendCardView" />
+
+    <TextView
+        android:id="@+id/listItemUvLegendValue"
+        style="@style/basicTextView"
+        android:layout_width="55dp"
+        android:textColor="@color/theme_text_color"
+        android:textSize="14sp"
+        android:gravity="start"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:background="?selectableItemBackground"
+        android:orientation="horizontal"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:weightSum="1"
+        android:backgroundTint="@color/theme_view_color"
+        tools:context=".view.activity.SettingActivity">
+
+        <TextView
+            android:id="@+id/customSettingLeft"
+            style="@style/settingMultiTextView"
+            android:textColor="@color/theme_text_color"/>
+
+        <TextView
+            android:id="@+id/customSettingSystemRight"
+            style="@style/settingMultiTextView"
+            android:gravity="center_vertical|end"
+            android:textColor="@color/main_blue_color" />
+    </LinearLayout>
+</layout>
+

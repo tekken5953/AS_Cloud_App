@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@android:color/transparent">
+
+    <LinearLayout
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginStart="20dp"
+        android:layout_centerVertical="true">
+        <TextView
+            android:id="@+id/weeklyDayText"
+            style="@style/basicMediumTextView"
+            android:lines="1"
+            android:textSize="14sp"
+            android:letterSpacing="-0.04"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:textColor="@color/theme_text_color" />
+
+        <TextView
+            android:id="@+id/weeklyDayDate"
+            style="@style/basicMediumTextView"
+            android:layout_width="wrap_content"
+            android:letterSpacing="-0.04"
+            android:textColor="@color/theme_sub_color"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/weeklyMinIv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+
+        <ImageView
+            android:id="@+id/weeklyMaxIv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="24dp">
+        <TextView
+            android:id="@+id/weeklyMinText"
+            style="@style/basicMediumTextView"
+            android:gravity="center"
+            android:lines="1"
+            android:textColor="@color/theme_text_color"
+            android:textSize="16sp"/>
+
+        <TextView
+            style="@style/basicMediumTextView"
+            android:text="/"
+            android:gravity="center"
+            android:lines="1"
+            android:textSize="16sp"
+            android:textColor="@color/theme_text_color"
+            android:layout_marginStart="1dp"/>
+
+        <TextView
+            android:id="@+id/weeklyMaxText"
+            style="@style/basicMediumTextView"
+            android:gravity="center"
+            android:lines="1"
+            android:textColor="@color/theme_text_color"
+            android:textSize="16sp"
+            android:layout_marginStart="1dp"/>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/weeklyBottomLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/theme_line_color"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"/>
+</RelativeLayout>

@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="dummy_gray_dark">#99ffffff</color>
-    <color name="dummy_gray_medium">#88ffffff</color>
-    <color name="dummy_gray_line">#79ffffff</color>
-    <color name="dummy_gray_light">#66ffffff</color>
+    <color name="mode_color_text">#FFFFFF</color>
+    <color name="mode_color_view">#FF000000</color>
+    <color name="main_gray_color">#D9D9D9</color>
+
+    <color name="theme_view_color">#262626</color>
+    <color name="theme_text_color">#FFFFFF</color>
+    <color name="theme_sub_color">#9C9C9C</color>
+    <color name="theme_line_color">#303236</color>
+    <color name="theme_box_solid_color">#2A2C2F</color>
+    <color name="theme_box_stroke_color">#303236</color>
+    <color name="theme_main_bg_color">#262626</color>
+    <color name="theme_indicator_empty_color">#A6A6A6</color>
+    <color name="theme_indicator_fill_color">#eeeeee</color>
+    <color name="theme_pm_title_bg_color">#9C9C9C</color>
+    <color name="theme_alert_double_cancel_color">#484C56</color>
+    <color name="theme_alert_double_apply_color">#F87171</color>
+
+    <color name="theme_sun_tomorrow_night">#7E5EFF</color>
+    <color name="theme_sun_tomorrow_day">#FF8A48</color>
+    <color name="theme_opacity30_view_color">#30000000</color>
 </resources>
