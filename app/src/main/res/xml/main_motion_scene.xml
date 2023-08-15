@@ -227,14 +227,14 @@
             style="@style/basicTextView"
             android:layout_marginStart="24dp"
             android:layout_marginTop="22dp"
-            android:layout_marginEnd="40dp"
             android:alpha="1"
             android:lineHeight="22dp"
+            android:maxEms="10"
             android:fontFamily="@font/spoqa_hansansneo_regular"
             android:gravity="start"
             android:textColor="@color/mode_black_color"
             android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@id/mainMotionLayout" 
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear"/>
 
         <Constraint
@@ -337,7 +337,7 @@
             app:layout_constraintStart_toEndOf="@id/mainLiveTempValue" />
         <Constraint
             android:id="@+id/mainCompareTempTv"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:layout_marginTop="8dp"
             android:textColor="@color/mode_black_color"
             android:textSize="16sp"
@@ -358,7 +358,7 @@
 
         <Constraint
             android:id="@+id/mainSensValue"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:textSize="16sp"
             android:alpha="1"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLayout"
@@ -594,7 +594,7 @@
             android:alpha="0"/>
         <Constraint
             android:id="@+id/mainCompareTempTv"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:layout_marginTop="8dp"
             android:alpha="0"
             android:textColor="@color/mode_black_color"
@@ -607,7 +607,7 @@
             android:alpha="0"/>
         <Constraint
             android:id="@+id/mainSensValue"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:alpha="0"/>
         <Constraint
             android:id="@+id/mainPmBoxTL"

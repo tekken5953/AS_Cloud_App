@@ -20,7 +20,6 @@ import android.widget.LinearLayout.VISIBLE
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
-import androidx.core.view.size
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -126,7 +125,7 @@ class MainActivity
     private val uvResponseList = ArrayList<AdapterModel.UVResponseItem>()
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(this, dailyWeatherList) }
     private val weeklyWeatherAdapter by lazy { WeeklyWeatherAdapter(this, weeklyWeatherList) }
-    private val reportViewPagerItem = ArrayList<AdapterModel.ReportItem>()
+    private val reportViewPagerItem = ArrayList<String>()
     private val warningViewPagerAdapter by lazy {
         WarningViewPagerAdapter(
             this,
@@ -134,12 +133,13 @@ class MainActivity
             binding.mainWarningVp
         )
     }
-    private val reportArrayList = ArrayList<AdapterModel.ReportItem>()
+    private val reportArrayList = ArrayList<String>()
     private val uvLegendAdapter = UVLegendAdapter(this, uvLegendList)
     private val uvResponseAdapter = UVResponseAdapter(this, uvResponseList)
     private val airQList = ArrayList<AdapterModel.AirQTitleItem>()
     private val airQAdapter = AirQTitleAdapter(this, airQList)
     private var currentSun = 0
+    private val warningList = ArrayList<String>()
     private var isSunAnimated = false
     private var isProgressed = false
     private val sunPb by lazy { SunProgress(binding.seekArc) }
@@ -161,11 +161,16 @@ class MainActivity
         getDataSingleTime(isCurrent = false)
         Thread.sleep(100)
 
+        if (!isProgressed) {
+            warningSlideAuto()
+            isProgressed = true
+        }
         binding.nestedAdView.resume()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        isProgressed = false
         binding.nestedAdView.destroy()
     }
 
@@ -273,18 +278,6 @@ class MainActivity
                 sideMenuBuilder.show(sideMenuView, true)
             }
         })
-
-        binding.mainWarningBox.setOnClickListener {
-            val intent = Intent(this@MainActivity, WarningDetailActivity::class.java)
-            val list = ArrayList<String>()
-            reportArrayList.forEachIndexed { index, s ->
-                list.add(s.text)
-
-                if (index == reportArrayList.lastIndex) {
-                    intent.putExtra("warning", list)
-                }
-            }
-        }
     }
 
     // 햄버거 메뉴 세팅
@@ -856,13 +849,11 @@ class MainActivity
                             reportArrayList.clear()
                             result.summary?.let { sList ->
                                 sList.forEachIndexed { index, summary ->
-                                   reportArrayList.add(AdapterModel.ReportItem(summary.replace("○", "")
-                                       .replace("\n", "")
-                                       .trim()))
-
-                                    if (index == sList.lastIndex) {
-                                        warningSlideAuto()
-                                    }
+                                    val item = summary.replace("○", "")
+                                        .replace("\n", "")
+                                        .trim()
+                                    reportArrayList.add(item)
+                                    warningList.add(item)
                                 }
                             }
 
@@ -1527,7 +1518,7 @@ class MainActivity
             vp.currentItem = if (vp.currentItem + 1 < reportArrayList.size) vp.currentItem + 1 else 0
             handler.postDelayed({
                 warningSlideAuto()
-            },5000)
+            },4000)
         }
     }
 

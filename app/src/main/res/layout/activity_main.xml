@@ -108,13 +108,13 @@
             style="@style/basicTextView"
             android:layout_marginStart="24dp"
             android:layout_marginTop="22dp"
-            android:layout_marginEnd="40dp"
             android:fontFamily="@font/spoqa_hansansneo_regular"
             android:gravity="start"
             android:lineHeight="26dp"
+            android:maxEms="10"
             android:textColor="@color/mode_black_color"
             android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@id/mainMotionLayout"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear"/>
 
         <ImageView
@@ -289,7 +289,7 @@
 
         <TextView
             android:id="@+id/mainCompareTempTv"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:layout_marginTop="8dp"
             android:textColor="@color/mode_black_color"
             android:textSize="16sp"
@@ -308,7 +308,7 @@
 
         <TextView
             android:id="@+id/mainSensValue"
-            style="@style/basicTextView"
+            style="@style/basicMediumTextView"
             android:textColor="#3D3D3D"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLayout"
@@ -316,7 +316,7 @@
             android:layout_marginTop="27dp"
             android:layout_marginEnd="24dp"/>
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/mainWarningBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -330,8 +330,8 @@
                 android:id="@+id/mainWarningVp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true" />
-        </RelativeLayout>
+                android:layout_gravity="center"/>
+        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/nested_subAir_frame"

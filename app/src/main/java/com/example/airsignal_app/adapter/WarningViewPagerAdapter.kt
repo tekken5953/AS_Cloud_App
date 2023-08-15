@@ -1,6 +1,8 @@
 package com.example.airsignal_app.adapter
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -9,16 +11,16 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.airsignal_app.R
-import com.example.airsignal_app.dao.AdapterModel
 import com.example.airsignal_app.util.VibrateUtil
+import com.example.airsignal_app.view.activity.WarningDetailActivity
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-06-013 오후 2:35
  **/
 class WarningViewPagerAdapter(
-    private val context: Context,
-    list: ArrayList<AdapterModel.ReportItem>,
+    private val context: Activity,
+    list: ArrayList<String>,
     private val viewPager2: ViewPager2
 ) :
     RecyclerView.Adapter<WarningViewPagerAdapter.ViewHolder>() {
@@ -62,8 +64,8 @@ class WarningViewPagerAdapter(
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val textView = view.findViewById<TextView>(R.id.vpWarningText)
 
-        fun bind(dao: AdapterModel.ReportItem) {
-            textView.text = dao.text
+        fun bind(dao: String) {
+            textView.text = dao
             textView.setTextColor(textColor)
 
             if (mList.size == 0) {
@@ -76,7 +78,9 @@ class WarningViewPagerAdapter(
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try {
-
+                        val intent = Intent(context, WarningDetailActivity::class.java)
+                        intent.putExtra("warning", mList)
+                        context.startActivity(intent)
                     } catch (e: NullPointerException) {
                         e.printStackTrace()
                     }
