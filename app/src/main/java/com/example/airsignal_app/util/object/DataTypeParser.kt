@@ -367,17 +367,6 @@ object DataTypeParser {
         }
     }
 
-    /** Opacity가 들어간 색상 반환**/
-    fun getDataOpacityColor(context: Context, grade: Int): Int {
-        return when (grade) {
-            1 -> ResourcesCompat.getColor(context.resources, R.color.air_good_o, null)
-            2 -> ResourcesCompat.getColor(context.resources, R.color.air_normal_o, null)
-            3 -> ResourcesCompat.getColor(context.resources, R.color.air_bad_o, null)
-            4 -> ResourcesCompat.getColor(context.resources, R.color.air_very_bad_o, null)
-            else -> ResourcesCompat.getColor(context.resources, R.color.progressError, null)
-        }
-    }
-
     /** 등급에 따른 텍스트 변환 **/
     fun getDataText(context: Context, grade: Int): String {
         return when (grade) {
@@ -392,18 +381,6 @@ object DataTypeParser {
     /** Double을 지정 자릿수에서 반올림 **/
     fun convertDoubleToDecimal(double: Double, digit: Int): String {
         return String.format("%.${digit}f", double)
-    }
-    
-    /** 주소 추출 **/
-    fun getAddressDefault(address: Address): String {
-        Logger.t("testtest").i("${address.adminArea} ${address.subAdminArea} ${address.locality}" +
-                " ${address.subLocality} ${address.thoroughfare} ${address.subThoroughfare} ${address.featureName}"
-                    .replace(" null "," ")
-                    .trim())
-        return "${address.adminArea} ${address.subAdminArea} ${address.locality}" +
-                " ${address.subLocality} ${address.thoroughfare} ${address.subThoroughfare}"
-                    .replace(" null "," ")
-                    .trim()
     }
 
     /** 요일 변환 **/

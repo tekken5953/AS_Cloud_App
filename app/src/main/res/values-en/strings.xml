@@ -88,7 +88,6 @@
     <string name="perm_notice">It is available without permission\nbut some services may be restricted</string>
     <string name="perm_title">Please allow access to use the app</string>
     <string name="not_serviced_location">It\'s not a serviceable area</string>
-
     <string name="airq_question_pm2p5">PM2.5 is dust smaller than 2.5/1000th of a millimeter. The particles are too fine to be filtered through the nasal mucosa and can directly penetrate into the alveoli when inhaled, increasing the prevalence of asthma or lung disease and early mortality. In addition, ultrafine dust deteriorates visibility, is deposited on the surface of leaves of plants, interferes with metabolism, and accumulates on buildings, relics and statues to cause corrosion.
     </string>
     <string name="airq_question_pm10">PM10 is dust smaller than 10/1000mm, and Fine dust is emitted as a mixture of solid and liquid particles in the air, and is produced through chemical reactions or naturally. Fine dust deteriorates visibility, is deposited on the surface of leaves of plants, interferes with metabolism, and is deposited on buildings, relics and statues, causing corrosion.
@@ -112,7 +111,6 @@
     <string name="live_temp">Temp</string>
     <string name="sens_temp">Sensory Temp</string>
     <string name="cancel">Cancel</string>
-
     <string name="daily_today">Tod</string>
     <string name="daily_tomorrow">Tom</string>
     <string name="daily_next_tomorrow">Next Tom</string>

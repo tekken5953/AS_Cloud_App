@@ -716,19 +716,6 @@
                                 android:textSize="12sp" />
                         </RelativeLayout>
 
-                        <!--                         <at.grabner.circleprogress.CircleProgressView-->
-                        <!--                            android:id="@+id/nested_air_cpv"-->
-                        <!--                            android:layout_width="130dp"-->
-                        <!--                            android:layout_height="130dp"-->
-                        <!--                            app:cpv_innerContourColor="@android:color/transparent"-->
-                        <!--                            app:cpv_outerContourColor="@android:color/transparent"-->
-                        <!--                            app:cpv_barWidth="25dp"-->
-                        <!--                            app:cpv_rimWidth="25dp"-->
-                        <!--                            app:cpv_seekMode="false"-->
-                        <!--                            app:cpv_startAngle="190"-->
-                        <!--                            app:cpv_textMode="Text"-->
-                        <!--                            app:cpv_textSize="20sp"/>-->
-
                         <androidx.cardview.widget.CardView
                             android:id="@+id/nested_air_cpv_card"
                             android:layout_width="110dp"

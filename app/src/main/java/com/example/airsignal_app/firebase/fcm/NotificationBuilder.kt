@@ -51,7 +51,6 @@ class NotificationBuilder {
 
         notificationBuilder
             .setWhen(System.currentTimeMillis())
-//            .setSilent(true)
             .setSubText(getNotificationAddress(context))
             .setSmallIcon(R.drawable.app_icon)
             .setContentIntent(pendingIntent)
