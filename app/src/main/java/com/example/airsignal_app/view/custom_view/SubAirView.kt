@@ -50,7 +50,7 @@ class SubAirView(context: Context, attrs: AttributeSet?)
                     "북" -> { drawable(R.drawable.ico_wind_n) }
                     "북북동" -> { drawable(R.drawable.ico_wind_nne) }
                     "북동" -> { drawable(R.drawable.ico_wind_ne) }
-                    "동북동" -> { drawable(R.drawable.ico_wind_nne) }
+                    "동북동" -> { drawable(R.drawable.ico_wind_ene) }
                     "동" -> { drawable(R.drawable.ico_wind_e) }
                     "동남동" -> { drawable(R.drawable.ico_wind_ese) }
                     "남동" -> { drawable(R.drawable.ico_wind_se) }

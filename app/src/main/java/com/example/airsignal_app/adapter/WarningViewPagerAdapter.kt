@@ -79,10 +79,12 @@ class WarningViewPagerAdapter(
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try {
-                        val intent = Intent(context, WarningDetailActivity::class.java)
-                        intent.putExtra("warning", mList)
-                        intent.putExtra("address", GetAppInfo.getNotificationAddress(context))
-                        context.startActivity(intent)
+                        if (mList.size != 0) {
+                            val intent = Intent(context, WarningDetailActivity::class.java)
+                            intent.putExtra("warning", mList)
+                            intent.putExtra("address", GetAppInfo.getNotificationAddress(context))
+                            context.startActivity(intent)
+                        }
                     } catch (e: NullPointerException) {
                         e.printStackTrace()
                     }

@@ -608,22 +608,4 @@ object DataTypeParser {
             }
         }
     }
-
-//    fun convertVectorDrawable(vector: String?): Drawable {
-//        return when(vector) {
-//            "남" -> {
-//
-//            }
-//            "북" -> {
-//
-//            }
-//            "동" -> {
-//
-//            }
-//            "서" -> {
-//
-//            }
-//
-//        }
-//    }
 }
