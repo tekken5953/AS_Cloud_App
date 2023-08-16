@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.airsignal_app">
+    package="app.airsignal.weather">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -14,7 +14,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name=".koin.BaseApplication"
+        android:name="app.airsignal.weather.koin.BaseApplication"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app__name"
@@ -25,21 +25,21 @@
         android:windowSoftInputMode="adjustNothing"
         tools:replace="android:icon,android:label">
         <activity
-            android:name=".view.activity.WarningDetailActivity"
+            android:name="app.airsignal.weather.view.activity.WarningDetailActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.activity.WebURLActivity"
+            android:name="app.airsignal.weather.view.activity.WebURLActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.activity.PermissionActivity"
+            android:name="app.airsignal.weather.view.activity.PermissionActivity"
             android:attributionTags="SLocationService"
             android:exported="false"
             android:hardwareAccelerated="false"
@@ -49,7 +49,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.activity.SplashActivity"
+            android:name="app.airsignal.weather.view.activity.SplashActivity"
             android:exported="true"
             android:hardwareAccelerated="false">
             <meta-data
@@ -63,11 +63,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.activity.SettingActivity"
+            android:name="app.airsignal.weather.view.activity.SettingActivity"
             android:exported="false"
             android:hardwareAccelerated="false" />
         <activity
-            android:name=".view.activity.MainActivity"
+            android:name="app.airsignal.weather.view.activity.MainActivity"
             android:attributionTags="SLocationService"
             android:exported="false"
             android:hardwareAccelerated="true"
@@ -88,7 +88,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.activity.LoginActivity"
+            android:name="app.airsignal.weather.view.activity.LoginActivity"
             android:exported="true" />
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
@@ -98,11 +98,11 @@
             android:value="@string/adMobId" />
 
         <receiver
-            android:name=".firebase.fcm.NotificationBuilder"
+            android:name="app.airsignal.weather.firebase.fcm.NotificationBuilder"
             tools:ignore="Instantiatable" />
 
         <service
-            android:name=".firebase.fcm.SubFCM"
+            android:name="app.airsignal.weather.firebase.fcm.SubFCM"
             android:directBootAware="true"
             android:exported="false"
             tools:ignore="Instantiatable">

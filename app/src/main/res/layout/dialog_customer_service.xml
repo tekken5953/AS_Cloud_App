@@ -28,7 +28,7 @@
             android:textSize="16sp" />
     </RelativeLayout>
 
-    <com.example.airsignal_app.view.custom_view.CustomerServiceView
+    <app.airsignal.weather.view.custom_view.CustomerServiceView
         android:id="@+id/customerCall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
         app:customerValue="@string/phone_airsignal"
         app:layout_constraintTop_toBottomOf="@+id/customerTopBar"/>
 
-    <com.example.airsignal_app.view.custom_view.CustomerServiceView
+    <app.airsignal.weather.view.custom_view.CustomerServiceView
         android:id="@+id/customerEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
         app:customerValue="play@airsignal.kr"
         app:layout_constraintTop_toBottomOf="@id/customerCall"/>
 
-    <com.example.airsignal_app.view.custom_view.CustomerServiceView
+    <app.airsignal.weather.view.custom_view.CustomerServiceView
         android:id="@+id/customerHomePage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

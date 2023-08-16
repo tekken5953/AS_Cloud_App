@@ -7,7 +7,7 @@
 
         <variable
             name="dataVM"
-            type="com.example.airsignal_app.vmodel.GetWeatherViewModel" />
+            type="app.airsignal.weather.vmodel.GetWeatherViewModel" />
 
     </data>
 
@@ -368,7 +368,7 @@
                     android:background="@drawable/main_pm_bg"/>
             </TableRow>
 
-            <com.example.airsignal_app.view.custom_view.SubAirView
+            <app.airsignal.weather.view.custom_view.SubAirView
                 android:id="@+id/subAirHumid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -377,7 +377,7 @@
                 app:customImg="@drawable/ico_main_humidity"
                 app:isLeftLine="false" />
 
-            <com.example.airsignal_app.view.custom_view.SubAirView
+            <app.airsignal.weather.view.custom_view.SubAirView
                 android:id="@+id/subAirWind"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -386,7 +386,7 @@
                 app:customImg="@drawable/ico_main_wind"
                 app:isLeftLine="true" />
 
-            <com.example.airsignal_app.view.custom_view.SubAirView
+            <app.airsignal.weather.view.custom_view.SubAirView
                 android:id="@+id/subAirRainP"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -438,7 +438,7 @@
                 android:background="@color/theme_main_bg_color"
                 android:paddingBottom="55dp">
 
-                <com.example.airsignal_app.view.custom_view.AirQView
+                <app.airsignal.weather.view.custom_view.AirQView
                     android:id="@+id/nested_air_help_popup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
