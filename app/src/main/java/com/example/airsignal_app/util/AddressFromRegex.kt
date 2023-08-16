@@ -1,7 +1,5 @@
 package com.example.airsignal_app.util
 
-import com.example.airsignal_app.util.`object`.GetAppInfo
-
 
 /**
  * @author : Lee Jae Young

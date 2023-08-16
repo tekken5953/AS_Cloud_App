@@ -1551,9 +1551,9 @@ class MainActivity
                                                 it.replace("null", "")
 
                                                 val regexAddr =
-                                                    if (getUserLocation(this@MainActivity) == LANG_KR)
-                                                        AddressFromRegex(it).getAddress()
-                                                    else it.replace("South Korea", "")
+                                                    if (getUserLocation(this@MainActivity) == LANG_EN)
+                                                        it.replace("South Korea", "")
+                                                    else AddressFromRegex(it).getAddress()
 
                                                 val formedAddr =
                                                     if (regexAddr != IN_COMPLETE_ADDRESS) {
