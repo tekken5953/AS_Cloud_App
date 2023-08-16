@@ -179,8 +179,13 @@ class SearchDialog(
     @SuppressLint("ClickableViewAccessibility", "InflateParams")
     private fun searchEditListener(listView: ListView, editText: EditText, noResult: TextView) {
         @SuppressLint("InflateParams")
-        val searchItem = java.util.ArrayList<String>()
-        val allTextArray = resources.getStringArray(R.array.address)
+        val searchItem = ArrayList<String>()
+        val allTextArray =
+            if (isKorea())
+                resources.getStringArray(R.array.address_korean)
+            else
+                resources.getStringArray(R.array.address_english)
+
         val adapter =
             CustomArrayAdapter(editText, dataList = searchItem)
         listView.adapter = adapter

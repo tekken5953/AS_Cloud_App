@@ -80,8 +80,7 @@
             style="@style/settingMultiTextView"
             android:layout_weight="0.6"
             android:textSize="16sp"
-            android:lineHeight="20.03sp"
-            android:background="?selectableItemBackground" />
+            android:lineHeight="20.03sp" />
 
         <TextView
             android:id="@+id/notiBackContent"
@@ -148,9 +147,6 @@
         android:id="@+id/notiSoundView"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        app:topicTitle="notification_sound"
-        app:enableSubTitle="false"
-        app:notiTitle="@string/noti_sound_setting"
         android:animateLayoutChanges="true"
         android:visibility="gone"
         android:paddingStart="24dp"
