@@ -29,11 +29,12 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
                 View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
 
-        binding.termsServiceBackIv.setOnClickListener {
+        binding.webUrlBackIv.setOnClickListener {
             finish()
         }
 
-        val webSettings = binding.termsServiceWebView.settings
+        // 웹뷰 세팅
+        val webSettings = binding.webUrlWebView.settings
         webSettings.apply {
             javaScriptEnabled = true // 자바스크립트 허용
             builtInZoomControls = true
@@ -44,7 +45,7 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             cacheMode = WebSettings.LOAD_NO_CACHE // 브라우저 캐시 허용
         }
 
-        binding.termsServiceWebView.apply {
+        binding.webUrlWebView.apply {
             webChromeClient = WebChromeClient()
             webViewClient = WebViewClient()
         }
@@ -52,19 +53,20 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
         val pdfUrl: String
         when(intent.extras!!.getString("sort")) {
             "termsOfService" -> {
-                binding.termsServiceTitle.text = getString(R.string.term_of_services)
+                binding.webUrlTitle.text = getString(R.string.term_of_services)
                 pdfUrl = "https://docs.google.com/document/d/e/2PACX-1vTmaf0Wg9zhNZfe-_S-4eWDj1XLwbYlUcoONys3MzzTEAx-_QLlJOuTGo7uQjl5FbyGlWPL6d9tp8JV/pub"
             }
             "dataUsage" -> {
-                binding.termsServiceTitle.text = getString(R.string.data_usages)
+                binding.webUrlTitle.text = getString(R.string.data_usages)
                 pdfUrl = "file:///android_asset/airsignal_user_data_usage.html"
             }
             else -> {
-                binding.termsServiceTitle.text = ""
+                binding.webUrlTitle.text = ""
                 pdfUrl = "about:blank"
             }
 
         }
-        binding.termsServiceWebView.loadUrl(pdfUrl)
+        
+        binding.webUrlWebView.loadUrl(pdfUrl) // 웹 페이지 로딩
     }
 }

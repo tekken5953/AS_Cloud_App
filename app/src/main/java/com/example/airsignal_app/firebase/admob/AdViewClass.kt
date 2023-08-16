@@ -1,11 +1,9 @@
 package com.example.airsignal_app.firebase.admob
 
 import android.content.Context
-import com.example.airsignal_app.dao.IgnoredKeyFile.adMobTestDeviceId
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
 
 /**
  * @author : Lee Jae Young

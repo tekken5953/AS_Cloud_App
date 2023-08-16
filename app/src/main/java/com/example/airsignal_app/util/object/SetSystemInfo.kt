@@ -88,6 +88,7 @@ object SetSystemInfo {
         }
     }
 
+    /** 상태 바 설정 **/
     @Suppress("DEPRECATION")
     fun setStatusBar(activity: Activity) {
         activity.window.apply {

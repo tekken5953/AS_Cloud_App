@@ -16,8 +16,8 @@ import com.example.airsignal_app.util.`object`.SetSystemInfo
 class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     override val resID: Int get() = R.layout.activity_warning_detail
 
-    val warningList = ArrayList<String>()
-    val warningAdapter = WarningDetailAdapter(this, warningList)
+    private val warningList = ArrayList<String>()
+    private val warningAdapter = WarningDetailAdapter(this, warningList)
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,10 +34,13 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
 
         val dataList = intent.getStringArrayListExtra("warning")
         val regexAddress = AddressFromRegex(getUserLastAddress(this)).getWarningAddress()
+
+        // 수정 된 주소에 따른 적용
         binding.warningAddr.text =
             if (regexAddress != "Error") regexAddress
             else getNotificationAddress(this)
 
+        // 기상 특보 추가
         dataList?.let {
             warningList.addAll(it)
             warningAdapter.notifyDataSetChanged()

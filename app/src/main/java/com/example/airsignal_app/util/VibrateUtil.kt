@@ -19,7 +19,7 @@ class VibrateUtil(private val context: Context) {
             }
     }
 
-    /** 진동 발생 메서드 **/
+    /** 기본 진동 발생 메서드 **/
     fun make(duration: Int) {
         vib.vibrate(
             VibrationEffect.createOneShot(
@@ -28,6 +28,7 @@ class VibrateUtil(private val context: Context) {
         )
     }
 
+    /** 알림 진동 발생 **/
     fun noti(array: LongArray) {
         vib.vibrate(
             VibrationEffect.createWaveform(array, -1)

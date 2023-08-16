@@ -45,7 +45,7 @@ class Term24Class {
     }
 
     /** 24절기 날짜 반환 **/
-    fun getTermDate(): String {
+    private fun getTermDate(): String {
         val date = DataTypeParser.currentDateTimeString("MM월 dd일").split(" ")
         val result = StringBuilder()
         date.forEach {

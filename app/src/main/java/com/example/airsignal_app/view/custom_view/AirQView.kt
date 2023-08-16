@@ -28,6 +28,7 @@ class AirQView(context: Context, attrs: AttributeSet?)
             typedArray.recycle()
         }
 
+        // 취소 버튼 클릭 시 다이얼로그 사라짐
         airBinding.airQCancel.setOnClickListener {
             val fadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out)
             this.apply {
@@ -37,6 +38,7 @@ class AirQView(context: Context, attrs: AttributeSet?)
         }
     }
 
+    // 외부 공기질 목록에 따른 내용 반환
     fun modifyDataSort(context: Context, krName: String): String {
         return when(krName) {
             context.getString(R.string.pm2_5) -> context.getString(R.string.airq_question_pm2p5)
@@ -49,6 +51,7 @@ class AirQView(context: Context, attrs: AttributeSet?)
         }
     }
 
+    // 외부 공기질 목록에 따른 그래프 반환
     fun modifyDataGraph(context: Context, krName: String): Drawable? {
         return when(krName) {
             context.getString(R.string.pm2_5) -> {
@@ -73,6 +76,7 @@ class AirQView(context: Context, attrs: AttributeSet?)
         }
     }
 
+    // 데이터 적용
     @SuppressLint("SetTextI18n")
     fun fetchData(explain: String, graph: Drawable, nameEN: String, nameKR: String): AirQView {
         airBinding.airQExplainText.text = explain

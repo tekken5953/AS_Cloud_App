@@ -29,19 +29,23 @@ class LoginActivity
         super.onCreate(savedInstanceState)
         initBinding()
 
+        // 구글 로그인 버튼 클릭
         binding.googleLoginButton.setOnClickListener {
             googleLogin.login(binding.googleLoginButton, startActivityResult)
         }
 
+        // 카카오 로그인 버튼 클릭
         binding.kakakoLoginButton.setOnClickListener {
             kakaoLogin.checkInstallKakaoTalk(binding.kakakoLoginButton)
         }
 
+        // 네이버 로그인 버튼 클릭
         binding.naverLoginButton.setOnClickListener {
             binding.naverLoginButton.alpha = 0.7f
             naverLogin.login(binding.naverLoginButton)
         }
 
+        // 뒤로가기 버튼 클릭
         binding.loginMainBack.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -53,6 +57,7 @@ class LoginActivity
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             when (result.resultCode) {
+                // 로그인 성공 함
                 RESULT_OK -> {
                     val data = result.data
                     val task = GoogleSignIn.getSignedInAccountFromIntent(data)
@@ -63,6 +68,7 @@ class LoginActivity
                     googleLogin.handleSignInResult(task, isAuto = false)
                     EnterPageUtil(this).toMain(LOGIN_GOOGLE)
                 }
+                // 로그인 취소 됨
                 RESULT_CANCELED -> {
                     Timber.tag(TAG_LOGIN).w("Cancel Google Login")
                     binding.googleLoginButton.alpha = 1f

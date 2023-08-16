@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 
 class SunProgress(private val seekArc: SeekArc) {
 
+    /** 일출/일몰 그래프 애니메이션 발동 **/
     fun animate(currentSun: Int) {
         CoroutineScope(Dispatchers.Main).launch {
             seekArc.apply {
@@ -43,6 +44,7 @@ class SunProgress(private val seekArc: SeekArc) {
         }
     }
 
+    /** 일출/일몰 그래프 터치 막기 **/
     @SuppressLint("ClickableViewAccessibility")
     fun disableTouch() {
         seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지

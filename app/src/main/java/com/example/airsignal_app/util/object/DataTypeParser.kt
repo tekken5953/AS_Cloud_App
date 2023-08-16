@@ -92,6 +92,7 @@ object DataTypeParser {
         }
     }
 
+    /** 음력 날짜 반환 **/
     fun getLunarDate(): Int {
         val cal = LocalDateTime.now()
         val cc = ChineseCalendar()
@@ -99,6 +100,7 @@ object DataTypeParser {
         return cc.get(ChineseCalendar.DAY_OF_MONTH)
     }
 
+    /** 달 모양 반환 **/
     private fun applyLunarImg(): Int {
         return when (getLunarDate()) {
             29,30,1 -> {
@@ -365,6 +367,7 @@ object DataTypeParser {
         }
     }
 
+    /** Opacity가 들어간 색상 반환**/
     fun getDataOpacityColor(context: Context, grade: Int): Int {
         return when (grade) {
             1 -> ResourcesCompat.getColor(context.resources, R.color.air_good_o, null)
@@ -421,11 +424,6 @@ object DataTypeParser {
     fun convertAddress(addr: String): String {
         return addr.replace("특별시", "시").replace("광역시", "시")
             .replace("제주특별자치도", "제주도")
-    }
-
-    fun convertAddressInv(addr: String): String {
-        return addr.replace("시", "특별시").replace("시", "광역시")
-            .replace("제주도", "제주특별자치도")
     }
 
     /** HH:mm 포맷의 시간을 분으로 변환 **/

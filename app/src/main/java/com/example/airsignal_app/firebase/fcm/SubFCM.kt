@@ -73,6 +73,7 @@ class SubFCM : FirebaseMessagingService() {
         return this
     }
 
+    // 어드민 계정 토픽
     fun subAdminTopic() {
         val encoder: Base64.Encoder = Base64.getEncoder()
         val encodedStream: String = encoder.encodeToString("admin".toByteArray())
