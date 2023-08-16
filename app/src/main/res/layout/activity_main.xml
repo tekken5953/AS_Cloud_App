@@ -50,7 +50,6 @@
                 android:focusableInTouchMode="true"
                 android:maxEms="12"
                 android:singleLine="true"
-                android:textColor="@color/mode_black_color"
                 android:textSize="14sp"
                 app:drawableStartCompat="@drawable/location_fill" />
         </ScrollView>
@@ -69,7 +68,7 @@
                 android:layout_marginStart="24dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ico_hamb_w"
-                app:tint="@color/mode_black_color" />
+                app:tint="@color/black"/>
 
             <ImageView
                 android:id="@+id/mainRefreshData"
@@ -79,7 +78,7 @@
                 android:layout_toStartOf="@+id/mainAddAddress"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/refresh"
-                app:tint="@color/mode_black_color" />
+                app:tint="@color/black"/>
 
             <ImageView
                 android:id="@+id/mainAddAddress"
@@ -89,7 +88,7 @@
                 android:layout_marginEnd="24dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ico_add_w"
-                app:tint="@color/mode_black_color" />
+                app:tint="@color/black"/>
 
         </RelativeLayout>
 
@@ -112,7 +111,6 @@
             android:gravity="start"
             android:lineHeight="26dp"
             android:maxEms="10"
-            android:textColor="@color/mode_black_color"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear"/>
@@ -124,9 +122,9 @@
             android:layout_marginStart="6dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/gps_fix"
+            app:tint="@color/mode_black_color"
             app:layout_constraintStart_toEndOf="@+id/mainGpsTitleTv"
-            app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv"
-            app:tint="@color/mode_black_color" />
+            app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/mainErrorRenewBtn"
@@ -141,7 +139,7 @@
             android:elevation="0dp"
             android:fontFamily="@font/spoqa_hansansneo_medium"
             android:letterSpacing="-0.072"
-            android:text="다시 불러오기"
+            android:text="@string/renew_data"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:translationZ="0dp"
@@ -166,21 +164,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
-<!--        <TextView-->
-<!--            android:id="@+id/mainSkyText"-->
-<!--            style="@style/basicTextView"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:textColor="@color/mode_black_color"-->
-<!--            android:textSize="14sp"-->
-<!--            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"-->
-<!--            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />-->
+        <TextView
+            android:id="@+id/mainErrorTitle"
+            style="@style/basicMediumTextView"
+            android:layout_marginTop="32dp"
+            android:textSize="20sp"
+            android:lineHeight="25dp"
+            android:alpha="0"
+            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
+            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
 
         <TextView
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
             android:layout_marginTop="12dp"
-            android:textColor="@color/mode_black_color"
             android:textSize="72sp"
             app:layout_constraintStart_toStartOf="@+id/mainGpsTitleTv"
             app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv" />
@@ -282,7 +280,6 @@
             style="@style/basicTextView"
             android:layout_marginStart="2dp"
             android:paddingTop="5dp"
-            android:textColor="@color/mode_black_color"
             android:textSize="57sp"
             app:layout_constraintTop_toTopOf="@+id/mainLiveTempValue"
             app:layout_constraintStart_toEndOf="@id/mainLiveTempValue"/>
@@ -291,7 +288,6 @@
             android:id="@+id/mainCompareTempTv"
             style="@style/basicMediumTextView"
             android:layout_marginTop="8dp"
-            android:textColor="@color/mode_black_color"
             android:textSize="16sp"
             app:layout_constraintTop_toBottomOf="@id/mainSensTitle"
             app:layout_constraintEnd_toEndOf="@id/mainSensValue"/>
@@ -330,7 +326,7 @@
                 android:id="@+id/mainWarningVp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center" />
         </LinearLayout>
 
         <RelativeLayout
@@ -371,7 +367,6 @@
                     android:layout_marginStart="15dp"
                     android:background="@drawable/main_pm_bg"/>
             </TableRow>
-
 
             <com.example.airsignal_app.view.custom_view.SubAirView
                 android:id="@+id/subAirHumid"

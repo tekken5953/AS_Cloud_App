@@ -9,8 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="red">#FF0000</color>
 
-    <color name="mode_color_text">#FF000000</color>
-    <color name="mode_color_view">#FFFFFFFF</color>
     <color name="main_blue_color">#00C2FF</color>
     <color name="main_gray_color">#A7A7A7</color>
 
@@ -52,8 +50,6 @@
     <color name="theme_box_solid_color">#FFFFFF</color>
     <color name="theme_box_stroke_color">#F4F4F4</color>
     <color name="theme_main_bg_color">#EBEBEB</color>
-    <color name="theme_indicator_empty_color">#eeeeee</color>
-    <color name="theme_indicator_fill_color">#A6A6A6</color>
     <color name="theme_pm_title_bg_color">#EBEBEB</color>
     <color name="theme_alert_double_cancel_color">#D9D9D9</color>
     <color name="theme_alert_double_apply_color">#F87171</color>
@@ -61,5 +57,4 @@
     <color name="theme_sun_tomorrow_night">#30159C</color>
     <color name="theme_sun_tomorrow_day">#FF8A48</color>
 
-    <color name="theme_opacity30_view_color">#30FFFFFF</color>
 </resources>

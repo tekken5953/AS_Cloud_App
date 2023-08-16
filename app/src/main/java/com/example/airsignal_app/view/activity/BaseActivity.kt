@@ -1,6 +1,7 @@
 package com.example.airsignal_app.view.activity
 
 import android.content.Context
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
@@ -16,6 +17,7 @@ import com.example.airsignal_app.util.`object`.GetAppInfo.getUserFontScale
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLocation
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserTheme
 import com.example.airsignal_app.util.`object`.SetSystemInfo
+import com.example.airsignal_app.util.`object`.SetSystemInfo.setStatusBar
 
 /**
  * @author : Lee Jae Young

@@ -2,9 +2,14 @@ package com.example.airsignal_app.util.`object`
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.view.View
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import com.example.airsignal_app.R
+import com.example.airsignal_app.dao.StaticDataObject.THEME_DARK
+import com.example.airsignal_app.dao.StaticDataObject.THEME_LIGHT
 import java.util.*
 
 /**
@@ -80,6 +85,22 @@ object SetSystemInfo {
             "높음" -> cardView.setCardBackgroundColor(context.getColor(R.color.uv_high))
             "매우높음" -> cardView.setCardBackgroundColor(context.getColor(R.color.uv_very_high))
             "위험" -> cardView.setCardBackgroundColor(context.getColor(R.color.uv_caution))
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    fun setStatusBar(activity: Activity) {
+        activity.window.apply {
+            statusBarColor = activity.getColor(R.color.theme_view_color)
+            navigationBarColor = activity.getColor(R.color.theme_view_color)
+        }
+
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+            activity.window.decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        } else {
+            activity.window.decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
     }
 }

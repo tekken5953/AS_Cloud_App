@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.location.LocationManager
@@ -139,9 +138,9 @@ class MainActivity
     private val airQList = ArrayList<AdapterModel.AirQTitleItem>()
     private val airQAdapter = AirQTitleAdapter(this, airQList)
     private var currentSun = 0
-    private val warningList = ArrayList<String>()
     private var isSunAnimated = false
     private var isProgressed = false
+    private var isWarned = false
     private val sunPb by lazy { SunProgress(binding.seekArc) }
     private val rotateAnim by lazy {
         RotateAnimation(
@@ -166,6 +165,7 @@ class MainActivity
     override fun onDestroy() {
         super.onDestroy()
         isProgressed = false
+        isWarned = false
         binding.nestedAdView.destroy()
     }
 
@@ -396,17 +396,17 @@ class MainActivity
         }
     }
 
-    // 7글자를 기준으로 WordWrap 적용
-    private fun guardWordWrap(s: String): String {
-        return try {
-            val formS = if (s.first().toString() == " ")
-                s.replaceFirst(" ", "") else s
-            WrapTextClass().getFormedText(formS, 40)
-        } catch (e: NoSuchElementException) {
-            e.printStackTrace()
-            return s
-        }
-    }
+//    // 7글자를 기준으로 WordWrap 적용
+//    private fun guardWordWrap(s: String): String {
+//        return try {
+//            val formS = if (s.first().toString() == " ")
+//                s.replaceFirst(" ", "") else s
+//            WrapTextClass().getFormedText(formS, 10)
+//        } catch (e: NoSuchElementException) {
+//            e.printStackTrace()
+//            return s
+//        }
+//    }
 
     // 프로그래스 보이기
     private fun showPB() {
@@ -848,30 +848,22 @@ class MainActivity
                                         .replace("\n", "")
                                         .trim()
                                     reportArrayList.add(item)
-                                    warningList.add(item)
 
                                     if (index == sList.lastIndex) {
-                                        if (reportViewPagerItem.size == 0) {
-                                            binding.mainWarningBox.visibility = GONE
+                                        if (reportArrayList.size == 0) {
+                                            binding.mainWarningBox.setBackgroundColor(getColor(android.R.color.transparent))
                                         } else {
-                                            binding.mainWarningBox.visibility = VISIBLE
-                                            if (!isProgressed) {
+                                            if (!isWarned) {
                                                 warningSlideAuto()
-                                                isProgressed = true
+                                                isWarned = true
                                             }
                                         }
                                     }
                                 }
                             }
 
-                            if (getUserLocation(this@MainActivity) == LANG_EN) {
-                                binding.mainWarningBox.visibility = GONE
-                            } else {
-                                binding.mainWarningBox.visibility = VISIBLE
-                            }
-
-                            binding.subAirPM25.text = "초미세먼지  " + air.pm25Value.toInt().toString()
-                            binding.subAirPM10.text = "미세먼지  " + air.pm10Value.toInt().toString()
+                            binding.subAirPM25.text = "${getString(R.string.pm2_5)}   ${air.pm25Value.toInt()}"
+                            binding.subAirPM10.text = "${getString(R.string.pm10)}   ${air.pm10Value.toInt()}"
 
                             binding.mainSensTitle.text = getString(R.string.sens_temp)
                             binding.mainSensValue.text =
@@ -1027,7 +1019,7 @@ class MainActivity
                     }
 
                     is BaseRepository.ApiState.Error -> {
-                        Timber.tag("testtesttest").e(entireData.toString())
+                        Timber.tag("testtest").e(entireData.toString())
                         runOnUiThread {
                             hidePB()
                             hideAllViews(error = eData.errorMessage)
@@ -1143,37 +1135,30 @@ class MainActivity
     private fun hideAllViews(error: String?) {
         when (error) {
             ERROR_API_PROTOCOL, ERROR_SERVER_CONNECTING -> {
-                binding.mainCompareTempTv.text = getString(R.string.api_call_error)
+                binding.mainErrorTitle.text = getString(R.string.api_call_error)
             }
             ERROR_NOT_SERVICED_LOCATION -> {
-                binding.mainCompareTempTv.text = getString(R.string.not_serviced_location)
+                binding.mainErrorTitle.text = getString(R.string.not_serviced_location)
             }
             ERROR_TIMEOUT -> {
-                binding.mainCompareTempTv.text = getString(R.string.timeout_error)
+                binding.mainErrorTitle.text = getString(R.string.timeout_error)
             }
             ERROR_NETWORK -> {
-                binding.mainCompareTempTv.text = getString(R.string.network_error)
+                binding.mainErrorTitle.text = getString(R.string.network_error)
             }
             ERROR_GET_LOCATION_FAILED -> {
-                binding.mainCompareTempTv.text = getString(R.string.address_call_error)
+                binding.mainErrorTitle.text = getString(R.string.address_call_error)
             }
             ERROR_GPS_CONNECTED -> {
-                binding.mainCompareTempTv.text = getString(R.string.gps_call_error)
+                binding.mainErrorTitle.text = getString(R.string.gps_call_error)
             }
             ERROR_GET_DATA -> {
-                binding.mainCompareTempTv.text = getString(R.string.data_call_error)
+                binding.mainErrorTitle.text = getString(R.string.data_call_error)
             }
             else -> {
                 RDBLogcat.writeErrorNotANR(this, ERROR_LOCATION_FAILED, error!!)
-                binding.mainCompareTempTv.text = getString(R.string.unkown_error)
+                binding.mainErrorTitle.text = getString(R.string.unkown_error)
             }
-        }
-
-        binding.mainCompareTempTv.apply {
-            textSize = 20f
-            typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_medium.ttf")
-            setPadding(0, 50, 0, 0)
-            setTextColor(getColor(R.color.theme_text_color))
         }
 
         binding.mainErrorRenewBtn.setOnClickListener {
@@ -1219,7 +1204,7 @@ class MainActivity
             binding.mainTopBarGpsTitle,
             binding.mainSensTitle,
             binding.mainSensValue,
-            binding.mainMinValue,
+            binding.mainMaxValue,
             binding.mainMaxTitle,
             binding.mainMinValue,
             binding.mainMinTitle,
@@ -1227,7 +1212,8 @@ class MainActivity
             binding.subAirPM10,
             binding.subAirHumid.getTitle(),
             binding.subAirWind.getTitle(),
-            binding.subAirRainP.getTitle()
+            binding.subAirRainP.getTitle(),
+            binding.mainCompareTempTv
         )
 
         if (visibility == GONE) {
@@ -1256,6 +1242,13 @@ class MainActivity
 
             binding.mainErrorRenewBtn.alpha = 1f
             binding.mainErrorRenewBtn.isClickable = true
+            binding.mainErrorTitle.alpha = 1f
+            applyBackground(binding.mainWarningBox,null)
+            applyBackground(binding.nestedSubAirFrame,null)
+            binding.mainWarningVp.alpha = 0f
+            binding.subAirHumid.alpha = 0f
+            binding.subAirWind.alpha = 0f
+            binding.subAirRainP.alpha = 0f
 
             changeStrokeColor(binding.subAirPM10, getColor(android.R.color.transparent))
             changeStrokeColor(binding.subAirPM25, getColor(android.R.color.transparent))
@@ -1263,17 +1256,17 @@ class MainActivity
         } else {
             binding.mainSensTitle.text = getString(R.string.sens_temp)
             binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
-
-            binding.mainCompareTempTv.textSize = 16f
-            binding.mainCompareTempTv.typeface =
-                Typeface.createFromAsset(assets, "spoqa_hansansneo_regular.ttf")
-
             binding.subAirHumid.getTitle().text = getString(R.string.humidity)
             binding.subAirWind.getTitle().text = getString(R.string.wind)
             binding.subAirRainP.getTitle().text = getString(R.string.rainPer)
 
             binding.mainErrorRenewBtn.alpha = 0f
             binding.mainErrorRenewBtn.isClickable = false
+            applyBackground(binding.mainWarningBox, R.drawable.report_frame_bg)
+            binding.mainErrorTitle.alpha = 0f
+            binding.subAirHumid.alpha = 1f
+            binding.subAirWind.alpha = 1f
+            binding.subAirRainP.alpha = 1f
 
             binding.mainMinTitle.text = getString(R.string.min)
             binding.mainMaxTitle.text = getString(R.string.max)
@@ -1444,7 +1437,7 @@ class MainActivity
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
             binding.mainGpsFix, binding.mainMotionSLideImg,
-            binding.mainRefreshData
+            binding.mainRefreshData, binding.mainSideMenuIv
         )
 
         // 글자색 white로 변경
@@ -1519,7 +1512,7 @@ class MainActivity
             vp.currentItem = if (vp.currentItem + 1 < reportArrayList.size) vp.currentItem + 1 else 0
             handler.postDelayed({
                 warningSlideAuto()
-            },4000)
+            },3500)
         }
     }
 
@@ -1615,6 +1608,14 @@ class MainActivity
                 getColor(R.color.theme_alert_double_apply_color),
                 getString(R.string.ok)
             )
+        }
+    }
+
+    private fun <T> applyBackground(view: T, res: Int?) {
+        res?.let {
+            (view as View).background = ResourcesCompat.getDrawable(resources, it, null)
+        } ?: apply {
+            (view as View).background = null
         }
     }
 }

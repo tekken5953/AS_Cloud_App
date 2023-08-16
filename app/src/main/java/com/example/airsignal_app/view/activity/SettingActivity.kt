@@ -64,6 +64,7 @@ import com.example.airsignal_app.util.`object`.SetAppInfo.setUserFontScale
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserLocation
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserNoti
 import com.example.airsignal_app.util.`object`.SetAppInfo.setUserTheme
+import com.example.airsignal_app.util.`object`.SetSystemInfo.setStatusBar
 import com.example.airsignal_app.view.MakeSingleDialog
 import com.example.airsignal_app.view.ShowDialogClass
 import com.example.airsignal_app.view.custom_view.CustomerServiceView
@@ -105,17 +106,7 @@ class SettingActivity
         super.onCreate(savedInstanceState)
 
         initBinding()
-
-        window.statusBarColor = getColor(R.color.theme_view_color)
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility =
-                window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        } else {
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        }
+        setStatusBar(this)
 
         if (isInit) {
             isInit = false
@@ -650,8 +641,8 @@ class SettingActivity
     private fun showSnackBar(view: View, isAllow: Boolean) {
         val alertOn = ContextCompat.getDrawable(this, R.drawable.alert_on)!!
         val alertOff = ContextCompat.getDrawable(this, R.drawable.alert_off)!!
-        alertOn.setTint(getColor(R.color.mode_color_view))
-        alertOff.setTint(getColor(R.color.mode_color_view))
+        alertOn.setTint(getColor(R.color.theme_view_color))
+        alertOff.setTint(getColor(R.color.theme_view_color))
         if (isAllow) {
             if (!isInit) {
                 SnackBarUtils.make(
@@ -715,16 +706,6 @@ class SettingActivity
     }
 
     private fun applyDeviceTheme() {
-        @Suppress("DEPRECATION")
-        if (GetSystemInfo.isThemeNight(this)) {
-            window.statusBarColor = Color.BLACK
-            window.decorView.systemUiVisibility =
-                window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        } else {
-            window.statusBarColor = Color.WHITE
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        }
-
         // 설정 페이지 테마 항목이름 바꾸기
         when (getUserTheme(this)) {
             "dark" -> {

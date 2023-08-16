@@ -17,6 +17,7 @@ import com.example.airsignal_app.util.RequestPermissionsUtil
 import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLoginPlatform
 import com.example.airsignal_app.util.`object`.GetSystemInfo
 import com.example.airsignal_app.util.`object`.GetSystemInfo.goToPlayStore
+import com.example.airsignal_app.util.`object`.SetAppInfo.fullScreenMode
 import com.example.airsignal_app.view.MakeSingleDialog
 import com.example.airsignal_app.vmodel.GetAppVersionViewModel
 import com.google.firebase.database.FirebaseDatabase
@@ -38,7 +39,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        fullScreenMode()
+        fullScreenMode(this)
 
         initBinding()
 

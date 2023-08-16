@@ -2,12 +2,16 @@ package com.example.airsignal_app.view.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.widget.ArrayAdapter
-import androidx.recyclerview.widget.RecyclerView
+import android.view.View
 import com.example.airsignal_app.R
 import com.example.airsignal_app.adapter.WarningDetailAdapter
+import com.example.airsignal_app.dao.StaticDataObject.THEME_LIGHT
 import com.example.airsignal_app.databinding.ActivityWarningDetailBinding
-import timber.log.Timber
+import com.example.airsignal_app.util.AddressFromRegex
+import com.example.airsignal_app.util.`object`.GetAppInfo.getNotificationAddress
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserLastAddress
+import com.example.airsignal_app.util.`object`.GetAppInfo.getUserTheme
+import com.example.airsignal_app.util.`object`.SetSystemInfo
 
 class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     override val resID: Int get() = R.layout.activity_warning_detail
@@ -20,11 +24,19 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
         super.onCreate(savedInstanceState)
         initBinding()
 
+        SetSystemInfo.setStatusBar(this)
+
         binding.warningListView.adapter = warningAdapter
 
+        binding.warningBack.setOnClickListener {
+            finish()
+        }
+
         val dataList = intent.getStringArrayListExtra("warning")
-        val dataAddress = intent.extras!!.getString("address")
-        binding.warningAddr.text = dataAddress
+        val regexAddress = AddressFromRegex(getUserLastAddress(this)).getWarningAddress()
+        binding.warningAddr.text =
+            if (regexAddress != "Error") regexAddress
+            else getNotificationAddress(this)
 
         dataList?.let {
             warningList.addAll(it)

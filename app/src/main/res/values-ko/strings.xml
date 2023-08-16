@@ -33,7 +33,6 @@
     <string name="allowed_noti">설정을 허용하였습니다</string>
     <string name="denied_noti">설정을 거부하였습니다</string>>
     <string name="hour">시</string>
-    <string name="widget_time_format">MM월 dd일 HH시 mm분</string>
     <string name="system">시스템</string>
     <string name="live_air_quality">실시간 공기질</string>
     <string name="uv_title">자외선 지수</string>
@@ -173,4 +172,5 @@
     <string name="max">최고</string>
     <string name="min">최저</string>
     <string name="warning_title">기상 특보</string>
+    <string name="renew_data">다시 불러오기</string>
 </resources>

@@ -117,4 +117,5 @@ object SetAppInfo {
     fun setCurrentLocation(context: Context, loc: String) {
         SharedPreferenceManager(context).setString(CURRENT_GPS_ID, loc)
     }
+
 }

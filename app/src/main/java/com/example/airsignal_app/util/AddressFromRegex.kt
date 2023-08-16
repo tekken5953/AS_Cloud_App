@@ -69,6 +69,26 @@ class AddressFromRegex(private val address: String) {
         }
     }
 
+    fun getWarningAddress(): String {
+        val sb = StringBuilder()
+        return try {
+            generatePatternFirst().forEach { first ->
+                if (!first.findAll(address).none()) {
+                    sb.append(first.find(address)!!.value)
+                }
+            }
+
+            if (sb.isEmpty()) {
+                getAddress().split(" ").last()
+            } else {
+                sb.toString()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            "Error"
+        }
+    }
+
     fun getNotificationAddress(): String {
         val sb = StringBuilder()
         return try {

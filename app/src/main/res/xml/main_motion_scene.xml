@@ -232,7 +232,6 @@
             android:maxEms="10"
             android:fontFamily="@font/spoqa_hansansneo_regular"
             android:gravity="start"
-            android:textColor="@color/mode_black_color"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear"/>
@@ -298,7 +297,6 @@
             style="@style/basicMediumTextView"
             android:layout_marginTop="12dp"
             android:lineHeight="52dp"
-            android:textColor="@color/mode_black_color"
             android:textSize="72sp"
             app:layout_constraintStart_toStartOf="@+id/mainGpsTitleTv"
             app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv" />
@@ -331,7 +329,6 @@
             android:paddingTop="5dp"
             android:text="˚"
             android:alpha="1"
-            android:textColor="@color/mode_black_color"
             android:textSize="57sp"
             app:layout_constraintTop_toTopOf="@+id/mainLiveTempValue"
             app:layout_constraintStart_toEndOf="@id/mainLiveTempValue" />
@@ -339,7 +336,6 @@
             android:id="@+id/mainCompareTempTv"
             style="@style/basicMediumTextView"
             android:layout_marginTop="8dp"
-            android:textColor="@color/mode_black_color"
             android:textSize="16sp"
             android:alpha="1"
             app:layout_constraintTop_toBottomOf="@id/mainSensTitle"
@@ -522,7 +518,6 @@
             android:alpha="0"
             android:fontFamily="@font/spoqa_hansansneo_regular"
             android:gravity="start"
-            android:textColor="@color/mode_black_color"
             android:textSize="18sp" />
         <Constraint
             android:id="@+id/nested_subAir_frame"
@@ -578,7 +573,6 @@
 <!--            android:id="@+id/mainSkyText"-->
 <!--            style="@style/basicTextView"-->
 <!--            android:alpha="0"-->
-<!--            android:textColor="@color/mode_black_color"-->
 <!--            android:textSize="15sp"-->
 <!--            app:layout_constraintEnd_toEndOf="@+id/mainSkyImg"-->
 <!--            app:layout_constraintStart_toStartOf="@+id/mainSkyImg"-->
@@ -597,7 +591,6 @@
             style="@style/basicMediumTextView"
             android:layout_marginTop="8dp"
             android:alpha="0"
-            android:textColor="@color/mode_black_color"
             app:layout_constraintTop_toBottomOf="@id/mainSensTitle"
             app:layout_constraintEnd_toEndOf="@id/mainSensValue"
             android:textSize="16sp" />
