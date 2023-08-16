@@ -47,6 +47,7 @@ object GetSystemInfo {
         }
     }
 
+    /** 안드로이드 ID(Unique) 반환 **/
     @SuppressLint("HardwareIds")
     fun androidID(context: Context): String {
         return try {
@@ -59,16 +60,7 @@ object GetSystemInfo {
         }
     }
 
-    @Suppress("DEPRECATION")
-    fun getDeviceWidth(context: Context): Int {
-        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
-        Logger.t(TAG_D).i("Display Width : ${displayMetrics.widthPixels}")
-        return displayMetrics.widthPixels
-    }
-
-
+    /** 현재 앱 버전 반환 **/
     fun getApplicationVersion(context: Context): String {
         try {
             val packageManager = context.packageManager
@@ -83,10 +75,12 @@ object GetSystemInfo {
         return ""
     }
 
+    // 플레이 스토어 주소 반환
     private fun getPlayStoreURL(context: Context): String {
         return "market://details?id=${context.packageName}"
     }
 
+    /** 플레이 스토어로 이동 **/
     fun goToPlayStore(activity: Activity) {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(getPlayStoreURL(activity))

@@ -26,7 +26,7 @@ import com.orhanobut.logger.Logger
  **/
 object SetAppInfo {
 
-    // 몰입모드로 전환됩니다
+    /** 몰입모드로 전환됩니다 **/
     fun fullScreenMode(activity: Activity) {
         @Suppress("DEPRECATION")
         activity.window.decorView.systemUiVisibility = (

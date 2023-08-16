@@ -30,11 +30,11 @@ class PermissionActivity :
 
     override fun onResume() {
         super.onResume()
-        if (perm.isLocationPermitted()) {
-            if (!perm.isNotificationPermitted()) {
-                if (getInitNotiPermission(this) == "") {
+        if (perm.isLocationPermitted()) {   // 위치 서비스 이용 가능?
+            if (!perm.isNotificationPermitted()) {  // 알림 서비스 이용 가능?
+                if (getInitNotiPermission(this) == "") { // 알림 서비스 권한 호출이 처음?
                     SetAppInfo.setInitNotiPermission(this, "Not Init")
-                    perm.requestNotification()
+                    perm.requestNotification()  // 알림 권한 요청
                 } else {
                     Toast.makeText(
                         this, getString(R.string.noti_always_can),
@@ -56,32 +56,36 @@ class PermissionActivity :
 
         initBinding()
 
+        // 초기설정 로그 저장 - 초기 설치 날짜
         RDBLogcat.writeUserPref(
             this, sort = RDBLogcat.USER_PREF_SETUP,
             title = RDBLogcat.USER_PREF_SETUP_INIT,
             value = "${DataTypeParser.parseLongToLocalDateTime(DataTypeParser.getCurrentTime())}"
         )
 
+        // 초기설정 로그 저장 - 마지막 접속 시간
         RDBLogcat.writeUserPref(
             this, sort = RDBLogcat.USER_PREF_SETUP,
             title = RDBLogcat.USER_PREF_SETUP_LAST_LOGIN,
             value = "${DataTypeParser.parseLongToLocalDateTime(DataTypeParser.getCurrentTime())}"
         )
 
+        // 초기설정 로그 저장 - 디바이스 SDK 버전
         RDBLogcat.writeUserPref(
             this, sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
             value = GetSystemInfo.getApplicationVersion(this)
         )
 
+        // 권한 허용 버튼 클릭
         binding.permissionOkBtn.setOnClickListener {
-            if (!perm.isLocationPermitted()) {
+            if (!perm.isLocationPermitted()) {  // 위치 권한 허용?
                 if (perm.isShouldShowRequestPermissionRationale(
                         this,
                         android.Manifest.permission.ACCESS_FINE_LOCATION
-                    )
+                    )   // 권한 거부가 2번 이하?
                 ) {
-                    when (getInitLocPermission(this)) {
+                    when (getInitLocPermission(this)) { // 위치 권한 요청이 처음?
                         "" -> {
                             SetAppInfo.setInitLocPermission(this, "Second")
                             perm.requestLocation()

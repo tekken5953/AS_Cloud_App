@@ -49,6 +49,7 @@ class EnterPageUtil(private val activity: Activity) {
         }
     }
 
+    /** 권한 요청 페이지로 이동 **/
     fun toPermission() {
         val intent = Intent(activity, PermissionActivity::class.java)
         activity.startActivity(intent)

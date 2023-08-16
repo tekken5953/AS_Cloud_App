@@ -27,6 +27,7 @@ class RequestPermissionsUtil(private val context: Context) {
         Manifest.permission.ACCESS_COARSE_LOCATION
     )
 
+    /** 백그라운드 위치 권한 31 이상 **/
     @RequiresApi(Build.VERSION_CODES.Q)
     private val permissionsLocationBackground =
         Manifest.permission.ACCESS_BACKGROUND_LOCATION
@@ -109,6 +110,7 @@ class RequestPermissionsUtil(private val context: Context) {
         return true
     }
 
+    /** 알림 설정 권한 여부 검사 **/
     fun isNotiDenied(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             for (perm in permissionNotification) {
@@ -124,6 +126,7 @@ class RequestPermissionsUtil(private val context: Context) {
         return true
     }
 
+    /** 권한 요청 거부 횟수에 따른 반환 **/
     fun isShouldShowRequestPermissionRationale(activity: Activity, perm: String): Boolean {
         return when (getInitLocPermission(activity)) {
             "" -> {
@@ -142,6 +145,7 @@ class RequestPermissionsUtil(private val context: Context) {
         }
     }
 
+    /** 백그라운드에서 위치 접근 권한 허용 여부 검사 **/
     @RequiresApi(Build.VERSION_CODES.Q)
     fun isBackgroundRequestLocation(): Boolean {
 
@@ -149,6 +153,7 @@ class RequestPermissionsUtil(private val context: Context) {
                 PackageManager.PERMISSION_GRANTED
     }
 
+    /** 백그라운드에서 위치 접근 권한 요청 **/
     @RequiresApi(Build.VERSION_CODES.Q)
     fun requestBackgroundLocation() {
         ActivityCompat.requestPermissions(

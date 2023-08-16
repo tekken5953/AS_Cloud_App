@@ -16,6 +16,7 @@ class MakeSingleDialog(private val context: Context) {
     lateinit var apply: AppCompatButton
     lateinit var builder: Dialog
 
+    // 버튼이 하나인 다이얼로그 생성
     fun makeDialog(textTitle: String, color: Int, buttonText: String): AppCompatButton {
         builder = Dialog(context)
         val view = LayoutInflater.from(context)

@@ -72,6 +72,7 @@ class SearchDialog(
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // 텍스트 폰트 크기 적용
         when (getUserFontScale(activity)) {
             TEXT_SCALE_SMALL -> {
                 SetSystemInfo.setTextSizeSmall(activity)
@@ -83,19 +84,22 @@ class SearchDialog(
                 SetSystemInfo.setTextSizeDefault(activity)
             }
         }
-        if (layoutId == 0) {
+
+        if (layoutId == 0) {  // 등록된 주소 다이얼로그
             val changeAddressView: TextView = view.findViewById(R.id.changeAddressView)
             val currentAddress: TextView = view.findViewById(R.id.changeAddressText)
             val currentGpsImg: ImageView = view.findViewById(R.id.changeAddressImg)
 
+            // 주소 등록 EditText 클릭
             changeAddressView.setOnClickListener {
                 changeAddressView.clearFocus()
-                dismissNow()
-                SearchDialog(activity, 1, fm, tagId).showNow(fm, tagId)
+                dismissNow() // 현재 다이얼로그 사라짐
+                SearchDialog(activity, 1, fm, tagId).showNow(fm, tagId) // 다이얼로그 재호출
             }
 
-            val editList: TextView = view.findViewById(R.id.changeAddressEdit)
-            editList.setOnClickListener {
+            // 삭제 버튼 클릭
+            val deleteList: TextView = view.findViewById(R.id.changeAddressEdit)
+            deleteList.setOnClickListener {
                 if (!currentAdapter.getCheckBoxVisible()) {
                     currentAdapter.updateCheckBoxVisible(true)
                 } else {
@@ -103,6 +107,7 @@ class SearchDialog(
                 }
             }
 
+            // 현재 주소 클릭 시 현재 주소로 데이터 호출
             currentAddress.setOnClickListener {
                 dismissNow()
                 CoroutineScope(Dispatchers.IO).launch {
@@ -116,6 +121,7 @@ class SearchDialog(
                 }
             }
 
+            // 등록 된 주소 보여주기 세팅
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
             GpsRepository(activity).findAll().forEach { entity ->
@@ -136,6 +142,7 @@ class SearchDialog(
                 }
             }
 
+            // 등록 된 주소 클릭 시 등록 된 주소로 데이터 호출
             currentAdapter.setOnItemClickListener(object : AddressListAdapter.OnItemClickListener {
                 override fun onItemClick(v: View, position: Int) {
                     CoroutineScope(Dispatchers.Default).launch {
@@ -151,7 +158,9 @@ class SearchDialog(
             })
 
             currentAdapter.notifyDataSetChanged()
-        } else {
+        }
+        // 주소 등록 다이얼로그 생성
+        else {
             val searchView: EditText = view.findViewById(R.id.searchAddressView)
             val searchBack: ImageView = view.findViewById(R.id.searchBack)
             val noResult: TextView = view.findViewById(R.id.searchAddressNoResult)
@@ -398,6 +407,7 @@ class SearchDialog(
         return displayMetrics.heightPixels
     }
 
+    // 커스텀 어댑터 클래스
     private inner class CustomArrayAdapter(private val editText: EditText, dataList: List<String>) :
         ArrayAdapter<String>(activity, R.layout.list_item_searced_address, dataList) {
 

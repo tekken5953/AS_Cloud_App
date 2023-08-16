@@ -22,6 +22,7 @@ class ShowDialogClass(private val activity: Activity) {
     private lateinit var alertDialog: androidx.appcompat.app.AlertDialog
 
     init {
+        // 폰트 크기 설정
         when(getUserFontScale(activity)) {
             TEXT_SCALE_SMALL -> {
                 SetSystemInfo.setTextSizeSmall(activity)

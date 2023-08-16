@@ -3,19 +3,8 @@ package com.example.airsignal_app.retrofit
 import com.google.gson.annotations.SerializedName
 
 class ApiModel {
-//    // 회원가입 시 Body에 넣어서 POST 할 데이터 모델
-//    data class Member(val userId: String?, val phone: String?, val password: String?)
-//    // 로그인 시 Body에 넣어서 POST 할 데이터 모델
-//    data class Login(val userId: String?, val password: String?)
-//    // 로그인 시 발행된 AccessToken Body로 Get할 데이터 모델
-//    data class LoginToken(var access: String?, var refresh: String?)
-//    // 유저정보 GET할 데이터 모델
-//    data class GetMyInfo(val userId: String?, val email: String?, val name: String?, val authority: String?)
-//    // 유저 비밀번호 변경 모델
-//    data class PutMyPassword(val password: String?)
-//    // 유저 이메일 변경 모델
-//    data class PutMyEmail(val email: String?)
 
+    // 앱 버전 모델
     data class AppVersion(
         @SerializedName("version")
         val version: String,
@@ -23,6 +12,7 @@ class ApiModel {
         val releaseDate: String
     )
 
+    // 메타데이터 모델
     data class MetaData(
         @SerializedName("address")
         val address: String?,
@@ -34,6 +24,7 @@ class ApiModel {
         val address3: String?
     )
 
+    // 시간별 날씨 데이터 모델
     data class RealTimeData(
         @SerializedName("base")
         val base: String?,
@@ -63,6 +54,7 @@ class ApiModel {
         val windSpeed: Double?
     )
 
+    // 주간별 날씨 데이터 모델
     data class WeeklyData(
         @SerializedName("rainDate")
         val rainDate: String?,
@@ -160,6 +152,7 @@ class ApiModel {
         val taMax7: Double?
     )
 
+    // 외부 공기질 데이터 모델
     data class AirQualityData(
         @SerializedName("pm25Grade1h")
         val pm25Grade1h: Int?,
@@ -209,6 +202,7 @@ class ApiModel {
         val stationDetail: StationDetailInner
     )
 
+    // 스테이션 정보 모델
     data class StationDetailInner(
         @SerializedName("item")
         val stationDetailItem: String?,
@@ -218,6 +212,7 @@ class ApiModel {
         val stationDetailAddr: String?
     )
 
+    // 일출/일몰 데이터 모델
     data class SunData(
         @SerializedName("locdate")
         val locdate: String?,
@@ -231,6 +226,7 @@ class ApiModel {
         val sunset: String?,
     )
 
+    // 내일 일출/일몰 데이터 모델
     data class SunTomorrow(
         @SerializedName("locdate")
         val locdate: String?,
@@ -244,6 +240,7 @@ class ApiModel {
         val sunset: String?,
     )
 
+    // 오늘 최저/최고 기온 데이터 모델
     data class TodayTemp(
         @SerializedName("min")
         val min: Double?,
@@ -251,11 +248,13 @@ class ApiModel {
         val max: Double?
     )
 
+    // 어제 기온 데이터 모델
     data class YesterdayTemp(
         @SerializedName("temperature")
         val temp: Double?
     )
 
+    // 자외선 데이터 모델
     data class UV(
         @SerializedName("value")
         val value: Int?,
@@ -263,11 +262,8 @@ class ApiModel {
         val flag: String?
     )
 
+    // 실시간 정보 데이터 모델
     data class Current(
-//        @SerializedName("base")
-//        val baseTime: LocalDateTime,
-//        @SerializedName("forecast")
-//        val forecastTime: LocalDateTime,
         @SerializedName("rainType")
         val rainType: String?,
         @SerializedName("rainHourly")
@@ -276,16 +272,13 @@ class ApiModel {
         val humidity: Double?,
         @SerializedName("temperature")
         val temperature: Double?,
-//        @SerializedName("windSpeedEW")
-//        val windSpeedEW: Double?,
-//        @SerializedName("windSpeedSN")
-//        val windSpeedSN: Double?,
         @SerializedName("vector")
         val vector: String?,
         @SerializedName("windSpeed")
         val windSpeed: Double?,
     )
 
+    // 전체 데이터 모델
     data class GetEntireData(
         @SerializedName("metadata")
         val meta: MetaData,
@@ -315,17 +308,21 @@ class ApiModel {
         val term24: String?
     )
 
+    // 4x2 위젯 - 미세먼지 등급
     data class Widget4x2Quality(
         @SerializedName("pm10Grade1h")
         val pm10Grade1h: Int?
     )
 
+    // 4x2 위젯 - 실시간 정보
     data class Widget4x2Current(
         @SerializedName("rainType")
         val rainType: String?,
         @SerializedName("temperature")
         val temperature: Double?
     )
+
+    // 4x2 위젯 - 일출/일몰
     data class Widget4x2Sun(
         @SerializedName("sunrise")
         val sunrise: String?,
@@ -333,6 +330,7 @@ class ApiModel {
         val sunset: String?
     )
 
+    // 4x2 위젯 - 시간별 데이터
     data class Widget4x2Realtime(
         @SerializedName("forecast")
         val forecast: String?,
@@ -346,6 +344,7 @@ class ApiModel {
         val temp: Double?
     )
 
+    // 4x2 위젯 - 전체 데이터
     data class Widget4x2Data(
         @SerializedName("quality")
         val quality: Widget4x2Quality,

@@ -34,12 +34,8 @@ class GetAppVersionRepo: BaseRepository() {
 
                     try {
                         if (response.isSuccessful) {
-//                        Logger.t(TAG_R).d("Success to get API : ${ApiState.Success(responseBody).data}")
-
                             _getAppVersionResult.postValue(ApiState.Success(responseBody))
                         } else {
-//                        Logger.t(TAG_R).d("Fail to get API : ${ApiState.Success(responseBody).data}")
-
                             _getAppVersionResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
                         }
                     } catch(e: Exception) {
@@ -48,8 +44,6 @@ class GetAppVersionRepo: BaseRepository() {
                 }
 
                 override fun onFailure(call: Call<ApiModel.AppVersion>, t: Throwable) {
-//                    Logger.t(TAG_R).d("Fail to get API : ${t.localizedMessage}")
-
                     _getAppVersionResult.postValue(ApiState.Error(ERROR_NETWORK))
                 }
             })

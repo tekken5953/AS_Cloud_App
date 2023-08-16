@@ -22,7 +22,7 @@ object RDBLogcat {
     const val USER_PREF_SETUP = "설치"
     const val USER_PREF_DEVICE = "디바이스"
     const val USER_PREF_SETUP_INIT = "초기 설치"
-    const val USER_PREF_SETUP_LAST_LOGIN = "마지막 로그인 시간"
+    const val USER_PREF_SETUP_LAST_LOGIN = "마지막 접속 시간"
     const val USER_PREF_SETUP_COUNT = "총 설치 횟수"
     const val USER_PREF_DEVICE_APP_VERSION = "앱 버전"
     const val USER_PREF_DEVICE_DEVICE_MODEL = "디바이스 모델"

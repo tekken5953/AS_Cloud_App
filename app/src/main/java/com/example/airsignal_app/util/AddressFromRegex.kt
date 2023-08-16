@@ -7,6 +7,7 @@ package com.example.airsignal_app.util
  **/
 class AddressFromRegex(private val address: String) {
 
+    /** 축약 된 주소 반환 **/
     fun getAddress(): String {
         val s1: StringBuilder = StringBuilder()
         val s2: StringBuilder = StringBuilder()
@@ -67,6 +68,7 @@ class AddressFromRegex(private val address: String) {
         }
     }
 
+    /** 기상 특보 전용 주소 반환 **/
     fun getWarningAddress(): String {
         val sb = StringBuilder()
         return try {
@@ -87,6 +89,7 @@ class AddressFromRegex(private val address: String) {
         }
     }
 
+    /** 알림 전용 주소 반환 **/
     fun getNotificationAddress(): String {
         val sb = StringBuilder()
         return try {
@@ -106,6 +109,7 @@ class AddressFromRegex(private val address: String) {
         }
     }
 
+    // 문자열에서 띄워쓰기 개수 반환
     private fun countSpacesInStringBuilder(s: String): Int {
         var count = 0
         for (element in s) {
@@ -116,6 +120,7 @@ class AddressFromRegex(private val address: String) {
         return count
     }
 
+    // 도로명 주소인지 검사
     private fun isRoadAddress(): Boolean {
         val roadList = generatePatternRoad()
         roadList.forEach { list ->
@@ -124,6 +129,7 @@ class AddressFromRegex(private val address: String) {
         return false
     }
 
+    // 광역시,특별시,도 추출
     private fun generatePatternFirst(): ArrayList<Regex> {
         return arrayListOf(
             Regex("\\b\\S+광역시\\b"),
@@ -132,6 +138,7 @@ class AddressFromRegex(private val address: String) {
         )
     }
 
+    // 시,군,구 추출
     private fun generatePatternSecond(): ArrayList<Regex> {
         return arrayListOf(
             Regex("\\b\\S+시\\b"),
@@ -140,6 +147,7 @@ class AddressFromRegex(private val address: String) {
         )
     }
 
+    // 읍,면,동 추출 - 구주소
     private fun generatePatternThird(): ArrayList<Regex> {
         return arrayListOf(
             Regex("\\b\\S+읍\\b"),
@@ -148,19 +156,14 @@ class AddressFromRegex(private val address: String) {
         )
     }
 
+    // 리 추출 - 구주소
     private fun generatePatternFourth(): ArrayList<Regex> {
         return arrayListOf(
             Regex("\\b\\S+리\\b")
         )
     }
 
-//    private fun generatePatternOthers(): ArrayList<Regex> {
-//        return arrayListOf(
-//            Regex("\\b\\d+\\S*"),
-//            Regex("\\b\\w+\\S*")
-//        )
-//    }
-
+    // 도로명 주소 추출 - 신주소
     private fun generatePatternRoad(): ArrayList<Regex> {
         return arrayListOf(
             Regex("\\b\\S+로\\b"),

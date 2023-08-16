@@ -74,6 +74,7 @@ class SideMenuBuilder(private val context: Context) {
         return alertDialog
     }
 
+    // 로그인 정보 반환
     fun setUserData(profile: ImageView, Id: TextView): SideMenuBuilder {
         Glide.with(context)
             .load(Uri.parse(getUserProfileImage(context)))
@@ -87,6 +88,7 @@ class SideMenuBuilder(private val context: Context) {
         return this
     }
 
+    // 폰트 크기 반환
     private fun setFontScale(): SideMenuBuilder {
         when (getUserFontScale(context)) {
             TEXT_SCALE_SMALL -> {
@@ -102,6 +104,7 @@ class SideMenuBuilder(private val context: Context) {
         return this
     }
 
+    // 바텀 다이얼로그 가로 비율 설정
     private fun attributeDialog() {
         val params: WindowManager.LayoutParams = alertDialog.window!!.attributes
 
@@ -114,11 +117,12 @@ class SideMenuBuilder(private val context: Context) {
         alertDialog.window!!.attributes = params
     }
 
-    // 바텀 다이얼로그 비율설정
+    // 바텀 다이얼로그 세로 비율 설정
     private fun getBottomSheetDialogDefaultWidth(per: Int): Int {
         return getWindowWidth() * per / 100
     }
 
+    // 디바이스 넓이 구하기
     private fun getWindowWidth(): Int {
         // 디바이스의 width 를 구한다
         val displayMetrics = DisplayMetrics()

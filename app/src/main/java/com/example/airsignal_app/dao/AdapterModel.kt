@@ -45,19 +45,6 @@ object AdapterModel {
         val content: String
     )
 
-//    // 앱 버전
-//    data class AppVersionItem(
-//        val version: String
-//    )
-
-//    // 이벤트 리스트
-//    data class EventItem(
-//        @PrimaryKey(autoGenerate = true) val id: Int,
-//        val date: String,
-//        val title: String,
-//        val content: Any?
-//    )
-
     // 자외선 지수 범례
     data class UVLegendItem(
         val value: String,
@@ -81,6 +68,7 @@ object AdapterModel {
         val grade: Int
     )
 
+    // 영문/국문 주소 쌍 모델
     data class AddressListItem(
         val kr: String?,
         val en: String?

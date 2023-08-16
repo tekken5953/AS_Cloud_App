@@ -106,6 +106,7 @@ class SettingActivity
         super.onCreate(savedInstanceState)
 
         initBinding()
+
         setStatusBar(this)
 
         if (isInit) {
@@ -331,6 +332,7 @@ class SettingActivity
                 }
             }
 
+            // 설정 변경시
             rg.setOnCheckedChangeListener { radioGroup, i ->
                 when (i) {
                     small.id -> {
@@ -351,157 +353,6 @@ class SettingActivity
                 }
             }
         }
-
-        val detailView: View =
-            LayoutInflater.from(this).inflate(R.layout.dialog_detail, null)
-        val detailDate: TextView = detailView.findViewById(R.id.detailNoticeDate)
-        val detailTitle: TextView = detailView.findViewById(R.id.detailTitle)
-        val detailContent: TextView = detailView.findViewById(R.id.detailContent)
-        val detailHeadLine: TextView = detailView.findViewById(R.id.detailHeadLine)
-
-        // 공지사항 클릭
-//        binding.settingNotice.setOnClickListener {
-//            val noticeMainView: View =
-//                LayoutInflater.from(this).inflate(R.layout.dialog_notice, null)
-//            val noticeAdapter = NoticeAdapter(this, noticeItem)
-//            val recyclerView: RecyclerView = noticeMainView.findViewById(R.id.noticeRv)
-//            val noticeTitle: TextView = noticeMainView.findViewById(R.id.noticeTitle)
-//            val nullText = noticeMainView.findViewById<TextView>(R.id.noticeNullText)
-//
-//            recyclerView.adapter = noticeAdapter
-//            noticeItem.clear()
-//
-//            CoroutineScope(Dispatchers.IO).launch {
-//                HttpClient
-//                    .getInstance(false)
-//                    .setClientBuilder()
-//                    .mMyAPIImpl
-//                    .notice.enqueue(object : Callback<List<AdapterModel.NoticeItem>> {
-//                        @SuppressLint("NotifyDataSetChanged")
-//                        override fun onResponse(
-//                            call: Call<List<AdapterModel.NoticeItem>>,
-//                            response: Response<List<AdapterModel.NoticeItem>>
-//                        ) {
-//                            try {
-//                                val list = response.body()!!
-//                                list.forEach {
-//                                    addNoticeItem(convertDateFormat(it.created),
-//                                        convertDateFormat(it.modified),
-//                                        it.title,
-//                                        it.content)
-//                                }
-//
-//                                noticeAdapter.notifyDataSetChanged()
-//                                if (list.isEmpty()) {
-//                                    nullText.visibility = View.VISIBLE
-//                                } else {
-//                                    nullText.visibility = View.GONE
-//                                }
-//                            } catch(e: Exception) {
-//                                nullText.visibility = View.VISIBLE
-//                                e.printStackTrace()
-//                            }
-//                        }
-//
-//                        override fun onFailure(
-//                            call: Call<List<AdapterModel.NoticeItem>>,
-//                            t: Throwable
-//                        ) {
-//                            nullText.visibility = View.VISIBLE
-//                            Toast.makeText(this@SettingActivity,
-//                                "공지사항을 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
-//
-//                            t.printStackTrace()
-//                        }
-//                    })
-//            }
-//
-//            ShowDialogClass(this)
-//                .setBackPressed(noticeMainView.findViewById(R.id.noticeBack))
-//                .show(noticeMainView, true)
-//
-//            noticeAdapter.setOnItemClickListener(object : NoticeAdapter.OnItemClickListener {
-//                override fun onItemClick(v: View, position: Int) {
-//                    detailDate.text = noticeItem[position].created
-//                    detailDate.visibility = View.VISIBLE
-//                    detailTitle.text = noticeTitle.text.toString()
-//                    detailContent.text = noticeItem[position].content
-//                    detailHeadLine.text = noticeItem[position].title
-//                    ShowDialogClass(this@SettingActivity)
-//                        .setBackPressed(detailView.findViewById(R.id.detailBack))
-//                        .show(detailView, true)
-//                }
-//            })
-//        }
-//
-//        // 자주묻는질문 클릭
-//        binding.settingFaq.setOnClickListener {
-//            val faqMainView: View = LayoutInflater.from(this).inflate(R.layout.dialog_faq, null)
-//            val faqAdapter = FaqAdapter(this, faqItem)
-//            val recyclerView = faqMainView.findViewById<RecyclerView>(R.id.faqRv)
-//            val faqTitle: TextView = faqMainView.findViewById(R.id.faqTitle)
-//            val faqNullText: TextView = faqMainView.findViewById(R.id.faqNullText)
-//            faqItem.clear()
-//            recyclerView.adapter = faqAdapter
-//
-//            CoroutineScope(Dispatchers.IO).launch {
-//                HttpClient.getInstance(false)
-//                    .setClientBuilder()
-//                    .mMyAPIImpl.faq.enqueue(object : Callback<List<AdapterModel.FaqItem>>{
-//                        @SuppressLint("NotifyDataSetChanged")
-//                        override fun onResponse(
-//                            call: Call<List<AdapterModel.FaqItem>>,
-//                            response: Response<List<AdapterModel.FaqItem>>
-//                        ) {
-//                            try {
-//                                val list = response.body()!!
-//                                list.forEach {
-//                                    addFaqItem(it.title,it.content)
-//                                }
-//
-//                                faqAdapter.notifyDataSetChanged()
-//
-//                                if (list.isEmpty()) {
-//                                    faqNullText.visibility = View.VISIBLE
-//                                } else {
-//                                    faqNullText.visibility = View.GONE
-//                                }
-//                            } catch (e: Exception) {
-//                                faqNullText.visibility = View.VISIBLE
-//                                e.printStackTrace()
-//                            }
-//                        }
-//
-//                        override fun onFailure(
-//                            call: Call<List<AdapterModel.FaqItem>>,
-//                            t: Throwable
-//                        ) {
-//                            faqNullText.visibility = View.VISIBLE
-//                            Toast.makeText(this@SettingActivity,
-//                                "자주 묻는 질문을 불러오는데 실패했습니다",
-//                                Toast.LENGTH_SHORT).show()
-//
-//                            t.printStackTrace()
-//                        }
-//                    })
-//            }
-//
-//            ShowDialogClass(this)
-//                .setBackPressed(faqMainView.findViewById(R.id.faqBack))
-//                .show(faqMainView, true)
-//
-//            faqAdapter.setOnItemClickListener(object : FaqAdapter.OnItemClickListener {
-//                override fun onItemClick(v: View, position: Int) {
-//                    detailDate.visibility = View.GONE
-//                    detailTitle.text = faqTitle.text.toString()
-//                    detailContent.text = faqItem[position].content
-//                    detailHeadLine.text = faqItem[position].title
-//                    ShowDialogClass(this@SettingActivity)
-//                        .setBackPressed(detailView.findViewById(R.id.detailBack))
-//                        .show(detailView, true)
-//                }
-//            })
-//        }
 
         // 앱 정보 클릭
         binding.settingAppInfo.setOnClickListener {
@@ -531,6 +382,7 @@ class SettingActivity
             val notiLine2: View = notificationView.findViewById(R.id.notificationLine2)
             val notiLine3: View = notificationView.findViewById(R.id.notificationLine3)
 
+            // 알림 미허용시 다른 아이템 숨김
             fun setVisibility(isChecked: Boolean) {
                 if (isChecked) {
                     notiVibrateTr.visibility = View.VISIBLE
@@ -545,6 +397,7 @@ class SettingActivity
                 }
             }
 
+            // 백그라운드 요청에 따른 적용
             fun applyBack(isChecked: Boolean) {
                 if (VERSION.SDK_INT >= 29) {
                     if (isChecked) {
@@ -609,6 +462,7 @@ class SettingActivity
             }
 
             setNightAlertsSpan(notiSettingTitle)
+            // 개인 설정에 따른 스위치 변환
             notiSettingSwitch.isChecked = getUserNotiEnable(this)
             notiVibrateSwitch.isChecked = getUserNotiVibrate(this)
             notiSoundSwitch.isChecked = getUserNotiSound(this)
@@ -616,16 +470,19 @@ class SettingActivity
             setVisibility(notiSettingSwitch.isChecked)
             applyBack(notiSettingSwitch.isChecked)
 
+            // 알림 설정 스위치 변화
             notiSettingSwitch.setOnCheckedChangeListener { _, isChecked ->
                 setUserNoti(this, notiEnable, isChecked)
                 showSnackBar(notificationView, isChecked)
                 setVisibility(isChecked)
                 applyBack(isChecked)
             }
+            // 진동 설정 스위치 변화
             notiVibrateSwitch.setOnCheckedChangeListener { _, isChecked ->
                 setUserNoti(this, notiVibrate, isChecked)
                 showSnackBar(notificationView, isChecked)
             }
+            // 소리 설정 스위치 변화
             notiSoundSwitch.setOnCheckedChangeListener { _, isChecked ->
                 setUserNoti(this, notiSound, isChecked)
                 showSnackBar(notificationView, isChecked)
@@ -637,7 +494,7 @@ class SettingActivity
         }
     }
 
-    /** 알림 커스텀 스낵바 세팅 **/
+    // 알림 커스텀 스낵바 세팅
     private fun showSnackBar(view: View, isAllow: Boolean) {
         val alertOn = ContextCompat.getDrawable(this, R.drawable.alert_on)!!
         val alertOff = ContextCompat.getDrawable(this, R.drawable.alert_off)!!
@@ -660,6 +517,7 @@ class SettingActivity
         }
     }
 
+    // 야간 알림 텍스트 색상 설정
     private fun setNightAlertsSpan(textView: TextView) {
         val span = SpannableStringBuilder(textView.text)
         val formatText = textView.text.split(System.lineSeparator())
@@ -696,6 +554,7 @@ class SettingActivity
         textView.text = span
     }
 
+    // 문자열에서 해당 문자의 인덱스 반환
     private fun findCharacterIndex(input: String, targetChar: Char): Int {
         for (index in input.indices) {
             if (input[index] == targetChar) {
@@ -705,6 +564,7 @@ class SettingActivity
         return -1 // 문자가 없는 경우 -1을 반환
     }
 
+    // 테마 적용
     private fun applyDeviceTheme() {
         // 설정 페이지 테마 항목이름 바꾸기
         when (getUserTheme(this)) {
@@ -720,6 +580,7 @@ class SettingActivity
         }
     }
 
+    // 앱 버전 불러오기
     @SuppressLint("SetTextI18n")
     private fun applyAppVersionResult() {
         val viewAppInfo: View =
@@ -736,6 +597,7 @@ class SettingActivity
         val appInfoDataUsage: TextView = viewAppInfo.findViewById(R.id.appInfoDataUsage)
 
 
+        // 뷰모델 데이터 호출
         appVersionViewModel.fetchData().observe(this) { result ->
             result?.let { ver ->
                 when (ver) {
@@ -770,27 +632,32 @@ class SettingActivity
             }
         }
 
+        // 새로운 버전 다운로드 실행
         appInfoDownBtn.setOnClickListener {
             goToPlayStore(this)
         }
 
+        // 오픈소스 라이센스 클릭
         appInfoLicense.setOnClickListener {
             startActivity(Intent(this, OssLicensesMenuActivity::class.java))
             OssLicensesMenuActivity.setActivityTitle(getString(R.string.list_of_open_source))
         }
 
+        // 이용약관 클릭
         appInfoTermsService.setOnClickListener {
             val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
             intent.putExtra("sort","termsOfService")
             startActivity(intent)
         }
 
+        // 개인 정보 처리 방침 클릭
         appInfoDataUsage.setOnClickListener {
             val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
             intent.putExtra("sort","dataUsage")
             startActivity(intent)
         }
 
+        // 고객 센터 클릭
         appInfoCustomerService.setOnClickListener {
             val customerView: View = LayoutInflater.from(this)
                 .inflate(R.layout.dialog_customer_service,null)
@@ -816,11 +683,7 @@ class SettingActivity
             .show(viewAppInfo, true)
     }
 
-    private fun convertDateFormat(s: String): String {
-        val fs = LocalDateTime.parse(s)
-        return "${fs.year}.${fs.monthValue}.${fs.dayOfMonth}"
-    }
-
+    // 유저 이메일에 따른 로그인 여부 적용
     private fun applyUserEmail() {
         if (getUserEmail(this) != "") {
             binding.settingUserEmail.text = getUserEmail(this)
@@ -831,6 +694,7 @@ class SettingActivity
         }
     }
 
+    // 유저 언어 설정 적용
     private fun applyUserLanguage() {
         // 설정 페이지 언어 항목이름 바꾸기
         when (getUserLocation(this)) {
@@ -846,6 +710,7 @@ class SettingActivity
         }
     }
 
+    // 유저 폰트 크기 설정 적용
     private fun applyFontScale() {
         // 설정 페이지 폰트크기 항목이름 바꾸기
         when (getUserFontScale(this)) {
@@ -861,8 +726,8 @@ class SettingActivity
         }
     }
 
+    // 마지막 로그인 플랫폼 종류
     private fun applyLastLogin(): String {
-        // 마지막 로그인 플랫폼 종류
         val lastLogin = getUserLoginPlatform(this)
         if (lastLogin != "") {
             binding.settingLogOut.text = getString(R.string.setting_logout)
@@ -889,7 +754,7 @@ class SettingActivity
         return lastLogin
     }
 
-    /** 이미지 드로어블 할당 **/
+    // 이미지 드로어블 할당
     private fun setImageDrawable(imageView: ImageView, src: Int) {
         imageView.setImageDrawable(
             ResourcesCompat.getDrawable(
@@ -899,7 +764,7 @@ class SettingActivity
         )
     }
 
-    /** 메인 액티비티로 이동 **/
+    // 메인 액티비티로 이동
     private fun goMain() {
         val intent = Intent(this@SettingActivity, MainActivity::class.java)
         startActivity(intent)
@@ -907,7 +772,7 @@ class SettingActivity
         finish()
     }
 
-    /** 라디오 버튼 DrawableEnd Tint 변경 **/
+    // 라디오 버튼 DrawableEnd Tint 변경
     @SuppressLint("UseCompatTextViewDrawableApis")
     private fun changeCheckIcon(rbOn: RadioButton, rbOff1: RadioButton, rbOff2: RadioButton) {
         rbOn.compoundDrawableTintList =
@@ -918,7 +783,7 @@ class SettingActivity
             ColorStateList.valueOf(getColor(android.R.color.transparent))
     }
 
-    /** 언어 라디오 버튼 클릭 시 이벤트 처리 **/
+    // 언어 라디오 버튼 클릭 시 이벤트 처리
     private fun changedLangRadio(
         lang: String,
         radioGroup: RadioGroup,
@@ -933,7 +798,7 @@ class SettingActivity
         }
     }
 
-    /** 테마 라디오 버튼 클릭 시 이벤트 처리 **/
+    // 테마 라디오 버튼 클릭 시 이벤트 처리
     private fun changedThemeRadio(
         mode: Int,
         dbData: String,
@@ -957,7 +822,7 @@ class SettingActivity
         }
     }
 
-    /** 언어 설정 변경 후 어플리케이션 재시작 **/
+    // 언어 설정 변경 후 어플리케이션 재시작
     private fun saveLanguageChange() {
         val builder = Dialog(this)
         val view = LayoutInflater.from(this)
@@ -982,13 +847,13 @@ class SettingActivity
         builder.show()
     }
 
-    /** 자주묻는질문 아이템 추가하기 **/
+    // 자주묻는질문 아이템 추가하기
     private fun addFaqItem(title: String, content: String) {
         val item = AdapterModel.FaqItem(title, content)
         faqItem.add(item)
     }
 
-    /** 공지사항 아이템 추가하기 **/
+    // 공지사항 아이템 추가하기
     private fun addNoticeItem(
         created: String,
         modified: String,

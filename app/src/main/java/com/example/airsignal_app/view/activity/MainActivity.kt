@@ -187,7 +187,7 @@ class MainActivity
 
         initializing()
 
-        sunPb.disableTouch()
+        sunPb.disableTouch()    // 일출/일몰 그래프 클릭 방지
 
         // 메인 하단 스크롤 유도 화살표 애니메이션 적용
         val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
@@ -197,12 +197,7 @@ class MainActivity
         addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
         addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
         addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
-        addUvLegendItem(
-            3,
-            "8 - 10",
-            getColor(R.color.uv_very_high),
-            getString(R.string.uv_very_high)
-        )
+        addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), getString(R.string.uv_very_high))
         addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
         // 스크롤 최상단으로 올리기 버튼
@@ -230,6 +225,7 @@ class MainActivity
             }
         }
 
+        // 데이터 갱신 버튼 클릭
         binding.mainRefreshData.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 v!!.startAnimation(rotateAnim)
@@ -396,18 +392,6 @@ class MainActivity
         }
     }
 
-//    // 7글자를 기준으로 WordWrap 적용
-//    private fun guardWordWrap(s: String): String {
-//        return try {
-//            val formS = if (s.first().toString() == " ")
-//                s.replaceFirst(" ", "") else s
-//            WrapTextClass().getFormedText(formS, 10)
-//        } catch (e: NoSuchElementException) {
-//            e.printStackTrace()
-//            return s
-//        }
-//    }
-
     // 프로그래스 보이기
     private fun showPB() {
         if (binding.mainMotionLayout.alpha == NOT_SHOWING_LOADING_FLOAT) {
@@ -440,16 +424,18 @@ class MainActivity
         @Suppress("DEPRECATION") windowManager.defaultDisplay.getMetrics(
             displayMetrics
         )
-//        addExitDialog()
+
         // 자동 로그인
         SilentLoginClass().login(this@MainActivity)
 
+        // 어댑터 바인딩
         binding.mainDailyWeatherRv.adapter = dailyWeatherAdapter
         binding.mainWeeklyWeatherRv.adapter = weeklyWeatherAdapter
         binding.mainUVLegendRv.adapter = uvLegendAdapter
         binding.mainUvCollapseRv.adapter = uvResponseAdapter
         binding.nestedAirRv.adapter = airQAdapter
 
+        // 기상특보 뷰페이저 세팅
         binding.mainWarningVp.apply {
             adapter = warningViewPagerAdapter
             isClickable = true
@@ -461,6 +447,7 @@ class MainActivity
 
         AdViewClass(this).loadAdView(binding.nestedAdView)  // adView 생성
 
+        // adView 닫기 클릭
         binding.adViewCancelIv.setOnClickListener {
             it.visibility = GONE
             val layoutParams =
@@ -510,6 +497,7 @@ class MainActivity
                     sectionList.forEach {
                         if (firstVisibleItemPosition >= it) {
                             when (it) {
+                                // 오늘
                                 sectionList[0] -> {
                                     setSectionTextColor(
                                         todaySection,
@@ -517,6 +505,7 @@ class MainActivity
                                         afterTomorrowSection
                                     )
                                 }
+                                // 내일
                                 sectionList[1] -> {
                                     setSectionTextColor(
                                         tomorrowSection,
@@ -524,6 +513,7 @@ class MainActivity
                                         afterTomorrowSection
                                     )
                                 }
+                                // 모레
                                 sectionList[2] -> {
                                     setSectionTextColor(
                                         afterTomorrowSection,
@@ -568,13 +558,16 @@ class MainActivity
             }
         })
 
+        // 외부 공기질 도움말 아이콘 이미지 설정
         binding.nestedAirHelp.setImageDrawable(
             ResourcesCompat.getDrawable(resources, R.drawable.ico_question, null)
         )
 
+        // 외부 공기질 도움말 클릭
         binding.nestedAirHelp.setOnClickListener {
             if (binding.nestedAirHelpPopup.alpha == 0f) {
                 val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
+                // 팝업 다이얼로그 생성
                 binding.nestedAirHelpPopup.apply {
                     bringToFront()
                     airQList.forEach {
@@ -612,14 +605,18 @@ class MainActivity
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
+        // 뒤로가기 한번 클릭 시 토스트
         if (!isBackPressed) {
             ToastUtils(this)
                 .showMessage(getString(R.string.back_press), 2)
             isBackPressed = true
-        } else {
+        }
+        // 2초안에 한번 더 클릭 시 종료
+        else {
             removeSingleKey(this, lastAddress)
             EnterPageUtil(this).fullyExit()
         }
+        // 2초간 스레드 유지
         Handler(Looper.getMainLooper()).postDelayed({
             isBackPressed = false
         }, 2000)
@@ -645,6 +642,7 @@ class MainActivity
         getDataViewModel.fetchData().observe(this) { entireData ->
             entireData?.let { eData ->
                 when (eData) {
+                    // 통신 성공
                     is BaseRepository.ApiState.Success -> {
                         try {
                             val result = eData.data
@@ -668,18 +666,22 @@ class MainActivity
 
                             airQList.clear()
 
+                            // 주간 오전 날씨
                             val wfMin = listOf(
                                 week.wf0Am, week.wf1Am, week.wf2Am, week.wf3Am,
                                 week.wf4Am, week.wf5Am, week.wf6Am, week.wf7Am
                             )
+                            // 주간 오후 날씨
                             val wfMax = listOf(
                                 week.wf0Pm, week.wf1Pm, week.wf2Pm, week.wf3Pm,
                                 week.wf4Pm, week.wf5Pm, week.wf6Pm, week.wf7Pm
                             )
+                            // 주간 최저 기온
                             val taMin = listOf(
                                 week.taMin0, week.taMin1, week.taMin2, week.taMin3,
                                 week.taMin4, week.taMin5, week.taMin6, week.taMin7
                             )
+                            // 주간 최고 기온
                             val taMax = listOf(
                                 week.taMax0, week.taMax1, week.taMax2, week.taMax3, week.taMax4,
                                 week.taMax5, week.taMax6, week.taMax7
@@ -706,19 +708,6 @@ class MainActivity
                             }
 
                             realtime.let {
-//                                binding.mainSkyText.text = translateSky(
-//                                    this,
-//                                    applySkyText(
-//                                        this,
-//                                        modifyCurrentRainType(
-//                                            current.rainType,
-//                                            realtime.rainType
-//                                        ),
-//                                        realtime.sky,
-//                                        thunder
-//                                    )
-//                                )
-
                                 binding.subAirHumid.fetchData(
                                     "${
                                         realtime.humid!!
@@ -781,7 +770,7 @@ class MainActivity
                                 air.pm25Value.toInt().toString(), "㎍/m3"
                             )
 
-                            airQList[PM2p5_INDEX].isSelect = true
+                            airQList[PM2p5_INDEX].isSelect = true   // 초기 데이터 = 초미세먼지
 
                             // UV 값이 없으면 카드 없앰
                             if ((uv.flag == null) || (uv.value == null) || (uv.flag == "null") || (uv.value.toString() == "null"))
@@ -798,6 +787,7 @@ class MainActivity
                                     translateUV(this, uv.flag) + "\n" + uv.value.toString()
                             }
 
+                            // 일출/일몰 세팅
                             val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
                             val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
                             val sbRiseTom =
@@ -808,12 +798,14 @@ class MainActivity
                             binding.mainSunRiseTom.text = sbRiseTom
                             binding.mainSunSetTom.text = sbSetTom
 
+                            // 기온 비교 세팅
                             getCompareTempText(
                                 yesterday.temp!!,
                                 modifyCurrentTempType(current.temperature, realtime.temp),
                                 binding.mainCompareTempTv
                             )
 
+                            // 메인 날씨 아이콘 세팅
                             binding.mainSkyImg.setImageDrawable(
                                 applySkyImg(
                                     this,
@@ -823,6 +815,7 @@ class MainActivity
                                 )
                             )
 
+                            // 날씨에 따라 배경화면 변경
                             applyWindowBackground(
                                 currentSun,
                                 applySkyText(
@@ -842,6 +835,7 @@ class MainActivity
 
                             reportViewPagerItem.clear()
                             reportArrayList.clear()
+                            // 기상특보 세팅
                             result.summary?.let { sList ->
                                 sList.forEachIndexed { index, summary ->
                                     val item = summary.replace("○", "")
@@ -880,6 +874,7 @@ class MainActivity
                                     v = current.windSpeed
                                 ).roundToInt().toString() + "˚"
 
+                            // 시간별 날씨 아이템 추가
                             for (i: Int in 0 until result.realtime.size) {
                                 val dailyIndex = result.realtime[i]
                                 val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
@@ -935,6 +930,7 @@ class MainActivity
                                 }
                             }
 
+                            // 주간별 날씨 아이템 추가
                             for (i: Int in 0 until (7)) {
                                 try {
                                     val formedDate = dateNow.plusDays(i.toLong())
@@ -970,6 +966,7 @@ class MainActivity
                             dailyWeatherAdapter.notifyDataSetChanged()
                             airQAdapter.notifyDataSetChanged()
 
+                            // 24절기 세팅
                             terms24?.let { term ->
                                 val bundle = Term24Class().getTerms24Bundle(term)
                                 bundle?.let { b ->
@@ -1018,6 +1015,7 @@ class MainActivity
                         }
                     }
 
+                    // 통신 실패
                     is BaseRepository.ApiState.Error -> {
                         Timber.tag("testtest").e(entireData.toString())
                         runOnUiThread {
@@ -1026,6 +1024,7 @@ class MainActivity
                         }
                     }
 
+                    // 통신 중
                     is BaseRepository.ApiState.Loading -> {
                         runOnUiThread { showPB() }
                     }
@@ -1035,6 +1034,7 @@ class MainActivity
         return this
     }
 
+    // 외부 공기질 데이터 아이템 추가
     private fun applyAirQView(
         name: String,
         nameKR: String,
@@ -1161,6 +1161,7 @@ class MainActivity
             }
         }
 
+        // 에러 버튼 클릭
         binding.mainErrorRenewBtn.setOnClickListener {
             mVib()
             getDataSingleTime(isCurrent = false)
@@ -1195,6 +1196,7 @@ class MainActivity
         setVisibilityForViews(VISIBLE, null)
     }
 
+    // 레이아웃 숨김처리에 따른 뷰 세팅
     private fun setVisibilityForViews(visibility: Int, error: String?) {
         val textViewArray = arrayListOf(
             binding.mainGpsTitleTv,
@@ -1216,6 +1218,7 @@ class MainActivity
             binding.mainCompareTempTv
         )
 
+        // 숨김
         if (visibility == GONE) {
             if (error == ERROR_NETWORK ||
                 error == ERROR_GET_DATA
@@ -1253,7 +1256,9 @@ class MainActivity
             changeStrokeColor(binding.subAirPM10, getColor(android.R.color.transparent))
             changeStrokeColor(binding.subAirPM25, getColor(android.R.color.transparent))
 
-        } else {
+        }
+        // 보임
+        else {
             binding.mainSensTitle.text = getString(R.string.sens_temp)
             binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
             binding.subAirHumid.getTitle().text = getString(R.string.humidity)
@@ -1292,6 +1297,7 @@ class MainActivity
         }
     }
 
+    // 텍스트뷰 테두리 색상 변경
     private fun changeStrokeColor(textView: TextView, color: Int) {
         // 특정 상황에 맞게 원하는 색상으로 변경
         textView.setTextColor(color)
@@ -1302,16 +1308,19 @@ class MainActivity
         }
     }
 
+    // 현재 지역의 날씨 데이터 뷰모델 생성 및 호출
     private fun loadCurrentViewModelData(lat: Double, lng: Double) {
         getDataObservers()
         getDataViewModel.loadData(lat, lng, null)
     }
 
+    // 저장된 지역의 날씨 데이터 뷰모델 생성 및 호출
     private fun loadSavedViewModelData(addr: String) {
         getDataObservers()
         getDataViewModel.loadData(null, null, addr)
     }
 
+    // 외부 공기질 아이템 추가
     private fun addAirQItem(
         position: Int, nameKR: String, name: String, unit: String,
         value: String, grade: Int
@@ -1325,6 +1334,7 @@ class MainActivity
         this.airQAdapter.notifyItemChanged(position)
     }
 
+    // 외부 공기질 데이터 갱신
     private fun updateAirQData(
         position: Int, nameKR: String, name: String, unit: String,
         value: String
@@ -1491,6 +1501,7 @@ class MainActivity
             warningViewPagerAdapter.notifyDataSetChanged()
         }
 
+        // 일몰 후인지 아닌지 구분 후 적용
         if (!isNight) {
             when (sky) {
                 "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> {
@@ -1505,6 +1516,7 @@ class MainActivity
         }
     }
 
+    // 기상특보 자동 슬라이드 적용
     private fun warningSlideAuto() {
         val vp = binding.mainWarningVp
         val handler = Handler(Looper.getMainLooper())
@@ -1516,11 +1528,13 @@ class MainActivity
         }
     }
 
+    // 현재 위치가 한국인지 아닌지 구분
     private fun isKorea(lat: Double, lng: Double): Boolean {
         RDBLogcat.writeGpsHistory(this, false, "서비스 지역 밖", "${lat},${lng}")
         return lng in 125.0..132.0 && lat in 33.0..39.0
     }
 
+    // 현재 위치 불러오기
     @SuppressLint("MissingPermission")
     private fun getCurrentLocationData() {
         val locationClass = GetLocation(this)
@@ -1561,7 +1575,6 @@ class MainActivity
                                                     } else {
                                                         it
                                                     }
-
 
                                                 binding.mainGpsTitleTv.text = formedAddr
 
@@ -1611,6 +1624,7 @@ class MainActivity
         }
     }
 
+    // 뷰 백그라운드 적용
     private fun <T> applyBackground(view: T, res: Int?) {
         res?.let {
             (view as View).background = ResourcesCompat.getDrawable(resources, it, null)

@@ -56,7 +56,6 @@ class GetWeatherRepo : BaseRepository() {
                     ) {
                         try {
                             t.printStackTrace()
-//                            Logger.t(TAG_R).e("API NetworkError : ${t.stackTraceToString()}")
                             _getDataResult.postValue(ApiState.Error(ERROR_NETWORK))
                             call.cancel()
                         } catch (e: SocketTimeoutException) {
