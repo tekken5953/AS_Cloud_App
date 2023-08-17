@@ -14,6 +14,7 @@
             android:id="@+id/notificationBack"
             style="@style/BasicImageButtonIcon"
             android:layout_marginStart="20dp"
+            android:contentDescription="@string/cd_icon_back"
             android:layout_centerVertical="true"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/back_arrow"

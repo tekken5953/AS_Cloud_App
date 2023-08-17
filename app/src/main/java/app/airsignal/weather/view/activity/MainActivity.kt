@@ -1483,7 +1483,7 @@ class MainActivity
             binding.subAirRainP.getTitle(),binding.subAirHumid.getTitle(),binding.subAirWind.getValue(),
             binding.subAirRainP.getValue(),binding.subAirHumid.getValue(),
             binding.mainLiveTempValueC, binding.mainSensTitleC, binding.mainSensValueC,
-            binding.mainMinMaxTitleC, binding.mainMinMaxValueC,
+            binding.mainMinMaxTitleC, binding.mainMinMaxValueC
         )
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,

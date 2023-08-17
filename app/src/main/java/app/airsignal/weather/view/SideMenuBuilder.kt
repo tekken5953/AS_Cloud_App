@@ -7,6 +7,7 @@ import android.net.Uri
 import android.util.DisplayMetrics
 import android.view.*
 import android.widget.*
+import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_BIG
 import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_SMALL
@@ -78,6 +79,7 @@ class SideMenuBuilder(private val context: Context) {
     fun setUserData(profile: ImageView, Id: TextView): SideMenuBuilder {
         Glide.with(context)
             .load(Uri.parse(getUserProfileImage(context)))
+            .error(ResourcesCompat.getDrawable(context.resources,R.mipmap.ic_launcher_round,null))
             .into(profile)
 
         val email = getUserEmail(context)

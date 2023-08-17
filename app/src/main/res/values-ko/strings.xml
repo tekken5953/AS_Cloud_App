@@ -5,7 +5,8 @@
     <string name="setting_theme_left">테마 설정</string>
     <string name="setting_lang">언어 설정</string>
     <string name="setting_notify">알림</string>
-    <string name="setting_customer_service">고객센터</string>
+    <string name="set_noti">알림 설정</string>
+    <string name="setting_customer_service">정보</string>
     <string name="setting_faq">자주 묻는 질문</string>
     <string name="setting_notice">공지사항</string>
     <string name="setting_app_data">앱 정보</string>
@@ -173,4 +174,16 @@
     <string name="renew_data">다시 불러오기</string>
     <string name="enable_gps">GPS 활성화</string>
     <string name="register_new_address">주소 등록</string>
+
+    <string name="cd_ad_cancel">광고 숨기기</string>
+    <string name="cd_icon_back">뒤로가기</string>
+    <string name="cd_icon_cancel">닫기</string>
+    <string name="cd_icon_plus">등록</string>
+    <string name="cd_icon_gps_fix">현재주소로 갱신</string>
+    <string name="cd_img_more">더 보기</string>
+    <string name="cd_img_location">주소</string>
+    <string name="cd_icon_help">도움말</string>
+    <string name="cd_icon_up">스크롤 최상단</string>
+    <string name="cd_icon_side_menu">메뉴</string>
+    <string name="cd_icon_refresh_data">데이터 갱신</string>
 </resources>
