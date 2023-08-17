@@ -5,7 +5,8 @@
     <string name="setting_theme_left">테마 설정</string>
     <string name="setting_lang">언어 설정</string>
     <string name="setting_notify">알림</string>
-    <string name="setting_customer_service">고객센터</string>
+    <string name="set_noti">알림 설정</string>
+    <string name="setting_customer_service">정보</string>
     <string name="setting_faq">자주 묻는 질문</string>
     <string name="setting_notice">공지사항</string>
     <string name="setting_app_data">앱 정보</string>
@@ -86,7 +87,7 @@
     <string name="noti_perm_explain">날씨 및 미세먼지 정보 알림 제공</string>
     <string name="perm_notice">권한을 허용하지 않아도 이용은 가능하지만\n 일부 서비스가 제한 될 수 있습니다.</string>
     <string name="perm_title">앱 사용을 위해\n 접근 권한을 허용해주세요</string>
-    <string name="not_serviced_location">서비스 가능한 지역이 아닙니다</string>
+    <string name="not_serviced_location">서비스 가능한 지역이 아닙니다\n버튼을 클릭하여 새 주소를 등록하세요</string>
     <string name="airq_question_pm2p5">PM2.5는1000분의 2.5mm보다 작은 먼지로, 머리카락 직경(약 60㎛)의 1/20~1/30 크기보다 작은 입자이다. 미세먼지는 공기 중 고체상태와 액체상태의 입자의 혼합물로 배출되며 화학반응 또는 자연적으로 생성된다. PM2.5는 입자가 미세하여 코 점막을 통해 걸러지지 않고 흡입시 폐포까지 직접 침투하여 천식이나 폐질환의 유병률과 조기사망률을 증가시킨다. 또한 미세먼지는 시정을 악화시키고, 식물의 잎 표면에 침적되어 신진대사를 방해하며, 건축물이나 유적물 및 동상 등에 퇴적되어 부식을 일으킨다.</string>
     <string name="airq_question_pm10">초미세먼지는 미세먼지의 4분의 1크기밖에 되지 않는 아주 작은 먼지로, 사람의 눈에는 거의 보이지 않는다. 미세먼지와 마찬가지로 자동차나 화석연료에서 발생한다. 미세먼지보다 훨씬 작기 때문에 기도에서 걸러지지 못하고 대부분 폐포까지 침투해 심장질환과 호흡기 질병 등을 일으킨다.
 </string>
@@ -118,12 +119,12 @@
     <string name="want_logout">로그아웃 하시겠습니까?</string>
     <string name="login_with_naver">네이버로 로그인</string>
     <string name="data_call_error">데이터 호출 실패</string>
-    <string name="gps_call_error">GPS 연결 불가</string>
+    <string name="gps_call_error">GPS가 비활성화 되어있습니다.\n활성화 하거나 주소를 등록하세요</string>
     <string name="address_call_error">주소 호출 실패</string>
     <string name="network_error">네트워크 확인 후 갱신필요</string>
     <string name="timeout_error">요청시간 지연, 재 갱신 필요</string>
     <string name="api_call_error">데이터 호출에 실패했습니다</string>
-    <string name="unkown_error">알수없는 오류 발생</string>
+    <string name="unknown_error">알수없는 오류 발생</string>
     <string name="humidity">습도</string>
     <string name="wind">바람</string>
     <string name="rainPer">강수확률</string>
@@ -171,4 +172,18 @@
     <string name="min">최저</string>
     <string name="warning_title">기상 특보</string>
     <string name="renew_data">다시 불러오기</string>
+    <string name="enable_gps">GPS 활성화</string>
+    <string name="register_new_address">주소 등록</string>
+
+    <string name="cd_ad_cancel">광고 숨기기</string>
+    <string name="cd_icon_back">뒤로가기</string>
+    <string name="cd_icon_cancel">닫기</string>
+    <string name="cd_icon_plus">등록</string>
+    <string name="cd_icon_gps_fix">현재주소로 갱신</string>
+    <string name="cd_img_more">더 보기</string>
+    <string name="cd_img_location">주소</string>
+    <string name="cd_icon_help">도움말</string>
+    <string name="cd_icon_up">스크롤 최상단</string>
+    <string name="cd_icon_side_menu">메뉴</string>
+    <string name="cd_icon_refresh_data">데이터 갱신</string>
 </resources>

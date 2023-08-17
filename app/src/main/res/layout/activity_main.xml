@@ -7,7 +7,7 @@
 
         <variable
             name="dataVM"
-            type="com.example.airsignal_app.vmodel.GetWeatherViewModel" />
+            type="app.airsignal.weather.vmodel.GetWeatherViewModel" />
 
     </data>
 
@@ -51,6 +51,7 @@
                 android:maxEms="12"
                 android:singleLine="true"
                 android:textSize="14sp"
+                android:contentDescription="@string/cd_img_location"
                 app:drawableStartCompat="@drawable/location_fill" />
         </ScrollView>
 
@@ -66,6 +67,7 @@
                 style="@style/BasicImageButtonIcon"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="24dp"
+                android:contentDescription="@string/cd_icon_side_menu"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ico_hamb_w"
                 app:tint="@color/black"/>
@@ -75,6 +77,7 @@
                 style="@style/BasicImageButtonIcon"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="15dp"
+                android:contentDescription="@string/cd_icon_refresh_data"
                 android:layout_toStartOf="@+id/mainAddAddress"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/refresh"
@@ -86,6 +89,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="24dp"
+                android:contentDescription="@string/cd_icon_plus"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ico_add_w"
                 app:tint="@color/black"/>
@@ -112,13 +116,15 @@
             android:lineHeight="26dp"
             android:maxEms="10"
             android:textSize="18sp"
+            android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear"/>
 
         <ImageView
             android:id="@+id/mainGpsFix"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:contentDescription="@string/cd_icon_gps_fix"
             android:layout_marginStart="6dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/gps_fix"
@@ -132,18 +138,17 @@
             android:layout_height="56dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:layout_marginBottom="52dp"
             android:alpha="0"
             android:background="@drawable/single_btn_apply_bg"
             android:clickable="false"
             android:elevation="0dp"
             android:fontFamily="@font/spoqa_hansansneo_medium"
             android:letterSpacing="-0.072"
-            android:text="@string/renew_data"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:translationZ="0dp"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/mainErrorTitle"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <ImageView
             android:id="@+id/mainSkyStarImg"
@@ -190,6 +195,7 @@
             android:alpha="0"
             android:text="@string/live_temp"
             android:textSize="14sp"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
 
@@ -199,6 +205,7 @@
             android:layout_marginStart="17dp"
             android:alpha="0"
             android:textSize="18sp"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
 
@@ -209,6 +216,7 @@
             android:alpha="0"
             android:text="@string/sens_temp"
             android:textSize="14sp"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
 
@@ -218,6 +226,7 @@
             android:layout_marginStart="17dp"
             android:alpha="0"
             android:textSize="18sp"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
 
@@ -368,7 +377,7 @@
                     android:background="@drawable/main_pm_bg"/>
             </TableRow>
 
-            <com.example.airsignal_app.view.custom_view.SubAirView
+            <app.airsignal.weather.view.custom_view.SubAirView
                 android:id="@+id/subAirHumid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -377,7 +386,7 @@
                 app:customImg="@drawable/ico_main_humidity"
                 app:isLeftLine="false" />
 
-            <com.example.airsignal_app.view.custom_view.SubAirView
+            <app.airsignal.weather.view.custom_view.SubAirView
                 android:id="@+id/subAirWind"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -386,7 +395,7 @@
                 app:customImg="@drawable/ico_main_wind"
                 app:isLeftLine="true" />
 
-            <com.example.airsignal_app.view.custom_view.SubAirView
+            <app.airsignal.weather.view.custom_view.SubAirView
                 android:id="@+id/subAirRainP"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -401,6 +410,7 @@
             style="@style/basicTextView"
             android:layout_marginBottom="5dp"
             android:text="@string/slide_more"
+            android:contentDescription="@string/cd_img_more"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg"
@@ -412,6 +422,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="15dp"
+            android:contentDescription="@string/cd_img_more"
             android:src="@drawable/drop_down_bottom"
             app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             app:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
@@ -438,7 +449,7 @@
                 android:background="@color/theme_main_bg_color"
                 android:paddingBottom="55dp">
 
-                <com.example.airsignal_app.view.custom_view.AirQView
+                <app.airsignal.weather.view.custom_view.AirQView
                     android:id="@+id/nested_air_help_popup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -485,7 +496,7 @@
                             android:id="@+id/dailySectionToday"
                             style="@style/basicTextView"
                             android:text="@string/daily_today"
-                            android:textColor="@color/main_black_color"
+                            android:textColor="@color/theme_text_color"
                             android:textSize="16sp" />
 
                         <TextView
@@ -493,7 +504,7 @@
                             style="@style/basicTextView"
                             android:layout_marginStart="12dp"
                             android:text="@string/daily_tomorrow"
-                            android:textColor="@color/main_black_color"
+                            android:textColor="@color/theme_text_color"
                             android:textSize="16sp" />
 
                         <TextView
@@ -501,7 +512,7 @@
                             style="@style/basicTextView"
                             android:layout_marginStart="12dp"
                             android:text="@string/daily_next_tomorrow"
-                            android:textColor="@color/main_black_color"
+                            android:textColor="@color/theme_text_color"
                             android:textSize="16sp" />
                     </TableRow>
 
@@ -535,14 +546,15 @@
 
                     <ImageView
                         android:id="@+id/adViewCancelIv"
-                        android:layout_width="17dp"
-                        android:layout_height="17dp"
+                        android:layout_width="21dp"
+                        android:layout_height="21dp"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
                         android:src="@drawable/cancel"
                         android:visibility="visible"
+                        android:contentDescription="@string/cd_ad_cancel"
                         app:tint="@color/theme_text_color" />
 
                     <com.google.android.gms.ads.AdView
@@ -741,6 +753,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="top"
                             android:layout_marginTop="5dp"
+                            android:contentDescription="@string/cd_icon_help"
                             android:src="@drawable/ico_question" />
 
                     </TableRow>
@@ -1065,6 +1078,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/fab_bg"
+            android:contentDescription="@string/cd_icon_up"
             android:src="@drawable/arrow_top"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

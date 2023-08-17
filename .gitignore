@@ -88,12 +88,12 @@ lint/tmp/
 # Android Profiling
 *.hprof
 
-app/src/main/java/com/example/airsignal_app/dao/IgnoredKeyFile.kt
-app/src/main/res/values/address.xml
-app/src/main/res/values-en/address.xml
+app/src/main/java/app/airsignal/weather/dao/IgnoredKeyFile.kt
 app/src/main/res/values/ignored_key.xml
-app/src/main/java/com/example/airsignal_app/dao/URLConnectionData.kt
+app/src/main/res/values/address_english.xml
+app/src/main/res/values/address_korean.xml
 app/google-services.json
+airsignal_key_store1.jks
 
 
 

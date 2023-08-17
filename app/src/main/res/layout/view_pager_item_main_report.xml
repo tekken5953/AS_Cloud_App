@@ -18,7 +18,7 @@
         android:maxEms="17"
         android:ellipsize="end"
         android:textSize="14sp"
-        android:gravity="start"
+        android:gravity="start|center_vertical"
         android:drawablePadding="5dp"
         app:drawableStartCompat="@drawable/ico_warning"
         app:layout_constraintStart_toStartOf="parent"

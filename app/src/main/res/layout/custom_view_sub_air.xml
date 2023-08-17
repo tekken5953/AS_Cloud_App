@@ -28,6 +28,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginStart="25dp"
             android:layout_marginEnd="25dp"
+            android:drawablePadding="2dp"
             android:textColor="@color/theme_text_color"/>
 
         <TextView
