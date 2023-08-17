@@ -5,6 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.location.*
 import android.location.LocationListener
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.NetworkInfo
 import android.provider.Settings
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -94,26 +97,33 @@ class GetLocation(private val context: Context) {
     /** 백그라운드에서 위치 갱신 **/
     @SuppressLint("MissingPermission")
     fun getGpsInBackground(mills: Long, distance: Float) {
-        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
-        val locationListener: LocationListener = object : LocationListener {
-            override fun onLocationChanged(location: Location) {
-                // 위치 업데이트가 발생했을 때 실행되는 코드
-                val latitude = location.latitude
-                val longitude = location.longitude
-                updateCurrentAddress(latitude,longitude,getAddress(latitude,longitude)!!)
-                writeGpsHistory(context, isSearched = false,
-                    gpsValue = "WorkManager : ${latitude},${longitude} : ${getAddress(latitude,longitude)}",
-                responseData = null)
+        try {
+            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+            val locationListener: LocationListener = object : LocationListener {
+                override fun onLocationChanged(location: Location) {
+                    // 위치 업데이트가 발생했을 때 실행되는 코드
+                    val latitude = location.latitude
+                    val longitude = location.longitude
+                    updateCurrentAddress(latitude,longitude,getAddress(latitude,longitude)!!)
+                    writeGpsHistory(context, isSearched = false,
+                        gpsValue = "WorkManager : ${latitude},${longitude} : ${getAddress(latitude,longitude)}",
+                        responseData = null)
+                }
+                override fun onProviderEnabled(provider: String) {}
+                override fun onProviderDisabled(provider: String) {}
             }
-            override fun onProviderEnabled(provider: String) {}
-            override fun onProviderDisabled(provider: String) {}
+
+            locationListener.let { listener ->
+                locationManager!!.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    mills,
+                    distance,
+                    listener
+                )
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        locationManager!!.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER,
-            mills,
-            distance,
-            locationListener
-        )
     }
 
     /** 디바이스 GPS 센서에 접근이 가능한지 확인 **/
@@ -125,18 +135,25 @@ class GetLocation(private val context: Context) {
     }
 
     /** 디바이스 네트워크에 접근이 가능한지 확인 **/
+    @Suppress("DEPRECATION")
     fun isNetWorkConnected(): Boolean {
-        val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
-//        Timber.tag("Location Enable")
-//            .i("네트워크 호출 여부 : ${lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)}")
-        return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        val cm: ConnectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+         val networkInfo: NetworkInfo? = cm.activeNetworkInfo
+        return networkInfo?.isConnected ?: false
     }
 
     /** 핸드폰 위치 서비스가 켜져있는지 확인 **/
     fun requestSystemGPSEnable() {
-        Toast.makeText(context, "핸드폰 GPS가 켜져있는지 확인해주세요", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(context, "핸드폰 GPS가 켜져있는지 확인해주세요", Toast.LENGTH_SHORT).show()
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         context.startActivity(intent)
+    }
+
+    /** 디바이스 네트워크 프로바이더 접근 가능한지 확인 **/
+    fun isNetworkProviderConnected(): Boolean {
+        val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
+        return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 }
 

@@ -11,7 +11,7 @@
     <color name="theme_main_bg_color">#262626</color>
     <color name="theme_pm_title_bg_color">#9C9C9C</color>
     <color name="theme_alert_double_cancel_color">#484C56</color>
-    <color name="theme_alert_double_apply_color">#F87171</color>
+    <color name="theme_alert_double_apply_color">#F74B4B</color>
 
     <color name="theme_sun_tomorrow_night">#7E5EFF</color>
     <color name="theme_sun_tomorrow_day">#FF8A48</color>

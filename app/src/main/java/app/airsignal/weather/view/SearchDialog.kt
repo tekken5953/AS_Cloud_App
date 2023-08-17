@@ -377,7 +377,8 @@ class SearchDialog(
     }
 
     private fun isKorea(): Boolean {
-        return getUserLocation(activity) == LANG_KR
+        val systemLang = Locale.getDefault().language
+        return getUserLocation(activity) == LANG_KR || systemLang == "ko"
     }
 
     // 리스트 아이템 추가

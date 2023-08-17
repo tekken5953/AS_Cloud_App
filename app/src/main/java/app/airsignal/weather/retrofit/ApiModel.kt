@@ -6,8 +6,10 @@ class ApiModel {
 
     // 앱 버전 모델
     data class AppVersion(
-        @SerializedName("version")
-        val version: String,
+        @SerializedName("versionName")
+        val name: String,
+        @SerializedName("versionCode")
+        val code: String,
         @SerializedName("releaseDate")
         val releaseDate: String
     )

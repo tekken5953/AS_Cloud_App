@@ -57,13 +57,25 @@ object GetSystemInfo {
     }
 
     /** 현재 앱 버전 반환 **/
-    fun getApplicationVersion(context: Context): String {
+    fun getApplicationVersionName(context: Context): String {
+        try {
+            val packageManager = context.packageManager
+            val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
+            return packageInfo.versionName
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+        }
+
+        return ""
+    }
+
+    /** 현재 앱 버전 반환 **/
+    fun getApplicationVersionCode(context: Context): String {
         try {
             val packageManager = context.packageManager
             val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
             val appVersionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
-            val appVersionName = packageInfo.versionName
-           return "${appVersionName}.${appVersionCode}"
+            return appVersionCode.toString()
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }

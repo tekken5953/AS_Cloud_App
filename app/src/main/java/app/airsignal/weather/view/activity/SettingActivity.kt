@@ -57,7 +57,7 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiEnable
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiSound
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiVibrate
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserTheme
-import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersion
+import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionName
 import app.airsignal.weather.util.`object`.GetSystemInfo.goToPlayStore
 import app.airsignal.weather.util.`object`.SetAppInfo
 import app.airsignal.weather.util.`object`.SetAppInfo.removeAllKeys
@@ -72,6 +72,7 @@ import app.airsignal.weather.view.custom_view.CustomerServiceView
 import app.airsignal.weather.view.custom_view.SnackBarUtils
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import app.airsignal.weather.util.*
+import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionCode
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -604,10 +605,11 @@ class SettingActivity
                 when (ver) {
                     is BaseRepository.ApiState.Success -> {
                         val data = ver.data
-                        val versionInfo = getApplicationVersion(this)
+                        val versionName = getApplicationVersionName(this)
+                        val versionCode = getApplicationVersionCode(this)
 
-                        appInfoVersionValue.text = versionInfo
-                        if (data.version == versionInfo) {
+                        appInfoVersionValue.text = "${versionName}.${versionCode}"
+                        if ("${data.name}.${data.code}" == "${versionName}.${versionCode}") {
                             appInfoIsRecent.text = getString(R.string.last_software)
                             appInfoIsRecent.setTextColor(getColor(R.color.sub_gray_color))
                             appInfoDownBtn.visibility = View.GONE

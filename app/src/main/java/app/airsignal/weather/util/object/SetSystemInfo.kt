@@ -2,6 +2,8 @@ package app.airsignal.weather.util.`object`
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.ActivityInfo
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
@@ -90,14 +92,16 @@ object SetSystemInfo {
         activity.window.apply {
             statusBarColor = activity.getColor(R.color.theme_view_color)
             navigationBarColor = activity.getColor(R.color.theme_view_color)
-        }
+            when (AppCompatDelegate.getDefaultNightMode()) {
+                AppCompatDelegate.MODE_NIGHT_YES -> {
+                    this.decorView.systemUiVisibility =
+                        this.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+                }
 
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            activity.window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        } else {
-            activity.window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                AppCompatDelegate.MODE_NIGHT_NO -> {
+                    View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                }
+            }
         }
     }
 }

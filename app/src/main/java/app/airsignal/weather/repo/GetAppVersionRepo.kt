@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import app.airsignal.weather.dao.ErrorCode.ERROR_API_PROTOCOL
 import app.airsignal.weather.dao.ErrorCode.ERROR_NETWORK
 import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
+import app.airsignal.weather.dao.ErrorCode.ERROR_UNKNOWN
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.retrofit.HttpClient.mMyAPIImpl
 import kotlinx.coroutines.CoroutineScope
@@ -13,6 +14,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import timber.log.Timber
 
 /**
  * @author : Lee Jae Young
@@ -44,7 +46,12 @@ class GetAppVersionRepo: BaseRepository() {
                 }
 
                 override fun onFailure(call: Call<ApiModel.AppVersion>, t: Throwable) {
-                    _getAppVersionResult.postValue(ApiState.Error(ERROR_NETWORK))
+                    Timber.tag("testt").d(t.stackTraceToString())
+                    try {
+                        _getAppVersionResult.postValue(ApiState.Error(ERROR_NETWORK))
+                    } catch(e: Exception) {
+                        _getAppVersionResult.postValue(ApiState.Error(ERROR_UNKNOWN))
+                    }
                 }
             })
         }

@@ -112,6 +112,7 @@
             android:lineHeight="26dp"
             android:maxEms="10"
             android:textSize="18sp"
+            android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear"/>
 
@@ -132,18 +133,17 @@
             android:layout_height="56dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:layout_marginBottom="52dp"
             android:alpha="0"
             android:background="@drawable/single_btn_apply_bg"
             android:clickable="false"
             android:elevation="0dp"
             android:fontFamily="@font/spoqa_hansansneo_medium"
             android:letterSpacing="-0.072"
-            android:text="@string/renew_data"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:translationZ="0dp"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/mainErrorTitle"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <ImageView
             android:id="@+id/mainSkyStarImg"

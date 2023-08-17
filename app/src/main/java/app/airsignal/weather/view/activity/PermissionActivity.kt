@@ -74,7 +74,7 @@ class PermissionActivity :
         RDBLogcat.writeUserPref(
             this, sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
-            value = GetSystemInfo.getApplicationVersion(this)
+            value = "${GetSystemInfo.getApplicationVersionName(this)}.${GetSystemInfo.getApplicationVersionCode(this)}"
         )
 
         // 권한 허용 버튼 클릭

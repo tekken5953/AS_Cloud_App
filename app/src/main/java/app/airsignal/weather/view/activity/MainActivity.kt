@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.location.LocationManager
 import android.os.*
+import android.os.Build.VERSION
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -96,7 +97,6 @@ import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -368,7 +368,7 @@ class MainActivity
                 RequestPermissionsUtil(this@MainActivity).requestLocation()
             }
         } else {
-            app.airsignal.weather.view.ToastUtils(this).showMessage(getString(R.string.error_network))
+            ToastUtils(this).showMessage(getString(R.string.error_network))
         }
     }
 
@@ -598,7 +598,17 @@ class MainActivity
 
     // 백그라운드 위치 호출
     private fun createWorkManager() {
-        GetLocation(this).getGpsInBackground(0, 500f)
+        val loc = GetLocation(this)
+        if (loc.isNetWorkConnected()) {
+            if (loc.isGPSConnected()) {
+                if (VERSION.SDK_INT >= 29) {
+                    if (RequestPermissionsUtil(this).isBackgroundRequestLocation())
+                        loc.getGpsInBackground(0, 500f)
+                } else {
+                    loc.getGpsInBackground(0, 500f)
+                }
+            }
+        }
     }
 
     @Deprecated("Deprecated in Java")
@@ -999,26 +1009,31 @@ class MainActivity
                                 )
                             }
                         } catch (e: java.lang.NullPointerException) {
-                            Timber.tag("testtest").e(e.stackTraceToString())
                             runOnUiThread {
                                 hidePB()
                                 hideAllViews(error = ERROR_API_PROTOCOL)
                             }
                         } catch (e: IndexOutOfBoundsException) {
-                            Timber.tag("testtest").e(entireData.toString())
                             runOnUiThread {
                                 hidePB()
-                                hideAllViews(error = ERROR_GET_DATA)
+                                if (GetLocation(this).isNetWorkConnected()) {
+                                    hideAllViews(error = ERROR_GET_DATA)
+                                } else {
+                                    hideAllViews(error = ERROR_NETWORK)
+                                }
                             }
                         }
                     }
 
                     // 통신 실패
                     is BaseRepository.ApiState.Error -> {
-                        Timber.tag("testtest").e(entireData.toString())
                         runOnUiThread {
                             hidePB()
-                            hideAllViews(error = eData.errorMessage)
+                            if (GetLocation(this).isNetWorkConnected()) {
+                                hideAllViews(error = eData.errorMessage)
+                            } else {
+                                hideAllViews(error = ERROR_NETWORK)
+                            }
                         }
                     }
 
@@ -1155,14 +1170,41 @@ class MainActivity
             }
             else -> {
                 RDBLogcat.writeErrorNotANR(this, ERROR_LOCATION_FAILED, error!!)
-                binding.mainErrorTitle.text = getString(R.string.unkown_error)
+                binding.mainErrorTitle.text = getString(R.string.unknown_error)
             }
         }
 
-        // 에러 버튼 클릭
-        binding.mainErrorRenewBtn.setOnClickListener {
-            mVib()
-            getDataSingleTime(isCurrent = false)
+        if (error == ERROR_GPS_CONNECTED) {
+            binding.mainErrorRenewBtn.apply {
+                text = getString(R.string.enable_gps)
+                // 에러 버튼 클릭
+                setOnClickListener {
+                    mVib()
+                    GetLocation(this@MainActivity).requestSystemGPSEnable()
+                }
+            }
+        } else if (error == ERROR_NOT_SERVICED_LOCATION) {
+            binding.mainErrorRenewBtn.apply {
+                text = getString(R.string.register_new_address)
+                setOnClickListener {
+                    mVib()
+                    val bottomSheet =
+                        SearchDialog(
+                            this@MainActivity, 1, supportFragmentManager,
+                            BottomSheetDialogFragment().tag
+                        )
+                    bottomSheet.show(1)
+                }
+            }
+        } else {
+            binding.mainErrorRenewBtn.apply {
+                text = getString(R.string.renew_data)
+                // 에러 버튼 클릭
+                setOnClickListener {
+                    mVib()
+                    getDataSingleTime(isCurrent = false)
+                }
+            }
         }
 
         // 주소, 갱신버튼, 현재기온, 기온비교, 최저/최고 기온, 날씨 정보 더보기, 모션 슬라이드 막기
@@ -1226,6 +1268,7 @@ class MainActivity
                 binding.mainAddAddress.imageTintList =
                     ColorStateList.valueOf(getColor(R.color.theme_text_color))
             }
+
             textViewArray.forEach {
                 it.text = ""
             }
@@ -1241,9 +1284,9 @@ class MainActivity
                 isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
             }
 
+            binding.mainErrorTitle.alpha = 1f
             binding.mainErrorRenewBtn.alpha = 1f
             binding.mainErrorRenewBtn.isClickable = true
-            binding.mainErrorTitle.alpha = 1f
             applyBackground(binding.mainWarningBox,null)
             applyBackground(binding.nestedSubAirFrame,null)
             binding.mainWarningVp.alpha = 0f
@@ -1262,11 +1305,11 @@ class MainActivity
             binding.subAirHumid.getTitle().text = getString(R.string.humidity)
             binding.subAirWind.getTitle().text = getString(R.string.wind)
             binding.subAirRainP.getTitle().text = getString(R.string.rainPer)
-
+            applyBackground(binding.mainWarningBox, R.drawable.report_frame_bg)
+            binding.mainWarningVp.alpha = 1f
+            binding.mainErrorTitle.alpha = 0f
             binding.mainErrorRenewBtn.alpha = 0f
             binding.mainErrorRenewBtn.isClickable = false
-            applyBackground(binding.mainWarningBox, R.drawable.report_frame_bg)
-            binding.mainErrorTitle.alpha = 0f
             binding.subAirHumid.alpha = 1f
             binding.subAirWind.alpha = 1f
             binding.subAirRainP.alpha = 1f
@@ -1601,7 +1644,7 @@ class MainActivity
                         hideAllViews(ERROR_GET_LOCATION_FAILED)
                     }
                 }
-            } else if (!locationClass.isGPSConnected() && locationClass.isNetWorkConnected()) {
+            } else if (locationClass.isNetworkProviderConnected()) {
                 CoroutineScope(Dispatchers.Default).launch {
                     val lm =
                         getSystemService(LOCATION_SERVICE) as LocationManager
@@ -1611,7 +1654,7 @@ class MainActivity
                     }
                 }
             } else {
-                locationClass.requestSystemGPSEnable()
+                hideAllViews(ERROR_GPS_CONNECTED)
             }
         } else {
             MakeSingleDialog(this).makeDialog(

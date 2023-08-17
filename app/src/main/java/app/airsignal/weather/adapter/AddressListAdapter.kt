@@ -24,6 +24,8 @@ import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * @author : Lee Jae Young
@@ -179,6 +181,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<AdapterMo
     }
 
     fun isKorea(): Boolean {
-        return getUserLocation(context) == LANG_KR
+        val systemLang = Locale.getDefault().language
+        return getUserLocation(context) == LANG_KR || systemLang == "ko"
     }
 }

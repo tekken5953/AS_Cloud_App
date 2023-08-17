@@ -87,7 +87,7 @@
     <string name="noti_perm_explain">Provides weather and PM information notifications</string>
     <string name="perm_notice">It is available without permission\nbut some services may be restricted</string>
     <string name="perm_title">Please allow access to use the app</string>
-    <string name="not_serviced_location">It\'s not a serviceable area</string>
+    <string name="not_serviced_location">It\'s not a serviceable area\nPress button to register new address</string>
     <string name="airq_question_pm2p5">PM2.5 is dust smaller than 2.5/1000th of a millimeter. The particles are too fine to be filtered through the nasal mucosa and can directly penetrate into the alveoli when inhaled, increasing the prevalence of asthma or lung disease and early mortality. In addition, ultrafine dust deteriorates visibility, is deposited on the surface of leaves of plants, interferes with metabolism, and accumulates on buildings, relics and statues to cause corrosion.
     </string>
     <string name="airq_question_pm10">PM10 is dust smaller than 10/1000mm, and Fine dust is emitted as a mixture of solid and liquid particles in the air, and is produced through chemical reactions or naturally. Fine dust deteriorates visibility, is deposited on the surface of leaves of plants, interferes with metabolism, and is deposited on buildings, relics and statues, causing corrosion.
@@ -125,12 +125,12 @@
     <string name="want_logout">Do sign out?</string>
     <string name="login_with_naver">Sign in with Naver</string>
     <string name="data_call_error">Data call failed</string>
-    <string name="gps_call_error">Unable to connect to GPS</string>
+    <string name="gps_call_error">Gps is disabled.\nTurn on it or Add new address</string>
     <string name="address_call_error">Address call failed</string>
     <string name="network_error">Network Check and Update Required</string>
     <string name="timeout_error">Request time delay, renewal required</string>
     <string name="api_call_error">Data call failed</string>
-    <string name="unkown_error">Unknown Error</string>
+    <string name="unknown_error">Unknown Error</string>
     <string name="humidity">Humidity</string>
     <string name="wind">Wind</string>
     <string name="rainPer">Rain</string>
@@ -178,4 +178,6 @@
     <string name="min">Max</string>
     <string name="warning_title">Weather report</string>
     <string name="renew_data">Re call data</string>
+    <string name="enable_gps">Activate GPS</string>
+    <string name="register_new_address">Register</string>
 </resources>

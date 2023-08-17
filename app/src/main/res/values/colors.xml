@@ -41,7 +41,7 @@
     <color name="theme_main_bg_color">#EBEBEB</color>
     <color name="theme_pm_title_bg_color">#EBEBEB</color>
     <color name="theme_alert_double_cancel_color">#D9D9D9</color>
-    <color name="theme_alert_double_apply_color">#F87171</color>
+    <color name="theme_alert_double_apply_color">#F74B4B</color>
 
     <color name="theme_sun_tomorrow_night">#30159C</color>
     <color name="theme_sun_tomorrow_day">#FF8A48</color>

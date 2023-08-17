@@ -9,6 +9,7 @@ import app.airsignal.weather.dao.ErrorCode.ERROR_NETWORK
 import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.databinding.ActivitySplashBinding
 import app.airsignal.weather.firebase.db.RDBLogcat
+import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.repo.BaseRepository
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.LoggerUtil
@@ -21,6 +22,7 @@ import app.airsignal.weather.view.MakeSingleDialog
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import com.google.firebase.database.FirebaseDatabase
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 
 @SuppressLint("CustomSplashScreen")
@@ -52,7 +54,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             this,
             sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
-            value = GetSystemInfo.getApplicationVersion(this)
+            value = "${GetSystemInfo.getApplicationVersionName(this)}.${GetSystemInfo.getApplicationVersionCode(this)}"
         )
 
         // 유저 디바이스 설정 - 디바이스 모델
@@ -92,8 +94,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                         // 통신 성공
                         is BaseRepository.ApiState.Success -> {
                             binding.splashPB.visibility = View.GONE
-                            val versionInfo = GetSystemInfo.getApplicationVersion(this)
-                            if (ver.data.version == versionInfo) {
+                            val versionName = GetSystemInfo.getApplicationVersionName(this)
+                            val versionCode = GetSystemInfo.getApplicationVersionCode(this)
+                            Timber.tag("testt").i("versionInfo : ${versionName}.${versionCode} dataVersion: ${ver.data.name}.${ver.data.code}")
+                            if (ver.data.name == versionName) {
                                 enterPage()
                             } else {
                                 MakeSingleDialog(this)
@@ -107,13 +111,22 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                         // 통신 실패
                         is BaseRepository.ApiState.Error -> {
                             binding.splashPB.visibility = View.GONE
+                            Timber.tag("testt").w(ver.errorMessage)
                             when (ver.errorMessage) {
                                 ERROR_NETWORK -> {
-                                    makeDialog(getString(R.string.error_network_connect))
+                                    if (GetLocation(this).isNetWorkConnected()) {
+                                        makeDialog(getString(R.string.unknown_error))
+                                    } else {
+                                        makeDialog(getString(R.string.error_network_connect))
+                                    }
                                 }
 
                                 ERROR_SERVER_CONNECTING -> {
                                     makeDialog(getString(R.string.error_server_down))
+                                }
+
+                                else -> {
+                                    makeDialog(getString(R.string.unknown_error))
                                 }
                             }
                         }
