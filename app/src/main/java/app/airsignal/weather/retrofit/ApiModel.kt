@@ -1,6 +1,7 @@
 package app.airsignal.weather.retrofit
 
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDateTime
 
 class ApiModel {
 
@@ -359,4 +360,14 @@ class ApiModel {
         @SerializedName("realtime")
         val realtime: List<Widget4x2Realtime>
     )
+
+    // 기상 특보 검색
+    data class BroadCastWeather(
+        @SerializedName("region")
+        val region: String,
+        @SerializedName("content")
+        val content: List<String>,
+        @SerializedName("time")
+        val time: LocalDateTime,
+        )
 }

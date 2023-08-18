@@ -4,12 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.location.*
-import android.location.LocationListener
 import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.net.NetworkInfo
 import android.provider.Settings
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.ErrorCode.ERROR_LOCATION_IOException
@@ -48,11 +45,18 @@ class GetLocation(private val context: Context) {
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
             } else { "No Address" }
-        } catch (e: IOException) {
-            writeErrorNotANR(context, sort = ERROR_LOCATION_IOException, msg = e.localizedMessage!!)
-            null
-        } catch (e: IndexOutOfBoundsException) {
-            null
+        } catch (e: Exception) {
+            when(e) {
+                is IOException -> {
+                    writeErrorNotANR(context, sort = ERROR_LOCATION_IOException, msg = e.localizedMessage!!)
+                    null
+                }
+                is IndexOutOfBoundsException -> {
+                    null
+                } else -> {
+                    null
+                }
+            }
         }
     }
 

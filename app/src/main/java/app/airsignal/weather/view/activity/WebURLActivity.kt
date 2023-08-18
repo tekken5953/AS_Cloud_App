@@ -9,6 +9,7 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatDelegate
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.ActivityWebUrlBinding
+import app.airsignal.weather.util.`object`.SetSystemInfo
 
 class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
     override val resID: Int get() = R.layout.activity_web_url
@@ -17,6 +18,8 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
+
+        SetSystemInfo.setStatusBar(this)
 
         window.statusBarColor = getColor(R.color.theme_view_color)
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
@@ -29,9 +32,7 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
                 View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
 
-        binding.webUrlBackIv.setOnClickListener {
-            finish()
-        }
+        binding.webUrlBackIv.setOnClickListener { finish() }
 
         // 웹뷰 세팅
         val webSettings = binding.webUrlWebView.settings

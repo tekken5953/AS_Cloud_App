@@ -551,7 +551,6 @@ class MainActivity
 
                 } catch (e: Exception) {
                     e.printStackTrace()
-
                 }
             }
         })
@@ -615,7 +614,7 @@ class MainActivity
     override fun onBackPressed() {
         // 뒤로가기 한번 클릭 시 토스트
         if (!isBackPressed) {
-            app.airsignal.weather.view.ToastUtils(this)
+            ToastUtils(this)
                 .showMessage(getString(R.string.back_press), 2)
             isBackPressed = true
         }
@@ -1008,19 +1007,23 @@ class MainActivity
                                     responseData = "${getUserLastAddress(this)},${result}"
                                 )
                             }
-                        } catch (e: java.lang.NullPointerException) {
-                            runOnUiThread {
-                                hidePB()
-                                hideAllViews(error = ERROR_API_PROTOCOL)
-                            }
-                        } catch (e: IndexOutOfBoundsException) {
-                            runOnUiThread {
-                                hidePB()
-                                if (GetLocation(this).isNetWorkConnected()) {
-                                    hideAllViews(error = ERROR_GET_DATA)
-                                } else {
-                                    hideAllViews(error = ERROR_NETWORK)
+                        } catch(e: Exception) {
+                            hidePB()
+                            when(e) {
+                                is NullPointerException -> {
+                                    runOnUiThread {
+
+                                        hideAllViews(error = ERROR_API_PROTOCOL)
+                                    }
                                 }
+                                is IndexOutOfBoundsException -> {
+                                    if (GetLocation(this).isNetWorkConnected()) {
+                                        hideAllViews(error = ERROR_GET_DATA)
+                                    } else {
+                                        hideAllViews(error = ERROR_NETWORK)
+                                    }
+                                }
+                                else -> throw e
                             }
                         }
                     }

@@ -13,6 +13,7 @@ import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
 import app.airsignal.weather.util.EnterPageUtil
+import app.airsignal.weather.util.`object`.SetSystemInfo
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import timber.log.Timber
 
@@ -28,6 +29,8 @@ class LoginActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
+
+        SetSystemInfo.setStatusBar(this)
 
         // 구글 로그인 버튼 클릭
         binding.googleLoginButton.setOnClickListener {

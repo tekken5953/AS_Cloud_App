@@ -31,6 +31,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="20dp"
+        android:contentDescription="@string/cd_click_arrow_right"
         android:src="@drawable/right_arrow"
         app:tint="@color/theme_text_color" />
 

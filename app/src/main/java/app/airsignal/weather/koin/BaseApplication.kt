@@ -7,7 +7,7 @@ import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.repo.GetAppVersionRepo
 import app.airsignal.weather.repo.GetWeatherRepo
 import app.airsignal.weather.retrofit.HttpClient
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
+import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import app.airsignal.weather.vmodel.GetWeatherViewModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -32,10 +32,10 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
 
     // ANR 에러 발생 시 로그 저장 후 종료
     override fun uncaughtException(p0: Thread, p1: Throwable) {
-        RDBLogcat.writeErrorANR(thread = "Thread : ${p0.name}", msg = "Error Msg: ${p1.stackTraceToString()}" )
+        RDBLogcat.writeErrorANR(thread = "Thread : ${p0.name}", msg = "Error Msg: ${p1.stackTraceToString()}")
         FirebaseCrashlytics.getInstance().apply {
             try {
-                setUserId(getUserEmail(applicationContext))
+                setUserId(GetSystemInfo.androidID(this@BaseApplication))
             } catch(e: NullPointerException) {
                 e.printStackTrace()
             }

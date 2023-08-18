@@ -12,12 +12,9 @@ import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.RequestPermissionsUtil
-import app.airsignal.weather.util.`object`.DataTypeParser
-import app.airsignal.weather.util.`object`.GetAppInfo
+import app.airsignal.weather.util.`object`.*
 import app.airsignal.weather.util.`object`.GetAppInfo.getInitLocPermission
 import app.airsignal.weather.util.`object`.GetAppInfo.getInitNotiPermission
-import app.airsignal.weather.util.`object`.GetSystemInfo
-import app.airsignal.weather.util.`object`.SetAppInfo
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserNoti
 import app.airsignal.weather.view.LocPermCautionDialog
 import app.airsignal.weather.view.MakeSingleDialog
@@ -55,6 +52,8 @@ class PermissionActivity :
         setContentView(R.layout.activity_permission)
 
         initBinding()
+
+        SetSystemInfo.setStatusBar(this)
 
         // 초기설정 로그 저장 - 초기 설치 날짜
         RDBLogcat.writeUserPref(

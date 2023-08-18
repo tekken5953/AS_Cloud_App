@@ -12,6 +12,7 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="24dp"
         android:src="@drawable/location"
+        android:contentDescription="@string/cd_img_location"
         app:tint="@color/theme_text_color" />
 
     <TextView

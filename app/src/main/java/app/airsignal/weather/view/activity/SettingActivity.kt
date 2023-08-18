@@ -74,6 +74,7 @@ import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionCode
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -607,6 +608,8 @@ class SettingActivity
                         val data = ver.data
                         val versionName = getApplicationVersionName(this)
                         val versionCode = getApplicationVersionCode(this)
+                        Logger.t("testtest")
+                            .i("version App : ${versionName}.${versionCode} version Server : ${data.name}.${data.code}")
 
                         appInfoVersionValue.text = "${versionName}.${versionCode}"
                         if ("${data.name}.${data.code}" == "${versionName}.${versionCode}") {

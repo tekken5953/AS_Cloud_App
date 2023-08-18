@@ -1,9 +1,8 @@
 package app.airsignal.weather.retrofit;
 
-import app.airsignal.weather.dao.AdapterModel;
-
 import java.util.List;
 
+import app.airsignal.weather.dao.AdapterModel;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -30,4 +29,8 @@ public interface MyApiImpl {
 
     @GET("version") // 앱 버전 호출
     Call<ApiModel.AppVersion> getVersion();
+
+    @GET("forecast/broadcast")
+    Call<ApiModel.BroadCastWeather> getBroadCast(
+            @Query("code") int code);
 }

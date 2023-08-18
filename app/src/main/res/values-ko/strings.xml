@@ -162,7 +162,7 @@
     <string name="email">이메일</string>
     <string name="home_page">홈페이지</string>
     <string name="data_api_license">위 화면에서 보여지는 데이터는 에어코리아, 기상청, 한국천문연구원에서 제공받아 사용됩니다.</string>
-    <string name="phone_airsignal">070-4912-9321</string>
+    <string name="phone_airsignal">070–4912–9321</string>
     <string name="faq_no_result">자주 묻는 질문이 없습니다</string>
     <string name="no_result_notice">공지사항이 없습니다</string>
     <string name="loc_caution_title">위치 권한은 꼭 필요해요</string>
@@ -186,4 +186,18 @@
     <string name="cd_icon_up">스크롤 최상단</string>
     <string name="cd_icon_side_menu">메뉴</string>
     <string name="cd_icon_refresh_data">데이터 갱신</string>
+    <string name="cd_img_sky">현재 날씨</string>
+    <string name="cd_img_star">밤 하늘의 별</string>
+    <string name="cd_img_sun_rise">일출</string>
+    <string name="cd_img_sun_set">일몰</string>
+    <string name="cd_icon_location">위치 권한</string>
+    <string name="cd_icon_noti">알림 권한</string>
+    <string name="cd_login_platform">프로필 이미지</string>
+    <string name="cd_customer_service_img">고객센터 아이콘</string>
+    <string name="cd_airq_graph">공기질 범주</string>
+    <string name="cd_check">체크 아이콘</string>
+    <string name="cd_img_sub_air">기타 공기질 아이콘</string>
+    <string name="cd_icon_location_shadow">위치 권한 그림자</string>
+    <string name="cd_click_arrow_right">클릭하여 이동</string>
+    <string name="cd_list_item">리스트 항목</string>
 </resources>

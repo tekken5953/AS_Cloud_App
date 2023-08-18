@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="top"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/theme_view_color">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <View
         android:id="@+id/changeAddressTopView"
@@ -65,6 +64,7 @@
         android:layout_alignTop="@+id/changeAddressText"
         android:layout_alignBottom="@+id/changeAddressText"
         android:layout_marginStart="24dp"
+        android:contentDescription="@string/cd_icon_gps_fix"
         android:src="@drawable/gps_fix"
         app:tint="@color/theme_text_color" />
 
@@ -90,6 +90,7 @@
         android:layout_marginEnd="24dp"
         android:src="@drawable/check_small"
         android:visibility="gone"
+        android:contentDescription="@string/cd_check"
         app:tint="@color/theme_text_color" />
 
     <TextView

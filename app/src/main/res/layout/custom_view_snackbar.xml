@@ -27,6 +27,7 @@
                     android:id="@+id/image"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:contentDescription="@string/cd_check"
                     app:tint="@color/theme_view_color"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

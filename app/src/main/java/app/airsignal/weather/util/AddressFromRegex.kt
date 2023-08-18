@@ -51,21 +51,11 @@ class AddressFromRegex(private val address: String) {
             }
         }
 
-        return if (isRoadAddress()) {
-            val addr = "${s1}${s2}${sr}"
-            if (countSpacesInStringBuilder(addr) < 2) {
-                address.replace("대한민국","").replace("South Korea","")
-            } else {
-                addr
-            }
-        } else {
-            val addr = "${s1}${s2}${s3}${s4}"
-            if (countSpacesInStringBuilder(addr) < 2) {
-                address.replace("대한민국","").replace("South Korea","")
-            } else {
-                addr
-            }
-        }
+        val fullAddress = address.replace("대한민국", "").replace("South Korea", "")
+        val formatAddress = if (isRoadAddress()) "${s1}${s2}${sr}" else "${s1}${s2}${s3}${s4}"
+        return if (countSpacesInStringBuilder(formatAddress) < 2 || formatAddress == "") {
+            fullAddress
+        } else formatAddress
     }
 
     /** 기상 특보 전용 주소 반환 **/
