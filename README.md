@@ -34,10 +34,14 @@
 <br/>
 <h2>Licence</h2><br/>
 
-![1](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/e85d065e-4ff7-4910-9871-45108cfb3849)&nbsp;&nbsp;![2](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/70c4e802-6213-4752-9d1b-d26a5e3cf214)
+![1](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/e85d065e-4ff7-4910-9871-45108cfb3849)&nbsp;&nbsp;![2](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/70c4e802-6213-4752-9d1b-d26a5e3cf214)&nbsp;&nbsp;![img_opencode1_m](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/b282e4ca-1398-42f7-b4f1-a251b3d91573)
+
 
 AirKorea Open API &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-기상청 Open API
+기상청 Open API &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+한국천문연구원 Open API
+
+
 
 <br/>
 
