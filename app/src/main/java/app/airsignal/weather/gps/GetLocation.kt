@@ -48,11 +48,18 @@ class GetLocation(private val context: Context) {
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
             } else { "No Address" }
-        } catch (e: IOException) {
-            writeErrorNotANR(context, sort = ERROR_LOCATION_IOException, msg = e.localizedMessage!!)
-            null
-        } catch (e: IndexOutOfBoundsException) {
-            null
+        } catch (e: Exception) {
+            when(e) {
+                is IOException -> {
+                    writeErrorNotANR(context, sort = ERROR_LOCATION_IOException, msg = e.localizedMessage!!)
+                    null
+                }
+                is IndexOutOfBoundsException -> {
+                    null
+                } else -> {
+                    null
+                }
+            }
         }
     }
 

@@ -31,6 +31,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
 
         val dataList = intent.getStringArrayListExtra("warning")
         val regexAddress = AddressFromRegex(getUserLastAddress(this)).getWarningAddress()
+            .replace("경기도","경기")
 
         // 수정 된 주소에 따른 적용
         binding.warningAddr.text =
@@ -43,6 +44,23 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             warningAdapter.notifyDataSetChanged()
         } ?: apply {
             warningAdapter.notifyDataSetChanged()
+        }
+    }
+
+    // 지역명을 지역 코드로 변환
+    private fun parseRegionToCode(region: String): Int {
+        return when(region) {
+            "서울,경기,인천" -> { 108 }
+            "강원" -> { 105 }
+            "충남" -> { 133 }
+            "충북" -> { 131 }
+            "전남" -> { 156 }
+            "전북" -> { 146 }
+            "경남" -> { 159 }
+            "경북" -> { 143 }
+            "제주" -> { 184 }
+            "전국" -> { 109 }
+            else -> { 109 }
         }
     }
 }

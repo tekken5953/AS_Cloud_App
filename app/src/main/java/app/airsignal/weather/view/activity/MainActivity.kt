@@ -551,7 +551,6 @@ class MainActivity
 
                 } catch (e: Exception) {
                     e.printStackTrace()
-
                 }
             }
         })
@@ -1008,19 +1007,23 @@ class MainActivity
                                     responseData = "${getUserLastAddress(this)},${result}"
                                 )
                             }
-                        } catch (e: java.lang.NullPointerException) {
-                            runOnUiThread {
-                                hidePB()
-                                hideAllViews(error = ERROR_API_PROTOCOL)
-                            }
-                        } catch (e: IndexOutOfBoundsException) {
-                            runOnUiThread {
-                                hidePB()
-                                if (GetLocation(this).isNetWorkConnected()) {
-                                    hideAllViews(error = ERROR_GET_DATA)
-                                } else {
-                                    hideAllViews(error = ERROR_NETWORK)
+                        } catch(e: Exception) {
+                            hidePB()
+                            when(e) {
+                                is NullPointerException -> {
+                                    runOnUiThread {
+
+                                        hideAllViews(error = ERROR_API_PROTOCOL)
+                                    }
                                 }
+                                is IndexOutOfBoundsException -> {
+                                    if (GetLocation(this).isNetWorkConnected()) {
+                                        hideAllViews(error = ERROR_GET_DATA)
+                                    } else {
+                                        hideAllViews(error = ERROR_NETWORK)
+                                    }
+                                }
+                                else -> throw e
                             }
                         }
                     }

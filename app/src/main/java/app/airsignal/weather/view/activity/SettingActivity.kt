@@ -608,7 +608,8 @@ class SettingActivity
                         val data = ver.data
                         val versionName = getApplicationVersionName(this)
                         val versionCode = getApplicationVersionCode(this)
-                        Logger.t("testtest").i("version App : ${versionName}.${versionCode} version Server : ${data.name}.${data.code}")
+                        Logger.t("testtest")
+                            .i("version App : ${versionName}.${versionCode} version Server : ${data.name}.${data.code}")
 
                         appInfoVersionValue.text = "${versionName}.${versionCode}"
                         if ("${data.name}.${data.code}" == "${versionName}.${versionCode}") {

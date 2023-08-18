@@ -11,5 +11,5 @@ object ErrorCode {
     const val ERROR_GET_DATA = "IndexOutOfBoundsException"
     const val ERROR_LOCATION_IOException = "주소 - IOException"
     const val ERROR_LOCATION_FAILED = "GPS 위치정보 갱신실패"
-    const val ERROR_UNKNOWN = "Unkown Error"
+    const val ERROR_UNKNOWN = "Unknown Error"
 }

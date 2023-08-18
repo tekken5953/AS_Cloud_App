@@ -15,14 +15,14 @@ class SunProgress(private val seekArc: SeekArc) {
     fun animate(currentSun: Int) {
         CoroutineScope(Dispatchers.Main).launch {
             seekArc.apply {
-                sweepAngle = 180
-                arcColor = Color.parseColor("#E1E1E1")
+                this.sweepAngle = 180
+                this.arcColor = Color.parseColor("#E1E1E1")
 
                 if (GetAppInfo.getIsNight(currentSun)) {
-                    isClockwise = false
-                    startAngle = 180
-                    arcRotation = 90
-                    progressColor = Color.parseColor("#7E5DFF")
+                    this.isClockwise = false
+                    this.startAngle = 180
+                    this.arcRotation = 90
+                    this.progressColor = Color.parseColor("#7E5DFF")
 
 
                     val animatorSun =
@@ -30,10 +30,10 @@ class SunProgress(private val seekArc: SeekArc) {
                     animatorSun.duration = 800
                     animatorSun.start()
                 } else {
-                    isClockwise = true
-                    startAngle = 90
-                    arcRotation = 180
-                    progressColor = Color.parseColor("#FF8A48")
+                    this.isClockwise = true
+                    this.startAngle = 90
+                    this. arcRotation = 180
+                    this. progressColor = Color.parseColor("#FF8A48")
 
                     val animatorSun =
                         ObjectAnimator.ofInt(seekArc, "progress", currentSun)
