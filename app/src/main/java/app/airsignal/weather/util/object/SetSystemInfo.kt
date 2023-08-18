@@ -92,15 +92,11 @@ object SetSystemInfo {
         activity.window.apply {
             statusBarColor = activity.getColor(R.color.theme_view_color)
             navigationBarColor = activity.getColor(R.color.theme_view_color)
-            when (AppCompatDelegate.getDefaultNightMode()) {
-                AppCompatDelegate.MODE_NIGHT_YES -> {
-                    this.decorView.systemUiVisibility =
-                        this.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-                }
-
-                AppCompatDelegate.MODE_NIGHT_NO -> {
-                    View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                }
+            if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
+                this.decorView.systemUiVisibility =
+                    this.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+            } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO ) {
+                this.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             }
         }
     }

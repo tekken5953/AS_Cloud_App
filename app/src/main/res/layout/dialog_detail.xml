@@ -2,14 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/theme_view_color">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
         android:id="@+id/detailBack"
         style="@style/BasicImageButtonIcon"
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
+        android:contentDescription="@string/cd_icon_back"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@drawable/back_arrow"
         app:tint="@color/theme_text_color"/>

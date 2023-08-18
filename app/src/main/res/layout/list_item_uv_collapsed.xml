@@ -14,6 +14,7 @@
         android:layout_height="6dp"
         android:src="@drawable/dot"
         android:layout_marginTop="5dp"
+        android:contentDescription="@string/cd_list_item"
         app:tint="@color/theme_text_color"/>
 
     <TextView

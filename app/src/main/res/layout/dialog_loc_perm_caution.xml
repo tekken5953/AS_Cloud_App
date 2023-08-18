@@ -35,6 +35,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ico_gps_big"
         android:layout_centerHorizontal="true"
+        android:contentDescription="@string/cd_icon_location"
         android:layout_above="@+id/permCautionImgShadow"/>
 
     <ImageView
@@ -45,6 +46,7 @@
         android:paddingEnd="0dp"
         android:src="@drawable/shadow_caution"
         app:tint="@color/theme_text_color"
+        android:contentDescription="@string/cd_icon_location_shadow"
         android:layout_centerHorizontal="true"
         android:layout_above="@+id/permCautionBtn"
         android:layout_marginBottom="22dp"/>

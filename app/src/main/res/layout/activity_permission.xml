@@ -57,6 +57,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginTop="12dp"
+                    android:contentDescription="@string/cd_icon_location"
                     android:layout_below="@+id/permissionItemNasTitle"
                     android:layout_marginStart="36dp"
                     android:src="@drawable/ico_gps"/>
@@ -112,6 +113,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginTop="12dp"
+                    android:contentDescription="@string/cd_icon_noti"
                     android:layout_below="@+id/permissionItemUnNasTitle"
                     android:layout_marginStart="36dp"
                     android:src="@drawable/ico_alarm"/>

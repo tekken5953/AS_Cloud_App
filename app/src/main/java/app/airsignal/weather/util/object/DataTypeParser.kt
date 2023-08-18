@@ -91,7 +91,7 @@ object DataTypeParser {
     }
 
     /** 음력 날짜 반환 **/
-    fun getLunarDate(): Int {
+    private fun getLunarDate(): Int {
         val cal = LocalDateTime.now()
         val cc = ChineseCalendar()
         cc.set(cal.year,cal.monthValue-1,cal.dayOfMonth)

@@ -155,6 +155,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="47.5dp"
+            android:contentDescription="@string/cd_img_star"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -164,6 +165,7 @@
             android:id="@+id/mainSkyImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_img_sky"
             app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
             app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr"
             app:layout_constraintEnd_toEndOf="parent"
@@ -947,6 +949,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="6dp"
+                            android:contentDescription="@string/cd_img_sun_rise"
                             android:src="@drawable/ico_sun" />
 
                         <TextView
@@ -990,6 +993,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="6dp"
+                            android:contentDescription="@string/cd_img_sun_set"
                             android:src="@drawable/ico_moon" />
 
                         <TextView

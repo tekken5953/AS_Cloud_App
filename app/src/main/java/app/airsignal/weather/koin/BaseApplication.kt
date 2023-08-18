@@ -7,7 +7,6 @@ import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.repo.GetAppVersionRepo
 import app.airsignal.weather.repo.GetWeatherRepo
 import app.airsignal.weather.retrofit.HttpClient
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
 import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import app.airsignal.weather.vmodel.GetWeatherViewModel

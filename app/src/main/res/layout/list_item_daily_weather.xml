@@ -32,7 +32,8 @@
         android:layout_below="@+id/itemDailyTime"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@string/cd_img_sky"/>
 
     <TextView
         android:id="@+id/itemDailyValue"

@@ -614,7 +614,7 @@ class MainActivity
     override fun onBackPressed() {
         // 뒤로가기 한번 클릭 시 토스트
         if (!isBackPressed) {
-            app.airsignal.weather.view.ToastUtils(this)
+            ToastUtils(this)
                 .showMessage(getString(R.string.back_press), 2)
             isBackPressed = true
         }

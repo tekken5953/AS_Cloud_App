@@ -156,7 +156,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<AdapterMo
     }
 
     // 첫번째 인덱스 색상 변경
-    fun applyColorFirstIndex(isChecked: Boolean, textView: TextView, imgView: ImageView) {
+    private fun applyColorFirstIndex(isChecked: Boolean, textView: TextView, imgView: ImageView) {
         if (isChecked) {
             textView.setTextColor(context.getColor(R.color.main_blue_color))
             imgView.imageTintList =

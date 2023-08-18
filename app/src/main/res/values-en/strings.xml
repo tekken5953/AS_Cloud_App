@@ -193,4 +193,18 @@
     <string name="cd_icon_up">Scroll to top</string>
     <string name="cd_icon_side_menu">Menu</string>
     <string name="cd_icon_refresh_data">Refresh Data</string>
+    <string name="cd_img_sky">현재 날씨</string>
+    <string name="cd_img_star">밤 하늘의 별</string>
+    <string name="cd_img_sun_rise">일출</string>
+    <string name="cd_img_sun_set">일몰</string>
+    <string name="cd_icon_location">위치 권한</string>
+    <string name="cd_icon_noti">알림 권한</string>
+    <string name="cd_login_platform">프로필 이미지</string>
+    <string name="cd_customer_service_img">고객센터 아이콘</string>
+    <string name="cd_airq_graph">공기질 범주</string>
+    <string name="cd_check">체크 아이콘</string>
+    <string name="cd_img_sub_air">기타 공기질 아이콘</string>
+    <string name="cd_icon_location_shadow">위치 권한 그림자</string>
+    <string name="cd_click_arrow_right">클릭하여 이동</string>
+    <string name="cd_list_item">리스트 항목</string>
 </resources>

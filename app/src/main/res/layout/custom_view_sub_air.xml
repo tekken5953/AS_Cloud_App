@@ -13,6 +13,7 @@
             android:id="@+id/customSubAirImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:contentDescription="@string/cd_img_sub_air"
             android:layout_centerHorizontal="true"/>
 
         <TextView

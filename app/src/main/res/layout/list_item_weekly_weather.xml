@@ -38,11 +38,13 @@
         android:gravity="center">
         <ImageView
             android:id="@+id/weeklyMinIv"
+            android:contentDescription="@string/cd_img_sky"
             android:layout_width="30dp"
             android:layout_height="30dp"/>
 
         <ImageView
             android:id="@+id/weeklyMaxIv"
+            android:contentDescription="@string/cd_img_sky"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="8dp"/>

@@ -44,7 +44,7 @@ class SubFCM : FirebaseMessagingService() {
     }
 
     /** 토픽 구독 설정 **/
-    fun subTopic(topic: String): SubFCM {
+    private fun subTopic(topic: String): SubFCM {
         instance.subscribeToTopic(topic)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -59,7 +59,7 @@ class SubFCM : FirebaseMessagingService() {
     }
 
     /** 토픽 구독 해제 **/
-    fun unSubTopic(topic: String): SubFCM {
+    private fun unSubTopic(topic: String): SubFCM {
         instance.unsubscribeFromTopic(topic)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -110,6 +110,6 @@ class SubFCM : FirebaseMessagingService() {
     /** 새로운 토큰 발행 **/
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-//        Timber.tag(TAG_N).d("sendRegistrationTokenToServer($token)")
+        Timber.tag(TAG_N).d("sendRegistrationTokenToServer($token)")
     }
 }

@@ -93,6 +93,7 @@
                         android:textSize="16sp"
                         android:layout_marginEnd="10dp"
                         android:gravity="start"
+                        android:contentDescription="@string/cd_login_platform"
                         android:textColor="@color/theme_text_color"
                         android:layout_toEndOf="@+id/settingUserIcon"
                         android:layout_toStartOf="@+id/settingLogOut" />

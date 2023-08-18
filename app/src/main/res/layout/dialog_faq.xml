@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/theme_view_color">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <RelativeLayout
         android:id="@+id/faqTopBar"
@@ -17,6 +16,7 @@
             style="@style/BasicImageButtonIcon"
             android:layout_marginStart="20dp"
             android:layout_centerVertical="true"
+            android:contentDescription="@string/cd_icon_back"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/back_arrow"
             app:tint="@color/theme_text_color"/>
