@@ -130,7 +130,8 @@
             android:src="@drawable/gps_fix"
             app:tint="@color/mode_black_color"
             app:layout_constraintStart_toEndOf="@+id/mainGpsTitleTv"
-            app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv" />
+            app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv"
+            app:layout_constraintBottom_toBottomOf="@+id/mainGpsTitleTv"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/mainErrorRenewBtn"

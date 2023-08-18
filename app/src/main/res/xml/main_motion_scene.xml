@@ -244,7 +244,8 @@
             android:layout_marginStart="6dp"
             android:alpha="1"
             app:layout_constraintStart_toEndOf="@+id/mainGpsTitleTv"
-            app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv" />
+            app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv"
+            app:layout_constraintBottom_toBottomOf="@+id/mainGpsTitleTv"/>
         <Constraint
             android:id="@+id/mainSkyStarImg"
             android:layout_width="match_parent"

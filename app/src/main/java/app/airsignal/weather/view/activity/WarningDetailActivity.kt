@@ -25,13 +25,10 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
 
         binding.warningListView.adapter = warningAdapter
 
-        binding.warningBack.setOnClickListener {
-            finish()
-        }
+        binding.warningBack.setOnClickListener { finish() }
 
         val dataList = intent.getStringArrayListExtra("warning")
         val regexAddress = AddressFromRegex(getUserLastAddress(this)).getWarningAddress()
-            .replace("경기도","경기")
 
         // 수정 된 주소에 따른 적용
         binding.warningAddr.text =
@@ -61,6 +58,25 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             "제주" -> { 184 }
             "전국" -> { 109 }
             else -> { 109 }
+        }
+    }
+
+    // 지역명을 전체 명칭으로 변환
+    private fun parseRegionFullName(region: String): String {
+        return when(region) {
+            "서울" -> { "서울시" }
+            "경기" -> { "경기도" }
+            "인천" -> { "인천 광역시" }
+            "강원" -> { "강원도" }
+            "충남" -> { "충청남도" }
+            "충북" -> { "충청북도" }
+            "전남" -> { "전라남도" }
+            "전북" -> { "전라북도" }
+            "경남" -> { "경상남도" }
+            "경북" -> { "경상북도" }
+            "제주" -> { "제주도" }
+            "전국" -> { "전국" }
+            else -> { "전국" }
         }
     }
 }
