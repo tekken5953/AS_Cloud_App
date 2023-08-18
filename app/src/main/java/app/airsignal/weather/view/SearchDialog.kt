@@ -130,7 +130,7 @@ class SearchDialog(
             rv.adapter = currentAdapter
             GpsRepository(activity).findAll().forEach { entity ->
                 if (entity.name == CURRENT_GPS_ID) {
-                    currentAddress.text = getCurrentLocation(activity)
+                    currentAddress.text = getCurrentLocation(activity).replace(getString(R.string.korea), "")
 
                     if (getCurrentLocation(activity) == getUserLastAddress(activity)) {
                         currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))

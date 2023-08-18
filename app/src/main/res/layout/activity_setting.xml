@@ -81,11 +81,13 @@
                         android:id="@+id/settingUserIcon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:layout_marginEnd="6dp"
                         android:layout_centerVertical="true"/>
 
                     <TextView
                         android:id="@+id/settingUserEmail"
                         style="@style/basicMediumTextView"
+                        android:layout_width="match_parent"
                         android:layout_centerVertical="true"
                         android:text="@string/please_login"
                         android:textSize="16sp"
@@ -93,9 +95,7 @@
                         android:gravity="start"
                         android:textColor="@color/theme_text_color"
                         android:layout_toEndOf="@+id/settingUserIcon"
-                        android:layout_toStartOf="@+id/settingLogOut"
-                        android:layout_marginStart="6dp"
-                        android:fontFamily="@font/spoqa_hansansneo_regular" />
+                        android:layout_toStartOf="@+id/settingLogOut" />
 
                     <TextView
                         android:id="@+id/settingLogOut"
@@ -104,8 +104,7 @@
                         android:padding="5dp"
                         android:textColor="@color/red"
                         android:text="@string/setting_logout"
-                        android:fontFamily="@font/spoqa_hansansneo_regular"
-                        android:textSize="16sp"
+                        android:textSize="17sp"
                         android:layout_gravity="end"
                         android:layout_alignParentEnd="true"/>
                 </RelativeLayout>

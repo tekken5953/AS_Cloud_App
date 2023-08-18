@@ -61,21 +61,21 @@
         <TextView
             android:id="@+id/appInfoVersionValue"
             style="@style/basicTextView"
-            android:layout_marginTop="5dp"
             android:fontFamily="@font/spoqa_hansansneo_regular"
             android:textColor="@color/main_blue_color"
             android:textSize="16sp"
             android:visibility="gone"
             android:layout_marginEnd="24dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle"
-            android:layout_marginBottom="3dp"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/appInfoLine1"/>
 
         <TextView
             android:id="@+id/appInfoIsRecent"
             style="@style/basicTextView"
             android:textColor="@color/theme_sub_color"
             android:textSize="12sp"
+            android:layout_marginTop="2dp"
             app:layout_constraintStart_toStartOf="@+id/appInfoVersionTitle"
             app:layout_constraintTop_toBottomOf="@+id/appInfoVersionValue" />
 
@@ -91,8 +91,8 @@
             android:visibility="gone"
             android:layout_marginEnd="24dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/appInfoVersionTitle"
-            android:layout_marginBottom="3dp"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/appInfoLine1"/>
 
         <View
             android:id="@+id/appInfoLine1"
