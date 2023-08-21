@@ -100,6 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp">
+
                 <TextView
                     android:id="@+id/permissionItemUnNasTitle"
                     style="@style/basicMediumTextView"
@@ -109,17 +110,17 @@
                     android:layout_marginStart="36dp"/>
 
                 <ImageView
-                    android:id="@+id/permissionItemNotiImg"
+                    android:id="@+id/permissionItemBackImg"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginTop="12dp"
-                    android:contentDescription="@string/cd_icon_noti"
                     android:layout_below="@+id/permissionItemUnNasTitle"
+                    android:contentDescription="@string/cd_icon_location"
                     android:layout_marginStart="36dp"
-                    android:src="@drawable/ico_alarm"/>
+                    android:src="@drawable/ico_gps"/>
 
                 <TextView
-                    android:id="@+id/permissionItemNotiTitle"
+                    android:id="@+id/permissionItemBackTitle"
                     android:layout_toEndOf="@+id/permissionItemNotiImg"
                     style="@style/basicMediumTextView"
                     android:layout_marginTop="8dp"
@@ -127,17 +128,50 @@
                     android:textSize="16sp"
                     android:textColor="@color/theme_text_color"
                     android:layout_marginStart="12dp"
-                    android:text="@string/noti_perm"/>
+                    android:text="@string/background_location"/>
 
                 <TextView
-                    android:id="@+id/permissionItemNotiSubTitle"
+                    android:id="@+id/permissionItemBackSubTitle"
                     style="@style/basicMediumTextView"
                     android:textSize="14sp"
                     android:text="@string/non_essential"
                     android:textColor="@color/theme_text_color"
                     android:layout_marginStart="2dp"
-                    android:layout_alignBottom="@+id/permissionItemNotiTitle"
-                    android:layout_toEndOf="@+id/permissionItemNotiTitle"/>
+                    android:layout_alignBottom="@+id/permissionItemBackTitle"
+                    android:layout_toEndOf="@+id/permissionItemBackTitle"/>
+
+                <TextView
+                    android:id="@+id/permissionItemBackContent"
+                    style="@style/basicTextView"
+                    android:textColor="@color/theme_sub_color"
+                    android:textSize="14sp"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/background_location_explain"
+                    android:layout_below="@+id/permissionItemBackTitle"
+                    android:layout_alignStart="@+id/permissionItemBackTitle"/>
+
+
+
+                <ImageView
+                    android:id="@+id/permissionItemNotiImg"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="18dp"
+                    android:contentDescription="@string/cd_icon_noti"
+                    android:layout_below="@+id/permissionItemBackContent"
+                    android:layout_marginStart="36dp"
+                    android:src="@drawable/ico_alarm"/>
+
+                <TextView
+                    android:id="@+id/permissionItemNotiTitle"
+                    android:layout_toEndOf="@+id/permissionItemNotiImg"
+                    style="@style/basicMediumTextView"
+                    android:layout_marginTop="14dp"
+                    android:layout_below="@+id/permissionItemBackContent"
+                    android:textSize="16sp"
+                    android:textColor="@color/theme_text_color"
+                    android:layout_marginStart="12dp"
+                    android:text="@string/noti_perm"/>
 
                 <TextView
                     android:id="@+id/permissionItemNotiContent"
@@ -148,6 +182,8 @@
                     android:text="@string/noti_perm_explain"
                     android:layout_below="@+id/permissionItemNotiTitle"
                     android:layout_alignStart="@+id/permissionItemNotiTitle"/>
+
+
 
             </RelativeLayout>
         </LinearLayout>

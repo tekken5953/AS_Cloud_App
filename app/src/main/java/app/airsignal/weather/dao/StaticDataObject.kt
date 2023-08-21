@@ -16,6 +16,7 @@ object StaticDataObject {
     const val INITIALIZED_LOC_PERMISSION = "initialized_loc_permission"
     const val INITIALIZED_NOTI_PERMISSION = "initialized_noti_permission"
     const val LAST_REFRESH_WIDGET_TIME = "widget_last_refresh"
+    const val IS_BACK_LOCATION_ENABLE = "is_back_location_enable"
     const val SHOWING_LOADING_FLOAT = 0.5f
     const val NOT_SHOWING_LOADING_FLOAT = 1f
     const val PM2p5_INDEX = 0

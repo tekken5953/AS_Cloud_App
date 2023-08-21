@@ -212,7 +212,6 @@ class MainActivity
                 }
             }
 
-
             // 하단 스크롤시 네비게이션 바 색상 하얀색으로 변경
             if (v.scrollY == 0) {
                 window.navigationBarColor = getColor(android.R.color.transparent)

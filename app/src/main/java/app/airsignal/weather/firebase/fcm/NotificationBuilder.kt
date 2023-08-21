@@ -50,6 +50,7 @@ class NotificationBuilder {
         val ringtone = RingtoneManager.getRingtone(context, sound)
 
         notificationBuilder
+            .setAutoCancel(true)
             .setWhen(System.currentTimeMillis())
             .setSubText(getNotificationAddress(context))
             .setSmallIcon(R.mipmap.ic_launcher)
