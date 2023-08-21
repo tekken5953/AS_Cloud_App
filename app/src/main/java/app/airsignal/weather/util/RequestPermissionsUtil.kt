@@ -14,6 +14,7 @@ import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_LOCATION
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_NOTIFICATION
 import app.airsignal.weather.dao.StaticDataObject.TAG_P
+import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.util.`object`.GetAppInfo.getInitLocPermission
 import timber.log.Timber
 
@@ -148,7 +149,6 @@ class RequestPermissionsUtil(private val context: Context) {
     /** 백그라운드에서 위치 접근 권한 허용 여부 검사 **/
     @RequiresApi(Build.VERSION_CODES.Q)
     fun isBackgroundRequestLocation(): Boolean {
-
         return ContextCompat.checkSelfPermission(context, permissionsLocationBackground) ==
                 PackageManager.PERMISSION_GRANTED
     }

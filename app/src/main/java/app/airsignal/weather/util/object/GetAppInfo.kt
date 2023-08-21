@@ -14,6 +14,7 @@ import app.airsignal.weather.dao.IgnoredKeyFile.userProfile
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.INITIALIZED_LOC_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSION
+import app.airsignal.weather.dao.StaticDataObject.IS_BACK_LOCATION_ENABLE
 import app.airsignal.weather.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import app.airsignal.weather.db.SharedPreferenceManager
@@ -116,5 +117,9 @@ object GetAppInfo {
 
     fun getCurrentLocation(context: Context): String {
         return SharedPreferenceManager(context).getString(CURRENT_GPS_ID)
+    }
+
+    fun getBackLocationEnable(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(IS_BACK_LOCATION_ENABLE)
     }
 }
