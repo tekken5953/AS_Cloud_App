@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 
 /**
  * @author : Lee Jae Young
@@ -18,7 +19,7 @@ class AdViewClass(private val context: Context) {
         MobileAds.initialize(context)
 //        Timber.tag(TAG_AD).d("Google Mobile Ads SDK Version:  ${MobileAds.getVersion()}")
 //        val testDeviceIds = listOf(adMobTestDeviceId)
-//        val configuration = RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build()
+//        val configuration = RequestConfiguration.Builder().build()
 //        MobileAds.setRequestConfiguration(configuration)
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
