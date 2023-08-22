@@ -413,7 +413,7 @@
             style="@style/basicTextView"
             android:layout_marginBottom="5dp"
             android:text="@string/slide_more"
-            android:contentDescription="@string/cd_img_more"
+            android:contentDescription="@string/cd_text_more"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg"

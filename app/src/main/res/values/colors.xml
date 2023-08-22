@@ -31,6 +31,7 @@
 
     <color name="main_black_color">#4F4F4F</color>
     <color name="sub_gray_color">#7C7C7C</color>
+    <color name="cancel_color">#7C7C7C</color>
 
     <color name="theme_view_color">#FFFFFF</color>
     <color name="theme_text_color">#4F4F4F</color>

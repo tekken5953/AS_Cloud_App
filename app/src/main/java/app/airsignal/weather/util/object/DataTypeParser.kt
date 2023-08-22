@@ -581,4 +581,14 @@ object DataTypeParser {
             }
         }
     }
+
+    /** 문자열에서 해당 문자의 인덱스 반환 **/
+    fun findCharacterIndex(input: String, targetChar: Char): Int {
+        for (index in input.indices) {
+            if (input[index] == targetChar) {
+                return index
+            }
+        }
+        return -1 // 문자가 없는 경우 -1을 반환
+    }
 }

@@ -14,7 +14,8 @@ import app.airsignal.weather.dao.IgnoredKeyFile.userProfile
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.INITIALIZED_LOC_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSION
-import app.airsignal.weather.dao.StaticDataObject.IS_BACK_LOCATION_ENABLE
+import app.airsignal.weather.dao.StaticDataObject.IS_INIT_BACK_LOC_PERMISSION
+import app.airsignal.weather.dao.StaticDataObject.IS_PERMED_BACK_LOG
 import app.airsignal.weather.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import app.airsignal.weather.db.SharedPreferenceManager
@@ -119,7 +120,11 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getString(CURRENT_GPS_ID)
     }
 
-    fun getBackLocationEnable(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(IS_BACK_LOCATION_ENABLE)
+    fun getInitBackLogPerm(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(IS_INIT_BACK_LOC_PERMISSION)
+    }
+
+    fun isPermedBackLoc(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(IS_PERMED_BACK_LOG)
     }
 }

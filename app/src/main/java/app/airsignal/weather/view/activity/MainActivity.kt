@@ -79,11 +79,13 @@ import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentTempType
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.util.`object`.GetAppInfo.getEntireSun
+import app.airsignal.weather.util.`object`.GetAppInfo.getInitBackLogPerm
 import app.airsignal.weather.util.`object`.GetAppInfo.getIsNight
 import app.airsignal.weather.util.`object`.GetAppInfo.getTopicNotification
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
+import app.airsignal.weather.util.`object`.GetAppInfo.isPermedBackLoc
 import app.airsignal.weather.util.`object`.GetSystemInfo.isThemeNight
 import app.airsignal.weather.util.`object`.SetAppInfo.removeSingleKey
 import app.airsignal.weather.util.`object`.SetAppInfo.setCurrentLocation
@@ -95,6 +97,7 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
@@ -177,7 +180,28 @@ class MainActivity
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
             window.setBackgroundDrawableResource(R.drawable.main_bg_snow)
-            createWorkManager()        // 워크 매니저 생성
+        }
+
+        if (getInitBackLogPerm(this)) {
+            if (VERSION.SDK_INT >= 29) {
+                Logger.t("testtest").w("Up 29")
+                if (RequestPermissionsUtil(this).isBackgroundRequestLocation()) {
+                    Logger.t("testtest").w("backLoc is true")
+                    createWorkManager()
+                } else {
+                    Logger.t("testtest").w("backLoc is false")
+                }
+            } else {
+                Logger.t("testtest").w("Down 29")
+                if (isPermedBackLoc(this)) {
+                    Logger.t("testtest").w("backLoc is true")
+                    createWorkManager()
+                } else {
+                    Logger.t("testtest").w("backLoc is false")
+                }
+            }
+        } else {
+            Logger.t("testtest").w("Not Set Notification")
         }
 
         initBinding()
@@ -298,6 +322,7 @@ class MainActivity
                 }.thenAccept {
                     val intent = Intent(this@MainActivity, SettingActivity::class.java)
                     startActivity(intent)
+                    finish()
                 }
             }
         } catch (e: NullPointerException) {
@@ -590,21 +615,6 @@ class MainActivity
                     alpha = 0f
                 }
                 binding.nestedAirRv.bringToFront()
-            }
-        }
-    }
-
-    // 백그라운드 위치 호출
-    private fun createWorkManager() {
-        val loc = GetLocation(this)
-        if (loc.isNetWorkConnected()) {
-            if (loc.isGPSConnected()) {
-                if (VERSION.SDK_INT >= 29) {
-                    if (RequestPermissionsUtil(this).isBackgroundRequestLocation())
-                        loc.getGpsInBackground(0, 500f)
-                } else {
-                    loc.getGpsInBackground(0, 500f)
-                }
             }
         }
     }
@@ -1154,6 +1164,18 @@ class MainActivity
             }
             ERROR_NOT_SERVICED_LOCATION -> {
                 binding.mainErrorTitle.text = getString(R.string.not_serviced_location)
+                binding.mainErrorRenewBtn.apply {
+                    text = getString(R.string.register_new_address)
+                    setOnClickListener {
+                        mVib()
+                        val bottomSheet =
+                            SearchDialog(
+                                this@MainActivity, 1, supportFragmentManager,
+                                BottomSheetDialogFragment().tag
+                            )
+                        bottomSheet.show(1)
+                    }
+                }
             }
             ERROR_TIMEOUT -> {
                 binding.mainErrorTitle.text = getString(R.string.timeout_error)
@@ -1166,6 +1188,14 @@ class MainActivity
             }
             ERROR_GPS_CONNECTED -> {
                 binding.mainErrorTitle.text = getString(R.string.gps_call_error)
+                binding.mainErrorRenewBtn.apply {
+                    text = getString(R.string.enable_gps)
+                    // 에러 버튼 클릭
+                    setOnClickListener {
+                        mVib()
+                        GetLocation(this@MainActivity).requestSystemGPSEnable()
+                    }
+                }
             }
             ERROR_GET_DATA -> {
                 binding.mainErrorTitle.text = getString(R.string.data_call_error)
@@ -1173,38 +1203,13 @@ class MainActivity
             else -> {
                 RDBLogcat.writeErrorNotANR(this, ERROR_LOCATION_FAILED, error!!)
                 binding.mainErrorTitle.text = getString(R.string.unknown_error)
-            }
-        }
-
-        if (error == ERROR_GPS_CONNECTED) {
-            binding.mainErrorRenewBtn.apply {
-                text = getString(R.string.enable_gps)
-                // 에러 버튼 클릭
-                setOnClickListener {
-                    mVib()
-                    GetLocation(this@MainActivity).requestSystemGPSEnable()
-                }
-            }
-        } else if (error == ERROR_NOT_SERVICED_LOCATION) {
-            binding.mainErrorRenewBtn.apply {
-                text = getString(R.string.register_new_address)
-                setOnClickListener {
-                    mVib()
-                    val bottomSheet =
-                        SearchDialog(
-                            this@MainActivity, 1, supportFragmentManager,
-                            BottomSheetDialogFragment().tag
-                        )
-                    bottomSheet.show(1)
-                }
-            }
-        } else {
-            binding.mainErrorRenewBtn.apply {
-                text = getString(R.string.renew_data)
-                // 에러 버튼 클릭
-                setOnClickListener {
-                    mVib()
-                    getDataSingleTime(isCurrent = false)
+                binding.mainErrorRenewBtn.apply {
+                    text = getString(R.string.renew_data)
+                    // 에러 버튼 클릭
+                    setOnClickListener {
+                        mVib()
+                        getDataSingleTime(isCurrent = false)
+                    }
                 }
             }
         }
@@ -1266,8 +1271,11 @@ class MainActivity
                 error == ERROR_GET_DATA
             ) {
                 binding.mainAddAddress.setImageDrawable(null)
+                binding.mainSideMenuIv.setImageDrawable(null)
             } else {
                 binding.mainAddAddress.imageTintList =
+                    ColorStateList.valueOf(getColor(R.color.theme_text_color))
+                binding.mainSideMenuIv.imageTintList =
                     ColorStateList.valueOf(getColor(R.color.theme_text_color))
             }
 
@@ -1278,7 +1286,6 @@ class MainActivity
             binding.mainGpsFix.setImageDrawable(null)
             binding.mainMotionSLideImg.setImageDrawable(null)
             binding.mainRefreshData.setImageDrawable(null)
-            binding.mainSideMenuIv.setImageDrawable(null)
 
             binding.mainMotionLayout.apply {
                 transitionToStart()
@@ -1490,10 +1497,10 @@ class MainActivity
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
             binding.mainGpsFix, binding.mainMotionSLideImg,
-            binding.mainRefreshData, binding.mainSideMenuIv
+            binding.mainRefreshData
         )
 
-        // 글자색 white로 변경
+        // 글자색 white 로 변경
         @Suppress("DEPRECATION")
         fun white() {
             binding.mainWarningBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#10000000"))
@@ -1519,7 +1526,7 @@ class MainActivity
             warningViewPagerAdapter.notifyDataSetChanged()
         }
 
-        // 글자색 black으로 변경
+        // 글자색 black 으로 변경
         @Suppress("DEPRECATION")
         fun black() {
             binding.mainWarningBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#50FFFFFF"))
@@ -1662,7 +1669,8 @@ class MainActivity
             MakeSingleDialog(this).makeDialog(
                 getString(R.string.error_network_connect),
                 getColor(R.color.theme_alert_double_apply_color),
-                getString(R.string.ok)
+                getString(R.string.ok),
+                false
             )
         }
     }
@@ -1673,6 +1681,14 @@ class MainActivity
             (view as View).background = ResourcesCompat.getDrawable(resources, it, null)
         } ?: apply {
             (view as View).background = null
+        }
+    }
+
+    // 백그라운드 위치 호출
+    private fun createWorkManager() {
+        val loc = GetLocation(this)
+        if (loc.isNetWorkConnected()) {
+            loc.getGpsInBackground(0, 500f)
         }
     }
 }

@@ -4,6 +4,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.method.LinkMovementMethod
+import android.text.style.URLSpan
 import android.widget.Toast
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
@@ -76,6 +80,23 @@ class PermissionActivity :
             value = "${GetSystemInfo.getApplicationVersionName(this)}.${GetSystemInfo.getApplicationVersionCode(this)}"
         )
 
+        val userDataIndex = binding.permissionUserDataNotice.text.toString().indexOf(getString(R.string.data_usages).lowercase())
+
+        val spanUserData = SpannableStringBuilder(binding.permissionUserDataNotice.text.toString())
+        spanUserData.setSpan(URLSpan("https://docs.google.com/document/d/e/2PACX-1vQd0Dxx1oiWNUVspQcuiqp_q9OvCMf5Fx0vp7dhwpNSz312Yx0W8ltyjyqHx7VwwBXaWq_NZmBNf1b7/pub"),
+                userDataIndex,
+                userDataIndex + getString(R.string.data_usages).length,
+                Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+
+        binding.permissionUserDataNotice.text = spanUserData
+
+        binding.permissionUserDataNotice.linksClickable = true
+        binding.permissionUserDataNotice.movementMethod = LinkMovementMethod.getInstance()
+
+        binding.permissionUserDataCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            binding.permissionOkBtn.isEnabled = isChecked
+        }
+
         // 권한 허용 버튼 클릭
         binding.permissionOkBtn.setOnClickListener {
             if (!perm.isLocationPermitted()) {  // 위치 권한 허용?
@@ -100,9 +121,10 @@ class PermissionActivity :
                     }
                 } else {
                     MakeSingleDialog(this).makeDialog(
-                        textTitle = getString(R.string.perm_self_msg),
+                        textTitle = getString(R.string.perm_loc_self),
                         color = getColor(R.color.main_blue_color),
-                        buttonText = getString(R.string.ok)
+                        buttonText = getString(R.string.ok),
+                        true
                     )
                         .setOnClickListener {
                             RefreshUtils(this).refreshActivity()

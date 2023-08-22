@@ -81,12 +81,12 @@
     <string name="location_perm">Location permission</string>
     <string name="essential">(App is in use)</string>
     <string name="loc_perm_explain">Provide current location weather data</string>
-    <string name="non_essential_perm">Select permissions</string>
+    <string name="non_essential_perm">Selectable permissions</string>
     <string name="essential_perm">Required permissions</string>
     <string name="noti_perm">Notification permissions</string>
     <string name="non_essential">(App not in use)</string>
     <string name="noti_perm_explain">Provides weather and PM information notifications</string>
-    <string name="perm_notice">It is available without permission\nbut some services may be restricted</string>
+    <string name="perm_notice">It is available without permission but some services may be restricted</string>
     <string name="perm_title">Please allow access to use the app</string>
     <string name="not_serviced_location">It\'s not a serviceable area\nPress button to register new address</string>
     <string name="airq_question_pm2p5">PM2.5 is dust smaller than 2.5/1000th of a millimeter. The particles are too fine to be filtered through the nasal mucosa and can directly penetrate into the alveoli when inhaled, increasing the prevalence of asthma or lung disease and early mortality. In addition, ultrafine dust deteriorates visibility, is deposited on the surface of leaves of plants, interferes with metabolism, and accumulates on buildings, relics and statues to cause corrosion.
@@ -106,7 +106,7 @@
         Repeated exposure to ozone can cause damage to the body, including the lungs, affecting chest pain, coughing, nausea, throat irritation, and digestion. It can also aggravate bronchitis, heart disease, emphysema and asthma, and reduce lung capacity.In particular, it is necessary to be careful because it affects patients with bronchial asthma, respiratory diseases, children, and the elderly. In addition, it directly affects crops and plants, resulting in reduced yields and even death of leaves.
     </string>
     <string name="open_source_license">Open source license</string>
-    <string name="data_usages">Individual data usages</string>
+    <string name="data_usages">Privacy policy</string>
     <string name="term_of_services">Term of services</string>
     <string name="customers_center">Customer service</string>
     <string name="live_temp">Temp</string>
@@ -152,7 +152,8 @@
     <string name="bad">Bad</string>
     <string name="worst">Very Bad</string>
     <string name="error">Error</string>
-    <string name="perm_self_msg"><![CDATA[Permission is Denied\nPermission -> Location Check the Always]]></string>
+    <string name="perm_self_msg"><![CDATA[Permission is Denied\nAccess the location when the app is not in use.]]></string>
+    <string name="perm_loc_self"><![CDATA[Permission is Denied\nPermission -> Location Check the Always allow]]></string>
     <string name="noti_always_can"><![CDATA[Notification always can agree in App Settings -> Notification]]></string>
     <string name="noti_setting_enable">Notification settings\nProvides weather notifications and event information</string>
     <string name="vibrate_setting">Vibration Settings</string>
@@ -187,7 +188,8 @@
     <string name="cd_icon_cancel">Dismiss</string>
     <string name="cd_icon_plus">Add</string>
     <string name="cd_icon_gps_fix">Renew current location</string>
-    <string name="cd_img_more">More View</string>
+    <string name="cd_img_more">More View Icon</string>
+    <string name="cd_text_more">More View Text</string>
     <string name="cd_img_location">Address</string>
     <string name="cd_icon_help">Help</string>
     <string name="cd_icon_up">Scroll to top</string>
@@ -208,5 +210,19 @@
     <string name="cd_click_arrow_right">Click to move</string>
     <string name="cd_list_item">List item</string>
     <string name="background_location">Background location</string>
-    <string name="background_location_explain">Access the location when the app is not in use</string>
+    <string name="background_location_explain">Location Check the Always</string>
+    <string name="agree_user_data">I agree with AirSignal\'s privacy policy</string>
+    <string name="background_location_reset">This is used only for notification services</string>
+
+    <string name="background_location_active">Now using</string>
+    <string name="background_location_not_active">Make use</string>
+    <string name="do_active">Using</string>
+    <string name="undo_active">Stop Using</string>
+    <string name="back_perm_down_title">Use real-time location</string>
+    <string name="back_perm_up_title">Set background\nlocation Permission</string>
+    <string name="nav_back_perm">Permissions > Locations > Always Allow</string>
+    <string name="back_perm_1">You can update your location to receive accurate notifications even when the app is not working.</string>
+    <string name="back_perm_2">You can change this setting at any time under Application Location Permission.</string>
+    <string name="back_perm_3">Background location information is not used except for the notification service</string>
+    <string name="back_perm_subtitle"><![CDATA[Please check Permissions > Locations > Always Allow]]></string>
 </resources>

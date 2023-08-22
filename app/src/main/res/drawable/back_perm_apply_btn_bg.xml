@@ -4,7 +4,7 @@
     <item android:id="@android:id/background">
         <shape>
             <solid
-                android:color="@color/theme_alert_double_apply_color"/>
+                android:color="@color/main_blue_color"/>
             <corners
                 android:radius="12dp"/>
         </shape>
