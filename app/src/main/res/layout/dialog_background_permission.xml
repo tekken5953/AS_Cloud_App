@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="15dp"
+    android:layout_marginEnd="15dp"
+    android:background="@drawable/loc_perm_bg">
+
+    <ImageView
+        android:id="@+id/backPermLocIcon"
+        android:layout_width="35dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="36dp"
+        android:contentDescription="@string/cd_icon_location"
+        android:src="@drawable/ico_gps_big" />
+
+    <TextView
+        android:id="@+id/backPermTitle"
+        style="@style/basicMediumTextView"
+        android:layout_below="@+id/backPermLocIcon"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:lineHeight="24dp"
+        android:textColor="@color/theme_text_color"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/backPermSubTitle"
+        style="@style/basicTextView"
+        android:layout_below="@+id/backPermTitle"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:layout_marginTop="12dp"
+        android:text="@string/back_perm_subtitle"
+        android:textSize="16sp" />
+
+    <TableRow
+        android:id="@+id/backPermTr1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/backPermSubTitle"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="start">
+
+        <ImageView
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_gravity="top"
+            android:layout_marginTop="5dp"
+            android:contentDescription="@string/cd_list_item"
+            android:src="@drawable/dot"
+            app:tint="@color/theme_sub_color" />
+
+        <TextView
+            style="@style/basicTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:gravity="start"
+            android:lineHeight="20dp"
+            android:text="@string/back_perm_1"
+            android:textSize="14sp" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/backPermTr2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/backPermTr1"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="start">
+
+        <ImageView
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_gravity="top"
+            android:layout_marginTop="5dp"
+            android:contentDescription="@string/cd_list_item"
+            android:src="@drawable/dot"
+            app:tint="@color/theme_sub_color" />
+
+        <TextView
+            style="@style/basicTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:gravity="start"
+            android:lineHeight="20dp"
+            android:text="@string/back_perm_2"
+            android:textSize="14sp" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/backPermTr3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/backPermTr2"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="24dp"
+        android:gravity="start">
+
+        <ImageView
+            android:layout_width="6dp"
+            android:layout_height="6dp"
+            android:layout_gravity="top"
+            android:layout_marginTop="5dp"
+            android:contentDescription="@string/cd_list_item"
+            android:src="@drawable/dot"
+            app:tint="@color/theme_sub_color" />
+
+        <TextView
+            style="@style/basicTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:gravity="start"
+            android:lineHeight="20dp"
+            android:text="@string/back_perm_3"
+            android:textSize="14sp" />
+    </TableRow>
+
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/backPermTr3"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_marginBottom="52dp"
+        android:layout_marginTop="36dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/backPermCancelBtn"
+            android:layout_width="146dp"
+            android:layout_height="56dp"
+            android:text="@string/cancel"
+            android:textSize="18sp"
+            android:textAllCaps="false"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:textColor="@color/cancel_color"
+            android:background="@drawable/double_btn_cancel_bg"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/backPermApplyBtn"
+            android:layout_width="146dp"
+            android:layout_height="56dp"
+            android:autoSizeMaxTextSize="18sp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="12sp"
+            android:layout_marginStart="16dp"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:textColor="@color/white"
+            android:textAllCaps="false"
+            android:background="@drawable/back_perm_apply_btn_bg"/>
+    </TableRow>
+</RelativeLayout>

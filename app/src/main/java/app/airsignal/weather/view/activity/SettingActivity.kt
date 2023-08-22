@@ -6,10 +6,8 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Build.VERSION
 import android.os.Bundle
-import android.provider.Settings
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
@@ -45,10 +43,8 @@ import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
 import app.airsignal.weather.repo.BaseRepository
-import app.airsignal.weather.util.EnterPageUtil
-import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.RequestPermissionsUtil
-import app.airsignal.weather.util.`object`.GetAppInfo
+import app.airsignal.weather.util.*
+import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserFontScale
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
@@ -57,23 +53,24 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiEnable
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiSound
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiVibrate
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserTheme
+import app.airsignal.weather.util.`object`.GetAppInfo.isPermedBackLoc
+import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionCode
 import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionName
 import app.airsignal.weather.util.`object`.GetSystemInfo.goToPlayStore
-import app.airsignal.weather.util.`object`.SetAppInfo
 import app.airsignal.weather.util.`object`.SetAppInfo.removeAllKeys
+import app.airsignal.weather.util.`object`.SetAppInfo.setInitBackLocPermission
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserFontScale
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLocation
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserNoti
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserTheme
 import app.airsignal.weather.util.`object`.SetSystemInfo.setStatusBar
-import app.airsignal.weather.view.MakeSingleDialog
+import app.airsignal.weather.view.BackLocCheckDialog
 import app.airsignal.weather.view.ShowDialogClass
 import app.airsignal.weather.view.custom_view.CustomerServiceView
 import app.airsignal.weather.view.custom_view.SnackBarUtils
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
-import app.airsignal.weather.util.*
-import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionCode
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -121,7 +118,7 @@ class SettingActivity
         // 뒤로가기 버튼 클릭
         binding.settingBack.setOnClickListener {
 //            VibrateUtil(this).make(20)
-            onBackPressedDispatcher.onBackPressed()
+            goMain()
         }
 
         // 로그아웃 버튼 클릭
@@ -402,62 +399,45 @@ class SettingActivity
 
             // 백그라운드 요청에 따른 적용
             fun applyBack(isChecked: Boolean) {
-                if (VERSION.SDK_INT >= 29) {
-                    if (isChecked) {
-                        notiBackTr.visibility = View.VISIBLE
+                if (isChecked) {
+                    setInitBackLocPermission(this,true)
+                    notiBackTr.visibility = View.VISIBLE
+                    // 29 이상
+                    if (VERSION.SDK_INT >= 29) {
+                        // 백그라운드 허용 여부
                         isBackAllow = RequestPermissionsUtil(this).isBackgroundRequestLocation()
-
+                        notiBackTitle.text = getString(R.string.perm_self_msg)
                         if (isBackAllow) {
-                            notiBackTitle.text = getString(R.string.perm_back_setting)
-                            setNightAlertsSpan(notiBackTitle)
                             notiBackContent.text = getString(R.string.allowed)
-                            setNightAlertsSpan(notiBackContent)
                         } else {
-                            notiBackTitle.text = getString(R.string.perm_self_msg)
-                            setNightAlertsSpan(notiBackTitle)
                             notiBackContent.text = getString(R.string.do_allow)
-                            setNightAlertsSpan(notiBackContent)
                         }
+                    }
+                    // 29 이하
+                    else {
+                        notiBackTitle.text = getString(R.string.perm_back_setting)
+                        if (isPermedBackLoc(this)) {
+                            notiBackContent.text = getString(R.string.background_location_active)
+                        } else {
+                            notiBackContent.text =
+                                getString(R.string.background_location_not_active)
+                        }
+                    }
 
-                        notiBackTr.setOnClickListener {
-                            if (!isBackAllow) {
-                                if (RequestPermissionsUtil(this)
-                                        .isShouldShowRequestPermissionRationale(
-                                            this,
-                                            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                                        )
-                                ) {
-                                    onResume()
-                                    when (GetAppInfo.getInitLocPermission(this)) {
-                                        "" -> {
-                                            SetAppInfo.setInitLocPermission(this, "Second")
-                                            RequestPermissionsUtil(this).requestBackgroundLocation()
-                                        }
-                                        "Second" -> {
-                                            SetAppInfo.setInitLocPermission(this, "Done")
-                                            RequestPermissionsUtil(this).requestBackgroundLocation()
-                                        }
-                                    }
-                                } else {
-                                    MakeSingleDialog(this)
-                                        .makeDialog(
-                                            getString(R.string.perm_self_msg),
-                                            getColor(R.color.main_blue_color),
-                                            getString(R.string.ok)
-                                        ).setOnClickListener {
-                                            val intent =
-                                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                            val uri: Uri =
-                                                Uri.fromParts("package", packageName, null)
-                                            intent.data = uri
-                                            startActivity(intent)
-                                            MakeSingleDialog(this).dismiss()
-                                        }
-                                }
-                            }
+                    setNightAlertsSpan(notiBackTitle)
+                    setNightAlertsSpan(notiBackContent)
+
+                    notiBackTr.setOnClickListener {
+                        if (notiBackContent.text.toString() == getString(R.string.do_allow) ||
+                            notiBackContent.text.toString() == getString(R.string.background_location_not_active) ||
+                            notiBackContent.text.toString() == getString(R.string.background_location_active)
+                        ) {
+                            BackLocCheckDialog(
+                                this,
+                                supportFragmentManager,
+                                BottomSheetDialogFragment().tag
+                            ).show()
                         }
-                    } else {
-                        notiBackTr.visibility = View.GONE
                     }
                 } else {
                     notiBackTr.visibility = View.GONE
@@ -520,7 +500,7 @@ class SettingActivity
         }
     }
 
-    // 야간 알림 텍스트 색상 설정
+    // 알림 텍스트 색상 설정
     private fun setNightAlertsSpan(textView: TextView) {
         val span = SpannableStringBuilder(textView.text)
         val formatText = textView.text.split(System.lineSeparator())
@@ -549,22 +529,12 @@ class SettingActivity
                 }
             }
 
-            if (textView.text == getString(R.string.allowed)) {
+            if (textView.text == getString(R.string.allowed) || textView.text == getString(R.string.background_location_active)) {
                 textView.setTextColor(getColor(R.color.main_blue_color))
             }
         }
 
         textView.text = span
-    }
-
-    // 문자열에서 해당 문자의 인덱스 반환
-    private fun findCharacterIndex(input: String, targetChar: Char): Int {
-        for (index in input.indices) {
-            if (input[index] == targetChar) {
-                return index
-            }
-        }
-        return -1 // 문자가 없는 경우 -1을 반환
     }
 
     // 테마 적용
@@ -652,24 +622,25 @@ class SettingActivity
         // 이용약관 클릭
         appInfoTermsService.setOnClickListener {
             val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
-            intent.putExtra("sort","termsOfService")
+            intent.putExtra("sort", "termsOfService")
             startActivity(intent)
         }
 
         // 개인 정보 처리 방침 클릭
         appInfoDataUsage.setOnClickListener {
             val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
-            intent.putExtra("sort","dataUsage")
+            intent.putExtra("sort", "dataUsage")
             startActivity(intent)
         }
 
         // 고객 센터 클릭
         appInfoCustomerService.setOnClickListener {
             val customerView: View = LayoutInflater.from(this)
-                .inflate(R.layout.dialog_customer_service,null)
+                .inflate(R.layout.dialog_customer_service, null)
 
             val customerCall: CustomerServiceView = customerView.findViewById(R.id.customerCall)
-            val customerHomePage: CustomerServiceView = customerView.findViewById(R.id.customerHomePage)
+            val customerHomePage: CustomerServiceView =
+                customerView.findViewById(R.id.customerHomePage)
             val customerEmail: CustomerServiceView = customerView.findViewById(R.id.customerEmail)
 
             customerCall.fetchData(R.drawable.ico_cs_phone)
@@ -868,5 +839,12 @@ class SettingActivity
     ) {
         val item = AdapterModel.NoticeItem(created, modified, title, content)
         noticeItem.add(item)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        @Suppress("DEPRECATION")
+        super.onBackPressed()
+        goMain()
     }
 }

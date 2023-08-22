@@ -6,6 +6,7 @@ import android.content.Intent
 import android.location.*
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import app.airsignal.weather.R
@@ -103,6 +104,7 @@ class GetLocation(private val context: Context) {
     fun getGpsInBackground(mills: Long, distance: Float) {
         try {
             val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+
             val locationListener: LocationListener = object : LocationListener {
                 override fun onLocationChanged(location: Location) {
                     // 위치 업데이트가 발생했을 때 실행되는 코드
@@ -117,13 +119,26 @@ class GetLocation(private val context: Context) {
                 override fun onProviderDisabled(provider: String) {}
             }
 
-            locationListener.let { listener ->
-                locationManager!!.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER,
-                    mills,
-                    distance,
-                    listener
-                )
+            if (Build.VERSION.SDK_INT >= 31) {
+                if (!locationManager!!.hasProvider(Context.LOCATION_SERVICE)) {
+                    locationListener.let { listener ->
+                        locationManager.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER,
+                            mills,
+                            distance,
+                            listener
+                        )
+                    }
+                }
+            } else {
+                locationListener.let { listener ->
+                    locationManager!!.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER,
+                        mills,
+                        distance,
+                        listener
+                    )
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()

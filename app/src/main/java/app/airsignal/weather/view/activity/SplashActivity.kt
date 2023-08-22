@@ -102,7 +102,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             } else {
                                 MakeSingleDialog(this)
                                     .makeDialog(getString(R.string.not_latest_version),
-                                R.color.main_blue_color,getString(R.string.download))
+                                R.color.main_blue_color,getString(R.string.download), true)
                                     .setOnClickListener {
                                         goToPlayStore(this@SplashActivity)
                                     }
@@ -144,7 +144,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     // 다이얼로그 생성
     private fun makeDialog(s: String) {
         MakeSingleDialog(this).makeDialog(
-            s, getColor(R.color.theme_alert_double_apply_color), getString(R.string.ok)
+            s, getColor(R.color.theme_alert_double_apply_color), getString(R.string.ok), false
         )
     }
 }

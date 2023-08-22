@@ -15,4 +15,5 @@
 
     <color name="theme_sun_tomorrow_night">#7E5EFF</color>
     <color name="theme_sun_tomorrow_day">#FF8A48</color>
+    <color name="cancel_color">#FFFFFF</color>
 </resources>

@@ -17,7 +17,7 @@ class MakeSingleDialog(private val context: Context) {
     lateinit var builder: Dialog
 
     // 버튼이 하나인 다이얼로그 생성
-    fun makeDialog(textTitle: String, color: Int, buttonText: String): AppCompatButton {
+    fun makeDialog(textTitle: String, color: Int, buttonText: String, cancelable: Boolean): AppCompatButton {
         builder = Dialog(context)
         val view = LayoutInflater.from(context)
             .inflate(R.layout.dialog_alert_single_btn,null)
@@ -25,7 +25,7 @@ class MakeSingleDialog(private val context: Context) {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(view)
-            setCancelable(false)
+            setCancelable(cancelable)
         }
 
         builder.create()
