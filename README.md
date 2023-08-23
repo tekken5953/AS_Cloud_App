@@ -23,6 +23,16 @@
 > jy5953@airsignal.kr
 
 <br/>
+<h2>App Download</h2>
+
+[Play Store for Android](https://play.google.com/store/apps/details?id=app.airsignal.weather)
+
+<br/>
+<h2>Latest Version</h2>
+
+``1.1.10``
+
+<br/>
 <h2>Gradle Setting</h2>
 
 ``compileSdk : 33``
