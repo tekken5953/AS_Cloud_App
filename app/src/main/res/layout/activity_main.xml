@@ -690,9 +690,8 @@
                                 style="@style/basicMediumTextView"
                                 android:layout_alignParentTop="true"
                                 android:layout_centerHorizontal="true"
-                                android:letterSpacing="-0.064"
                                 android:textColor="@color/theme_text_color"
-                                android:textSize="18sp" />
+                                android:textSize="17sp" />
 
                             <TextView
                                 android:id="@+id/nested_air_title_kr"
@@ -700,7 +699,6 @@
                                 android:layout_below="@+id/nested_air_title_en"
                                 android:layout_centerHorizontal="true"
                                 android:layout_marginBottom="10dp"
-                                android:letterSpacing="-0.048"
                                 android:textColor="@color/theme_sub_color"
                                 android:textSize="14sp" />
 

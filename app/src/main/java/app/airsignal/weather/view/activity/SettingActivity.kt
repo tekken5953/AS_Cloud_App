@@ -182,7 +182,7 @@ class SettingActivity
             val cancel: ImageView = themeView.findViewById(R.id.changeThemeBack)
 
             ShowDialogClass(this)
-                .setBackPressRefresh(themeView.findViewById(R.id.changeThemeBack))
+                .setBackPressed(themeView.findViewById(R.id.changeThemeBack))
                 .show(themeView, true)
 
             // 현재 저장된 테마에 따라서 라디오버튼 체크
@@ -316,7 +316,7 @@ class SettingActivity
             val rg = scaleView.findViewById<RadioGroup>(R.id.changeScaleRadioGroup)
 
             ShowDialogClass(this)
-                .setBackPressRefresh(back)
+                .setBackPressed(back)
                 .show(scaleView, true)
 
             // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크

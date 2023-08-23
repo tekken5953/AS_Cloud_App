@@ -225,4 +225,10 @@
     <string name="back_perm_2">You can change this setting at any time under Application Location Permission.</string>
     <string name="back_perm_3">Background location information is not used except for the notification service</string>
     <string name="back_perm_subtitle"><![CDATA[Please check Permissions > Locations > Always Allow]]></string>
+    <string name="agree">Agree</string>
+    <string name="first_perm_title">Agree to use user location</string>
+    <string name="first_perm_tr1">Collect and use location to provide weather data.</string>
+    <string name="first_perm_tr2">Location is processed even when the app is not in use to send more accurate weather notifications.</string>
+    <string name="first_perm_tr3">Please accept the location processing by pressing the \'agree\' button to use the app.</string>
+    <string name="first_perm_tr4">You can stop collecting and using location from app settings or system location permissions.</string>
 </resources>
