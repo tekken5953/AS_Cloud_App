@@ -541,10 +541,10 @@ class SettingActivity
     private fun applyDeviceTheme() {
         // 설정 페이지 테마 항목이름 바꾸기
         when (getUserTheme(this)) {
-            "dark" -> {
+            THEME_DARK -> {
                 binding.settingSystemTheme.fetchData(getString(R.string.theme_dark))
             }
-            "light" -> {
+            THEME_LIGHT -> {
                 binding.settingSystemTheme.fetchData(getString(R.string.theme_light))
             }
             else -> {
