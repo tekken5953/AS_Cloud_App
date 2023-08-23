@@ -59,7 +59,7 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             }
             "dataUsage" -> {
                 binding.webUrlTitle.text = getString(R.string.data_usages)
-                pdfUrl = "file:///android_asset/airsignal_user_data_usage.html"
+                pdfUrl = "file:///android_asset/privacy_policy.html"
             }
             else -> {
                 binding.webUrlTitle.text = ""
@@ -67,7 +67,8 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             }
 
         }
-        
+
+        binding.webUrlWebView.clearCache(true)
         binding.webUrlWebView.loadUrl(pdfUrl) // 웹 페이지 로딩
     }
 }

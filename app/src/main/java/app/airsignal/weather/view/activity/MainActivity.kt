@@ -184,24 +184,14 @@ class MainActivity
 
         if (getInitBackLogPerm(this)) {
             if (VERSION.SDK_INT >= 29) {
-                Logger.t("testtest").w("Up 29")
                 if (RequestPermissionsUtil(this).isBackgroundRequestLocation()) {
-                    Logger.t("testtest").w("backLoc is true")
                     createWorkManager()
-                } else {
-                    Logger.t("testtest").w("backLoc is false")
                 }
             } else {
-                Logger.t("testtest").w("Down 29")
                 if (isPermedBackLoc(this)) {
-                    Logger.t("testtest").w("backLoc is true")
                     createWorkManager()
-                } else {
-                    Logger.t("testtest").w("backLoc is false")
                 }
             }
-        } else {
-            Logger.t("testtest").w("Not Set Notification")
         }
 
         initBinding()

@@ -40,17 +40,6 @@ object SetSystemInfo {
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
-    /** 화면을 풀 스크린으로 사용합니다 **/
-    @Suppress("DEPRECATION")
-    fun setFullScreenMode(activity: Activity) {
-        activity.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-    }
-
     /** 국가를 대한민국으로 설정합니다 **/
     fun setLocaleToKorea(context: Context) {
         val configuration = context.resources.configuration

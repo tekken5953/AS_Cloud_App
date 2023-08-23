@@ -7,7 +7,9 @@ import android.provider.Settings
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
+import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
+import android.text.style.UnderlineSpan
 import android.widget.Toast
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
@@ -83,12 +85,21 @@ class PermissionActivity :
         val userDataIndex = binding.permissionUserDataNotice.text.toString().indexOf(getString(R.string.data_usages).lowercase())
 
         val spanUserData = SpannableStringBuilder(binding.permissionUserDataNotice.text.toString())
-        spanUserData.setSpan(URLSpan("https://docs.google.com/document/d/e/2PACX-1vQd0Dxx1oiWNUVspQcuiqp_q9OvCMf5Fx0vp7dhwpNSz312Yx0W8ltyjyqHx7VwwBXaWq_NZmBNf1b7/pub"),
+        spanUserData.setSpan(UnderlineSpan(),
                 userDataIndex,
                 userDataIndex + getString(R.string.data_usages).length,
                 Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+        spanUserData.setSpan(ForegroundColorSpan(getColor(R.color.main_blue_color)),
+            userDataIndex,
+            userDataIndex + getString(R.string.data_usages).length,
+            Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
 
         binding.permissionUserDataNotice.text = spanUserData
+        binding.permissionUserDataNotice.setOnClickListener {
+            val intent = Intent(this@PermissionActivity, WebURLActivity::class.java)
+            intent.putExtra("sort","dataUsage")
+            startActivity(intent)
+        }
 
         binding.permissionUserDataNotice.linksClickable = true
         binding.permissionUserDataNotice.movementMethod = LinkMovementMethod.getInstance()
