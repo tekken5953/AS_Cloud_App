@@ -1,4 +1,4 @@
-__<h1><a href="https://play.google.com/store/apps/details?id=app.airsignal.weather](https://github.com/tekken5953/AS_Cloud_App/edit/master/release_note.md">에어시그널 날씨 앱 릴리즈 노트</a></h1>__
+__<h1>[에어시그널 날씨 앱 릴리즈 노트](https://github.com/tekken5953/AS_Cloud_App/blob/master/release_note.md)</a></h1>__
 
 <h2>버전</h2>
 
