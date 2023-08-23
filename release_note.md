@@ -1,7 +1,8 @@
-__<h1><a href="https://play.google.com/store/apps/details?id=app.airsignal.weather">에어시그널 날씨 앱 릴리즈 노트</a></h1>__
+__<h1><a href="https://play.google.com/store/apps/details?id=app.airsignal.weather](https://github.com/tekken5953/AS_Cloud_App/edit/master/release_note.md)">에어시그널 날씨 앱 릴리즈 노트</a></h1>__
 
 <h2>버전</h2>
-1.1.10
+
+[1.1.10](https://play.google.com/store/apps/details?id=app.airsignal.weather)
 
 <h2>날짜</h2>
 2023.08.23
