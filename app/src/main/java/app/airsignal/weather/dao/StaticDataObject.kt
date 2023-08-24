@@ -35,4 +35,9 @@ object StaticDataObject {
     const val TEXT_SCALE_DEFAULT = "default"
     const val THEME_LIGHT = "light"
     const val THEME_DARK = "dark"
+    const val SHARE_ADDR = 0
+    const val SHARE_SKY = 10
+    const val SHARE_TEMP = 20
+    const val SHARE_RAIN = 30
+    const val SHARE_HUMID = 40
 }

@@ -771,6 +771,7 @@ class SettingActivity
             cancel.isEnabled = false
             setUserLocation(this, lang)  // 다른 언어라면 db 값 변경
             radioGroup.check(radioButton.id) // 라디오 버튼 체크
+            Thread.sleep(100)
             saveLanguageChange() // 언어 설정 변경 후 어플리케이션 재시작
         }
     }

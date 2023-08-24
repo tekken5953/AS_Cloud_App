@@ -38,6 +38,7 @@ import app.airsignal.weather.dao.ErrorCode.ERROR_NOT_SERVICED_LOCATION
 import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.dao.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
+import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
 import app.airsignal.weather.dao.StaticDataObject.CO_INDEX
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.IN_COMPLETE_ADDRESS
@@ -86,7 +87,6 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.util.`object`.GetAppInfo.isPermedBackLoc
-import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.util.`object`.GetSystemInfo.isThemeNight
 import app.airsignal.weather.util.`object`.SetAppInfo.removeSingleKey
 import app.airsignal.weather.util.`object`.SetAppInfo.setCurrentLocation
@@ -209,7 +209,12 @@ class MainActivity
         addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
         addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
         addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
-        addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), getString(R.string.uv_very_high))
+        addUvLegendItem(
+            3,
+            "8 - 10",
+            getColor(R.color.uv_very_high),
+            getString(R.string.uv_very_high)
+        )
         addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
         // 스크롤 최상단으로 올리기 버튼
@@ -280,6 +285,20 @@ class MainActivity
                 sideMenuBuilder.show(sideMenuView, true)
             }
         })
+
+        // 공유하기 버튼 클릭
+        binding.mainShareIv.setOnClickListener {
+            val nonFixMsg = "현재 ${binding.mainTopBarGpsTitle.text}의 날씨는 ${binding.mainLiveTempValue.text}˚로 ${binding.mainSkyText.text}입니다. " +
+                    "강수확률은 ${binding.subAirRainP.getValue().text}이고 습도는 ${binding.subAirHumid.getValue().text}입니다."
+            val fixMsg = "에어시그널의 실시간 날씨 정보를 알고싶다면 아래 링크를 클릭하세요.\n$playStoreURL"
+            val chooserMsg = "날씨 데이터 공유하기"
+
+            val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT,"${nonFixMsg}\n\n${fixMsg}")
+
+            startActivity(Intent.createChooser(intent, chooserMsg))
+        }
     }
 
     // 햄버거 메뉴 세팅
@@ -397,10 +416,10 @@ class MainActivity
                 responseData = null
             )
 
-            val gps = if (getUserLocation(this) == LANG_EN) enAddr else addr
+            val gps = if (getUserLocation(this) == LANG_EN) enAddr?.trim() else addr.trim()
 
             binding.mainGpsTitleTv.text = gps
-            binding.mainTopBarGpsTitle.text = gps
+            binding.mainTopBarGpsTitle.text = gps!!.split(" ").last()
         }
     }
 
@@ -698,18 +717,17 @@ class MainActivity
 
                             current.temperature?.let { currentTemp ->
                                 realtime.let {
+                                    val temp = modifyCurrentTempType(
+                                        currentTemp,
+                                        realtime.temp
+                                    ).toString()
                                     binding.mainLiveTempValue.text =
-                                        modifyCurrentTempType(
-                                            currentTemp,
-                                            realtime.temp
-                                        ).toString()
+                                        temp
                                     binding.mainLiveTempUnit.text = "˚"
 
                                     binding.mainLiveTempValueC.text =
-                                        modifyCurrentTempType(
-                                            currentTemp,
-                                            realtime.temp
-                                        ).toString() + "˚"
+                                        "$temp˚"
+
                                 }
                             }
 
@@ -730,11 +748,9 @@ class MainActivity
                                     realtime.vector
                                 )
 
+                                val rainP = "${realtime.rainP!!.roundToInt()}%"
                                 binding.subAirRainP.fetchData(
-                                    "${
-                                        realtime.rainP!!
-                                            .roundToInt()
-                                    }%", R.drawable.ico_main_rain,
+                                    rainP, R.drawable.ico_main_rain,
                                     null
                                 )
                             }
@@ -821,14 +837,16 @@ class MainActivity
                                 )
                             )
 
+                            val skyText = applySkyText(
+                            this,
+                            modifyCurrentRainType(current.rainType, realtime.rainType),
+                            realtime.sky, thunder
+                            )
+                            binding.mainSkyText.text = skyText
                             // 날씨에 따라 배경화면 변경
                             applyWindowBackground(
                                 currentSun,
-                                applySkyText(
-                                    this,
-                                    modifyCurrentRainType(current.rainType, realtime.rainType),
-                                    realtime.sky, thunder
-                                )
+                                skyText
                             )
 
                             changeStrokeColor(binding.subAirPM25,
@@ -876,6 +894,7 @@ class MainActivity
                                     rh = current.humidity!!,
                                     v = current.windSpeed!!
                                 ).roundToInt().toString() + "˚"
+
 
                             binding.mainSensValueC.text =
                                 SensibleTempFormula().getSensibleTemp(
@@ -1015,7 +1034,6 @@ class MainActivity
                             when(e) {
                                 is NullPointerException -> {
                                     runOnUiThread {
-
                                         hideAllViews(error = ERROR_API_PROTOCOL)
                                     }
                                 }
@@ -1193,6 +1211,14 @@ class MainActivity
             }
             ERROR_GET_DATA -> {
                 binding.mainErrorTitle.text = getString(R.string.data_call_error)
+                binding.mainErrorRenewBtn.apply {
+                    text = getString(R.string.renew_data)
+                    // 에러 버튼 클릭
+                    setOnClickListener {
+                        mVib()
+                        getDataSingleTime(isCurrent = false)
+                    }
+                }
             }
             else -> {
                 RDBLogcat.writeErrorNotANR(this, ERROR_LOCATION_FAILED, error!!)
@@ -1491,7 +1517,7 @@ class MainActivity
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
             binding.mainGpsFix, binding.mainMotionSLideImg,
-            binding.mainRefreshData
+            binding.mainRefreshData, binding.mainShareIv
         )
 
         // 글자색 white 로 변경
@@ -1623,7 +1649,7 @@ class MainActivity
                                                 binding.mainGpsTitleTv.text = formedAddr
 
                                                 binding.mainTopBarGpsTitle.text =
-                                                    formedAddr
+                                                    formedAddr.trim().split(" ").last()
 
                                                 loadCurrentViewModelData(
                                                     loc.latitude,

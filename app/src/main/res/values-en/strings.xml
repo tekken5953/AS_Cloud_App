@@ -213,6 +213,7 @@
     <string name="background_location_explain">Location Check the Always</string>
     <string name="agree_user_data">I agree with AirSignal\'s privacy policy</string>
     <string name="background_location_reset">This is used only for notification services</string>
+    <string name="cd_data_share">Share icon</string>
 
     <string name="background_location_active">Now using</string>
     <string name="background_location_not_active">Make use</string>
