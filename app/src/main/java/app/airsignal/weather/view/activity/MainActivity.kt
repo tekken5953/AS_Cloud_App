@@ -86,6 +86,7 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.util.`object`.GetAppInfo.isPermedBackLoc
+import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.util.`object`.GetSystemInfo.isThemeNight
 import app.airsignal.weather.util.`object`.SetAppInfo.removeSingleKey
 import app.airsignal.weather.util.`object`.SetAppInfo.setCurrentLocation
@@ -97,7 +98,6 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
@@ -841,21 +841,25 @@ class MainActivity
 
                             reportViewPagerItem.clear()
                             reportArrayList.clear()
-                            // 기상특보 세팅
-                            result.summary?.let { sList ->
-                                sList.forEachIndexed { index, summary ->
-                                    val item = summary.replace("○", "")
-                                        .replace("\n", "")
-                                        .trim()
-                                    reportArrayList.add(item)
+                            if (getUserLocation(this) == LANG_EN){
+                                binding.mainWarningBox.setBackgroundColor(getColor(android.R.color.transparent))
+                            } else {
+                                // 기상특보 세팅
+                                result.summary?.let { sList ->
+                                    sList.forEachIndexed { index, summary ->
+                                        val item = summary.replace("○", "")
+                                            .replace("\n", "")
+                                            .trim()
+                                        reportArrayList.add(item)
 
-                                    if (index == sList.lastIndex) {
-                                        if (reportArrayList.size == 0) {
-                                            binding.mainWarningBox.setBackgroundColor(getColor(android.R.color.transparent))
-                                        } else {
-                                            if (!isWarned) {
-                                                warningSlideAuto()
-                                                isWarned = true
+                                        if (index == sList.lastIndex) {
+                                            if (reportArrayList.size == 0) {
+                                                binding.mainWarningBox.setBackgroundColor(getColor(android.R.color.transparent))
+                                            } else {
+                                                if (!isWarned) {
+                                                    warningSlideAuto()
+                                                    isWarned = true
+                                                }
                                             }
                                         }
                                     }
