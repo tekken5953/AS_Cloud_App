@@ -28,7 +28,7 @@
 [Play Store for Android](https://play.google.com/store/apps/details?id=app.airsignal.weather)
 
 <br/>
-<h2>Latest Version</h2>
+<h2>Latest Release</h2>
 
 ``1.1.10``
 
