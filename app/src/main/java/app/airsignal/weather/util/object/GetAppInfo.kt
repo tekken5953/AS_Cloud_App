@@ -18,6 +18,7 @@ import app.airsignal.weather.dao.StaticDataObject.IS_INIT_BACK_LOC_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.IS_PERMED_BACK_LOG
 import app.airsignal.weather.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_ADDRESS
+import app.airsignal.weather.dao.StaticDataObject.WARNING_FIXED
 import app.airsignal.weather.db.SharedPreferenceManager
 
 /**
@@ -126,5 +127,9 @@ object GetAppInfo {
 
     fun isPermedBackLoc(context: Context): Boolean {
         return SharedPreferenceManager(context).getBoolean(IS_PERMED_BACK_LOG)
+    }
+
+    fun getWarningFixed(context: Context): String {
+        return SharedPreferenceManager(context).getString(WARNING_FIXED)
     }
 }

@@ -126,4 +126,7 @@ dependencies {
 
     // Google Crashlytics
     implementation 'com.google.firebase:firebase-crashlytics'
+
+    // Warning Detail Spinner
+    implementation "com.github.skydoves:powerspinner:1.2.7"
 }

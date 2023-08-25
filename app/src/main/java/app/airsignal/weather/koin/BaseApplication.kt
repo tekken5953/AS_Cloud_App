@@ -5,10 +5,12 @@ import android.content.Context
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.repo.GetAppVersionRepo
+import app.airsignal.weather.repo.GetWarningRepo
 import app.airsignal.weather.repo.GetWeatherRepo
 import app.airsignal.weather.retrofit.HttpClient
 import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
+import app.airsignal.weather.vmodel.GetWarningViewModel
 import app.airsignal.weather.vmodel.GetWeatherViewModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.koin.android.ext.koin.androidContext
@@ -59,7 +61,9 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
         single { HttpClient }
         single { GetWeatherRepo() }
         single { GetAppVersionRepo() }
+        single { GetWarningRepo() }
         viewModel { GetAppVersionViewModel(get()) }
         viewModel { GetWeatherViewModel(get()) }
+        viewModel { GetWarningViewModel(get()) }
     }
 }

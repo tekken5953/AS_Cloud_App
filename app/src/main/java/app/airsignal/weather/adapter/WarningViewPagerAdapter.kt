@@ -82,7 +82,7 @@ class WarningViewPagerAdapter(
                         if (mList.size != 0) {
                             val intent = Intent(context, WarningDetailActivity::class.java)
                             intent.putExtra("warning", mList)
-                            intent.putExtra("address", GetAppInfo.getNotificationAddress(context))
+                            intent.putExtra("isMain", true)
                             context.startActivity(intent)
                         }
                     } catch (e: NullPointerException) {

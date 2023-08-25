@@ -89,6 +89,7 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.util.`object`.GetAppInfo.isPermedBackLoc
+import app.airsignal.weather.util.`object`.GetSystemInfo.getLocale
 import app.airsignal.weather.util.`object`.GetSystemInfo.isThemeNight
 import app.airsignal.weather.util.`object`.SetAppInfo.removeSingleKey
 import app.airsignal.weather.util.`object`.SetAppInfo.setCurrentLocation
@@ -347,6 +348,7 @@ class MainActivity
             val id = sideMenuView.findViewById<TextView>(R.id.navHeaderUserId)
             val weather = sideMenuView.findViewById<TextView>(R.id.navMenuWeather)
             val setting = sideMenuView.findViewById<TextView>(R.id.navMenuSetting)
+            val warning = sideMenuView.findViewById<TextView>(R.id.navMenuWarning)
             val headerTr = sideMenuView.findViewById<TableRow>(R.id.headerTr)
             val adView = sideMenuView.findViewById<AdView>(R.id.navMenuAdview)
 
@@ -354,6 +356,17 @@ class MainActivity
                 setBackPressed(cancel)
                 setUserData(profile, id)
                 AdViewClass(this@MainActivity).loadAdView(adView)
+            }
+
+            if (getUserLocation(this) == LANG_EN ||
+                    getLocale(this) == Locale.ENGLISH
+            ) {
+                warning.visibility = GONE
+            } else {
+                warning.visibility = VISIBLE
+                warning.setOnClickListener {
+                    EnterPageUtil(this@MainActivity).toWarning()
+                }
             }
 
             headerTr.setOnClickListener {
@@ -698,7 +711,6 @@ class MainActivity
         }
     }
 
-
     // 뷰모델에서 Observing 한 데이터 결과 적용
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel(): MainActivity {
@@ -801,11 +813,11 @@ class MainActivity
                             }
 
                             updateAirQData(
-                                PM2p5_INDEX, getString(R.string.pm2_5), "PM2.5",
+                                PM2p5_INDEX, getString(R.string.pm2_5_full), "PM2.5",
                                 "㎍/㎥", air.pm25Value!!.toInt().toString()
                             )
                             updateAirQData(
-                                PM10_INDEX, getString(R.string.pm10), "PM10",
+                                PM10_INDEX, getString(R.string.pm10_full), "PM10",
                                 "㎍/㎥", air.pm10Value!!.toInt().toString()
                             )
                             updateAirQData(
@@ -826,7 +838,7 @@ class MainActivity
                             )
 
                             applyAirQView(
-                                "PM2.5", getString(R.string.pm2_5),
+                                "PM2.5", getString(R.string.pm2_5_full),
                                 air.pm25Value.toInt().toString(), "㎍/m3"
                             )
 
@@ -922,8 +934,8 @@ class MainActivity
                                 }
                             }
 
-                            binding.subAirPM25.text = "${getString(R.string.pm2_5)}   ${air.pm25Value.toInt()}"
-                            binding.subAirPM10.text = "${getString(R.string.pm10)}   ${air.pm10Value.toInt()}"
+                            binding.subAirPM25.text = "${getString(R.string.pm2_5_full)}   ${air.pm25Value.toInt()}"
+                            binding.subAirPM10.text = "${getString(R.string.pm10_full)}   ${air.pm10Value.toInt()}"
 
                             binding.mainSensTitle.text = getString(R.string.sens_temp)
                             binding.mainSensValue.text =

@@ -137,6 +137,8 @@
     <string name="rainPer">Rain</string>
     <string name="pm2.5">PM2.5</string>
     <string name="pm10">PM10</string>
+    <string name="pm2.5_full">ultrafine dust</string>
+    <string name="pm10_full">fine dust</string>
     <string name="co">CO</string>
     <string name="so2">SO2</string>
     <string name="no2">NO2</string>
@@ -229,4 +231,5 @@
     <string name="first_perm_tr2">Location is processed even when the app is not in use to send more accurate weather notifications.</string>
     <string name="first_perm_tr3">Please accept the location processing by pressing the \'agree\' button to use the app.</string>
     <string name="first_perm_tr4">You can stop collecting and using location from app settings or system location permissions.</string>
+    <string name="choose_region">지역을 선택하세요</string>
 </resources>
