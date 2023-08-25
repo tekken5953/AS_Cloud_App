@@ -136,6 +136,10 @@
     <string name="so2">아황산가스</string>
     <string name="no2">이산화질소</string>
     <string name="o3">오존</string>
+    <string name="o3_full">오존</string>
+    <string name="so2_full">아황산가스</string>
+    <string name="no2_full">이산화질소</string>
+    <string name="co_full">일산화탄소</string>
     <string name="add_new_address">새 주소를 등록하세요</string>
     <string name="input_address">주소를 입력해주세요</string>
     <string name="last_software">최신 소프트웨어입니다.</string>

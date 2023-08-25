@@ -821,19 +821,19 @@ class MainActivity
                                 "㎍/㎥", air.pm10Value!!.toInt().toString()
                             )
                             updateAirQData(
-                                CO_INDEX, getString(R.string.co), "CO",
+                                CO_INDEX, getString(R.string.co_full), "CO",
                                 "ppm", air.coValue!!.toString()
                             )
                             updateAirQData(
-                                SO2_INDEX, getString(R.string.so2), "SO2",
+                                SO2_INDEX, getString(R.string.so2_full), "SO2",
                                 "ppm", air.so2Value!!.toString()
                             )
                             updateAirQData(
-                                NO2_INDEX, getString(R.string.no2), "NO2",
+                                NO2_INDEX, getString(R.string.no2_full), "NO2",
                                 "ppm", air.no2Value!!.toString()
                             )
                             updateAirQData(
-                                O3_INDEX, getString(R.string.o3), "O3",
+                                O3_INDEX, getString(R.string.o3_full), "O3",
                                 "ppm", air.o3Value!!.toString()
                             )
 
