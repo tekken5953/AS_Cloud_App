@@ -7,7 +7,7 @@ import timber.log.Timber
 
 open class BaseViewModel(msg: String?) : ViewModel() {
     private var message = msg
-    var job: Job? = null
+    private var job: Job? = null
 
     override fun onCleared() {
         super.onCleared()

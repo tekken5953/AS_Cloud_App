@@ -205,10 +205,7 @@
     <string name="cd_data_share">공유하기</string>
 
 
-    <string name="background_location">백그라운드 위치 권한</string>
-    <string name="background_location_explain">권한 -> 위치 -> 허용을\n체크해주세요</string>
     <string name="agree_user_data">에어시그널의 개인정보 처리방침에 동의합니다.</string>
-    <string name="background_location_reset">이 권한은 알림 서비스에만 사용됩니다</string>
     <string name="background_location_active">사용중</string>
     <string name="background_location_not_active">사용하기</string>
     <string name="do_active">사용하기</string>
