@@ -116,10 +116,7 @@ class SettingActivity
         val lastLogin = applyLastLogin()
 
         // 뒤로가기 버튼 클릭
-        binding.settingBack.setOnClickListener {
-//            VibrateUtil(this).make(20)
-            goMain()
-        }
+        binding.settingBack.setOnClickListener { goMain() }
 
         // 로그아웃 버튼 클릭
         binding.settingLogOut.setOnClickListener {

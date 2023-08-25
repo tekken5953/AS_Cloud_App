@@ -35,6 +35,7 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getCurrentLocation
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserFontScale
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
+import app.airsignal.weather.util.`object`.GetSystemInfo.getLocale
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
 import app.airsignal.weather.util.`object`.SetSystemInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -377,8 +378,8 @@ class SearchDialog(
     }
 
     private fun isKorea(): Boolean {
-        val systemLang = Locale.getDefault().language
-        return getUserLocation(activity) == LANG_KR || systemLang == "ko"
+        val systemLang = getLocale(activity)
+        return getUserLocation(activity) == LANG_KR || systemLang == Locale.KOREA
     }
 
     // 리스트 아이템 추가
@@ -424,9 +425,9 @@ class SearchDialog(
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = super.getView(position, convertView, parent) as TextView
             val fullText = getItem(position)!!
-//            val editableText = convertAddressInv(getItem(position)!!).lowercase()
+            val editableText = fullText.lowercase()
 
-            val startIndex = fullText.indexOf(editText.text.toString())
+            val startIndex = editableText.indexOf(editText.text.toString().lowercase())
 
             if (startIndex != -1) {
                 val coloredText = android.text.SpannableString(getItem(position))

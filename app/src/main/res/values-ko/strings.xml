@@ -230,5 +230,6 @@
     <string name="first_perm_tr3">앱 사용을 위해 \'동의\' 버튼을 눌러 위치 정보 처리에 동의해주세요.</string>
     <string name="first_perm_tr4">날씨 앱 설정 혹은 앱 위치 권한에서 위치 정보 수집 및 사용을 중지할 수 있습니다.</string>
     <string name="choose_region">지역을 선택하세요</string>
+    <string name="pined">고정됨</string>
 
 </resources>

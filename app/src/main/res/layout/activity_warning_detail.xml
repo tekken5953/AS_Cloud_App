@@ -8,8 +8,8 @@
         android:id="@+id/warningMainLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="true"
         android:background="@color/theme_view_color"
+        android:clickable="true"
         tools:context=".view.activity.WarningDetailActivity">
 
         <RelativeLayout
@@ -122,6 +122,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="16dp"
+            android:clipToPadding="false"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"

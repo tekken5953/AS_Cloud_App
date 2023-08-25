@@ -236,4 +236,5 @@
     <string name="first_perm_tr3">Please accept the location processing by pressing the \'agree\' button to use the app.</string>
     <string name="first_perm_tr4">You can stop collecting and using location from app settings or system location permissions.</string>
     <string name="choose_region">지역을 선택하세요</string>
+    <string name="pined">고정됨</string>
 </resources>
