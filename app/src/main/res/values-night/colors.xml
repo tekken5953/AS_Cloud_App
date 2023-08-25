@@ -5,8 +5,8 @@
     <color name="theme_view_color">#262626</color>
     <color name="theme_text_color">#FFFFFF</color>
     <color name="theme_sub_color">#9C9C9C</color>
-    <color name="theme_line_color">#303236</color>
-    <color name="theme_box_solid_color">#2A2C2F</color>
+    <color name="theme_line_color">#44474D</color>
+    <color name="theme_box_solid_color">#303136</color>
     <color name="theme_box_stroke_color">#303236</color>
     <color name="theme_main_bg_color">#262626</color>
     <color name="theme_pm_title_bg_color">#9C9C9C</color>

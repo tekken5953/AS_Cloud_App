@@ -13,7 +13,8 @@ import app.airsignal.weather.R
 
 class MakeDoubleDialog(private val context: Context) {
     val builder = Dialog(context)
-    fun make(titleString: String, applyString: String, cancelString: String,applyColor: Int): AppCompatButton {
+    fun make(titleString: String, applyString: String, cancelString: String, applyColor: Int)
+            : Pair<AppCompatButton, AppCompatButton> {
         val view = LayoutInflater.from(context)
             .inflate(R.layout.dialog_alert_double_btn, null)
         builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -36,7 +37,7 @@ class MakeDoubleDialog(private val context: Context) {
 
         builder.show()
 
-        return apply
+        return Pair(apply, cancel)
     }
 
     fun dismiss() {

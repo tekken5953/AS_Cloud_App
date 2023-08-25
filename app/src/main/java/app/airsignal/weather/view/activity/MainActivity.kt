@@ -43,6 +43,7 @@ import app.airsignal.weather.dao.StaticDataObject.CO_INDEX
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.IN_COMPLETE_ADDRESS
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
+import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.dao.StaticDataObject.NO2_INDEX
 import app.airsignal.weather.dao.StaticDataObject.NOT_SHOWING_LOADING_FLOAT
 import app.airsignal.weather.dao.StaticDataObject.O3_INDEX
@@ -77,6 +78,7 @@ import app.airsignal.weather.util.`object`.DataTypeParser.isRainyDay
 import app.airsignal.weather.util.`object`.DataTypeParser.millsToString
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentRainType
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentTempType
+import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.util.`object`.GetAppInfo.getEntireSun
@@ -288,16 +290,52 @@ class MainActivity
 
         // 공유하기 버튼 클릭
         binding.mainShareIv.setOnClickListener {
-            val nonFixMsg = "현재 ${binding.mainTopBarGpsTitle.text}의 날씨는 ${binding.mainLiveTempValue.text}˚로 ${binding.mainSkyText.text}입니다. " +
-                    "강수확률은 ${binding.subAirRainP.getValue().text}이고 습도는 ${binding.subAirHumid.getValue().text}입니다."
-            val fixMsg = "에어시그널의 실시간 날씨 정보를 알고싶다면 아래 링크를 클릭하세요.\n$playStoreURL"
-            val chooserMsg = "날씨 데이터 공유하기"
+            val doubleDialog = MakeDoubleDialog(this)
+            if (getUserLocation(this) == LANG_EN) {
+                doubleDialog.make(
+                        "Share with in English?",
+                        "Yes",
+                        "With in Korean",
+                        R.color.main_blue_color
+                    ).apply {
+                        this.first.setOnClickListener {
+                            doubleDialog.dismiss()
+                            addShareMsg(LANG_EN)
+                        }
+                        this.second.setOnClickListener {
+                            doubleDialog.dismiss()
+                            addShareMsg(LANG_KR)
+                        }
+                    }
+            } else {
+                doubleDialog.dismiss()
+                addShareMsg(LANG_KR)
+            }
+        }
+    }
 
-            val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
-            intent.type = "text/plain"
-            intent.putExtra(Intent.EXTRA_TEXT,"${nonFixMsg}\n\n${fixMsg}")
+    // 공유하기 언어별 대응
+    private fun addShareMsg(locale: String) {
+        val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
+        intent.type = "text/plain"
+        if (locale == LANG_EN) {
+            intent.putExtra(
+                Intent.EXTRA_TEXT, "${
+                    "The weather ${binding.mainTopBarGpsTitle.text} is ${binding.mainLiveTempValue.text}˚ " +
+                            "${translateSkyText(binding.mainSkyText.text.toString())}. The chance of rain is ${binding.subAirRainP.getValue().text}," +
+                            " and the humidity is ${binding.subAirHumid.getValue().text}"
+                }\n\n${"Click the link for real-time weather information on Airsignal\n$playStoreURL"}"
+            )
+            startActivity(Intent.createChooser(intent, "Share weather data"))
 
-            startActivity(Intent.createChooser(intent, chooserMsg))
+        } else {
+            intent.putExtra(
+                Intent.EXTRA_TEXT, "${
+                    "현재 ${binding.mainTopBarGpsTitle.text}의 날씨는 ${binding.mainLiveTempValue.text}˚로 ${binding.mainSkyText.text}입니다. " +
+                            "강수확률은 ${binding.subAirRainP.getValue().text}이고 습도는 ${binding.subAirHumid.getValue().text}입니다."
+                }\n\n${"에어시그널의 실시간 날씨 정보를 알고싶다면 아래 링크를 클릭하세요.\n$playStoreURL"}"
+            )
+            startActivity(Intent.createChooser(intent, "날씨 데이터 공유하기"))
         }
     }
 
