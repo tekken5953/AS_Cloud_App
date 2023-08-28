@@ -215,8 +215,8 @@
             android:layout_height="wrap_content"
             android:alpha="0"
             android:layout_marginEnd="15dp"
-            app:layout_constraintStart_toStartOf="@+id/topBarLinear"
-            app:layout_constraintEnd_toEndOf="@+id/topBarLinear"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/topBarLinear"
             app:layout_constraintBottom_toBottomOf="@+id/topBarLinear"/>
 
@@ -488,9 +488,9 @@
             android:layout_height="wrap_content"
             android:alpha="1"
             android:layout_marginEnd="15dp"
-            app:layout_constraintStart_toEndOf="@+id/mainSkyImg"
             app:layout_constraintTop_toTopOf="@+id/topBarLinear"
-            app:layout_constraintBottom_toBottomOf="@+id/topBarLinear"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <Constraint
             android:id="@+id/mainMotionLinear"

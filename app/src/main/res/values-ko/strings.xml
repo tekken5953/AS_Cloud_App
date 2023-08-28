@@ -144,6 +144,7 @@
     <string name="input_address">주소를 입력해주세요</string>
     <string name="last_software">최신 소프트웨어입니다.</string>
     <string name="not_latest_version">최신 버전이 있습니다</string>
+    <string name="not_latest_go_to_store">최신 버전이 있습니다.\n스토어로 이동하시겠습니까?</string>
     <string name="fail_to_get_version">앱 정보를 불러오는데 실패했습니다</string>
     <string name="list_of_open_source">오픈소스 라이센스 목록</string>
     <string name="good">좋음</string>
@@ -231,5 +232,6 @@
     <string name="first_perm_tr4">날씨 앱 설정 혹은 앱 위치 권한에서 위치 정보 수집 및 사용을 중지할 수 있습니다.</string>
     <string name="choose_region">지역을 선택하세요</string>
     <string name="pined">고정됨</string>
+    <string name="naver_disconnect">네이버 로그인 서비스와의 연동을 해제하였습니다</string>
 
 </resources>

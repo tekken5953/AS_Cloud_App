@@ -151,6 +151,7 @@
     <string name="input_address">Input address</string>
     <string name="last_software">Latest software version</string>
     <string name="not_latest_version">Not the latest software version</string>
+    <string name="not_latest_go_to_store">Not the latest software version\nwant to go to the play store?</string>
     <string name="fail_to_get_version">Fail to get software version</string>
     <string name="list_of_open_source">List of opensource</string>
     <string name="good">Good</string>
@@ -235,6 +236,7 @@
     <string name="first_perm_tr2">Location is processed even when the app is not in use to send more accurate weather notifications.</string>
     <string name="first_perm_tr3">Please accept the location processing by pressing the \'agree\' button to use the app.</string>
     <string name="first_perm_tr4">You can stop collecting and using location from app settings or system location permissions.</string>
-    <string name="choose_region">지역을 선택하세요</string>
-    <string name="pined">고정됨</string>
+    <string name="choose_region">Select a region</string>
+    <string name="pined">Fixed</string>
+    <string name="naver_disconnect">Disconnect from Naver</string>
 </resources>

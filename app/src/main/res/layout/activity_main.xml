@@ -37,8 +37,8 @@
             android:overScrollMode="ifContentScrolls"
             android:scrollbars="none"
             android:layout_marginEnd="15dp"
-            app:layout_constraintStart_toStartOf="@+id/topBarLinear"
-            app:layout_constraintEnd_toEndOf="@+id/topBarLinear"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/topBarLinear"
             app:layout_constraintBottom_toBottomOf="@+id/topBarLinear" >
 

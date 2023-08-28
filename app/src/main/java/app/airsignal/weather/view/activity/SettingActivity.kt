@@ -57,6 +57,7 @@ import app.airsignal.weather.util.`object`.GetAppInfo.isPermedBackLoc
 import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionCode
 import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionName
 import app.airsignal.weather.util.`object`.GetSystemInfo.goToPlayStore
+import app.airsignal.weather.util.`object`.SetAppInfo.fullScreenMode
 import app.airsignal.weather.util.`object`.SetAppInfo.removeAllKeys
 import app.airsignal.weather.util.`object`.SetAppInfo.setInitBackLocPermission
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserFontScale
@@ -107,6 +108,7 @@ class SettingActivity
 
         initBinding()
 
+        fullScreenMode(this)
         setStatusBar(this)
 
         if (isInit) {
@@ -137,19 +139,21 @@ class SettingActivity
                 apply.text = getString(R.string.setting_logout)
 
                 apply.setOnClickListener {
+                    builder.dismiss()
                     CoroutineScope(Dispatchers.IO).launch {
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
                             LOGIN_KAKAO -> {
 //                                KakaoLogin(this@SettingActivity).logout(email)
-                                KakaoLogin(this@SettingActivity).disconnectFromKakao()
+                                KakaoLogin(this@SettingActivity).disconnectFromKakao(binding.settingPb)
                             }
                             LOGIN_NAVER -> {
 //                                NaverLogin(this@SettingActivity).logout()
-                                NaverLogin(this@SettingActivity).disconnectFromNaver()
+                                NaverLogin(this@SettingActivity).disconnectFromNaver(binding.settingPb)
                             }
                             LOGIN_GOOGLE -> {
-                                GoogleLogin(this@SettingActivity).logout()
+                                GoogleLogin(this@SettingActivity).logout(binding.settingPb)
                             }
+                            else -> {}
                         }
                         delay(100)
 

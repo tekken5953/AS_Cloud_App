@@ -163,6 +163,7 @@ class MainActivity
         addSideMenu()
         getDataSingleTime(isCurrent = false)
         Thread.sleep(100)
+        AdViewClass(this).loadAdView(binding.nestedAdView)  // adView 생성
         binding.nestedAdView.resume()
     }
 
@@ -198,6 +199,7 @@ class MainActivity
         }
 
         initBinding()
+
         binding.dataVM = getDataViewModel
 
         initializing()
@@ -526,8 +528,6 @@ class MainActivity
         }
 
         binding.mainUvCollapseRv.isClickable = false
-
-        AdViewClass(this).loadAdView(binding.nestedAdView)  // adView 생성
 
         // adView 닫기 클릭
         binding.adViewCancelIv.setOnClickListener {

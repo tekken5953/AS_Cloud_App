@@ -2,6 +2,7 @@ package app.airsignal.weather.login
 
 import android.app.Activity
 import android.content.Intent
+import android.widget.ProgressBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.dao.IgnoredKeyFile.googleDefaultClientId
@@ -12,6 +13,7 @@ import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginPref
 import app.airsignal.weather.util.EnterPageUtil
+import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserEmail
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserId
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLoginPlatform
@@ -56,11 +58,13 @@ class GoogleLogin(private val activity: Activity) {
     }
 
     /** 로그아웃 진행 + 로그아웃 로그 저장 **/
-    fun logout() {
+    fun logout(pb: ProgressBar?) {
         client.signOut()
             .addOnCompleteListener {
                 saveLogoutStatus()
-                EnterPageUtil(activity).toLogin()
+                pb?.let {
+                    RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = it)
+                }
             }
             .addOnCanceledListener {
                 app.airsignal.weather.view.ToastUtils(activity)

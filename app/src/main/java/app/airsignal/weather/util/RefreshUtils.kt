@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import kotlin.system.exitProcess
 
 class RefreshUtils(private val context: Context) {
@@ -24,7 +25,7 @@ class RefreshUtils(private val context: Context) {
     }
 
     /** sec 초 이후에 액티비티 갱신 **/
-    fun refreshActivityAfterSecond(sec: Int, pbLayout: LinearLayout?) {
+    fun refreshActivityAfterSecond(sec: Int, pbLayout: ProgressBar?) {
         pbLayout?.let {
             it.visibility = View.VISIBLE
         }
