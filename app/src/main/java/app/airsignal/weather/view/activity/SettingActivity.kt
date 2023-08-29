@@ -116,10 +116,7 @@ class SettingActivity
         val lastLogin = applyLastLogin()
 
         // 뒤로가기 버튼 클릭
-        binding.settingBack.setOnClickListener {
-//            VibrateUtil(this).make(20)
-            goMain()
-        }
+        binding.settingBack.setOnClickListener { goMain() }
 
         // 로그아웃 버튼 클릭
         binding.settingLogOut.setOnClickListener {
@@ -140,19 +137,21 @@ class SettingActivity
                 apply.text = getString(R.string.setting_logout)
 
                 apply.setOnClickListener {
+                    builder.dismiss()
                     CoroutineScope(Dispatchers.IO).launch {
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
                             LOGIN_KAKAO -> {
 //                                KakaoLogin(this@SettingActivity).logout(email)
-                                KakaoLogin(this@SettingActivity).disconnectFromKakao()
+                                KakaoLogin(this@SettingActivity).disconnectFromKakao(binding.settingPb)
                             }
                             LOGIN_NAVER -> {
 //                                NaverLogin(this@SettingActivity).logout()
-                                NaverLogin(this@SettingActivity).disconnectFromNaver()
+                                NaverLogin(this@SettingActivity).disconnectFromNaver(binding.settingPb)
                             }
                             LOGIN_GOOGLE -> {
-                                GoogleLogin(this@SettingActivity).logout()
+                                GoogleLogin(this@SettingActivity).logout(binding.settingPb)
                             }
+                            else -> {}
                         }
                         delay(100)
 
@@ -182,7 +181,7 @@ class SettingActivity
             val cancel: ImageView = themeView.findViewById(R.id.changeThemeBack)
 
             ShowDialogClass(this)
-                .setBackPressRefresh(themeView.findViewById(R.id.changeThemeBack))
+                .setBackPressed(themeView.findViewById(R.id.changeThemeBack))
                 .show(themeView, true)
 
             // 현재 저장된 테마에 따라서 라디오버튼 체크
@@ -316,7 +315,7 @@ class SettingActivity
             val rg = scaleView.findViewById<RadioGroup>(R.id.changeScaleRadioGroup)
 
             ShowDialogClass(this)
-                .setBackPressRefresh(back)
+                .setBackPressed(back)
                 .show(scaleView, true)
 
             // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크
@@ -771,6 +770,7 @@ class SettingActivity
             cancel.isEnabled = false
             setUserLocation(this, lang)  // 다른 언어라면 db 값 변경
             radioGroup.check(radioButton.id) // 라디오 버튼 체크
+            Thread.sleep(100)
             saveLanguageChange() // 언어 설정 변경 후 어플리케이션 재시작
         }
     }

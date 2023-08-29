@@ -80,11 +80,27 @@
         android:textSize="17sp" />
 
     <TextView
-        android:id="@+id/navMenuSetting"
+        android:id="@+id/navMenuWarning"
         style="@style/basicTextView"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_below="@+id/navMenuWeather"
+        android:layout_marginTop="30dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:gravity="start|center_vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:visibility="gone"
+        android:text="@string/warning_title"
+        android:textColor="@color/theme_text_color"
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/navMenuSetting"
+        style="@style/basicTextView"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/navMenuWarning"
         android:layout_marginTop="20dp"
         android:background="?android:attr/selectableItemBackground"
         android:gravity="start|center_vertical"

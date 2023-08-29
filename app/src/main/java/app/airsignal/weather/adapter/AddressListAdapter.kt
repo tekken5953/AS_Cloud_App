@@ -20,6 +20,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
+import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
@@ -76,7 +77,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<AdapterMo
         @SuppressLint("InflateParams")
         fun bind(dao: AdapterModel.AddressListItem) {
 
-            address.text = if (!isKorea()) dao.en else dao.kr
+            address.text = if (isEnglish()) dao.en else dao.kr
 
             if (visible) {
                 delete.animate().alpha(1f).duration = 500
@@ -99,7 +100,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<AdapterMo
                 val apply = view.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
                 val title = view.findViewById<TextView>(R.id.alertDoubleTitle)
 
-                if (!isKorea()) {
+                if (isEnglish()) {
                     val span = SpannableStringBuilder("Delete ${address.text}?")
                     span.setSpan(
                         ForegroundColorSpan(
@@ -180,8 +181,8 @@ class AddressListAdapter(private val context: Context, list: ArrayList<AdapterMo
         return visible
     }
 
-    fun isKorea(): Boolean {
+    fun isEnglish(): Boolean {
         val systemLang = Locale.getDefault().language
-        return getUserLocation(context) == LANG_KR || systemLang == "ko"
+        return getUserLocation(context) == LANG_EN || systemLang == "en"
     }
 }

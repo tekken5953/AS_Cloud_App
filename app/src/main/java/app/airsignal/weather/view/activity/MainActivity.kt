@@ -38,10 +38,12 @@ import app.airsignal.weather.dao.ErrorCode.ERROR_NOT_SERVICED_LOCATION
 import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.dao.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
+import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
 import app.airsignal.weather.dao.StaticDataObject.CO_INDEX
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.IN_COMPLETE_ADDRESS
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
+import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.dao.StaticDataObject.NO2_INDEX
 import app.airsignal.weather.dao.StaticDataObject.NOT_SHOWING_LOADING_FLOAT
 import app.airsignal.weather.dao.StaticDataObject.O3_INDEX
@@ -76,6 +78,7 @@ import app.airsignal.weather.util.`object`.DataTypeParser.isRainyDay
 import app.airsignal.weather.util.`object`.DataTypeParser.millsToString
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentRainType
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentTempType
+import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.util.`object`.GetAppInfo.getEntireSun
@@ -86,6 +89,7 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.util.`object`.GetAppInfo.isPermedBackLoc
+import app.airsignal.weather.util.`object`.GetSystemInfo.getLocale
 import app.airsignal.weather.util.`object`.GetSystemInfo.isThemeNight
 import app.airsignal.weather.util.`object`.SetAppInfo.removeSingleKey
 import app.airsignal.weather.util.`object`.SetAppInfo.setCurrentLocation
@@ -97,7 +101,6 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
@@ -160,6 +163,7 @@ class MainActivity
         addSideMenu()
         getDataSingleTime(isCurrent = false)
         Thread.sleep(100)
+        AdViewClass(this).loadAdView(binding.nestedAdView)  // adView 생성
         binding.nestedAdView.resume()
     }
 
@@ -195,6 +199,7 @@ class MainActivity
         }
 
         initBinding()
+
         binding.dataVM = getDataViewModel
 
         initializing()
@@ -209,7 +214,12 @@ class MainActivity
         addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
         addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
         addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
-        addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), getString(R.string.uv_very_high))
+        addUvLegendItem(
+            3,
+            "8 - 10",
+            getColor(R.color.uv_very_high),
+            getString(R.string.uv_very_high)
+        )
         addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
         // 스크롤 최상단으로 올리기 버튼
@@ -280,6 +290,56 @@ class MainActivity
                 sideMenuBuilder.show(sideMenuView, true)
             }
         })
+
+        // 공유하기 버튼 클릭
+        binding.mainShareIv.setOnClickListener {
+            val doubleDialog = MakeDoubleDialog(this)
+            if (getUserLocation(this) == LANG_EN) {
+                doubleDialog.make(
+                        "Share with in English?",
+                        "Yes",
+                        "With in Korean",
+                        R.color.main_blue_color
+                    ).apply {
+                        this.first.setOnClickListener {
+                            doubleDialog.dismiss()
+                            addShareMsg(LANG_EN)
+                        }
+                        this.second.setOnClickListener {
+                            doubleDialog.dismiss()
+                            addShareMsg(LANG_KR)
+                        }
+                    }
+            } else {
+                doubleDialog.dismiss()
+                addShareMsg(LANG_KR)
+            }
+        }
+    }
+
+    // 공유하기 언어별 대응
+    private fun addShareMsg(locale: String) {
+        val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
+        intent.type = "text/plain"
+        if (locale == LANG_EN) {
+            intent.putExtra(
+                Intent.EXTRA_TEXT, "${
+                    "The weather ${binding.mainTopBarGpsTitle.text} is ${binding.mainLiveTempValue.text}˚ " +
+                            "${translateSkyText(binding.mainSkyText.text.toString())}. The chance of rain is ${binding.subAirRainP.getValue().text}," +
+                            " and the humidity is ${binding.subAirHumid.getValue().text}"
+                }\n\n${"Click the link for real-time weather information on Airsignal\n$playStoreURL"}"
+            )
+            startActivity(Intent.createChooser(intent, "Share weather data"))
+
+        } else {
+            intent.putExtra(
+                Intent.EXTRA_TEXT, "${
+                    "현재 ${binding.mainTopBarGpsTitle.text}의 날씨는 ${binding.mainLiveTempValue.text}˚로 ${binding.mainSkyText.text}입니다. " +
+                            "강수확률은 ${binding.subAirRainP.getValue().text}이고 습도는 ${binding.subAirHumid.getValue().text}입니다."
+                }\n\n${"에어시그널의 실시간 날씨 정보를 알고싶다면 아래 링크를 클릭하세요.\n$playStoreURL"}"
+            )
+            startActivity(Intent.createChooser(intent, "날씨 데이터 공유하기"))
+        }
     }
 
     // 햄버거 메뉴 세팅
@@ -290,6 +350,7 @@ class MainActivity
             val id = sideMenuView.findViewById<TextView>(R.id.navHeaderUserId)
             val weather = sideMenuView.findViewById<TextView>(R.id.navMenuWeather)
             val setting = sideMenuView.findViewById<TextView>(R.id.navMenuSetting)
+            val warning = sideMenuView.findViewById<TextView>(R.id.navMenuWarning)
             val headerTr = sideMenuView.findViewById<TableRow>(R.id.headerTr)
             val adView = sideMenuView.findViewById<AdView>(R.id.navMenuAdview)
 
@@ -297,6 +358,17 @@ class MainActivity
                 setBackPressed(cancel)
                 setUserData(profile, id)
                 AdViewClass(this@MainActivity).loadAdView(adView)
+            }
+
+            if (getUserLocation(this) == LANG_EN ||
+                    getLocale(this) == Locale.ENGLISH
+            ) {
+                warning.visibility = GONE
+            } else {
+                warning.visibility = VISIBLE
+                warning.setOnClickListener {
+                    EnterPageUtil(this@MainActivity).toWarning()
+                }
             }
 
             headerTr.setOnClickListener {
@@ -397,10 +469,10 @@ class MainActivity
                 responseData = null
             )
 
-            val gps = if (getUserLocation(this) == LANG_EN) enAddr else addr
+            val gps = if (getUserLocation(this) == LANG_EN) enAddr?.trim() else addr.trim()
 
             binding.mainGpsTitleTv.text = gps
-            binding.mainTopBarGpsTitle.text = gps
+            binding.mainTopBarGpsTitle.text = gps!!.split(" ").last()
         }
     }
 
@@ -456,8 +528,6 @@ class MainActivity
         }
 
         binding.mainUvCollapseRv.isClickable = false
-
-        AdViewClass(this).loadAdView(binding.nestedAdView)  // adView 생성
 
         // adView 닫기 클릭
         binding.adViewCancelIv.setOnClickListener {
@@ -641,7 +711,6 @@ class MainActivity
         }
     }
 
-
     // 뷰모델에서 Observing 한 데이터 결과 적용
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel(): MainActivity {
@@ -698,18 +767,17 @@ class MainActivity
 
                             current.temperature?.let { currentTemp ->
                                 realtime.let {
+                                    val temp = modifyCurrentTempType(
+                                        currentTemp,
+                                        realtime.temp
+                                    ).toString()
                                     binding.mainLiveTempValue.text =
-                                        modifyCurrentTempType(
-                                            currentTemp,
-                                            realtime.temp
-                                        ).toString()
+                                        temp
                                     binding.mainLiveTempUnit.text = "˚"
 
                                     binding.mainLiveTempValueC.text =
-                                        modifyCurrentTempType(
-                                            currentTemp,
-                                            realtime.temp
-                                        ).toString() + "˚"
+                                        "$temp˚"
+
                                 }
                             }
 
@@ -730,11 +798,9 @@ class MainActivity
                                     realtime.vector
                                 )
 
+                                val rainP = "${realtime.rainP!!.roundToInt()}%"
                                 binding.subAirRainP.fetchData(
-                                    "${
-                                        realtime.rainP!!
-                                            .roundToInt()
-                                    }%", R.drawable.ico_main_rain,
+                                    rainP, R.drawable.ico_main_rain,
                                     null
                                 )
                             }
@@ -747,32 +813,32 @@ class MainActivity
                             }
 
                             updateAirQData(
-                                PM2p5_INDEX, getString(R.string.pm2_5), "PM2.5",
+                                PM2p5_INDEX, getString(R.string.pm2_5_full), "PM2.5",
                                 "㎍/㎥", air.pm25Value!!.toInt().toString()
                             )
                             updateAirQData(
-                                PM10_INDEX, getString(R.string.pm10), "PM10",
+                                PM10_INDEX, getString(R.string.pm10_full), "PM10",
                                 "㎍/㎥", air.pm10Value!!.toInt().toString()
                             )
                             updateAirQData(
-                                CO_INDEX, getString(R.string.co), "CO",
+                                CO_INDEX, getString(R.string.co_full), "CO",
                                 "ppm", air.coValue!!.toString()
                             )
                             updateAirQData(
-                                SO2_INDEX, getString(R.string.so2), "SO2",
+                                SO2_INDEX, getString(R.string.so2_full), "SO2",
                                 "ppm", air.so2Value!!.toString()
                             )
                             updateAirQData(
-                                NO2_INDEX, getString(R.string.no2), "NO2",
+                                NO2_INDEX, getString(R.string.no2_full), "NO2",
                                 "ppm", air.no2Value!!.toString()
                             )
                             updateAirQData(
-                                O3_INDEX, getString(R.string.o3), "O3",
+                                O3_INDEX, getString(R.string.o3_full), "O3",
                                 "ppm", air.o3Value!!.toString()
                             )
 
                             applyAirQView(
-                                "PM2.5", getString(R.string.pm2_5),
+                                "PM2.5", getString(R.string.pm2_5_full),
                                 air.pm25Value.toInt().toString(), "㎍/m3"
                             )
 
@@ -821,14 +887,16 @@ class MainActivity
                                 )
                             )
 
+                            val skyText = applySkyText(
+                            this,
+                            modifyCurrentRainType(current.rainType, realtime.rainType),
+                            realtime.sky, thunder
+                            )
+                            binding.mainSkyText.text = skyText
                             // 날씨에 따라 배경화면 변경
                             applyWindowBackground(
                                 currentSun,
-                                applySkyText(
-                                    this,
-                                    modifyCurrentRainType(current.rainType, realtime.rainType),
-                                    realtime.sky, thunder
-                                )
+                                skyText
                             )
 
                             changeStrokeColor(binding.subAirPM25,
@@ -841,29 +909,33 @@ class MainActivity
 
                             reportViewPagerItem.clear()
                             reportArrayList.clear()
-                            // 기상특보 세팅
-                            result.summary?.let { sList ->
-                                sList.forEachIndexed { index, summary ->
-                                    val item = summary.replace("○", "")
-                                        .replace("\n", "")
-                                        .trim()
-                                    reportArrayList.add(item)
+                            if (getUserLocation(this) == LANG_EN){
+                                binding.mainWarningBox.setBackgroundColor(getColor(android.R.color.transparent))
+                            } else {
+                                // 기상특보 세팅
+                                result.summary?.let { sList ->
+                                    sList.forEachIndexed { index, summary ->
+                                        val item = summary.replace("○", "")
+                                            .replace("\n", "")
+                                            .trim()
+                                        reportArrayList.add(item)
 
-                                    if (index == sList.lastIndex) {
-                                        if (reportArrayList.size == 0) {
-                                            binding.mainWarningBox.setBackgroundColor(getColor(android.R.color.transparent))
-                                        } else {
-                                            if (!isWarned) {
-                                                warningSlideAuto()
-                                                isWarned = true
+                                        if (index == sList.lastIndex) {
+                                            if (reportArrayList.size == 0) {
+                                                binding.mainWarningBox.setBackgroundColor(getColor(android.R.color.transparent))
+                                            } else {
+                                                if (!isWarned) {
+                                                    warningSlideAuto()
+                                                    isWarned = true
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
 
-                            binding.subAirPM25.text = "${getString(R.string.pm2_5)}   ${air.pm25Value.toInt()}"
-                            binding.subAirPM10.text = "${getString(R.string.pm10)}   ${air.pm10Value.toInt()}"
+                            binding.subAirPM25.text = "${getString(R.string.pm2_5_full)}   ${air.pm25Value.toInt()}"
+                            binding.subAirPM10.text = "${getString(R.string.pm10_full)}   ${air.pm10Value.toInt()}"
 
                             binding.mainSensTitle.text = getString(R.string.sens_temp)
                             binding.mainSensValue.text =
@@ -872,6 +944,7 @@ class MainActivity
                                     rh = current.humidity!!,
                                     v = current.windSpeed!!
                                 ).roundToInt().toString() + "˚"
+
 
                             binding.mainSensValueC.text =
                                 SensibleTempFormula().getSensibleTemp(
@@ -1011,7 +1084,6 @@ class MainActivity
                             when(e) {
                                 is NullPointerException -> {
                                     runOnUiThread {
-
                                         hideAllViews(error = ERROR_API_PROTOCOL)
                                     }
                                 }
@@ -1189,6 +1261,14 @@ class MainActivity
             }
             ERROR_GET_DATA -> {
                 binding.mainErrorTitle.text = getString(R.string.data_call_error)
+                binding.mainErrorRenewBtn.apply {
+                    text = getString(R.string.renew_data)
+                    // 에러 버튼 클릭
+                    setOnClickListener {
+                        mVib()
+                        getDataSingleTime(isCurrent = false)
+                    }
+                }
             }
             else -> {
                 RDBLogcat.writeErrorNotANR(this, ERROR_LOCATION_FAILED, error!!)
@@ -1487,7 +1567,7 @@ class MainActivity
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
             binding.mainGpsFix, binding.mainMotionSLideImg,
-            binding.mainRefreshData
+            binding.mainRefreshData, binding.mainShareIv
         )
 
         // 글자색 white 로 변경
@@ -1619,7 +1699,7 @@ class MainActivity
                                                 binding.mainGpsTitleTv.text = formedAddr
 
                                                 binding.mainTopBarGpsTitle.text =
-                                                    formedAddr
+                                                    formedAddr.trim().split(" ").last()
 
                                                 loadCurrentViewModelData(
                                                     loc.latitude,

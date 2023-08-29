@@ -13,7 +13,7 @@ android {
         applicationId "app.airsignal.weather"
         minSdk 26
         targetSdk 33
-        versionCode 8
+        versionCode 10
         versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -126,4 +126,7 @@ dependencies {
 
     // Google Crashlytics
     implementation 'com.google.firebase:firebase-crashlytics'
+
+    // Warning Detail Spinner
+    implementation "com.github.skydoves:powerspinner:1.2.7"
 }

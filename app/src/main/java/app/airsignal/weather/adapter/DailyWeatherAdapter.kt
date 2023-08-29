@@ -78,7 +78,7 @@ class DailyWeatherAdapter(
             date.text = getDailyItemDate(context, LocalDateTime.parse(dao.date))
             rain.text = "${dao.rainP?.toInt().toString()}%"
 
-            if (adapterPosition == 0) {
+            if (bindingAdapterPosition == 0) {
                 date.setBackgroundResource(R.drawable.daily_date_bg_s)
             } else {
                 date.setBackgroundResource(R.drawable.daily_date_bg_ns)

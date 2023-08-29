@@ -366,8 +366,6 @@ class ApiModel {
         @SerializedName("region")
         val region: String,
         @SerializedName("content")
-        val content: List<String>,
-        @SerializedName("time")
-        val time: LocalDateTime,
-        )
+        val content: List<String>?
+    )
 }

@@ -6,6 +6,7 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setUserLoginPlatform
 import app.airsignal.weather.view.activity.LoginActivity
 import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.activity.PermissionActivity
+import app.airsignal.weather.view.activity.WarningDetailActivity
 import kotlin.system.exitProcess
 
 /**
@@ -55,5 +56,12 @@ class EnterPageUtil(private val activity: Activity) {
         activity.startActivity(intent)
         activity.overridePendingTransition(0,0)
         activity.finish()
+    }
+
+    /** 기상 특보 페이지로 이동 **/
+    fun toWarning() {
+        val intent = Intent(activity, WarningDetailActivity::class.java)
+        activity.startActivity(intent)
+        activity.overridePendingTransition(0,0)
     }
 }

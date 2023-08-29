@@ -21,6 +21,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import app.airsignal.weather.R
+import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.RequestPermissionsUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
 import app.airsignal.weather.util.`object`.GetAppInfo
@@ -36,100 +37,57 @@ import org.w3c.dom.Text
  * @author : Lee Jae Young
  * @since : 2023-04-11 오전 11:53
  **/
-class BackLocCheckDialog(
+class FirstLocCheckDialog(
     mActivity: Activity,
     private val fm: FragmentManager, private val tagId: String?
 ) : BottomSheetDialogFragment() {
     private val activity = mActivity
+    private val perm = RequestPermissionsUtil(activity)
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return inflater.inflate(R.layout.dialog_background_permission, container, false)
+        return inflater.inflate(R.layout.dialog_first_perm, container, false)
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val apply = view.findViewById<AppCompatButton>(R.id.backPermApplyBtn)
-        val cancel = view.findViewById<AppCompatButton>(R.id.backPermCancelBtn)
-        val subTitle = view.findViewById<TextView>(R.id.backPermSubTitle)
-        val title = view.findViewById<TextView>(R.id.backPermTitle)
+        val apply = view.findViewById<AppCompatButton>(R.id.firstPermApplyBtn)
+        val cancel = view.findViewById<AppCompatButton>(R.id.firstPermCancelBtn)
 
-        val subText = subTitle.text.toString()
-        if (subText.contains(getString(R.string.nav_back_perm))) {
-            val startIndex = subText.indexOf(getString(R.string.nav_back_perm))
-            val span = SpannableStringBuilder(subText)
-            span.setSpan(
-                ForegroundColorSpan(activity.getColor(R.color.main_blue_color)),
-                startIndex,
-                startIndex + getString(R.string.nav_back_perm).length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-            subTitle.text = span
-        }
-
-        if (Build.VERSION.SDK_INT >= 29) {
-            title.text = getString(R.string.back_perm_up_title)
-            subTitle.visibility = View.VISIBLE
-            apply.text = getString(R.string.always_allowed)
-
-            apply.setOnClickListener {
-                if (RequestPermissionsUtil(activity)
-                        .isShouldShowRequestPermissionRationale(
-                            activity,
-                            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                        )
+        apply.setOnClickListener {
+            if (!perm.isLocationPermitted()) {  // 위치 권한 허용?
+                if (perm.isShouldShowRequestPermissionRationale(
+                        activity,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                    )   // 권한 거부가 2번 이하?
                 ) {
-                    when (GetAppInfo.getInitLocPermission(activity)) {
+                    when (GetAppInfo.getInitLocPermission(activity)) { // 위치 권한 요청이 처음?
                         "" -> {
                             SetAppInfo.setInitLocPermission(activity, "Second")
-                            RequestPermissionsUtil(activity).requestBackgroundLocation()
-                            activity.recreate()
+                            perm.requestLocation()
                         }
                         "Second" -> {
-                            SetAppInfo.setInitLocPermission(activity, "Done")
-                            RequestPermissionsUtil(activity).requestBackgroundLocation()
-                            activity.recreate()
+                            LocPermCautionDialog(
+                                activity,
+                                fm,
+                                BottomSheetDialogFragment().tag
+                            )
+                                .show()
                         }
                     }
                 } else {
-                    val intent =
-                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    val uri: Uri =
-                        Uri.fromParts("package", activity.packageName, null)
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri: Uri = Uri.fromParts("package", activity.packageName, null)
                     intent.data = uri
                     startActivity(intent)
                 }
-                dismissNow()
             }
-        } else {
-            title.text = getString(R.string.back_perm_down_title)
-            subTitle.visibility = View.GONE
-            apply.apply {
-                if (GetAppInfo.isPermedBackLoc(activity)) {
-                    this.text = getString(R.string.undo_active)
-                    this.backgroundTintList =
-                        ColorStateList.valueOf(activity.getColor(R.color.theme_alert_double_apply_color))
-                    this.setOnClickListener {
-                        SetAppInfo.setPermedBackLog(activity, false)
-                        dismissNow()
-                        activity.recreate()
-                    }
-                } else {
-                    this.text = getString(R.string.do_active)
-                    this.backgroundTintList =
-                        ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
-                    this.setOnClickListener {
-                        SetAppInfo.setPermedBackLog(activity, true)
-                        dismissNow()
-                        activity.recreate()
-                    }
-                }
-            }
+            dismissNow()
         }
         cancel.setOnClickListener {
             dismissNow()
@@ -144,7 +102,7 @@ class BackLocCheckDialog(
         dialog.setOnShowListener { dialogInterface ->
             val bottomSheetDialog = dialogInterface as BottomSheetDialog
             bottomSheetDialog.behavior.isDraggable = false
-            setupRatio(bottomSheetDialog, 65)
+            setupRatio(bottomSheetDialog, 75)
         }
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationBottom
 
@@ -153,7 +111,7 @@ class BackLocCheckDialog(
 
     // 레이아웃 노출
     fun show() {
-        BackLocCheckDialog(activity, fm, tagId).showNow(fm, tagId)
+        FirstLocCheckDialog(activity, fm, tagId).showNow(fm, tagId)
     }
 
     // 바텀 다이얼로그 세팅

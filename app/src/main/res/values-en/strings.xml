@@ -137,6 +137,12 @@
     <string name="rainPer">Rain</string>
     <string name="pm2.5">PM2.5</string>
     <string name="pm10">PM10</string>
+    <string name="pm2.5_full">ultrafine dust</string>
+    <string name="pm10_full">fine dust</string>
+    <string name="o3_full">ozone</string>
+    <string name="so2_full">sulfur dioxide</string>
+    <string name="no2_full">nitrogen dioxide</string>
+    <string name="co_full">carbon monoxide</string>
     <string name="co">CO</string>
     <string name="so2">SO2</string>
     <string name="no2">NO2</string>
@@ -145,6 +151,7 @@
     <string name="input_address">Input address</string>
     <string name="last_software">Latest software version</string>
     <string name="not_latest_version">Not the latest software version</string>
+    <string name="not_latest_go_to_store">Not the latest software version\nwant to go to the play store?</string>
     <string name="fail_to_get_version">Fail to get software version</string>
     <string name="list_of_open_source">List of opensource</string>
     <string name="good">Good</string>
@@ -209,10 +216,8 @@
     <string name="cd_icon_location_shadow">Location Permission Shadow</string>
     <string name="cd_click_arrow_right">Click to move</string>
     <string name="cd_list_item">List item</string>
-    <string name="background_location">Background location</string>
-    <string name="background_location_explain">Location Check the Always</string>
     <string name="agree_user_data">I agree with AirSignal\'s privacy policy</string>
-    <string name="background_location_reset">This is used only for notification services</string>
+    <string name="cd_data_share">Share icon</string>
 
     <string name="background_location_active">Now using</string>
     <string name="background_location_not_active">Make use</string>
@@ -225,4 +230,15 @@
     <string name="back_perm_2">You can change this setting at any time under Application Location Permission.</string>
     <string name="back_perm_3">Background location information is not used except for the notification service</string>
     <string name="back_perm_subtitle"><![CDATA[Please check Permissions > Locations > Always Allow]]></string>
+    <string name="agree">Agree</string>
+    <string name="first_perm_title">Agree to use user location</string>
+    <string name="first_perm_tr1">Collect and use location to provide weather data.</string>
+    <string name="first_perm_tr2">Location is processed even when the app is not in use to send more accurate weather notifications.</string>
+    <string name="first_perm_tr3">Please accept the location processing by pressing the \'agree\' button to use the app.</string>
+    <string name="first_perm_tr4">You can stop collecting and using location from app settings or system location permissions.</string>
+    <string name="choose_region">Select a region</string>
+    <string name="pined">Fixed</string>
+    <string name="naver_disconnect">Disconnect from Naver</string>
+    <string name="inquiry">문의하기</string>
+    <string name="etc">기타</string>
 </resources>

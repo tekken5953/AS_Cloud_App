@@ -33,34 +33,36 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
 
+        val context = newBase ?: this
+
         // 설정된 언어정보 불러오기
-        when (getUserLocation(this)) {
+        when (getUserLocation(context)) {
             LANG_KR -> {
-                SetSystemInfo.setLocaleToKorea(this)
+                SetSystemInfo.setLocaleToKorea(context)
             }
             LANG_EN -> {
-                SetSystemInfo.setLocaleToEnglish(this)
+                SetSystemInfo.setLocaleToEnglish(context)
             }
             else -> {
-                SetSystemInfo.setLocaleToSystem(this)
+                SetSystemInfo.setLocaleToSystem(context)
             }
         }
 
         // 설정된 폰트크기 불러오기
-        when (getUserFontScale(this)) {
+        when (getUserFontScale(context)) {
             TEXT_SCALE_SMALL -> {
-                SetSystemInfo.setTextSizeSmall(this)
+                SetSystemInfo.setTextSizeSmall(context)
             }
             TEXT_SCALE_BIG -> {
-                SetSystemInfo.setTextSizeLarge(this)
+                SetSystemInfo.setTextSizeLarge(context)
             }
             else -> {
-                SetSystemInfo.setTextSizeDefault(this)
+                SetSystemInfo.setTextSizeDefault(context)
             }
         }
 
         // 설정된 테마 정보 불러오기
-        when (getUserTheme(this)) {
+        when (getUserTheme(context)) {
             THEME_DARK -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
             }

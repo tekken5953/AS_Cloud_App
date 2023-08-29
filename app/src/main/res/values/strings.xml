@@ -18,7 +18,7 @@
     <string name="english">English</string>
     <string name="korean">한국어</string>
     <string name="system_lang">시스템 언어</string>
-    <string name="weather">날씨정보</string>
+    <string name="weather">날씨 정보</string>
     <string name="save_change">설정을 저장하였습니다.앱을 다시 시작합니다</string>
     <string name="ok">확인</string>
     <string name="theme_system">시스템 테마</string>
@@ -130,14 +130,21 @@
     <string name="rainPer">강수확률</string>
     <string name="pm2.5">초미세먼지</string>
     <string name="pm10">미세먼지</string>
+    <string name="pm2.5_full">초미세먼지</string>
+    <string name="pm10_full">미세먼지</string>
     <string name="co">일산화탄소</string>
     <string name="so2">아황산가스</string>
     <string name="no2">이산화질소</string>
     <string name="o3">오존</string>
+    <string name="o3_full">오존</string>
+    <string name="so2_full">아황산가스</string>
+    <string name="no2_full">이산화질소</string>
+    <string name="co_full">일산화탄소</string>
     <string name="add_new_address">새 주소를 등록하세요</string>
     <string name="input_address">주소를 입력해주세요</string>
     <string name="last_software">최신 소프트웨어입니다.</string>
     <string name="not_latest_version">최신 버전이 있습니다</string>
+    <string name="not_latest_go_to_store">최신 버전이 있습니다.\n스토어로 이동하시겠습니까?</string>
     <string name="fail_to_get_version">앱 정보를 불러오는데 실패했습니다</string>
     <string name="list_of_open_source">오픈소스 라이센스 목록</string>
     <string name="good">좋음</string>
@@ -202,12 +209,10 @@
     <string name="cd_icon_location_shadow">위치 권한 그림자</string>
     <string name="cd_click_arrow_right">클릭하여 이동</string>
     <string name="cd_list_item">리스트 항목</string>
+    <string name="cd_data_share">공유하기</string>
 
 
-    <string name="background_location">백그라운드 위치 권한</string>
-    <string name="background_location_explain">권한 -> 위치 -> 허용을\n체크해주세요</string>
     <string name="agree_user_data">에어시그널의 개인정보 처리방침에 동의합니다.</string>
-    <string name="background_location_reset">이 권한은 알림 서비스에만 사용됩니다</string>
     <string name="background_location_active">사용중</string>
     <string name="background_location_not_active">사용하기</string>
     <string name="do_active">사용하기</string>
@@ -219,5 +224,16 @@
     <string name="back_perm_2">이 설정은 애플리케이션 위치 권한에서 언제든 변경 할 수 있습니다.</string>
     <string name="back_perm_3">백그라운드 위치 정보는 알림 서비스 이외에 사용되지 않습니다.</string>
     <string name="back_perm_subtitle"><![CDATA[권한 > 위치 > 항상 허용을 체크해주세요]]></string>
+    <string name="agree">동의</string>
+    <string name="first_perm_title">현재 위치정보 사용 동의</string>
+    <string name="first_perm_tr1">현재 위치의 날씨 정보를 제공하기 위해 위치 정보를 수집하여 사용합니다.</string>
+    <string name="first_perm_tr2">보다 정확한 위치의 알림을 발신하기 위해 앱을 사용하지 않을 때도 위치 정보가 정기적으로 처리됩니다.</string>
+    <string name="first_perm_tr3">앱 사용을 위해 \'동의\' 버튼을 눌러 위치 정보 처리에 동의해주세요.</string>
+    <string name="first_perm_tr4">날씨 앱 설정 혹은 앱 위치 권한에서 위치 정보 수집 및 사용을 중지할 수 있습니다.</string>
+    <string name="choose_region">지역을 선택하세요</string>
+    <string name="pined">고정됨</string>
+    <string name="naver_disconnect">네이버 로그인 서비스와의 연동을 해제하였습니다</string>
+    <string name="inquiry">문의하기</string>
+    <string name="etc">기타</string>
 
 </resources>

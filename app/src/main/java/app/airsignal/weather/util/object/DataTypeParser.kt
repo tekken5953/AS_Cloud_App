@@ -90,6 +90,29 @@ object DataTypeParser {
         }
     }
 
+    fun translateSkyText(sky: String): String {
+        return when(sky) {
+            "맑음" -> {
+                "at clear"
+            }
+            "구름많음","흐림" -> {
+                "at cloudy"
+            }
+            "소나기","비","구름많고 소나기","흐리고 비","구름많고 비","흐리고 소나기" -> {
+                "at rainy"
+            }
+            "구름많고 눈","흐리고 눈","눈" -> {
+                "at snowy"
+            }
+            "구름많고 비/눈","흐리고 비/눈","비/눈"-> {
+                "at rainy/snowy"
+            }
+            else -> {
+                ""
+            }
+        }
+    }
+
     /** 음력 날짜 반환 **/
     private fun getLunarDate(): Int {
         val cal = LocalDateTime.now()

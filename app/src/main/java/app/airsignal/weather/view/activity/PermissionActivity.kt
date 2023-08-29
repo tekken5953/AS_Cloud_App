@@ -22,8 +22,7 @@ import app.airsignal.weather.util.`object`.*
 import app.airsignal.weather.util.`object`.GetAppInfo.getInitLocPermission
 import app.airsignal.weather.util.`object`.GetAppInfo.getInitNotiPermission
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserNoti
-import app.airsignal.weather.view.LocPermCautionDialog
-import app.airsignal.weather.view.MakeSingleDialog
+import app.airsignal.weather.view.*
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PermissionActivity :
@@ -96,6 +95,7 @@ class PermissionActivity :
 
         binding.permissionUserDataNotice.text = spanUserData
         binding.permissionUserDataNotice.setOnClickListener {
+            // 개인정보 처리방침 열림
             val intent = Intent(this@PermissionActivity, WebURLActivity::class.java)
             intent.putExtra("sort","dataUsage")
             startActivity(intent)
@@ -105,47 +105,17 @@ class PermissionActivity :
         binding.permissionUserDataNotice.movementMethod = LinkMovementMethod.getInstance()
 
         binding.permissionUserDataCheckBox.setOnCheckedChangeListener { _, isChecked ->
+            // 개인정보 처리방침 체크 박스
             binding.permissionOkBtn.isEnabled = isChecked
         }
 
         // 권한 허용 버튼 클릭
         binding.permissionOkBtn.setOnClickListener {
-            if (!perm.isLocationPermitted()) {  // 위치 권한 허용?
-                if (perm.isShouldShowRequestPermissionRationale(
-                        this,
-                        android.Manifest.permission.ACCESS_FINE_LOCATION
-                    )   // 권한 거부가 2번 이하?
-                ) {
-                    when (getInitLocPermission(this)) { // 위치 권한 요청이 처음?
-                        "" -> {
-                            SetAppInfo.setInitLocPermission(this, "Second")
-                            perm.requestLocation()
-                        }
-                        "Second" -> {
-                            LocPermCautionDialog(
-                                this,
-                                supportFragmentManager,
-                                BottomSheetDialogFragment().tag
-                            )
-                                .show()
-                        }
-                    }
-                } else {
-                    MakeSingleDialog(this).makeDialog(
-                        textTitle = getString(R.string.perm_loc_self),
-                        color = getColor(R.color.main_blue_color),
-                        buttonText = getString(R.string.ok),
-                        true
-                    )
-                        .setOnClickListener {
-                            RefreshUtils(this).refreshActivity()
-                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                            val uri: Uri = Uri.fromParts("package", packageName, null)
-                            intent.data = uri
-                            startActivity(intent)
-                        }
-                }
-            }
+            FirstLocCheckDialog(
+                this,
+                supportFragmentManager,
+                BottomSheetDialogFragment().tag
+            ).show()
         }
     }
 

@@ -8,6 +8,8 @@ import android.webkit.WebSettings
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatDelegate
 import app.airsignal.weather.R
+import app.airsignal.weather.dao.IgnoredKeyFile.privacyPolicyURI
+import app.airsignal.weather.dao.IgnoredKeyFile.termsOfServiceURL
 import app.airsignal.weather.databinding.ActivityWebUrlBinding
 import app.airsignal.weather.util.`object`.SetSystemInfo
 
@@ -55,17 +57,16 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
         when(intent.extras!!.getString("sort")) {
             "termsOfService" -> {
                 binding.webUrlTitle.text = getString(R.string.term_of_services)
-                pdfUrl = "https://docs.google.com/document/d/e/2PACX-1vTmaf0Wg9zhNZfe-_S-4eWDj1XLwbYlUcoONys3MzzTEAx-_QLlJOuTGo7uQjl5FbyGlWPL6d9tp8JV/pub"
+                pdfUrl = termsOfServiceURL
             }
             "dataUsage" -> {
                 binding.webUrlTitle.text = getString(R.string.data_usages)
-                pdfUrl = "file:///android_asset/privacy_policy.html"
+                pdfUrl = privacyPolicyURI
             }
             else -> {
                 binding.webUrlTitle.text = ""
                 pdfUrl = "about:blank"
             }
-
         }
 
         binding.webUrlWebView.clearCache(true)

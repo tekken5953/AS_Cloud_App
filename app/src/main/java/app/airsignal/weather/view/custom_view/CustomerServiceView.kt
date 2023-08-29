@@ -1,6 +1,5 @@
 package app.airsignal.weather.view.custom_view
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -9,7 +8,6 @@ import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.CustomViewCustomerItemBinding
 
-@SuppressLint("Recycle", "CustomViewStyleable")
 class CustomerServiceView(context: Context, attrs: AttributeSet?)
     : LinearLayout(context, attrs) {
     private var customerBinding: CustomViewCustomerItemBinding

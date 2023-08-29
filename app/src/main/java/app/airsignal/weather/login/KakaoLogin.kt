@@ -1,7 +1,9 @@
 package app.airsignal.weather.login
 
 import android.app.Activity
+import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatButton
+import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPhone
 import app.airsignal.weather.dao.IgnoredKeyFile.userEmail
@@ -216,10 +218,10 @@ class KakaoLogin(private val activity: Activity) {
     }
 
     /** 클라이언트와 완전히 연결 끊기 **/
-    fun disconnectFromKakao() {
-        UserApiClient.instance.unlink { error ->
-            if (error == null) {
-                EnterPageUtil(activity).toLogin()
+    fun disconnectFromKakao(pb: ProgressBar?) {
+        UserApiClient.instance.unlink {
+            pb?.let {
+                RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = it)
             }
         }
     }

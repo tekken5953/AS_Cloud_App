@@ -36,14 +36,16 @@
             android:orientation="horizontal"
             android:overScrollMode="ifContentScrolls"
             android:scrollbars="none"
-            app:layout_constraintBottom_toBottomOf="@id/topBarLinear"
+            android:layout_marginEnd="15dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/topBarLinear">
+            app:layout_constraintTop_toTopOf="@+id/topBarLinear"
+            app:layout_constraintBottom_toBottomOf="@+id/topBarLinear" >
 
             <TextView
                 android:id="@+id/mainTopBarGpsTitle"
                 style="@style/basicTextView"
+                android:contentDescription="@string/cd_img_location"
                 android:drawablePadding="3dp"
                 android:ellipsize="marquee"
                 android:focusable="true"
@@ -51,7 +53,6 @@
                 android:maxEms="12"
                 android:singleLine="true"
                 android:textSize="14sp"
-                android:contentDescription="@string/cd_img_location"
                 app:drawableStartCompat="@drawable/location_fill" />
         </ScrollView>
 
@@ -67,32 +68,44 @@
                 style="@style/BasicImageButtonIcon"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="24dp"
-                android:contentDescription="@string/cd_icon_side_menu"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/cd_icon_side_menu"
                 android:src="@drawable/ico_hamb_w"
-                app:tint="@color/black"/>
+                app:tint="@color/black" />
+
+            <ImageView
+                android:id="@+id/mainShareIv"
+                style="@style/BasicImageButtonIcon"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="24dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/cd_icon_refresh_data"
+                android:padding="4dp"
+                android:src="@drawable/share"
+                app:tint="@color/black" />
 
             <ImageView
                 android:id="@+id/mainRefreshData"
                 style="@style/BasicImageButtonIcon"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="15dp"
-                android:contentDescription="@string/cd_icon_refresh_data"
+                android:layout_marginEnd="10dp"
                 android:layout_toStartOf="@+id/mainAddAddress"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/cd_icon_refresh_data"
                 android:src="@drawable/refresh"
-                app:tint="@color/black"/>
+                app:tint="@color/black" />
 
             <ImageView
                 android:id="@+id/mainAddAddress"
                 style="@style/BasicImageButtonIcon"
-                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="24dp"
-                android:contentDescription="@string/cd_icon_plus"
+                android:layout_marginEnd="10dp"
+                android:layout_toStartOf="@+id/mainShareIv"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/cd_icon_plus"
                 android:src="@drawable/ico_add_w"
-                app:tint="@color/black"/>
+                app:tint="@color/black" />
 
         </RelativeLayout>
 
@@ -115,23 +128,23 @@
             android:gravity="start"
             android:lineHeight="26dp"
             android:maxEms="10"
-            android:textSize="18sp"
             android:textColor="@color/black"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/topBarLinear"/>
+            app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 
         <ImageView
             android:id="@+id/mainGpsFix"
             android:layout_width="27dp"
             android:layout_height="27dp"
-            android:contentDescription="@string/cd_icon_gps_fix"
             android:layout_marginStart="6dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cd_icon_gps_fix"
             android:src="@drawable/gps_fix"
-            app:tint="@color/mode_black_color"
+            app:layout_constraintBottom_toBottomOf="@+id/mainGpsTitleTv"
             app:layout_constraintStart_toEndOf="@+id/mainGpsTitleTv"
             app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv"
-            app:layout_constraintBottom_toBottomOf="@+id/mainGpsTitleTv"/>
+            app:tint="@color/mode_black_color" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/mainErrorRenewBtn"
@@ -148,8 +161,8 @@
             android:textColor="@color/white"
             android:textSize="18sp"
             android:translationZ="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/mainErrorTitle"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mainErrorTitle" />
 
         <ImageView
             android:id="@+id/mainSkyStarImg"
@@ -168,17 +181,28 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/cd_img_sky"
             app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
-            app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
 
         <TextView
             android:id="@+id/mainErrorTitle"
             style="@style/basicMediumTextView"
             android:layout_marginTop="32dp"
-            android:textSize="20sp"
-            android:lineHeight="25dp"
             android:alpha="0"
+            android:lineHeight="25dp"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
+            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
+
+        <TextView
+            android:id="@+id/mainSkyText"
+            style="@style/basicMediumTextView"
+            android:layout_marginTop="32dp"
+            android:alpha="0"
+            android:lineHeight="25dp"
+            android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
@@ -197,8 +221,8 @@
             android:layout_marginStart="17dp"
             android:alpha="0"
             android:text="@string/live_temp"
-            android:textSize="14sp"
             android:textColor="@color/black"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
 
@@ -207,8 +231,8 @@
             style="@style/basicMediumTextView"
             android:layout_marginStart="17dp"
             android:alpha="0"
-            android:textSize="18sp"
             android:textColor="@color/black"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
 
@@ -218,8 +242,8 @@
             android:layout_marginStart="17dp"
             android:alpha="0"
             android:text="@string/sens_temp"
-            android:textSize="14sp"
             android:textColor="@color/black"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
 
@@ -228,8 +252,8 @@
             style="@style/basicMediumTextView"
             android:layout_marginStart="17dp"
             android:alpha="0"
-            android:textSize="18sp"
             android:textColor="@color/black"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
 
@@ -237,35 +261,38 @@
             android:id="@+id/mainMinMaxTr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
             app:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
-            app:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue">
+            app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue">
+
             <TextView
                 android:id="@+id/mainMinTitle"
                 style="@style/basicTextView"
-                android:textSize="16sp"
-                android:textColor="#5CC4FF"/>
+                android:textColor="#5CC4FF"
+                android:textSize="16sp" />
+
             <TextView
                 android:id="@+id/mainMinValue"
                 style="@style/basicMediumTextView"
+                android:layout_marginStart="3dp"
                 android:textColor="#5CC4FF"
-                android:textSize="16sp"
-                android:layout_marginStart="3dp"/>
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/mainMaxTitle"
                 style="@style/basicTextView"
+                android:layout_marginStart="10dp"
                 android:textColor="#FB3737"
-                android:textSize="16sp"
-                android:layout_marginStart="10dp"/>
+                android:textSize="16sp" />
+
             <TextView
                 android:id="@+id/mainMaxValue"
                 style="@style/basicMediumTextView"
+                android:layout_marginStart="3dp"
                 android:textColor="#FB3737"
-                android:textSize="16sp"
-                android:layout_marginStart="3dp"/>
+                android:textSize="16sp" />
         </TableRow>
 
         <TextView
@@ -283,6 +310,7 @@
             style="@style/basicMediumTextView"
             android:layout_marginStart="17dp"
             android:alpha="0"
+            android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
             app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
@@ -293,47 +321,48 @@
             android:layout_marginStart="2dp"
             android:paddingTop="5dp"
             android:textSize="57sp"
-            app:layout_constraintTop_toTopOf="@+id/mainLiveTempValue"
-            app:layout_constraintStart_toEndOf="@id/mainLiveTempValue"/>
+            app:layout_constraintStart_toEndOf="@id/mainLiveTempValue"
+            app:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
 
         <TextView
             android:id="@+id/mainCompareTempTv"
             style="@style/basicMediumTextView"
             android:layout_marginTop="8dp"
             android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/mainSensTitle"
-            app:layout_constraintEnd_toEndOf="@id/mainSensValue"/>
+            app:layout_constraintEnd_toEndOf="@id/mainSensValue"
+            app:layout_constraintTop_toBottomOf="@id/mainSensTitle" />
 
         <TextView
             android:id="@+id/mainSensTitle"
             style="@style/basicMediumTextView"
+            android:layout_marginEnd="13dp"
             android:textColor="#3D3D3D"
             android:textSize="16sp"
-            android:layout_marginEnd="13dp"
+            app:layout_constraintBottom_toBottomOf="@+id/mainSensValue"
             app:layout_constraintEnd_toStartOf="@+id/mainSensValue"
-            app:layout_constraintTop_toTopOf="@+id/mainSensValue"
-            app:layout_constraintBottom_toBottomOf="@+id/mainSensValue"/>
+            app:layout_constraintTop_toTopOf="@+id/mainSensValue" />
 
         <TextView
             android:id="@+id/mainSensValue"
             style="@style/basicMediumTextView"
+            android:layout_marginTop="27dp"
+            android:layout_marginEnd="24dp"
             android:textColor="#3D3D3D"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLayout"
-            app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv"
-            android:layout_marginTop="27dp"
-            android:layout_marginEnd="24dp"/>
+            app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv" />
 
         <LinearLayout
             android:id="@+id/mainWarningBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/nested_subAir_frame"
-            android:background="@drawable/main_bottom_content_box_bg"
-            android:layout_marginBottom="12dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:gravity="center">
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/main_bottom_content_box_bg"
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@+id/nested_subAir_frame">
+
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/mainWarningVp"
                 android:layout_width="match_parent"
@@ -345,11 +374,11 @@
             android:id="@+id/nested_subAir_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/mainMotionSlideGuide"
             android:layout_marginStart="24dp"
-            android:layout_marginBottom="31dp"
             android:layout_marginEnd="24dp"
-            android:background="@drawable/main_bottom_content_box_bg">
+            android:layout_marginBottom="31dp"
+            android:background="@drawable/main_bottom_content_box_bg"
+            app:layout_constraintBottom_toTopOf="@+id/mainMotionSlideGuide">
 
             <TableRow
                 android:id="@+id/subAirTr"
@@ -358,34 +387,35 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="25dp"
                 android:gravity="center">
+
                 <TextView
                     android:id="@+id/subAirPM10"
                     style="@style/basicMediumTextView"
-                    android:textColor="@android:color/transparent"
+                    android:background="@drawable/main_pm_bg"
                     android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
                     android:paddingTop="6dp"
+                    android:paddingEnd="10dp"
                     android:paddingBottom="6dp"
-                    android:background="@drawable/main_pm_bg"/>
+                    android:textColor="@android:color/transparent" />
 
                 <TextView
                     android:id="@+id/subAirPM25"
                     style="@style/basicMediumTextView"
-                    android:textColor="@android:color/transparent"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:paddingTop="6dp"
-                    android:paddingBottom="6dp"
                     android:layout_marginStart="15dp"
-                    android:background="@drawable/main_pm_bg"/>
+                    android:background="@drawable/main_pm_bg"
+                    android:paddingStart="10dp"
+                    android:paddingTop="6dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="6dp"
+                    android:textColor="@android:color/transparent" />
             </TableRow>
 
             <app.airsignal.weather.view.custom_view.SubAirView
                 android:id="@+id/subAirHumid"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@+id/subAirWind"
                 android:layout_alignTop="@+id/subAirWind"
+                android:layout_toStartOf="@+id/subAirWind"
                 app:customImg="@drawable/ico_main_humidity"
                 app:isLeftLine="false" />
 
@@ -393,8 +423,8 @@
                 android:id="@+id/subAirWind"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@+id/subAirTr"
+                android:layout_centerHorizontal="true"
                 app:customImg="@drawable/ico_main_wind"
                 app:isLeftLine="true" />
 
@@ -412,8 +442,8 @@
             android:id="@+id/mainMotionSlideGuide"
             style="@style/basicTextView"
             android:layout_marginBottom="5dp"
-            android:text="@string/slide_more"
             android:contentDescription="@string/cd_text_more"
+            android:text="@string/slide_more"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg"
@@ -424,8 +454,8 @@
             android:id="@+id/mainMotionSLideImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="15dp"
             android:contentDescription="@string/cd_img_more"
+            android:paddingBottom="15dp"
             android:src="@drawable/drop_down_bottom"
             app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             app:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
@@ -544,7 +574,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
                     android:animateLayoutChanges="true"
-                    android:background="@drawable/uv_box_bg"
+                    android:background="@drawable/scrolled_box_bg"
                     android:visibility="visible">
 
                     <ImageView
@@ -555,9 +585,9 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
+                        android:contentDescription="@string/cd_ad_cancel"
                         android:src="@drawable/cancel"
                         android:visibility="visible"
-                        android:contentDescription="@string/cd_ad_cancel"
                         app:tint="@color/theme_text_color" />
 
                     <com.google.android.gms.ads.AdView
@@ -614,10 +644,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/nested_weekly_box"
-                    android:background="@drawable/scrolled_box_bg"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
+                    android:background="@drawable/scrolled_box_bg"
                     android:paddingTop="36dp"
                     android:paddingBottom="36dp"
                     android:visibility="gone">
@@ -632,8 +662,8 @@
                     <TextView
                         android:id="@+id/mainTermsDate"
                         style="@style/basicTextView"
-                        android:layout_centerHorizontal="true"
                         android:layout_below="@+id/mainTermsTitle"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="5dp"
                         android:textColor="@color/theme_sub_color"
                         android:textSize="16sp" />
@@ -641,11 +671,11 @@
                     <TextView
                         android:id="@+id/mainTermsExplain"
                         style="@style/basicMediumTextView"
-                        android:layout_centerHorizontal="true"
                         android:layout_below="@+id/mainTermsDate"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="21dp"
                         android:textColor="@color/theme_text_color"
-                        android:textSize="16sp"/>
+                        android:textSize="16sp" />
 
                 </RelativeLayout>
 
@@ -690,9 +720,8 @@
                                 style="@style/basicMediumTextView"
                                 android:layout_alignParentTop="true"
                                 android:layout_centerHorizontal="true"
-                                android:letterSpacing="-0.064"
                                 android:textColor="@color/theme_text_color"
-                                android:textSize="18sp" />
+                                android:textSize="17sp" />
 
                             <TextView
                                 android:id="@+id/nested_air_title_kr"
@@ -700,7 +729,6 @@
                                 android:layout_below="@+id/nested_air_title_en"
                                 android:layout_centerHorizontal="true"
                                 android:layout_marginBottom="10dp"
-                                android:letterSpacing="-0.048"
                                 android:textColor="@color/theme_sub_color"
                                 android:textSize="14sp" />
 
@@ -786,7 +814,7 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
                     android:animateLayoutChanges="true"
-                    android:background="@drawable/uv_box_bg"
+                    android:background="@drawable/scrolled_box_bg"
                     android:clickable="true">
 
                     <TextView
@@ -900,29 +928,28 @@
                     android:layout_marginTop="16dp"
                     android:layout_marginEnd="12dp"
                     android:layout_marginBottom="20dp"
-                    android:background="@drawable/sun_box_bg">
+                    android:background="@drawable/scrolled_box_bg">
 
                     <LinearLayout
                         android:id="@+id/mainSunSeekLinear"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_above="@+id/mainSunLine"
+                        android:layout_marginTop="5dp"
                         android:layout_toStartOf="@+id/mainSunSetLinear"
                         android:layout_toEndOf="@+id/mainSUnRiseLinear"
                         android:gravity="center"
-                        android:layout_marginTop="5dp"
                         android:orientation="vertical">
 
                         <com.triggertrap.seekarc.SeekArc
                             android:id="@+id/seekArc"
                             android:layout_width="match_parent"
-                            android:layout_height="160dp"
+                            android:layout_height="180dp"
                             android:layout_gravity="bottom"
                             android:layout_marginTop="95dp"
-                            android:paddingTop="20dp"
                             android:paddingStart="20dp"
+                            android:paddingTop="30dp"
                             android:paddingEnd="20dp"
-                            app:thumb="@drawable/ico_sun_graph"
                             app:arcColor="#E1E1E1"
                             app:arcWidth="9dp"
                             app:max="100"
@@ -932,6 +959,7 @@
                             app:roundEdges="true"
                             app:startAngle="90"
                             app:sweepAngle="180"
+                            app:thumb="@drawable/ico_sun_graph"
                             app:touchInside="false" />
                     </LinearLayout>
 
@@ -969,13 +997,13 @@
                             android:layout_width="55dp"
                             android:layout_marginStart="3dp"
                             android:layout_marginBottom="12dp"
-                            android:textColor="@color/theme_text_color"
-                            android:textSize="18sp"
+                            android:autoSizeMaxTextSize="18sp"
+                            android:autoSizeMinTextSize="14sp"
+                            android:autoSizeTextType="uniform"
                             android:maxLines="1"
                             android:padding="0.5dp"
-                            android:autoSizeTextType="uniform"
-                            android:autoSizeMinTextSize="14sp"
-                            android:autoSizeMaxTextSize="18sp"/>
+                            android:textColor="@color/theme_text_color"
+                            android:textSize="18sp" />
 
                     </LinearLayout>
 
@@ -1013,13 +1041,13 @@
                             android:layout_width="55dp"
                             android:layout_marginStart="3dp"
                             android:layout_marginBottom="12dp"
-                            android:textColor="@color/theme_text_color"
-                            android:textSize="18sp"
+                            android:autoSizeMaxTextSize="18sp"
+                            android:autoSizeMinTextSize="14sp"
+                            android:autoSizeTextType="uniform"
                             android:maxLines="1"
                             android:padding="0.5dp"
-                            android:autoSizeTextType="uniform"
-                            android:autoSizeMinTextSize="14sp"
-                            android:autoSizeMaxTextSize="18sp"/>
+                            android:textColor="@color/theme_text_color"
+                            android:textSize="18sp" />
                     </LinearLayout>
 
                     <View

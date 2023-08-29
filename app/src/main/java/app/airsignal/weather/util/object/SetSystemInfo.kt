@@ -3,8 +3,12 @@ package app.airsignal.weather.util.`object`
 import android.app.Activity
 import android.content.Context
 import android.content.pm.ActivityInfo
+import android.os.Build
 import android.util.Log
 import android.view.View
+import android.view.Window
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import app.airsignal.weather.R
@@ -44,24 +48,21 @@ object SetSystemInfo {
     fun setLocaleToKorea(context: Context) {
         val configuration = context.resources.configuration
         configuration.setLocale(Locale.KOREA)
-        @Suppress("DEPRECATION")
-        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+        context.createConfigurationContext(configuration)
     }
 
     /** 국가를 영어권으로 설정합니다 **/
     fun setLocaleToEnglish(context: Context) {
         val configuration = context.resources.configuration
         configuration.setLocale(Locale.ENGLISH)
-        @Suppress("DEPRECATION")
-        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+        context.createConfigurationContext(configuration)
     }
 
     /** 국가를 시스템으로 설정합니다 **/
     fun setLocaleToSystem(context: Context) {
         val configuration = context.resources.configuration
         configuration.setLocale(Locale.getDefault())
-        @Suppress("DEPRECATION")
-        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+        context.createConfigurationContext(configuration)
     }
 
     /** UV 범주 색상 적용 **/
@@ -80,7 +81,7 @@ object SetSystemInfo {
     fun setStatusBar(activity: Activity) {
         activity.window.apply {
             statusBarColor = activity.getColor(R.color.theme_view_color)
-            navigationBarColor = activity.getColor(R.color.theme_view_color)
+            navigationBarColor = activity.getColor(android.R.color.transparent)
             if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
                 this.decorView.systemUiVisibility =
                     this.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()

@@ -135,7 +135,16 @@
                 app:motionTarget="@id/mainLiveTempUnit" />
 
 
-
+            <KeyAttribute
+                android:alpha="0"
+                app:curveFit="linear"
+                app:framePosition="60"
+                app:motionTarget="@id/mainTopBarGpsTitleScroll" />
+            <KeyAttribute
+                android:alpha="1"
+                app:curveFit="linear"
+                app:framePosition="99"
+                app:motionTarget="@id/mainTopBarGpsTitleScroll" />
             <KeyAttribute
                 android:alpha="0"
                 app:curveFit="linear"
@@ -205,10 +214,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:alpha="0"
-            app:layout_constraintBottom_toBottomOf="@id/topBarLinear"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="15dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/topBarLinear" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/topBarLinear"
+            app:layout_constraintBottom_toBottomOf="@+id/topBarLinear"/>
 
         <Constraint
             android:id="@+id/mainMotionLinear"
@@ -477,15 +487,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:alpha="1"
-            app:layout_constraintBottom_toBottomOf="@id/topBarLinear"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintTop_toTopOf="@+id/topBarLinear"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/topBarLinear" />
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <Constraint
             android:id="@+id/mainMotionLinear"
             android:layout_width="match_parent"
-            android:layout_height="144dp"
+            android:layout_height="130dp"
             android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
         <!--        <Constraint-->
@@ -550,7 +560,7 @@
             android:layout_marginStart="20dp"
             app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
+            app:layout_constraintTop_toBottomOf="@+id/mainTopBarGpsTitleScroll" />
 <!--        <Constraint-->
 <!--            android:id="@+id/mainSkyText"-->
 <!--            style="@style/basicTextView"-->
