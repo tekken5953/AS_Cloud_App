@@ -16,13 +16,13 @@
             <ImageView
                 android:id="@+id/settingBack"
                 style="@style/BasicImageButtonIcon"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:layout_marginStart="20dp"
-                android:src="@drawable/back_arrow"
+                android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                app:tint="@color/theme_text_color"
+                android:layout_marginStart="20dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/cd_icon_back"
-                android:layout_alignParentStart="true" />
+                android:src="@drawable/back_arrow"
+                app:tint="@color/theme_text_color" />
 
             <TextView
                 android:id="@+id/settingTitle"
@@ -35,20 +35,20 @@
         </RelativeLayout>
 
         <ProgressBar
+            android:id="@+id/settingPb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/settingPb"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:overScrollMode="never"
             android:layout_marginTop="22dp"
+            android:overScrollMode="never"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/settingTopBarTr">
 
@@ -60,12 +60,12 @@
                     android:id="@+id/settingUserTitle"
                     style="@style/basicTextView"
                     android:layout_marginStart="24dp"
+                    android:fontFamily="@font/spoqa_hansansneo_bold"
                     android:text="@string/setting_account"
                     android:textColor="@color/theme_sub_color"
                     android:textSize="14sp"
-                    android:fontFamily="@font/spoqa_hansansneo_bold"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <View
                     android:id="@+id/settingLine1"
@@ -91,44 +91,44 @@
                         android:id="@+id/settingUserIcon"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:layout_centerVertical="true"
                         android:layout_marginEnd="6dp"
-                        android:contentDescription="@string/cd_login_platform"
-                        android:layout_centerVertical="true"/>
+                        android:contentDescription="@string/cd_login_platform" />
 
                     <TextView
                         android:id="@+id/settingUserEmail"
                         style="@style/basicMediumTextView"
                         android:layout_width="match_parent"
                         android:layout_centerVertical="true"
-                        android:text="@string/please_login"
-                        android:textSize="16sp"
                         android:layout_marginEnd="10dp"
-                        android:gravity="start"
-                        android:contentDescription="@string/cd_login_platform"
-                        android:textColor="@color/theme_text_color"
+                        android:layout_toStartOf="@+id/settingLogOut"
                         android:layout_toEndOf="@+id/settingUserIcon"
-                        android:layout_toStartOf="@+id/settingLogOut" />
+                        android:contentDescription="@string/cd_login_platform"
+                        android:gravity="start"
+                        android:text="@string/please_login"
+                        android:textColor="@color/theme_text_color"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/settingLogOut"
                         style="@style/basicTextView"
                         android:layout_height="48dp"
-                        android:padding="5dp"
-                        android:textColor="@color/red"
-                        android:text="@string/setting_logout"
-                        android:textSize="17sp"
+                        android:layout_alignParentEnd="true"
                         android:layout_gravity="end"
-                        android:layout_alignParentEnd="true"/>
+                        android:padding="5dp"
+                        android:text="@string/setting_logout"
+                        android:textColor="@color/red"
+                        android:textSize="17sp" />
                 </RelativeLayout>
 
                 <TextView
                     android:id="@+id/settingThemeTitle"
                     style="@style/basicTextView"
                     android:layout_marginTop="40dp"
+                    android:fontFamily="@font/spoqa_hansansneo_bold"
                     android:text="@string/system"
                     android:textColor="@color/theme_sub_color"
                     android:textSize="14sp"
-                    android:fontFamily="@font/spoqa_hansansneo_bold"
                     app:layout_constraintStart_toStartOf="@+id/settingUserTitle"
                     app:layout_constraintTop_toBottomOf="@+id/settingUserTr" />
 
@@ -146,34 +146,34 @@
                     android:id="@+id/settingSystemTheme"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    app:left="@string/setting_theme_left"
                     app:layout="@layout/custom_view_setting_system"
-                    app:layout_constraintTop_toBottomOf="@+id/settingLine2"/>
+                    app:layout_constraintTop_toBottomOf="@+id/settingLine2"
+                    app:left="@string/setting_theme_left" />
 
                 <app.airsignal.weather.view.custom_view.SettingSystemView
                     android:id="@+id/settingSystemLang"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    app:left="@string/setting_lang"
                     app:layout="@layout/custom_view_setting_system"
-                    app:layout_constraintTop_toBottomOf="@+id/settingSystemTheme"/>
+                    app:layout_constraintTop_toBottomOf="@+id/settingSystemTheme"
+                    app:left="@string/setting_lang" />
 
                 <app.airsignal.weather.view.custom_view.SettingSystemView
                     android:id="@+id/settingSystemFont"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    app:left="@string/font_scale"
                     app:layout="@layout/custom_view_setting_system"
-                    app:layout_constraintTop_toBottomOf="@+id/settingSystemLang"/>
+                    app:layout_constraintTop_toBottomOf="@+id/settingSystemLang"
+                    app:left="@string/font_scale" />
 
                 <TextView
                     android:id="@+id/settingNotiTitle"
                     style="@style/basicTextView"
                     android:layout_marginTop="25dp"
+                    android:fontFamily="@font/spoqa_hansansneo_bold"
                     android:text="@string/setting_notify"
                     android:textColor="@color/theme_sub_color"
                     android:textSize="14sp"
-                    android:fontFamily="@font/spoqa_hansansneo_bold"
                     app:layout_constraintStart_toStartOf="@+id/settingUserTitle"
                     app:layout_constraintTop_toBottomOf="@+id/settingSystemFont" />
 
@@ -191,18 +191,18 @@
                     android:id="@+id/settingNotificationText"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    app:left="@string/set_noti"
                     app:layout="@layout/custom_view_setting_system"
-                    app:layout_constraintTop_toBottomOf="@+id/settingLine3"/>
+                    app:layout_constraintTop_toBottomOf="@+id/settingLine3"
+                    app:left="@string/set_noti" />
 
                 <TextView
                     android:id="@+id/settingCustomerTitle"
                     style="@style/basicTextView"
                     android:layout_marginTop="25dp"
+                    android:fontFamily="@font/spoqa_hansansneo_bold"
                     android:text="@string/setting_customer_service"
                     android:textColor="@color/theme_sub_color"
                     android:textSize="14sp"
-                    android:fontFamily="@font/spoqa_hansansneo_bold"
                     app:layout_constraintStart_toStartOf="@+id/settingUserTitle"
                     app:layout_constraintTop_toBottomOf="@+id/settingNotificationText" />
 
@@ -216,50 +216,80 @@
                     android:background="@color/theme_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingCustomerTitle" />
 
-<!--                <TextView-->
-<!--                    android:id="@+id/settingNotice"-->
+                <!--                <TextView-->
+                <!--                    android:id="@+id/settingNotice"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    android:paddingStart="24dp"-->
+                <!--                    android:paddingEnd="24dp"-->
+                <!--                    android:background="?android:attr/selectableItemBackground"-->
+                <!--                    style="@style/settingSingleTextView"-->
+                <!--                    android:text="@string/setting_notice"-->
+                <!--                    android:textColor="@color/theme_text_color"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@+id/settingLine4" />-->
+
+                <!--                <TextView-->
+                <!--                    android:id="@+id/settingEvent"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    style="@style/settingSingleTextView"-->
+                <!--                    android:paddingStart="24dp"-->
+                <!--                    android:background="?android:attr/selectableItemBackground"-->
+                <!--                    android:paddingEnd="24dp"-->
+                <!--                    android:text="@string/event"-->
+                <!--                    android:textColor="@color/theme_text_color"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@+id/settingNotice" />-->
+
+                <!--                <TextView-->
+                <!--                    android:id="@+id/settingFaq"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    style="@style/settingSingleTextView"-->
+                <!--                    android:layout_marginBottom="30dp"-->
+                <!--                    android:paddingStart="24dp"-->
+                <!--                    android:paddingEnd="24dp"-->
+                <!--                    android:background="?android:attr/selectableItemBackground"-->
+                <!--                    android:text="@string/setting_faq"-->
+                <!--                    android:textColor="@color/theme_text_color"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@+id/settingEvent" />-->
+
+<!--                <app.airsignal.weather.view.custom_view.SettingSystemView-->
+<!--                    android:id="@+id/settingCustomerService"-->
+<!--                    style="@style/basicMediumTextView"-->
 <!--                    android:layout_width="match_parent"-->
-<!--                    android:paddingStart="24dp"-->
-<!--                    android:paddingEnd="24dp"-->
-<!--                    android:background="?android:attr/selectableItemBackground"-->
-<!--                    style="@style/settingSingleTextView"-->
-<!--                    android:text="@string/setting_notice"-->
+<!--                    android:layout_height="52dp"-->
+<!--                    android:gravity="center_vertical|start"-->
+<!--                    app:left="@string/customers_center"-->
 <!--                    android:textColor="@color/theme_text_color"-->
+<!--                    android:textSize="16sp"-->
 <!--                    app:layout_constraintTop_toBottomOf="@+id/settingLine4" />-->
 
-<!--                <TextView-->
-<!--                    android:id="@+id/settingEvent"-->
+<!--                <app.airsignal.weather.view.custom_view.SettingSystemView-->
+<!--                    android:id="@+id/settingComplain"-->
+<!--                    style="@style/basicMediumTextView"-->
 <!--                    android:layout_width="match_parent"-->
-<!--                    style="@style/settingSingleTextView"-->
-<!--                    android:paddingStart="24dp"-->
-<!--                    android:background="?android:attr/selectableItemBackground"-->
-<!--                    android:paddingEnd="24dp"-->
-<!--                    android:text="@string/event"-->
+<!--                    android:layout_height="52dp"-->
+<!--                    android:gravity="center_vertical|start"-->
+<!--                    app:left="@string/inquiry"-->
 <!--                    android:textColor="@color/theme_text_color"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/settingNotice" />-->
+<!--                    android:textSize="16sp"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/settingCustomerService" />-->
 
-<!--                <TextView-->
-<!--                    android:id="@+id/settingFaq"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    style="@style/settingSingleTextView"-->
-<!--                    android:layout_marginBottom="30dp"-->
-<!--                    android:paddingStart="24dp"-->
-<!--                    android:paddingEnd="24dp"-->
-<!--                    android:background="?android:attr/selectableItemBackground"-->
-<!--                    android:text="@string/setting_faq"-->
-<!--                    android:textColor="@color/theme_text_color"-->
-<!--                    app:layout_constraintTop_toBottomOf="@+id/settingEvent" />-->
-
-                <TextView
+                <app.airsignal.weather.view.custom_view.SettingSystemView
                     android:id="@+id/settingAppInfo"
-                    android:layout_width="match_parent"
                     style="@style/settingSingleTextView"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    android:text="@string/setting_app_data"
-                    android:textColor="@color/theme_text_color"
+                    android:layout_width="match_parent"
                     android:background="?android:attr/selectableItemBackground"
+                    app:left="@string/setting_app_data"
+                    android:textColor="@color/theme_text_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingLine4" />
+
+                <View
+                    android:id="@+id/settingLine6"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@color/theme_line_color"
+                    app:layout_constraintTop_toBottomOf="@+id/settingAppInfo" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

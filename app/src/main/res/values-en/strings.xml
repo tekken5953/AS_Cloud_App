@@ -239,4 +239,6 @@
     <string name="choose_region">Select a region</string>
     <string name="pined">Fixed</string>
     <string name="naver_disconnect">Disconnect from Naver</string>
+    <string name="inquiry">문의하기</string>
+    <string name="etc">기타</string>
 </resources>

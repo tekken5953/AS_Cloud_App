@@ -233,5 +233,7 @@
     <string name="choose_region">지역을 선택하세요</string>
     <string name="pined">고정됨</string>
     <string name="naver_disconnect">네이버 로그인 서비스와의 연동을 해제하였습니다</string>
+    <string name="inquiry">문의하기</string>
+    <string name="etc">기타</string>
 
 </resources>

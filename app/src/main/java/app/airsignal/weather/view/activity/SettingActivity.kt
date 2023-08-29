@@ -57,7 +57,6 @@ import app.airsignal.weather.util.`object`.GetAppInfo.isPermedBackLoc
 import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionCode
 import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionName
 import app.airsignal.weather.util.`object`.GetSystemInfo.goToPlayStore
-import app.airsignal.weather.util.`object`.SetAppInfo.fullScreenMode
 import app.airsignal.weather.util.`object`.SetAppInfo.removeAllKeys
 import app.airsignal.weather.util.`object`.SetAppInfo.setInitBackLocPermission
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserFontScale
@@ -108,7 +107,6 @@ class SettingActivity
 
         initBinding()
 
-        fullScreenMode(this)
         setStatusBar(this)
 
         if (isInit) {
