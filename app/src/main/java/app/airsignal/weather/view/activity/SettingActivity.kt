@@ -511,7 +511,7 @@ class SettingActivity
             )
             // 크기변경
             span.setSpan(
-                AbsoluteSizeSpan(30),
+                AbsoluteSizeSpan(37),
                 it.length, span.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )

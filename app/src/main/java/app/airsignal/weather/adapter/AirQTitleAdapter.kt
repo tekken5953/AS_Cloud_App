@@ -17,6 +17,8 @@ class AirQTitleAdapter(private val context: Context, list: ArrayList<AdapterMode
     RecyclerView.Adapter<AirQTitleAdapter.ViewHolder>() {
     private val mList = list
 
+    private var isWhite = false
+
     private lateinit var onClickListener: OnItemClickListener
 
     interface OnItemClickListener {
@@ -43,6 +45,10 @@ class AirQTitleAdapter(private val context: Context, list: ArrayList<AdapterMode
         holder.bind(mList[position])
     }
 
+    fun setIsWhite(b: Boolean) {
+        isWhite = b
+    }
+
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val title: TextView = itemView.findViewById(R.id.listItemCpvTitle)
 
@@ -54,12 +60,17 @@ class AirQTitleAdapter(private val context: Context, list: ArrayList<AdapterMode
                 title.setTextColor(context.getColor(R.color.white))
                 title.setBackgroundResource(R.drawable.pm_rv_title_bg_s)
             } else {
-                title.setTextColor(context.getColor(R.color.theme_text_color))
-                title.setBackgroundResource(R.drawable.pm_rv_title_bg_ns)
+                if (isWhite) {
+                    title.setBackgroundResource(R.drawable.pm_rv_title_bg_ns_w)
+                    title.setTextColor(context.getColor(R.color.sub_white))
+                } else {
+                    title.setBackgroundResource(R.drawable.pm_rv_title_bg_ns_b)
+                    title.setTextColor(context.getColor(R.color.sub_black))
+                }
             }
 
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
 
                 if (position != RecyclerView.NO_POSITION) {
                     try {

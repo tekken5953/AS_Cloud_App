@@ -107,7 +107,7 @@
                         android:gravity="start"
                         android:text="@string/please_login"
                         android:textColor="@color/theme_text_color"
-                        android:textSize="16sp" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/settingLogOut"
@@ -118,7 +118,7 @@
                         android:padding="5dp"
                         android:text="@string/setting_logout"
                         android:textColor="@color/red"
-                        android:textSize="17sp" />
+                        android:textSize="16sp" />
                 </RelativeLayout>
 
                 <TextView
@@ -280,16 +280,6 @@
                     app:left="@string/setting_app_data"
                     android:textColor="@color/theme_text_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingLine4" />
-
-                <View
-                    android:id="@+id/settingLine6"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="24dp"
-                    android:background="@color/theme_line_color"
-                    app:layout_constraintTop_toBottomOf="@+id/settingAppInfo" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

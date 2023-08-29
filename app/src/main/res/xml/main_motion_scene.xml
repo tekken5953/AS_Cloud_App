@@ -50,6 +50,16 @@
                 app:curveFit="linear"
                 app:framePosition="1"
                 app:motionTarget="@id/nested_subAir_frame" />
+            <KeyAttribute
+                android:alpha="1"
+                app:curveFit="linear"
+                app:framePosition="0"
+                app:motionTarget="@id/mainGpsFix" />
+            <KeyAttribute
+                android:alpha="0"
+                app:curveFit="linear"
+                app:framePosition="1"
+                app:motionTarget="@id/mainGpsFix" />
 
 
             <KeyAttribute
@@ -226,12 +236,6 @@
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-        <!--        <Constraint-->
-        <!--            android:id="@+id/bottomNav"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="0.1dp"-->
-        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--            android:alpha="0"/>-->
         <Constraint
             android:id="@+id/mainGpsTitleTv"
             style="@style/basicTextView"
@@ -274,16 +278,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
             app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
-<!--        <Constraint-->
-<!--            android:id="@+id/mainSkyText"-->
-<!--            style="@style/basicTextView"-->
-<!--            android:layout_marginTop="5dp"-->
-<!--            android:alpha="1"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:textSize="16sp"-->
-<!--            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"-->
-<!--            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />-->
         <Constraint
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
@@ -477,11 +471,6 @@
 
 
     <ConstraintSet android:id="@+id/end">
-        <!--        <Constraint-->
-        <!--            android:id="@+id/topBarLinear"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            app:layout_constraintBottom_toTopOf="@+id/mainMotionLayout" />-->
         <Constraint
             android:id="@+id/mainTopBarGpsTitleScroll"
             android:layout_width="wrap_content"
@@ -498,12 +487,6 @@
             android:layout_height="130dp"
             android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
-        <!--        <Constraint-->
-        <!--            android:id="@+id/bottomNav"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="55dp"-->
-        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--            android:alpha="1"/>-->
         <Constraint
             android:id="@+id/mainGpsTitleTv"
             style="@style/basicTextView"
@@ -545,8 +528,8 @@
             app:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue" />
         <Constraint
             android:id="@+id/mainGpsFix"
-            android:layout_width="27dp"
-            android:layout_height="27dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:alpha="0" />
         <Constraint
             android:id="@+id/mainSkyStarImg"
@@ -561,14 +544,6 @@
             app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             app:layout_constraintTop_toBottomOf="@+id/mainTopBarGpsTitleScroll" />
-<!--        <Constraint-->
-<!--            android:id="@+id/mainSkyText"-->
-<!--            style="@style/basicTextView"-->
-<!--            android:alpha="0"-->
-<!--            android:textSize="15sp"-->
-<!--            app:layout_constraintEnd_toEndOf="@+id/mainSkyImg"-->
-<!--            app:layout_constraintStart_toStartOf="@+id/mainSkyImg"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />-->
 
         <Constraint
             android:id="@+id/mainLiveTempValue"

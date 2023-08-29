@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="312dp"
     android:layout_height="wrap_content"
-    android:background="@drawable/scrolled_box_bg">
+    android:background="@drawable/dialog_bg">
 
     <TextView
         android:id="@+id/alertDoubleTitle"

@@ -1,9 +1,11 @@
 package app.airsignal.weather.adapter
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
@@ -16,6 +18,7 @@ import app.airsignal.weather.dao.AdapterModel
 class UVResponseAdapter(private val context: Context, list: ArrayList<AdapterModel.UVResponseItem>) :
     RecyclerView.Adapter<UVResponseAdapter.ViewHolder>() {
     private val mList = list
+    private var isWhite = false
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -33,11 +36,23 @@ class UVResponseAdapter(private val context: Context, list: ArrayList<AdapterMod
         holder.bind(mList[position])
     }
 
+    fun setIsWhite(b: Boolean) {
+        isWhite = b
+    }
+
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val text: TextView = itemView.findViewById(R.id.listItemUvResponseText)
+        private val dot: ImageView = itemView.findViewById(R.id.listItemUvResponseDot)
 
         fun bind(dao: AdapterModel.UVResponseItem) {
             text.text = dao.text
+            if (isWhite) {
+                text.setTextColor(context.getColor(R.color.white))
+                dot.imageTintList = ColorStateList.valueOf(context.getColor(R.color.white))
+            } else {
+                text.setTextColor(context.getColor(R.color.main_black))
+                dot.imageTintList = ColorStateList.valueOf(context.getColor(R.color.main_black))
+            }
         }
     }
 }

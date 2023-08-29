@@ -22,7 +22,7 @@ class MakeSingleDialog(private val context: Context) {
         val view = LayoutInflater.from(context)
             .inflate(R.layout.dialog_alert_single_btn,null)
         builder.apply {
-            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            window?.setBackgroundDrawable(ColorDrawable(context.getColor(R.color.theme_view_color)))
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(view)
             setCancelable(cancelable)

@@ -4,11 +4,13 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.ProgressBar
+import app.airsignal.weather.R
 import kotlin.system.exitProcess
 
 class RefreshUtils(private val context: Context) {

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.location.LocationManager
@@ -236,14 +237,14 @@ class MainActivity
                 }
             }
 
-            // 하단 스크롤시 네비게이션 바 색상 하얀색으로 변경
-            if (v.scrollY == 0) {
-                window.navigationBarColor = getColor(android.R.color.transparent)
-                binding.nestedFab.apply { alpha = 0f }
-            } else {
-                window.navigationBarColor = getColor(R.color.theme_view_color)
-                binding.nestedFab.apply { alpha = 1f }
-            }
+//            // 하단 스크롤시 네비게이션 바 색상 하얀색으로 변경
+//            if (v.scrollY == 0) {
+//                window.navigationBarColor = getColor(android.R.color.transparent)
+//                binding.nestedFab.apply { alpha = 0f }
+//            } else {
+//                window.navigationBarColor = getColor(R.color.theme_view_color)
+//                binding.nestedFab.apply { alpha = 1f }
+//            }
         }
 
         // 데이터 갱신 버튼 클릭
@@ -414,9 +415,21 @@ class MainActivity
 
     // 시간별 날씨 색션 컬러 변경
     private fun setSectionTextColor(t1: TextView, t2: TextView, t3: TextView) {
-        t1.setTextColor(getColor(R.color.main_blue_color))
-        t2.setTextColor(getColor(R.color.main_gray_color))
-        t3.setTextColor(getColor(R.color.main_gray_color))
+        if (dailyWeatherAdapter.getIsWhite()) {
+            t1.typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_bold.ttf")
+            t2.typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_regular.ttf")
+            t3.typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_regular.ttf")
+            t1.setTextColor(getColor(R.color.white))
+            t2.setTextColor(getColor(R.color.sub_white))
+            t3.setTextColor(getColor(R.color.sub_white))
+        } else {
+            t1.typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_medium.ttf")
+            t2.typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_regular.ttf")
+            t3.typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_regular.ttf")
+            t1.setTextColor(getColor(R.color.main_blue_color))
+            t2.setTextColor(getColor(R.color.sub_black))
+            t3.setTextColor(getColor(R.color.sub_black))
+        }
     }
 
     // 날씨 데이터 API 호출
@@ -641,7 +654,7 @@ class MainActivity
 
         // 외부 공기질 도움말 아이콘 이미지 설정
         binding.nestedAirHelp.setImageDrawable(
-            ResourcesCompat.getDrawable(resources, R.drawable.ico_question, null)
+            ResourcesCompat.getDrawable(resources, R.drawable.help, null)
         )
 
         // 외부 공기질 도움말 클릭
@@ -895,8 +908,7 @@ class MainActivity
                             binding.mainSkyText.text = skyText
                             // 날씨에 따라 배경화면 변경
                             applyWindowBackground(
-                                currentSun,
-                                skyText
+                                currentSun, skyText
                             )
 
                             changeStrokeColor(binding.subAirPM25,
@@ -1014,12 +1026,8 @@ class MainActivity
                                 try {
                                     val formedDate = dateNow.plusDays(i.toLong())
                                     val date: String = when (i) {
-                                        0 -> {
-                                            getString(R.string.today)
-                                        }
-                                        1 -> {
-                                            getString(R.string.tomorrow)
-                                        }
+                                        0 -> { getString(R.string.today) }
+                                        1 -> { getString(R.string.tomorrow) }
                                         else -> {
                                             "${
                                                 convertDayOfWeekToKorean(
@@ -1040,10 +1048,6 @@ class MainActivity
                                     e.printStackTrace()
                                 }
                             }
-
-                            weeklyWeatherAdapter.notifyDataSetChanged()
-                            dailyWeatherAdapter.notifyDataSetChanged()
-                            airQAdapter.notifyDataSetChanged()
 
                             // 24절기 세팅
                             terms24?.let { term ->
@@ -1220,6 +1224,14 @@ class MainActivity
     // 통신에 실패할 경우 레이아웃 처리
     @SuppressLint("SetTextI18n")
     private fun hideAllViews(error: String?) {
+        binding.mainErrorRenewBtn.apply {
+            text = getString(R.string.renew_data)
+            // 에러 버튼 클릭
+            setOnClickListener {
+                mVib()
+                getDataSingleTime(isCurrent = false)
+            }
+        }
         when (error) {
             ERROR_API_PROTOCOL, ERROR_SERVER_CONNECTING -> {
                 binding.mainErrorTitle.text = getString(R.string.api_call_error)
@@ -1244,6 +1256,14 @@ class MainActivity
             }
             ERROR_NETWORK -> {
                 binding.mainErrorTitle.text = getString(R.string.network_error)
+                binding.mainErrorRenewBtn.apply {
+                    text = getString(R.string.renew_data)
+                    // 에러 버튼 클릭
+                    setOnClickListener {
+                        mVib()
+                        getDataSingleTime(isCurrent = false)
+                    }
+                }
             }
             ERROR_GET_LOCATION_FAILED -> {
                 binding.mainErrorTitle.text = getString(R.string.address_call_error)
@@ -1261,26 +1281,10 @@ class MainActivity
             }
             ERROR_GET_DATA -> {
                 binding.mainErrorTitle.text = getString(R.string.data_call_error)
-                binding.mainErrorRenewBtn.apply {
-                    text = getString(R.string.renew_data)
-                    // 에러 버튼 클릭
-                    setOnClickListener {
-                        mVib()
-                        getDataSingleTime(isCurrent = false)
-                    }
-                }
             }
             else -> {
                 RDBLogcat.writeErrorNotANR(this, ERROR_LOCATION_FAILED, error!!)
                 binding.mainErrorTitle.text = getString(R.string.unknown_error)
-                binding.mainErrorRenewBtn.apply {
-                    text = getString(R.string.renew_data)
-                    // 에러 버튼 클릭
-                    setOnClickListener {
-                        mVib()
-                        getDataSingleTime(isCurrent = false)
-                    }
-                }
             }
         }
 
@@ -1451,7 +1455,6 @@ class MainActivity
         )
 
         this.airQList.add(position, item)
-        this.airQAdapter.notifyItemChanged(position)
     }
 
     // 외부 공기질 데이터 갱신
@@ -1506,7 +1509,6 @@ class MainActivity
         val item = AdapterModel.UVLegendItem(value, color, grade)
 
         uvLegendList.add(index, item)
-        uvLegendAdapter.notifyItemInserted(index)
     }
 
     // 자외선 단계별 대응요령 아이템 추가
@@ -1548,49 +1550,84 @@ class MainActivity
         cautionArray.forEach {
             addUvResponseItem(it)
         }
-        uvResponseAdapter.notifyDataSetChanged()
     }
 
     // 메인화면 배경에 따라 텍스트의 색상을 변경
     @SuppressLint("UseCompatTextViewDrawableApis","NotifyDataSetChanged")
     private fun changeTextColorStyle(sky: String, isNight: Boolean) {
         val changeColorTextViews = listOf(
-            binding.mainLiveTempValue, binding.mainLiveTempUnit, binding.mainCompareTempTv,
-            binding.mainTopBarGpsTitle, binding.mainMotionSlideGuide,
-            binding.mainGpsTitleTv, binding.mainSensTitle, binding.mainSensValue,
+            binding.mainLiveTempValue,binding.mainLiveTempUnit,binding.mainCompareTempTv,
+            binding.mainTopBarGpsTitle,binding.mainMotionSlideGuide,
+            binding.mainGpsTitleTv,binding.mainSensTitle,binding.mainSensValue,
             binding.mainLiveTempTitleC,binding.subAirWind.getTitle(),
             binding.subAirRainP.getTitle(),binding.subAirHumid.getTitle(),binding.subAirWind.getValue(),
             binding.subAirRainP.getValue(),binding.subAirHumid.getValue(),
-            binding.mainLiveTempValueC, binding.mainSensTitleC, binding.mainSensValueC,
-            binding.mainMinMaxTitleC, binding.mainMinMaxValueC
+            binding.mainLiveTempValueC,binding.mainSensTitleC,binding.mainSensValueC,
+            binding.mainMinMaxTitleC,binding.mainMinMaxValueC,binding.mainDailyWeatherTitle,
+            binding.mainWeeklyWeatherTitle,binding.nestedAirTitle,binding.mainUvTitle,
+            binding.mainSunRiseTitle,binding.mainSunSetTitle,binding.mainSunRiseTime,
+            binding.mainSunSetTime,binding.mainSunTomTitle,binding.mainUvCollapsedTitle,
+            binding.nestedAirTitleEn,binding.dailySectionTomorrow,binding.dailySectionAfterTomorrow,
+            binding.mainSunSetTom, binding.mainSunRiseTom
+        )
+        val changeColorSubTextViews = listOf(
+            binding.mainLicenseText,binding.nestedAirTitleKr,binding.nestedAirUnit,
+        )
+        val changeTintLineViews = listOf(
+            binding.nestedAirLine,binding.mainSunLine,binding.mainUvLine
         )
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
             binding.mainGpsFix, binding.mainMotionSLideImg,
-            binding.mainRefreshData, binding.mainShareIv
+            binding.mainRefreshData, binding.mainShareIv,
+            binding.adViewCancelIv, binding.nestedAirHelp
+        )
+        val changeBoxViews = listOf(
+            binding.mainWarningBox,binding.nestedSubAirFrame,
+            binding.nestedDailyBox, binding.nestedWeeklyBox, binding.adViewBox,
+            binding.nestedAirBox, binding.mainUVBox, binding.mainSunBox
         )
 
         // 글자색 white 로 변경
         @Suppress("DEPRECATION")
         fun white() {
-            binding.mainWarningBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#10000000"))
-            binding.nestedSubAirFrame.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#10000000"))
             binding.subAirWind.getValue().compoundDrawableTintList =
                 ColorStateList.valueOf(getColor(R.color.white))
 
+            changeBoxViews.forEach {
+                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#10000000"))
+            }
             changeColorTextViews.forEach {
                 it.setTextColor(getColor(R.color.white))
             }
-
+            changeColorSubTextViews.forEach {
+                it.setTextColor(getColor(R.color.sub_white))
+            }
+            changeTintLineViews.forEach {
+                it.setBackgroundColor(getColor(R.color.sub_white))
+            }
             changeTintImageViews.forEach {
                 it.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
             }
+
+            binding.dailySectionTomorrow.setTextColor(getColor(R.color.sub_white))
+            binding.dailySectionAfterTomorrow.setTextColor(getColor(R.color.sub_white))
 
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
                 .setTint(ResourcesCompat.getColor(resources, R.color.white, null))
             window.decorView.systemUiVisibility =
                 window.decorView.systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
 
+            dailyWeatherAdapter.setIsWhite(true)
+            weeklyWeatherAdapter.setIsWhite(true)
+            uvLegendAdapter.setIsWhite(true)
+            uvResponseAdapter.setIsWhite(true)
+            airQAdapter.setIsWhite(true)
+            airQAdapter.notifyDataSetChanged()
+            uvResponseAdapter.notifyDataSetChanged()
+            uvLegendAdapter.notifyDataSetChanged()
+            weeklyWeatherAdapter.notifyDataSetChanged()
+            dailyWeatherAdapter.notifyDataSetChanged()
             warningViewPagerAdapter.changeTextColor(Color.WHITE)
             reportViewPagerItem.addAll(reportArrayList)
             warningViewPagerAdapter.notifyDataSetChanged()
@@ -1599,23 +1636,45 @@ class MainActivity
         // 글자색 black 으로 변경
         @Suppress("DEPRECATION")
         fun black() {
-            binding.mainWarningBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#50FFFFFF"))
-            binding.nestedSubAirFrame.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#50FFFFFF"))
             binding.subAirWind.getValue().compoundDrawableTintList =
-                ColorStateList.valueOf(getColor(R.color.black))
+                ColorStateList.valueOf(getColor(R.color.main_black))
 
+            changeBoxViews.forEach {
+                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40FFFFFF"))
+            }
             changeColorTextViews.forEach {
-                it.setTextColor(getColor(R.color.bg_black_color))
+                it.setTextColor(getColor(R.color.main_black))
+            }
+
+            changeColorSubTextViews.forEach {
+                it.setTextColor(getColor(R.color.sub_black))
+            }
+
+            changeTintLineViews.forEach {
+                it.setBackgroundColor(getColor(R.color.sub_black))
             }
 
             changeTintImageViews.forEach {
-                it.imageTintList = ColorStateList.valueOf(getColor(R.color.bg_black_color))
+                it.imageTintList = ColorStateList.valueOf(getColor(R.color.main_black))
             }
+
+            binding.dailySectionTomorrow.setTextColor(getColor(R.color.main_black))
+            binding.dailySectionAfterTomorrow.setTextColor(getColor(R.color.main_black))
 
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
                 .setTint(ResourcesCompat.getColor(resources, R.color.black, null))
             window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
+            dailyWeatherAdapter.setIsWhite(false)
+            weeklyWeatherAdapter.setIsWhite(false)
+            uvLegendAdapter.setIsWhite(false)
+            uvResponseAdapter.setIsWhite(false)
+            airQAdapter.setIsWhite(false)
+            airQAdapter.notifyDataSetChanged()
+            uvResponseAdapter.notifyDataSetChanged()
+            uvLegendAdapter.notifyDataSetChanged()
+            weeklyWeatherAdapter.notifyDataSetChanged()
+            dailyWeatherAdapter.notifyDataSetChanged()
             warningViewPagerAdapter.changeTextColor(Color.BLACK)
             reportViewPagerItem.addAll(reportArrayList)
             warningViewPagerAdapter.notifyDataSetChanged()
@@ -1660,7 +1719,7 @@ class MainActivity
         val locationClass = GetLocation(this)
         if (locationClass.isNetWorkConnected()) {
             if (locationClass.isGPSConnected()) {
-                CoroutineScope(Dispatchers.Default).launch {
+                CoroutineScope(SupervisorJob().job + Dispatchers.IO).launch {
                     try {
                         LocationServices.getFusedLocationProviderClient(this@MainActivity).run {
                             this.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)

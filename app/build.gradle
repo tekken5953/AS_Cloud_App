@@ -129,4 +129,5 @@ dependencies {
 
     // Warning Detail Spinner
     implementation "com.github.skydoves:powerspinner:1.2.7"
+
 }
