@@ -16,6 +16,7 @@ import app.airsignal.weather.dao.AdapterModel
 class UVLegendAdapter(private val context: Context, list: ArrayList<AdapterModel.UVLegendItem>) :
     RecyclerView.Adapter<UVLegendAdapter.ViewHolder>() {
     private val mList = list
+    private var isWhite = false
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -33,6 +34,10 @@ class UVLegendAdapter(private val context: Context, list: ArrayList<AdapterModel
         holder.bind(mList[position])
     }
 
+    fun setIsWhite(b: Boolean) {
+        isWhite = b
+    }
+
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val value: TextView = itemView.findViewById(R.id.listItemUvLegendValue)
         private val color: View = itemView.findViewById(R.id.listItemUvLegendColor)
@@ -42,6 +47,14 @@ class UVLegendAdapter(private val context: Context, list: ArrayList<AdapterModel
             value.text = dao.value
             color.setBackgroundColor(dao.color)
             grade.text = dao.grade
+
+            if (isWhite) {
+                grade.setTextColor(context.getColor(R.color.white))
+                value.setTextColor(context.getColor(R.color.white))
+            } else {
+                grade.setTextColor(context.getColor(R.color.main_black))
+                value.setTextColor(context.getColor(R.color.main_black))
+            }
         }
     }
 }

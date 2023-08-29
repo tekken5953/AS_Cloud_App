@@ -39,7 +39,7 @@ object SetSystemInfo {
     /** 폰트 크기를 기본으로 변경 **/
     fun setTextSizeDefault(context: Context) {
         val configuration = context.resources.configuration
-        configuration.fontScale = 1f
+        configuration.fontScale = 1.1f
         @Suppress("DEPRECATION")
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }

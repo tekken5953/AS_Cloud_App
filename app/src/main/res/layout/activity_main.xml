@@ -129,7 +129,7 @@
             android:lineHeight="26dp"
             android:maxEms="10"
             android:textColor="@color/black"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 
@@ -479,7 +479,7 @@
                 android:id="@+id/nested_main_linear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/theme_main_bg_color"
+                android:background="@android:color/transparent"
                 android:paddingBottom="55dp">
 
                 <app.airsignal.weather.view.custom_view.AirQView
@@ -527,7 +527,7 @@
 
                         <TextView
                             android:id="@+id/dailySectionToday"
-                            style="@style/basicTextView"
+                            style="@style/basicMediumTextView"
                             android:text="@string/daily_today"
                             android:textColor="@color/theme_text_color"
                             android:textSize="16sp" />
@@ -555,7 +555,6 @@
                         android:layout_height="match_parent"
                         android:layout_below="@+id/mainDailyWeatherTitle"
                         android:layout_marginStart="5dp"
-                        android:layout_marginTop="9dp"
                         android:clipToPadding="false"
                         android:orientation="horizontal"
                         android:overScrollMode="never"
@@ -774,7 +773,7 @@
                                 android:layout_gravity="center"
                                 android:gravity="center"
                                 android:textColor="@color/white"
-                                android:textSize="20sp" />
+                                android:textSize="21sp" />
 
                         </androidx.cardview.widget.CardView>
 
@@ -785,7 +784,7 @@
                             android:layout_gravity="top"
                             android:layout_marginTop="5dp"
                             android:contentDescription="@string/cd_icon_help"
-                            android:src="@drawable/ico_question" />
+                            android:src="@drawable/help" />
 
                     </TableRow>
 
@@ -948,7 +947,6 @@
                             android:layout_gravity="bottom"
                             android:layout_marginTop="95dp"
                             android:paddingStart="20dp"
-                            android:paddingTop="30dp"
                             android:paddingEnd="20dp"
                             app:arcColor="#E1E1E1"
                             app:arcWidth="9dp"
@@ -1069,6 +1067,7 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/mainSunTomTitle"
                             style="@style/basicMediumTextView"
                             android:fontFamily="@font/spoqa_hansansneo_medium"
                             android:text="@string/tomorrow"
@@ -1079,19 +1078,18 @@
                             android:id="@+id/mainSunRiseTom"
                             style="@style/basicTextView"
                             android:layout_marginStart="16dp"
-                            android:textColor="@color/theme_sun_tomorrow_day"
                             android:textSize="16sp" />
 
                         <TextView
                             android:id="@+id/mainSunSetTom"
                             style="@style/basicTextView"
                             android:layout_marginStart="16dp"
-                            android:textColor="@color/theme_sun_tomorrow_night"
                             android:textSize="16sp" />
                     </TableRow>
                 </RelativeLayout>
 
                 <TextView
+                    android:id="@+id/mainLicenseText"
                     style="@style/basicMediumTextView"
                     android:layout_below="@+id/mainSunBox"
                     android:layout_centerHorizontal="true"

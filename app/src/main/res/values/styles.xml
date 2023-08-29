@@ -101,8 +101,8 @@
 
     <style name="OpenSourceMenuTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/main_black_color</item>
-        <item name="android:textColorPrimary">@color/main_black_color</item>
+        <item name="colorPrimary">@color/main_black</item>
+        <item name="android:textColorPrimary">@color/main_black</item>
         <item name="android:windowBackground">@color/white</item>
 
         <!-- Status bar color. -->

@@ -122,7 +122,7 @@
         android:background="?android:attr/selectableItemBackground"
         android:layout_above="@+id/changeAddressLine3"
         android:layout_alignParentEnd="true"
-        android:textSize="15sp"
+        android:textSize="14sp"
         android:textColor="@color/theme_text_color"
         android:layout_marginEnd="24dp"/>
 

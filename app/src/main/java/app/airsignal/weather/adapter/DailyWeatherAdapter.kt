@@ -19,11 +19,12 @@ import java.time.LocalDateTime
  **/
 class DailyWeatherAdapter(
     private val context: Context,
-    list: ArrayList<AdapterModel.DailyWeatherItem>
+    list: ArrayList<AdapterModel.DailyWeatherItem>,
 ) :
     RecyclerView.Adapter<DailyWeatherAdapter.ViewHolder>() {
     private val mList = list
     private val dateSection = ArrayList<Int>()
+    private var isWhite: Boolean = false
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -43,12 +44,9 @@ class DailyWeatherAdapter(
                 LocalDateTime.parse(mList[position - 1].date).toLocalDate()
                     .compareTo(LocalDateTime.parse(mList[position].date).toLocalDate())
                 != 0) {
-                holder.date.visibility = View.VISIBLE
                 if (!dateSection.contains(position)) {
                     dateSection.add(position)
                 }
-            } else {
-                holder.date.visibility = View.INVISIBLE
             }
 
             if (mList[position].isRain) {
@@ -63,11 +61,18 @@ class DailyWeatherAdapter(
         return dateSection
     }
 
+    fun getIsWhite(): Boolean {
+        return isWhite
+    }
+
+    fun setIsWhite(b: Boolean) {
+        isWhite = b
+    }
+
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val time: TextView = itemView.findViewById(R.id.itemDailyTime)
         private val image: ImageView = itemView.findViewById(R.id.itemDailySky)
         private val value: TextView = itemView.findViewById(R.id.itemDailyValue)
-        val date: TextView = itemView.findViewById(R.id.itemDailyDate)
         val rain: TextView = itemView.findViewById(R.id.itemDailyRain)
 
         @SuppressLint("SetTextI18n")
@@ -75,13 +80,14 @@ class DailyWeatherAdapter(
             time.text = dao.time
             image.setImageDrawable(dao.img)
             value.text = dao.value
-            date.text = getDailyItemDate(context, LocalDateTime.parse(dao.date))
             rain.text = "${dao.rainP?.toInt().toString()}%"
 
-            if (bindingAdapterPosition == 0) {
-                date.setBackgroundResource(R.drawable.daily_date_bg_s)
+            if (isWhite) {
+                time.setTextColor(context.getColor(R.color.white))
+                value.setTextColor(context.getColor(R.color.white))
             } else {
-                date.setBackgroundResource(R.drawable.daily_date_bg_ns)
+                time.setTextColor(context.getColor(R.color.main_black))
+                value.setTextColor(context.getColor(R.color.main_black))
             }
         }
     }

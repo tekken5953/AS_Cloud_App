@@ -22,6 +22,7 @@ class WeeklyWeatherAdapter(
 ) :
     RecyclerView.Adapter<WeeklyWeatherAdapter.ViewHolder>() {
     private val mList = list
+    private var isWhite = false
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -51,6 +52,10 @@ class WeeklyWeatherAdapter(
         holder.bind(mList[position])
     }
 
+    fun setIsWhite(b: Boolean) {
+        isWhite = b
+    }
+
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val day: TextView = itemView.findViewById(R.id.weeklyDayText)
         private val date: TextView = itemView.findViewById(R.id.weeklyDayDate)
@@ -58,7 +63,7 @@ class WeeklyWeatherAdapter(
         private val maxImg: ImageView = itemView.findViewById(R.id.weeklyMaxIv)
         private val minText: TextView = itemView.findViewById(R.id.weeklyMinText)
         private val maxText: TextView = itemView.findViewById(R.id.weeklyMaxText)
-        private val line: View = itemView.findViewById(R.id.weeklyBottomLine)
+        private val section: TextView = itemView.findViewById(R.id.weeklyMinMaxSection)
 
         fun bind(dao: AdapterModel.WeeklyWeatherItem) {
             day.text = dao.day
@@ -68,13 +73,23 @@ class WeeklyWeatherAdapter(
             minText.text = dao.minText
             maxText.text = dao.maxText
 
-            if (adapterPosition == 0) {
-                day.setTextColor(context.getColor(R.color.main_blue_color))
-                date.setTextColor(context.getColor(R.color.main_blue_color))
+            if (isWhite) {
+                day.setTextColor(context.getColor(R.color.white))
+                date.setTextColor(context.getColor(R.color.sub_white))
+                minText.setTextColor(context.getColor(R.color.white))
+                maxText.setTextColor(context.getColor(R.color.white))
+                section.setTextColor(context.getColor(R.color.white))
+            } else {
+                day.setTextColor(context.getColor(R.color.main_black))
+                date.setTextColor(context.getColor(R.color.sub_black))
+                minText.setTextColor(context.getColor(R.color.main_black))
+                maxText.setTextColor(context.getColor(R.color.main_black))
+                section.setTextColor(context.getColor(R.color.main_black))
             }
 
-            if (adapterPosition == itemCount - 1) {
-                line.visibility = View.GONE
+            if (bindingAdapterPosition == 0) {
+                day.setTextColor(context.getColor(R.color.main_blue_color))
+                date.setTextColor(context.getColor(R.color.main_blue_color))
             }
         }
     }
