@@ -20,7 +20,9 @@
 
             <ImageView
                 android:id="@+id/warningBack"
-                style="@style/BasicImageButtonIcon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="3dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="20dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"

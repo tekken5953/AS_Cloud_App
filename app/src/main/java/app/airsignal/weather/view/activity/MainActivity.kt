@@ -159,12 +159,13 @@ class MainActivity
         }
     }
 
+    private val adView by lazy { AdViewClass(this) }
+
     override fun onResume() {
         super.onResume()
         addSideMenu()
         getDataSingleTime(isCurrent = false)
-        Thread.sleep(100)
-        AdViewClass(this).loadAdView(binding.nestedAdView)  // adView 생성
+        adView.loadAdView(binding.nestedAdView)  // adView 생성
         binding.nestedAdView.resume()
     }
 
@@ -205,6 +206,7 @@ class MainActivity
 
         initializing()
 
+
         sunPb.disableTouch()    // 일출/일몰 그래프 클릭 방지
 
         // 메인 하단 스크롤 유도 화살표 애니메이션 적용
@@ -224,9 +226,11 @@ class MainActivity
         addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
         // 스크롤 최상단으로 올리기 버튼
-        binding.nestedFab.setOnClickListener {
-            binding.nestedScrollview.smoothScrollTo(0, 0, 500)
-        }
+        binding.nestedFab.setOnClickListener(object : OnSingleClickListener() {
+            override fun onSingleClick(v: View?) {
+                binding.nestedScrollview.smoothScrollTo(0, 0, 500)
+            }
+        })
 
         binding.nestedScrollview.setOnScrollChangeListener { v, _, _, _, _ ->
             // 스크롤이 최하단일 경우 최초 한번만 일출/일몰 그래프 애니메이션
@@ -293,29 +297,35 @@ class MainActivity
         })
 
         // 공유하기 버튼 클릭
-        binding.mainShareIv.setOnClickListener {
-            val doubleDialog = MakeDoubleDialog(this)
-            if (getUserLocation(this) == LANG_EN) {
-                doubleDialog.make(
+        binding.mainShareIv.setOnClickListener(object : OnSingleClickListener(){
+            override fun onSingleClick(v: View?) {
+                val doubleDialog = MakeDoubleDialog(this@MainActivity)
+                if (getUserLocation(this@MainActivity) == LANG_EN) {
+                    doubleDialog.make(
                         "Share with in English?",
                         "Yes",
                         "With in Korean",
                         R.color.main_blue_color
                     ).apply {
-                        this.first.setOnClickListener {
-                            doubleDialog.dismiss()
-                            addShareMsg(LANG_EN)
-                        }
-                        this.second.setOnClickListener {
-                            doubleDialog.dismiss()
-                            addShareMsg(LANG_KR)
-                        }
+                        this.first.setOnClickListener(object : OnSingleClickListener() {
+                            override fun onSingleClick(v: View?) {
+                                doubleDialog.dismiss()
+                                addShareMsg(LANG_EN)
+                            }
+                        })
+                        this.second.setOnClickListener(object : OnSingleClickListener() {
+                            override fun onSingleClick(v: View?) {
+                                doubleDialog.dismiss()
+                                addShareMsg(LANG_KR)
+                            }
+                        })
                     }
-            } else {
-                doubleDialog.dismiss()
-                addShareMsg(LANG_KR)
+                } else {
+                    doubleDialog.dismiss()
+                    addShareMsg(LANG_KR)
+                }
             }
-        }
+        })
     }
 
     // 공유하기 언어별 대응
@@ -367,27 +377,36 @@ class MainActivity
                 warning.visibility = GONE
             } else {
                 warning.visibility = VISIBLE
-                warning.setOnClickListener {
-                    EnterPageUtil(this@MainActivity).toWarning()
-                }
+                warning.setOnClickListener(object : OnSingleClickListener() {
+                    override fun onSingleClick(v: View?) {
+                        sideMenuBuilder.dismiss()
+                        EnterPageUtil(this@MainActivity).toWarning()
+                    }
+                })
             }
 
-            headerTr.setOnClickListener {
-                if (getUserLoginPlatform(this) == "")
-                    EnterPageUtil(this@MainActivity).toLogin()
-            }
-            weather.setOnClickListener {
-                sideMenuBuilder.dismiss()
-            }
-            setting.setOnClickListener {
-                CompletableFuture.supplyAsync {
-                    sideMenuBuilder.dismiss()
-                }.thenAccept {
-                    val intent = Intent(this@MainActivity, SettingActivity::class.java)
-                    startActivity(intent)
-                    finish()
+            headerTr.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    if (getUserLoginPlatform(this@MainActivity) == "")
+                        EnterPageUtil(this@MainActivity).toLogin()
                 }
-            }
+            })
+            weather.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    sideMenuBuilder.dismiss()
+                }
+            })
+            setting.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    CompletableFuture.supplyAsync {
+                        sideMenuBuilder.dismiss()
+                    }.thenAccept {
+                        val intent = Intent(this@MainActivity, SettingActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                }
+            })
         } catch (e: NullPointerException) {
             e.printStackTrace()
         }
@@ -656,38 +675,40 @@ class MainActivity
         )
 
         // 외부 공기질 도움말 클릭
-        binding.nestedAirHelp.setOnClickListener {
-            if (binding.nestedAirHelpPopup.alpha == 0f) {
-                val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
-                // 팝업 다이얼로그 생성
-                binding.nestedAirHelpPopup.apply {
-                    bringToFront()
-                    airQList.forEach {
-                        try {
-                            if (it.isSelect) {
-                                fetchData(
-                                    modifyDataSort(this@MainActivity, it.nameKR),
-                                    modifyDataGraph(this@MainActivity, it.nameKR)!!,
-                                    it.name, it.nameKR
-                                )
-                                return@forEach
+        binding.nestedAirHelp.setOnClickListener(object : OnSingleClickListener() {
+            override fun onSingleClick(v: View?) {
+                if (binding.nestedAirHelpPopup.alpha == 0f) {
+                    val fadeIn = AnimationUtils.loadAnimation(this@MainActivity, R.anim.fade_in)
+                    // 팝업 다이얼로그 생성
+                    binding.nestedAirHelpPopup.apply {
+                        bringToFront()
+                        airQList.forEach {
+                            try {
+                                if (it.isSelect) {
+                                    fetchData(
+                                        modifyDataSort(this@MainActivity, it.nameKR),
+                                        modifyDataGraph(this@MainActivity, it.nameKR)!!,
+                                        it.name, it.nameKR
+                                    )
+                                    return@forEach
+                                }
+                            } catch (e: NullPointerException) {
+                                e.printStackTrace()
                             }
-                        } catch (e: NullPointerException) {
-                            e.printStackTrace()
                         }
+                        startAnimation(fadeIn)
+                        alpha = 1f
                     }
-                    startAnimation(fadeIn)
-                    alpha = 1f
+                } else {
+                    val fadeOut = AnimationUtils.loadAnimation(this@MainActivity, R.anim.fade_out)
+                    binding.nestedAirHelpPopup.apply {
+                        startAnimation(fadeOut)
+                        alpha = 0f
+                    }
+                    binding.nestedAirRv.bringToFront()
                 }
-            } else {
-                val fadeOut = AnimationUtils.loadAnimation(this, R.anim.fade_out)
-                binding.nestedAirHelpPopup.apply {
-                    startAnimation(fadeOut)
-                    alpha = 0f
-                }
-                binding.nestedAirRv.bringToFront()
             }
-        }
+        })
     }
 
     @Deprecated("Deprecated in Java")

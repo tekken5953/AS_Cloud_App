@@ -11,7 +11,9 @@
         app:layout_constraintTop_toTopOf="parent">
         <ImageView
             android:id="@+id/changeScaleBack"
-            style="@style/BasicImageButtonIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="3dp"
             android:layout_marginStart="20dp"
             android:layout_centerVertical="true"
             android:contentDescription="@string/cd_icon_back"

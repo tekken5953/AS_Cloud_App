@@ -7,8 +7,9 @@
 
     <ImageView
         android:id="@+id/searchBack"
-        style="@style/BasicImageButtonIcon"
         android:layout_width="35dp"
+        android:layout_height="32dp"
+        android:padding="3dp"
         android:contentDescription="@string/cd_icon_back"
         android:layout_alignTop="@+id/searchAddressView"
         android:layout_alignBottom="@+id/searchAddressView"

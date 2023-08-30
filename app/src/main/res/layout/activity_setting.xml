@@ -5,7 +5,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/theme_view_color">
+        android:background="@color/theme_view_color"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".view.activity.SettingActivity">
 
         <RelativeLayout
             android:id="@+id/settingTopBarTr"
@@ -15,14 +17,15 @@
 
             <ImageView
                 android:id="@+id/settingBack"
-                style="@style/BasicImageButtonIcon"
-                android:layout_alignParentStart="true"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="3dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="20dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/cd_icon_back"
                 android:src="@drawable/back_arrow"
-                app:tint="@color/theme_text_color" />
+                app:tint="@color/theme_text_color"/>
 
             <TextView
                 android:id="@+id/settingTitle"
