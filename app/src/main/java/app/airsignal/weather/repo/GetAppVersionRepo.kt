@@ -46,7 +46,6 @@ class GetAppVersionRepo: BaseRepository() {
                 }
 
                 override fun onFailure(call: Call<ApiModel.AppVersion>, t: Throwable) {
-                    Timber.tag("testt").d(t.stackTraceToString())
                     try {
                         _getAppVersionResult.postValue(ApiState.Error(ERROR_NETWORK))
                     } catch(e: Exception) {

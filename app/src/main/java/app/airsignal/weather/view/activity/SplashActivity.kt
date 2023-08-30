@@ -1,7 +1,6 @@
 package app.airsignal.weather.view.activity
 
 import android.annotation.SuppressLint
-import android.content.res.ColorStateList
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -23,7 +22,6 @@ import app.airsignal.weather.view.MakeSingleDialog
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import com.google.firebase.database.FirebaseDatabase
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 
 @SuppressLint("CustomSplashScreen")
@@ -97,7 +95,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             binding.splashPB.visibility = View.GONE
                             val versionName = GetSystemInfo.getApplicationVersionName(this)
                             val versionCode = GetSystemInfo.getApplicationVersionCode(this)
-                            if (ver.data.name == versionName) {
+                            if (ver.data.serviceName == versionName || ver.data.releaseName == versionName) {
                                 enterPage()
                             } else {
                                 MakeSingleDialog(this)

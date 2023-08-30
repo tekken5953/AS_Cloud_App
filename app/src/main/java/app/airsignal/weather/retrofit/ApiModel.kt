@@ -1,18 +1,21 @@
 package app.airsignal.weather.retrofit
 
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDateTime
 
 class ApiModel {
 
     // 앱 버전 모델
     data class AppVersion(
         @SerializedName("versionName")
-        val name: String,
+        val serviceName: String,
         @SerializedName("versionCode")
-        val code: String,
+        val serviceCode: String,
         @SerializedName("releaseDate")
-        val releaseDate: String
+        val date: String,
+        @SerializedName("testName")
+        val releaseName: String,
+        @SerializedName("testCode")
+        val releaseCode: String
     )
 
     // 메타데이터 모델
