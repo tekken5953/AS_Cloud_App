@@ -14,35 +14,39 @@ import kotlin.system.exitProcess
 
 class MakeSingleDialog(private val context: Context) {
     lateinit var apply: AppCompatButton
-    lateinit var builder: Dialog
+    val builder = Dialog(context)
 
     // 버튼이 하나인 다이얼로그 생성
-    fun makeDialog(textTitle: String, color: Int, buttonText: String, cancelable: Boolean): AppCompatButton {
-        builder = Dialog(context)
+    fun makeDialog(
+        textTitle: String,
+        color: Int,
+        buttonText: String,
+        cancelable: Boolean
+    ): AppCompatButton {
         val view = LayoutInflater.from(context)
-            .inflate(R.layout.dialog_alert_single_btn,null)
+            .inflate(R.layout.dialog_alert_single_btn, null)
         builder.apply {
-            window?.setBackgroundDrawable(ColorDrawable(context.getColor(R.color.theme_view_color)))
-            requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(view)
-            setCancelable(cancelable)
+            this.window?.setBackgroundDrawableResource(R.drawable.dialog_bg)
+            this.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            this.setContentView(view)
+            this.setCancelable(cancelable)
+            this.create()
+
+            val title = view.findViewById<TextView>(R.id.alertSingleTitle)
+            apply = view.findViewById(R.id.alertSingleApplyBtn)
+
+            apply.backgroundTintList = ColorStateList.valueOf(context.getColor(color))
+
+            title.text = textTitle
+            apply.text = buttonText
+            apply.setOnClickListener {
+                exitProcess(0)
+            }
+
+            this.show()
+
+            return apply
         }
-
-        builder.create()
-
-        val title = view.findViewById<TextView>(R.id.alertSingleTitle)
-        apply = view.findViewById(R.id.alertSingleApplyBtn)
-
-        apply.backgroundTintList = ColorStateList.valueOf(color)
-
-        title.text = textTitle
-        apply.text = buttonText
-        apply.setOnClickListener {
-            exitProcess(0)
-        }
-        builder.show()
-
-        return apply
     }
 
     fun dismiss() {

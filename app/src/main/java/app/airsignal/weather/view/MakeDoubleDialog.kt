@@ -13,12 +13,13 @@ import app.airsignal.weather.R
 
 class MakeDoubleDialog(private val context: Context) {
     val builder = Dialog(context)
+
     fun make(titleString: String, applyString: String, cancelString: String, applyColor: Int)
             : Pair<AppCompatButton, AppCompatButton> {
         val view = LayoutInflater.from(context)
             .inflate(R.layout.dialog_alert_double_btn, null)
         builder.apply {
-            this.window?.setBackgroundDrawable(ColorDrawable(context.getColor(R.color.theme_view_color)))
+            this.window?.setBackgroundDrawableResource(R.drawable.dialog_bg)
             this.requestWindowFeature(Window.FEATURE_NO_TITLE)
             this.setContentView(view)
             this.setCancelable(true)

@@ -436,8 +436,6 @@ class MainActivity
     private fun getDataSingleTime(isCurrent: Boolean) {
         if (RequestPermissionsUtil(this).isNetworkPermitted()) {
             if (RequestPermissionsUtil(this).isLocationPermitted()) {
-                binding.mainDailyWeatherRv.scrollToPosition(0)
-                binding.mainWarningVp.currentItem = 0
                 val lastAddress = getUserLastAddress(this)
                 if (!isCurrent) {
                     val addrArray = resources.getStringArray(R.array.address_korean)
@@ -733,6 +731,8 @@ class MainActivity
                     // 통신 성공
                     is BaseRepository.ApiState.Success -> {
                         try {
+                            binding.mainDailyWeatherRv.scrollToPosition(0)
+                            binding.mainWarningVp.currentItem = 0
                             val result = eData.data
                             val metaAddr = result.meta.address!!
                             reNewTopicInMain(metaAddr)
@@ -1683,16 +1683,10 @@ class MainActivity
         // 일몰 후인지 아닌지 구분 후 적용
         if (!isNight) {
             when (sky) {
-                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> {
-                    black()
-                }
-                else -> {
-                    white()
-                }
+                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> { black() }
+                else -> { white() }
             }
-        } else {
-            white()
-        }
+        } else { white() }
     }
 
     // 기상특보 자동 슬라이드 적용

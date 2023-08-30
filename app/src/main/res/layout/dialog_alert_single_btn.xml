@@ -10,7 +10,7 @@
         style="@style/basicMediumTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="62dp"
-        android:textSize="16sp"
+        android:textSize="15sp"
         android:lineHeight="24dp"/>
 
     <androidx.appcompat.widget.AppCompatButton

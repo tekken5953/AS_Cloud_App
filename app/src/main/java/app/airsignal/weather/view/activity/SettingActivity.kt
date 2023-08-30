@@ -113,6 +113,8 @@ class SettingActivity
             isInit = false
         }
 
+
+
         val lastLogin = applyLastLogin()
 
         // 뒤로가기 버튼 클릭
@@ -380,6 +382,11 @@ class SettingActivity
             val notiSoundSwitch: SwitchCompat = notificationView.findViewById(R.id.notiSoundSwitch)
             val notiLine2: View = notificationView.findViewById(R.id.notificationLine2)
             val notiLine3: View = notificationView.findViewById(R.id.notificationLine3)
+            val notiPerm = RequestPermissionsUtil(this)
+
+            if (VERSION.SDK_INT >= 33) {
+                setUserNoti(this, notiEnable, notiPerm.isNotificationPermitted())
+            }
 
             // 알림 미허용시 다른 아이템 숨김
             fun setVisibility(isChecked: Boolean) {
@@ -454,10 +461,23 @@ class SettingActivity
 
             // 알림 설정 스위치 변화
             notiSettingSwitch.setOnCheckedChangeListener { _, isChecked ->
-                setUserNoti(this, notiEnable, isChecked)
-                showSnackBar(notificationView, isChecked)
-                setVisibility(isChecked)
-                applyBack(isChecked)
+                if (VERSION.SDK_INT >= 33) {
+                    if (isChecked) {
+                        if (notiPerm.isNotificationPermitted()) {
+                            setUserNoti(this, notiEnable, true)
+                            showSnackBar(notificationView, true)
+                            setVisibility(true)
+                            applyBack(true)
+                        } else {
+                            notiPerm.requestNotification()
+                        }
+                    }
+                } else {
+                    setUserNoti(this, notiEnable, isChecked)
+                    showSnackBar(notificationView, isChecked)
+                    setVisibility(isChecked)
+                    applyBack(isChecked)
+                }
             }
             // 진동 설정 스위치 변화
             notiVibrateSwitch.setOnCheckedChangeListener { _, isChecked ->

@@ -19,7 +19,7 @@
     <string name="korean">한국어</string>
     <string name="system_lang">시스템 언어</string>
     <string name="weather">날씨 정보</string>
-    <string name="save_change">설정을 저장하였습니다.앱을 다시 시작합니다</string>
+    <string name="save_change">설정을 저장하였습니다.\n앱을 다시 시작합니다</string>
     <string name="ok">확인</string>
     <string name="theme_system">시스템 테마</string>
     <string name="event">이벤트</string>
