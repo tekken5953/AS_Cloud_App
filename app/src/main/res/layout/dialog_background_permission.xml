@@ -139,9 +139,9 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/backPermCancelBtn"
             android:layout_width="146dp"
-            android:layout_height="56dp"
+            android:layout_height="60dp"
             android:text="@string/cancel"
-            android:textSize="18sp"
+            android:textSize="17sp"
             android:textAllCaps="false"
             android:fontFamily="@font/spoqa_hansansneo_medium"
             android:textColor="@color/cancel_color"
@@ -150,8 +150,8 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/backPermApplyBtn"
             android:layout_width="146dp"
-            android:layout_height="56dp"
-            android:autoSizeMaxTextSize="18sp"
+            android:layout_height="60dp"
+            android:autoSizeMaxTextSize="17sp"
             android:autoSizeTextType="uniform"
             android:autoSizeMinTextSize="12sp"
             android:layout_marginStart="16dp"

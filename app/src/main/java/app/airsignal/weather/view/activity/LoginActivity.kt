@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import app.airsignal.weather.R
+import app.airsignal.weather.dao.IgnoredKeyFile.notificationAdmin
 import app.airsignal.weather.dao.StaticDataObject.TAG_LOGIN
 import app.airsignal.weather.databinding.ActivityLoginBinding
 import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_GOOGLE
@@ -65,7 +66,7 @@ class LoginActivity
                     val data = result.data
                     val task = GoogleSignIn.getSignedInAccountFromIntent(data)
 
-                    if (task.result.email == "tekken5953@naver.com") {
+                    if (task.result.email == notificationAdmin) {
                         SubFCM().subAdminTopic()
                     }
                     googleLogin.handleSignInResult(task, isAuto = false)
