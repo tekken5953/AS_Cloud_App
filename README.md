@@ -30,7 +30,7 @@
 <br/>
 <h2>Latest Release</h2>
 
-``1.1.10``
+``1.2.11``
 
 <br/>
 <h2>Gradle Setting</h2>
