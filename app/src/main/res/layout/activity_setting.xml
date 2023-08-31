@@ -219,16 +219,14 @@
                     android:background="@color/theme_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingCustomerTitle" />
 
-                <!--                <TextView-->
-                <!--                    android:id="@+id/settingNotice"-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:paddingStart="24dp"-->
-                <!--                    android:paddingEnd="24dp"-->
-                <!--                    android:background="?android:attr/selectableItemBackground"-->
-                <!--                    style="@style/settingSingleTextView"-->
-                <!--                    android:text="@string/setting_notice"-->
-                <!--                    android:textColor="@color/theme_text_color"-->
-                <!--                    app:layout_constraintTop_toBottomOf="@+id/settingLine4" />-->
+                <app.airsignal.weather.view.custom_view.SettingSystemView
+                    android:id="@+id/settingNotice"
+                    style="@style/settingSingleTextView"
+                    android:layout_width="match_parent"
+                    android:background="?android:attr/selectableItemBackground"
+                    app:left="@string/setting_notice"
+                    android:textColor="@color/theme_text_color"
+                    app:layout_constraintTop_toBottomOf="@+id/settingLine4" />
 
                 <!--                <TextView-->
                 <!--                    android:id="@+id/settingEvent"-->
@@ -282,7 +280,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     app:left="@string/setting_app_data"
                     android:textColor="@color/theme_text_color"
-                    app:layout_constraintTop_toBottomOf="@+id/settingLine4" />
+                    app:layout_constraintTop_toBottomOf="@+id/settingNotice" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

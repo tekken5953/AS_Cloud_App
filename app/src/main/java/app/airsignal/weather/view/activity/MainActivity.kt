@@ -1609,6 +1609,11 @@ class MainActivity
             binding.nestedAirBox, binding.mainUVBox, binding.mainSunBox
         )
 
+        setSectionTextColor(
+            binding.dailySectionToday,
+            binding.dailySectionTomorrow,
+            binding.dailySectionAfterTomorrow)
+
         // 글자색 white 로 변경
         @Suppress("DEPRECATION")
         fun white() {
