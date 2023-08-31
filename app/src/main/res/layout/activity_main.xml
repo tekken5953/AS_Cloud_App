@@ -383,7 +383,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:layout_marginBottom="31dp"
+            android:layout_marginBottom="25dp"
             android:background="@drawable/main_bottom_content_box_bg"
             app:layout_constraintBottom_toTopOf="@+id/mainMotionSlideGuide">
 
@@ -448,12 +448,12 @@
         <TextView
             android:id="@+id/mainMotionSlideGuide"
             style="@style/basicTextView"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="10dp"
             android:contentDescription="@string/cd_text_more"
             android:text="@string/slide_more"
             android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
 
@@ -462,11 +462,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/cd_img_more"
-            android:paddingBottom="15dp"
             android:src="@drawable/drop_down_bottom"
-            app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
-            app:layout_constraintEnd_toEndOf="@id/mainMotionLayout"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLayout"
+            android:layout_marginStart="2dp"
+            android:layout_marginBottom="2dp"
+            app:layout_constraintTop_toTopOf="@+id/mainMotionSlideGuide"
+            app:layout_constraintBottom_toBottomOf="@+id/mainMotionSlideGuide"
+            app:layout_constraintStart_toEndOf="@+id/mainMotionSlideGuide"
             app:tint="@color/black" />
 
 

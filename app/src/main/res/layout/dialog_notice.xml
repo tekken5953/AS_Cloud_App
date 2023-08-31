@@ -29,70 +29,70 @@
             android:textSize="16sp" />
     </RelativeLayout>
 
-    <TableRow
-        android:id="@+id/noticeTopTr"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/noticeTopBar"
-        android:layout_marginTop="22dp">
-        <TextView
-            android:id="@+id/noticeCAll"
-            style="@style/basicTextView"
-            android:text="전체"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:paddingStart="13dp"
-            android:paddingEnd="13dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:layout_marginStart="24dp"
-            android:background="@drawable/daily_date_bg_s"/>
+<!--    <TableRow-->
+<!--        android:id="@+id/noticeTopTr"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/noticeTopBar"-->
+<!--        android:layout_marginTop="22dp">-->
+<!--        <TextView-->
+<!--            android:id="@+id/noticeCAll"-->
+<!--            style="@style/basicTextView"-->
+<!--            android:text="전체"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="14sp"-->
+<!--            android:paddingStart="13dp"-->
+<!--            android:paddingEnd="13dp"-->
+<!--            android:paddingTop="4dp"-->
+<!--            android:paddingBottom="4dp"-->
+<!--            android:layout_marginStart="24dp"-->
+<!--            android:background="@drawable/daily_date_bg_s"/>-->
 
-        <TextView
-            android:id="@+id/noticeCNotice"
-            style="@style/basicTextView"
-            android:text="공지"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:paddingStart="13dp"
-            android:paddingEnd="13dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:layout_marginStart="15dp"
-            android:background="@drawable/daily_date_bg_ns"/>
+<!--        <TextView-->
+<!--            android:id="@+id/noticeCNotice"-->
+<!--            style="@style/basicTextView"-->
+<!--            android:text="공지"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="14sp"-->
+<!--            android:paddingStart="13dp"-->
+<!--            android:paddingEnd="13dp"-->
+<!--            android:paddingTop="4dp"-->
+<!--            android:paddingBottom="4dp"-->
+<!--            android:layout_marginStart="15dp"-->
+<!--            android:background="@drawable/daily_date_bg_ns"/>-->
 
-        <TextView
-            android:id="@+id/noticeCPatch"
-            style="@style/basicTextView"
-            android:text="패치"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:paddingStart="13dp"
-            android:paddingEnd="13dp"
-            android:paddingTop="4dp"
-            android:layout_marginStart="15dp"
-            android:paddingBottom="4dp"
-            android:background="@drawable/daily_date_bg_ns"/>
+<!--        <TextView-->
+<!--            android:id="@+id/noticeCPatch"-->
+<!--            style="@style/basicTextView"-->
+<!--            android:text="패치"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="14sp"-->
+<!--            android:paddingStart="13dp"-->
+<!--            android:paddingEnd="13dp"-->
+<!--            android:paddingTop="4dp"-->
+<!--            android:layout_marginStart="15dp"-->
+<!--            android:paddingBottom="4dp"-->
+<!--            android:background="@drawable/daily_date_bg_ns"/>-->
 
-        <TextView
-            android:id="@+id/noticeCEvent"
-            style="@style/basicTextView"
-            android:text="이벤트"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:paddingStart="13dp"
-            android:paddingEnd="13dp"
-            android:paddingTop="4dp"
-            android:layout_marginStart="15dp"
-            android:paddingBottom="4dp"
-            android:background="@drawable/daily_date_bg_ns"/>
-    </TableRow>
+<!--        <TextView-->
+<!--            android:id="@+id/noticeCEvent"-->
+<!--            style="@style/basicTextView"-->
+<!--            android:text="이벤트"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="14sp"-->
+<!--            android:paddingStart="13dp"-->
+<!--            android:paddingEnd="13dp"-->
+<!--            android:paddingTop="4dp"-->
+<!--            android:layout_marginStart="15dp"-->
+<!--            android:paddingBottom="4dp"-->
+<!--            android:background="@drawable/daily_date_bg_ns"/>-->
+<!--    </TableRow>-->
 
     <TextView
         android:id="@+id/noticeNullText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/noticeTopTr"
+        android:layout_below="@+id/noticeTopBar"
         android:gravity="center"
         android:text="@string/no_result_notice"
         android:textSize="20sp"
@@ -104,7 +104,7 @@
         android:id="@+id/noticeRv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/noticeTopTr"
+        android:layout_below="@+id/noticeTopBar"
         android:layout_marginTop="22dp"
         android:overScrollMode="never"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
