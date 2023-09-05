@@ -130,4 +130,7 @@ dependencies {
     // Warning Detail Spinner
     implementation "com.github.skydoves:powerspinner:1.2.7"
 
+    // Firebase In App Message
+    implementation("com.google.firebase:firebase-inappmessaging-display-ktx")
+
 }

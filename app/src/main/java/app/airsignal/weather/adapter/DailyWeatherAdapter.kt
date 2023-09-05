@@ -7,10 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
-import app.airsignal.weather.util.`object`.DataTypeParser.getDailyItemDate
+import com.bumptech.glide.Glide
 import java.time.LocalDateTime
 
 /**
@@ -22,7 +23,7 @@ class DailyWeatherAdapter(
     list: ArrayList<AdapterModel.DailyWeatherItem>,
 ) :
     RecyclerView.Adapter<DailyWeatherAdapter.ViewHolder>() {
-    private val mList = list
+    private var mList = list
     private val dateSection = ArrayList<Int>()
     private var isWhite: Boolean = false
 
@@ -35,6 +36,15 @@ class DailyWeatherAdapter(
 
         return ViewHolder(view)
     }
+
+    fun submitList(newItems: ArrayList<AdapterModel.DailyWeatherItem>) {
+        val diffCallback = ItemDiffCallback(mList, newItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+        mList = newItems
+        diffResult.dispatchUpdatesTo(this)
+    }
+
 
     override fun getItemCount(): Int = mList.size
 
@@ -78,9 +88,9 @@ class DailyWeatherAdapter(
         @SuppressLint("SetTextI18n")
         fun bind(dao: AdapterModel.DailyWeatherItem) {
             time.text = dao.time
-            image.setImageDrawable(dao.img)
+            Glide.with(context).load(dao.img).into(image)
             value.text = dao.value
-            rain.text = "${dao.rainP?.toInt().toString()}%"
+            rain.text = "${dao.rainP?.toInt()}%"
 
             if (isWhite) {
                 time.setTextColor(context.getColor(R.color.white))

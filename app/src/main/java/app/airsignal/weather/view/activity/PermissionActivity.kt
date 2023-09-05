@@ -98,6 +98,7 @@ class PermissionActivity :
             // 개인정보 처리방침 열림
             val intent = Intent(this@PermissionActivity, WebURLActivity::class.java)
             intent.putExtra("sort","dataUsage")
+            intent.putExtra("appBar",true)
             startActivity(intent)
         }
 

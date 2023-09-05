@@ -749,6 +749,7 @@ class SettingActivity
         appInfoTermsService.setOnClickListener {
             val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
             intent.putExtra("sort", "termsOfService")
+            intent.putExtra("appBar",true)
             startActivity(intent)
         }
 
@@ -756,6 +757,7 @@ class SettingActivity
         appInfoDataUsage.setOnClickListener {
             val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
             intent.putExtra("sort", "dataUsage")
+            intent.putExtra("appBar",true)
             startActivity(intent)
         }
 

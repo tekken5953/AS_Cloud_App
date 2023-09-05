@@ -4,35 +4,38 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:id="@+id/detailBack"
-        style="@style/BasicImageButtonIcon"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
-        android:contentDescription="@string/cd_icon_back"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/back_arrow"
-        app:tint="@color/theme_text_color"/>
+    <RelativeLayout
+        android:id="@+id/detailTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageView
+            android:id="@+id/detailBack"
+            style="@style/BasicImageButtonIcon"
+            android:layout_marginStart="20dp"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/cd_icon_back"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/back_arrow"
+            app:tint="@color/theme_text_color"/>
 
-    <TextView
-        android:id="@+id/detailTitle"
-        style="@style/basicMediumTextView"
-        android:layout_alignTop="@+id/detailBack"
-        android:layout_alignBottom="@+id/detailBack"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="10dp"
-        android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:textColor="@color/theme_text_color"
-        android:textSize="16sp" />
+        <TextView
+            android:id="@+id/detailTitle"
+            style="@style/basicMediumTextView"
+            android:layout_centerInParent="true"
+            android:text="@string/setting_notice"
+            android:textColor="@color/theme_text_color"
+            android:textSize="16sp" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/detailHeadLine"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:letterSpacing="-0.04"
-        android:layout_below="@+id/detailTitle"
+        android:layout_below="@+id/detailTopBar"
         android:layout_marginStart="27dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="22dp"
         android:layout_marginEnd="37dp"
         android:fontFamily="@font/spoqa_hansansneo_medium"
         android:gravity="start"
@@ -70,19 +73,25 @@
         android:layout_alignEnd="@+id/detailHeadLine"
         android:background="@color/theme_line_color" />
 
-    <TextView
-        android:id="@+id/detailContent"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/detailView"
-        android:layout_alignStart="@+id/detailHeadLine"
         android:layout_marginTop="20dp"
-        android:letterSpacing="-0.04"
-        android:lineSpacingExtra="7dp"
         android:layout_alignEnd="@+id/detailHeadLine"
         android:layout_marginBottom="40dp"
-        android:fontFamily="@font/spoqa_hansansneo_regular"
-        android:textColor="@color/theme_sub_color"
-        android:textSize="15sp" />
-
+        android:overScrollMode="never"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        android:layout_alignStart="@+id/detailHeadLine">
+        <TextView
+            android:id="@+id/detailContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:letterSpacing="-0.04"
+            android:lineSpacingExtra="7dp"
+            android:fontFamily="@font/spoqa_hansansneo_regular"
+            android:textColor="@color/theme_text_color"
+            android:textSize="15sp" />
+    </ScrollView>
 </RelativeLayout>

@@ -11,6 +11,7 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserFontScale
 import app.airsignal.weather.util.`object`.SetSystemInfo
+import com.bumptech.glide.Glide
 
 /**
  * @author : Lee Jae Young
@@ -68,8 +69,8 @@ class WeeklyWeatherAdapter(
         fun bind(dao: AdapterModel.WeeklyWeatherItem) {
             day.text = dao.day
             date.text = dao.date
-            minImg.setImageDrawable(dao.minImg)
-            maxImg.setImageDrawable(dao.maxImg)
+            Glide.with(context).load(dao.minImg).into(minImg)
+            Glide.with(context).load(dao.maxImg).into(maxImg)
             minText.text = dao.minText
             maxText.text = dao.maxText
 

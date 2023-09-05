@@ -448,7 +448,7 @@
         <TextView
             android:id="@+id/mainMotionSlideGuide"
             style="@style/basicTextView"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="15dp"
             android:contentDescription="@string/cd_text_more"
             android:text="@string/slide_more"
             android:textColor="@color/black"

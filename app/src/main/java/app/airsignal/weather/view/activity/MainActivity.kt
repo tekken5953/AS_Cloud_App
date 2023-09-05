@@ -21,6 +21,7 @@ import android.widget.LinearLayout.VISIBLE
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
+import androidx.core.view.size
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -104,6 +105,7 @@ import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -583,16 +585,26 @@ class MainActivity
 
         // 내일 클릭
         tomorrowSection.setOnClickListener {
-            binding.mainDailyWeatherRv.scrollToPosition(getHourCountToTomorrow())
-            binding.mainDailyWeatherRv.post {
-                scrollSmoothFirst(getHourCountToTomorrow())
+            if (dailyWeatherList.size >= getHourCountToTomorrow()) {
+                tomorrowSection.visibility = VISIBLE
+                binding.mainDailyWeatherRv.scrollToPosition(getHourCountToTomorrow())
+                binding.mainDailyWeatherRv.post {
+                    scrollSmoothFirst(getHourCountToTomorrow())
+                }
+            } else {
+                tomorrowSection.visibility = GONE
             }
         }
 
         // 모레 클릭
         afterTomorrowSection.setOnClickListener {
-            binding.mainDailyWeatherRv.post {
-                scrollSmoothFirst(getHourCountToTomorrow() + 24)
+            if (dailyWeatherList.size >= getHourCountToTomorrow() + 24) {
+                afterTomorrowSection.visibility = VISIBLE
+                binding.mainDailyWeatherRv.post {
+                    scrollSmoothFirst(getHourCountToTomorrow() + 24)
+                }
+            } else {
+                afterTomorrowSection.visibility = GONE
             }
         }
 
@@ -600,49 +612,63 @@ class MainActivity
         binding.mainDailyWeatherRv.addOnScrollListener(object : OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (dx != 0) {
-                    val sectionList = dailyWeatherAdapter.getDateSectionList()
-                    // 현재 스크롤 위치 확인
-                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-
-                    sectionList.forEach {
-                        if (firstVisibleItemPosition >= it) {
-                            when (it) {
-                                // 오늘
-                                sectionList[0] -> {
-                                    setSectionTextColor(
-                                        todaySection,
-                                        tomorrowSection,
-                                        afterTomorrowSection
-                                    )
-                                }
-                                // 내일
-                                sectionList[1] -> {
-                                    setSectionTextColor(
-                                        tomorrowSection,
-                                        todaySection,
-                                        afterTomorrowSection
-                                    )
-                                }
-                                // 모레
-                                sectionList[2] -> {
-                                    setSectionTextColor(
-                                        afterTomorrowSection,
-                                        todaySection,
-                                        tomorrowSection
-                                    )
-                                }
-                                else -> {}
+                val sectionList = dailyWeatherAdapter.getDateSectionList()
+                // 현재 스크롤 위치 확인
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                when(sectionList.size) {
+                    1 -> {
+                        setSectionTextColor(
+                            todaySection,
+                            tomorrowSection,
+                            afterTomorrowSection
+                        )
+                    }
+                    2 -> {
+                        when (layoutManager.findFirstVisibleItemPosition()) {
+                            sectionList[0] -> {
+                                setSectionTextColor(
+                                    todaySection,
+                                    tomorrowSection,
+                                    afterTomorrowSection
+                                )
                             }
+                            sectionList[1] -> {
+                                setSectionTextColor(
+                                    tomorrowSection,
+                                    todaySection,
+                                    afterTomorrowSection
+                                )
+                            }
+                            else -> {}
                         }
                     }
-                } else {
-                    setSectionTextColor(
-                        todaySection,
-                        tomorrowSection,
-                        afterTomorrowSection
-                    )
+                    3 -> {
+                        when (layoutManager.findFirstVisibleItemPosition()) {
+                            sectionList[0] -> {
+                                setSectionTextColor(
+                                    todaySection,
+                                    tomorrowSection,
+                                    afterTomorrowSection
+                                )
+                            }
+                            sectionList[1] -> {
+                                setSectionTextColor(
+                                    tomorrowSection,
+                                    todaySection,
+                                    afterTomorrowSection
+                                )
+                            }
+                            sectionList[2] -> {
+                                setSectionTextColor(
+                                    afterTomorrowSection,
+                                    todaySection,
+                                    tomorrowSection
+                                )
+                            }
+                            else -> {}
+                        }
+                    }
+                    else -> {}
                 }
             }
         })
@@ -1653,7 +1679,7 @@ class MainActivity
             uvResponseAdapter.notifyDataSetChanged()
             uvLegendAdapter.notifyDataSetChanged()
             weeklyWeatherAdapter.notifyDataSetChanged()
-            dailyWeatherAdapter.notifyDataSetChanged()
+            dailyWeatherAdapter.submitList(dailyWeatherList)
             warningViewPagerAdapter.changeTextColor(Color.WHITE)
             reportViewPagerItem.addAll(reportArrayList)
             warningViewPagerAdapter.notifyDataSetChanged()
@@ -1700,7 +1726,7 @@ class MainActivity
             uvResponseAdapter.notifyDataSetChanged()
             uvLegendAdapter.notifyDataSetChanged()
             weeklyWeatherAdapter.notifyDataSetChanged()
-            dailyWeatherAdapter.notifyDataSetChanged()
+            dailyWeatherAdapter.submitList(dailyWeatherList)
             warningViewPagerAdapter.changeTextColor(Color.BLACK)
             reportViewPagerItem.addAll(reportArrayList)
             warningViewPagerAdapter.notifyDataSetChanged()

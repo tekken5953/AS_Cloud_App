@@ -130,8 +130,8 @@ class AddressListAdapter(private val context: Context, list: ArrayList<AdapterMo
                 cancel.text = context.getString(R.string.cancel)
                 apply.setOnClickListener {
                     db.deleteFromAddress(address.text.toString())
-                    mList.removeAt(adapterPosition)
-                    notifyItemRemoved(adapterPosition)
+                    mList.removeAt(bindingAdapterPosition)
+                    notifyItemRemoved(bindingAdapterPosition)
                     updateCheckBoxVisible(false)
                     builder.dismiss()
                 }
@@ -143,7 +143,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<AdapterMo
             }
 
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
 
                 if (position != RecyclerView.NO_POSITION) {
                     try {

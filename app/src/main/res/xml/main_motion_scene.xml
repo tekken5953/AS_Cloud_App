@@ -382,7 +382,7 @@
         <Constraint
             android:id="@+id/mainMotionSlideGuide"
             style="@style/basicTextView"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="15dp"
             android:alpha="1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
