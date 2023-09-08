@@ -19,8 +19,9 @@
         <OnSwipe
             app:dragDirection="dragUp"
             app:dragScale="2.5"
-            app:maxAcceleration="30"
-            app:maxVelocity="30"
+            app:maxAcceleration="35"
+            app:maxVelocity="35"
+            app:springStopThreshold="0"
             app:touchAnchorId="@id/nested_scrollview"
             app:touchAnchorSide="top" />
 
