@@ -3,6 +3,7 @@ package app.airsignal.weather.view.activity
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebViewClient
@@ -40,12 +41,12 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
         val webSettings = binding.webUrlWebView.settings
         webSettings.apply {
             javaScriptEnabled = true // 자바스크립트 허용
-            builtInZoomControls = true
+            builtInZoomControls = true // 줌 컨트롤러 생성
             setSupportZoom(true) // 핀치 줌 허용
             loadWithOverviewMode = true // 메타태그 허용
             useWideViewPort = true // 화면 맞추기
             domStorageEnabled = true // 로컬 저장소 허용
-            cacheMode = WebSettings.LOAD_NO_CACHE // 브라우저 캐시 허용
+            cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK // 브라우저 캐시 허용
         }
 
         binding.webUrlWebView.apply {
@@ -53,23 +54,29 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             webViewClient = WebViewClient()
         }
 
-        val pdfUrl: String
+        if (intent.extras!!.getBoolean("appBar")) {
+            binding.webUrlLinear.visibility = View.VISIBLE
+        } else {
+            binding.webUrlLinear.visibility = View.GONE
+        }
+
+        val url: String
         when(intent.extras!!.getString("sort")) {
             "termsOfService" -> {
                 binding.webUrlTitle.text = getString(R.string.term_of_services)
-                pdfUrl = termsOfServiceURL
+                url = termsOfServiceURL
             }
             "dataUsage" -> {
                 binding.webUrlTitle.text = getString(R.string.data_usages)
-                pdfUrl = privacyPolicyURI
+                url = privacyPolicyURI
             }
             else -> {
                 binding.webUrlTitle.text = ""
-                pdfUrl = "about:blank"
+                url = "about:blank"
             }
         }
 
         binding.webUrlWebView.clearCache(true)
-        binding.webUrlWebView.loadUrl(pdfUrl) // 웹 페이지 로딩
+        binding.webUrlWebView.loadUrl(url) // 페이지 로딩
     }
 }

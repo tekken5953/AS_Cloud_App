@@ -54,10 +54,6 @@ class WarningViewPagerAdapter(
         holder.bind(mList[position])
     }
 
-    fun mVib() {
-        VibrateUtil(context).make(20)
-    }
-
     fun changeTextColor(color: Int) {
         textColor = color
     }
@@ -76,7 +72,7 @@ class WarningViewPagerAdapter(
             }
 
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try {
                         if (mList.size != 0) {

@@ -27,6 +27,8 @@ object AdapterModel {
 
     // 공지사항 리스트
     data class NoticeItem(
+        @SerializedName("category")
+        val category: String?,
         @SerializedName("created")
         val created: String,
         @SerializedName("modified")

@@ -50,7 +50,7 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:letterSpacing">-0.04</item>
         <item name="android:textColor">@color/theme_text_color</item>
-        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:gravity">center_vertical</item>
         <item name="fontFamily">@font/spoqa_hansansneo_medium</item>
         <item name="android:textSize">16sp</item>
         <item name="android:layout_weight">0.5</item>
@@ -63,8 +63,8 @@
         <item name="android:gravity">center_vertical</item>
         <item name="fontFamily">@font/spoqa_hansansneo_medium</item>
         <item name="android:textSize">16sp</item>
-        <item name="background">?selectableItemBackground</item>
         <item name="android:layout_marginTop">5dp</item>
+        <item name="background">?selectableItemBackground</item>
     </style>
 
     <style name="DialogAnimationSide">
@@ -93,10 +93,11 @@
         <item name="android:windowExitAnimation">@anim/sidebar_hidden</item>
     </style>
 
-    <style name="BasicImageButtonIcon">
+    <style name="BasicImageButtonIcon" parent="Theme.AppCompat.Light">
         <item name="android:layout_width">32dp</item>
         <item name="android:layout_height">32dp</item>
         <item name="android:padding">3dp</item>
+        <item name="android:colorControlHighlight">@color/ripple_white</item>
     </style>
 
     <style name="OpenSourceMenuTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">

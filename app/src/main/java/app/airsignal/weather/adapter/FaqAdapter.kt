@@ -50,7 +50,7 @@ class FaqAdapter(private val context: Context, list: ArrayList<AdapterModel.FaqI
             headLine.text = dao.title
 
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
 
                 if (position != RecyclerView.NO_POSITION) {
                     onClickListener.onItemClick(it, position)

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
@@ -46,17 +47,19 @@ class NoticeAdapter(private val context: Context, list: ArrayList<AdapterModel.N
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val date: TextView = itemView.findViewById(R.id.itemNoticeDate)
         private val title: TextView = itemView.findViewById(R.id.itemNoticeHeader)
+        private val category: TextView = itemView.findViewById(R.id.itemNoticeCategory)
 
         fun bind(dao: AdapterModel.NoticeItem) {
             date.text = dao.created
             title.text = dao.title
+            category.text = dao.category
 
-            if (adapterPosition == 0) {
+            if (bindingAdapterPosition == 0) {
                 date.setTextColor(context.getColor(R.color.main_blue_color))
             }
 
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
 
                 if (position != RecyclerView.NO_POSITION) {
                     onClickListener.onItemClick(it, position)

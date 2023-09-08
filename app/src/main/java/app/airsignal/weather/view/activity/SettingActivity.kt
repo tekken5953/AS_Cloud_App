@@ -21,7 +21,9 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
+import app.airsignal.weather.adapter.NoticeAdapter
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.IgnoredKeyFile.notiEnable
 import app.airsignal.weather.dao.IgnoredKeyFile.notiSound
@@ -43,6 +45,7 @@ import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
 import app.airsignal.weather.repo.BaseRepository
+import app.airsignal.weather.retrofit.HttpClient
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
@@ -77,6 +80,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import timber.log.Timber
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 class SettingActivity
@@ -307,6 +316,98 @@ class SettingActivity
             }
         }
 
+        val detailView: View =
+            LayoutInflater.from(this).inflate(R.layout.dialog_detail, null)
+        val detailDate: TextView = detailView.findViewById(R.id.detailNoticeDate)
+        val detailTitle: TextView = detailView.findViewById(R.id.detailTitle)
+        val detailContent: TextView = detailView.findViewById(R.id.detailContent)
+        val detailHeadLine: TextView = detailView.findViewById(R.id.detailHeadLine)
+        val detailCategory: TextView = detailView.findViewById(R.id.detailNoticeCategory)
+
+        // 공지사항 클릭
+        binding.settingNotice.setOnClickListener {
+            val noticeMainView: View =
+                LayoutInflater.from(this).inflate(R.layout.dialog_notice, null)
+            val noticeAdapter = NoticeAdapter(this, noticeItem)
+            val recyclerView: RecyclerView = noticeMainView.findViewById(R.id.noticeRv)
+            val noticeTitle: TextView = noticeMainView.findViewById(R.id.noticeTitle)
+            val nullText = noticeMainView.findViewById<TextView>(R.id.noticeNullText)
+
+            recyclerView.adapter = noticeAdapter
+            noticeItem.clear()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                HttpClient
+                    .getInstance(false)
+                    .setClientBuilder()
+                    .mMyAPIImpl
+                    .notice.enqueue(object : Callback<List<AdapterModel.NoticeItem>> {
+                        @SuppressLint("NotifyDataSetChanged")
+                        override fun onResponse(
+                            call: Call<List<AdapterModel.NoticeItem>>,
+                            response: Response<List<AdapterModel.NoticeItem>>
+                        ) {
+                            try {
+                                Timber.tag("noticeItem").i(response.body().toString())
+                                val list = response.body()!!
+                                list.forEachIndexed { i, item ->
+                                    val createdTime =  LocalDateTime.parse(item.created)
+                                    val modifiedTime =  LocalDateTime.parse(item.modified)
+                                    addNoticeItem(
+                                        item.category,
+                                        createdTime.format(DateTimeFormatter.ofPattern("yy.MM.dd")),
+                                        modifiedTime.format(DateTimeFormatter.ofPattern("yy.MM.dd")),
+                                        item.title, item.content)
+
+                                    noticeAdapter.notifyItemInserted(i)
+                                }
+
+                                if (list.isEmpty()) {
+                                    nullText.visibility = View.VISIBLE
+                                } else {
+                                    nullText.visibility = View.GONE
+                                }
+                            } catch(e: Exception) {
+                                nullText.visibility = View.VISIBLE
+                                e.printStackTrace()
+                            }
+                        }
+
+                        override fun onFailure(
+                            call: Call<List<AdapterModel.NoticeItem>>,
+                            t: Throwable
+                        ) {
+                            nullText.visibility = View.VISIBLE
+                            Toast.makeText(this@SettingActivity,
+                                "공지사항을 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+
+                            t.printStackTrace()
+                        }
+                    })
+            }
+
+            ShowDialogClass(this)
+                .setBackPressed(noticeMainView.findViewById(R.id.noticeBack))
+                .show(noticeMainView, true)
+
+            noticeAdapter.setOnItemClickListener(object : NoticeAdapter.OnItemClickListener {
+                override fun onItemClick(v: View, position: Int) {
+                    detailDate.text = noticeItem[position].created
+                    detailDate.visibility = View.VISIBLE
+                    detailCategory.text = noticeItem[position].category
+                    detailCategory.visibility = View.VISIBLE
+                    detailTitle.text = noticeTitle.text.toString()
+                    detailContent.text = noticeItem[position].content
+                    detailHeadLine.text = noticeItem[position].title
+                    ShowDialogClass(this@SettingActivity)
+                        .setBackPressed(detailView.findViewById(R.id.detailBack))
+                        .show(detailView, true)
+                }
+            })
+        }
+
+
+        // 폰트 크기 설정 클릭
         binding.settingSystemFont.setOnClickListener {
             val scaleView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_change_font_scale, null)
@@ -471,6 +572,11 @@ class SettingActivity
                         } else {
                             notiPerm.requestNotification()
                         }
+                    } else {
+                        setUserNoti(this, notiEnable, false)
+                        showSnackBar(notificationView, false)
+                        setVisibility(false)
+                        applyBack(false)
                     }
                 } else {
                     setUserNoti(this, notiEnable, isChecked)
@@ -597,11 +703,10 @@ class SettingActivity
                         val data = ver.data
                         val versionName = getApplicationVersionName(this)
                         val versionCode = getApplicationVersionCode(this)
-                        Logger.t("testtest")
-                            .i("version App : ${versionName}.${versionCode} version Server : ${data.name}.${data.code}")
 
                         appInfoVersionValue.text = "${versionName}.${versionCode}"
-                        if ("${data.name}.${data.code}" == "${versionName}.${versionCode}") {
+                        if ("${data.serviceName}.${data.serviceCode}" == "${versionName}.${versionCode}"
+                            || "${versionName}.${versionCode}" == "${data.releaseName}.${data.releaseCode}") {
                             appInfoIsRecent.text = getString(R.string.last_software)
                             appInfoIsRecent.setTextColor(getColor(R.color.sub_gray_color))
                             appInfoDownBtn.visibility = View.GONE
@@ -642,6 +747,7 @@ class SettingActivity
         appInfoTermsService.setOnClickListener {
             val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
             intent.putExtra("sort", "termsOfService")
+            intent.putExtra("appBar",true)
             startActivity(intent)
         }
 
@@ -649,6 +755,7 @@ class SettingActivity
         appInfoDataUsage.setOnClickListener {
             val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
             intent.putExtra("sort", "dataUsage")
+            intent.putExtra("appBar",true)
             startActivity(intent)
         }
 
@@ -852,12 +959,13 @@ class SettingActivity
 
     // 공지사항 아이템 추가하기
     private fun addNoticeItem(
+        category: String?,
         created: String,
         modified: String,
         title: String,
         content: String
     ) {
-        val item = AdapterModel.NoticeItem(created, modified, title, content)
+        val item = AdapterModel.NoticeItem(category,created, modified, title, content)
         noticeItem.add(item)
     }
 

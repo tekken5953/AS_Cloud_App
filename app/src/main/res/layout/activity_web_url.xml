@@ -15,15 +15,16 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:gravity="center_vertical"
+            android:visibility="visible"
             android:orientation="horizontal"
             android:background="@color/theme_view_color"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/webUrlBackIv"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                style="@style/BasicImageButtonIcon"
                 android:contentDescription="@string/cd_icon_back"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/back_arrow"
                 app:tint="@color/theme_text_color"
                 android:layout_marginStart="24dp"/>

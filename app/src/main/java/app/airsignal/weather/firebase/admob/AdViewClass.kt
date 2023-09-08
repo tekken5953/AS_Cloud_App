@@ -1,27 +1,27 @@
 package app.airsignal.weather.firebase.admob
 
+import android.app.Activity
 import android.content.Context
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.RequestConfiguration
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-04-14 오후 5:15
  **/
-class AdViewClass(private val context: Context) {
+class AdViewClass(private val activity: Activity) {
+    private var adRequest: AdRequest
     //https://developers.google.com/admob/android/test-ads?hl=ko        // Test
     //https://support.google.com/admob/answer/6128543?hl=ko             // 정책
     //https://apps.admob.com/v2/apps/2919179286/overview?pli=1&sac=true // 콘솔
 
+    init {
+        MobileAds.initialize(activity)
+        adRequest = AdRequest.Builder().build()
+    }
+
     fun loadAdView(adView: AdView) {
-        MobileAds.initialize(context)
-//        Timber.tag(TAG_AD).d("Google Mobile Ads SDK Version:  ${MobileAds.getVersion()}")
-//        val testDeviceIds = listOf(adMobTestDeviceId)
-//        val configuration = RequestConfiguration.Builder().build()
-//        MobileAds.setRequestConfiguration(configuration)
-        val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
     }
 }

@@ -5,7 +5,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/theme_view_color">
+        android:background="@color/theme_view_color"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".view.activity.SettingActivity">
 
         <RelativeLayout
             android:id="@+id/settingTopBarTr"
@@ -15,14 +17,15 @@
 
             <ImageView
                 android:id="@+id/settingBack"
-                style="@style/BasicImageButtonIcon"
-                android:layout_alignParentStart="true"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:padding="3dp"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="20dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@string/cd_icon_back"
                 android:src="@drawable/back_arrow"
-                app:tint="@color/theme_text_color" />
+                app:tint="@color/theme_text_color"/>
 
             <TextView
                 android:id="@+id/settingTitle"
@@ -216,16 +219,14 @@
                     android:background="@color/theme_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingCustomerTitle" />
 
-                <!--                <TextView-->
-                <!--                    android:id="@+id/settingNotice"-->
-                <!--                    android:layout_width="match_parent"-->
-                <!--                    android:paddingStart="24dp"-->
-                <!--                    android:paddingEnd="24dp"-->
-                <!--                    android:background="?android:attr/selectableItemBackground"-->
-                <!--                    style="@style/settingSingleTextView"-->
-                <!--                    android:text="@string/setting_notice"-->
-                <!--                    android:textColor="@color/theme_text_color"-->
-                <!--                    app:layout_constraintTop_toBottomOf="@+id/settingLine4" />-->
+                <app.airsignal.weather.view.custom_view.SettingSystemView
+                    android:id="@+id/settingNotice"
+                    style="@style/settingSingleTextView"
+                    android:layout_width="match_parent"
+                    android:background="?android:attr/selectableItemBackground"
+                    app:left="@string/setting_notice"
+                    android:textColor="@color/theme_text_color"
+                    app:layout_constraintTop_toBottomOf="@+id/settingLine4" />
 
                 <!--                <TextView-->
                 <!--                    android:id="@+id/settingEvent"-->
@@ -279,7 +280,7 @@
                     android:background="?android:attr/selectableItemBackground"
                     app:left="@string/setting_app_data"
                     android:textColor="@color/theme_text_color"
-                    app:layout_constraintTop_toBottomOf="@+id/settingLine4" />
+                    app:layout_constraintTop_toBottomOf="@+id/settingNotice" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
