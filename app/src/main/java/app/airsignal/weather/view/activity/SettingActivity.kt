@@ -485,11 +485,9 @@ class SettingActivity
             val notiLine3: View = notificationView.findViewById(R.id.notificationLine3)
             val notiPerm = RequestPermissionsUtil(this)
 
-//            if (VERSION.SDK_INT >= 33) {
-//                if (notiPerm.isNotificationPermitted()) {
-//                    setUserNoti(this, notiEnable, notiPerm.isNotificationPermitted())
-//                }
-//            }
+            if (VERSION.SDK_INT >= 33) {
+                setUserNoti(this, notiEnable, notiPerm.isNotificationPermitted())
+            }
 
             // 알림 미허용시 다른 아이템 숨김
             fun setVisibility(isChecked: Boolean) {

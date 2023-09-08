@@ -95,7 +95,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             binding.splashPB.visibility = View.GONE
                             val versionName = GetSystemInfo.getApplicationVersionName(this)
                             val versionCode = GetSystemInfo.getApplicationVersionCode(this)
-                            if (ver.data.serviceName == versionName || ver.data.releaseName == versionName) {
+                            if ((ver.data.serviceName == versionName) || (ver.data.releaseName == versionName)) {
                                 enterPage()
                             } else {
                                 MakeSingleDialog(this)

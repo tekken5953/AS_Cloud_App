@@ -112,6 +112,7 @@ import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
+
 @SuppressLint("InflateParams")
 class MainActivity
     : BaseActivity<ActivityMainBinding>() {
@@ -492,16 +493,16 @@ class MainActivity
 
     // 저장된 주소로 데이터 호출
     private fun loadSavedAddr(addr: String?, enAddr: String?) {
-        addr?.let {
-            loadSavedViewModelData(it)
+        addr?.let { mAddr ->
+            loadSavedViewModelData(mAddr)
 
             RDBLogcat.writeGpsHistory(
                 this, isSearched = true,
-                gpsValue = addr,
+                gpsValue = mAddr,
                 responseData = null
             )
 
-            val gps = if (getUserLocation(this) == LANG_EN) enAddr?.trim() else addr.trim()
+            val gps = if (getUserLocation(this) == LANG_EN) enAddr?.trim() else mAddr.trim()
 
             binding.mainGpsTitleTv.text = gps
             binding.mainTopBarGpsTitle.text = gps!!.split(" ").last()
@@ -865,11 +866,11 @@ class MainActivity
                                 )
                             }
 
-                            today?.let {
-                                binding.mainMinValue.text = filteringNullData(it.min!!)+"˚"
-                                binding.mainMaxValue.text = filteringNullData(it.max!!)+"˚"
+                            today?.let { mToday ->
+                                binding.mainMinValue.text = filteringNullData(mToday.min)+"˚"
+                                binding.mainMaxValue.text = filteringNullData(mToday.max)+"˚"
                                 binding.mainMinMaxValueC.text =
-                                    "${filteringNullData(it.min)}˚/${filteringNullData(it.max)}˚"
+                                    "${filteringNullData(mToday.min)}˚/${filteringNullData(mToday.max)}˚"
                             }
 
                             updateAirQData(
@@ -905,18 +906,24 @@ class MainActivity
                             airQList[PM2p5_INDEX].isSelect = true   // 초기 데이터 = 초미세먼지
 
                             // UV 값이 없으면 카드 없앰
-                            if ((uv.flag == null) || (uv.value == null) || (uv.flag == "null") || (uv.value.toString() == "null"))
+                            uv.flag?.let { mFlag ->
+                                uv.value?.let { mValue ->
+                                    if (mFlag != "null") {
+                                        binding.mainUVBox.visibility = VISIBLE
+                                        applyUvResponseItem(mFlag)   // 자외선 단계별 대응요령 추가
+                                        setUvBackgroundColor(
+                                            this,
+                                            mFlag,
+                                            binding.mainUVLegendCardView
+                                        ) // UV 범주 색상 변경
+                                        binding.mainUvValue.text =
+                                            translateUV(this, mFlag) + "\n" + mValue.toString()
+                                    }
+                                } ?: apply {
+                                    binding.mainUVBox.visibility = GONE
+                                }
+                            } ?: apply {
                                 binding.mainUVBox.visibility = GONE
-                            else {
-                                binding.mainUVBox.visibility = VISIBLE
-                                applyUvResponseItem(uv.flag)   // 자외선 단계별 대응요령 추가
-                                setUvBackgroundColor(
-                                    this,
-                                    uv.flag,
-                                    binding.mainUVLegendCardView
-                                ) // UV 범주 색상 변경
-                                binding.mainUvValue.text =
-                                    translateUV(this, uv.flag) + "\n" + uv.value.toString()
                             }
 
                             // 일출/일몰 세팅
@@ -1167,6 +1174,10 @@ class MainActivity
                         runOnUiThread { showPB() }
                     }
                 }
+            } ?: run {
+                runOnUiThread {
+                    hideAllViews(error = ERROR_API_PROTOCOL)
+                }
             }
         }
         return this
@@ -1216,8 +1227,8 @@ class MainActivity
     }
 
     // 필드값이 없을 때 -100 출력 됨
-    private fun filteringNullData(data: Double): String {
-        return if (data != -100.0 && data != 100.0) data.roundToInt().toString() else ""
+    private fun filteringNullData(data: Double?): String {
+        return if (data != -100.0 && data != 100.0) data!!.roundToInt().toString() else ""
     }
 
     // 시간별 날씨 리사이클러뷰 아이템 추가
@@ -1473,9 +1484,7 @@ class MainActivity
         // 특정 상황에 맞게 원하는 색상으로 변경
         textView.setTextColor(color)
         textView.background.mutate().let { background ->
-            if (background is GradientDrawable) {
-                background.setStroke(3, color) // 테두리 두께와 색상 변경
-            }
+            (background as GradientDrawable).setStroke(3, color) // 테두리 두께와 색상 변경
         }
     }
 
@@ -1509,7 +1518,6 @@ class MainActivity
         position: Int, nameKR: String, name: String, unit: String,
         value: String
     ) {
-
         if (!airQList.contains(
                 AdapterModel.AirQTitleItem(
                     false, position, nameKR,
@@ -1525,24 +1533,26 @@ class MainActivity
     }
 
     // 현재 위치정보로 DB 갱신
-    private fun updateCurrentAddress(lat: Double, lng: Double, addr: String?) {
+    private fun updateCurrentAddress(mLat: Double, mLng: Double, mAddr: String?) {
         val roomDB = GpsRepository(this@MainActivity)
-        addr?.let {
+        mAddr?.let {
             setUserLastAddr(this@MainActivity, it)
         }
         val model = GpsEntity()
 
-        model.name = CURRENT_GPS_ID
-        model.position = -1
-        model.lat = lat
-        model.lng = lng
-        model.addrKr = addr
-        model.addrEn = addr
-        model.timeStamp = getCurrentTime()
-        if (gpsDbIsEmpty(roomDB)) {
-            roomDB.insert(model)
-        } else {
-            roomDB.update(model)
+        model.apply {
+            name = CURRENT_GPS_ID
+            position = -1
+            lat = mLat
+            lng = mLng
+            addrKr = mAddr
+            addrEn = mAddr
+            timeStamp = getCurrentTime()
+            if (gpsDbIsEmpty(roomDB)) {
+                roomDB.insert(model)
+            } else {
+                roomDB.update(model)
+            }
         }
     }
 
@@ -1615,7 +1625,8 @@ class MainActivity
             binding.mainSunRiseTitle,binding.mainSunSetTitle,binding.mainSunRiseTime,
             binding.mainSunSetTime,binding.mainSunTomTitle,binding.mainUvCollapsedTitle,
             binding.nestedAirTitleEn,binding.dailySectionTomorrow,binding.dailySectionAfterTomorrow,
-            binding.mainSunSetTom, binding.mainSunRiseTom
+            binding.mainSunSetTom, binding.mainSunRiseTom, binding.mainTermsTitle,
+            binding.mainTermsExplain
         )
         val changeColorSubTextViews = listOf(
             binding.mainLicenseText,binding.nestedAirTitleKr,binding.nestedAirUnit,
@@ -1632,7 +1643,8 @@ class MainActivity
         val changeBoxViews = listOf(
             binding.mainWarningBox,binding.nestedSubAirFrame,
             binding.nestedDailyBox, binding.nestedWeeklyBox, binding.adViewBox,
-            binding.nestedAirBox, binding.mainUVBox, binding.mainSunBox
+            binding.nestedAirBox, binding.mainUVBox, binding.mainSunBox,
+            binding.nestedTerms24Box
         )
 
         setSectionTextColor(
@@ -1779,10 +1791,7 @@ class MainActivity
                                                 CoroutineScope(Dispatchers.IO).launch {
                                                     setUserLastAddr(this@MainActivity, it)
                                                     setCurrentLocation(this@MainActivity, it)
-                                                    updateCurrentAddress(
-                                                        loc.latitude, loc.longitude,
-                                                        it
-                                                    )
+                                                    updateCurrentAddress(loc.latitude, loc.longitude, it)
                                                 }
 
                                                 it.replaceFirst(" ", "")
@@ -1797,19 +1806,14 @@ class MainActivity
                                                 val formedAddr =
                                                     if (regexAddr != IN_COMPLETE_ADDRESS) {
                                                         regexAddr
-                                                    } else {
-                                                        it
-                                                    }
+                                                    } else { it }
 
                                                 binding.mainGpsTitleTv.text = formedAddr
 
                                                 binding.mainTopBarGpsTitle.text =
                                                     formedAddr.trim().split(" ").last()
 
-                                                loadCurrentViewModelData(
-                                                    loc.latitude,
-                                                    loc.longitude
-                                                )
+                                                loadCurrentViewModelData(loc.latitude, loc.longitude)
                                             }
                                         } else {
                                             hideAllViews(
@@ -1844,8 +1848,7 @@ class MainActivity
             MakeSingleDialog(this).makeDialog(
                 getString(R.string.error_network_connect),
                 getColor(R.color.theme_alert_double_apply_color),
-                getString(R.string.ok),
-                false
+                getString(R.string.ok), false
             )
         }
     }
