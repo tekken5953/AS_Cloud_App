@@ -21,7 +21,6 @@ import android.widget.LinearLayout.VISIBLE
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
-import androidx.core.view.size
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -37,6 +36,7 @@ import app.airsignal.weather.dao.ErrorCode.ERROR_GPS_CONNECTED
 import app.airsignal.weather.dao.ErrorCode.ERROR_LOCATION_FAILED
 import app.airsignal.weather.dao.ErrorCode.ERROR_NETWORK
 import app.airsignal.weather.dao.ErrorCode.ERROR_NOT_SERVICED_LOCATION
+import app.airsignal.weather.dao.ErrorCode.ERROR_NULL_DATA
 import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.dao.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
@@ -105,13 +105,11 @@ import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
-
 
 @SuppressLint("InflateParams")
 class MainActivity
@@ -146,7 +144,6 @@ class MainActivity
     private val airQList = ArrayList<AdapterModel.AirQTitleItem>()
     private val airQAdapter = AirQTitleAdapter(this, airQList)
     private var currentSun = 0
-    private var isSunAnimated = false
     private var isProgressed = false
     private var isWarned = false
     private val sunPb by lazy { SunProgress(binding.seekArc) }
@@ -234,25 +231,6 @@ class MainActivity
                 binding.nestedScrollview.smoothScrollTo(0, 0, 500)
             }
         })
-
-        binding.nestedScrollview.setOnScrollChangeListener { v, _, _, _, _ ->
-            // 스크롤이 최하단일 경우 최초 한번만 일출/일몰 그래프 애니메이션
-            if (!v.canScrollVertically(1)) {
-                if (!isSunAnimated) {
-                    sunPb.animate(currentSun)
-                    isSunAnimated = true
-                }
-            }
-
-//            // 하단 스크롤시 네비게이션 바 색상 하얀색으로 변경
-//            if (v.scrollY == 0) {
-//                window.navigationBarColor = getColor(android.R.color.transparent)
-//                binding.nestedFab.apply { alpha = 0f }
-//            } else {
-//                window.navigationBarColor = getColor(R.color.theme_view_color)
-//                binding.nestedFab.apply { alpha = 1f }
-//            }
-        }
 
         // 데이터 갱신 버튼 클릭
         binding.mainRefreshData.setOnClickListener(object : OnSingleClickListener() {
@@ -800,6 +778,8 @@ class MainActivity
 
                             currentSun = GetAppInfo.getCurrentSun(sun.sunrise!!, sun.sunset!!)
 
+                            sunPb.animate(currentSun)
+
                             airQList.clear()
 
                             // 주간 오전 날씨
@@ -1004,20 +984,25 @@ class MainActivity
                             binding.subAirPM10.text = "${getString(R.string.pm10_full)}   ${air.pm10Value.toInt()}"
 
                             binding.mainSensTitle.text = getString(R.string.sens_temp)
-                            binding.mainSensValue.text =
-                                SensibleTempFormula().getSensibleTemp(
-                                    ta = current.temperature!!,
-                                    rh = current.humidity!!,
-                                    v = current.windSpeed!!
-                                ).roundToInt().toString() + "˚"
+                            current.temperature?.let { t ->
+                                current.humidity?.let { h ->
+                                    current.windSpeed?.let { w ->
+                                        binding.mainSensValue.text =
+                                            SensibleTempFormula().getSensibleTemp(
+                                                ta = t,
+                                                rh = h,
+                                                v = w
+                                            ).roundToInt().toString() + "˚"
 
-
-                            binding.mainSensValueC.text =
-                                SensibleTempFormula().getSensibleTemp(
-                                    ta = current.temperature,
-                                    rh = current.humidity,
-                                    v = current.windSpeed
-                                ).roundToInt().toString() + "˚"
+                                        binding.mainSensValueC.text =
+                                            SensibleTempFormula().getSensibleTemp(
+                                                ta = t,
+                                                rh = h,
+                                                v = w
+                                            ).roundToInt().toString() + "˚"
+                                    }
+                                }
+                            }
 
                             // 시간별 날씨 아이템 추가
                             for (i: Int in 0 until result.realtime.size) {
@@ -1139,6 +1124,7 @@ class MainActivity
                             }
                         } catch(e: Exception) {
                             hidePB()
+                            RDBLogcat.writeErrorNotANR(this, "Unknown Error", e.localizedMessage!!)
                             when(e) {
                                 is NullPointerException -> {
                                     runOnUiThread {
@@ -1159,6 +1145,7 @@ class MainActivity
 
                     // 통신 실패
                     is BaseRepository.ApiState.Error -> {
+                        RDBLogcat.writeErrorNotANR(this, eData.errorMessage, entireData.toString())
                         runOnUiThread {
                             hidePB()
                             if (GetLocation(this).isNetWorkConnected()) {
@@ -1176,7 +1163,7 @@ class MainActivity
                 }
             } ?: run {
                 runOnUiThread {
-                    hideAllViews(error = ERROR_API_PROTOCOL)
+                    hideAllViews(error = ERROR_NULL_DATA)
                 }
             }
         }
@@ -1271,7 +1258,7 @@ class MainActivity
                 tv.visibility = VISIBLE
                 tv.text =
                     if (resources.configuration.locales[0] == Locale.KOREA) {
-                        "어제보다 ${it.absoluteValue} ˚ 높아요"
+                        "어제보다 ${it.absoluteValue}˚ 높아요"
                     } else {
                         "${it.absoluteValue}˚ upper than yesterday"
                     }
@@ -1291,7 +1278,7 @@ class MainActivity
             }
         }
         when (error) {
-            ERROR_API_PROTOCOL, ERROR_SERVER_CONNECTING -> {
+            ERROR_API_PROTOCOL, ERROR_SERVER_CONNECTING, ERROR_NULL_DATA -> {
                 binding.mainErrorTitle.text = getString(R.string.api_call_error)
             }
             ERROR_NOT_SERVICED_LOCATION -> {
@@ -1381,7 +1368,6 @@ class MainActivity
             binding.mainGpsTitleTv,
             binding.mainLiveTempValue,
             binding.mainLiveTempUnit,
-            binding.mainMotionSlideGuide,
             binding.mainTopBarGpsTitle,
             binding.mainSensTitle,
             binding.mainSensValue,
@@ -1428,12 +1414,19 @@ class MainActivity
             binding.mainErrorTitle.alpha = 1f
             binding.mainErrorRenewBtn.alpha = 1f
             binding.mainErrorRenewBtn.isClickable = true
+            binding.mainMotionSlideGuide.apply {
+                text = getString(R.string.error_guide)
+                setTextColor(ResourcesCompat.getColor(resources,
+                    R.color.theme_text_color,null))
+            }
             applyBackground(binding.mainWarningBox,null)
             applyBackground(binding.nestedSubAirFrame,null)
             binding.mainWarningVp.alpha = 0f
             binding.subAirHumid.alpha = 0f
             binding.subAirWind.alpha = 0f
             binding.subAirRainP.alpha = 0f
+            binding.mainSkyStarImg.alpha = 0f
+            binding.mainShareIv.alpha = 0f
 
             changeStrokeColor(binding.subAirPM10, getColor(android.R.color.transparent))
             changeStrokeColor(binding.subAirPM25, getColor(android.R.color.transparent))
@@ -1442,7 +1435,6 @@ class MainActivity
         // 보임
         else {
             binding.mainSensTitle.text = getString(R.string.sens_temp)
-            binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
             binding.subAirHumid.getTitle().text = getString(R.string.humidity)
             binding.subAirWind.getTitle().text = getString(R.string.wind)
             binding.subAirRainP.getTitle().text = getString(R.string.rainPer)
@@ -1451,9 +1443,12 @@ class MainActivity
             binding.mainErrorTitle.alpha = 0f
             binding.mainErrorRenewBtn.alpha = 0f
             binding.mainErrorRenewBtn.isClickable = false
+            binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
             binding.subAirHumid.alpha = 1f
             binding.subAirWind.alpha = 1f
             binding.subAirRainP.alpha = 1f
+            binding.mainSkyStarImg.alpha = 1f
+            binding.mainShareIv.alpha = 1f
 
             binding.mainMinTitle.text = getString(R.string.min)
             binding.mainMaxTitle.text = getString(R.string.max)
@@ -1506,9 +1501,7 @@ class MainActivity
         value: String, grade: Int
     ) {
         val item = AdapterModel.AirQTitleItem(
-            false, position, nameKR,
-            name, unit, value, grade
-        )
+            false, position, nameKR, name, unit, value, grade)
 
         this.airQList.add(position, item)
     }
@@ -1787,7 +1780,9 @@ class MainActivity
                                         if (isKorea(loc.latitude, loc.longitude)) {
                                             val addr = GetLocation(this@MainActivity)
                                                 .getAddress(loc.latitude, loc.longitude)
-                                            addr?.let {
+                                                ?: getUserLastAddress(this@MainActivity)
+
+                                            addr.let {
                                                 CoroutineScope(Dispatchers.IO).launch {
                                                     setUserLastAddr(this@MainActivity, it)
                                                     setCurrentLocation(this@MainActivity, it)

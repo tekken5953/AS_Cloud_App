@@ -241,4 +241,5 @@
     <string name="naver_disconnect">Disconnect from Naver</string>
     <string name="inquiry">Inquiry</string>
     <string name="etc">Etc</string>
+    <string name="error_guide">if the problem persists.Please contact \'play@airsignal.kr\'</string>
 </resources>

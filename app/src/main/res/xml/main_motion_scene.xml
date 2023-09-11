@@ -34,22 +34,22 @@
             <KeyAttribute
                 android:alpha="1"
                 app:curveFit="linear"
-                app:framePosition="0"
+                app:framePosition="30"
                 app:motionTarget="@id/mainWarningBox" />
             <KeyAttribute
                 android:alpha="0"
                 app:curveFit="linear"
-                app:framePosition="1"
+                app:framePosition="30"
                 app:motionTarget="@id/mainWarningBox" />
             <KeyAttribute
                 android:alpha="1"
                 app:curveFit="linear"
-                app:framePosition="0"
+                app:framePosition="30"
                 app:motionTarget="@id/nested_subAir_frame" />
             <KeyAttribute
                 android:alpha="0"
                 app:curveFit="linear"
-                app:framePosition="1"
+                app:framePosition="30"
                 app:motionTarget="@id/nested_subAir_frame" />
             <KeyAttribute
                 android:alpha="1"
@@ -61,7 +61,6 @@
                 app:curveFit="linear"
                 app:framePosition="1"
                 app:motionTarget="@id/mainGpsFix" />
-
 
             <KeyAttribute
                 android:alpha="1"

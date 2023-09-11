@@ -46,7 +46,6 @@ class GetWarningRepo: BaseRepository() {
                 }
 
                 override fun onFailure(call: Call<ApiModel.BroadCastWeather>, t: Throwable) {
-                    Timber.tag("testt").d(t.stackTraceToString())
                     try {
                         _getWarningResult.postValue(ApiState.Error(ERROR_NETWORK))
                     } catch(e: Exception) {

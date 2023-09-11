@@ -14,6 +14,7 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getWarningFixed
 import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.vmodel.GetWarningViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     override val resID: Int get() = R.layout.activity_warning_detail
@@ -46,7 +47,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             }
         }
 
-        val regexAddress =  if (intent.extras?.getBoolean("isMain") == true) {
+        val regexAddress = if (intent.extras?.getBoolean("isMain") == true) {
             AddressFromRegex(getUserLastAddress(this)).getWarningAddress()
         } else {
             getWarningFixed(this)
@@ -72,37 +73,38 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     // 앱 버전 뷰모델 데이터 호출
     @SuppressLint("NotifyDataSetChanged")
     private fun applyWarning() {
-        if (!warningViewModel.fetchData().hasObservers()) {
-            warningViewModel.fetchData().observe(this) { result ->
-                result?.let { warning ->
-                    when (warning) {
-                        // 통신 성공
-                        is BaseRepository.ApiState.Success -> {
-                            binding.warningPb.visibility = View.GONE
-                            val data = warning.data
-                            warningList.clear()
-                            data.content?.forEachIndexed { index, s ->
-                                binding.warningNoResult.visibility = View.GONE
-                                warningList.add(s.replace("○","").trim())
-                                if (index == data.content.lastIndex) {
-                                    warningAdapter.notifyDataSetChanged()
-                                }
-                            } ?: apply {
-                                binding.warningNoResult.visibility = View.VISIBLE
+        warningViewModel.fetchData().observe(this) { result ->
+            result?.let { warning ->
+                when (warning) {
+                    // 통신 성공
+                    is BaseRepository.ApiState.Success -> {
+                        binding.warningPb.visibility = View.GONE
+                        val data = warning.data
+                        warningList.clear()
+                        data.content?.forEachIndexed { index, s ->
+                            binding.warningNoResult.visibility = View.GONE
+                            warningList.add(s.replace("○", "").trim())
+                            if (index == data.content.lastIndex) {
+                                warningAdapter.notifyDataSetChanged()
                             }
-                        }
-                        // 통신 실패
-                        is BaseRepository.ApiState.Error -> {
-                            binding.warningPb.visibility = View.GONE
+                        } ?: apply {
                             binding.warningNoResult.visibility = View.VISIBLE
                         }
+                    }
+                    // 통신 실패
+                    is BaseRepository.ApiState.Error -> {
+                        binding.warningPb.visibility = View.GONE
+                        binding.warningNoResult.visibility = View.VISIBLE
+                    }
 
-                        // 통신 중
-                        is BaseRepository.ApiState.Loading -> {
-                            binding.warningPb.visibility = View.VISIBLE
-                        }
+                    // 통신 중
+                    is BaseRepository.ApiState.Loading -> {
+                        binding.warningPb.visibility = View.VISIBLE
                     }
                 }
+            } ?: apply {
+                binding.warningPb.visibility = View.GONE
+                binding.warningNoResult.visibility = View.VISIBLE
             }
         }
     }
@@ -110,52 +112,122 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     // 지역명을 지역 코드로 변환
     private fun parseRegionToCode(region: String): Int {
         return when (parseRegionFullName(region)) {
-            "서울시","경기도","인천 광역시" -> { 108 }
-            "강원도" -> { 105 }
-            "충청남도" -> { 133 }
-            "충청북도" -> { 131 }
-            "전라남도" -> { 156 }
-            "전라북도" -> { 146 }
-            "경상남도" -> { 159 }
-            "경상북도" -> { 143 }
-            "제주도" -> { 184 }
-            else -> { 109 }
+            "서울시", "경기도", "인천 광역시" -> {
+                108
+            }
+            "강원도" -> {
+                105
+            }
+            "충청남도" -> {
+                133
+            }
+            "충청북도" -> {
+                131
+            }
+            "전라남도" -> {
+                156
+            }
+            "전라북도" -> {
+                146
+            }
+            "경상남도" -> {
+                159
+            }
+            "경상북도" -> {
+                143
+            }
+            "제주도" -> {
+                184
+            }
+            else -> {
+                109
+            }
         }
     }
 
     // 지역명을 전체 명칭으로 변환
     private fun parseRegionFullName(region: String): String {
         return when (region) {
-            "서울" -> { "서울시" }
-            "경기" -> { "경기도" }
-            "인천" -> { "인천 광역시" }
-            "강원" -> { "강원도" }
-            "충남" -> { "충청남도" }
-            "충북" -> { "충청북도" }
-            "전남" -> { "전라남도" }
-            "전북" -> { "전라북도" }
-            "경남" -> { "경상남도" }
-            "경북" -> { "경상북도" }
-            "제주" -> { "제주도" }
-            "전국" -> { "전국" }
-            else -> { region }
+            "서울" -> {
+                "서울시"
+            }
+            "경기" -> {
+                "경기도"
+            }
+            "인천" -> {
+                "인천 광역시"
+            }
+            "강원" -> {
+                "강원도"
+            }
+            "충남" -> {
+                "충청남도"
+            }
+            "충북" -> {
+                "충청북도"
+            }
+            "전남" -> {
+                "전라남도"
+            }
+            "전북" -> {
+                "전라북도"
+            }
+            "경남" -> {
+                "경상남도"
+            }
+            "경북" -> {
+                "경상북도"
+            }
+            "제주" -> {
+                "제주도"
+            }
+            "전국" -> {
+                "전국"
+            }
+            else -> {
+                region
+            }
         }
     }
 
     private fun parseStringToIndex(region: String): Int {
         return when (parseRegionFullName(region)) {
-            "서울시" -> { 1 }
-            "경기도" -> { 2 }
-            "인천 광역시" -> { 3 }
-            "강원도" -> { 4 }
-            "충청남도" -> { 5 }
-            "충청북도" -> { 6 }
-            "전라남도" -> { 7 }
-            "전라북도" -> { 8 }
-            "경상남도" -> { 9 }
-            "경상북도" -> { 10 }
-            "제주도" -> { 11 }
-            else -> { 0 }
+            "서울시" -> {
+                1
+            }
+            "경기도" -> {
+                2
+            }
+            "인천 광역시" -> {
+                3
+            }
+            "강원도" -> {
+                4
+            }
+            "충청남도" -> {
+                5
+            }
+            "충청북도" -> {
+                6
+            }
+            "전라남도" -> {
+                7
+            }
+            "전라북도" -> {
+                8
+            }
+            "경상남도" -> {
+                9
+            }
+            "경상북도" -> {
+                10
+            }
+            "제주도" -> {
+                11
+            }
+            else -> {
+                0
+            }
         }
     }
 }

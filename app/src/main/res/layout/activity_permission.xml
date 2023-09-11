@@ -159,6 +159,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:foregroundTint="@color/main_blue_color"
+            android:buttonTint="@color/theme_text_color"
             app:layout_constraintEnd_toEndOf="@+id/permissionOkBtn"
             app:layout_constraintTop_toTopOf="@+id/permissionUserDataNotice"
             app:layout_constraintBottom_toBottomOf="@+id/permissionUserDataNotice"/>
@@ -194,6 +195,7 @@
             android:layout_marginBottom="52dp"
             android:textSize="18sp"
             android:enabled="false"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
             android:background="@drawable/permission_ok_btn_bg"
             android:textColor="@color/white"
             android:text="@string/ok"/>
