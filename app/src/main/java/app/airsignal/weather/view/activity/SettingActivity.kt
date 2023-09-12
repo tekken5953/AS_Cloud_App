@@ -66,6 +66,7 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setUserFontScale
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLocation
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserNoti
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserTheme
+import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.util.`object`.SetSystemInfo.setStatusBar
 import app.airsignal.weather.view.BackLocCheckDialog
 import app.airsignal.weather.view.ShowDialogClass
@@ -74,7 +75,6 @@ import app.airsignal.weather.view.custom_view.SnackBarUtils
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -118,11 +118,7 @@ class SettingActivity
 
         setStatusBar(this)
 
-        if (isInit) {
-            isInit = false
-        }
-
-
+        if (isInit) { isInit = false }
 
         val lastLogin = applyLastLogin()
 
@@ -417,9 +413,9 @@ class SettingActivity
             val back = scaleView.findViewById<ImageView>(R.id.changeScaleBack)
             val rg = scaleView.findViewById<RadioGroup>(R.id.changeScaleRadioGroup)
 
-            ShowDialogClass(this)
-                .setBackPressed(back)
-                .show(scaleView, true)
+            val fontDialog = ShowDialogClass(this)
+
+            fontDialog.setBackPressed(back).show(scaleView, true)
 
             // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크
             when (getUserFontScale(this)) {
@@ -440,19 +436,23 @@ class SettingActivity
                     small.id -> {
                         setUserFontScale(this, TEXT_SCALE_SMALL)
                         radioGroup.check(small.id)
-                        this.goMain()
+                        SetSystemInfo.setTextSizeSmall(this)
                     }
                     big.id -> {
                         setUserFontScale(this, TEXT_SCALE_BIG)
                         radioGroup.check(big.id)
-                        this.goMain()
+                        SetSystemInfo.setTextSizeLarge(this)
                     }
                     default.id -> {
                         setUserFontScale(this, TEXT_SCALE_DEFAULT)
                         radioGroup.check(default.id)
-                        this.goMain()
+                        SetSystemInfo.setTextSizeDefault(this)
                     }
                 }
+
+                binding.settingRootView.removeAllViews()
+                Thread.sleep(100)
+                saveConfigChangeRestart()
             }
         }
 
@@ -898,7 +898,7 @@ class SettingActivity
             setUserLocation(this, lang)  // 다른 언어라면 db 값 변경
             radioGroup.check(radioButton.id) // 라디오 버튼 체크
             Thread.sleep(100)
-            saveLanguageChange() // 언어 설정 변경 후 어플리케이션 재시작
+            saveConfigChangeRestart() // 언어 설정 변경 후 어플리케이션 재시작
         }
     }
 
@@ -927,7 +927,7 @@ class SettingActivity
     }
 
     // 언어 설정 변경 후 어플리케이션 재시작
-    private fun saveLanguageChange() {
+    private fun saveConfigChangeRestart() {
         val builder = Dialog(this)
         val view = LayoutInflater.from(this)
             .inflate(R.layout.dialog_alert_single_btn, null)
@@ -946,6 +946,7 @@ class SettingActivity
         title.text = getString(R.string.save_change)
         apply.text = getString(R.string.ok)
         apply.setOnClickListener {
+            finish()
             RefreshUtils(this).refreshApplication()
         }
         builder.show()

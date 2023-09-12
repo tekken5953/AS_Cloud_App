@@ -383,6 +383,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
+            android:clickable="false"
             android:layout_marginBottom="25dp"
             android:background="@drawable/main_bottom_content_box_bg"
             app:layout_constraintBottom_toTopOf="@+id/mainMotionSlideGuide">
@@ -563,7 +564,6 @@
                         android:layout_height="match_parent"
                         android:layout_below="@+id/mainDailyWeatherTitle"
                         android:layout_marginStart="5dp"
-                        android:clipToPadding="false"
                         android:orientation="horizontal"
                         android:overScrollMode="never"
                         android:paddingStart="13dp"

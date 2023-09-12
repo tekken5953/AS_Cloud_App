@@ -10,6 +10,7 @@ import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import app.airsignal.weather.R
+import app.airsignal.weather.dao.ErrorCode.ERROR_GET_DATA
 import app.airsignal.weather.dao.ErrorCode.ERROR_LOCATION_IOException
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.db.room.model.GpsEntity
@@ -34,12 +35,11 @@ class GetLocation(private val context: Context) {
     fun getAddress(lat: Double, lng: Double): String? {
         return try {
             val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
-
             @Suppress( "DEPRECATION")
             val address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             val fullAddr = address[0].getAddressLine(0)
-            val notiAddr = AddressFromRegex(fullAddr).getNotificationAddress()
             CoroutineScope(Dispatchers.IO).launch {
+                val notiAddr = AddressFromRegex(fullAddr).getNotificationAddress()
                 setNotificationAddress(context, notiAddr)
                 setUserLastAddr(context, formattingFullAddress(fullAddr))
             }
@@ -53,6 +53,7 @@ class GetLocation(private val context: Context) {
                     null
                 }
                 is IndexOutOfBoundsException -> {
+                    writeErrorNotANR(context, sort = ERROR_GET_DATA, msg = e.localizedMessage!!)
                     null
                 } else -> {
                     null
@@ -81,7 +82,7 @@ class GetLocation(private val context: Context) {
 
     /** 현재 주소 DB에 업데이트 **/
     fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val roomDB = GpsRepository(context)
             setUserLastAddr(context, addr)
             val model = GpsEntity()

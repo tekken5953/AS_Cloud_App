@@ -16,14 +16,14 @@ import kotlinx.coroutines.launch
 class GpsRepository(private val context: Context) {
 
     fun update(model: GpsEntity) {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             getInstance(context)!!.gpsRepository().updateCurrentGPS(model)
             Logger.t(TAG_D).d("Update Model : $model")
         }
     }
 
     fun insert(model: GpsEntity) {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             getInstance(context)!!.gpsRepository().insertNewGPS(model)
         }
     }
@@ -37,7 +37,7 @@ class GpsRepository(private val context: Context) {
     }
 
     fun deleteFromAddress(addr: String) {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             getInstance(context)!!.gpsRepository().deleteFromAddr(addr)
         }
     }

@@ -71,33 +71,29 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     }
 
     // 앱 버전 뷰모델 데이터 호출
-    @SuppressLint("NotifyDataSetChanged")
     private fun applyWarning() {
         warningViewModel.fetchData().observe(this) { result ->
             result?.let { warning ->
                 when (warning) {
-                    // 통신 성공
                     is BaseRepository.ApiState.Success -> {
                         binding.warningPb.visibility = View.GONE
-                        val data = warning.data
-                        warningList.clear()
-                        data.content?.forEachIndexed { index, s ->
-                            binding.warningNoResult.visibility = View.GONE
-                            warningList.add(s.replace("○", "").trim())
-                            if (index == data.content.lastIndex) {
-                                warningAdapter.notifyDataSetChanged()
+                        warning.data.content?.let { content ->
+                            if (content.isNotEmpty()) {
+                                binding.warningNoResult.visibility = View.GONE
+                                warningList.clear()
+                                warningList.addAll(content.map { it.replace("○", "").trim()})
+                                warningAdapter.notifyItemRangeInserted(0,warningList.size)
+                            } else {
+                                binding.warningNoResult.visibility = View.VISIBLE
                             }
                         } ?: apply {
                             binding.warningNoResult.visibility = View.VISIBLE
                         }
                     }
-                    // 통신 실패
                     is BaseRepository.ApiState.Error -> {
                         binding.warningPb.visibility = View.GONE
                         binding.warningNoResult.visibility = View.VISIBLE
                     }
-
-                    // 통신 중
                     is BaseRepository.ApiState.Loading -> {
                         binding.warningPb.visibility = View.VISIBLE
                     }

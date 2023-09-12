@@ -11,7 +11,7 @@ import org.json.JSONObject
  **/
 
 
-class SharedPreferenceManager(private val context: Context) {
+class SharedPreferenceManager(context: Context) {
     @Suppress("PrivatePropertyName") private val PREFERENCES_NAME = "rebuild_preference"
     @Suppress("PrivatePropertyName") private val DEFAULT_VALUE_STRING = ""
     @Suppress("PrivatePropertyName") private val DEFAULT_VALUE_BOOLEAN = false
@@ -19,17 +19,14 @@ class SharedPreferenceManager(private val context: Context) {
     @Suppress("PrivatePropertyName") private val DEFAULT_VALUE_LONG = -1L
     @Suppress("PrivatePropertyName") private val DEFAULT_VALUE_FLOAT = -1f
 
-    private fun getPreferences(): SharedPreferences {
-        return context.getSharedPreferences(
-            PREFERENCES_NAME,
-            Context.MODE_PRIVATE
-        )
-    }
+    private val prefs: SharedPreferences =  context.getSharedPreferences(
+    PREFERENCES_NAME,
+    Context.MODE_PRIVATE
+    )
+    private val editor: SharedPreferences.Editor = prefs.edit()
 
     /**String 값 저장 **/
     fun setString(key: String, value: String) : SharedPreferenceManager{
-        val prefs = getPreferences()
-        val editor = prefs.edit()
         editor.putString(key, value)
         editor.apply()
         return this
@@ -37,8 +34,6 @@ class SharedPreferenceManager(private val context: Context) {
 
     /**Boolean 값 저장**/
     fun setBoolean(key: String, value: Boolean) : SharedPreferenceManager {
-        val prefs = getPreferences()
-        val editor = prefs.edit()
         editor.putBoolean(key, value)
         editor.apply()
         return this
@@ -46,8 +41,6 @@ class SharedPreferenceManager(private val context: Context) {
 
     /**Integer 값 저장**/
     fun setInt(key: String, value: Int) : SharedPreferenceManager {
-        val prefs = getPreferences()
-        val editor = prefs.edit()
         editor.putInt(key, value)
         editor.apply()
         return this
@@ -55,8 +48,6 @@ class SharedPreferenceManager(private val context: Context) {
 
     /**Long 값 저장**/
     fun setLong(key: String, value: Long) : SharedPreferenceManager {
-        val prefs = getPreferences()
-        val editor = prefs.edit()
         editor.putLong(key, value)
         editor.apply()
         return this
@@ -64,8 +55,6 @@ class SharedPreferenceManager(private val context: Context) {
 
     /**Float 값 저장**/
     fun setFloat(key: String, value: Float) : SharedPreferenceManager {
-        val prefs = getPreferences()
-        val editor = prefs.edit()
         editor.putFloat(key, value)
         editor.apply()
         return this
@@ -73,8 +62,6 @@ class SharedPreferenceManager(private val context: Context) {
 
     /**String 값 호출**/
     fun getString(key: String): String {
-        val prefs =
-            getPreferences()
         return prefs.getString(
             key,
             DEFAULT_VALUE_STRING
@@ -83,8 +70,6 @@ class SharedPreferenceManager(private val context: Context) {
 
     /**Boolean 값 호출**/
     fun getBoolean(key: String): Boolean {
-        val prefs =
-            getPreferences()
         return prefs.getBoolean(
             key,
             DEFAULT_VALUE_BOOLEAN
@@ -93,15 +78,11 @@ class SharedPreferenceManager(private val context: Context) {
 
     /**Integer 값 호출**/
     fun getInt(key: String): Int {
-        val prefs =
-            getPreferences()
         return prefs.getInt(key, DEFAULT_VALUE_INT)
     }
 
     /**Long 값 호출**/
     fun getLong(key: String): Long {
-        val prefs =
-            getPreferences()
         return prefs.getLong(
             key,
             DEFAULT_VALUE_LONG
@@ -110,8 +91,6 @@ class SharedPreferenceManager(private val context: Context) {
 
     /**Float 값 호출**/
     fun getFloat(key: String): Float {
-        val prefs =
-            getPreferences()
         return prefs.getFloat(
             key,
             DEFAULT_VALUE_FLOAT
@@ -120,24 +99,19 @@ class SharedPreferenceManager(private val context: Context) {
 
     /**키 값 삭제**/
     fun removeKey(key: String) {
-        val prefs = getPreferences()
-        val edit = prefs.edit()
-        edit.remove(key)
-        edit.apply()
+        editor.remove(key)
+        editor.apply()
     }
 
     /**모든 데이터 값 삭제**/
     fun clear() {
-        val prefs = getPreferences()
-        val edit = prefs.edit()
-        edit.clear()
-        edit.apply()
+        editor.clear()
+        editor.apply()
     }
 
     /** 키쌍 리스트 구하기**/
     fun getAllList(): Map<String, Any>? {
         val jsonObject = JSONObject()
-        val prefs = getPreferences()
         try {
             for (i in 0 until prefs.all.size) {
                 jsonObject.put(prefs.all.keys.toString(), prefs.all.values)

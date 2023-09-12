@@ -48,21 +48,24 @@ object SetSystemInfo {
     fun setLocaleToKorea(context: Context) {
         val configuration = context.resources.configuration
         configuration.setLocale(Locale.KOREA)
-        context.createConfigurationContext(configuration)
+        @Suppress("DEPRECATION")
+        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
     /** 국가를 영어권으로 설정합니다 **/
     fun setLocaleToEnglish(context: Context) {
         val configuration = context.resources.configuration
         configuration.setLocale(Locale.ENGLISH)
-        context.createConfigurationContext(configuration)
+        @Suppress("DEPRECATION")
+        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
     /** 국가를 시스템으로 설정합니다 **/
     fun setLocaleToSystem(context: Context) {
         val configuration = context.resources.configuration
         configuration.setLocale(Locale.getDefault())
-        context.createConfigurationContext(configuration)
+        @Suppress("DEPRECATION")
+        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
 
     /** UV 범주 색상 적용 **/

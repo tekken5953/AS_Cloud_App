@@ -7,7 +7,8 @@
         android:layout_height="match_parent"
         android:background="@color/theme_view_color"
         xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".view.activity.SettingActivity">
+        tools:context=".view.activity.SettingActivity"
+        android:id="@+id/settingRootView">
 
         <RelativeLayout
             android:id="@+id/settingTopBarTr"

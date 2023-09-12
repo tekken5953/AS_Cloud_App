@@ -16,6 +16,8 @@ import app.airsignal.weather.dao.StaticDataObject.INITIALIZED_LOC_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.IS_INIT_BACK_LOC_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.IS_PERMED_BACK_LOG
+import app.airsignal.weather.dao.StaticDataObject.LAST_LAT
+import app.airsignal.weather.dao.StaticDataObject.LAST_LNG
 import app.airsignal.weather.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import app.airsignal.weather.dao.StaticDataObject.WARNING_FIXED
@@ -131,5 +133,13 @@ object GetAppInfo {
 
     fun getWarningFixed(context: Context): String {
         return SharedPreferenceManager(context).getString(WARNING_FIXED)
+    }
+
+    fun getLastLat(context: Context): String {
+        return SharedPreferenceManager(context).getString(LAST_LAT)
+    }
+
+    fun getLastLng(context: Context): String {
+        return SharedPreferenceManager(context).getString(LAST_LNG)
     }
 }

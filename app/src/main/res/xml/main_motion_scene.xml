@@ -18,7 +18,6 @@
 
         <OnSwipe
             app:dragDirection="dragUp"
-            app:dragScale="2.5"
             app:maxAcceleration="35"
             app:maxVelocity="35"
             app:springStopThreshold="0"
@@ -44,17 +43,17 @@
             <KeyAttribute
                 android:alpha="1"
                 app:curveFit="linear"
-                app:framePosition="30"
+                app:framePosition="0"
                 app:motionTarget="@id/nested_subAir_frame" />
             <KeyAttribute
                 android:alpha="0"
                 app:curveFit="linear"
-                app:framePosition="30"
+                app:framePosition="1"
                 app:motionTarget="@id/nested_subAir_frame" />
             <KeyAttribute
                 android:alpha="1"
                 app:curveFit="linear"
-                app:framePosition="0"
+                app:framePosition="30"
                 app:motionTarget="@id/mainGpsFix" />
             <KeyAttribute
                 android:alpha="0"
