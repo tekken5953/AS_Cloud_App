@@ -35,7 +35,7 @@ class MakeSingleDialog(private val context: Context) {
             val title = view.findViewById<TextView>(R.id.alertSingleTitle)
             apply = view.findViewById(R.id.alertSingleApplyBtn)
 
-            apply.backgroundTintList = ColorStateList.valueOf(context.getColor(color))
+            apply.backgroundTintList = ColorStateList.valueOf(color)
 
             title.text = textTitle
             apply.text = buttonText

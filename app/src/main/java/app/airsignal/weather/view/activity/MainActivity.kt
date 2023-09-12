@@ -189,7 +189,7 @@ class MainActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
-            window.setBackgroundDrawableResource(R.drawable.main_bg_snow)
+            changeBackgroundResource(null)
         }
 
         if (getInitBackLogPerm(this)) {
@@ -768,9 +768,7 @@ class MainActivity
                         showProgressBar()
                     }
                 }
-            } ?: run {
-                hideAllViews(error = ERROR_NULL_DATA)
-            }
+            } ?: run { hideAllViews(error = ERROR_NULL_DATA) }
         }
         return this
     }
@@ -818,6 +816,16 @@ class MainActivity
     private fun updateUIWithData(result: ApiModel.GetEntireData) {
         result.let {
             currentSun = GetAppInfo.getCurrentSun(result.sun.sunrise!!, result.sun.sunset!!)
+            // 메인 날씨 텍스트 세팅
+            val skyText = applySkyText(
+                this,
+                modifyCurrentRainType(result.current.rainType, result.realtime[0].rainType),
+                result.realtime[0].sky, result.thunder)
+            binding.mainSkyText.text = skyText
+            // 날씨에 따라 배경화면 변경
+            applyWindowBackground(
+                currentSun, skyText
+            )
             updateWeatherItems(it)
             updateAirQualityData(it.quality)
             updateUVData(it.uv)
@@ -835,17 +843,6 @@ class MainActivity
                     result.realtime[0].sky, result.thunder,
                     isLarge = true, isNight = getIsNight(currentSun)
                 )
-            )
-
-            // 메인 날씨 텍스트 세팅
-            val skyText = applySkyText(
-                this,
-                modifyCurrentRainType(result.current.rainType, result.realtime[0].rainType),
-                result.realtime[0].sky, result.thunder)
-            binding.mainSkyText.text = skyText
-            // 날씨에 따라 배경화면 변경
-            applyWindowBackground(
-                currentSun, skyText
             )
         }
     }
@@ -1226,7 +1223,8 @@ class MainActivity
     // 하늘상태에 따라 윈도우 배경 변경
     private fun applyWindowBackground(progress: Int, sky: String?) {
         if (getIsNight(progress)) {
-            window.setBackgroundDrawableResource(R.drawable.main_bg_night)
+            changeBackgroundResource(R.drawable.main_bg_night)
+
             binding.mainSkyStarImg.setImageDrawable(
                 ResourcesCompat.getDrawable(resources, R.drawable.bg_nightsky, null)
             )
@@ -1234,18 +1232,41 @@ class MainActivity
         } else {
             binding.mainSkyStarImg.setImageDrawable(null)
             when (sky) {
-                "맑음", "구름많음" -> window.setBackgroundDrawableResource(R.drawable.main_bg_clear)
+                "맑음", "구름많음" ->
+                    changeBackgroundResource(R.drawable.main_bg_clear)
 
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
                 "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
                 "번개,뇌우", "비/번개" ->
-                    window.setBackgroundDrawableResource(R.drawable.main_bg_cloudy)
+                    changeBackgroundResource(R.drawable.main_bg_cloudy)
 
                 "구름많고 눈", "눈", "흐리고 눈" ->
-                    window.setBackgroundDrawableResource(R.drawable.main_bg_snow)
+                    changeBackgroundResource(R.drawable.main_bg_snow)
 
-                else -> window.setBackgroundDrawableResource(R.drawable.main_bg_snow)
+
+                else ->
+                    changeBackgroundResource(R.drawable.main_bg_snow)
             }
+        }
+    }
+
+    private fun changeBackgroundResource(id: Int?) {
+        val contentView = window.decorView.findViewById<View>(android.R.id.content)
+
+        id?.let {
+            // Fade in 애니메이션을 적용할 때
+            contentView.setBackgroundResource(id)
+            contentView.startAnimation(AlphaAnimation(0f, 1f).apply {
+                duration = 700 // 애니메이션 지속 시간 (1초)
+                window.setBackgroundDrawableResource(id)
+            })
+        } ?: apply {
+            // Fade in 애니메이션을 적용할 때
+            contentView.setBackgroundColor(getColor(R.color.theme_view_color))
+            contentView.startAnimation(AlphaAnimation(0f, 1f).apply {
+                duration = 700 // 애니메이션 지속 시간 (1초)
+                window.setBackgroundDrawableResource(R.color.theme_view_color)
+            })
         }
     }
 
@@ -1365,7 +1386,7 @@ class MainActivity
         val backgroundResourceId = if (isNight) R.color.black else R.color.white
 
         binding.mainSkyImg.apply {
-            window.setBackgroundDrawableResource(backgroundResourceId)
+            changeBackgroundResource(backgroundResourceId)
             setImageDrawable(ResourcesCompat.getDrawable(resources,
                 if (isNight) R.drawable.ico_error_b else R.drawable.ico_error_w, null))
         }
