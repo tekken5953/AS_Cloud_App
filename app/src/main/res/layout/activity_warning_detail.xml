@@ -3,7 +3,8 @@
 
     <data />
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/warningMainLayout"
         android:layout_width="match_parent"
@@ -126,7 +127,7 @@
             android:layout_marginBottom="16dp"
             android:clipToPadding="false"
             android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layoutManager=".util.LinearLayoutManagerWrapper"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/warningLine"
             tools:listitem="@layout/list_item_warning_detail" />

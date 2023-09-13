@@ -1,6 +1,7 @@
 package app.airsignal.weather.view.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import app.airsignal.weather.R
@@ -8,6 +9,9 @@ import app.airsignal.weather.adapter.WarningDetailAdapter
 import app.airsignal.weather.databinding.ActivityWarningDetailBinding
 import app.airsignal.weather.repo.BaseRepository
 import app.airsignal.weather.util.AddressFromRegex
+import app.airsignal.weather.util.EnterPageUtil
+import app.airsignal.weather.util.LinearLayoutManagerWrapper
+import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.`object`.GetAppInfo.getNotificationAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getWarningFixed
@@ -22,11 +26,6 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     private val warningList = ArrayList<String>()
     private val warningAdapter = WarningDetailAdapter(this, warningList)
     private val warningViewModel by viewModel<GetWarningViewModel>()
-
-    override fun onDestroy() {
-        super.onDestroy()
-        warningList.clear()
-    }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {

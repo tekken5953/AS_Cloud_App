@@ -11,1115 +11,1122 @@
 
     </data>
 
-    <androidx.constraintlayout.motion.widget.MotionLayout
-        android:id="@+id/mainMotionLayout"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        app:layoutDescription="@xml/main_motion_scene"
-        app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-        <LinearLayout
-            android:id="@+id/mainMotionLinear"
+        android:id="@+id/mainSwipeLayout"
+        android:foregroundTint="@color/main_blue_color">
+        <androidx.constraintlayout.motion.widget.MotionLayout
+            android:id="@+id/mainMotionLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:nestedScrollingEnabled="false"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toTopOf="@+id/nested_scrollview"
-            app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
+            android:fitsSystemWindows="true"
+            app:layoutDescription="@xml/main_motion_scene"
+            tools:showPaths="true"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-        <ScrollView
-            android:id="@+id/mainTopBarGpsTitleScroll"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:overScrollMode="ifContentScrolls"
-            android:scrollbars="none"
-            android:layout_marginEnd="15dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/topBarLinear"
-            app:layout_constraintBottom_toBottomOf="@+id/topBarLinear" >
-
-            <TextView
-                android:id="@+id/mainTopBarGpsTitle"
-                style="@style/basicTextView"
-                android:contentDescription="@string/cd_img_location"
-                android:drawablePadding="3dp"
-                android:ellipsize="marquee"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:maxEms="12"
-                android:singleLine="true"
-                android:textSize="14sp"
-                app:drawableStartCompat="@drawable/location_fill" />
-        </ScrollView>
-
-        <RelativeLayout
-            android:id="@+id/topBarLinear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/mainSideMenuIv"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:padding="3dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="24dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/cd_icon_side_menu"
-                android:src="@drawable/ico_hamb_w"
-                app:tint="@color/black" />
-
-            <ImageView
-                android:id="@+id/mainShareIv"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:padding="3dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="24dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/cd_icon_refresh_data"
-                android:src="@drawable/share"
-                app:tint="@color/black" />
-
-            <ImageView
-                android:id="@+id/mainRefreshData"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:padding="3dp"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:layout_toStartOf="@+id/mainAddAddress"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/cd_icon_refresh_data"
-                android:src="@drawable/refresh"
-                app:tint="@color/black" />
-
-            <ImageView
-                android:id="@+id/mainAddAddress"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:padding="3dp"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:layout_toStartOf="@+id/mainShareIv"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/cd_icon_plus"
-                android:src="@drawable/ico_add_w"
-                app:tint="@color/black" />
-
-        </RelativeLayout>
-
-        <!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
-        <!--            android:id="@+id/bottomNav"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="55dp"-->
-        <!--            android:alpha="0"-->
-        <!--            app:itemIconTint="@color/main_blue_color"-->
-        <!--            app:itemTextColor="@color/main_blue_color"-->
-        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--            app:menu="@menu/bottom_nav" />-->
-
-        <TextView
-            android:id="@+id/mainGpsTitleTv"
-            style="@style/basicTextView"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="22dp"
-            android:fontFamily="@font/spoqa_hansansneo_regular"
-            android:gravity="start"
-            android:lineHeight="26dp"
-            android:maxEms="10"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
-
-        <ImageView
-            android:id="@+id/mainGpsFix"
-            android:layout_width="27dp"
-            android:layout_height="27dp"
-            android:layout_marginStart="6dp"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/cd_icon_gps_fix"
-            android:src="@drawable/gps_fix"
-            app:layout_constraintBottom_toBottomOf="@+id/mainGpsTitleTv"
-            app:layout_constraintStart_toEndOf="@+id/mainGpsTitleTv"
-            app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv"
-            app:tint="@color/mode_black_color" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/mainErrorRenewBtn"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:alpha="0"
-            android:background="@drawable/single_btn_apply_bg"
-            android:clickable="false"
-            android:elevation="0dp"
-            android:fontFamily="@font/spoqa_hansansneo_medium"
-            android:letterSpacing="-0.072"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:translationZ="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mainErrorTitle" />
-
-        <ImageView
-            android:id="@+id/mainSkyStarImg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="47.5dp"
-            android:contentDescription="@string/cd_img_star"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/mainSkyImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/cd_img_sky"
-            app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
-
-        <TextView
-            android:id="@+id/mainErrorTitle"
-            style="@style/basicMediumTextView"
-            android:layout_marginTop="32dp"
-            android:alpha="0"
-            android:lineHeight="25dp"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
-
-        <TextView
-            android:id="@+id/mainSkyText"
-            style="@style/basicMediumTextView"
-            android:layout_marginTop="32dp"
-            android:alpha="0"
-            android:lineHeight="25dp"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
-
-        <TextView
-            android:id="@+id/mainLiveTempValue"
-            style="@style/basicMediumTextView"
-            android:layout_marginTop="12dp"
-            android:textSize="72sp"
-            app:layout_constraintStart_toStartOf="@+id/mainGpsTitleTv"
-            app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv" />
-
-        <TextView
-            android:id="@+id/mainLiveTempTitleC"
-            style="@style/basicTextView"
-            android:layout_marginStart="17dp"
-            android:alpha="0"
-            android:text="@string/live_temp"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
-
-        <TextView
-            android:id="@+id/mainLiveTempValueC"
-            style="@style/basicMediumTextView"
-            android:layout_marginStart="17dp"
-            android:alpha="0"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
-
-        <TextView
-            android:id="@+id/mainSensTitleC"
-            style="@style/basicTextView"
-            android:layout_marginStart="17dp"
-            android:alpha="0"
-            android:text="@string/sens_temp"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
-
-        <TextView
-            android:id="@+id/mainSensValueC"
-            style="@style/basicMediumTextView"
-            android:layout_marginStart="17dp"
-            android:alpha="0"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
-
-        <TableRow
-            android:id="@+id/mainMinMaxTr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
-            app:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
-            app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue">
-
-            <TextView
-                android:id="@+id/mainMinTitle"
-                style="@style/basicTextView"
-                android:textColor="#5CC4FF"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/mainMinValue"
-                style="@style/basicMediumTextView"
-                android:layout_marginStart="3dp"
-                android:textColor="#5CC4FF"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/mainMaxTitle"
-                style="@style/basicTextView"
-                android:layout_marginStart="10dp"
-                android:textColor="#FB3737"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/mainMaxValue"
-                style="@style/basicMediumTextView"
-                android:layout_marginStart="3dp"
-                android:textColor="#FB3737"
-                android:textSize="16sp" />
-        </TableRow>
-
-        <TextView
-            android:id="@+id/mainMinMaxTitleC"
-            style="@style/basicTextView"
-            android:layout_marginStart="17dp"
-            android:alpha="0"
-            android:text="@string/min_max"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
-
-        <TextView
-            android:id="@+id/mainMinMaxValueC"
-            style="@style/basicMediumTextView"
-            android:layout_marginStart="17dp"
-            android:alpha="0"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
-
-        <TextView
-            android:id="@+id/mainLiveTempUnit"
-            style="@style/basicTextView"
-            android:layout_marginStart="2dp"
-            android:paddingTop="5dp"
-            android:textSize="57sp"
-            app:layout_constraintStart_toEndOf="@id/mainLiveTempValue"
-            app:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
-
-        <TextView
-            android:id="@+id/mainCompareTempTv"
-            style="@style/basicMediumTextView"
-            android:layout_marginTop="8dp"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@id/mainSensValue"
-            app:layout_constraintTop_toBottomOf="@id/mainSensTitle" />
-
-        <TextView
-            android:id="@+id/mainSensTitle"
-            style="@style/basicMediumTextView"
-            android:layout_marginEnd="13dp"
-            android:textColor="#3D3D3D"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toBottomOf="@+id/mainSensValue"
-            app:layout_constraintEnd_toStartOf="@+id/mainSensValue"
-            app:layout_constraintTop_toTopOf="@+id/mainSensValue" />
-
-        <TextView
-            android:id="@+id/mainSensValue"
-            style="@style/basicMediumTextView"
-            android:layout_marginTop="27dp"
-            android:layout_marginEnd="24dp"
-            android:textColor="#3D3D3D"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@+id/mainMotionLayout"
-            app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv" />
-
-        <LinearLayout
-            android:id="@+id/mainWarningBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="12dp"
-            android:background="@drawable/main_bottom_content_box_bg"
-            android:gravity="center"
-            app:layout_constraintBottom_toTopOf="@+id/nested_subAir_frame">
-
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/mainWarningVp"
+            <LinearLayout
+                android:id="@+id/mainMotionLinear"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center" />
-        </LinearLayout>
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:nestedScrollingEnabled="false"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toTopOf="@+id/nested_scrollview"
+                app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 
-        <RelativeLayout
-            android:id="@+id/nested_subAir_frame"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:clickable="false"
-            android:layout_marginBottom="25dp"
-            android:background="@drawable/main_bottom_content_box_bg"
-            app:layout_constraintBottom_toTopOf="@+id/mainMotionSlideGuide">
-
-            <TableRow
-                android:id="@+id/subAirTr"
-                android:layout_width="match_parent"
+            <ScrollView
+                android:id="@+id/mainTopBarGpsTitleScroll"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="25dp"
-                android:gravity="center">
+                android:orientation="horizontal"
+                android:overScrollMode="ifContentScrolls"
+                android:scrollbars="none"
+                android:layout_marginEnd="15dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/topBarLinear"
+                app:layout_constraintBottom_toBottomOf="@+id/topBarLinear" >
 
                 <TextView
-                    android:id="@+id/subAirPM10"
-                    style="@style/basicMediumTextView"
-                    android:background="@drawable/main_pm_bg"
-                    android:paddingStart="10dp"
-                    android:paddingTop="6dp"
-                    android:paddingEnd="10dp"
-                    android:paddingBottom="6dp"
-                    android:textColor="@android:color/transparent" />
-
-                <TextView
-                    android:id="@+id/subAirPM25"
-                    style="@style/basicMediumTextView"
-                    android:layout_marginStart="15dp"
-                    android:background="@drawable/main_pm_bg"
-                    android:paddingStart="10dp"
-                    android:paddingTop="6dp"
-                    android:paddingEnd="10dp"
-                    android:paddingBottom="6dp"
-                    android:textColor="@android:color/transparent" />
-            </TableRow>
-
-            <app.airsignal.weather.view.custom_view.SubAirView
-                android:id="@+id/subAirHumid"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/subAirWind"
-                android:layout_toStartOf="@+id/subAirWind"
-                app:customImg="@drawable/ico_main_humidity"
-                app:isLeftLine="false" />
-
-            <app.airsignal.weather.view.custom_view.SubAirView
-                android:id="@+id/subAirWind"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/subAirTr"
-                android:layout_centerHorizontal="true"
-                app:customImg="@drawable/ico_main_wind"
-                app:isLeftLine="true" />
-
-            <app.airsignal.weather.view.custom_view.SubAirView
-                android:id="@+id/subAirRainP"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/subAirWind"
-                android:layout_toEndOf="@+id/subAirWind"
-                app:customImg="@drawable/ico_main_rain"
-                app:isLeftLine="true" />
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/mainMotionSlideGuide"
-            style="@style/basicTextView"
-            android:layout_marginBottom="15dp"
-            android:contentDescription="@string/cd_text_more"
-            android:text="@string/slide_more"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
-
-        <ImageView
-            android:id="@+id/mainMotionSLideImg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/cd_img_more"
-            android:src="@drawable/drop_down_bottom"
-            android:layout_marginStart="5dp"
-            android:layout_marginBottom="2dp"
-            app:layout_constraintTop_toTopOf="@+id/mainMotionSlideGuide"
-            app:layout_constraintBottom_toBottomOf="@+id/mainMotionSlideGuide"
-            app:layout_constraintStart_toEndOf="@+id/mainMotionSlideGuide"
-            app:tint="@color/black" />
-
-
-        <androidx.core.widget.NestedScrollView
-            android:id="@+id/nested_scrollview"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="-25dp"
-            android:clipToPadding="false"
-            android:orientation="vertical"
-            android:overScrollMode="never"
-            android:scrollbars="none"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/mainMotionLinear">
+                    android:id="@+id/mainTopBarGpsTitle"
+                    style="@style/basicTextView"
+                    android:contentDescription="@string/cd_img_location"
+                    android:drawablePadding="3dp"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:maxEms="12"
+                    android:singleLine="true"
+                    android:textSize="14sp"
+                    app:drawableStartCompat="@drawable/location_fill" />
+            </ScrollView>
 
             <RelativeLayout
-                android:id="@+id/nested_main_linear"
+                android:id="@+id/topBarLinear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:paddingBottom="55dp">
+                android:layout_marginTop="18dp"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <app.airsignal.weather.view.custom_view.AirQView
-                    android:id="@+id/nested_air_help_popup"
+                <ImageView
+                    android:id="@+id/mainSideMenuIv"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="3dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="24dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/cd_icon_side_menu"
+                    android:src="@drawable/ico_hamb_w"
+                    app:tint="@android:color/transparent" />
+
+                <ImageView
+                    android:id="@+id/mainShareIv"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="3dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="24dp"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/cd_icon_refresh_data"
+                    android:src="@drawable/share"
+                    app:tint="@android:color/transparent" />
+
+                <ImageView
+                    android:id="@+id/mainAddAddress"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="3dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toStartOf="@+id/mainShareIv"
+                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/cd_icon_plus"
+                    android:src="@drawable/ico_add_w"
+                    app:tint="@android:color/transparent" />
+
+            </RelativeLayout>
+
+            <!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
+            <!--            android:id="@+id/bottomNav"-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="55dp"-->
+            <!--            android:alpha="0"-->
+            <!--            app:itemIconTint="@color/main_blue_color"-->
+            <!--            app:itemTextColor="@color/main_blue_color"-->
+            <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--            app:menu="@menu/bottom_nav" />-->
+
+            <ImageView
+                android:id="@+id/mainLoadingView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:alpha="0"
+                android:clickable="false"
+                android:focusable="false"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:src="@drawable/app_icon"/>
+
+            <TextView
+                android:id="@+id/mainGpsTitleTv"
+                style="@style/basicTextView"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="22dp"
+                android:fontFamily="@font/spoqa_hansansneo_regular"
+                android:gravity="start"
+                android:lineHeight="26dp"
+                android:maxEms="10"
+                android:textColor="@android:color/transparent"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
+
+            <ImageView
+                android:id="@+id/mainGpsFix"
+                android:layout_width="27dp"
+                android:layout_height="27dp"
+                android:layout_marginStart="6dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/cd_icon_gps_fix"
+                android:src="@drawable/gps_fix"
+                app:layout_constraintBottom_toBottomOf="@+id/mainGpsTitleTv"
+                app:layout_constraintStart_toEndOf="@+id/mainGpsTitleTv"
+                app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv"
+                app:tint="@android:color/transparent" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/mainErrorRenewBtn"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:alpha="0"
+                android:background="@drawable/single_btn_apply_bg"
+                android:clickable="false"
+                android:elevation="0dp"
+                android:fontFamily="@font/spoqa_hansansneo_medium"
+                android:letterSpacing="-0.072"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:translationZ="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/mainErrorTitle" />
+
+            <ImageView
+                android:id="@+id/mainSkyStarImg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="47.5dp"
+                android:contentDescription="@string/cd_img_star"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/mainSkyImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/cd_img_sky"
+                app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
+
+            <TextView
+                android:id="@+id/mainErrorTitle"
+                style="@style/basicMediumTextView"
+                android:layout_marginTop="32dp"
+                android:alpha="0"
+                android:lineHeight="25dp"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+                app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
+                app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
+
+            <TextView
+                android:id="@+id/mainSkyText"
+                style="@style/basicMediumTextView"
+                android:layout_marginTop="32dp"
+                android:alpha="0"
+                android:lineHeight="25dp"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+                app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
+                app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
+
+            <TextView
+                android:id="@+id/mainLiveTempValue"
+                style="@style/basicMediumTextView"
+                android:layout_marginTop="12dp"
+                android:textSize="72sp"
+                app:layout_constraintStart_toStartOf="@+id/mainGpsTitleTv"
+                app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv" />
+
+            <TextView
+                android:id="@+id/mainLiveTempTitleC"
+                style="@style/basicTextView"
+                android:layout_marginStart="17dp"
+                android:alpha="0"
+                android:text="@string/live_temp"
+                android:textColor="@android:color/transparent"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+                app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
+
+            <TextView
+                android:id="@+id/mainLiveTempValueC"
+                style="@style/basicMediumTextView"
+                android:layout_marginStart="17dp"
+                android:alpha="0"
+                android:textColor="@android:color/transparent"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+                app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
+
+            <TextView
+                android:id="@+id/mainSensTitleC"
+                style="@style/basicTextView"
+                android:layout_marginStart="17dp"
+                android:alpha="0"
+                android:text="@string/sens_temp"
+                android:textColor="@android:color/transparent"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+                app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
+
+            <TextView
+                android:id="@+id/mainSensValueC"
+                style="@style/basicMediumTextView"
+                android:layout_marginStart="17dp"
+                android:alpha="0"
+                android:textColor="@android:color/transparent"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+                app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
+
+            <TableRow
+                android:id="@+id/mainMinMaxTr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
+                app:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
+                app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue">
+
+                <TextView
+                    android:id="@+id/mainMinTitle"
+                    style="@style/basicTextView"
+                    android:textColor="#5CC4FF"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/mainMinValue"
+                    style="@style/basicMediumTextView"
+                    android:layout_marginStart="3dp"
+                    android:textColor="#5CC4FF"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/mainMaxTitle"
+                    style="@style/basicTextView"
+                    android:layout_marginStart="10dp"
+                    android:textColor="#FB3737"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/mainMaxValue"
+                    style="@style/basicMediumTextView"
+                    android:layout_marginStart="3dp"
+                    android:textColor="#FB3737"
+                    android:textSize="16sp" />
+            </TableRow>
+
+            <TextView
+                android:id="@+id/mainMinMaxTitleC"
+                style="@style/basicTextView"
+                android:layout_marginStart="17dp"
+                android:alpha="0"
+                android:text="@string/min_max"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+                app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
+
+            <TextView
+                android:id="@+id/mainMinMaxValueC"
+                style="@style/basicMediumTextView"
+                android:layout_marginStart="17dp"
+                android:alpha="0"
+                android:textColor="@android:color/transparent"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+                app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
+
+            <TextView
+                android:id="@+id/mainLiveTempUnit"
+                style="@style/basicTextView"
+                android:layout_marginStart="2dp"
+                android:paddingTop="5dp"
+                android:textSize="57sp"
+                app:layout_constraintStart_toEndOf="@id/mainLiveTempValue"
+                app:layout_constraintTop_toTopOf="@+id/mainLiveTempValue" />
+
+            <TextView
+                android:id="@+id/mainCompareTempTv"
+                style="@style/basicMediumTextView"
+                android:layout_marginTop="8dp"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@id/mainSensValue"
+                app:layout_constraintTop_toBottomOf="@id/mainSensTitle" />
+
+            <TextView
+                android:id="@+id/mainSensTitle"
+                style="@style/basicMediumTextView"
+                android:layout_marginEnd="13dp"
+                android:textColor="#3D3D3D"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/mainSensValue"
+                app:layout_constraintEnd_toStartOf="@+id/mainSensValue"
+                app:layout_constraintTop_toTopOf="@+id/mainSensValue" />
+
+            <TextView
+                android:id="@+id/mainSensValue"
+                style="@style/basicMediumTextView"
+                android:layout_marginTop="27dp"
+                android:layout_marginEnd="24dp"
+                android:textColor="#3D3D3D"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="@+id/mainMotionLayout"
+                app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv" />
+
+            <LinearLayout
+                android:id="@+id/mainWarningBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/main_bottom_content_box_bg"
+                android:gravity="center"
+                app:layout_constraintBottom_toTopOf="@+id/nested_subAir_frame">
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/mainWarningVp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/nested_air_box"
+                    android:layout_gravity="center" />
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/nested_subAir_frame"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:clickable="false"
+                android:layout_marginBottom="25dp"
+                android:background="@drawable/main_bottom_content_box_bg"
+                app:layout_constraintBottom_toTopOf="@+id/mainMotionSlideGuide">
+
+                <TableRow
+                    android:id="@+id/subAirTr"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="25dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/subAirPM10"
+                        style="@style/basicMediumTextView"
+                        android:background="@drawable/main_pm_bg"
+                        android:paddingStart="10dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="6dp"
+                        android:textColor="@android:color/transparent" />
+
+                    <TextView
+                        android:id="@+id/subAirPM25"
+                        style="@style/basicMediumTextView"
+                        android:layout_marginStart="15dp"
+                        android:background="@drawable/main_pm_bg"
+                        android:paddingStart="10dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="6dp"
+                        android:textColor="@android:color/transparent" />
+                </TableRow>
+
+                <app.airsignal.weather.view.custom_view.SubAirView
+                    android:id="@+id/subAirHumid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/subAirWind"
+                    android:layout_toStartOf="@+id/subAirWind"
+                    app:customImg="@drawable/ico_main_humidity"
+                    app:isLeftLine="false" />
+
+                <app.airsignal.weather.view.custom_view.SubAirView
+                    android:id="@+id/subAirWind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/subAirTr"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:alpha="0"
-                    android:background="@drawable/help_bg"
-                    android:elevation="3dp"
-                    android:gravity="center_horizontal"
-                    android:translationZ="2dp" />
+                    app:customImg="@drawable/ico_main_wind"
+                    app:isLeftLine="true" />
+
+                <app.airsignal.weather.view.custom_view.SubAirView
+                    android:id="@+id/subAirRainP"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/subAirWind"
+                    android:layout_toEndOf="@+id/subAirWind"
+                    app:customImg="@drawable/ico_main_rain"
+                    app:isLeftLine="true" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/mainMotionSlideGuide"
+                style="@style/basicTextView"
+                android:layout_marginBottom="15dp"
+                android:contentDescription="@string/cd_text_more"
+                android:text="@string/slide_more"
+                android:textColor="@android:color/transparent"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+                app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
+
+            <ImageView
+                android:id="@+id/mainMotionSLideImg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/cd_img_more"
+                android:src="@drawable/drop_down_bottom"
+                android:layout_marginStart="5dp"
+                android:layout_marginBottom="2dp"
+                app:layout_constraintTop_toTopOf="@+id/mainMotionSlideGuide"
+                app:layout_constraintBottom_toBottomOf="@+id/mainMotionSlideGuide"
+                app:layout_constraintStart_toEndOf="@+id/mainMotionSlideGuide"
+                app:tint="@android:color/transparent" />
+
+
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/nested_scrollview"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginBottom="-25dp"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:overScrollMode="never"
+                android:scrollbars="none"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mainMotionLinear">
 
                 <RelativeLayout
-                    android:id="@+id/nested_daily_box"
+                    android:id="@+id/nested_main_linear"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/scrolled_box_bg">
+                    android:background="@android:color/transparent"
+                    android:paddingBottom="55dp">
 
-                    <TextView
-                        android:id="@+id/mainDailyWeatherTitle"
-                        style="@style/basicMediumTextView"
+                    <app.airsignal.weather.view.custom_view.AirQView
+                        android:id="@+id/nested_air_help_popup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/nested_air_box"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginStart="20dp"
-                        android:layout_marginTop="24dp"
-                        android:drawablePadding="5dp"
-                        android:text="@string/daily_weather"
-                        android:textColor="@color/theme_text_color"
-                        android:textSize="18sp"
-                        app:drawableStartCompat="@drawable/ico_time" />
-
-                    <TableRow
-                        android:id="@+id/mainDailyWeatherSectionTR"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/mainDailyWeatherTitle"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="16dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/dailySectionToday"
-                            style="@style/basicMediumTextView"
-                            android:text="@string/daily_today"
-                            android:textColor="@color/theme_text_color"
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:id="@+id/dailySectionTomorrow"
-                            style="@style/basicTextView"
-                            android:layout_marginStart="12dp"
-                            android:text="@string/daily_tomorrow"
-                            android:textColor="@color/theme_text_color"
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:id="@+id/dailySectionAfterTomorrow"
-                            style="@style/basicTextView"
-                            android:layout_marginStart="12dp"
-                            android:text="@string/daily_next_tomorrow"
-                            android:textColor="@color/theme_text_color"
-                            android:textSize="16sp" />
-                    </TableRow>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/mainDailyWeatherRv"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_below="@+id/mainDailyWeatherTitle"
-                        android:layout_marginStart="5dp"
-                        android:orientation="horizontal"
-                        android:overScrollMode="never"
-                        android:paddingStart="13dp"
-                        android:paddingEnd="15dp"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/list_item_daily_weather" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/adViewBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/nested_daily_box"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="12dp"
-                    android:animateLayoutChanges="true"
-                    android:background="@drawable/scrolled_box_bg"
-                    android:visibility="visible">
-
-                    <ImageView
-                        android:id="@+id/adViewCancelIv"
-                        android:layout_width="21dp"
-                        android:layout_height="21dp"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
-                        android:contentDescription="@string/cd_ad_cancel"
-                        android:src="@drawable/cancel"
-                        android:visibility="visible"
-                        app:tint="@color/theme_text_color" />
-
-                    <com.google.android.gms.ads.AdView
-                        android:id="@+id/nested_adView"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="5dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="2dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_toStartOf="@+id/adViewCancelIv"
-                        android:visibility="visible"
-                        app:adSize="FULL_BANNER"
-                        app:adUnitId="@string/adUnit_main_Id" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/nested_weekly_box"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/adViewBox"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/scrolled_box_bg">
-
-                    <TextView
-                        android:id="@+id/mainWeeklyWeatherTitle"
-                        style="@style/basicMediumTextView"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="24dp"
-                        android:drawablePadding="5dp"
-                        android:text="@string/weekly_weather"
-                        android:textColor="@color/theme_text_color"
-                        android:textSize="18sp"
-                        app:drawableStartCompat="@drawable/ico_weekly" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/mainWeeklyWeatherRv"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_below="@+id/mainWeeklyWeatherTitle"
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="18dp"
-                        android:clipToPadding="false"
-                        android:orientation="vertical"
-                        android:overScrollMode="never"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/list_item_weekly_weather" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/nested_terms24_box"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/nested_weekly_box"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/scrolled_box_bg"
-                    android:paddingTop="36dp"
-                    android:paddingBottom="36dp"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/mainTermsTitle"
-                        style="@style/basicBoldTextView"
-                        android:layout_centerHorizontal="true"
-                        android:textColor="@color/theme_text_color"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/mainTermsDate"
-                        style="@style/basicTextView"
-                        android:layout_below="@+id/mainTermsTitle"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="5dp"
-                        android:textColor="@color/theme_sub_color"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/mainTermsExplain"
-                        style="@style/basicMediumTextView"
-                        android:layout_below="@+id/mainTermsDate"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="21dp"
-                        android:textColor="@color/theme_text_color"
-                        android:textSize="16sp" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/nested_air_box"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/nested_terms24_box"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/scrolled_box_bg"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="20dp">
-
-                    <TextView
-                        android:id="@+id/nested_air_title"
-                        style="@style/basicMediumTextView"
-                        android:layout_marginTop="24dp"
-                        android:drawablePadding="5dp"
-                        android:text="@string/live_air_quality"
-                        android:textColor="@color/theme_text_color"
-                        android:textSize="18sp"
-                        app:drawableStartCompat="@drawable/ico_airquality" />
-
-                    <TableRow
-                        android:id="@+id/nested_air_tr"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/nested_air_title"
-                        android:layout_marginTop="21dp"
-                        android:gravity="center">
-
-                        <RelativeLayout
-                            android:id="@+id/nested_air_right_linear"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="30dp">
-
-                            <TextView
-                                android:id="@+id/nested_air_title_en"
-                                style="@style/basicMediumTextView"
-                                android:layout_alignParentTop="true"
-                                android:layout_centerHorizontal="true"
-                                android:textColor="@color/theme_text_color"
-                                android:textSize="17sp" />
-
-                            <TextView
-                                android:id="@+id/nested_air_title_kr"
-                                style="@style/basicTextView"
-                                android:layout_below="@+id/nested_air_title_en"
-                                android:layout_centerHorizontal="true"
-                                android:layout_marginBottom="10dp"
-                                android:textColor="@color/theme_sub_color"
-                                android:textSize="14sp" />
-
-                            <View
-                                android:id="@+id/nested_air_line"
-                                android:layout_width="90dp"
-                                android:layout_height="1.5dp"
-                                android:layout_below="@+id/nested_air_title_kr"
-                                android:layout_marginTop="9dp"
-                                android:background="@color/theme_line_color" />
-
-                            <TextView
-                                android:id="@+id/nested_air_value"
-                                style="@style/basicMediumTextView"
-                                android:layout_below="@+id/nested_air_line"
-                                android:layout_centerHorizontal="true"
-                                android:layout_marginTop="8dp"
-                                android:letterSpacing="-0.064"
-                                android:textSize="24sp" />
-
-                            <TextView
-                                android:id="@+id/nested_air_unit"
-                                style="@style/basicTextView"
-                                android:layout_below="@id/nested_air_value"
-                                android:layout_centerHorizontal="true"
-                                android:layout_marginTop="5dp"
-                                android:textColor="@color/theme_sub_color"
-                                android:textSize="12sp" />
-                        </RelativeLayout>
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/nested_air_cpv_card"
-                            android:layout_width="110dp"
-                            android:layout_height="110dp"
-                            android:layout_marginStart="26dp"
-                            android:translationZ="0dp"
-                            app:cardCornerRadius="55dp"
-                            app:cardElevation="0dp">
-
-                            <TextView
-                                android:id="@+id/nested_air_cpv_text"
-                                style="@style/basicMediumTextView"
-                                android:layout_gravity="center"
-                                android:gravity="center"
-                                android:textColor="@color/white"
-                                android:textSize="21sp" />
-
-                        </androidx.cardview.widget.CardView>
-
-                        <ImageView
-                            android:id="@+id/nested_air_help"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="top"
-                            android:layout_marginTop="5dp"
-                            android:contentDescription="@string/cd_icon_help"
-                            android:src="@drawable/help" />
-
-                    </TableRow>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/nested_air_rv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/nested_air_tr"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="35dp"
-                        android:layout_marginBottom="12dp"
-                        android:overScrollMode="never"
-                        android:scrollbars="none"
-                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                        app:spanCount="3"
-                        tools:listitem="@layout/list_item_pm_title" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/mainUVBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/nested_air_box"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="12dp"
-                    android:animateLayoutChanges="true"
-                    android:background="@drawable/scrolled_box_bg"
-                    android:clickable="true">
-
-                    <TextView
-                        android:id="@+id/mainUvTitle"
-                        style="@style/basicMediumTextView"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="24dp"
-                        android:drawablePadding="5dp"
-                        android:text="@string/uv_title"
-                        android:textColor="@color/theme_text_color"
-                        android:textSize="18sp"
-                        app:drawableStartCompat="@drawable/ico_uv" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/mainUVLegendRv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/mainUVLegendCardView"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginStart="33dp"
-                        android:layout_marginEnd="25dp"
-                        android:layout_marginBottom="25dp"
-                        android:layout_toEndOf="@+id/mainUVLegendCardView"
-                        android:background="@drawable/uv_legend_ripple_bg"
-                        android:clickable="true"
-                        android:clipToPadding="false"
-                        android:nestedScrollingEnabled="false"
-                        android:orientation="vertical"
-                        android:overScrollMode="never"
-                        android:scrollbars="none"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:itemCount="5"
-                        tools:listitem="@layout/list_item_uv_legend" />
-
-                    <androidx.cardview.widget.CardView
-                        android:id="@+id/mainUVLegendCardView"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:layout_below="@+id/mainUvTitle"
-                        android:layout_alignStart="@+id/mainUvTitle"
-                        android:layout_marginStart="18dp"
-                        android:layout_marginTop="25dp"
-                        android:translationZ="0dp"
-                        app:cardBackgroundColor="#4ADE80"
-                        app:cardCornerRadius="50dp"
-                        app:cardElevation="0dp">
-
-                        <TextView
-                            android:id="@+id/mainUvValue"
-                            style="@style/basicMediumTextView"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="4dp"
-                            android:gravity="center"
-                            android:letterSpacing="-0.02"
-                            android:lineSpacingExtra="2dp"
-                            android:textColor="@color/white"
-                            android:textSize="20sp" />
-                    </androidx.cardview.widget.CardView>
+                        android:layout_marginEnd="20dp"
+                        android:alpha="0"
+                        android:background="@drawable/help_bg"
+                        android:elevation="3dp"
+                        android:gravity="center_horizontal"
+                        android:translationZ="2dp" />
 
                     <RelativeLayout
-                        android:id="@+id/mainUvCollapsedLayout"
+                        android:id="@+id/nested_daily_box"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/mainUVLegendRv"
-                        android:visibility="visible">
-
-                        <View
-                            android:id="@+id/mainUvLine"
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_alignParentTop="true"
-                            android:layout_marginStart="18dp"
-                            android:layout_marginTop="13dp"
-                            android:layout_marginEnd="18dp"
-                            android:background="@color/theme_line_color" />
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/scrolled_box_bg">
 
                         <TextView
-                            android:id="@+id/mainUvCollapsedTitle"
+                            android:id="@+id/mainDailyWeatherTitle"
                             style="@style/basicMediumTextView"
-                            android:layout_below="@+id/mainUvLine"
                             android:layout_marginStart="20dp"
-                            android:layout_marginTop="16dp"
-                            android:text="@string/how_to_response_title"
+                            android:layout_marginTop="24dp"
+                            android:drawablePadding="5dp"
+                            android:text="@string/daily_weather"
                             android:textColor="@color/theme_text_color"
-                            android:textSize="14sp" />
+                            android:textSize="18sp"
+                            app:drawableStartCompat="@drawable/ico_time" />
+
+                        <TableRow
+                            android:id="@+id/mainDailyWeatherSectionTR"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@+id/mainDailyWeatherTitle"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="16dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/dailySectionToday"
+                                style="@style/basicMediumTextView"
+                                android:text="@string/daily_today"
+                                android:textColor="@color/theme_text_color"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:id="@+id/dailySectionTomorrow"
+                                style="@style/basicTextView"
+                                android:layout_marginStart="12dp"
+                                android:text="@string/daily_tomorrow"
+                                android:textColor="@color/theme_text_color"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:id="@+id/dailySectionAfterTomorrow"
+                                style="@style/basicTextView"
+                                android:layout_marginStart="12dp"
+                                android:text="@string/daily_next_tomorrow"
+                                android:textColor="@color/theme_text_color"
+                                android:textSize="16sp" />
+                        </TableRow>
 
                         <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/mainUvCollapseRv"
+                            android:id="@+id/mainDailyWeatherRv"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_below="@+id/mainDailyWeatherTitle"
+                            android:layout_marginStart="5dp"
+                            android:orientation="horizontal"
+                            android:overScrollMode="never"
+                            android:paddingStart="13dp"
+                            android:paddingEnd="15dp"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/list_item_daily_weather" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/adViewBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/nested_daily_box"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="12dp"
+                        android:animateLayoutChanges="true"
+                        android:background="@drawable/scrolled_box_bg"
+                        android:visibility="visible">
+
+                        <ImageView
+                            android:id="@+id/adViewCancelIv"
+                            android:layout_width="21dp"
+                            android:layout_height="21dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:contentDescription="@string/cd_ad_cancel"
+                            android:src="@drawable/cancel"
+                            android:visibility="visible"
+                            app:tint="@color/theme_text_color" />
+
+                        <com.google.android.gms.ads.AdView
+                            android:id="@+id/nested_adView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginEnd="2dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_toStartOf="@+id/adViewCancelIv"
+                            android:visibility="visible"
+                            app:adSize="FULL_BANNER"
+                            app:adUnitId="@string/adUnit_main_Id" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/nested_weekly_box"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/adViewBox"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/scrolled_box_bg">
+
+                        <TextView
+                            android:id="@+id/mainWeeklyWeatherTitle"
+                            style="@style/basicMediumTextView"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="24dp"
+                            android:drawablePadding="5dp"
+                            android:text="@string/weekly_weather"
+                            android:textColor="@color/theme_text_color"
+                            android:textSize="18sp"
+                            app:drawableStartCompat="@drawable/ico_weekly" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/mainWeeklyWeatherRv"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_below="@+id/mainWeeklyWeatherTitle"
+                            android:layout_marginTop="20dp"
+                            android:layout_marginBottom="18dp"
+                            android:clipToPadding="false"
+                            android:orientation="vertical"
+                            android:overScrollMode="never"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/list_item_weekly_weather" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/nested_terms24_box"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/nested_weekly_box"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/scrolled_box_bg"
+                        android:paddingTop="36dp"
+                        android:paddingBottom="36dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/mainTermsTitle"
+                            style="@style/basicBoldTextView"
+                            android:layout_centerHorizontal="true"
+                            android:textColor="@color/theme_text_color"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/mainTermsDate"
+                            style="@style/basicTextView"
+                            android:layout_below="@+id/mainTermsTitle"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="5dp"
+                            android:textColor="@color/theme_sub_color"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/mainTermsExplain"
+                            style="@style/basicMediumTextView"
+                            android:layout_below="@+id/mainTermsDate"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="21dp"
+                            android:textColor="@color/theme_text_color"
+                            android:textSize="16sp" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/nested_air_box"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/nested_terms24_box"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/scrolled_box_bg"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp">
+
+                        <TextView
+                            android:id="@+id/nested_air_title"
+                            style="@style/basicMediumTextView"
+                            android:layout_marginTop="24dp"
+                            android:drawablePadding="5dp"
+                            android:text="@string/live_air_quality"
+                            android:textColor="@color/theme_text_color"
+                            android:textSize="18sp"
+                            app:drawableStartCompat="@drawable/ico_airquality" />
+
+                        <TableRow
+                            android:id="@+id/nested_air_tr"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/mainUvCollapsedTitle"
+                            android:layout_below="@+id/nested_air_title"
+                            android:layout_marginTop="21dp"
+                            android:gravity="center">
+
+                            <RelativeLayout
+                                android:id="@+id/nested_air_right_linear"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="30dp">
+
+                                <TextView
+                                    android:id="@+id/nested_air_title_en"
+                                    style="@style/basicMediumTextView"
+                                    android:layout_alignParentTop="true"
+                                    android:layout_centerHorizontal="true"
+                                    android:textColor="@color/theme_text_color"
+                                    android:textSize="17sp" />
+
+                                <TextView
+                                    android:id="@+id/nested_air_title_kr"
+                                    style="@style/basicTextView"
+                                    android:layout_below="@+id/nested_air_title_en"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginBottom="10dp"
+                                    android:textColor="@color/theme_sub_color"
+                                    android:textSize="14sp" />
+
+                                <View
+                                    android:id="@+id/nested_air_line"
+                                    android:layout_width="90dp"
+                                    android:layout_height="1.5dp"
+                                    android:layout_below="@+id/nested_air_title_kr"
+                                    android:layout_marginTop="9dp"
+                                    android:background="@color/theme_line_color" />
+
+                                <TextView
+                                    android:id="@+id/nested_air_value"
+                                    style="@style/basicMediumTextView"
+                                    android:layout_below="@+id/nested_air_line"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginTop="8dp"
+                                    android:letterSpacing="-0.064"
+                                    android:textSize="24sp" />
+
+                                <TextView
+                                    android:id="@+id/nested_air_unit"
+                                    style="@style/basicTextView"
+                                    android:layout_below="@id/nested_air_value"
+                                    android:layout_centerHorizontal="true"
+                                    android:layout_marginTop="5dp"
+                                    android:textColor="@color/theme_sub_color"
+                                    android:textSize="12sp" />
+                            </RelativeLayout>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/nested_air_cpv_card"
+                                android:layout_width="110dp"
+                                android:layout_height="110dp"
+                                android:layout_marginStart="26dp"
+                                android:translationZ="0dp"
+                                app:cardCornerRadius="55dp"
+                                app:cardElevation="0dp">
+
+                                <TextView
+                                    android:id="@+id/nested_air_cpv_text"
+                                    style="@style/basicMediumTextView"
+                                    android:layout_gravity="center"
+                                    android:gravity="center"
+                                    android:textColor="@color/white"
+                                    android:textSize="21sp" />
+
+                            </androidx.cardview.widget.CardView>
+
+                            <ImageView
+                                android:id="@+id/nested_air_help"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="top"
+                                android:layout_marginTop="5dp"
+                                android:contentDescription="@string/cd_icon_help"
+                                android:src="@drawable/help" />
+
+                        </TableRow>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/nested_air_rv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/nested_air_tr"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="35dp"
+                            android:layout_marginBottom="12dp"
+                            android:overScrollMode="never"
+                            android:scrollbars="none"
+                            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                            app:spanCount="3"
+                            tools:listitem="@layout/list_item_pm_title" />
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/mainUVBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/nested_air_box"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="12dp"
+                        android:animateLayoutChanges="true"
+                        android:background="@drawable/scrolled_box_bg"
+                        android:clickable="true">
+
+                        <TextView
+                            android:id="@+id/mainUvTitle"
+                            style="@style/basicMediumTextView"
                             android:layout_marginStart="20dp"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginEnd="20dp"
+                            android:layout_marginTop="24dp"
+                            android:drawablePadding="5dp"
+                            android:text="@string/uv_title"
+                            android:textColor="@color/theme_text_color"
+                            android:textSize="18sp"
+                            app:drawableStartCompat="@drawable/ico_uv" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/mainUVLegendRv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@+id/mainUVLegendCardView"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginStart="33dp"
+                            android:layout_marginEnd="25dp"
                             android:layout_marginBottom="25dp"
+                            android:layout_toEndOf="@+id/mainUVLegendCardView"
+                            android:background="@drawable/uv_legend_ripple_bg"
+                            android:clickable="true"
                             android:clipToPadding="false"
                             android:nestedScrollingEnabled="false"
+                            android:orientation="vertical"
                             android:overScrollMode="never"
                             android:scrollbars="none"
                             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            tools:listitem="@layout/list_item_uv_collapsed" />
-                    </RelativeLayout>
-                </RelativeLayout>
+                            tools:itemCount="5"
+                            tools:listitem="@layout/list_item_uv_legend" />
 
-                <RelativeLayout
-                    android:id="@+id/mainSunBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:layout_below="@+id/mainUVBox"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginEnd="12dp"
-                    android:layout_marginBottom="20dp"
-                    android:background="@drawable/scrolled_box_bg">
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/mainUVLegendCardView"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_below="@+id/mainUvTitle"
+                            android:layout_alignStart="@+id/mainUvTitle"
+                            android:layout_marginStart="18dp"
+                            android:layout_marginTop="25dp"
+                            android:translationZ="0dp"
+                            app:cardBackgroundColor="#4ADE80"
+                            app:cardCornerRadius="50dp"
+                            app:cardElevation="0dp">
 
-                    <LinearLayout
-                        android:id="@+id/mainSunSeekLinear"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_above="@+id/mainSunLine"
-                        android:layout_marginTop="5dp"
-                        android:layout_toStartOf="@+id/mainSunSetLinear"
-                        android:layout_toEndOf="@+id/mainSUnRiseLinear"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/mainUvValue"
+                                style="@style/basicMediumTextView"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="4dp"
+                                android:gravity="center"
+                                android:letterSpacing="-0.02"
+                                android:lineSpacingExtra="2dp"
+                                android:textColor="@color/white"
+                                android:textSize="20sp" />
+                        </androidx.cardview.widget.CardView>
 
-                        <com.triggertrap.seekarc.SeekArc
-                            android:id="@+id/seekArc"
+                        <RelativeLayout
+                            android:id="@+id/mainUvCollapsedLayout"
                             android:layout_width="match_parent"
-                            android:layout_height="160dp"
-                            android:layout_gravity="bottom"
-                            android:layout_marginTop="95dp"
-                            android:paddingStart="20dp"
-                            android:paddingEnd="20dp"
-                            app:arcColor="#E1E1E1"
-                            app:arcWidth="9dp"
-                            app:max="100"
-                            app:progressColor="#FF8A48"
-                            app:progressWidth="9dp"
-                            app:rotation="180"
-                            app:roundEdges="true"
-                            app:startAngle="90"
-                            app:sweepAngle="180"
-                            app:thumb="@drawable/ico_sun_graph"
-                            app:touchInside="false" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/mainSUnRiseLinear"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_above="@+id/mainSunLine"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginStart="40dp"
-                        android:gravity="center_horizontal|bottom"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/mainSunRiseImg"
-                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="6dp"
-                            android:contentDescription="@string/cd_img_sun_rise"
-                            android:src="@drawable/ico_sun" />
+                            android:layout_below="@id/mainUVLegendRv"
+                            android:visibility="visible">
 
-                        <TextView
-                            android:id="@+id/mainSunRiseTitle"
-                            style="@style/basicTextView"
-                            android:layout_marginBottom="6dp"
-                            android:ellipsize="end"
-                            android:lines="1"
-                            android:text="@string/sunrise"
-                            android:textColor="@color/theme_text_color"
-                            android:textSize="16sp" />
+                            <View
+                                android:id="@+id/mainUvLine"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:layout_alignParentTop="true"
+                                android:layout_marginStart="18dp"
+                                android:layout_marginTop="13dp"
+                                android:layout_marginEnd="18dp"
+                                android:background="@color/theme_line_color" />
 
-                        <TextView
-                            android:id="@+id/mainSunRiseTime"
-                            style="@style/basicMediumTextView"
-                            android:layout_width="55dp"
-                            android:layout_marginStart="3dp"
-                            android:layout_marginBottom="12dp"
-                            android:autoSizeMaxTextSize="18sp"
-                            android:autoSizeMinTextSize="14sp"
-                            android:autoSizeTextType="uniform"
-                            android:maxLines="1"
-                            android:padding="0.5dp"
-                            android:textColor="@color/theme_text_color"
-                            android:textSize="18sp" />
+                            <TextView
+                                android:id="@+id/mainUvCollapsedTitle"
+                                style="@style/basicMediumTextView"
+                                android:layout_below="@+id/mainUvLine"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginTop="16dp"
+                                android:text="@string/how_to_response_title"
+                                android:textColor="@color/theme_text_color"
+                                android:textSize="14sp" />
 
-                    </LinearLayout>
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/mainUvCollapseRv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/mainUvCollapsedTitle"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginTop="12dp"
+                                android:layout_marginEnd="20dp"
+                                android:layout_marginBottom="25dp"
+                                android:clipToPadding="false"
+                                android:nestedScrollingEnabled="false"
+                                android:overScrollMode="never"
+                                android:scrollbars="none"
+                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                tools:listitem="@layout/list_item_uv_collapsed" />
+                        </RelativeLayout>
+                    </RelativeLayout>
 
-                    <LinearLayout
-                        android:id="@+id/mainSunSetLinear"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_above="@+id/mainSunLine"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="40dp"
-                        android:gravity="center_horizontal|bottom"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/mainSunSetImg"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="6dp"
-                            android:contentDescription="@string/cd_img_sun_set"
-                            android:src="@drawable/ico_moon" />
-
-                        <TextView
-                            android:id="@+id/mainSunSetTitle"
-                            style="@style/basicTextView"
-                            android:layout_marginBottom="6dp"
-                            android:ellipsize="end"
-                            android:lines="1"
-                            android:text="@string/sunset"
-                            android:textColor="@color/theme_text_color"
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:id="@+id/mainSunSetTime"
-                            style="@style/basicMediumTextView"
-                            android:layout_width="55dp"
-                            android:layout_marginStart="3dp"
-                            android:layout_marginBottom="12dp"
-                            android:autoSizeMaxTextSize="18sp"
-                            android:autoSizeMinTextSize="14sp"
-                            android:autoSizeTextType="uniform"
-                            android:maxLines="1"
-                            android:padding="0.5dp"
-                            android:textColor="@color/theme_text_color"
-                            android:textSize="18sp" />
-                    </LinearLayout>
-
-                    <View
-                        android:id="@+id/mainSunLine"
+                    <RelativeLayout
+                        android:id="@+id/mainSunBox"
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_above="@+id/mainSunTr"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginEnd="30dp"
-                        android:layout_marginBottom="12dp"
-                        android:background="@color/theme_line_color" />
-
-                    <TableRow
-                        android:id="@+id/mainSunTr"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
+                        android:layout_height="200dp"
+                        android:layout_below="@+id/mainUVBox"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="12dp"
                         android:layout_marginBottom="20dp"
-                        android:gravity="center">
+                        android:background="@drawable/scrolled_box_bg">
 
-                        <TextView
-                            android:id="@+id/mainSunTomTitle"
-                            style="@style/basicMediumTextView"
-                            android:fontFamily="@font/spoqa_hansansneo_medium"
-                            android:text="@string/tomorrow"
-                            android:textColor="@color/theme_text_color"
-                            android:textSize="16sp" />
+                        <LinearLayout
+                            android:id="@+id/mainSunSeekLinear"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_above="@+id/mainSunLine"
+                            android:layout_marginTop="5dp"
+                            android:layout_toStartOf="@+id/mainSunSetLinear"
+                            android:layout_toEndOf="@+id/mainSUnRiseLinear"
+                            android:gravity="center"
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/mainSunRiseTom"
-                            style="@style/basicTextView"
-                            android:layout_marginStart="16dp"
-                            android:textSize="16sp" />
+                            <com.triggertrap.seekarc.SeekArc
+                                android:id="@+id/seekArc"
+                                android:layout_width="match_parent"
+                                android:layout_height="160dp"
+                                android:layout_gravity="bottom"
+                                android:layout_marginTop="95dp"
+                                android:paddingStart="20dp"
+                                android:paddingEnd="20dp"
+                                app:arcColor="#E1E1E1"
+                                app:arcWidth="9dp"
+                                app:max="100"
+                                app:progressColor="#FF8A48"
+                                app:progressWidth="9dp"
+                                app:rotation="180"
+                                app:roundEdges="true"
+                                app:startAngle="90"
+                                app:sweepAngle="180"
+                                app:thumb="@drawable/ico_sun_graph"
+                                app:touchInside="false" />
+                        </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/mainSunSetTom"
-                            style="@style/basicTextView"
-                            android:layout_marginStart="16dp"
-                            android:textSize="16sp" />
-                    </TableRow>
+                        <LinearLayout
+                            android:id="@+id/mainSUnRiseLinear"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@+id/mainSunLine"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginStart="40dp"
+                            android:gravity="center_horizontal|bottom"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/mainSunRiseImg"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="6dp"
+                                android:contentDescription="@string/cd_img_sun_rise"
+                                android:src="@drawable/ico_sun" />
+
+                            <TextView
+                                android:id="@+id/mainSunRiseTitle"
+                                style="@style/basicTextView"
+                                android:layout_marginBottom="6dp"
+                                android:ellipsize="end"
+                                android:lines="1"
+                                android:text="@string/sunrise"
+                                android:textColor="@color/theme_text_color"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:id="@+id/mainSunRiseTime"
+                                style="@style/basicMediumTextView"
+                                android:layout_width="55dp"
+                                android:layout_marginStart="3dp"
+                                android:layout_marginBottom="12dp"
+                                android:autoSizeMaxTextSize="18sp"
+                                android:autoSizeMinTextSize="14sp"
+                                android:autoSizeTextType="uniform"
+                                android:maxLines="1"
+                                android:padding="0.5dp"
+                                android:textColor="@color/theme_text_color"
+                                android:textSize="18sp" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/mainSunSetLinear"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_above="@+id/mainSunLine"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="40dp"
+                            android:gravity="center_horizontal|bottom"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/mainSunSetImg"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="6dp"
+                                android:contentDescription="@string/cd_img_sun_set"
+                                android:src="@drawable/ico_moon" />
+
+                            <TextView
+                                android:id="@+id/mainSunSetTitle"
+                                style="@style/basicTextView"
+                                android:layout_marginBottom="6dp"
+                                android:ellipsize="end"
+                                android:lines="1"
+                                android:text="@string/sunset"
+                                android:textColor="@color/theme_text_color"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:id="@+id/mainSunSetTime"
+                                style="@style/basicMediumTextView"
+                                android:layout_width="55dp"
+                                android:layout_marginStart="3dp"
+                                android:layout_marginBottom="12dp"
+                                android:autoSizeMaxTextSize="18sp"
+                                android:autoSizeMinTextSize="14sp"
+                                android:autoSizeTextType="uniform"
+                                android:maxLines="1"
+                                android:padding="0.5dp"
+                                android:textColor="@color/theme_text_color"
+                                android:textSize="18sp" />
+                        </LinearLayout>
+
+                        <View
+                            android:id="@+id/mainSunLine"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_above="@+id/mainSunTr"
+                            android:layout_marginStart="30dp"
+                            android:layout_marginEnd="30dp"
+                            android:layout_marginBottom="12dp"
+                            android:background="@color/theme_line_color" />
+
+                        <TableRow
+                            android:id="@+id/mainSunTr"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentBottom="true"
+                            android:layout_marginBottom="20dp"
+                            android:gravity="center">
+
+                            <TextView
+                                android:id="@+id/mainSunTomTitle"
+                                style="@style/basicMediumTextView"
+                                android:fontFamily="@font/spoqa_hansansneo_medium"
+                                android:text="@string/tomorrow"
+                                android:textColor="@color/theme_text_color"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:id="@+id/mainSunRiseTom"
+                                style="@style/basicTextView"
+                                android:layout_marginStart="16dp"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:id="@+id/mainSunSetTom"
+                                style="@style/basicTextView"
+                                android:layout_marginStart="16dp"
+                                android:textSize="16sp" />
+                        </TableRow>
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/mainLicenseText"
+                        style="@style/basicMediumTextView"
+                        android:layout_below="@+id/mainSunBox"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:text="@string/data_api_license"
+                        android:textColor="@color/sub_gray_color"
+                        android:textSize="11sp"
+                        android:textStyle="italic" />
                 </RelativeLayout>
+            </androidx.core.widget.NestedScrollView>
 
-                <TextView
-                    android:id="@+id/mainLicenseText"
-                    style="@style/basicMediumTextView"
-                    android:layout_below="@+id/mainSunBox"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:text="@string/data_api_license"
-                    android:textColor="@color/sub_gray_color"
-                    android:textSize="11sp"
-                    android:textStyle="italic" />
-            </RelativeLayout>
-        </androidx.core.widget.NestedScrollView>
-
-        <ImageButton
-            android:id="@+id/nested_fab"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="15dp"
-            android:background="@drawable/fab_bg"
-            android:contentDescription="@string/cd_icon_up"
-            android:src="@drawable/arrow_top"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-    </androidx.constraintlayout.motion.widget.MotionLayout>
+            <ImageButton
+                android:id="@+id/nested_fab"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/fab_bg"
+                android:contentDescription="@string/cd_icon_up"
+                android:src="@drawable/arrow_top"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.motion.widget.MotionLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

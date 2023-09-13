@@ -869,9 +869,6 @@ class SettingActivity
 
     // 메인 액티비티로 이동
     private fun goMain() {
-        val intent = Intent(this@SettingActivity, MainActivity::class.java)
-        startActivity(intent)
-        overridePendingTransition(0, 0)
         finish()
     }
 

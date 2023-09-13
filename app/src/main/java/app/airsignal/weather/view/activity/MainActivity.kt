@@ -107,6 +107,7 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.database.DatabaseException
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
@@ -114,6 +115,9 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
+import androidx.constraintlayout.motion.widget.MotionLayout
+import timber.log.Timber
+
 
 @SuppressLint("InflateParams")
 class MainActivity
@@ -188,7 +192,10 @@ class MainActivity
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        initBinding()
+
         if (savedInstanceState == null) {
+            binding.mainLoadingView.alpha = 1f
             changeBackgroundResource(null)
         }
 
@@ -204,12 +211,9 @@ class MainActivity
             }
         }
 
-        initBinding()
-
         binding.dataVM = getDataViewModel
 
         initializing()
-
 
         sunPb.disableTouch()    // 일출/일몰 그래프 클릭 방지
 
@@ -233,15 +237,6 @@ class MainActivity
         binding.nestedFab.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 binding.nestedScrollview.smoothScrollTo(0, 0, 500)
-            }
-        })
-
-        // 데이터 갱신 버튼 클릭
-        binding.mainRefreshData.setOnClickListener(object : OnSingleClickListener() {
-            override fun onSingleClick(v: View?) {
-                v!!.startAnimation(rotateAnim)
-                mVib()
-                getDataSingleTime(isCurrent = false)
             }
         })
 
@@ -311,6 +306,35 @@ class MainActivity
                 }
             }
         })
+
+        // MotionLayout 상태 변경 리스너를 설정합니다.
+        // 스와이프 리프래시 레이아웃의 상태를 모션레이아웃의 스와이프 상태에 맞춰서 변경합니다.
+        binding.mainMotionLayout.setTransitionListener(object : MotionLayout.TransitionListener {
+            override fun onTransitionStarted(motionLayout: MotionLayout, startId: Int, endId: Int) {}
+
+            override fun onTransitionChange(
+                motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float) {
+                Timber.tag("TAG_TEST").d("onTransitionChange : $progress")
+                binding.mainSwipeLayout.isEnabled = progress <= 0.15f
+            }
+
+            override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {}
+
+            override fun onTransitionTrigger(
+                motionLayout: MotionLayout, triggerId: Int, positive: Boolean, progress: Float) {}})
+
+
+        binding.mainSwipeLayout.setColorSchemeColors(
+            Color.parseColor("#3f48cc"),
+            Color.parseColor("#ffe100"),
+            Color.parseColor("#0ed145"),
+            Color.parseColor("#ca4fcc"))
+        // 스와이프 리프래시 레이아웃 리스너
+        binding.mainSwipeLayout.setOnRefreshListener {
+            Handler(Looper.getMainLooper()).postDelayed({
+                getDataSingleTime(false)
+            },500)
+        }
     }
 
     // 공유하기 언어별 대응
@@ -365,7 +389,8 @@ class MainActivity
                 warning.setOnClickListener(object : OnSingleClickListener() {
                     override fun onSingleClick(v: View?) {
                         sideMenuBuilder.dismiss()
-                        EnterPageUtil(this@MainActivity).toWarning()
+                        val intent = Intent(this@MainActivity, WarningDetailActivity::class.java)
+                        startActivity(intent)
                     }
                 })
             }
@@ -388,7 +413,6 @@ class MainActivity
                     }.thenAccept {
                         val intent = Intent(this@MainActivity, SettingActivity::class.java)
                         startActivity(intent)
-                        finish()
                     }
                 }
             })
@@ -486,17 +510,18 @@ class MainActivity
 
             val gps = if (getUserLocation(this) == LANG_EN) enAddr?.trim() else mAddr.trim()
 
-            binding.mainGpsTitleTv.text = gps
-            binding.mainTopBarGpsTitle.text = gps!!.split(" ").last()
+            updateAddress(gps)
         }
     }
 
     // 프로그래스 보이기
     private fun showProgressBar() {
-        if (binding.mainMotionLayout.alpha == NOT_SHOWING_LOADING_FLOAT) {
-            binding.mainMotionLayout.alpha = SHOWING_LOADING_FLOAT
-            binding.mainMotionLayout.isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
-            binding.mainMotionLayout.isEnabled = false
+        if (isProgressed) {
+            if (binding.mainMotionLayout.alpha == NOT_SHOWING_LOADING_FLOAT) {
+                binding.mainMotionLayout.alpha = SHOWING_LOADING_FLOAT
+                binding.mainMotionLayout.isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
+                binding.mainMotionLayout.isEnabled = false
+            }
         }
     }
 
@@ -507,13 +532,12 @@ class MainActivity
             binding.mainMotionLayout.isInteractionEnabled = true // 모션 레이아웃의 스와이프를 허용
             binding.mainMotionLayout.isEnabled = true
         }
-        binding.mainRefreshData.clearAnimation()
         binding.mainGpsFix.clearAnimation()
     }
 
     // 프로그래스 진행 여부
     private fun isProgressed(): Boolean {
-        return binding.mainMotionLayout.alpha == SHOWING_LOADING_FLOAT || binding.mainRefreshData.animation != null
+        return binding.mainMotionLayout.alpha == SHOWING_LOADING_FLOAT
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -750,6 +774,8 @@ class MainActivity
     private fun getDataObservers() {
         if (!getDataViewModel.fetchData().hasActiveObservers()) {
             applyGetDataViewModel()
+        } else {
+            binding.mainSwipeLayout.isRefreshing = false
         }
     }
 
@@ -757,6 +783,8 @@ class MainActivity
     fun applyGetDataViewModel(): MainActivity {
         getDataViewModel.fetchData().observe(this) { entireData ->
             entireData?.let { eData ->
+                binding.mainSwipeLayout.isRefreshing = false
+
                 when (eData) {
                     is BaseRepository.ApiState.Success -> {
                         handleApiSuccess(eData.data)
@@ -766,10 +794,13 @@ class MainActivity
                     }
                     is BaseRepository.ApiState.Loading -> {
                         showProgressBar()
+                        Thread.sleep(100)
+                        isProgressed = true
                     }
                 }
             } ?: run { hideAllViews(error = ERROR_NULL_DATA) }
         }
+
         return this
     }
 
@@ -778,20 +809,34 @@ class MainActivity
         try {
             val metaAddr = result.meta.address!!
             reNewTopicInMain(metaAddr)
-
-            updateUIWithData(result)
-
             runOnUiThread {
                 binding.mainDailyWeatherRv.scrollToPosition(0)
                 binding.mainWarningVp.currentItem = 0
 
                 hideProgressBar()
+                updateUIWithData(result)
                 showAllViews()
                 RDBLogcat.writeGpsHistory(
                     this,
                     isSearched = false,
                     gpsValue = metaAddr,
                     responseData = "${getUserLastAddress(this)},${result}"
+                )
+
+                Thread.sleep(100)
+                // 메인 날씨 텍스트 세팅
+                val skyText = applySkyText(
+                    this,
+                    modifyCurrentRainType(result.current.rainType, result.realtime[0].rainType),
+                    result.realtime[0].sky, result.thunder)
+                binding.mainSkyText.text = skyText
+                if (binding.mainLoadingView.alpha == 1f) {
+                    binding.mainLoadingView.alpha = 0f
+                }
+                // 날씨에 따라 배경화면 변경
+                applyWindowBackground(
+                    currentSun,
+                    skyText
                 )
             }
         } catch (e: Exception) {
@@ -801,9 +846,13 @@ class MainActivity
 
     // API 통신이 에러일 때 처리
     private fun handleApiError(errorMessage: String) {
-        RDBLogcat.writeErrorNotANR(this, errorMessage, "")
         runOnUiThread {
             hideProgressBar()
+            try {
+                RDBLogcat.writeErrorNotANR(this, errorMessage, "")
+            } catch(e: DatabaseException) {
+                e.printStackTrace()
+            }
             if (GetLocation(this).isNetWorkConnected()) {
                 hideAllViews(error = errorMessage)
             } else {
@@ -816,16 +865,6 @@ class MainActivity
     private fun updateUIWithData(result: ApiModel.GetEntireData) {
         result.let {
             currentSun = GetAppInfo.getCurrentSun(result.sun.sunrise!!, result.sun.sunset!!)
-            // 메인 날씨 텍스트 세팅
-            val skyText = applySkyText(
-                this,
-                modifyCurrentRainType(result.current.rainType, result.realtime[0].rainType),
-                result.realtime[0].sky, result.thunder)
-            binding.mainSkyText.text = skyText
-            // 날씨에 따라 배경화면 변경
-            applyWindowBackground(
-                currentSun, skyText
-            )
             updateWeatherItems(it)
             updateAirQualityData(it.quality)
             updateUVData(it.uv)
@@ -1153,6 +1192,13 @@ class MainActivity
         )
     }
 
+    // 주소 업데이트 후 적용
+    private fun updateAddress(addr: String?) {
+        // UI 업데이트: 주소 텍스트뷰에 주소를 설정하고 데이터 로딩을 시작합니다.
+        binding.mainGpsTitleTv.text = addr
+        binding.mainTopBarGpsTitle.text = addr!!.trim().split(" ").last()
+    }
+
     // 기상 경보 업데이트
     private fun updateWeatherWarnings(summary: List<String>?) {
         runOnUiThread {
@@ -1243,7 +1289,6 @@ class MainActivity
                 "구름많고 눈", "눈", "흐리고 눈" ->
                     changeBackgroundResource(R.drawable.main_bg_snow)
 
-
                 else ->
                     changeBackgroundResource(R.drawable.main_bg_snow)
             }
@@ -1251,22 +1296,10 @@ class MainActivity
     }
 
     private fun changeBackgroundResource(id: Int?) {
-        val contentView = window.decorView.findViewById<View>(android.R.id.content)
-
         id?.let {
-            // Fade in 애니메이션을 적용할 때
-            contentView.setBackgroundResource(id)
-            contentView.startAnimation(AlphaAnimation(0f, 1f).apply {
-                duration = 700 // 애니메이션 지속 시간 (1초)
-                window.setBackgroundDrawableResource(id)
-            })
+            window.setBackgroundDrawableResource(it)
         } ?: apply {
-            // Fade in 애니메이션을 적용할 때
-            contentView.setBackgroundColor(getColor(R.color.theme_view_color))
-            contentView.startAnimation(AlphaAnimation(0f, 1f).apply {
-                duration = 700 // 애니메이션 지속 시간 (1초)
-                window.setBackgroundDrawableResource(R.color.theme_view_color)
-            })
+            window.setBackgroundDrawableResource(R.color.theme_view_color)
         }
     }
 
@@ -1434,7 +1467,6 @@ class MainActivity
 
             setDrawable(binding.mainGpsFix,null)
             setDrawable(binding.mainMotionSLideImg,null)
-            setDrawable(binding.mainRefreshData,null)
             setDrawable(binding.mainGpsFix,null)
 
             binding.mainMotionLayout.apply {
@@ -1470,7 +1502,6 @@ class MainActivity
 
             setDrawable(binding.mainGpsFix, R.drawable.gps_fix)
             setDrawable(binding.mainMotionSLideImg,R.drawable.drop_down_bottom)
-            setDrawable(binding.mainRefreshData,R.drawable.refresh)
             setDrawable(binding.mainAddAddress,R.drawable.ico_add_w)
             setDrawable(binding.mainSideMenuIv,R.drawable.ico_hamb_w)
 
@@ -1523,9 +1554,9 @@ class MainActivity
     }
 
     // 현재 지역의 날씨 데이터 뷰모델 생성 및 호출
-    private fun loadCurrentViewModelData(lat: Double, lng: Double) {
+    private fun loadCurrentViewModelData(lat: Double, lng: Double, addr: String?) {
         getDataObservers()
-        getDataViewModel.loadData(lat, lng, null)
+        getDataViewModel.loadData(lat, lng, addr)
     }
 
     // 저장된 지역의 날씨 데이터 뷰모델 생성 및 호출
@@ -1683,7 +1714,7 @@ class MainActivity
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
             binding.mainGpsFix, binding.mainMotionSLideImg,
-            binding.mainRefreshData, binding.mainShareIv,
+            binding.mainShareIv,
             binding.adViewCancelIv, binding.nestedAirHelp
         )
         val changeBoxViews = listOf(
@@ -1831,7 +1862,7 @@ class MainActivity
             val lm = getSystemService(LOCATION_SERVICE) as LocationManager
             val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
             location?.let { loc ->
-                loadCurrentViewModelData(loc.latitude, loc.longitude)
+                loadCurrentViewModelData(loc.latitude, loc.longitude, null)
             }
         }
     }
@@ -1874,11 +1905,8 @@ class MainActivity
                     cleanedAddr.replace("South Korea", "")
                 else AddressFromRegex(cleanedAddr).getAddress()
 
-            // UI 업데이트: 주소 텍스트뷰에 주소를 설정하고 데이터 로딩을 시작합니다.
-            binding.mainGpsTitleTv.text = formattedAddr
-            binding.mainTopBarGpsTitle.text = formattedAddr.trim().split(" ").last()
-
-            loadCurrentViewModelData(lat, lng)
+            loadCurrentViewModelData(lat, lng, formattedAddr)
+            updateAddress(formattedAddr)
         }
     }
 
