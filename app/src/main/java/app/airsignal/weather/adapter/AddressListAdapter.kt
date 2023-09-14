@@ -21,12 +21,10 @@ import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
-import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * @author : Lee Jae Young

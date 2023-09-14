@@ -14,7 +14,6 @@ import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_LOCATION
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_NOTIFICATION
 import app.airsignal.weather.dao.StaticDataObject.TAG_P
-import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.util.`object`.GetAppInfo.getInitLocPermission
 import timber.log.Timber
 

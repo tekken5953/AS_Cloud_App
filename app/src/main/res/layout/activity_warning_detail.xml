@@ -45,6 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:src="@drawable/ico_warning"
+            android:contentDescription="@string/exclamation_mark"
             app:layout_constraintBottom_toBottomOf="@+id/warningAddr"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/warningAddr" />

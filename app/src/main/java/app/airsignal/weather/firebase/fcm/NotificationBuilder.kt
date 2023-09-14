@@ -23,7 +23,6 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getNotificationAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiEnable
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiSound
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiVibrate
-import io.reactivex.annotations.NonNull
 import kotlin.math.roundToInt
 
 

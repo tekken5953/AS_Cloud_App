@@ -11,8 +11,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
-import app.airsignal.weather.util.VibrateUtil
-import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.view.activity.WarningDetailActivity
 
 /**

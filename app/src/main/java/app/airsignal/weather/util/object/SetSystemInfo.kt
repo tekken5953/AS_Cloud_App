@@ -2,13 +2,7 @@ package app.airsignal.weather.util.`object`
 
 import android.app.Activity
 import android.content.Context
-import android.content.pm.ActivityInfo
-import android.os.Build
-import android.util.Log
 import android.view.View
-import android.view.Window
-import android.view.WindowInsets
-import android.view.WindowInsetsController
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import app.airsignal.weather.R

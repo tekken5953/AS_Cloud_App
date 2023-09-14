@@ -3,8 +3,6 @@ package app.airsignal.weather.view
 import android.app.Dialog
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.Window
 import android.widget.TextView

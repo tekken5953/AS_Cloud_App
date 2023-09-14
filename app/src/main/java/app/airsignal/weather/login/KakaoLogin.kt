@@ -3,7 +3,6 @@ package app.airsignal.weather.login
 import android.app.Activity
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatButton
-import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPhone
 import app.airsignal.weather.dao.IgnoredKeyFile.userEmail

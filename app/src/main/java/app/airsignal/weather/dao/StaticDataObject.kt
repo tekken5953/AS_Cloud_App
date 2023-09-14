@@ -29,7 +29,6 @@ object StaticDataObject {
     const val SO2_INDEX = 3
     const val NO2_INDEX = 4
     const val O3_INDEX = 5
-    const val IN_COMPLETE_ADDRESS = "불완전한 주소"
     const val LANG_KR = "korea"
     const val LANG_EN = "english"
     const val LANG_SYS = "system"
@@ -38,9 +37,4 @@ object StaticDataObject {
     const val TEXT_SCALE_DEFAULT = "default"
     const val THEME_LIGHT = "light"
     const val THEME_DARK = "dark"
-    const val SHARE_ADDR = 0
-    const val SHARE_SKY = 10
-    const val SHARE_TEMP = 20
-    const val SHARE_RAIN = 30
-    const val SHARE_HUMID = 40
 }

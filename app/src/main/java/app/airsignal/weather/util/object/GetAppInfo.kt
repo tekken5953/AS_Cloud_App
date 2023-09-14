@@ -68,10 +68,6 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getString(userProfile)
     }
 
-    fun getLoginVerificationCode(context: Context): String {
-        return SharedPreferenceManager(context).getString(IgnoredKeyFile.loginVerificationCode)
-    }
-
     fun getTopicNotification(context: Context): String {
         return SharedPreferenceManager(context).getString("Notification_All")
     }
@@ -105,10 +101,6 @@ object GetAppInfo {
 
     fun getNotificationAddress(context: Context): String {
         return SharedPreferenceManager(context).getString(NOTIFICATION_ADDRESS)
-    }
-
-    fun getLastRefreshTime(context: Context): Long {
-        return SharedPreferenceManager(context).getLong(LAST_REFRESH_WIDGET_TIME)
     }
 
     fun getInitLocPermission(context: Context): String {

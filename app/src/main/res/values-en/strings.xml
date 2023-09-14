@@ -242,4 +242,6 @@
     <string name="inquiry">Inquiry</string>
     <string name="etc">Etc</string>
     <string name="error_guide">if the problem persists.Please contact \'play@airsignal.kr\'</string>
+    <string name="cd_loading_img">Loading Image</string>
+    <string name="exclamation_mark">Exclamation mark</string>
 </resources>

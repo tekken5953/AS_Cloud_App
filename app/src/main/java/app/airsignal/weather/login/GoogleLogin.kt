@@ -12,7 +12,6 @@ import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_FAILED
 import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_GOOGLE
 import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginPref
-import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserEmail
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserId

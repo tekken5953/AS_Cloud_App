@@ -3,7 +3,6 @@ package app.airsignal.weather.view.activity
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
-import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebViewClient

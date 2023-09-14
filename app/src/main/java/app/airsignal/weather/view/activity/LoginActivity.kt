@@ -17,7 +17,6 @@ import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.`object`.SetSystemInfo
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import timber.log.Timber
-import java.net.CookieManager
 
 
 class LoginActivity

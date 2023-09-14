@@ -93,20 +93,12 @@ object SetAppInfo {
         SharedPreferenceManager(context).setString(lastLoginPlatform, platform)
     }
 
-    fun setLoginVerificationCode(context: Context, code: String) {
-        SharedPreferenceManager(context).setString(loginVerificationCode, code)
-    }
-
     fun setTopicNotification(context: Context, topic: String) {
         SharedPreferenceManager(context).setString("Notification_All", topic)
     }
 
     fun setNotificationAddress(context: Context, addr: String) {
         SharedPreferenceManager(context).setString(NOTIFICATION_ADDRESS, addr)
-    }
-
-    fun setLastRefreshTime(context: Context, l: Long) {
-        SharedPreferenceManager(context).setLong(LAST_REFRESH_WIDGET_TIME, l)
     }
 
     fun setInitLocPermission(context: Context, s: String) {
@@ -127,10 +119,6 @@ object SetAppInfo {
 
     fun setPermedBackLog(context: Context,b: Boolean) {
         SharedPreferenceManager(context).setBoolean(IS_PERMED_BACK_LOG, b)
-    }
-
-    fun setWarningFixed(context: Context, region: String) {
-        SharedPreferenceManager(context).setString(WARNING_FIXED, region)
     }
 
     fun setLastLat(context: Context, lat: Double) {

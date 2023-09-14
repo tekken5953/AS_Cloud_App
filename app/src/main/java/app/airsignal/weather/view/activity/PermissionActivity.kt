@@ -1,29 +1,23 @@
 package app.airsignal.weather.view.activity
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
-import android.text.style.URLSpan
 import android.text.style.UnderlineSpan
 import android.widget.Toast
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityPermissionBinding
 import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.util.EnterPageUtil
-import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.RequestPermissionsUtil
 import app.airsignal.weather.util.`object`.*
-import app.airsignal.weather.util.`object`.GetAppInfo.getInitLocPermission
 import app.airsignal.weather.util.`object`.GetAppInfo.getInitNotiPermission
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserNoti
-import app.airsignal.weather.view.*
+import app.airsignal.weather.view.FirstLocCheckDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PermissionActivity :
