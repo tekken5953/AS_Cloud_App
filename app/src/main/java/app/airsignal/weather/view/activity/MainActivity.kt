@@ -1752,7 +1752,7 @@ class MainActivity
             uvResponseAdapter.notifyDataSetChanged()
             uvLegendAdapter.notifyDataSetChanged()
             weeklyWeatherAdapter.notifyDataSetChanged()
-            weeklyWeatherAdapter.notifyDataSetChanged()
+            dailyWeatherAdapter.notifyDataSetChanged()
             dailyWeatherAdapter.submitList(dailyWeatherList)
             warningViewPagerAdapter.changeTextColor(color)
             reportViewPagerItem.addAll(warningList)

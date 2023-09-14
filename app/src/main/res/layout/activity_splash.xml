@@ -9,20 +9,26 @@
         tools:context=".view.activity.SplashActivity"
         android:background="@color/theme_view_color">
 
-
-        <ImageView
+        <androidx.cardview.widget.CardView
             android:id="@+id/splashPB"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:visibility="gone"
-            android:clickable="false"
-            android:focusable="false"
-            android:contentDescription="@string/cd_loading_img"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:alpha="0"
+            app:cardCornerRadius="70dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@android:color/transparent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:src="@drawable/app_icon"/>
+            app:layout_constraintEnd_toEndOf="parent">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/cd_loading_img"
+                android:clickable="false"
+                android:focusable="false"
+                android:src="@drawable/app_icon"/>
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

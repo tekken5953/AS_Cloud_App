@@ -11,6 +11,7 @@ import android.media.Ringtone
 import android.media.RingtoneManager
 import android.view.View
 import androidx.core.app.NotificationCompat
+import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_CHANNEL_ID
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_CHANNEL_NAME
@@ -56,7 +57,8 @@ class NotificationBuilder {
                 .setAutoCancel(true)
                 .setWhen(System.currentTimeMillis())
                 .setSubText(subtext)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setColor(context.getColor(R.color.main_blue_color))
+                .setSmallIcon(R.drawable.ic_stat_airsignal_default)
                 .setContentIntent(pendingIntent)
                 .setContentTitle(title)
                 .setContentText(content)
@@ -73,7 +75,7 @@ class NotificationBuilder {
                         subtext = getNotificationAddress(context),
                         content = "최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
                                 "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚",
-                        imgPath = getSkyImg(
+                        imgPath = getSkyBitmap(
                             context,
                             data["rainType"]!!, data["sky"]!!, data["thunder"]!!.toDouble()
                         )
@@ -81,13 +83,20 @@ class NotificationBuilder {
                 }
                 "patch" -> {
                     data["payload"]?.let { payload ->
-                        setNotiBuilder(title = "에어시그널 날씨", null, payload, null)
-                    } ?: setNotiBuilder(title = "에어시그널 날씨", null, "새로운 업데이트가 준비되었어요", null)
+                        setNotiBuilder(title = "에어시그널 날씨",
+                            subtext = null, content = payload,
+                            null)
+                    } ?: setNotiBuilder(title = "에어시그널 날씨", null,
+                        "새로운 업데이트가 준비되었어요",
+                        null)
                 }
                 "event" -> {
                     data["payload"]?.let { payload ->
-                        setNotiBuilder(title = "에어시그널 날씨", null, payload, null)
-                    } ?: setNotiBuilder(title = "에어시그널 날씨", null, "눌러서 이벤트를 확인하세요", null)
+                        setNotiBuilder(title = "에어시그널 날씨", null, payload,
+                            null)
+                    } ?: setNotiBuilder(title = "에어시그널 날씨", null,
+                        "눌러서 이벤트를 확인하세요",
+                        null)
                 }
             }
         }
@@ -121,7 +130,7 @@ class NotificationBuilder {
         }
     }
 
-    private fun getSkyImg(context: Context, rain: String?, sky: String?, thunder: Double?): Bitmap? {
+    private fun getSkyBitmap(context: Context, rain: String?, sky: String?, thunder: Double?): Bitmap? {
         val bitmapDrawable = getSkyImgLarge(context,
             applySkyText(context, rain, sky, thunder),
             false) as BitmapDrawable

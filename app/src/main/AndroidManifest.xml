@@ -99,8 +99,7 @@
 
         <receiver
             android:name="app.airsignal.weather.firebase.fcm.NotificationBuilder"
-            tools:ignore="Instantiatable" />
-
+            tools:ignore="Instantiatable"/>
         <service
             android:name="app.airsignal.weather.firebase.fcm.SubFCM"
             android:directBootAware="true"
