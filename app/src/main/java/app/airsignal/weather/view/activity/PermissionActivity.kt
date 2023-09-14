@@ -15,6 +15,7 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityPermissionBinding
 import app.airsignal.weather.firebase.db.RDBLogcat
+import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.RequestPermissionsUtil

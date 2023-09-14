@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.media.Ringtone
 import android.media.RingtoneManager
 import android.view.View
 import androidx.core.app.NotificationCompat
@@ -22,6 +23,7 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getNotificationAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiEnable
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiSound
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiVibrate
+import io.reactivex.annotations.NonNull
 import kotlin.math.roundToInt
 
 
@@ -49,37 +51,74 @@ class NotificationBuilder {
         val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val ringtone = RingtoneManager.getRingtone(context, sound)
 
-        notificationBuilder
-            .setAutoCancel(true)
-            .setWhen(System.currentTimeMillis())
-            .setSubText(getNotificationAddress(context))
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentIntent(pendingIntent)
-            .setContentTitle("${parseStringToDoubleToInt(data["temp"].toString())}˚" +
-                    " ${applySkyText(context,data["rainType"],data["sky"],data["thunder"]!!.toDouble())}")
-            .setContentText("최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
-                    "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚")
-            .setLargeIcon(getSkyImg(context,
-                data["rainType"]!!,data["sky"]!!, data["thunder"]!!.toDouble()))
+        fun setNotiBuilder(title: String, subtext: String?, content: String, imgPath: Bitmap?
+        ) {
+            notificationBuilder
+                .setAutoCancel(true)
+                .setWhen(System.currentTimeMillis())
+                .setSubText(subtext)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pendingIntent)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setLargeIcon(imgPath)
+        }
+
+        data["sort"]?.let { sort ->
+            when(sort) {
+                "daily" -> {
+                    setNotiBuilder(
+                        title = "${parseStringToDoubleToInt(data["temp"].toString())}˚" +
+                                " ${applySkyText(context, data["rainType"],
+                                    data["sky"], data["thunder"]!!.toDouble())}",
+                        subtext = getNotificationAddress(context),
+                        content = "최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
+                                "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚",
+                        imgPath = getSkyImg(
+                            context,
+                            data["rainType"]!!, data["sky"]!!, data["thunder"]!!.toDouble()
+                        )
+                    )
+                }
+                "patch" -> {
+                    data["payload"]?.let { payload ->
+                        setNotiBuilder(title = "에어시그널 날씨", null, payload, null)
+                    } ?: setNotiBuilder(title = "에어시그널 날씨", null, "새로운 업데이트가 준비되었어요", null)
+                }
+                "event" -> {
+                    data["payload"]?.let { payload ->
+                        setNotiBuilder(title = "에어시그널 날씨", null, payload, null)
+                    } ?: setNotiBuilder(title = "에어시그널 날씨", null, "눌러서 이벤트를 확인하세요", null)
+                }
+            }
+        }
 
         if (getUserNotiEnable(context)) {
             notificationManager!!.run {
                 createNotificationChannel(notificationChannel)
                 notify(1, notificationBuilder.build())
-                if (getUserNotiSound(context)) {
-                    if (ringtone.isPlaying) {
-                        ringtone.stop()
-                    }
-                    ringtone.play()
-                }
 
-                if (getUserNotiVibrate(context)) {
-                    VibrateUtil(context).noti(longArrayOf(0, 100, 200, 300))
-                }
+                applyRingtone(context, ringtone)
+                applyVibrate(context)
             }
         } else {
             RDBLogcat.writeNotificationHistory(context, "체크 해제로 인한 알림 미발송",
                 "${GetAppInfo.getUserLastAddress(context)} $data")
+        }
+    }
+
+   private fun applyRingtone(context: Context,ringtone: Ringtone) {
+       if (getUserNotiSound(context)) {
+           if (ringtone.isPlaying) {
+               ringtone.stop()
+           }
+           ringtone.play()
+       }
+   }
+
+    private fun applyVibrate(context: Context) {
+        if (getUserNotiVibrate(context)) {
+            VibrateUtil(context).noti(longArrayOf(0, 100, 200, 300))
         }
     }
 

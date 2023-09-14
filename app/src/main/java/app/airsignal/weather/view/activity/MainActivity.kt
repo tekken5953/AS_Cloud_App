@@ -196,6 +196,7 @@ class MainActivity
 
         if (savedInstanceState == null) {
             binding.mainLoadingView.alpha = 1f
+            SubFCM().subTopic("patch")
             changeBackgroundResource(null)
         }
 

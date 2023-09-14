@@ -16,18 +16,12 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.*
 
-
 class SubFCM : FirebaseMessagingService() {
     private val instance = FirebaseMessaging.getInstance()
 
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        Timber.tag(TAG_N).d(
-            "FCM 메시지 수신 : data : ${message.data}\n" +
-                    "from : ${message.from}"
-        )
-
         RDBLogcat.writeNotificationHistory(this,
             GetAppInfo.getUserLastAddress(this),
             message.data.toString()
@@ -44,7 +38,7 @@ class SubFCM : FirebaseMessagingService() {
     }
 
     /** 토픽 구독 설정 **/
-    private fun subTopic(topic: String): SubFCM {
+    fun subTopic(topic: String): SubFCM {
         instance.subscribeToTopic(topic)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
