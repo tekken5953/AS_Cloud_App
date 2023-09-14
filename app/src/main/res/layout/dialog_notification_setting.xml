@@ -36,6 +36,7 @@
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:layout_below="@+id/notificationTopBar">
+
         <TextView
             android:id="@+id/notiSettingTitle"
             style="@style/settingMultiTextView"

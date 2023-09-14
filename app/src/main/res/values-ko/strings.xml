@@ -79,12 +79,12 @@
     <string name="app_version">앱 버전</string>
     <string name="location_perm">위치 권한</string>
     <string name="essential">(앱 사용 중)</string>
-    <string name="loc_perm_explain">현재 위치 날씨 데이터 제공</string>
+    <string name="loc_perm_explain">·현재 위치 날씨 데이터 제공</string>
     <string name="non_essential_perm">선택 권한</string>
     <string name="essential_perm">필수 권한</string>
     <string name="noti_perm">알림 권한</string>
     <string name="non_essential">(앱 미사용 중)</string>
-    <string name="noti_perm_explain">날씨 및 미세먼지 정보 알림 제공</string>
+    <string name="noti_perm_explain">·날씨 및 미세먼지 정보 알림 제공\n·이벤트 및 업데이트에 관련된 정보 제공</string>
     <string name="perm_notice">권한을 허용하지 않아도 이용은 가능하지만 일부 서비스가 제한 될 수 있습니다.</string>
     <string name="perm_title">앱 사용을 위해\n 접근 권한을 허용해주세요</string>
     <string name="not_serviced_location_error">서비스 가능한 지역이 아닙니다\n버튼을 클릭하여 새 주소를 등록하세요</string>

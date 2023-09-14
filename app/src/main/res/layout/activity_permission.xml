@@ -57,7 +57,7 @@
                     android:id="@+id/permissionItemLocImg"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="14dp"
                     android:contentDescription="@string/cd_icon_location"
                     android:layout_below="@+id/permissionItemNasTitle"
                     android:layout_marginStart="36dp"
@@ -79,7 +79,7 @@
                     style="@style/basicTextView"
                     android:textColor="@color/theme_sub_color"
                     android:textSize="14sp"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="4dp"
                     android:text="@string/loc_perm_explain"
                     android:layout_below="@+id/permissionItemLocTitle"
                     android:layout_alignStart="@+id/permissionItemLocTitle"/>
@@ -104,7 +104,7 @@
                     android:id="@+id/permissionItemNotiImg"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="27dp"
                     android:contentDescription="@string/cd_icon_noti"
                     android:layout_below="@+id/permissionItemUnNasTitle"
                     android:layout_marginStart="36dp"
@@ -126,8 +126,10 @@
                     style="@style/basicTextView"
                     android:textColor="@color/theme_sub_color"
                     android:textSize="14sp"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="4dp"
                     android:text="@string/noti_perm_explain"
+                    android:gravity="start"
+                    android:lineHeight="22dp"
                     android:layout_below="@+id/permissionItemNotiTitle"
                     android:layout_alignStart="@+id/permissionItemNotiTitle"/>
 

@@ -80,12 +80,12 @@
     <string name="app_version">App Version</string>
     <string name="location_perm">Location permission</string>
     <string name="essential">(App is in use)</string>
-    <string name="loc_perm_explain">Provide current location weather data</string>
+    <string name="loc_perm_explain">·Provide current location weather data</string>
     <string name="non_essential_perm">Selectable permissions</string>
     <string name="essential_perm">Required permissions</string>
     <string name="noti_perm">Notification permissions</string>
     <string name="non_essential">(App not in use)</string>
-    <string name="noti_perm_explain">Provides weather and PM information notifications</string>
+    <string name="noti_perm_explain">·Provides weather and PM information notifications\n·Provides events and updates</string>
     <string name="perm_notice">It is available without permission but some services may be restricted</string>
     <string name="perm_title">Please allow access to use the app</string>
     <string name="not_serviced_location_error">It\'s not a serviceable area\nPress button to register new address</string>
