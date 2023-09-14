@@ -325,10 +325,10 @@ class MainActivity
 
 
         binding.mainSwipeLayout.setColorSchemeColors(
-            Color.parseColor("#3f48cc"),
-            Color.parseColor("#ffe100"),
-            Color.parseColor("#0ed145"),
-            Color.parseColor("#ca4fcc"))
+            Color.parseColor("#22D3EE"),
+            Color.parseColor("#4DCF7D"),
+            Color.parseColor("#FACC15"),
+            Color.parseColor("#F87171"))
         // 스와이프 리프래시 레이아웃 리스너
         binding.mainSwipeLayout.setOnRefreshListener {
             Handler(Looper.getMainLooper()).postDelayed({
@@ -1487,7 +1487,6 @@ class MainActivity
             changeStrokeColor(binding.subAirPM25, getColor(android.R.color.transparent))
 
             updateErrorViewsVisibility(GONE)
-
         }
         // 보임
         else {

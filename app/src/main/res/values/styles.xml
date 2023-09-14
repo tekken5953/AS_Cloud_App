@@ -57,7 +57,7 @@
     </style>
 
     <style name="settingSingleTextView">
-        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_height">55dp</item>
         <item name="android:letterSpacing">-0.04</item>
         <item name="android:textColor">@color/theme_text_color</item>
         <item name="android:gravity">center_vertical</item>

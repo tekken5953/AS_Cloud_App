@@ -149,7 +149,7 @@
                 <app.airsignal.weather.view.custom_view.SettingSystemView
                     android:id="@+id/settingSystemTheme"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="55dp"
                     app:layout="@layout/custom_view_setting_system"
                     app:layout_constraintTop_toBottomOf="@+id/settingLine2"
                     app:left="@string/setting_theme_left" />
@@ -157,7 +157,7 @@
                 <app.airsignal.weather.view.custom_view.SettingSystemView
                     android:id="@+id/settingSystemLang"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="55dp"
                     app:layout="@layout/custom_view_setting_system"
                     app:layout_constraintTop_toBottomOf="@+id/settingSystemTheme"
                     app:left="@string/setting_lang" />
@@ -165,7 +165,7 @@
                 <app.airsignal.weather.view.custom_view.SettingSystemView
                     android:id="@+id/settingSystemFont"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="55dp"
                     app:layout="@layout/custom_view_setting_system"
                     app:layout_constraintTop_toBottomOf="@+id/settingSystemLang"
                     app:left="@string/font_scale" />
@@ -194,7 +194,7 @@
                 <app.airsignal.weather.view.custom_view.SettingSystemView
                     android:id="@+id/settingNotificationText"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="55dp"
                     app:layout="@layout/custom_view_setting_system"
                     app:layout_constraintTop_toBottomOf="@+id/settingLine3"
                     app:left="@string/set_noti" />
