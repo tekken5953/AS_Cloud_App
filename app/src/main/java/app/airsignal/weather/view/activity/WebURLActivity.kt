@@ -23,6 +23,8 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
 
         SetSystemInfo.setStatusBar(this)
 
+        val webView = binding.webUrlWebView
+
         window.statusBarColor = getColor(R.color.theme_view_color)
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
             @Suppress("DEPRECATION")
@@ -34,11 +36,16 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
                 View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
 
-        binding.webUrlBackIv.setOnClickListener { finish() }
+        binding.webUrlBackIv.setOnClickListener {
+            if (!webView.canGoBack()) finish() else webView.goBack()
+        }
+
+        binding.webUrlTop.setOnClickListener {
+            webView.pageUp(true)
+        }
 
         // 웹뷰 세팅
-        val webSettings = binding.webUrlWebView.settings
-        webSettings.apply {
+        webView.settings.apply {
             javaScriptEnabled = true // 자바스크립트 허용
             builtInZoomControls = true // 줌 컨트롤러 생성
             setSupportZoom(true) // 핀치 줌 허용
@@ -48,7 +55,7 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK // 브라우저 캐시 허용
         }
 
-        binding.webUrlWebView.apply {
+        webView.apply {
             webChromeClient = WebChromeClient()
             webViewClient = WebViewClient()
         }
@@ -75,7 +82,7 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             }
         }
 
-        binding.webUrlWebView.clearCache(true)
-        binding.webUrlWebView.loadUrl(url) // 페이지 로딩
+        webView.clearCache(true)
+        webView.loadUrl(url) // 페이지 로딩
     }
 }

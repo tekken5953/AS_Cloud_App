@@ -238,5 +238,6 @@
     <string name="error_guide">해당 문제가 지속적으로 발생 시\nplay@airsignal.kr 로 문의 부탁드립니다.</string>
     <string name="cd_loading_img">로딩 이미지</string>
     <string name="exclamation_mark">느낌표</string>
+    <string name="cd_ad_view">광고뷰</string>
 
 </resources>

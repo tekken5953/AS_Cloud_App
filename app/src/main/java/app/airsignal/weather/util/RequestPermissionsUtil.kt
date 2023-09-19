@@ -10,14 +10,17 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
-import app.airsignal.weather.dao.StaticDataObject
-import app.airsignal.weather.dao.StaticDataObject.REQUEST_LOCATION
-import app.airsignal.weather.dao.StaticDataObject.REQUEST_NOTIFICATION
-import app.airsignal.weather.dao.StaticDataObject.TAG_P
 import app.airsignal.weather.util.`object`.GetAppInfo.getInitLocPermission
 import timber.log.Timber
 
 class RequestPermissionsUtil(private val context: Context) {
+
+    companion object {
+        const val REQUEST_LOCATION = 0x0000001                       // 위치권한 요청 Result Code
+        const val REQUEST_NOTIFICATION = 0x0000002                    // 알림권한 요청 Result Code
+        const val REQUEST_BACKGROUND_LOCATION = 0x0000003
+        const val TAG_P = "TAG_Permission"
+    }
 
     private val permissionNetWork = Manifest.permission.INTERNET
 
@@ -158,7 +161,7 @@ class RequestPermissionsUtil(private val context: Context) {
         ActivityCompat.requestPermissions(
             context as Activity,
             arrayOf(permissionsLocationBackground),
-            StaticDataObject.REQUEST_BACKGROUND_LOCATION
+            REQUEST_BACKGROUND_LOCATION
         )
     }
 }

@@ -133,4 +133,8 @@ dependencies {
     // Firebase In App Message
     implementation("com.google.firebase:firebase-inappmessaging-display-ktx")
 
+    // Lottie
+    def lottieVersion = "5.2.0"
+    implementation "com.airbnb.android:lottie:$lottieVersion"
+
 }

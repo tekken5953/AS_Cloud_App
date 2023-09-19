@@ -20,6 +20,7 @@ import app.airsignal.weather.dao.StaticDataObject.IS_PERMED_BACK_LOG
 import app.airsignal.weather.dao.StaticDataObject.LAST_LAT
 import app.airsignal.weather.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_ADDRESS
+import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_TOPIC_DAILY
 import app.airsignal.weather.dao.StaticDataObject.WARNING_FIXED
 import app.airsignal.weather.db.SharedPreferenceManager
 
@@ -94,7 +95,7 @@ object SetAppInfo {
     }
 
     fun setTopicNotification(context: Context, topic: String) {
-        SharedPreferenceManager(context).setString("Notification_All", topic)
+        SharedPreferenceManager(context).setString(NOTIFICATION_TOPIC_DAILY, topic)
     }
 
     fun setNotificationAddress(context: Context, addr: String) {

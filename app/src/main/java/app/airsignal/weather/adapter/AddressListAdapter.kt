@@ -36,11 +36,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<AdapterMo
     private var visible = false
     val db = GpsRepository(context)
 
-    private lateinit var onClickListener: OnItemClickListener
-
-    interface OnItemClickListener {
-        fun onItemClick(v: View, position: Int)
-    }
+    private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -52,7 +48,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<AdapterMo
         return ViewHolder(view)
     }
 
-    fun setOnItemClickListener(listener: OnItemClickListener) {
+    fun setOnItemClickListener(listener: OnAdapterItemClick.OnAdapterItemClick) {
         this.onClickListener = listener
     }
 

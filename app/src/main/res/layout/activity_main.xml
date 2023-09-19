@@ -119,26 +119,21 @@
             <!--            app:layout_constraintBottom_toBottomOf="parent"-->
             <!--            app:menu="@menu/bottom_nav" />-->
 
-            <androidx.cardview.widget.CardView
+            <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/mainLoadingView"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
                 android:alpha="0"
-                app:cardCornerRadius="70dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="@android:color/transparent"
+                app:lottie_cacheComposition="true"
+                app:lottie_colorFilter="@color/lottie_loading_color"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/cd_loading_img"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:src="@drawable/app_icon"/>
-            </androidx.cardview.widget.CardView>
+                app:lottie_rawRes="@raw/lottie_loading"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_clipToCompositionBounds="true"/>
 
             <TextView
                 android:id="@+id/mainGpsTitleTv"
@@ -613,7 +608,7 @@
 
                         <com.google.android.gms.ads.AdView
                             android:id="@+id/nested_adView"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_marginStart="5dp"
                             android:layout_marginTop="5dp"
@@ -621,6 +616,8 @@
                             android:layout_marginBottom="5dp"
                             android:layout_toStartOf="@+id/adViewCancelIv"
                             android:visibility="visible"
+                            android:layout_centerInParent="true"
+                            android:contentDescription="@string/cd_ad_view"
                             app:adSize="FULL_BANNER"
                             app:adUnitId="@string/adUnit_main_Id" />
                     </RelativeLayout>

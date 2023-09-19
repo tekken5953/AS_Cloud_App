@@ -3,6 +3,8 @@ package app.airsignal.weather.view.activity
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.ErrorCode.ERROR_NETWORK
@@ -18,6 +20,7 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.util.`object`.GetSystemInfo.goToPlayStore
 import app.airsignal.weather.util.`object`.SetAppInfo.fullScreenMode
+import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.view.MakeSingleDialog
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import com.google.firebase.database.FirebaseDatabase
@@ -39,7 +42,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        fullScreenMode(this)
+        SetSystemInfo.setStatusBar(this)
 
         initBinding()
 
@@ -77,8 +80,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private fun enterPage() {
         if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
             EnterPageUtil(this@SplashActivity).toMain(
-                    getUserLoginPlatform(this)
-                )
+                getUserLoginPlatform(this)
+            )
         } else {
             EnterPageUtil(this@SplashActivity).toPermission()
         }

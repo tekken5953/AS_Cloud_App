@@ -18,6 +18,7 @@ import android.view.animation.*
 import android.widget.*
 import android.widget.LinearLayout.LayoutParams
 import android.widget.LinearLayout.VISIBLE
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.core.view.setMargins
@@ -41,17 +42,9 @@ import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.dao.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
 import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
-import app.airsignal.weather.dao.StaticDataObject.CO_INDEX
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
-import app.airsignal.weather.dao.StaticDataObject.NO2_INDEX
-import app.airsignal.weather.dao.StaticDataObject.NOT_SHOWING_LOADING_FLOAT
-import app.airsignal.weather.dao.StaticDataObject.O3_INDEX
-import app.airsignal.weather.dao.StaticDataObject.PM10_INDEX
-import app.airsignal.weather.dao.StaticDataObject.PM2p5_INDEX
-import app.airsignal.weather.dao.StaticDataObject.SHOWING_LOADING_FLOAT
-import app.airsignal.weather.dao.StaticDataObject.SO2_INDEX
 import app.airsignal.weather.databinding.ActivityMainBinding
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
@@ -100,6 +93,7 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setCurrentLocation
 import app.airsignal.weather.util.`object`.SetAppInfo.setLastLat
 import app.airsignal.weather.util.`object`.SetAppInfo.setLastLng
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
+import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.util.`object`.SetSystemInfo.setUvBackgroundColor
 import app.airsignal.weather.view.*
 import app.airsignal.weather.vmodel.GetWeatherViewModel
@@ -110,19 +104,29 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.database.DatabaseException
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
-import androidx.constraintlayout.motion.widget.MotionLayout
-import timber.log.Timber
 
 
 @SuppressLint("InflateParams")
 class MainActivity
     : BaseActivity<ActivityMainBinding>() {
     override val resID: Int get() = R.layout.activity_main
+
+    companion object {
+        const val SHOWING_LOADING_FLOAT = 0.5f
+        const val NOT_SHOWING_LOADING_FLOAT = 1f
+        const val PM2p5_INDEX = 0
+        const val PM10_INDEX = 1
+        const val CO_INDEX = 2
+        const val SO2_INDEX = 3
+        const val NO2_INDEX = 4
+        const val O3_INDEX = 5
+    }
 
     private var isBackPressed = false
     private val sideMenuBuilder by lazy { SideMenuBuilder(this) }
@@ -198,6 +202,8 @@ class MainActivity
             binding.mainLoadingView.alpha = 1f
             SubFCM().subTopic("patch")
             changeBackgroundResource(null)
+            window.statusBarColor = getColor(R.color.theme_view_color)
+            window.navigationBarColor = getColor(R.color.theme_view_color)
         }
 
         if (getInitBackLogPerm(this)) {
@@ -1470,25 +1476,33 @@ class MainActivity
             setDrawable(binding.mainMotionSLideImg,null)
             setDrawable(binding.mainGpsFix,null)
 
-            binding.mainMotionLayout.apply {
-                transitionToStart()
-                Thread.sleep(100)
-                isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
+            binding.mainLoadingView.apply {
+                this.alpha = 1f
+                if (!this.isAnimating)
+                    this.playAnimation()
+            }
+                binding.mainSwipeLayout.isEnabled = false
+
+                binding.mainMotionLayout.apply {
+                    transitionToStart()
+                    Thread.sleep(100)
+                    isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
+                }
+
+                binding.mainMotionSlideGuide.apply {
+                    text = getString(R.string.error_guide)
+                    setTextColor(ResourcesCompat.getColor(resources,
+                        R.color.theme_text_color,null))
+                }
+                applyBackground(binding.mainWarningBox,null)
+                applyBackground(binding.nestedSubAirFrame,null)
+
+                changeStrokeColor(binding.subAirPM10, getColor(android.R.color.transparent))
+                changeStrokeColor(binding.subAirPM25, getColor(android.R.color.transparent))
+
+                updateErrorViewsVisibility(GONE)
             }
 
-            binding.mainMotionSlideGuide.apply {
-                text = getString(R.string.error_guide)
-                setTextColor(ResourcesCompat.getColor(resources,
-                    R.color.theme_text_color,null))
-            }
-            applyBackground(binding.mainWarningBox,null)
-            applyBackground(binding.nestedSubAirFrame,null)
-
-            changeStrokeColor(binding.subAirPM10, getColor(android.R.color.transparent))
-            changeStrokeColor(binding.subAirPM25, getColor(android.R.color.transparent))
-
-            updateErrorViewsVisibility(GONE)
-        }
         // 보임
         else {
             binding.mainSensTitle.text = getString(R.string.sens_temp)
@@ -1500,6 +1514,12 @@ class MainActivity
             binding.mainMinTitle.text = getString(R.string.min)
             binding.mainMaxTitle.text = getString(R.string.max)
 
+            binding.mainLoadingView.apply{
+                this.alpha = 0f
+                if (this.isAnimating) {
+                    this.pauseAnimation()
+                }
+            }
             setDrawable(binding.mainGpsFix, R.drawable.gps_fix)
             setDrawable(binding.mainMotionSLideImg,R.drawable.drop_down_bottom)
             setDrawable(binding.mainAddAddress,R.drawable.ico_add_w)
@@ -1507,6 +1527,7 @@ class MainActivity
 
             // 원래 상태로 복구하기 위해 제약 조건 변경
             binding.mainMotionLayout.isInteractionEnabled = true
+            binding.mainSwipeLayout.isEnabled = true
 
             updateErrorViewsVisibility(VISIBLE)
         }
@@ -1550,7 +1571,7 @@ class MainActivity
         binding.mainSkyStarImg.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainShareIv.alpha = if (visibility == VISIBLE) 1f else 0f
 
-        binding.mainErrorRenewBtn.isClickable = visibility == VISIBLE
+        binding.mainErrorRenewBtn.isClickable = visibility == GONE
     }
 
     // 현재 지역의 날씨 데이터 뷰모델 생성 및 호출
@@ -1788,6 +1809,9 @@ class MainActivity
             changeTextToWhite()
         }
 
+        window.navigationBarColor = getColor(android.R.color.transparent)
+        window.statusBarColor = getColor(android.R.color.transparent)
+
         setSectionTextColor(
             binding.dailySectionToday,
             binding.dailySectionTomorrow,
@@ -1815,7 +1839,7 @@ class MainActivity
     private fun checkLocationAvailability() {
         val locationClass = GetLocation(this)
         if (!locationClass.isNetWorkConnected()) {
-            showErrorDialog(getString(R.string.error_network_connect))
+            hideAllViews(ERROR_NETWORK)
         } else if (locationClass.isGPSConnected()) {
             requestLocationWithGPS()
         } else if (locationClass.isNetworkProviderConnected()) {

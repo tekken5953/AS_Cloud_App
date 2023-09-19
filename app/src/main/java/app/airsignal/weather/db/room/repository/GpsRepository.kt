@@ -1,7 +1,6 @@
 package app.airsignal.weather.db.room.repository
 
 import android.content.Context
-import app.airsignal.weather.dao.StaticDataObject.TAG_D
 import app.airsignal.weather.db.database.GpsDataBase.Companion.getInstance
 import app.airsignal.weather.db.room.model.GpsEntity
 import com.orhanobut.logger.Logger
@@ -14,6 +13,9 @@ import kotlinx.coroutines.launch
  * @since : 2023-04-11 오후 5:34
  **/
 class GpsRepository(private val context: Context) {
+    companion object {
+        const val TAG_D = "TAG_DB"                            // Room DB
+    }
 
     fun update(model: GpsEntity) {
         CoroutineScope(Dispatchers.IO).launch {

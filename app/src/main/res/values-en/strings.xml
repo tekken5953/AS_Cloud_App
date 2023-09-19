@@ -244,4 +244,5 @@
     <string name="error_guide">if the problem persists.Please contact \'play@airsignal.kr\'</string>
     <string name="cd_loading_img">Loading Image</string>
     <string name="exclamation_mark">Exclamation mark</string>
+    <string name="cd_ad_view">Advertisement View</string>
 </resources>

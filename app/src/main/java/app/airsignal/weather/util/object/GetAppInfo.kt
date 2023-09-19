@@ -20,6 +20,7 @@ import app.airsignal.weather.dao.StaticDataObject.LAST_LAT
 import app.airsignal.weather.dao.StaticDataObject.LAST_LNG
 import app.airsignal.weather.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_ADDRESS
+import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_TOPIC_DAILY
 import app.airsignal.weather.dao.StaticDataObject.WARNING_FIXED
 import app.airsignal.weather.db.SharedPreferenceManager
 
@@ -69,7 +70,7 @@ object GetAppInfo {
     }
 
     fun getTopicNotification(context: Context): String {
-        return SharedPreferenceManager(context).getString("Notification_All")
+        return SharedPreferenceManager(context).getString(NOTIFICATION_TOPIC_DAILY)
     }
 
     fun getEntireSun(sunRise: String, sunSet: String): Int {

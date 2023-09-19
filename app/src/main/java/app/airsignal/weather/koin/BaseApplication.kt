@@ -36,13 +36,14 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     override fun uncaughtException(p0: Thread, p1: Throwable) {
         RDBLogcat.writeErrorANR(thread = "Thread : ${p0.name}", msg = "Error Msg: ${p1.stackTraceToString()}")
         FirebaseCrashlytics.getInstance().apply {
+            this.setCrashlyticsCollectionEnabled(true)
             try {
-                recordException(p1)
                 setUserId(GetSystemInfo.androidID(this@BaseApplication))
             } catch(e: NullPointerException) {
                 e.printStackTrace()
             }
-            recordException(p1) // Crashlytics 에 에러로그 기록
+
+            recordException(p1)
         }
         if (p0.name == "WidgetProvider") {
             HttpClient.getInstance(true).setClientBuilder()

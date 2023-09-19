@@ -20,7 +20,7 @@
             app:dragDirection="dragUp"
             app:maxAcceleration="35"
             app:maxVelocity="35"
-            app:dragScale="2.5"
+            app:dragScale="1.5"
             app:springStopThreshold="0"
             app:touchAnchorId="@id/nested_scrollview"
             app:touchAnchorSide="top" />
