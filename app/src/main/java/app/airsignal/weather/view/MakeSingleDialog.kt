@@ -3,8 +3,6 @@ package app.airsignal.weather.view
 import android.app.Dialog
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.Window
 import android.widget.TextView
@@ -35,7 +33,7 @@ class MakeSingleDialog(private val context: Context) {
             val title = view.findViewById<TextView>(R.id.alertSingleTitle)
             apply = view.findViewById(R.id.alertSingleApplyBtn)
 
-            apply.backgroundTintList = ColorStateList.valueOf(context.getColor(color))
+            apply.backgroundTintList = ColorStateList.valueOf(color)
 
             title.text = textTitle
             apply.text = buttonText

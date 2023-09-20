@@ -54,7 +54,7 @@ class ShowDialogClass(private val activity: Activity) {
     }
 
     /** 다이얼로그 뷰 소멸 **/
-    private fun dismiss() {
+    fun dismiss() {
         if (alertDialog.isShowing)
             alertDialog.dismiss()
     }

@@ -9,7 +9,6 @@ import kotlin.math.pow
  * @since : 2023-04-17 오전 9:22
  **/
 class SensibleTempFormula {
-
     /**
      * 여름철 체감온도 (5월 ~ 9월)
      *

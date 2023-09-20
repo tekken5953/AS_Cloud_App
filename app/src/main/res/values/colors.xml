@@ -50,4 +50,6 @@
 
     <color name="sub_white">#BFCEE3</color>
 
+    <color name="lottie_loading_color">#FFAE64</color>
+
 </resources>

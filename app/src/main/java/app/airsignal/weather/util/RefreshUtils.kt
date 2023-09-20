@@ -4,13 +4,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.ProgressBar
-import app.airsignal.weather.R
+import com.airbnb.lottie.LottieAnimationView
 import kotlin.system.exitProcess
 
 class RefreshUtils(private val context: Context) {
@@ -27,7 +25,7 @@ class RefreshUtils(private val context: Context) {
     }
 
     /** sec 초 이후에 액티비티 갱신 **/
-    fun refreshActivityAfterSecond(sec: Int, pbLayout: ProgressBar?) {
+    fun refreshActivityAfterSecond(sec: Int, pbLayout: LottieAnimationView?) {
         pbLayout?.let {
             it.visibility = View.VISIBLE
         }

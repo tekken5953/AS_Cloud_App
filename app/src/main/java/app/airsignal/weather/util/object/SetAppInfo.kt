@@ -6,7 +6,6 @@ import android.view.View
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
 import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPhone
 import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPlatform
-import app.airsignal.weather.dao.IgnoredKeyFile.loginVerificationCode
 import app.airsignal.weather.dao.IgnoredKeyFile.userEmail
 import app.airsignal.weather.dao.IgnoredKeyFile.userFontScale
 import app.airsignal.weather.dao.IgnoredKeyFile.userId
@@ -17,9 +16,9 @@ import app.airsignal.weather.dao.StaticDataObject.INITIALIZED_LOC_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.IS_INIT_BACK_LOC_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.IS_PERMED_BACK_LOG
-import app.airsignal.weather.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
+import app.airsignal.weather.dao.StaticDataObject.LAST_LAT
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_ADDRESS
-import app.airsignal.weather.dao.StaticDataObject.WARNING_FIXED
+import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_TOPIC_DAILY
 import app.airsignal.weather.db.SharedPreferenceManager
 
 /**
@@ -92,20 +91,12 @@ object SetAppInfo {
         SharedPreferenceManager(context).setString(lastLoginPlatform, platform)
     }
 
-    fun setLoginVerificationCode(context: Context, code: String) {
-        SharedPreferenceManager(context).setString(loginVerificationCode, code)
-    }
-
     fun setTopicNotification(context: Context, topic: String) {
-        SharedPreferenceManager(context).setString("Notification_All", topic)
+        SharedPreferenceManager(context).setString(NOTIFICATION_TOPIC_DAILY, topic)
     }
 
     fun setNotificationAddress(context: Context, addr: String) {
         SharedPreferenceManager(context).setString(NOTIFICATION_ADDRESS, addr)
-    }
-
-    fun setLastRefreshTime(context: Context, l: Long) {
-        SharedPreferenceManager(context).setLong(LAST_REFRESH_WIDGET_TIME, l)
     }
 
     fun setInitLocPermission(context: Context, s: String) {
@@ -128,7 +119,11 @@ object SetAppInfo {
         SharedPreferenceManager(context).setBoolean(IS_PERMED_BACK_LOG, b)
     }
 
-    fun setWarningFixed(context: Context, region: String) {
-        SharedPreferenceManager(context).setString(WARNING_FIXED, region)
+    fun setLastLat(context: Context, lat: Double) {
+        SharedPreferenceManager(context).setString(LAST_LAT, lat.toString())
+    }
+
+    fun setLastLng(context: Context, lng: Double) {
+        SharedPreferenceManager(context).setString(LAST_LAT, lng.toString())
     }
 }

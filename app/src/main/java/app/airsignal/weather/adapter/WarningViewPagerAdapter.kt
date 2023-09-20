@@ -11,8 +11,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
-import app.airsignal.weather.util.VibrateUtil
-import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.view.activity.WarningDetailActivity
 
 /**
@@ -28,8 +26,6 @@ class WarningViewPagerAdapter(
     private val mList = list
     private var textColor: Int = Color.WHITE
 
-    private lateinit var onClickListener: OnItemClickListener
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -38,14 +34,6 @@ class WarningViewPagerAdapter(
 
         val view: View = inflater.inflate(R.layout.view_pager_item_main_report, parent, false)
         return ViewHolder(view)
-    }
-
-    interface OnItemClickListener {
-        fun onItemClick(v: View, position: Int)
-    }
-
-    fun setOnItemClickListener(listener: OnItemClickListener) {
-        this.onClickListener = listener
     }
 
     override fun getItemCount(): Int = mList.size
@@ -81,7 +69,7 @@ class WarningViewPagerAdapter(
                             intent.putExtra("isMain", true)
                             context.startActivity(intent)
                         }
-                    } catch (e: NullPointerException) {
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }

@@ -36,6 +36,16 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
         val context = newBase ?: this
 
         // 설정된 언어정보 불러오기
+        applyUserLanguage(context)
+
+        // 설정된 폰트크기 불러오기
+        applyUserFontScale(context)
+
+        // 설정된 테마 정보 불러오기
+        applyUserTheme(context)
+    }
+
+    private fun applyUserLanguage(context: Context) {
         when (getUserLocation(context)) {
             LANG_KR -> {
                 SetSystemInfo.setLocaleToKorea(context)
@@ -47,8 +57,9 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
                 SetSystemInfo.setLocaleToSystem(context)
             }
         }
+    }
 
-        // 설정된 폰트크기 불러오기
+    private fun applyUserFontScale(context: Context) {
         when (getUserFontScale(context)) {
             TEXT_SCALE_SMALL -> {
                 SetSystemInfo.setTextSizeSmall(context)
@@ -60,8 +71,9 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
                 SetSystemInfo.setTextSizeDefault(context)
             }
         }
+    }
 
-        // 설정된 테마 정보 불러오기
+    private fun applyUserTheme(context: Context) {
         when (getUserTheme(context)) {
             THEME_DARK -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

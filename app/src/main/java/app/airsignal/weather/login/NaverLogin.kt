@@ -20,6 +20,7 @@ import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
 import app.airsignal.weather.view.ToastUtils
+import com.airbnb.lottie.LottieAnimationView
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
@@ -152,7 +153,7 @@ class NaverLogin(private val activity: Activity) {
     }
 
     /** 네이버 클라이언트와 연동 해제 **/
-    fun disconnectFromNaver(pb: ProgressBar?) {
+    fun disconnectFromNaver(pb: LottieAnimationView?) {
         NidOAuthLogin().callDeleteTokenApi(activity, object : OAuthLoginCallback {
             override fun onSuccess() {
                 //서버에서 토큰 삭제에 성공한 상태입니다.

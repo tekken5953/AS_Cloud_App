@@ -25,40 +25,4 @@ class LoggerUtil {
     fun getKeyHash(context: Context) {
         Timber.tag("TAG_LOGIN").d("key_hash : ${Utility.getKeyHash(context)}")
     }
-
-    /**
-     * @param tag Generate Tag with Timber
-     * @param json  Write JsonString for Parsing with PrettyPrinting
-     */
-    fun logJsonTimberDebug(tag: String, json: String) {
-        Timber.tag(tag).d(
-            GsonBuilder().setPrettyPrinting().create().toJson(
-                Gson().fromJson(json, JsonObject::class.java)
-            )
-        )
-    }
-
-    fun logJsonTimberInfo(tag: String, json: String) {
-        Timber.tag(tag).i(
-            GsonBuilder().setPrettyPrinting().create().toJson(
-                Gson().fromJson(json, JsonArray::class.java)
-            )
-        )
-    }
-
-    fun logJsonTimberWarning(tag: String, json: String) {
-        Timber.tag(tag).w(
-            GsonBuilder().setPrettyPrinting().create().toJson(
-                Gson().fromJson(json, JsonArray::class.java)
-            )
-        )
-    }
-
-    fun logJsonTimberError(tag: String, json: String) {
-        Timber.tag(tag).e(
-            GsonBuilder().setPrettyPrinting().create().toJson(
-                Gson().fromJson(json, JsonArray::class.java)
-            )
-        )
-    }
 }

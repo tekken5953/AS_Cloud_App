@@ -1,7 +1,6 @@
 package app.airsignal.weather.firebase.admob
 
 import android.app.Activity
-import android.content.Context
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds

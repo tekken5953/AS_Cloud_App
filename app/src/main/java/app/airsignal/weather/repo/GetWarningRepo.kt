@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import timber.log.Timber
 
 /**
  * @author : Lee Jae Young
@@ -46,8 +45,8 @@ class GetWarningRepo: BaseRepository() {
                 }
 
                 override fun onFailure(call: Call<ApiModel.BroadCastWeather>, t: Throwable) {
-                    Timber.tag("testt").d(t.stackTraceToString())
                     try {
+                        t.printStackTrace()
                         _getWarningResult.postValue(ApiState.Error(ERROR_NETWORK))
                     } catch(e: Exception) {
                         _getWarningResult.postValue(ApiState.Error(ERROR_UNKNOWN))

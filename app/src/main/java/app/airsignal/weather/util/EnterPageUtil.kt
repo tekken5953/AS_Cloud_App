@@ -31,6 +31,7 @@ class EnterPageUtil(private val activity: Activity) {
         val intent = Intent(activity, MainActivity::class.java)
         System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
         activity.startActivity(intent)
+        activity.overridePendingTransition(0,0)
         activity.finish()
     }
 
@@ -53,15 +54,19 @@ class EnterPageUtil(private val activity: Activity) {
     /** 권한 요청 페이지로 이동 **/
     fun toPermission() {
         val intent = Intent(activity, PermissionActivity::class.java)
-        activity.startActivity(intent)
-        activity.overridePendingTransition(0,0)
-        activity.finish()
+        activity.run {
+            startActivity(intent)
+            overridePendingTransition(0,0)
+            finish()
+        }
     }
 
     /** 기상 특보 페이지로 이동 **/
     fun toWarning() {
         val intent = Intent(activity, WarningDetailActivity::class.java)
-        activity.startActivity(intent)
-        activity.overridePendingTransition(0,0)
+        activity.run {
+            startActivity(intent)
+            overridePendingTransition(0,0)
+        }
     }
 }

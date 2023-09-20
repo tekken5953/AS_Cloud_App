@@ -47,7 +47,6 @@ class GetWeatherRepo : BaseRepository() {
                             } else {
                                 _getDataResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
 
-
                                 call.cancel()
                             }
                         } catch (e: NullPointerException) {

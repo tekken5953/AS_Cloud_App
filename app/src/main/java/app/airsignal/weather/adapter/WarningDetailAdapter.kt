@@ -20,8 +20,6 @@ class WarningDetailAdapter(
     RecyclerView.Adapter<WarningDetailAdapter.ViewHolder>() {
     private val mList = list
 
-    private lateinit var onClickListener: OnItemClickListener
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -30,14 +28,6 @@ class WarningDetailAdapter(
 
         val view: View = inflater.inflate(R.layout.list_item_warning_detail, parent, false)
         return ViewHolder(view)
-    }
-
-    interface OnItemClickListener {
-        fun onItemClick(v: View, position: Int)
-    }
-
-    fun setOnItemClickListener(listener: OnItemClickListener) {
-        this.onClickListener = listener
     }
 
     override fun getItemCount(): Int = mList.size

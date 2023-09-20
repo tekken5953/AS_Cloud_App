@@ -6,6 +6,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingBottom="23dp"
+        android:clickable="false"
+        android:focusable="false"
         android:background="@android:color/transparent"
         tools:context=".view.activity.MainActivity">
 
@@ -41,14 +43,5 @@
             android:layout_marginTop="8dp"
             android:layout_centerHorizontal="true"
             android:textColor="@color/theme_text_color"/>
-
-<!--        <View-->
-<!--            android:id="@+id/customSubAirLeftLine"-->
-<!--            android:layout_width="1.5dp"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_alignParentStart="true"-->
-<!--            android:layout_alignTop="@+id/customSubAirImg"-->
-<!--            android:layout_alignBottom="@+id/customSubAirValue"-->
-<!--            android:background="@color/theme_line_color"/>-->
     </RelativeLayout>
 </layout>

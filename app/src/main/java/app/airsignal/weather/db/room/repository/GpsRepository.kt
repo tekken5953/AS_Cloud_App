@@ -1,7 +1,6 @@
 package app.airsignal.weather.db.room.repository
 
 import android.content.Context
-import app.airsignal.weather.dao.StaticDataObject.TAG_D
 import app.airsignal.weather.db.database.GpsDataBase.Companion.getInstance
 import app.airsignal.weather.db.room.model.GpsEntity
 import com.orhanobut.logger.Logger
@@ -14,16 +13,19 @@ import kotlinx.coroutines.launch
  * @since : 2023-04-11 오후 5:34
  **/
 class GpsRepository(private val context: Context) {
+    companion object {
+        const val TAG_D = "TAG_DB"                            // Room DB
+    }
 
     fun update(model: GpsEntity) {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             getInstance(context)!!.gpsRepository().updateCurrentGPS(model)
             Logger.t(TAG_D).d("Update Model : $model")
         }
     }
 
     fun insert(model: GpsEntity) {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             getInstance(context)!!.gpsRepository().insertNewGPS(model)
         }
     }
@@ -37,7 +39,7 @@ class GpsRepository(private val context: Context) {
     }
 
     fun deleteFromAddress(addr: String) {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             getInstance(context)!!.gpsRepository().deleteFromAddr(addr)
         }
     }

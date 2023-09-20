@@ -24,10 +24,8 @@ class SubAirView(context: Context, attrs: AttributeSet?)
         subAirBinding = CustomViewSubAirBinding.inflate(inflater, this, true)
 
         attrs?.let {
-            val typedArray = context.obtainStyledAttributes(it,
-                R.styleable.SubAirView)
+            val typedArray = context.obtainStyledAttributes(it,R.styleable.SubAirView)
             typedArray.recycle()
-
         }
     }
 

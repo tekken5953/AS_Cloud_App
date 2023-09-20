@@ -21,12 +21,10 @@ import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
-import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * @author : Lee Jae Young
@@ -38,11 +36,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<AdapterMo
     private var visible = false
     val db = GpsRepository(context)
 
-    private lateinit var onClickListener: OnItemClickListener
-
-    interface OnItemClickListener {
-        fun onItemClick(v: View, position: Int)
-    }
+    private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -54,7 +48,7 @@ class AddressListAdapter(private val context: Context, list: ArrayList<AdapterMo
         return ViewHolder(view)
     }
 
-    fun setOnItemClickListener(listener: OnItemClickListener) {
+    fun setOnItemClickListener(listener: OnAdapterItemClick.OnAdapterItemClick) {
         this.onClickListener = listener
     }
 

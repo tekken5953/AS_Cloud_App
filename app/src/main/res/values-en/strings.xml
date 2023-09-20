@@ -80,15 +80,15 @@
     <string name="app_version">App Version</string>
     <string name="location_perm">Location permission</string>
     <string name="essential">(App is in use)</string>
-    <string name="loc_perm_explain">Provide current location weather data</string>
+    <string name="loc_perm_explain">·Provide current location weather data</string>
     <string name="non_essential_perm">Selectable permissions</string>
     <string name="essential_perm">Required permissions</string>
     <string name="noti_perm">Notification permissions</string>
     <string name="non_essential">(App not in use)</string>
-    <string name="noti_perm_explain">Provides weather and PM information notifications</string>
+    <string name="noti_perm_explain">·Provides weather and PM information notifications\n·Provides events and updates</string>
     <string name="perm_notice">It is available without permission but some services may be restricted</string>
     <string name="perm_title">Please allow access to use the app</string>
-    <string name="not_serviced_location">It\'s not a serviceable area\nPress button to register new address</string>
+    <string name="not_serviced_location_error">It\'s not a serviceable area\nPress button to register new address</string>
     <string name="airq_question_pm2p5">PM2.5 is dust smaller than 2.5/1000th of a millimeter. The particles are too fine to be filtered through the nasal mucosa and can directly penetrate into the alveoli when inhaled, increasing the prevalence of asthma or lung disease and early mortality. In addition, ultrafine dust deteriorates visibility, is deposited on the surface of leaves of plants, interferes with metabolism, and accumulates on buildings, relics and statues to cause corrosion.
     </string>
     <string name="airq_question_pm10">PM10 is dust smaller than 10/1000mm, and Fine dust is emitted as a mixture of solid and liquid particles in the air, and is produced through chemical reactions or naturally. Fine dust deteriorates visibility, is deposited on the surface of leaves of plants, interferes with metabolism, and is deposited on buildings, relics and statues, causing corrosion.
@@ -241,4 +241,9 @@
     <string name="naver_disconnect">Disconnect from Naver</string>
     <string name="inquiry">Inquiry</string>
     <string name="etc">Etc</string>
+    <string name="error_guide">if the problem persists.Please contact \'play@airsignal.kr\'</string>
+    <string name="cd_loading_img">Loading Image</string>
+    <string name="exclamation_mark">Exclamation mark</string>
+    <string name="cd_ad_view">Advertisement View</string>
+    <string name="last_location_call_msg">Address calls failed and call up the last address.</string>
 </resources>

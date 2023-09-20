@@ -1,7 +1,6 @@
 package app.airsignal.weather.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import timber.log.Timber
 
 class  ItemDiffCallback <T> (private val oldList: ArrayList<T>,
                              private val newList: ArrayList<T>) : DiffUtil.Callback() {

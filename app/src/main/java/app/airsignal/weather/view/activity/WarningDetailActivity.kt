@@ -1,8 +1,11 @@
 package app.airsignal.weather.view.activity
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.TextViewCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.WarningDetailAdapter
 import app.airsignal.weather.databinding.ActivityWarningDetailBinding
@@ -13,6 +16,7 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getWarningFixed
 import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.vmodel.GetWarningViewModel
+import com.orhanobut.logger.Logger
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
@@ -21,11 +25,6 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     private val warningList = ArrayList<String>()
     private val warningAdapter = WarningDetailAdapter(this, warningList)
     private val warningViewModel by viewModel<GetWarningViewModel>()
-
-    override fun onDestroy() {
-        super.onDestroy()
-        warningList.clear()
-    }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +45,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             }
         }
 
-        val regexAddress =  if (intent.extras?.getBoolean("isMain") == true) {
+        val regexAddress = if (intent.extras?.getBoolean("isMain") == true) {
             AddressFromRegex(getUserLastAddress(this)).getWarningAddress()
         } else {
             getWarningFixed(this)
@@ -65,6 +64,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
 
         binding.warningNoResult.setOnClickListener {
             binding.warningAddr.selectItemByIndex(0)
+            Logger.t("TAG_WARN").d("warningNoResult : ${binding.warningAddr.selectedIndex}")
             warningViewModel.loadDataResult(109)
         }
     }
@@ -72,45 +72,77 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     // 앱 버전 뷰모델 데이터 호출
     @SuppressLint("NotifyDataSetChanged")
     private fun applyWarning() {
-        if (!warningViewModel.fetchData().hasObservers()) {
-            warningViewModel.fetchData().observe(this) { result ->
-                result?.let { warning ->
-                    when (warning) {
-                        // 통신 성공
-                        is BaseRepository.ApiState.Success -> {
-                            binding.warningPb.visibility = View.GONE
-                            val data = warning.data
-                            warningList.clear()
-                            data.content?.forEachIndexed { index, s ->
-                                binding.warningNoResult.visibility = View.GONE
-                                warningList.add(s.replace("○","").trim())
-                                if (index == data.content.lastIndex) {
-                                    warningAdapter.notifyDataSetChanged()
-                                }
-                            } ?: apply {
-                                binding.warningNoResult.visibility = View.VISIBLE
+        warningViewModel.fetchData().observe(this) { result ->
+            warningList.clear()
+            result?.let { warning ->
+                when (warning) {
+                    is BaseRepository.ApiState.Success -> {
+                        warning.data.content?.let { content ->
+                            if (content.isNotEmpty()) {
+                                hideNoResult()
+                                warningList.addAll(content.map { it.replace("○", "").trim()})
+                                warningAdapter.notifyItemRangeInserted(0,warningList.size)
+                            } else {
+                                showNoResult()
                             }
-                        }
-                        // 통신 실패
-                        is BaseRepository.ApiState.Error -> {
-                            binding.warningPb.visibility = View.GONE
-                            binding.warningNoResult.visibility = View.VISIBLE
-                        }
-
-                        // 통신 중
-                        is BaseRepository.ApiState.Loading -> {
-                            binding.warningPb.visibility = View.VISIBLE
+                        } ?: apply {
+                            showNoResult()
                         }
                     }
+                    is BaseRepository.ApiState.Error -> {
+                        showNoResult()
+                        warningAdapter.notifyDataSetChanged()
+                    }
+                    is BaseRepository.ApiState.Loading -> {
+                        binding.warningPb.visibility = View.VISIBLE
+                    }
                 }
+            } ?: apply {
+                showNoResult()
+                warningAdapter.notifyDataSetChanged()
             }
         }
+    }
+
+    private fun showNoResult() {
+        binding.warningNoResult.visibility = View.VISIBLE
+        binding.warningPb.visibility = View.GONE
+
+        if (binding.warningAddr.text.toString() == "전국") {
+            binding.warningNoResult.apply {
+                text = "현재 전국의 기상특보가 없습니다."
+                setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    null, null, null, null
+                )
+                isClickable = false
+            }
+        } else {
+            binding.warningNoResult.apply {
+                bringToFront()
+                text = "현재 지역의 기상 특보가 없습니다.\n전국으로 검색하시겠습니까?"
+                setCompoundDrawablesRelativeWithIntrinsicBounds(
+                    null, null, null,
+                    ResourcesCompat.getDrawable(resources, R.drawable.search, null)
+                )
+                isClickable = true
+            }
+            TextViewCompat.setCompoundDrawableTintList(
+                binding.warningNoResult,
+                ColorStateList.valueOf(getColor(R.color.theme_text_color))
+            )
+        }
+    }
+
+    private fun hideNoResult() {
+        binding.warningNoResult.isClickable = false
+        binding.warningPb.visibility = View.GONE
+        binding.warningNoResult.visibility = View.GONE
     }
 
     // 지역명을 지역 코드로 변환
     private fun parseRegionToCode(region: String): Int {
         return when (parseRegionFullName(region)) {
-            "서울시","경기도","인천 광역시" -> { 108 }
+            "서울시", "경기도", "인천 광역시" -> { 108 }
             "강원도" -> { 105 }
             "충청남도" -> { 133 }
             "충청북도" -> { 131 }

@@ -2,10 +2,10 @@ package app.airsignal.weather.firebase.fcm
 
 import android.content.Context
 import android.content.Intent
-import app.airsignal.weather.dao.StaticDataObject.TAG_N
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.util.`object`.GetAppInfo
-import app.airsignal.weather.util.`object`.SetAppInfo
+import app.airsignal.weather.util.`object`.GetAppInfo.getTopicNotification
+import app.airsignal.weather.util.`object`.SetAppInfo.setTopicNotification
 import app.airsignal.weather.view.activity.SplashActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -16,18 +16,16 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.*
 
-
 class SubFCM : FirebaseMessagingService() {
+    companion object {
+        const val TAG_N = "Tag_Notification"                  // FCM 기본 태그 Key
+    }
     private val instance = FirebaseMessaging.getInstance()
 
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        Timber.tag(TAG_N).d(
-            "FCM 메시지 수신 : data : ${message.data}\n" +
-                    "from : ${message.from}"
-        )
-
+        Timber.tag(TAG_N).d("onMessageReceived(${message.data})")
         RDBLogcat.writeNotificationHistory(this,
             GetAppInfo.getUserLastAddress(this),
             message.data.toString()
@@ -44,7 +42,7 @@ class SubFCM : FirebaseMessagingService() {
     }
 
     /** 토픽 구독 설정 **/
-    private fun subTopic(topic: String): SubFCM {
+    fun subTopic(topic: String): SubFCM {
         instance.subscribeToTopic(topic)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -87,8 +85,15 @@ class SubFCM : FirebaseMessagingService() {
         val encodedStream: String = encoder.encodeToString(new.toByteArray())
             .replace("=","").replace("+","")
 
-        SubFCM().unSubTopic(old).subTopic(encodedStream)
-        SetAppInfo.setTopicNotification(context, encodedStream)
+        if (old == new) {
+            SubFCM().unSubTopic(old).subTopic(encodedStream)
+            setTopicNotification(context, encodedStream)
+        }
+    }
+
+    private fun getDailyTopic(context: Context): String? {
+        val topic = getTopicNotification(context)
+        return if (topic != "") topic else null
     }
 
     /** 현재 토큰정보 불러오기 **/

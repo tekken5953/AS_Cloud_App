@@ -59,7 +59,7 @@ class Term24Class {
     }
 
     /** 24절기 번들 필드 추가 **/
-    fun put(title: String, explain: String): Bundle {
+    private fun put(title: String, explain: String): Bundle {
         return Bundle().apply {
             putString("title",title)
             putString("date",getTermDate())
