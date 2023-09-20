@@ -6,7 +6,6 @@ import android.view.View
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
 import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPhone
 import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPlatform
-import app.airsignal.weather.dao.IgnoredKeyFile.loginVerificationCode
 import app.airsignal.weather.dao.IgnoredKeyFile.userEmail
 import app.airsignal.weather.dao.IgnoredKeyFile.userFontScale
 import app.airsignal.weather.dao.IgnoredKeyFile.userId
@@ -18,10 +17,8 @@ import app.airsignal.weather.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.IS_INIT_BACK_LOC_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.IS_PERMED_BACK_LOG
 import app.airsignal.weather.dao.StaticDataObject.LAST_LAT
-import app.airsignal.weather.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_TOPIC_DAILY
-import app.airsignal.weather.dao.StaticDataObject.WARNING_FIXED
 import app.airsignal.weather.db.SharedPreferenceManager
 
 /**

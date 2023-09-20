@@ -245,4 +245,5 @@
     <string name="cd_loading_img">Loading Image</string>
     <string name="exclamation_mark">Exclamation mark</string>
     <string name="cd_ad_view">Advertisement View</string>
+    <string name="last_location_call_msg">Address calls failed and call up the last address.</string>
 </resources>

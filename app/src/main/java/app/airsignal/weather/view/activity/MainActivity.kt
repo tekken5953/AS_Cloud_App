@@ -93,7 +93,6 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setCurrentLocation
 import app.airsignal.weather.util.`object`.SetAppInfo.setLastLat
 import app.airsignal.weather.util.`object`.SetAppInfo.setLastLng
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
-import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.util.`object`.SetSystemInfo.setUvBackgroundColor
 import app.airsignal.weather.view.*
 import app.airsignal.weather.vmodel.GetWeatherViewModel
@@ -286,6 +285,7 @@ class MainActivity
         // 공유하기 버튼 클릭
         binding.mainShareIv.setOnClickListener(object : OnSingleClickListener(){
             override fun onSingleClick(v: View?) {
+                mVib()
                 val doubleDialog = MakeDoubleDialog(this@MainActivity)
                 if (getUserLocation(this@MainActivity) == LANG_EN) {
                     doubleDialog.make(
@@ -492,9 +492,7 @@ class MainActivity
 
                 // TimeOut
                 HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                    if (isProgressed()) {
-                        hideProgressBar()
-                    }
+                    if (isProgressed()) { hideProgressBar() }
                 }, 1000 * 9)
             } else {
                 RequestPermissionsUtil(this@MainActivity).requestLocation()
@@ -1003,8 +1001,7 @@ class MainActivity
                     0 -> { getString(R.string.today) }
                     1 -> { getString(R.string.tomorrow) }
                     else -> {
-                        "${
-                            convertDayOfWeekToKorean(
+                        "${convertDayOfWeekToKorean(
                                 this, dateNow.dayOfWeek.value + i)}${getString(R.string.date)}"
                     }
                 }
@@ -1137,17 +1134,11 @@ class MainActivity
 
         // 서브 날씨(습도,바람,강수확률) 적용
         binding.subAirHumid.fetchData(
-            "${
-                real0.humid!!
-                    .roundToInt()
-            }%", R.drawable.ico_main_humidity,
+            "${real0.humid!!.roundToInt()}%", R.drawable.ico_main_humidity,
             null
         )
         binding.subAirWind.fetchData(
-            "${
-                real0.windSpeed!!
-                    .roundToInt()
-            }m/s", R.drawable.ico_main_wind,
+            "${real0.windSpeed!!.roundToInt()}m/s", R.drawable.ico_main_wind,
             real0.vector
         )
         val rainP = "${real0.rainP!!.roundToInt()}%"
@@ -1170,16 +1161,12 @@ class MainActivity
                 current.windSpeed?.let { w ->
                     binding.mainSensValue.text =
                         SensibleTempFormula().getSensibleTemp(
-                            ta = t,
-                            rh = h,
-                            v = w
+                            ta = t, rh = h, v = w
                         ).roundToInt().toString() + "˚"
 
                     binding.mainSensValueC.text =
                         SensibleTempFormula().getSensibleTemp(
-                            ta = t,
-                            rh = h,
-                            v = w
+                            ta = t, rh = h, v = w
                         ).roundToInt().toString() + "˚"
                 }
             }
@@ -1870,6 +1857,8 @@ class MainActivity
                 val addr = GetLocation(this@MainActivity).getAddress(lat, lng)
                 hideProgressBar()
                 if (isKorea(lat, lng)) {
+                    Toast.makeText(this, getString(R.string.last_location_call_msg),
+                        Toast.LENGTH_SHORT).show()
                     processAddress(lat, lng, addr)
                 } else {
                     hideAllViews(ERROR_NOT_SERVICED_LOCATION)
@@ -1889,14 +1878,6 @@ class MainActivity
                 loadCurrentViewModelData(loc.latitude, loc.longitude, null)
             }
         }
-    }
-
-    private fun showErrorDialog(message: String) {
-        MakeSingleDialog(this).makeDialog(
-            message,
-            getColor(R.color.theme_alert_double_apply_color),
-            getString(R.string.ok), false
-        )
     }
 
     private fun handleLocationFailure(errorMessage: String?) {

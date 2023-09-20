@@ -1,7 +1,6 @@
 package app.airsignal.weather.util.`object`
 
 import android.content.Context
-import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
 import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPlatform
 import app.airsignal.weather.dao.IgnoredKeyFile.notiEnable
@@ -18,7 +17,6 @@ import app.airsignal.weather.dao.StaticDataObject.IS_INIT_BACK_LOC_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.IS_PERMED_BACK_LOG
 import app.airsignal.weather.dao.StaticDataObject.LAST_LAT
 import app.airsignal.weather.dao.StaticDataObject.LAST_LNG
-import app.airsignal.weather.dao.StaticDataObject.LAST_REFRESH_WIDGET_TIME
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_TOPIC_DAILY
 import app.airsignal.weather.dao.StaticDataObject.WARNING_FIXED

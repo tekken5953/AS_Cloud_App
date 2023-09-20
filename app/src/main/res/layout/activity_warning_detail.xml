@@ -94,18 +94,16 @@
         <TextView
             android:id="@+id/warningNoResult"
             style="@style/basicMediumTextView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawablePadding="10dp"
             android:lineHeight="20dp"
-            android:padding="15dp"
+            android:gravity="center"
             android:text="현재 지역의 기상 특보가 없습니다.\n전국으로 검색하시겠습니까?"
             android:visibility="gone"
             app:drawableBottomCompat="@drawable/search"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/warningLine"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <ProgressBar
             android:id="@+id/warningPb"
@@ -126,7 +124,6 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="16dp"
-            android:clipToPadding="false"
             android:orientation="vertical"
             app:layoutManager=".util.LinearLayoutManagerWrapper"
             app:layout_constraintBottom_toBottomOf="parent"

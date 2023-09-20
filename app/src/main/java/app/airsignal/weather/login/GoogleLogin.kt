@@ -17,6 +17,7 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setUserEmail
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserId
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLoginPlatform
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserProfile
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -57,7 +58,7 @@ class GoogleLogin(private val activity: Activity) {
     }
 
     /** 로그아웃 진행 + 로그아웃 로그 저장 **/
-    fun logout(pb: ProgressBar?) {
+    fun logout(pb: LottieAnimationView?) {
         client.signOut()
             .addOnCompleteListener {
                 saveLogoutStatus()

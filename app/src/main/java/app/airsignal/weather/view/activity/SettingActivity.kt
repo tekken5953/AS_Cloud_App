@@ -398,6 +398,7 @@ class SettingActivity
                     ShowDialogClass(this@SettingActivity)
                         .setBackPressed(detailView.findViewById(R.id.detailBack))
                         .show(detailView, true)
+                    noticeAdapter.notifyItemChanged(0)
                 }
             })
         }
