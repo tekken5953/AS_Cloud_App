@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable
 import android.icu.util.ChineseCalendar
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
@@ -117,7 +118,7 @@ object DataTypeParser {
     private fun getLunarDate(): Int {
         val cal = LocalDateTime.now()
         val cc = ChineseCalendar()
-        cc.set(cal.year,cal.monthValue-1,cal.dayOfMonth)
+        cc.set(cal.year,cal.monthValue-1, cal.dayOfMonth)
         return cc.get(ChineseCalendar.DAY_OF_MONTH)
     }
 

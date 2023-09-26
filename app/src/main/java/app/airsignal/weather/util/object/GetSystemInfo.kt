@@ -84,7 +84,7 @@ object GetSystemInfo {
     }
 
     // 플레이 스토어 주소 반환
-    private fun getPlayStoreURL(context: Context): String {
+    fun getPlayStoreURL(context: Context): String {
         return "market://details?id=${context.packageName}"
     }
 

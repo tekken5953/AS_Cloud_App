@@ -3,8 +3,6 @@ package app.airsignal.weather.view.activity
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.ErrorCode.ERROR_NETWORK
@@ -19,12 +17,12 @@ import app.airsignal.weather.util.RequestPermissionsUtil
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.util.`object`.GetSystemInfo.goToPlayStore
-import app.airsignal.weather.util.`object`.SetAppInfo.fullScreenMode
 import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.view.MakeSingleDialog
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import com.google.firebase.database.FirebaseDatabase
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 
 
 @SuppressLint("CustomSplashScreen")
@@ -103,7 +101,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             } else {
                                 MakeSingleDialog(this)
                                     .makeDialog(getString(R.string.not_latest_go_to_store),
-                                R.color.main_blue_color,getString(R.string.download), true)
+                                getColor(R.color.main_blue_color),getString(R.string.download), true)
                                     .setOnClickListener {
                                         goToPlayStore(this@SplashActivity)
                                     }

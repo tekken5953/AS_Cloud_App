@@ -14,7 +14,7 @@ android {
         minSdk 26
         targetSdk 33
         versionCode 12
-        versionName "1.2"
+        versionName "1.03"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -102,7 +102,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_android_version"
     implementation "androidx.room:room-ktx:$room_android_version"
 
-    // 구글 지도
+    // Google Location
     implementation 'com.google.android.gms:play-services-maps:18.1.0' // 구글지도 라이브러리
     implementation 'com.google.android.gms:play-services-location:21.0.1' // 위치정보 라이브러리
 

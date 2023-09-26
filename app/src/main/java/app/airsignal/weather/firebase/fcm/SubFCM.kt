@@ -31,12 +31,10 @@ class SubFCM : FirebaseMessagingService() {
             message.data.toString()
         )
 
-        val intent = Intent(this, SplashActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP and Intent.FLAG_ACTIVITY_NEW_TASK)
+
         // 포그라운드 노티피케이션 발생
         NotificationBuilder().sendNotification(
             this,
-            intent,
             message.data
         )
     }

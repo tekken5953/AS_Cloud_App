@@ -64,6 +64,10 @@ class ApiModel {
     data class WeeklyData(
         @SerializedName("rainDate")
         val rainDate: String?,
+        @SerializedName("rnSt0Am")
+        val rnSt0Am: Double?,
+        @SerializedName("rnSt0Pm")
+        val rnSt0Pm: Double?,
         @SerializedName("rnSt1Am")
         val rnSt1Am: Double?,
         @SerializedName("rnSt1Pm")

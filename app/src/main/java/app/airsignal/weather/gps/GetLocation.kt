@@ -56,6 +56,7 @@ class GetLocation(private val context: Context) {
                     writeErrorNotANR(context, sort = ERROR_GET_DATA, msg = e.localizedMessage!!)
                     null
                 } else -> {
+                    writeErrorNotANR(context, sort = ERROR_GET_DATA, msg = e.localizedMessage!!)
                     null
                 }
             }

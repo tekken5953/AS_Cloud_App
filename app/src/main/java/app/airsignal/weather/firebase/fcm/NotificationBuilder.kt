@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.media.AudioAttributes
 import android.media.Ringtone
 import android.media.RingtoneManager
+import android.net.Uri
 import android.view.View
 import androidx.core.app.NotificationCompat
 import app.airsignal.weather.R
@@ -22,9 +23,15 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getNotificationAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiEnable
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiSound
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiVibrate
+import app.airsignal.weather.util.`object`.GetSystemInfo
+import app.airsignal.weather.view.activity.SplashActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 class NotificationBuilder {
+    lateinit var intent: Intent
 
     companion object {
         const val FCM_DAILY = "daily"
@@ -33,7 +40,8 @@ class NotificationBuilder {
         const val NOTIFICATION_CHANNEL_ID = "500"             // FCM 채널 ID
         const val NOTIFICATION_CHANNEL_NAME = "AIRSIGNAL"     // FCM 채널 NAME
     }
-    fun sendNotification(context: Context, intent: Intent, data: Map<String,String>) {
+
+    fun sendNotification(context: Context,data: Map<String,String>) {
 //        // Get the layouts to use in the custom notification
 //        val notificationLayout = RemoteViews(context.packageName, R.layout.notification_small)
 //        val notificationLayoutExpanded = RemoteViews(context.packageName, R.layout.notification_large)
@@ -41,6 +49,15 @@ class NotificationBuilder {
 
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
+
+        if(data["sort"] == FCM_PATCH) {
+            intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(GetSystemInfo.getPlayStoreURL(context))
+        } else {
+            intent = Intent(context, SplashActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP and Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationChannel = NotificationChannel(
@@ -118,8 +135,10 @@ class NotificationBuilder {
    }
 
     private fun applyVibrate(context: Context) {
-        if (getUserNotiVibrate(context)) {
-            VibrateUtil(context).noti(longArrayOf(0, 100, 200, 300))
+        CoroutineScope(Dispatchers.Default).launch {
+            if (getUserNotiVibrate(context)) {
+                VibrateUtil(context).noti(longArrayOf(0, 100, 200, 300))
+            }
         }
     }
 

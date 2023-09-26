@@ -240,5 +240,6 @@
     <string name="exclamation_mark">느낌표</string>
     <string name="cd_ad_view">광고뷰</string>
     <string name="last_location_call_msg">주소 호출에 실패하여 마지막 주소를 불러옵니다.</string>
+    <string name="error_data_reposonse">데이터 호출에 실패했습니다</string>
 
 </resources>
