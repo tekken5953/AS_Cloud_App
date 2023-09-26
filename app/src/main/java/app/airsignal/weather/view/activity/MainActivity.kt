@@ -103,6 +103,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.database.DatabaseException
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -898,13 +899,16 @@ class MainActivity
             updateTerm24(result.term24)
             updateBackgroundBasedOnWeather(currentSun, it.realtime[0],result.current, result.thunder!!)
 
+            val lunar = result.lunar?.date ?: -1
+
             // 메인 날씨 아이콘 세팅
             binding.mainSkyImg.setImageDrawable(
                 applySkyImg(
                     this,
                     modifyCurrentRainType(result.current.rainType, result.realtime[0].rainType),
                     result.realtime[0].sky, result.thunder,
-                    isLarge = true, isNight = getIsNight(currentSun)
+                    isLarge = true, isNight = getIsNight(currentSun),
+                    lunar
                 )
             )
         }
@@ -941,7 +945,6 @@ class MainActivity
             week.taMax5, week.taMax6, week.taMax7
         )
 
-        val tempDate = week.tempDate
 
         // 최저/최대 기온 적용
         result.today?.let { mToday ->
@@ -956,9 +959,10 @@ class MainActivity
         val current = result.current
         val realtime = result.realtime[0]
         val thunder = result.thunder
+        val lunar = result.lunar?.date ?: -1
 
-        for (i: Int in 0 until result.realtime.size) {
-            val dailyIndex = result.realtime[i]
+        repeat(result.realtime.size) {
+            val dailyIndex = result.realtime[it]
             val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
             val dailyTime =
                 millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
@@ -969,98 +973,77 @@ class MainActivity
 
             val isNight = getIsNight(dailySunProgress)
 
-            if (i == result.realtime.lastIndex + 1) {
-                break
-            } else if (i == 0) {
-                addDailyWeatherItem(
-                    "${forecastToday.hour}${getString(R.string.hour)}",
-                    applySkyImg(
-                        this,
-                        modifyCurrentRainType(
-                            current.rainType,
-                            realtime.rainType
-                        ),
-                        dailyIndex.sky,
-                        thunder,
-                        isLarge = false,
-                        isNight = isNight
-                    )!!,
-                    "${
-                        modifyCurrentTempType(
-                            current.temperature, realtime.temp
-                        ).roundToInt()
-                    }˚",
-                    dailyIndex.forecast!!,
-                    isRainyDay(dailyIndex.rainType),
-                    dailyIndex.rainP!!
-                )
-            } else {
-                addDailyWeatherItem(
-                    "${forecastToday.hour}${getString(R.string.hour)}",
-                    applySkyImg(
-                        this,
-                        dailyIndex.rainType, dailyIndex.sky, thunder,
-                        isLarge = false, isNight = isNight
-                    )!!,
-                    "${dailyIndex.temp!!.roundToInt()}˚",
-                    dailyIndex.forecast!!,
-                    isRainyDay(dailyIndex.rainType),
-                    dailyIndex.rainP!!
-                )
+            when (it) {
+                result.realtime.lastIndex + 1 -> {
+                    return
+                }
+                0 -> {
+                    addDailyWeatherItem(
+                        "${forecastToday.hour}${getString(R.string.hour)}",
+                        applySkyImg(
+                            this,
+                            modifyCurrentRainType(
+                                current.rainType,
+                                realtime.rainType
+                            ),
+                            dailyIndex.sky,
+                            thunder,
+                            isLarge = false,
+                            isNight = isNight,
+                            lunar
+                        )!!,
+                        "${
+                            modifyCurrentTempType(
+                                current.temperature, realtime.temp
+                            ).roundToInt()
+                        }˚",
+                        dailyIndex.forecast!!,
+                        isRainyDay(dailyIndex.rainType),
+                        dailyIndex.rainP!!
+                    )
+                }
+                else -> {
+                    addDailyWeatherItem(
+                        "${forecastToday.hour}${getString(R.string.hour)}",
+                        applySkyImg(
+                            this,
+                            dailyIndex.rainType, dailyIndex.sky, thunder,
+                            isLarge = false, isNight = isNight, lunar = lunar
+                        )!!,
+                        "${dailyIndex.temp!!.roundToInt()}˚",
+                        dailyIndex.forecast!!,
+                        isRainyDay(dailyIndex.rainType),
+                        dailyIndex.rainP!!
+                    )
+                }
             }
         }
 
         val dateNow: LocalDateTime = LocalDateTime.now()
 
-        if (LocalDateTime.parse(tempDate).dayOfMonth == dateNow.dayOfMonth) {
-            // 주간별 날씨 아이템 추가
-            for (i: Int in 0 until (7)) {
-                try {
-                    val formedDate = dateNow.plusDays(i.toLong())
-                    val date: String = when (i) {
-                        0 -> { getString(R.string.today) }
-                        1 -> { getString(R.string.tomorrow) }
-                        else -> {
-                            "${convertDayOfWeekToKorean(
-                                this, dateNow.dayOfWeek.value + i)}${getString(R.string.date)}"
-                        }
+        // 주간별 날씨 아이템 추가
+        repeat(7) {
+            try {
+                val formedDate = dateNow.plusDays(it.toLong())
+                val date: String = when (it) {
+                    0 -> { getString(R.string.today) }
+                    1 -> { getString(R.string.tomorrow) }
+                    else -> {
+                        "${convertDayOfWeekToKorean(
+                            this, dateNow.dayOfWeek.value + it)}${getString(R.string.date)}"
                     }
-                    addWeeklyWeatherItem(
-                        date,
-                        convertDateAppendZero(formedDate),
-                        getSkyImgSmall(this, wfMin[i], false)!!,
-                        getSkyImgSmall(this, wfMax[i], false)!!,
-                        "${taMin[i]!!.roundToInt()}˚",
-                        "${taMax[i]!!.roundToInt()}˚"
-                    )
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
-            }
-        } else {
-            // 주간별 날씨 아이템 추가
-            for (i: Int in 1 ..(7)) {
-                try {
-                    val formedDate = dateNow.plusDays(i.toLong())
-                    val date: String = when (i) {
-                        1 -> { getString(R.string.today) }
-                        2 -> { getString(R.string.tomorrow) }
-                        else -> {
-                            "${convertDayOfWeekToKorean(
-                                this, dateNow.dayOfWeek.value + i-1)}${getString(R.string.date)}"
-                        }
-                    }
-                    addWeeklyWeatherItem(
-                        date,
-                        convertDateAppendZero(formedDate),
-                        getSkyImgSmall(this, wfMin[i], false)!!,
-                        getSkyImgSmall(this, wfMax[i], false)!!,
-                        "${taMin[i]!!.roundToInt()}˚",
-                        "${taMax[i]!!.roundToInt()}˚"
-                    )
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                addWeeklyWeatherItem(
+                    date,
+                    convertDateAppendZero(formedDate),
+                    getSkyImgSmall(this, wfMin[it], false)!!,
+                    getSkyImgSmall(this, wfMax[it], false)!!,
+                    "${taMin[it]!!.roundToInt()}˚",
+                    "${taMax[it]!!.roundToInt()}˚"
+                )
+            } catch (e: Exception) {
+                RDBLogcat.writeErrorNotANR(this,RDBLogcat.DATA_CALL_ERROR,e.localizedMessage!!)
+                e.printStackTrace()
             }
         }
     }
@@ -1384,6 +1367,7 @@ class MainActivity
 
     // 에러 코드에 따라 에러 메시지 설정
     private fun setErrorMessage(error: String): String {
+        Timber.tag("exception").e(error)
         return when (error) {
             ERROR_API_PROTOCOL,ERROR_SERVER_CONNECTING,ERROR_NULL_DATA-> getString(R.string.api_call_error)
             ERROR_NOT_SERVICED_LOCATION -> getString(R.string.not_serviced_location_error)
@@ -1393,7 +1377,7 @@ class MainActivity
             ERROR_GPS_CONNECTED -> getString(R.string.gps_call_error)
             ERROR_GET_DATA -> getString(R.string.data_call_error)
             else -> {
-                RDBLogcat.writeErrorNotANR(this, ERROR_LOCATION_FAILED, error)
+                RDBLogcat.writeErrorNotANR(this, getString(R.string.unknown_error), error)
                 getString(R.string.unknown_error)
             }
         }
@@ -1430,6 +1414,7 @@ class MainActivity
 
     // 에러 메시지와 뷰 가시성 설정
     private fun updateViewsForError(error: String) {
+        isCalledButFail()
         binding.mainErrorTitle.text = setErrorMessage(error)
         setVisibilityForViews(GONE, error)
     }

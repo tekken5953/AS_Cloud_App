@@ -1,6 +1,7 @@
 package app.airsignal.weather.retrofit
 
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDateTime
 
 class ApiModel {
 
@@ -62,8 +63,12 @@ class ApiModel {
 
     // 주간별 날씨 데이터 모델
     data class WeeklyData(
-        @SerializedName("rainDate")
-        val rainDate: String?,
+//        @SerializedName("today")
+//        val today: LocalDateTime,
+//        @SerializedName("rainDate")
+//        val rainDate: String?,
+//        @SerializedName("tempDate")
+//        val tempDate: String?,
         @SerializedName("rnSt0Am")
         val rnSt0Am: Double?,
         @SerializedName("rnSt0Pm")
@@ -126,8 +131,6 @@ class ApiModel {
         val wf7Am: String?,
         @SerializedName("wf7Pm")
         val wf7Pm: String?,
-        @SerializedName("tempDate")
-        val tempDate: String?,
         @SerializedName("taMin0")
         val taMin0: Double?,
         @SerializedName("taMax0")
@@ -315,7 +318,9 @@ class ApiModel {
         @SerializedName("summary")
         val summary: List<String>?,
         @SerializedName("term24")
-        val term24: String?
+        val term24: String?,
+        @SerializedName("lunar")
+        val lunar: LunarDate?
     )
 
     // 4x2 위젯 - 미세먼지 등급
@@ -374,5 +379,14 @@ class ApiModel {
         val region: String,
         @SerializedName("content")
         val content: List<String>?
+    )
+
+    data class LunarDate(
+        @SerializedName("lunYear")
+        val year: Int,
+        @SerializedName("lunMonth")
+        val month: Int,
+        @SerializedName("lunDay")
+        val date: Int
     )
 }

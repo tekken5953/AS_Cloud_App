@@ -114,17 +114,9 @@ object DataTypeParser {
         }
     }
 
-    /** 음력 날짜 반환 **/
-    private fun getLunarDate(): Int {
-        val cal = LocalDateTime.now()
-        val cc = ChineseCalendar()
-        cc.set(cal.year,cal.monthValue-1, cal.dayOfMonth)
-        return cc.get(ChineseCalendar.DAY_OF_MONTH)
-    }
-
     /** 달 모양 반환 **/
-    private fun applyLunarImg(): Int {
-        return when (getLunarDate()) {
+    private fun applyLunarImg(date: Int): Int {
+        return when (date) {
             29,30,1 -> {
                 R.drawable.moon_sak
             }
@@ -210,13 +202,13 @@ object DataTypeParser {
     }
 
     /** sky value에 따른 이미지 설정 **/
-    fun getSkyImgLarge(context: Context, sky: String?, isNight: Boolean): Drawable? {
+    fun getSkyImgLarge(context: Context, sky: String?, isNight: Boolean, lunar: Int): Drawable? {
         return when (sky) {
             "맑음" -> {
                 if (!isNight) {
                     ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_sunny, null)
                 } else {
-                    ResourcesCompat.getDrawable(context.resources, applyLunarImg(), null)
+                    ResourcesCompat.getDrawable(context.resources, applyLunarImg(lunar), null)
                 }
             }
             "구름많음" -> {
@@ -333,7 +325,8 @@ object DataTypeParser {
         sky: String?,
         thunder: Double?,
         isLarge: Boolean,
-        isNight: Boolean?
+        isNight: Boolean?,
+        lunar: Int
     ): Drawable? {
         return if (rain != "없음") {
             if ((thunder == null) || (thunder < 0.2)) {
@@ -357,9 +350,9 @@ object DataTypeParser {
             if ((thunder == null) || (thunder < 0.2)) {
                 if (isLarge) {
                     if (isNight!!) {
-                        getSkyImgLarge(context, sky!!, isNight)!!
+                        getSkyImgLarge(context, sky!!, isNight, lunar)!!
                     } else {
-                        getSkyImgLarge(context, sky!!, isNight)!!
+                        getSkyImgLarge(context, sky!!, isNight, lunar)!!
                     }
                 } else {
                     if (isNight!!) {

@@ -95,12 +95,13 @@ class NotificationBuilder {
                 val rainType = data["rainType"]
                 val sky = data["sky"]
                 val thunder = data["thunder"]?.toDouble()
+                val lunar = data["lunar"]?.toInt()
                 setNotiBuilder(
                     title = "${temp}˚ ${applySkyText(context, rainType, sky, thunder)}",
                     subtext = getNotificationAddress(context),
                     content = "최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
                             "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚",
-                    imgPath = getSkyBitmap(context, rainType, sky, thunder)
+                    imgPath = getSkyBitmap(context, rainType, sky, thunder, lunar!!)
                 )
             }
             FCM_PATCH -> {
@@ -119,6 +120,7 @@ class NotificationBuilder {
                 it.notify(1, notificationBuilder.build())
                 applyVibrate(context)
             }
+            RDBLogcat.writeNotificationHistory(context,data["sort"].toString(),data.toString())
         } else {
             RDBLogcat.writeNotificationHistory(context, "체크 해제로 인한 알림 미발송",
                 "${GetAppInfo.getUserLastAddress(context)} $data")
@@ -146,12 +148,14 @@ class NotificationBuilder {
         context: Context,
         rain: String?,
         sky: String?,
-        thunder: Double?
+        thunder: Double?,
+        lunar: Int?
     ): Bitmap? {
         val bitmapDrawable = getSkyImgLarge(
             context,
             applySkyText(context, rain, sky, thunder),
-            false
+            false,
+            lunar ?: -1
         ) as BitmapDrawable
 
         return bitmapDrawable.bitmap
