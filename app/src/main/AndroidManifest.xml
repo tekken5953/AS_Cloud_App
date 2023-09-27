@@ -104,6 +104,7 @@
             android:name="app.airsignal.weather.firebase.fcm.SubFCM"
             android:directBootAware="true"
             android:exported="false"
+            android:enabled="true"
             tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

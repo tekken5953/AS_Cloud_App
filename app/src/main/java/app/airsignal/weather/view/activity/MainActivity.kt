@@ -45,6 +45,7 @@ import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
+import app.airsignal.weather.dao.StaticDataObject.TAG_R
 import app.airsignal.weather.databinding.ActivityMainBinding
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
@@ -88,6 +89,7 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.util.`object`.GetAppInfo.isPermedBackLoc
 import app.airsignal.weather.util.`object`.GetSystemInfo.getLocale
 import app.airsignal.weather.util.`object`.GetSystemInfo.isThemeNight
+import app.airsignal.weather.util.`object`.SetAppInfo
 import app.airsignal.weather.util.`object`.SetAppInfo.removeSingleKey
 import app.airsignal.weather.util.`object`.SetAppInfo.setCurrentLocation
 import app.airsignal.weather.util.`object`.SetAppInfo.setLastLat
@@ -101,6 +103,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.database.DatabaseException
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
@@ -199,7 +202,6 @@ class MainActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
-
         if (savedInstanceState == null) {
             binding.mainLoadingView.alpha = 1f
             SubFCM().subTopic("patch")
@@ -777,8 +779,9 @@ class MainActivity
 
     // 토픽을 갱신하는 작업
     private fun reNewTopicInMain(newAddr: String) {
-        val oldAddr = getTopicNotification(this)
-        SubFCM().renewTopic(this, oldAddr, newAddr)
+        val old = getTopicNotification(this)
+        SubFCM().renewTopic(old,newAddr)
+        SetAppInfo.setTopicNotification(this, newAddr)
     }
 
     // 현재 옵저버가 없으면 생성
@@ -883,6 +886,7 @@ class MainActivity
             getString(R.string.error_data_reposonse),
             Toast.LENGTH_SHORT
         ).show()
+        Logger.t(TAG_R).e("isCalledButFail")
         hideProgressBar()
     }
 
@@ -1463,9 +1467,7 @@ class MainActivity
             binding.mainCompareTempTv
         )
 
-        if (binding.mainLoadingView.alpha == 1f) {
-            binding.mainLoadingView.alpha = 0f
-        }
+        binding.mainLoadingView.alpha = 0f
 
         // 숨김
         if (visibility == GONE) {
@@ -1485,32 +1487,29 @@ class MainActivity
             setDrawable(binding.mainGpsFix,null)
             binding.mainShareIv.isEnabled = false
 
-            binding.mainLoadingView.apply {
-                this.alpha = 1f
-                if (!this.isAnimating)
-                    this.playAnimation()
+
+            binding.mainSwipeLayout.isEnabled = false
+
+            binding.mainMotionLayout.apply {
+                transitionToStart()
+                Thread.sleep(100)
+                isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
             }
-                binding.mainSwipeLayout.isEnabled = false
 
-                binding.mainMotionLayout.apply {
-                    transitionToStart()
-                    Thread.sleep(100)
-                    isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
-                }
-
-                binding.mainMotionSlideGuide.apply {
-                    text = getString(R.string.error_guide)
-                    setTextColor(ResourcesCompat.getColor(resources,
-                        R.color.theme_text_color,null))
-                }
-                applyBackground(binding.mainWarningBox,null)
-                applyBackground(binding.nestedSubAirFrame,null)
-
-                changeStrokeColor(binding.subAirPM10, getColor(android.R.color.transparent))
-                changeStrokeColor(binding.subAirPM25, getColor(android.R.color.transparent))
-
-                updateErrorViewsVisibility(GONE)
+            binding.mainMotionSlideGuide.apply {
+                text = getString(R.string.error_guide)
+                setTextColor(
+                    ResourcesCompat.getColor(resources, R.color.theme_text_color, null)
+                )
             }
+            applyBackground(binding.mainWarningBox, null)
+            applyBackground(binding.nestedSubAirFrame, null)
+
+            changeStrokeColor(binding.subAirPM10, getColor(android.R.color.transparent))
+            changeStrokeColor(binding.subAirPM25, getColor(android.R.color.transparent))
+
+            updateErrorViewsVisibility(GONE)
+        }
 
         // 보임
         else {
@@ -1524,12 +1523,6 @@ class MainActivity
             binding.mainMaxTitle.text = getString(R.string.max)
             binding.mainShareIv.isEnabled = true
 
-            binding.mainLoadingView.apply{
-                this.alpha = 0f
-                if (this.isAnimating) {
-                    this.pauseAnimation()
-                }
-            }
             setDrawable(binding.mainGpsFix, R.drawable.gps_fix)
             setDrawable(binding.mainMotionSLideImg,R.drawable.drop_down_bottom)
             setDrawable(binding.mainAddAddress,R.drawable.ico_add_w)

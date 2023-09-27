@@ -3,6 +3,7 @@ package app.airsignal.weather.firebase.fcm
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -25,10 +26,9 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiSound
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiVibrate
 import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.view.activity.SplashActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlin.math.roundToInt
+
 
 class NotificationBuilder {
     lateinit var intent: Intent
@@ -41,7 +41,7 @@ class NotificationBuilder {
         const val NOTIFICATION_CHANNEL_NAME = "AIRSIGNAL"     // FCM 채널 NAME
     }
 
-    fun sendNotification(context: Context,data: Map<String,String>) {
+    fun sendNotification(context: Context, data: Map<String,String>) {
 //        // Get the layouts to use in the custom notification
 //        val notificationLayout = RemoteViews(context.packageName, R.layout.notification_small)
 //        val notificationLayoutExpanded = RemoteViews(context.packageName, R.layout.notification_large)
@@ -63,11 +63,12 @@ class NotificationBuilder {
         val notificationChannel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
             NOTIFICATION_CHANNEL_NAME,
-            NotificationManager.IMPORTANCE_LOW
+            if (getUserNotiVibrate(context))
+                NotificationManager.IMPORTANCE_DEFAULT
+            else NotificationManager.IMPORTANCE_LOW
         ).apply {
             description = "Channel description"
             lockscreenVisibility = View.VISIBLE
-            enableVibration(false)
             setSound(sound,AudioAttributes.Builder().build())
         }
 
@@ -101,7 +102,7 @@ class NotificationBuilder {
                     subtext = getNotificationAddress(context),
                     content = "최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
                             "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚",
-                    imgPath = getSkyBitmap(context, rainType, sky, thunder, lunar!!)
+                    imgPath = getSkyBitmap(context, rainType, sky, thunder, lunar ?: -1)
                 )
             }
             FCM_PATCH -> {
@@ -117,8 +118,8 @@ class NotificationBuilder {
         if (getUserNotiEnable(context)) {
             notificationManager?.let {
                 it.createNotificationChannel(notificationChannel)
+//                applyVibrate(context)
                 it.notify(1, notificationBuilder.build())
-                applyVibrate(context)
             }
             RDBLogcat.writeNotificationHistory(context,data["sort"].toString(),data.toString())
         } else {
@@ -138,9 +139,7 @@ class NotificationBuilder {
 
     private fun applyVibrate(context: Context) {
         CoroutineScope(Dispatchers.Default).launch {
-            if (getUserNotiVibrate(context)) {
-                VibrateUtil(context).noti(longArrayOf(0, 100, 200, 300))
-            }
+            VibrateUtil(context).noti(longArrayOf(0,100,100))
         }
     }
 
