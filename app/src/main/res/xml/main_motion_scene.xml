@@ -279,6 +279,15 @@
             app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
             app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
         <Constraint
+            android:id="@+id/mainSkyText"
+            style="@style/basicMediumTextView"
+            android:textSize="20sp"
+            android:alpha="1"
+            app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
+            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
+            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg"/>
+        <Constraint
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
             android:layout_marginTop="12dp"
@@ -324,6 +333,18 @@
             android:alpha="1"
             app:layout_constraintTop_toBottomOf="@id/mainSensTitle"
             app:layout_constraintEnd_toEndOf="@id/mainSensValue"/>
+
+        <Constraint
+            android:id="@+id/indoor_air_text"
+            style="@style/basicMediumTextView"
+            android:textSize="14sp"
+            android:alpha="1"
+            app:layout_constraintEnd_toEndOf="@id/mainSensValue"
+            app:layout_constraintBottom_toBottomOf="@+id/mainMinMaxTr"
+            android:paddingStart="11dp"
+            android:paddingEnd="11dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"/>
 
         <Constraint
             android:id="@+id/mainSensTitle"
@@ -539,6 +560,15 @@
             app:layout_constraintBottom_toBottomOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             app:layout_constraintTop_toBottomOf="@+id/mainTopBarGpsTitleScroll" />
+        <Constraint
+            android:id="@+id/mainSkyText"
+            style="@style/basicMediumTextView"
+            android:textSize="20sp"
+            android:alpha="0"
+            app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
+            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
+            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg"/>
 
         <Constraint
             android:id="@+id/mainLiveTempValue"
@@ -556,6 +586,17 @@
             app:layout_constraintTop_toBottomOf="@id/mainSensTitle"
             app:layout_constraintEnd_toEndOf="@id/mainSensValue"
             android:textSize="16sp" />
+        <Constraint
+            android:id="@+id/indoor_air_text"
+            style="@style/basicMediumTextView"
+            android:textSize="13sp"
+            android:alpha="0"
+            app:layout_constraintEnd_toEndOf="@id/mainSensValue"
+            app:layout_constraintBottom_toBottomOf="@+id/mainMinMaxTr"
+            android:paddingStart="11dp"
+            android:paddingEnd="11dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"/>
         <Constraint
             android:id="@+id/mainSensTitle"
             style="@style/basicTextView"

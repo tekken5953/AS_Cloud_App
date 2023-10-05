@@ -55,6 +55,10 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK // 브라우저 캐시 허용
         }
 
+        binding.webUrlWebView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            binding.webUrlTop.visibility = if(scrollY == 0) View.GONE else View.VISIBLE
+        }
+
         webView.apply {
             webChromeClient = WebChromeClient()
             webViewClient = WebViewClient()
@@ -68,6 +72,10 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
 
         val url: String
         when(intent.extras!!.getString("sort")) {
+            "as-eye" -> {
+                binding.webUrlTitle.text = "AS-EYE"
+                url = "about:blank"
+            }
             "termsOfService" -> {
                 binding.webUrlTitle.text = getString(R.string.term_of_services)
                 url = termsOfServiceURL

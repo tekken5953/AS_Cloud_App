@@ -3,10 +3,8 @@ package app.airsignal.weather.util.`object`
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.icu.util.ChineseCalendar
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
-import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
@@ -67,16 +65,12 @@ object DataTypeParser {
     }
 
     /** Current의 rainType의 에러 방지 **/
-    fun modifyCurrentRainType(rainTypeCurrent: String?, rainTypeReal: String?): String? {
-        rainTypeCurrent?.let { current ->
-           return when(current) {
-                "비","눈","비/눈","소나기","없음" -> {
-                    current
-                }
-                else -> rainTypeReal
+    fun modifyCurrentRainType(rainTypeCurrent: String, rainTypeReal: String): String {
+        return when(rainTypeCurrent) {
+            "비","눈","비/눈","소나기","없음" -> {
+                rainTypeCurrent
             }
-        } ?: run {
-            return rainTypeReal
+            else -> rainTypeReal
         }
     }
 
@@ -168,16 +162,38 @@ object DataTypeParser {
     }
 
     /** Current의 Temperature의 에러 방지 **/
-    fun modifyCurrentTempType(tempCurrent: Double?, tempReal: Double?): Double {
-        return if (tempCurrent != null) {
-            if (tempCurrent < 50.0 && tempCurrent > -50.0) {
-                tempCurrent
-            } else {
-                tempReal!!
-            }
-        } else {
-            tempReal!!
+    fun modifyCurrentTempType(tempCurrent: Double?, tempReal: Double): Double {
+        return try {
+            tempCurrent?.let { tc ->
+                if (tc < 50.0 && tc > -50.0) {
+                    tc
+                } else {
+                    tempReal
+                }
+            } ?: tempReal
+        } catch (e: Exception) {
+            return tempReal
         }
+    }
+
+    fun modifyCurrentWindSpeed(windC: Double?, windR: Double): Double {
+        return windC?.let { c ->
+            if (c >= -100 && c <= 500) {
+                c
+            } else {
+                windR
+            }
+        } ?: windR
+    }
+
+    fun modifyCurrentHumid(humidC: Double?, humidR: Double): Double {
+        return humidC?.let { h ->
+            if (h >= -100 && h <= 100) {
+                h
+            } else {
+                humidR
+            }
+        } ?: humidR
     }
 
     /** rain type에 따른 이미지 설정 **/
@@ -331,9 +347,9 @@ object DataTypeParser {
         return if (rain != "없음") {
             if ((thunder == null) || (thunder < 0.2)) {
                 if (isLarge) {
-                    getRainTypeLarge(context, rain!!)!!
+                    getRainTypeLarge(context, rain!!) ?: ResourcesCompat.getDrawable(context.resources,R.drawable.cancel,null)
                 } else {
-                    getRainTypeSmall(context, rain!!)!!
+                    getRainTypeSmall(context, rain!!) ?: ResourcesCompat.getDrawable(context.resources,R.drawable.cancel,null)
                 }
             } else {
                 if (isLarge) {
@@ -427,7 +443,7 @@ object DataTypeParser {
             hour * 60 + minutes
         } catch (e: java.lang.NumberFormatException) {
             e.printStackTrace()
-            0
+            1
         }
     }
 

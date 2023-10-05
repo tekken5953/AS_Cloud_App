@@ -72,8 +72,6 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getHourCountToTomorrow
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgSmall
 import app.airsignal.weather.util.`object`.DataTypeParser.isRainyDay
 import app.airsignal.weather.util.`object`.DataTypeParser.millsToString
-import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentRainType
-import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentTempType
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.util.`object`.GetAppInfo
@@ -106,7 +104,6 @@ import com.google.firebase.database.DatabaseException
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -174,13 +171,12 @@ class MainActivity
         }
     }
 
-    private val adView by lazy { AdViewClass(this) }
+    private val adViewClass by lazy { AdViewClass(this) }
 
     override fun onResume() {
         super.onResume()
         addSideMenu()
         getDataSingleTime(isCurrent = false)
-        adView.loadAdView(binding.nestedAdView)  // adView 생성
         binding.nestedAdView.resume()
 
         applyRefreshScroll()
@@ -208,6 +204,8 @@ class MainActivity
             changeBackgroundResource(null)
             window.statusBarColor = getColor(R.color.theme_view_color)
             window.navigationBarColor = getColor(R.color.theme_view_color)
+            binding.mainMotionLayout.isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
+            binding.mainMotionLayout.isEnabled = false
         }
 
         if (getInitBackLogPerm(this)) {
@@ -221,6 +219,8 @@ class MainActivity
                 }
             }
         }
+
+        adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
 
         binding.dataVM = getDataViewModel
 
@@ -286,6 +286,13 @@ class MainActivity
                 sideMenuBuilder.show(sideMenuView, true)
             }
         })
+
+        binding.indoorAirText.setOnClickListener {
+            val intent = Intent(this, WebURLActivity::class.java)
+            intent.putExtra("sort","as-eye")
+            intent.putExtra("appBar",true)
+            startActivity(intent)
+        }
 
         // 공유하기 버튼 클릭
         binding.mainShareIv.setOnClickListener(object : OnSingleClickListener() {
@@ -392,7 +399,7 @@ class MainActivity
             sideMenuBuilder.apply {
                 setBackPressed(cancel)
                 setUserData(profile, id)
-                AdViewClass(this@MainActivity).loadAdView(adView)
+                adViewClass.loadAdView(adView)
             }
 
             if (getUserLocation(this) == LANG_EN ||
@@ -501,7 +508,7 @@ class MainActivity
                 // TimeOut
                 HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
                     if (isProgressed()) { hideProgressBar() }
-                }, 1000 * 9)
+                }, 1000 * 8)
             } else {
                 RequestPermissionsUtil(this@MainActivity).requestLocation()
             }
@@ -531,6 +538,7 @@ class MainActivity
     private fun showProgressBar() {
         if (isProgressed) {
             if (binding.mainMotionLayout.alpha == NOT_SHOWING_LOADING_FLOAT) {
+                isProgressed = true
                 binding.mainMotionLayout.alpha = SHOWING_LOADING_FLOAT
                 binding.mainMotionLayout.isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
                 binding.mainMotionLayout.isEnabled = false
@@ -794,7 +802,7 @@ class MainActivity
     }
 
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
-    fun applyGetDataViewModel(): MainActivity {
+    fun applyGetDataViewModel() {
         getDataViewModel.fetchData().observe(this) { entireData ->
             entireData?.let { eData ->
                 binding.mainSwipeLayout.isRefreshing = false
@@ -808,8 +816,6 @@ class MainActivity
                     }
                     is BaseRepository.ApiState.Loading -> {
                         showProgressBar()
-                        Thread.sleep(100)
-                        isProgressed = true
                     }
                 }
             } ?: run {
@@ -820,8 +826,6 @@ class MainActivity
                 }
             }
         }
-
-        return this
     }
 
     // API 통신이 성공일 때 처리
@@ -848,14 +852,15 @@ class MainActivity
                 // 메인 날씨 텍스트 세팅
                 val skyText = applySkyText(
                     this,
-                    modifyCurrentRainType(result.current.rainType, result.realtime[0].rainType),
+                    result.current.rainType,
                     result.realtime[0].sky, result.thunder)
                 binding.mainSkyText.text = skyText
                 // 날씨에 따라 배경화면 변경
                 applyWindowBackground(currentSun, skyText)
             }
         } catch (e: Exception) {
-            handleApiError(e.localizedMessage ?: "Unknown Error")
+            Logger.t(TAG_R).e("handleApiSuccess : ${e.stackTraceToString()}")
+            handleApiError(e.localizedMessage ?: e.stackTraceToString())
         }
     }
 
@@ -864,7 +869,7 @@ class MainActivity
         runOnUiThread {
             hideProgressBar()
             try {
-                RDBLogcat.writeErrorNotANR(this, errorMessage, "")
+                RDBLogcat.writeErrorANR("handleApiError", "handleApiError : $errorMessage")
             } catch(e: DatabaseException) {
                 e.printStackTrace()
             }
@@ -881,19 +886,18 @@ class MainActivity
     }
 
     private fun isCalledButFail() {
+        hideProgressBar()
         Toast.makeText(
             this@MainActivity,
             getString(R.string.error_data_reposonse),
             Toast.LENGTH_SHORT
         ).show()
-        Logger.t(TAG_R).e("isCalledButFail")
-        hideProgressBar()
     }
 
     // 결과에서 얻은 데이터로 UI 요소를 업데이트
     private fun updateUIWithData(result: ApiModel.GetEntireData) {
         result.let {
-            currentSun = GetAppInfo.getCurrentSun(result.sun.sunrise!!, result.sun.sunset!!)
+            currentSun = GetAppInfo.getCurrentSun(result.sun.sunrise ?: "0600", result.sun.sunset ?: "1900")
             updateWeatherItems(it)
             updateAirQualityData(it.quality)
             updateUVData(it.uv)
@@ -901,7 +905,7 @@ class MainActivity
             updateCurrentTemperature(it.yesterday, it.current, it.realtime)
             updateWeatherWarnings(result.summary)
             updateTerm24(result.term24)
-            updateBackgroundBasedOnWeather(currentSun, it.realtime[0],result.current, result.thunder!!)
+            updateBackgroundBasedOnWeather(currentSun, it.realtime[0], result.current, result.thunder!!)
 
             val lunar = result.lunar?.date ?: -1
 
@@ -909,7 +913,7 @@ class MainActivity
             binding.mainSkyImg.setImageDrawable(
                 applySkyImg(
                     this,
-                    modifyCurrentRainType(result.current.rainType, result.realtime[0].rainType),
+                    result.current.rainType,
                     result.realtime[0].sky, result.thunder,
                     isLarge = true, isNight = getIsNight(currentSun),
                     lunar
@@ -961,7 +965,6 @@ class MainActivity
         // 시간별 날씨 아이템 추가
         val sun = result.sun
         val current = result.current
-        val realtime = result.realtime[0]
         val thunder = result.thunder
         val lunar = result.lunar?.date ?: -1
 
@@ -970,10 +973,11 @@ class MainActivity
             val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
             val dailyTime =
                 millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
+            val sunset = sun.sunset ?: "0600"
+            val sunrise = sun.sunrise ?: "1900"
+            val entireSun = if (getEntireSun(sunrise, sunset) == 0) 1 else getEntireSun(sunrise, sunset)
             val dailySunProgress =
-                100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(
-                    sun.sunrise!!
-                )) / getEntireSun(sun.sunrise, sun.sunset!!)
+                100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(sunrise)) / entireSun
 
             val isNight = getIsNight(dailySunProgress)
 
@@ -986,10 +990,7 @@ class MainActivity
                         "${forecastToday.hour}${getString(R.string.hour)}",
                         applySkyImg(
                             this,
-                            modifyCurrentRainType(
-                                current.rainType,
-                                realtime.rainType
-                            ),
+                            current.rainType,
                             dailyIndex.sky,
                             thunder,
                             isLarge = false,
@@ -997,9 +998,7 @@ class MainActivity
                             lunar
                         )!!,
                         "${
-                            modifyCurrentTempType(
-                                current.temperature, realtime.temp
-                            ).roundToInt()
+                            current.temperature.roundToInt()
                         }˚",
                         dailyIndex.forecast!!,
                         isRainyDay(dailyIndex.rainType),
@@ -1014,7 +1013,7 @@ class MainActivity
                             dailyIndex.rainType, dailyIndex.sky, thunder,
                             isLarge = false, isNight = isNight, lunar = lunar
                         )!!,
-                        "${dailyIndex.temp!!.roundToInt()}˚",
+                        "${dailyIndex.temp.roundToInt()}˚",
                         dailyIndex.forecast!!,
                         isRainyDay(dailyIndex.rainType),
                         dailyIndex.rainP!!
@@ -1046,7 +1045,8 @@ class MainActivity
                     "${taMax[it]!!.roundToInt()}˚"
                 )
             } catch (e: Exception) {
-                RDBLogcat.writeErrorNotANR(this,RDBLogcat.DATA_CALL_ERROR,e.localizedMessage!!)
+                RDBLogcat.writeErrorANR(RDBLogcat.DATA_CALL_ERROR,
+                    "updateWeatherItems : ${e.stackTraceToString()}")
                 e.printStackTrace()
             }
         }
@@ -1147,21 +1147,17 @@ class MainActivity
         current: ApiModel.Current, realtime: List<ApiModel.RealTimeData>) {
         // 현재 온도 적용
         val real0 = realtime[0]
-        current.temperature?.let { currentTemp ->
-            real0.let { r ->
-                val temp = modifyCurrentTempType(currentTemp, r.temp).toString()
-                binding.mainLiveTempValue.text = temp
-                binding.mainLiveTempUnit.text = "˚"
-                binding.mainLiveTempValueC.text = "$temp˚"
-            }
-        }
+        val temp = current.temperature.toString()
+        binding.mainLiveTempValue.text = temp
+        binding.mainLiveTempUnit.text = "˚"
+        binding.mainLiveTempValueC.text = "$temp˚"
 
         // 서브 날씨(습도,바람,강수확률) 적용
         binding.subAirHumid.fetchData(
-            "${real0.humid!!.roundToInt()}%", R.drawable.ico_main_humidity, null
+            "${real0.humid.roundToInt()}%", R.drawable.ico_main_humidity, null
         )
         binding.subAirWind.fetchData(
-            "${real0.windSpeed!!.roundToInt()}m/s", R.drawable.ico_main_wind, real0.vector
+            "${real0.windSpeed.roundToInt()}m/s", R.drawable.ico_main_wind, real0.vector
         )
         val rainP = "${real0.rainP!!.roundToInt()}%"
         binding.subAirRainP.fetchData(rainP, R.drawable.ico_main_rain, null)
@@ -1169,26 +1165,31 @@ class MainActivity
         // 온도 비교 업데이트
         getCompareTempText(
             yesterdayTemp.temp!!,
-            modifyCurrentTempType(current.temperature, real0.temp),
+            current.temperature,
             binding.mainCompareTempTv
         )
 
         // 체감 온도 업데이트
         binding.mainSensTitle.text = getString(R.string.sens_temp)
-        current.temperature?.let { t ->
-            current.humidity?.let { h ->
-                current.windSpeed?.let { w ->
-                    binding.mainSensValue.text =
-                        SensibleTempFormula().getSensibleTemp(
-                            ta = t, rh = h, v = w
-                        ).roundToInt().toString() + "˚"
+        try {
+            binding.mainSensValue.text =
+                SensibleTempFormula().getSensibleTemp(
+                    ta = current.temperature, rh = current.humidity, v = current.windSpeed
+                ).roundToInt().toString() + "˚"
 
-                    binding.mainSensValueC.text =
-                        SensibleTempFormula().getSensibleTemp(
-                            ta = t, rh = h, v = w
-                        ).roundToInt().toString() + "˚"
-                }
-            }
+            binding.mainSensValueC.text =
+                SensibleTempFormula().getSensibleTemp(
+                    ta = current.temperature, rh = current.humidity, v = current.windSpeed
+                ).roundToInt().toString() + "˚"
+        } catch (e: Exception) {
+            SensibleTempFormula().getSensibleTemp(
+                ta = real0.temp, rh = real0.humid, v = real0.windSpeed
+            ).roundToInt().toString() + "˚"
+
+            binding.mainSensValueC.text =
+                SensibleTempFormula().getSensibleTemp(
+                    ta = real0.temp, rh = real0.humid, v = real0.windSpeed
+                ).roundToInt().toString() + "˚"
         }
     }
 
@@ -1198,7 +1199,7 @@ class MainActivity
         changeTextColorStyle(
             applySkyText(
                 this,
-                modifyCurrentRainType(current.rainType, realtime.rainType),
+                current.rainType,
                 realtime.sky, thunder
             ),
             getIsNight(currentSun)
@@ -1318,7 +1319,7 @@ class MainActivity
 
     // 필드값이 없을 때 -100 출력 됨
     private fun filteringNullData(data: Double?): String {
-        return if (data != -100.0 && data != 100.0) data!!.roundToInt().toString() else ""
+        return if (data != -100.0 && data != 100.0) data?.roundToInt().toString() else ""
     }
 
     // 시간별 날씨 리사이클러뷰 아이템 추가
@@ -1371,7 +1372,6 @@ class MainActivity
 
     // 에러 코드에 따라 에러 메시지 설정
     private fun setErrorMessage(error: String): String {
-        Timber.tag("exception").e(error)
         return when (error) {
             ERROR_API_PROTOCOL,ERROR_SERVER_CONNECTING,ERROR_NULL_DATA-> getString(R.string.api_call_error)
             ERROR_NOT_SERVICED_LOCATION -> getString(R.string.not_serviced_location_error)
@@ -1381,7 +1381,7 @@ class MainActivity
             ERROR_GPS_CONNECTED -> getString(R.string.gps_call_error)
             ERROR_GET_DATA -> getString(R.string.data_call_error)
             else -> {
-                RDBLogcat.writeErrorNotANR(this, getString(R.string.unknown_error), error)
+                RDBLogcat.writeErrorANR(getString(R.string.unknown_error), "setErrorMessage : $error" )
                 getString(R.string.unknown_error)
             }
         }
@@ -1486,6 +1486,9 @@ class MainActivity
             setDrawable(binding.mainMotionSLideImg,null)
             setDrawable(binding.mainGpsFix,null)
             binding.mainShareIv.isEnabled = false
+            binding.indoorAirText.setTextColor(Color.parseColor("#00FFFFFF"))
+            binding.indoorAirText.background = null
+            binding.indoorAirText.isEnabled = false
 
 
             binding.mainSwipeLayout.isEnabled = false
@@ -1521,7 +1524,10 @@ class MainActivity
             binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
             binding.mainMinTitle.text = getString(R.string.min)
             binding.mainMaxTitle.text = getString(R.string.max)
+            binding.indoorAirText.setTextColor(Color.parseColor("#1c0eff"))
+            binding.indoorAirText.setBackgroundResource(R.drawable.inner_air_text_bg)
             binding.mainShareIv.isEnabled = true
+            binding.indoorAirText.isEnabled = true
 
             setDrawable(binding.mainGpsFix, R.drawable.gps_fix)
             setDrawable(binding.mainMotionSLideImg,R.drawable.drop_down_bottom)
@@ -1572,6 +1578,8 @@ class MainActivity
         binding.subAirRainP.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainSkyStarImg.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainShareIv.alpha = if (visibility == VISIBLE) 1f else 0f
+        binding.indoorAirText.alpha = if (visibility == VISIBLE) 1f else 0f
+        binding.mainSkyText.alpha = if (visibility == VISIBLE) 1f else 0f
 
         binding.mainErrorRenewBtn.isClickable = visibility == GONE
     }
@@ -1868,29 +1876,34 @@ class MainActivity
                 }
             } ?: run {
                 hideProgressBar()
-                try {
-                    val lat = getLastLat(this@MainActivity)
-                    val lng = getLastLng(this@MainActivity)
-                    if (lat != "" && lng != "") {
-                        val mLat = lat.toDouble()
-                        val mLng = lat.toDouble()
-                        val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
-                        if (isKorea(mLat, mLng)) {
-                            Toast.makeText(this, getString(R.string.last_location_call_msg),
-                                Toast.LENGTH_SHORT).show()
-                            processAddress(mLat, mLng, addr)
-                        } else {
-                            hideAllViews(ERROR_NOT_SERVICED_LOCATION)
-                        }
-                    }
-                } catch(e: NumberFormatException) {
-                    e.printStackTrace()
-                    handleLocationFailure(e.localizedMessage)
-                    hideAllViews(ERROR_GET_LOCATION_FAILED)
+                callSavedLoc()
+            }
+        }.addOnFailureListener {
+            hideProgressBar()
+            callSavedLoc()
+        }
+    }
+
+    private fun callSavedLoc() {
+        try {
+            val lat = getLastLat(this@MainActivity)
+            val lng = getLastLng(this@MainActivity)
+            if (lat != "" && lng != "") {
+                val mLat = lat.toDouble()
+                val mLng = lat.toDouble()
+                val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
+                if (isKorea(mLat, mLng)) {
+                    Toast.makeText(this, getString(R.string.last_location_call_msg),
+                        Toast.LENGTH_SHORT).show()
+                    processAddress(mLat, mLng, addr)
+                } else {
+                    hideAllViews(ERROR_NOT_SERVICED_LOCATION)
                 }
             }
-        }.addOnFailureListener { e ->
-            handleLocationFailure(e.localizedMessage)
+        } catch(e: NumberFormatException) {
+            e.printStackTrace()
+            handleLocationFailure(e.stackTraceToString())
+            hideAllViews(ERROR_GET_LOCATION_FAILED)
         }
     }
 
@@ -1906,11 +1919,10 @@ class MainActivity
     }
 
     private fun handleLocationFailure(errorMessage: String?) {
-        if (errorMessage == "text")
-            isCalledButFail()
-        RDBLogcat.writeErrorNotANR(
-            this@MainActivity, sort = ERROR_LOCATION_FAILED,
-            msg = errorMessage ?: "Unknown Error"
+        isCalledButFail()
+        val msg = errorMessage ?: "errorMsg is NULL"
+        RDBLogcat.writeErrorANR(ERROR_LOCATION_FAILED,
+            "handleLocationFailure : $msg"
         )
     }
 

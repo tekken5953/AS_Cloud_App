@@ -40,15 +40,15 @@ class ApiModel {
         @SerializedName("rainProbability")
         val rainP: Double?,
         @SerializedName("rainType")
-        val rainType: String?,
+        val rainType: String = "없음",
         @SerializedName("humidity")
-        val humid: Double?,
+        val humid: Double = 0.0,
         @SerializedName("snowHourly")
-        val snow: Double?,
+        val snow: Double = 0.0,
         @SerializedName("sky")
         val sky: String?,
         @SerializedName("temperature")
-        val temp: Double?,
+        val temp: Double = 0.0,
         @SerializedName("windSpeedEW")
         val windSpeedEW: Double?,
         @SerializedName("windSpeedSN")
@@ -58,7 +58,7 @@ class ApiModel {
         @SerializedName("vector")
         val vector: String?,
         @SerializedName("windSpeed")
-        val windSpeed: Double?
+        val windSpeed: Double = 0.0
     )
 
     // 주간별 날씨 데이터 모델
@@ -278,17 +278,17 @@ class ApiModel {
     // 실시간 정보 데이터 모델
     data class Current(
         @SerializedName("rainType")
-        val rainType: String?,
+        var rainType: String,
         @SerializedName("rainHourly")
-        val rainHourly: Double?,
+        val rainHourly: Double,
         @SerializedName("humidity")
-        val humidity: Double?,
+        var humidity: Double,
         @SerializedName("temperature")
-        val temperature: Double?,
+        var temperature: Double,
         @SerializedName("vector")
-        val vector: String?,
+        val vector: String,
         @SerializedName("windSpeed")
-        val windSpeed: Double?,
+        var windSpeed: Double,
     )
 
     // 전체 데이터 모델

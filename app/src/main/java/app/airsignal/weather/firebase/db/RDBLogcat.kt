@@ -241,4 +241,12 @@ object RDBLogcat {
             .child(getTime())
             .setValue(msg)
     }
+
+    /** Admob 로드 에러 **/
+    fun writeAdError(code: String,errorMsg: String) {
+        ref.child("admob")
+            .child("Fail to Load")
+            .child(code)
+            .setValue(errorMsg)
+    }
 }

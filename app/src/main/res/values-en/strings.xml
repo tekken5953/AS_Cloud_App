@@ -247,4 +247,5 @@
     <string name="cd_ad_view">Advertisement View</string>
     <string name="last_location_call_msg">Address calls failed and call up the last address.</string>
     <string name="error_data_reposonse">Fail to response data</string>
+    <string name="indoor_air_check">check indoor air</string>
 </resources>

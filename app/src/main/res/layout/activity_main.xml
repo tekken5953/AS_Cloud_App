@@ -215,10 +215,10 @@
             <TextView
                 android:id="@+id/mainSkyText"
                 style="@style/basicMediumTextView"
-                android:layout_marginTop="32dp"
                 android:alpha="0"
                 android:lineHeight="25dp"
                 android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
                 app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
                 app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
                 app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
@@ -347,6 +347,19 @@
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="@id/mainSensValue"
                 app:layout_constraintTop_toBottomOf="@id/mainSensTitle" />
+
+            <TextView
+                android:id="@+id/indoor_air_text"
+                style="@style/basicMediumTextView"
+                android:textSize="13sp"
+                android:textColor="@android:color/transparent"
+                android:text="@string/indoor_air_check"
+                app:layout_constraintEnd_toEndOf="@id/mainSensValue"
+                app:layout_constraintBottom_toBottomOf="@+id/mainMinMaxTr"
+                android:paddingStart="11dp"
+                android:paddingEnd="11dp"
+                android:paddingTop="7dp"
+                android:paddingBottom="7dp"/>
 
             <TextView
                 android:id="@+id/mainSensTitle"
@@ -950,12 +963,12 @@
 
                         <LinearLayout
                             android:id="@+id/mainSunSeekLinear"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_above="@+id/mainSunLine"
-                            android:layout_marginTop="5dp"
                             android:layout_toStartOf="@+id/mainSunSetLinear"
                             android:layout_toEndOf="@+id/mainSUnRiseLinear"
+                            android:layout_marginTop="5dp"
                             android:gravity="center"
                             android:orientation="vertical">
 

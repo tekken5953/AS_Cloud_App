@@ -62,7 +62,7 @@ class SubAirView(context: Context, attrs: AttributeSet?)
                     "서북서" -> { drawable(R.drawable.ico_wind_wnw) }
                     "북서" -> { drawable(R.drawable.ico_wind_nw) }
                     "북북서" -> { drawable(R.drawable.ico_wind_nnw) }
-                    else -> { null }
+                    else -> { drawable(R.drawable.cancel) }
                 },null,null,null
             )
         }
@@ -73,7 +73,7 @@ class SubAirView(context: Context, attrs: AttributeSet?)
         return ResourcesCompat.getDrawable(resources, int, null)
     }
 
-    fun fetchData(value: String, img: Int,vector: String?): SubAirView {
+    fun fetchData(value: String, img: Int, vector: String?): SubAirView {
         subAirBinding.customSubAirValue.text = value
         subAirBinding.customSubAirImg.setImageDrawable(
             ResourcesCompat.getDrawable(resources,img,null))

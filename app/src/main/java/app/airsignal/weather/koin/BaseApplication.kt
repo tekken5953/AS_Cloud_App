@@ -8,11 +8,9 @@ import app.airsignal.weather.repo.GetAppVersionRepo
 import app.airsignal.weather.repo.GetWarningRepo
 import app.airsignal.weather.repo.GetWeatherRepo
 import app.airsignal.weather.retrofit.HttpClient
-import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import app.airsignal.weather.vmodel.GetWarningViewModel
 import app.airsignal.weather.vmodel.GetWeatherViewModel
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -35,16 +33,6 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     // ANR 에러 발생 시 로그 저장 후 종료
     override fun uncaughtException(p0: Thread, p1: Throwable) {
         RDBLogcat.writeErrorANR(thread = "Thread : ${p0.name}", msg = "Error Msg: ${p1.stackTraceToString()}")
-        FirebaseCrashlytics.getInstance().apply {
-            this.setCrashlyticsCollectionEnabled(true)
-            try {
-                setUserId(GetSystemInfo.androidID(this@BaseApplication))
-            } catch(e: NullPointerException) {
-                e.printStackTrace()
-            }
-
-            recordException(p1)
-        }
         if (p0.name == "WidgetProvider") {
             HttpClient.getInstance(true).setClientBuilder()
         } else {
