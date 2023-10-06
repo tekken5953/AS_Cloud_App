@@ -281,9 +281,8 @@
         <Constraint
             android:id="@+id/mainSkyText"
             style="@style/basicMediumTextView"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:alpha="1"
-            app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             app:layout_constraintTop_toBottomOf="@+id/mainSkyImg"/>
@@ -563,9 +562,8 @@
         <Constraint
             android:id="@+id/mainSkyText"
             style="@style/basicMediumTextView"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:alpha="0"
-            app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             app:layout_constraintTop_toBottomOf="@+id/mainSkyImg"/>

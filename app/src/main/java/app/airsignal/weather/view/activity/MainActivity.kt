@@ -1524,7 +1524,7 @@ class MainActivity
             binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
             binding.mainMinTitle.text = getString(R.string.min)
             binding.mainMaxTitle.text = getString(R.string.max)
-            binding.indoorAirText.setTextColor(Color.parseColor("#1c0eff"))
+            binding.indoorAirText.setTextColor(Color.parseColor("#3fe21e"))
             binding.indoorAirText.setBackgroundResource(R.drawable.inner_air_text_bg)
             binding.mainShareIv.isEnabled = true
             binding.indoorAirText.isEnabled = true
@@ -1734,7 +1734,7 @@ class MainActivity
             binding.mainSunSetTime,binding.mainSunTomTitle,binding.mainUvCollapsedTitle,
             binding.nestedAirTitleEn,binding.dailySectionTomorrow,binding.dailySectionAfterTomorrow,
             binding.mainSunSetTom, binding.mainSunRiseTom, binding.mainTermsTitle,
-            binding.mainTermsExplain
+            binding.mainTermsExplain,binding.mainSkyText
         )
         val changeColorSubTextViews = listOf(
             binding.mainLicenseText,binding.nestedAirTitleKr,binding.nestedAirUnit,

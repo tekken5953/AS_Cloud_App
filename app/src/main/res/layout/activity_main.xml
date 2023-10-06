@@ -217,8 +217,7 @@
                 style="@style/basicMediumTextView"
                 android:alpha="0"
                 android:lineHeight="25dp"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
+                android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
                 app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
                 app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
