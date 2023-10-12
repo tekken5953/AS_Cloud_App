@@ -630,7 +630,7 @@
                             android:visibility="visible"
                             android:layout_centerInParent="true"
                             android:contentDescription="@string/cd_ad_view"
-                            app:adSize="FULL_BANNER"
+                            app:adSize="BANNER"
                             app:adUnitId="@string/adUnit_main_Id" />
                     </RelativeLayout>
 

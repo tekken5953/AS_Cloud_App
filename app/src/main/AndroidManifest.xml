@@ -70,6 +70,7 @@
             android:name="app.airsignal.weather.view.activity.MainActivity"
             android:attributionTags="SLocationService"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:hardwareAccelerated="true"
             tools:targetApi="s" />
         <activity

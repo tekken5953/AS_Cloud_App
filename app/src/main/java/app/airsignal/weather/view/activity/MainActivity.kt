@@ -72,6 +72,9 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getHourCountToTomorrow
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgSmall
 import app.airsignal.weather.util.`object`.DataTypeParser.isRainyDay
 import app.airsignal.weather.util.`object`.DataTypeParser.millsToString
+import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentHumid
+import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentRainType
+import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentWindSpeed
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.util.`object`.GetAppInfo
@@ -725,9 +728,7 @@ class MainActivity
         })
 
         // 외부 공기질 도움말 아이콘 이미지 설정
-        binding.nestedAirHelp.setImageDrawable(
-            ResourcesCompat.getDrawable(resources, R.drawable.help, null)
-        )
+        binding.nestedAirHelp.setImageDrawable(getR(R.drawable.help))
 
         // 외부 공기질 도움말 클릭
         binding.nestedAirHelp.setOnClickListener(object : OnSingleClickListener() {
@@ -831,7 +832,7 @@ class MainActivity
     // API 통신이 성공일 때 처리
     private fun handleApiSuccess(result: ApiModel.GetEntireData) {
         try {
-            val metaAddr = result.meta.address!!
+            val metaAddr = result.meta.address ?: "주소 호출 에러"
             reNewTopicInMain(metaAddr)
             runOnUiThread {
                 binding.mainDailyWeatherRv.scrollToPosition(0)
@@ -905,7 +906,7 @@ class MainActivity
             updateCurrentTemperature(it.yesterday, it.current, it.realtime)
             updateWeatherWarnings(result.summary)
             updateTerm24(result.term24)
-            updateBackgroundBasedOnWeather(currentSun, it.realtime[0], result.current, result.thunder!!)
+            updateBackgroundBasedOnWeather(currentSun, it.realtime[0], result.current, result.thunder ?: 0.0)
 
             val lunar = result.lunar?.date ?: -1
 
@@ -1002,7 +1003,7 @@ class MainActivity
                         }˚",
                         dailyIndex.forecast!!,
                         isRainyDay(dailyIndex.rainType),
-                        dailyIndex.rainP!!
+                        dailyIndex.rainP ?: 0.0
                     )
                 }
                 else -> {
@@ -1057,48 +1058,51 @@ class MainActivity
         // 대기 질 데이터 업데이트
         airQList.clear()
 
+        val pm25 = (air.pm25Value ?: air.pm25Value24 ?: 0.0)
+        val pm10 = (air.pm10Value ?: air.pm10Value24 ?: 0.0)
+
         updateAirQData(
             PM2p5_INDEX, getString(R.string.pm2_5_full), "PM2.5",
-            "㎍/㎥", air.pm25Value!!.toInt().toString()
+            "㎍/㎥", pm25.toInt().toString()
         )
         updateAirQData(
             PM10_INDEX, getString(R.string.pm10_full), "PM10",
-            "㎍/㎥", air.pm10Value!!.toInt().toString()
+            "㎍/㎥", pm10.toInt().toString()
         )
         updateAirQData(
             CO_INDEX, getString(R.string.co_full), "CO",
-            "ppm", air.coValue!!.toString()
+            "ppm", air.coValue.toString()
         )
         updateAirQData(
             SO2_INDEX, getString(R.string.so2_full), "SO2",
-            "ppm", air.so2Value!!.toString()
+            "ppm", air.so2Value.toString()
         )
         updateAirQData(
             NO2_INDEX, getString(R.string.no2_full), "NO2",
-            "ppm", air.no2Value!!.toString()
+            "ppm", air.no2Value.toString()
         )
         updateAirQData(
             O3_INDEX, getString(R.string.o3_full), "O3",
-            "ppm", air.o3Value!!.toString()
+            "ppm", air.o3Value.toString()
         )
 
         applyAirQView(
             "PM2.5", getString(R.string.pm2_5_full),
-            air.pm25Value.toInt().toString(), "㎍/m3"
+            pm25.toInt().toString(), "㎍/m3"
         )
 
         airQList[PM2p5_INDEX].isSelect = true   // 초기 데이터 = 초미세먼지
 
         changeStrokeColor(binding.subAirPM25,
             getDataColor(this,
-                convertValueToGrade("PM2.5",air.pm25Value.toDouble())))
+                convertValueToGrade("PM2.5",pm25.toDouble())))
 
         changeStrokeColor(binding.subAirPM10,
             getDataColor(this,
-                convertValueToGrade("PM10",air.pm10Value.toDouble())))
+                convertValueToGrade("PM10", pm10)))
 
-        binding.subAirPM25.text = "${getString(R.string.pm2_5_full)}   ${air.pm25Value.toInt()}"
-        binding.subAirPM10.text = "${getString(R.string.pm10_full)}   ${air.pm10Value.toInt()}"
+        binding.subAirPM25.text = "${getString(R.string.pm2_5_full)}   ${pm25.toInt()}"
+        binding.subAirPM10.text = "${getString(R.string.pm10_full)}   ${(pm10.toInt())}"
     }
 
     @SuppressLint("SetTextI18n")
@@ -1154,23 +1158,24 @@ class MainActivity
 
         // 서브 날씨(습도,바람,강수확률) 적용
         binding.subAirHumid.fetchData(
-            "${real0.humid.roundToInt()}%", R.drawable.ico_main_humidity, null
+            "${modifyCurrentHumid(current.humidity,real0.humid).roundToInt()}%", R.drawable.ico_main_humidity, null
         )
         binding.subAirWind.fetchData(
-            "${real0.windSpeed.roundToInt()}m/s", R.drawable.ico_main_wind, real0.vector
+            "${modifyCurrentWindSpeed(current.windSpeed,real0.windSpeed).roundToInt()}m/s", R.drawable.ico_main_wind, real0.vector
         )
-        val rainP = "${real0.rainP!!.roundToInt()}%"
+        val rainP = "${(real0.rainP ?: 0.0).roundToInt()}%"
         binding.subAirRainP.fetchData(rainP, R.drawable.ico_main_rain, null)
 
         // 온도 비교 업데이트
         getCompareTempText(
-            yesterdayTemp.temp!!,
+            yesterdayTemp.temp ?: real0.temp,
             current.temperature,
             binding.mainCompareTempTv
         )
 
         // 체감 온도 업데이트
         binding.mainSensTitle.text = getString(R.string.sens_temp)
+
         try {
             binding.mainSensValue.text =
                 SensibleTempFormula().getSensibleTemp(
@@ -1286,9 +1291,9 @@ class MainActivity
             changeBackgroundResource(R.drawable.main_bg_night)
 
             binding.mainSkyStarImg.setImageDrawable(
-                ResourcesCompat.getDrawable(resources, R.drawable.bg_nightsky, null)
+                getR(R.drawable.bg_nightsky)
             )
-            changeTextColorStyle(sky!!, true)
+            changeTextColorStyle(sky?:"구름많음", true)
         } else {
             binding.mainSkyStarImg.setImageDrawable(null)
             when (sky) {
@@ -1435,8 +1440,7 @@ class MainActivity
 
         binding.mainSkyImg.apply {
             changeBackgroundResource(backgroundResourceId)
-            setImageDrawable(ResourcesCompat.getDrawable(resources,
-                if (isNight) R.drawable.ico_error_b else R.drawable.ico_error_w, null))
+            setImageDrawable(getR(if (isNight) R.drawable.ico_error_b else R.drawable.ico_error_w))
         }
     }
 
@@ -1501,9 +1505,7 @@ class MainActivity
 
             binding.mainMotionSlideGuide.apply {
                 text = getString(R.string.error_guide)
-                setTextColor(
-                    ResourcesCompat.getColor(resources, R.color.theme_text_color, null)
-                )
+                setTextColor(getC(R.color.theme_text_color))
             }
             applyBackground(binding.mainWarningBox, null)
             applyBackground(binding.nestedSubAirFrame, null)
@@ -1544,7 +1546,7 @@ class MainActivity
     // 이미지뷰의 이미지를 설정
     private fun setDrawable(imageView: ImageView, drawableResId: Int?) {
         drawableResId?.let {
-            imageView.setImageDrawable(ResourcesCompat.getDrawable(resources, it, null))
+            imageView.setImageDrawable(getR(it))
         } ?: imageView.setImageDrawable(null)
     }
 
@@ -1954,10 +1956,19 @@ class MainActivity
         }
     }
 
+    private fun getR(id: Int)
+    : Drawable? {
+        return ResourcesCompat.getDrawable(resources,id,null)
+    }
+    private fun getC(id: Int)
+    : Int {
+        return ResourcesCompat.getColor(resources,id,null)
+    }
+
     // 뷰 백그라운드 적용
     private fun <T> applyBackground(view: T, res: Int?) {
         res?.let {
-            (view as View).background = ResourcesCompat.getDrawable(resources, it, null)
+            (view as View).background = getR(it)
         } ?: apply {
             (view as View).background = null
         }
