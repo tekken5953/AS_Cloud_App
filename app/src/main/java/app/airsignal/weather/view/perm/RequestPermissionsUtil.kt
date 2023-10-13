@@ -1,4 +1,4 @@
-package app.airsignal.weather.util
+package app.airsignal.weather.view.perm
 
 import android.Manifest
 import android.annotation.TargetApi

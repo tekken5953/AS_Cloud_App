@@ -13,11 +13,11 @@ import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityPermissionBinding
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.util.EnterPageUtil
-import app.airsignal.weather.util.RequestPermissionsUtil
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.util.`object`.*
 import app.airsignal.weather.util.`object`.GetAppInfo.getInitNotiPermission
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserNoti
-import app.airsignal.weather.view.FirstLocCheckDialog
+import app.airsignal.weather.view.perm.FirstLocCheckDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PermissionActivity :

@@ -13,7 +13,7 @@ import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.repo.BaseRepository
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.LoggerUtil
-import app.airsignal.weather.util.RequestPermissionsUtil
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.util.`object`.GetSystemInfo.goToPlayStore
@@ -22,7 +22,6 @@ import app.airsignal.weather.view.MakeSingleDialog
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import com.google.firebase.database.FirebaseDatabase
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 
 
 @SuppressLint("CustomSplashScreen")

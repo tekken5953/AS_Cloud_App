@@ -73,8 +73,8 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgSmall
 import app.airsignal.weather.util.`object`.DataTypeParser.isRainyDay
 import app.airsignal.weather.util.`object`.DataTypeParser.millsToString
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentHumid
-import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentRainType
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentWindSpeed
+import app.airsignal.weather.util.`object`.DataTypeParser.translateSky
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.util.`object`.GetAppInfo
@@ -98,6 +98,7 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setLastLng
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
 import app.airsignal.weather.util.`object`.SetSystemInfo.setUvBackgroundColor
 import app.airsignal.weather.view.*
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.vmodel.GetWeatherViewModel
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
@@ -851,10 +852,10 @@ class MainActivity
                 Thread.sleep(100)
                 isDataResponse = true
                 // 메인 날씨 텍스트 세팅
-                val skyText = applySkyText(
+                val skyText = translateSky(this, applySkyText(
                     this,
                     result.current.rainType,
-                    result.realtime[0].sky, result.thunder)
+                    result.realtime[0].sky, result.thunder))
                 binding.mainSkyText.text = skyText
                 // 날씨에 따라 배경화면 변경
                 applyWindowBackground(currentSun, skyText)

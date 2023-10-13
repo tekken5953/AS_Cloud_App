@@ -1,4 +1,4 @@
-package app.airsignal.weather.view
+package app.airsignal.weather.view.perm
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -20,7 +20,6 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import app.airsignal.weather.R
-import app.airsignal.weather.util.RequestPermissionsUtil
 import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.util.`object`.SetAppInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior

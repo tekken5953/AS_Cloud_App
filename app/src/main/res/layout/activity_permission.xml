@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data/>
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/theme_view_color"
@@ -160,11 +159,13 @@
             android:id="@+id/permissionUserDataCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:foregroundTint="@color/main_blue_color"
             android:buttonTint="@color/theme_text_color"
+            android:foregroundTint="@color/main_blue_color"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            app:layout_constraintBottom_toBottomOf="@+id/permissionUserDataNotice"
             app:layout_constraintEnd_toEndOf="@+id/permissionOkBtn"
-            app:layout_constraintTop_toTopOf="@+id/permissionUserDataNotice"
-            app:layout_constraintBottom_toBottomOf="@+id/permissionUserDataNotice"/>
+            app:layout_constraintTop_toTopOf="@+id/permissionUserDataNotice" />
 
         <TextView
             android:id="@+id/permissionNotice"

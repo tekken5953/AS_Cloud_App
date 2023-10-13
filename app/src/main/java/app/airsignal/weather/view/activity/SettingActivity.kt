@@ -68,10 +68,11 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setUserNoti
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserTheme
 import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.util.`object`.SetSystemInfo.setStatusBar
-import app.airsignal.weather.view.BackLocCheckDialog
+import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.ShowDialogClass
 import app.airsignal.weather.view.custom_view.CustomerServiceView
 import app.airsignal.weather.view.custom_view.SnackBarUtils
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -108,6 +109,7 @@ class SettingActivity
         applyUserLanguage()
 
         applyFontScale()
+
     }
 
     @SuppressLint("InflateParams")
@@ -869,9 +871,7 @@ class SettingActivity
     }
 
     // 메인 액티비티로 이동
-    private fun goMain() {
-        finish()
-    }
+    private fun goMain() { finish() }
 
     // 라디오 버튼 DrawableEnd Tint 변경
     @SuppressLint("UseCompatTextViewDrawableApis")
@@ -944,7 +944,6 @@ class SettingActivity
         title.text = getString(R.string.save_change)
         apply.text = getString(R.string.ok)
         apply.setOnClickListener {
-            finish()
             RefreshUtils(this).refreshApplication()
         }
         builder.show()
