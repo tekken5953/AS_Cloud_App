@@ -210,6 +210,7 @@ class MainActivity
             window.navigationBarColor = getColor(R.color.theme_view_color)
             binding.mainMotionLayout.isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
             binding.mainMotionLayout.isEnabled = false
+            binding.mainMotionLayout.setTransition(R.id.start,R.id.end)
         }
 
         if (getInitBackLogPerm(this)) {
@@ -380,7 +381,7 @@ class MainActivity
                 motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float) {}
 
             override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
-                binding.mainSwipeLayout.isEnabled = currentId == 2131362628
+                binding.mainSwipeLayout.isEnabled = motionLayout.currentState == R.id.start
             }
 
             override fun onTransitionTrigger(
