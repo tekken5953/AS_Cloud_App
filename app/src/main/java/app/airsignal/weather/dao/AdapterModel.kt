@@ -22,7 +22,9 @@ object AdapterModel {
         val minImg: Drawable?,
         val maxImg: Drawable?,
         val minText: String,
-        val maxText: String
+        val maxText: String,
+        val rainAm: Double,
+        val rainPm: Double
     )
 
     // 공지사항 리스트

@@ -99,6 +99,8 @@ class ApiModel {
         val rnSt6Pm: Double?,
         @SerializedName("rnSt7Am")
         val rnSt7Am: Double?,
+        @SerializedName("rnSt7Pm")
+        val rnSt7Pm: Double?,
         @SerializedName("wf0Am")
         val wf0Am: String?,
         @SerializedName("wf0Pm")

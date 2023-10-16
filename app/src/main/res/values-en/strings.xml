@@ -218,6 +218,8 @@
     <string name="cd_list_item">List item</string>
     <string name="agree_user_data">I agree with AirSignal\'s privacy policy</string>
     <string name="cd_data_share">Share icon</string>
+    <string name="cd_rain_am">Am Rain Per</string>
+    <string name="cd_rain_pm">Pm Rain Per</string>
 
     <string name="background_location_active">Now using</string>
     <string name="background_location_not_active">Make use</string>

@@ -210,6 +210,8 @@
     <string name="cd_click_arrow_right">클릭하여 이동</string>
     <string name="cd_list_item">리스트 항목</string>
     <string name="cd_data_share">공유하기</string>
+    <string name="cd_rain_am">오전 강수확률</string>
+    <string name="cd_rain_pm">오후 강수확률</string>
 
 
     <string name="agree_user_data">에어시그널의 개인정보 처리방침에 동의합니다.</string>

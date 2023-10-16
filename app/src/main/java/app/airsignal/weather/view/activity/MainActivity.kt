@@ -11,6 +11,7 @@ import android.location.LocationManager
 import android.os.*
 import android.os.Build.VERSION
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -210,6 +211,7 @@ class MainActivity
             window.navigationBarColor = getColor(R.color.theme_view_color)
             binding.mainMotionLayout.isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
             binding.mainMotionLayout.isEnabled = false
+            binding.mainMotionLayout.setTransition(R.id.start,R.id.end)
         }
 
         if (getInitBackLogPerm(this)) {
@@ -377,10 +379,11 @@ class MainActivity
             override fun onTransitionStarted(motionLayout: MotionLayout, startId: Int, endId: Int) {}
 
             override fun onTransitionChange(
-                motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float) {}
+                motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float) {
+            }
 
             override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
-                binding.mainSwipeLayout.isEnabled = currentId == 2131362628
+                binding.mainSwipeLayout.isEnabled = motionLayout.currentState == R.id.start
             }
 
             override fun onTransitionTrigger(
@@ -954,6 +957,14 @@ class MainActivity
             week.taMax0, week.taMax1, week.taMax2, week.taMax3, week.taMax4,
             week.taMax5, week.taMax6, week.taMax7
         )
+        val rainAM = listOf(
+            week.rnSt0Am,week.rnSt1Am,week.rnSt2Am,week.rnSt3Am,week.rnSt4Am,
+            week.rnSt5Am,week.rnSt6Am,week.rnSt7Am
+        )
+        val rainPM = listOf(
+            week.rnSt0Pm,week.rnSt1Pm,week.rnSt2Pm,week.rnSt3Pm,week.rnSt4Pm,
+            week.rnSt5Pm,week.rnSt6Pm,week.rnSt7Pm,
+        )
 
 
         // 최저/최대 기온 적용
@@ -1044,7 +1055,9 @@ class MainActivity
                     getSkyImgSmall(this, wfMin[it], false)!!,
                     getSkyImgSmall(this, wfMax[it], false)!!,
                     "${taMin[it]!!.roundToInt()}˚",
-                    "${taMax[it]!!.roundToInt()}˚"
+                    "${taMax[it]!!.roundToInt()}˚",
+                    rainAM[it]!!,
+                    rainPM[it]!!
                 )
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(RDBLogcat.DATA_CALL_ERROR,
@@ -1341,9 +1354,9 @@ class MainActivity
     // 시간별 날씨 리사이클러뷰 아이템 추가
     private fun addWeeklyWeatherItem(
         day: String, date: String, minImg: Drawable,
-        maxImg: Drawable, minText: String, maxText: String,
+        maxImg: Drawable, minText: String, maxText: String, rainAm: Double, rainPm: Double
     ) {
-        val item = AdapterModel.WeeklyWeatherItem(day, date, minImg, maxImg, minText, maxText)
+        val item = AdapterModel.WeeklyWeatherItem(day, date, minImg, maxImg, minText, maxText,rainAm,rainPm)
 
         this.weeklyWeatherList.add(item)
     }

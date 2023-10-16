@@ -1,6 +1,8 @@
 package app.airsignal.weather.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +14,7 @@ import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserFontScale
 import app.airsignal.weather.util.`object`.SetSystemInfo
 import com.bumptech.glide.Glide
+import kotlin.math.roundToInt
 
 /**
  * @author : Lee Jae Young
@@ -65,7 +68,12 @@ class WeeklyWeatherAdapter(
         private val minText: TextView = itemView.findViewById(R.id.weeklyMinText)
         private val maxText: TextView = itemView.findViewById(R.id.weeklyMaxText)
         private val section: TextView = itemView.findViewById(R.id.weeklyMinMaxSection)
+        private val rainAm: TextView = itemView.findViewById(R.id.weeklyRainAm)
+        private val rainPm: TextView = itemView.findViewById(R.id.weeklyRainPm)
+        private val rainSlash: TextView = itemView.findViewById(R.id.weeklyRainSlash)
+        private val rainImg: ImageView = itemView.findViewById(R.id.weeklyRainIv)
 
+        @SuppressLint("SetTextI18n")
         fun bind(dao: AdapterModel.WeeklyWeatherItem) {
             day.text = dao.day
             date.text = dao.date
@@ -73,19 +81,29 @@ class WeeklyWeatherAdapter(
             Glide.with(context).load(dao.maxImg).into(maxImg)
             minText.text = dao.minText
             maxText.text = dao.maxText
+            rainAm.text = "${dao.rainAm.roundToInt()}%"
+            rainPm.text = "${dao.rainPm.roundToInt()}%"
 
             if (isWhite) {
                 day.setTextColor(context.getColor(R.color.white))
                 date.setTextColor(context.getColor(R.color.sub_white))
+                rainAm.setTextColor(context.getColor(R.color.white))
+                rainPm.setTextColor(context.getColor(R.color.white))
                 minText.setTextColor(context.getColor(R.color.white))
                 maxText.setTextColor(context.getColor(R.color.white))
                 section.setTextColor(context.getColor(R.color.white))
+                rainSlash.setTextColor(context.getColor(R.color.white))
+                rainImg.imageTintList = ColorStateList.valueOf(context.getColor(R.color.white))
             } else {
                 day.setTextColor(context.getColor(R.color.main_black))
                 date.setTextColor(context.getColor(R.color.sub_black))
+                rainAm.setTextColor(context.getColor(R.color.main_black))
+                rainPm.setTextColor(context.getColor(R.color.main_black))
                 minText.setTextColor(context.getColor(R.color.main_black))
                 maxText.setTextColor(context.getColor(R.color.main_black))
                 section.setTextColor(context.getColor(R.color.main_black))
+                rainSlash.setTextColor(context.getColor(R.color.main_black))
+                rainImg.imageTintList = ColorStateList.valueOf(context.getColor(R.color.main_black))
             }
 
             if (bindingAdapterPosition == 0) {

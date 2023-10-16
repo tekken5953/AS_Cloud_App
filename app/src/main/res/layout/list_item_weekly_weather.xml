@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
+    android:layout_height="70dp"
     android:background="@android:color/transparent">
 
     <LinearLayout
+        android:id="@+id/weeklyDayLayout"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -33,8 +35,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:orientation="horizontal"
+        android:layout_centerInParent="true"
         android:gravity="center">
         <ImageView
             android:id="@+id/weeklyMinIv"
@@ -48,6 +50,41 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="8dp"/>
+
+        <ImageView
+            android:id="@+id/weeklyRainIv"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:contentDescription="@string/cd_rain_am"
+            android:src="@drawable/water_drop"
+            android:layout_marginStart="10dp"/>
+
+        <TextView
+            android:id="@+id/weeklyRainAm"
+            style="@style/basicMediumTextView"
+            android:lines="1"
+            android:textColor="@color/theme_text_color"
+            android:textSize="12sp"
+            android:layout_marginStart="2dp"
+            android:contentDescription="@string/cd_rain_am" />
+
+        <TextView
+            android:id="@+id/weeklyRainSlash"
+            style="@style/basicMediumTextView"
+            android:text="/"
+            android:lines="1"
+            android:layout_marginStart="2dp"
+            android:textColor="@color/theme_text_color"
+            android:textSize="13sp"/>
+
+        <TextView
+            android:id="@+id/weeklyRainPm"
+            style="@style/basicMediumTextView"
+            android:lines="1"
+            android:layout_marginStart="2dp"
+            android:textColor="@color/theme_text_color"
+            android:textSize="12sp"
+            android:contentDescription="@string/cd_rain_pm"/>
     </LinearLayout>
 
     <LinearLayout
@@ -63,7 +100,7 @@
             android:gravity="center"
             android:lines="1"
             android:textColor="@color/theme_text_color"
-            android:textSize="16sp"/>
+            android:textSize="15sp"/>
 
         <TextView
             android:id="@+id/weeklyMinMaxSection"
@@ -71,7 +108,7 @@
             android:text="/"
             android:gravity="center"
             android:lines="1"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:textColor="@color/theme_text_color"
             android:layout_marginStart="1dp"/>
 
@@ -81,7 +118,7 @@
             android:gravity="center"
             android:lines="1"
             android:textColor="@color/theme_text_color"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:layout_marginStart="1dp"/>
     </LinearLayout>
 
