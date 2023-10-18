@@ -35,6 +35,7 @@
 ``1.2.11``
 
 <br/>
+
 <h2>Gradle Setting</h2>
 
 ``compileSdk : 33``
@@ -68,6 +69,8 @@ AirKorea Open API &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 <br/>
 <h2>Screen Shot</h2><br/>
 
-![3](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/85acb9e3-6569-440e-b4f1-47f24b7c3ef7)
-![2](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/57212fb4-6ce3-4bcc-a95b-96f021273391)
-![1](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/07737038-57ac-43fd-a2cf-6cfbd24af8dc)
+![s1](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/b5b04698-f4a9-4595-a19b-780b97328885)
+![s2](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/2960af97-2db7-403e-acf3-36876e34229e)<br/>
+![s3](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/0a8fff6f-4de0-4d69-8967-64365e04609c)
+![s4](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/e3973828-5e4d-4522-8392-cde779be7bde)
+
