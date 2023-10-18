@@ -5,12 +5,19 @@ import androidx.lifecycle.MutableLiveData
 import app.airsignal.weather.dao.ErrorCode.ERROR_API_PROTOCOL
 import app.airsignal.weather.dao.ErrorCode.ERROR_GET_DATA
 import app.airsignal.weather.dao.ErrorCode.ERROR_NETWORK
+import app.airsignal.weather.dao.ErrorCode.ERROR_NULL_POINT
 import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.dao.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.weather.dao.ErrorCode.ERROR_UNKNOWN
 import app.airsignal.weather.dao.StaticDataObject.TAG_R
+import app.airsignal.weather.firebase.db.RDBLogcat
+import app.airsignal.weather.firebase.db.RDBLogcat.writeErrorANR
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.retrofit.HttpClient.mMyAPIImpl
+import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentHumid
+import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentRainType
+import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentTempType
+import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentWindSpeed
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +47,7 @@ class GetWeatherRepo : BaseRepository() {
                     ) {
                         try {
                             if (response.isSuccessful) {
-                                val responseBody = response.body()!!
+                                val responseBody = processData(response.body())
                                 Logger.t(TAG_R)
                                     .d("Success API : ${ApiState.Success(responseBody).data}")
                                 _getDataResult.postValue(ApiState.Success(responseBody))
@@ -50,7 +57,7 @@ class GetWeatherRepo : BaseRepository() {
                                 call.cancel()
                             }
                         } catch (e: NullPointerException) {
-                            e.printStackTrace()
+                            Logger.t(TAG_R).e(e.stackTraceToString())
                             _getDataResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
                         }
                     }
@@ -59,8 +66,8 @@ class GetWeatherRepo : BaseRepository() {
                         call: Call<ApiModel.GetEntireData>,
                         t: Throwable
                     ) {
+                        Logger.t(TAG_R).e(t.stackTraceToString())
                         try {
-                            t.printStackTrace()
                             _getDataResult.postValue(ApiState.Error(ERROR_GET_DATA))
                             call.cancel()
                         } catch (e: Exception) {
@@ -72,9 +79,10 @@ class GetWeatherRepo : BaseRepository() {
                                     _getDataResult.postValue(ApiState.Error(ERROR_NETWORK))
                                 }
                                 is NullPointerException -> {
-                                    _getDataResult.postValue(ApiState.Error(ERROR_UNKNOWN))
+                                    _getDataResult.postValue(ApiState.Error(ERROR_NULL_POINT))
                                 }
                                 else -> {
+                                    Logger.t(TAG_R).e("onFailure : ERROR_UNKNOWN")
                                     _getDataResult.postValue(ApiState.Error(ERROR_UNKNOWN))
                                 }
                             }
@@ -82,5 +90,21 @@ class GetWeatherRepo : BaseRepository() {
                     }
                 })
         }
+    }
+
+    private fun processData(rawData: ApiModel.GetEntireData?): ApiModel.GetEntireData {
+        try {
+            rawData?.let { d ->
+                d.current.rainType = modifyCurrentRainType(d.current.rainType,d.realtime[0].rainType)
+                d.current.temperature = modifyCurrentTempType(d.current.temperature, d.realtime[0].temp)
+                d.current.windSpeed = modifyCurrentWindSpeed(d.current.windSpeed, d.realtime[0].windSpeed)
+                d.current.humidity = modifyCurrentHumid(d.current.humidity, d.realtime[0].humid)
+            }
+        } catch (e: Exception) {
+            writeErrorANR("processData by repository",e.stackTraceToString())
+            e.stackTraceToString()
+        }
+
+        return rawData ?: throw NullPointerException()
     }
 }

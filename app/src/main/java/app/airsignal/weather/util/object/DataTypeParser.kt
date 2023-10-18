@@ -3,7 +3,6 @@ package app.airsignal.weather.util.`object`
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.icu.util.ChineseCalendar
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
 import java.text.SimpleDateFormat
@@ -66,16 +65,12 @@ object DataTypeParser {
     }
 
     /** Current의 rainType의 에러 방지 **/
-    fun modifyCurrentRainType(rainTypeCurrent: String?, rainTypeReal: String?): String? {
-        rainTypeCurrent?.let { current ->
-           return when(current) {
-                "비","눈","비/눈","소나기","없음" -> {
-                    current
-                }
-                else -> rainTypeReal
+    fun modifyCurrentRainType(rainTypeCurrent: String, rainTypeReal: String): String {
+        return when(rainTypeCurrent) {
+            "비","눈","비/눈","소나기","없음" -> {
+                rainTypeCurrent
             }
-        } ?: run {
-            return rainTypeReal
+            else -> rainTypeReal
         }
     }
 
@@ -113,17 +108,9 @@ object DataTypeParser {
         }
     }
 
-    /** 음력 날짜 반환 **/
-    private fun getLunarDate(): Int {
-        val cal = LocalDateTime.now()
-        val cc = ChineseCalendar()
-        cc.set(cal.year,cal.monthValue-1,cal.dayOfMonth)
-        return cc.get(ChineseCalendar.DAY_OF_MONTH)
-    }
-
     /** 달 모양 반환 **/
-    private fun applyLunarImg(): Int {
-        return when (getLunarDate()) {
+    private fun applyLunarImg(date: Int): Int {
+        return when (date) {
             29,30,1 -> {
                 R.drawable.moon_sak
             }
@@ -175,16 +162,38 @@ object DataTypeParser {
     }
 
     /** Current의 Temperature의 에러 방지 **/
-    fun modifyCurrentTempType(tempCurrent: Double?, tempReal: Double?): Double {
-        return if (tempCurrent != null) {
-            if (tempCurrent < 50.0 && tempCurrent > -50.0) {
-                tempCurrent
-            } else {
-                tempReal!!
-            }
-        } else {
-            tempReal!!
+    fun modifyCurrentTempType(tempCurrent: Double?, tempReal: Double): Double {
+        return try {
+            tempCurrent?.let { tc ->
+                if (tc < 50.0 && tc > -50.0) {
+                    tc
+                } else {
+                    tempReal
+                }
+            } ?: tempReal
+        } catch (e: Exception) {
+            return tempReal
         }
+    }
+
+    fun modifyCurrentWindSpeed(windC: Double?, windR: Double): Double {
+        return windC?.let { c ->
+            if (c >= -100 && c <= 500) {
+                c
+            } else {
+                windR
+            }
+        } ?: windR
+    }
+
+    fun modifyCurrentHumid(humidC: Double?, humidR: Double): Double {
+        return humidC?.let { h ->
+            if (h >= -100 && h <= 100) {
+                h
+            } else {
+                humidR
+            }
+        } ?: humidR
     }
 
     /** rain type에 따른 이미지 설정 **/
@@ -209,13 +218,13 @@ object DataTypeParser {
     }
 
     /** sky value에 따른 이미지 설정 **/
-    fun getSkyImgLarge(context: Context, sky: String?, isNight: Boolean): Drawable? {
+    fun getSkyImgLarge(context: Context, sky: String?, isNight: Boolean, lunar: Int): Drawable? {
         return when (sky) {
             "맑음" -> {
                 if (!isNight) {
                     ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_sunny, null)
                 } else {
-                    ResourcesCompat.getDrawable(context.resources, applyLunarImg(), null)
+                    ResourcesCompat.getDrawable(context.resources, applyLunarImg(lunar), null)
                 }
             }
             "구름많음" -> {
@@ -332,14 +341,15 @@ object DataTypeParser {
         sky: String?,
         thunder: Double?,
         isLarge: Boolean,
-        isNight: Boolean?
+        isNight: Boolean?,
+        lunar: Int
     ): Drawable? {
         return if (rain != "없음") {
             if ((thunder == null) || (thunder < 0.2)) {
                 if (isLarge) {
-                    getRainTypeLarge(context, rain!!)!!
+                    getRainTypeLarge(context, rain!!) ?: ResourcesCompat.getDrawable(context.resources,R.drawable.cancel,null)
                 } else {
-                    getRainTypeSmall(context, rain!!)!!
+                    getRainTypeSmall(context, rain!!) ?: ResourcesCompat.getDrawable(context.resources,R.drawable.cancel,null)
                 }
             } else {
                 if (isLarge) {
@@ -356,9 +366,9 @@ object DataTypeParser {
             if ((thunder == null) || (thunder < 0.2)) {
                 if (isLarge) {
                     if (isNight!!) {
-                        getSkyImgLarge(context, sky!!, isNight)!!
+                        getSkyImgLarge(context, sky!!, isNight, lunar)!!
                     } else {
-                        getSkyImgLarge(context, sky!!, isNight)!!
+                        getSkyImgLarge(context, sky!!, isNight, lunar)!!
                     }
                 } else {
                     if (isNight!!) {
@@ -433,7 +443,7 @@ object DataTypeParser {
             hour * 60 + minutes
         } catch (e: java.lang.NumberFormatException) {
             e.printStackTrace()
-            0
+            1
         }
     }
 

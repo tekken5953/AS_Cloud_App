@@ -30,7 +30,10 @@ import java.util.*
  * @author : Lee Jae Young
  * @since : 2023-04-11 오후 14:01
  **/
-class AddressListAdapter(private val context: Context, list: ArrayList<AdapterModel.AddressListItem>) :
+class AddressListAdapter(
+    private val context: Context,
+    list: ArrayList<AdapterModel.AddressListItem>
+) :
     RecyclerView.Adapter<AddressListAdapter.ViewHolder>() {
     private val mList = list
     private var visible = false
@@ -60,7 +63,8 @@ class AddressListAdapter(private val context: Context, list: ArrayList<AdapterMo
         applyColorFirstIndex(
             mList[position].kr == getUserLastAddress(context),
             holder.address,
-            holder.gpsImg)
+            holder.gpsImg
+        )
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

@@ -29,7 +29,6 @@ class GetWeatherViewModel(private val repo: GetWeatherRepo) : BaseViewModel("날
             viewModelScope.launch {
                 getDataResultData = repo._getDataResult
             }
-
         } catch (e: Exception) {
             e.printStackTrace()
         }

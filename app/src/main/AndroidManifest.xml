@@ -70,6 +70,7 @@
             android:name="app.airsignal.weather.view.activity.MainActivity"
             android:attributionTags="SLocationService"
             android:exported="false"
+            android:screenOrientation="portrait"
             android:hardwareAccelerated="true"
             tools:targetApi="s" />
         <activity
@@ -93,9 +94,16 @@
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
             android:theme="@style/OpenSourceMenuTheme" />
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/adMobId" />
+        <meta-data
+            android:name="com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION"
+            android:value="true"/>
+        <meta-data
+            android:name="com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING"
+            android:value="true"/>
 
         <receiver
             android:name="app.airsignal.weather.firebase.fcm.NotificationBuilder"
@@ -104,6 +112,7 @@
             android:name="app.airsignal.weather.firebase.fcm.SubFCM"
             android:directBootAware="true"
             android:exported="false"
+            android:enabled="true"
             tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

@@ -45,10 +45,10 @@ class DailyWeatherAdapter(
         diffResult.dispatchUpdatesTo(this)
     }
 
-
     override fun getItemCount(): Int = mList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.setIsRecyclable(true)
         holder.bind(mList[position]).apply {
             if (position == 0 ||
                 LocalDateTime.parse(mList[position - 1].date).toLocalDate()

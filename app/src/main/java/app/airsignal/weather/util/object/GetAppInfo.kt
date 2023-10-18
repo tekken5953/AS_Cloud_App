@@ -21,6 +21,10 @@ import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_TOPIC_DAILY
 import app.airsignal.weather.dao.StaticDataObject.WARNING_FIXED
 import app.airsignal.weather.db.SharedPreferenceManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * @author : Lee Jae Young

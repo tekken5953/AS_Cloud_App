@@ -1,6 +1,7 @@
 package app.airsignal.weather.retrofit
 
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDateTime
 
 class ApiModel {
 
@@ -39,15 +40,15 @@ class ApiModel {
         @SerializedName("rainProbability")
         val rainP: Double?,
         @SerializedName("rainType")
-        val rainType: String?,
+        val rainType: String = "없음",
         @SerializedName("humidity")
-        val humid: Double?,
+        val humid: Double = 0.0,
         @SerializedName("snowHourly")
-        val snow: Double?,
+        val snow: Double = 0.0,
         @SerializedName("sky")
         val sky: String?,
         @SerializedName("temperature")
-        val temp: Double?,
+        val temp: Double = 0.0,
         @SerializedName("windSpeedEW")
         val windSpeedEW: Double?,
         @SerializedName("windSpeedSN")
@@ -57,13 +58,21 @@ class ApiModel {
         @SerializedName("vector")
         val vector: String?,
         @SerializedName("windSpeed")
-        val windSpeed: Double?
+        val windSpeed: Double = 0.0
     )
 
     // 주간별 날씨 데이터 모델
     data class WeeklyData(
-        @SerializedName("rainDate")
-        val rainDate: String?,
+//        @SerializedName("today")
+//        val today: LocalDateTime,
+//        @SerializedName("rainDate")
+//        val rainDate: String?,
+//        @SerializedName("tempDate")
+//        val tempDate: String?,
+        @SerializedName("rnSt0Am")
+        val rnSt0Am: Double?,
+        @SerializedName("rnSt0Pm")
+        val rnSt0Pm: Double?,
         @SerializedName("rnSt1Am")
         val rnSt1Am: Double?,
         @SerializedName("rnSt1Pm")
@@ -122,8 +131,6 @@ class ApiModel {
         val wf7Am: String?,
         @SerializedName("wf7Pm")
         val wf7Pm: String?,
-        @SerializedName("tempDate")
-        val tempDate: String?,
         @SerializedName("taMin0")
         val taMin0: Double?,
         @SerializedName("taMax0")
@@ -271,17 +278,17 @@ class ApiModel {
     // 실시간 정보 데이터 모델
     data class Current(
         @SerializedName("rainType")
-        val rainType: String?,
+        var rainType: String,
         @SerializedName("rainHourly")
-        val rainHourly: Double?,
+        val rainHourly: Double,
         @SerializedName("humidity")
-        val humidity: Double?,
+        var humidity: Double,
         @SerializedName("temperature")
-        val temperature: Double?,
+        var temperature: Double,
         @SerializedName("vector")
-        val vector: String?,
+        val vector: String,
         @SerializedName("windSpeed")
-        val windSpeed: Double?,
+        var windSpeed: Double,
     )
 
     // 전체 데이터 모델
@@ -311,7 +318,9 @@ class ApiModel {
         @SerializedName("summary")
         val summary: List<String>?,
         @SerializedName("term24")
-        val term24: String?
+        val term24: String?,
+        @SerializedName("lunar")
+        val lunar: LunarDate?
     )
 
     // 4x2 위젯 - 미세먼지 등급
@@ -370,5 +379,14 @@ class ApiModel {
         val region: String,
         @SerializedName("content")
         val content: List<String>?
+    )
+
+    data class LunarDate(
+        @SerializedName("lunYear")
+        val year: Int,
+        @SerializedName("lunMonth")
+        val month: Int,
+        @SerializedName("lunDay")
+        val date: Int
     )
 }

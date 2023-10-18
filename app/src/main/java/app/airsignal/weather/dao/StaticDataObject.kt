@@ -22,4 +22,8 @@ object StaticDataObject {
     const val TEXT_SCALE_DEFAULT = "default"
     const val THEME_LIGHT = "light"
     const val THEME_DARK = "dark"
+    const val REQUEST_LOCATION = 0x0000001                       // 위치권한 요청 Result Code
+    const val REQUEST_NOTIFICATION = 0x0000002                    // 알림권한 요청 Result Code
+    const val REQUEST_BACKGROUND_LOCATION = 0x0000003
+    const val TAG_N = "Tag_Notification"                  // FCM 기본 태그 Key
 }

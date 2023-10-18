@@ -78,11 +78,12 @@ object SetSystemInfo {
     fun setStatusBar(activity: Activity) {
         activity.window.apply {
             statusBarColor = activity.getColor(R.color.theme_view_color)
-            navigationBarColor = activity.getColor(R.color.theme_view_color)
+            navigationBarColor = activity.getColor(android.R.color.transparent)
+
             if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
                 this.decorView.systemUiVisibility =
                     this.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-            } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO ) {
+            } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
                 this.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
             }
         }

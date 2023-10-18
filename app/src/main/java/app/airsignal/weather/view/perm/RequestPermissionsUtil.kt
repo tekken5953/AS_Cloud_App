@@ -1,4 +1,4 @@
-package app.airsignal.weather.util
+package app.airsignal.weather.view.perm
 
 import android.Manifest
 import android.annotation.TargetApi
@@ -10,15 +10,16 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
+import app.airsignal.weather.dao.StaticDataObject.REQUEST_BACKGROUND_LOCATION
+import app.airsignal.weather.dao.StaticDataObject.REQUEST_LOCATION
+import app.airsignal.weather.dao.StaticDataObject.REQUEST_NOTIFICATION
+import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.util.`object`.GetAppInfo.getInitLocPermission
 import timber.log.Timber
 
 class RequestPermissionsUtil(private val context: Context) {
 
     companion object {
-        const val REQUEST_LOCATION = 0x0000001                       // 위치권한 요청 Result Code
-        const val REQUEST_NOTIFICATION = 0x0000002                    // 알림권한 요청 Result Code
-        const val REQUEST_BACKGROUND_LOCATION = 0x0000003
         const val TAG_P = "TAG_Permission"
     }
 
@@ -43,11 +44,16 @@ class RequestPermissionsUtil(private val context: Context) {
 
     /** 위치정보 권한 요청**/
     fun requestLocation() {
-        ActivityCompat.requestPermissions(
-            context as Activity,
-            permissionsLocation,
-            REQUEST_LOCATION
-        )
+        try{
+            ActivityCompat.requestPermissions(
+                context as Activity,
+                permissionsLocation,
+                REQUEST_LOCATION
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            RDBLogcat.writeErrorANR(Thread.currentThread().toString(),"requestLocation error ${e.stackTraceToString()}")
+        }
     }
 
     /** 알림 권한 요청 **/
