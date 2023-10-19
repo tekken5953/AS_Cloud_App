@@ -9,6 +9,7 @@ import app.airsignal.weather.dao.ErrorCode.ERROR_NETWORK
 import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.databinding.ActivitySplashBinding
 import app.airsignal.weather.firebase.db.RDBLogcat
+import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.repo.BaseRepository
 import app.airsignal.weather.util.EnterPageUtil
@@ -21,6 +22,10 @@ import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.view.MakeSingleDialog
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -47,6 +52,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         LoggerUtil().getInstance()
 
         applyAppVersionData()
+
+        FirebaseMessaging.getInstance()
+        CoroutineScope(Dispatchers.IO).launch {
+            SubFCM().getToken()
+        }
 
         // 유저 디바이스 설정 - 앱 버전
         RDBLogcat.writeUserPref(

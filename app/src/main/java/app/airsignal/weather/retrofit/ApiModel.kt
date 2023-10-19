@@ -277,6 +277,8 @@ class ApiModel {
 
     // 실시간 정보 데이터 모델
     data class Current(
+        @SerializedName("forecast")
+        val currentTime: String,
         @SerializedName("rainType")
         var rainType: String,
         @SerializedName("rainHourly")

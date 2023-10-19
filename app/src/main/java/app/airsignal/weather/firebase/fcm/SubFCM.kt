@@ -82,7 +82,7 @@ class SubFCM: FirebaseMessagingService() {
     /** 현재 토큰정보 불러오기 **/
     suspend fun getToken(): String? {
         val token = withContext(Dispatchers.IO) {
-            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            instance.token.addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     Timber.tag("Notification")
                         .w("Fetching FCM registration token failed by ${task.exception}")

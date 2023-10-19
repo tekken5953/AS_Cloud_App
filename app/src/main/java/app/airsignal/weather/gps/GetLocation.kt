@@ -1,6 +1,7 @@
 package app.airsignal.weather.gps
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.location.*
@@ -10,6 +11,7 @@ import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import app.airsignal.weather.R
+import app.airsignal.weather.dao.ErrorCode
 import app.airsignal.weather.dao.ErrorCode.ERROR_GET_DATA
 import app.airsignal.weather.dao.ErrorCode.ERROR_LOCATION_IOException
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
@@ -22,6 +24,8 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.util.`object`.SetAppInfo.setNotificationAddress
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,7 +39,8 @@ class GetLocation(private val context: Context) {
     fun getAddress(lat: Double, lng: Double): String? {
         return try {
             val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
-            @Suppress( "DEPRECATION")
+
+            @Suppress("DEPRECATION")
             val address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             val fullAddr = address[0].getAddressLine(0)
             CoroutineScope(Dispatchers.IO).launch {
@@ -45,17 +50,24 @@ class GetLocation(private val context: Context) {
             }
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
-            } else { "No Address" }
+            } else {
+                "No Address"
+            }
         } catch (e: Exception) {
-            when(e) {
+            when (e) {
                 is IOException -> {
-                    writeErrorNotANR(context, sort = ERROR_LOCATION_IOException, msg = e.localizedMessage!!)
+                    writeErrorNotANR(
+                        context,
+                        sort = ERROR_LOCATION_IOException,
+                        msg = e.localizedMessage!!
+                    )
                     null
                 }
                 is IndexOutOfBoundsException -> {
                     writeErrorNotANR(context, sort = ERROR_GET_DATA, msg = e.localizedMessage!!)
                     null
-                } else -> {
+                }
+                else -> {
                     writeErrorNotANR(context, sort = ERROR_GET_DATA, msg = e.localizedMessage!!)
                     null
                 }
@@ -74,25 +86,28 @@ class GetLocation(private val context: Context) {
             }
         }
 
-        return  if (formattedAddress.contains("null")) {
-            formattedAddress.split("null")[0].replace(context.getString(R.string.korea),"")
+        return if (formattedAddress.contains("null")) {
+            formattedAddress.split("null")[0].replace(context.getString(R.string.korea), "")
         } else {
             formattedAddress.replace(context.getString(R.string.korea), "")
         }
     }
 
     /** 현재 주소 DB에 업데이트 **/
-    fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
+    private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val roomDB = GpsRepository(context)
+            val model = GpsEntity(
+                name = CURRENT_GPS_ID,
+                position = -1,
+                lat = lat,
+                lng = lng,
+                addrKr = addr,
+                timeStamp = getCurrentTime()
+            )
+
             setUserLastAddr(context, addr)
-            val model = GpsEntity()
-            model.name = CURRENT_GPS_ID
-            model.position = -1
-            model.lat = lat
-            model.lng = lng
-            model.addrKr = addr
-            model.timeStamp = getCurrentTime()
+
             if (roomDB.findAll().isEmpty()) {
                 roomDB.insert(model)
             } else {
@@ -103,48 +118,35 @@ class GetLocation(private val context: Context) {
 
     /** 백그라운드에서 위치 갱신 **/
     @SuppressLint("MissingPermission")
-    fun getGpsInBackground(mills: Long, distance: Float) {
-        try {
-            val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+    fun getGpsInBackground() {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
-            val locationListener: LocationListener = object : LocationListener {
-                override fun onLocationChanged(location: Location) {
-                    // 위치 업데이트가 발생했을 때 실행되는 코드
-                    val latitude = location.latitude
-                    val longitude = location.longitude
-                    updateCurrentAddress(latitude,longitude,getAddress(latitude,longitude)!!)
-                    writeGpsHistory(context, isSearched = false,
-                        gpsValue = "WorkManager : ${latitude},${longitude} : ${getAddress(latitude,longitude)}",
-                        responseData = null)
-                }
-                override fun onProviderEnabled(provider: String) {}
-                override fun onProviderDisabled(provider: String) {}
-            }
-
-            if (Build.VERSION.SDK_INT >= 31) {
-                if (!locationManager!!.hasProvider(Context.LOCATION_SERVICE)) {
-                    locationListener.let { listener ->
-                        locationManager.requestLocationUpdates(
-                            LocationManager.GPS_PROVIDER,
-                            mills,
-                            distance,
-                            listener
+        val onSuccess: (Location?) -> Unit = { location ->
+            location?.let { loc ->
+                val latitude = loc.latitude
+                val longitude = loc.longitude
+                updateCurrentAddress(latitude, longitude, getAddress(latitude, longitude)!!)
+                writeGpsHistory(
+                    context, isSearched = false,
+                    gpsValue = "WorkManager : ${latitude},${longitude} : ${
+                        getAddress(
+                            latitude,
+                            longitude
                         )
-                    }
-                }
-            } else {
-                locationListener.let { listener ->
-                    locationManager!!.requestLocationUpdates(
-                        LocationManager.GPS_PROVIDER,
-                        mills,
-                        distance,
-                        listener
-                    )
-                }
+                    }",
+                    responseData = null
+                )
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
+
+        val onFailure: (e: Exception) -> Unit = {
+            it.printStackTrace()
+            writeGpsHistory(context,false,"WorkManager GPS is Failed to call", it.localizedMessage)
+        }
+
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+            .addOnSuccessListener(onSuccess)
+            .addOnFailureListener(onFailure)
     }
 
     /** 디바이스 GPS 센서에 접근이 가능한지 확인 **/
@@ -160,7 +162,7 @@ class GetLocation(private val context: Context) {
     fun isNetWorkConnected(): Boolean {
         val cm: ConnectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-         val networkInfo: NetworkInfo? = cm.activeNetworkInfo
+        val networkInfo: NetworkInfo? = cm.activeNetworkInfo
         return networkInfo?.isConnected ?: false
     }
 

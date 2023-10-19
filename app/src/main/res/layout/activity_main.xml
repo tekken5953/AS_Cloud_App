@@ -104,7 +104,7 @@
                     android:layout_toStartOf="@+id/mainShareIv"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/cd_icon_plus"
-                    android:src="@drawable/ico_add_w"
+                    android:src="@drawable/search"
                     app:tint="@android:color/transparent" />
 
             </RelativeLayout>
@@ -347,18 +347,18 @@
                 app:layout_constraintEnd_toEndOf="@id/mainSensValue"
                 app:layout_constraintTop_toBottomOf="@id/mainSensTitle" />
 
-            <TextView
-                android:id="@+id/indoor_air_text"
-                style="@style/basicMediumTextView"
-                android:textSize="13sp"
-                android:textColor="@android:color/transparent"
-                android:text="@string/indoor_air_check"
-                app:layout_constraintEnd_toEndOf="@id/mainSensValue"
-                app:layout_constraintBottom_toBottomOf="@+id/mainMinMaxTr"
-                android:paddingStart="11dp"
-                android:paddingEnd="11dp"
-                android:paddingTop="7dp"
-                android:paddingBottom="7dp"/>
+<!--            <TextView-->
+<!--                android:id="@+id/indoor_air_text"-->
+<!--                style="@style/basicMediumTextView"-->
+<!--                android:textSize="13sp"-->
+<!--                android:textColor="@android:color/transparent"-->
+<!--                android:text="@string/indoor_air_check"-->
+<!--                app:layout_constraintEnd_toEndOf="@id/mainSensValue"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/mainMinMaxTr"-->
+<!--                android:paddingStart="11dp"-->
+<!--                android:paddingEnd="11dp"-->
+<!--                android:paddingTop="7dp"-->
+<!--                android:paddingBottom="7dp"/>-->
 
             <TextView
                 android:id="@+id/mainSensTitle"

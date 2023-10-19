@@ -249,7 +249,7 @@
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/topBarLinear"/>
+            app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 
         <Constraint
             android:id="@+id/mainGpsFix"
@@ -332,17 +332,17 @@
             app:layout_constraintTop_toBottomOf="@id/mainSensTitle"
             app:layout_constraintEnd_toEndOf="@id/mainSensValue"/>
 
-        <Constraint
-            android:id="@+id/indoor_air_text"
-            style="@style/basicMediumTextView"
-            android:textSize="14sp"
-            android:alpha="1"
-            app:layout_constraintEnd_toEndOf="@id/mainSensValue"
-            app:layout_constraintBottom_toBottomOf="@+id/mainMinMaxTr"
-            android:paddingStart="11dp"
-            android:paddingEnd="11dp"
-            android:paddingTop="7dp"
-            android:paddingBottom="7dp"/>
+<!--        <Constraint-->
+<!--            android:id="@+id/indoor_air_text"-->
+<!--            style="@style/basicMediumTextView"-->
+<!--            android:textSize="14sp"-->
+<!--            android:alpha="1"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/mainSensValue"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/mainMinMaxTr"-->
+<!--            android:paddingStart="11dp"-->
+<!--            android:paddingEnd="11dp"-->
+<!--            android:paddingTop="7dp"-->
+<!--            android:paddingBottom="7dp"/>-->
 
         <Constraint
             android:id="@+id/mainSensTitle"
@@ -583,17 +583,17 @@
             app:layout_constraintTop_toBottomOf="@id/mainSensTitle"
             app:layout_constraintEnd_toEndOf="@id/mainSensValue"
             android:textSize="16sp" />
-        <Constraint
-            android:id="@+id/indoor_air_text"
-            style="@style/basicMediumTextView"
-            android:textSize="13sp"
-            android:alpha="0"
-            app:layout_constraintEnd_toEndOf="@id/mainSensValue"
-            app:layout_constraintBottom_toBottomOf="@+id/mainMinMaxTr"
-            android:paddingStart="11dp"
-            android:paddingEnd="11dp"
-            android:paddingTop="7dp"
-            android:paddingBottom="7dp"/>
+<!--        <Constraint-->
+<!--            android:id="@+id/indoor_air_text"-->
+<!--            style="@style/basicMediumTextView"-->
+<!--            android:textSize="13sp"-->
+<!--            android:alpha="0"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/mainSensValue"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/mainMinMaxTr"-->
+<!--            android:paddingStart="11dp"-->
+<!--            android:paddingEnd="11dp"-->
+<!--            android:paddingTop="7dp"-->
+<!--            android:paddingBottom="7dp"/>-->
         <Constraint
             android:id="@+id/mainSensTitle"
             style="@style/basicTextView"

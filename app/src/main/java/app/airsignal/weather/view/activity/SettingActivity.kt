@@ -68,10 +68,10 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setUserNoti
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserTheme
 import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.util.`object`.SetSystemInfo.setStatusBar
-import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.ShowDialogClass
 import app.airsignal.weather.view.custom_view.CustomerServiceView
 import app.airsignal.weather.view.custom_view.SnackBarUtils
+import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
@@ -682,7 +682,7 @@ class SettingActivity
     }
 
     // 앱 버전 불러오기
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "InflateParams")
     private fun applyAppVersionResult() {
         val viewAppInfo: View =
             LayoutInflater.from(this).inflate(R.layout.dialog_app_info, null)
@@ -925,6 +925,7 @@ class SettingActivity
     }
 
     // 언어 설정 변경 후 어플리케이션 재시작
+    @SuppressLint("InflateParams")
     private fun saveConfigChangeRestart() {
         val builder = Dialog(this)
         val view = LayoutInflater.from(this)
@@ -947,12 +948,6 @@ class SettingActivity
             RefreshUtils(this).refreshApplication()
         }
         builder.show()
-    }
-
-    // 자주묻는질문 아이템 추가하기
-    private fun addFaqItem(title: String, content: String) {
-        val item = AdapterModel.FaqItem(title, content)
-        faqItem.add(item)
     }
 
     // 공지사항 아이템 추가하기
