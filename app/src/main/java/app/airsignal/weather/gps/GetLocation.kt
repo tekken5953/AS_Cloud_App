@@ -26,6 +26,7 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setNotificationAddress
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.navercorp.nid.NaverIdLoginSDK.applicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -119,7 +120,7 @@ class GetLocation(private val context: Context) {
     /** 백그라운드에서 위치 갱신 **/
     @SuppressLint("MissingPermission")
     fun getGpsInBackground() {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(applicationContext)
 
         val onSuccess: (Location?) -> Unit = { location ->
             location?.let { loc ->
@@ -127,7 +128,7 @@ class GetLocation(private val context: Context) {
                 val longitude = loc.longitude
                 updateCurrentAddress(latitude, longitude, getAddress(latitude, longitude)!!)
                 writeGpsHistory(
-                    context, isSearched = false,
+                    applicationContext, isSearched = false,
                     gpsValue = "WorkManager : ${latitude},${longitude} : ${
                         getAddress(
                             latitude,

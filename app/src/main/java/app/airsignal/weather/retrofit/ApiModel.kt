@@ -5,7 +5,14 @@ import java.time.LocalDateTime
 
 class ApiModel {
 
-    // 앱 버전 모델
+    /**
+     * 앱 버전 모델
+     * @param serviceName 앱의 테스트 버전 네임
+     * @param serviceCode 앱의 테스트 버전 코드
+     * @param date 앱 배포 날짜
+     * @param releaseName 앱의 배포 버전 네임
+     * @param releaseCode 앱의 배포 버전 코드
+     */
     data class AppVersion(
         @SerializedName("versionName")
         val serviceName: String,
@@ -19,7 +26,13 @@ class ApiModel {
         val releaseCode: String
     )
 
-    // 메타데이터 모델
+    /**
+     * 메타 데이터 모델
+     * @param address 앱의 테스트 버전 네임
+     * @param address1 앱의 테스트 버전 코드
+     * @param address2 앱 배포 날짜
+     * @param address3 앱의 배포 버전 네임
+     */
     data class MetaData(
         @SerializedName("address")
         val address: String?,

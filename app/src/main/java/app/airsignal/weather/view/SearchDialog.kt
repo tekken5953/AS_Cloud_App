@@ -56,11 +56,7 @@ class SearchDialog(
     private val activity = mActivity
     private val layoutId = lId
     val currentList = ArrayList<AdapterModel.AddressListItem>()
-    private val currentAdapter =
-        AddressListAdapter(
-            activity,
-            currentList
-        )
+    private val currentAdapter = AddressListAdapter(activity, currentList)
     private val db by lazy { GpsRepository(activity) }
 
     override fun onCreateView(

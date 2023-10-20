@@ -27,9 +27,7 @@ class SideMenuBuilder(private val context: Context) {
         AlertDialog.Builder(context, R.style.DialogAnimationMenu)
     private lateinit var alertDialog: AlertDialog
 
-    init {
-        setFontScale()
-    }
+    init { setFontScale() }
 
     /** 다이얼로그 뒤로가기 버튼 리스너 등록 **/
     fun setBackPressed(imageView: View): SideMenuBuilder {
@@ -59,18 +57,11 @@ class SideMenuBuilder(private val context: Context) {
     /** 다이얼로그 뷰 갱신 **/
     fun show(v: View, cancelable: Boolean): AlertDialog {
         v.let {
-            if (v.parent == null) {
-                builder.setView(v).setCancelable(cancelable)
-                alertDialog = builder.create()
-                attributeDialog()
-                alertDialog.show()
-            } else {
-                (v.parent as ViewGroup).removeView(v)
-                builder.setView(v).setCancelable(cancelable)
-                alertDialog = builder.create()
-                attributeDialog()
-                alertDialog.show()
-            }
+            if(v.parent != null) (v.parent as ViewGroup).removeView(v)
+            builder.setView(v).setCancelable(cancelable)
+            alertDialog = builder.create()
+            attributeDialog()
+            alertDialog.show()
         }
         return alertDialog
     }
@@ -83,9 +74,7 @@ class SideMenuBuilder(private val context: Context) {
             .into(profile)
 
         val email = getUserEmail(context)
-        if (email != "") {
-            Id.text = email
-        } else Id.text = context.getString(R.string.please_login)
+        Id.text = if(email != "") email else context.getString(R.string.please_login)
 
         return this
     }
@@ -93,15 +82,9 @@ class SideMenuBuilder(private val context: Context) {
     // 폰트 크기 반환
     private fun setFontScale(): SideMenuBuilder {
         when (getUserFontScale(context)) {
-            TEXT_SCALE_SMALL -> {
-                SetSystemInfo.setTextSizeSmall(builder.context)
-            }
-            TEXT_SCALE_BIG -> {
-                SetSystemInfo.setTextSizeLarge(builder.context)
-            }
-            else -> {
-                SetSystemInfo.setTextSizeDefault(builder.context)
-            }
+            TEXT_SCALE_SMALL -> SetSystemInfo.setTextSizeSmall(builder.context)
+            TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(builder.context)
+            else -> SetSystemInfo.setTextSizeDefault(builder.context)
         }
         return this
     }
@@ -110,12 +93,12 @@ class SideMenuBuilder(private val context: Context) {
     private fun attributeDialog() {
         val params: WindowManager.LayoutParams = alertDialog.window!!.attributes
 
-        params.width = getBottomSheetDialogDefaultWidth(75)
-//        params.height = WindowManager.LayoutParams.MATCH_PARENT
-        params.gravity = Gravity.START
-
-        // 열기&닫기 시 애니메이션 설정
-        params.windowAnimations = R.style.DialogAnimationMenuAnim
+        params.apply {
+            width = getBottomSheetDialogDefaultWidth(75)
+            gravity = Gravity.START
+            // 열기&닫기 시 애니메이션 설정
+            windowAnimations = R.style.DialogAnimationMenuAnim
+        }
         alertDialog.window!!.attributes = params
     }
 
@@ -129,9 +112,7 @@ class SideMenuBuilder(private val context: Context) {
         // 디바이스의 width 를 구한다
         val displayMetrics = DisplayMetrics()
         @Suppress("DEPRECATION")
-        (context as Activity).windowManager.defaultDisplay.getMetrics(
-            displayMetrics
-        )
+        (context as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
         return displayMetrics.widthPixels
     }
 }

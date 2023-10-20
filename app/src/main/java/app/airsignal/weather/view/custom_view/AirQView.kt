@@ -53,27 +53,14 @@ class AirQView(context: Context, attrs: AttributeSet?)
 
     // 외부 공기질 목록에 따른 그래프 반환
     fun modifyDataGraph(context: Context, krName: String): Drawable? {
-        return when(krName) {
-            context.getString(R.string.pm2_5_full) -> {
-                ResourcesCompat.getDrawable(context.resources,R.drawable.graph_pm25,null)
-            }
-            context.getString(R.string.pm10_full) -> {
-                ResourcesCompat.getDrawable(context.resources,R.drawable.graph_pm10,null)
-            }
-            context.getString(R.string.o3_full) -> {
-                ResourcesCompat.getDrawable(context.resources,R.drawable.graph_03,null)
-            }
-            context.getString(R.string.no2_full) -> {
-                ResourcesCompat.getDrawable(context.resources,R.drawable.graph_no2,null)
-            }
-            context.getString(R.string.so2_full) ->  {
-                ResourcesCompat.getDrawable(context.resources,R.drawable.graph_so2,null)
-            }
-            context.getString(R.string.co_full)-> {
-                ResourcesCompat.getDrawable(context.resources,R.drawable.graph_co,null)
-            }
-            else -> null
-        }
+        return ResourcesCompat.getDrawable(context.resources,when(krName) {
+            context.getString(R.string.pm2_5_full) -> R.drawable.graph_pm25
+            context.getString(R.string.pm10_full) -> R.drawable.graph_pm10
+            context.getString(R.string.o3_full) -> R.drawable.graph_03
+            context.getString(R.string.no2_full) -> R.drawable.graph_no2
+            context.getString(R.string.so2_full) -> R.drawable.graph_so2
+            context.getString(R.string.co_full)-> R.drawable.graph_co
+            else -> R.drawable.cancel },null)
     }
 
     // 데이터 적용

@@ -22,11 +22,6 @@ class SubAirView(context: Context, attrs: AttributeSet?)
     init {
         val inflater = LayoutInflater.from(context)
         subAirBinding = CustomViewSubAirBinding.inflate(inflater, this, true)
-
-        attrs?.let {
-            val typedArray = context.obtainStyledAttributes(it,R.styleable.SubAirView)
-            typedArray.recycle()
-        }
     }
 
     // 타이틀 반환
@@ -45,25 +40,25 @@ class SubAirView(context: Context, attrs: AttributeSet?)
         vector?.let { v ->
             subAirBinding.customSubAirValue.setPadding(0,0,15,0)
             subAirBinding.customSubAirValue.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                when(v) {
-                    "북" -> { drawable(R.drawable.ico_wind_n) }
-                    "북북동" -> { drawable(R.drawable.ico_wind_nne) }
-                    "북동" -> { drawable(R.drawable.ico_wind_ne) }
-                    "동북동" -> { drawable(R.drawable.ico_wind_ene) }
-                    "동" -> { drawable(R.drawable.ico_wind_e) }
-                    "동남동" -> { drawable(R.drawable.ico_wind_ese) }
-                    "남동" -> { drawable(R.drawable.ico_wind_se) }
-                    "남남동" -> { drawable(R.drawable.ico_wind_sse) }
-                    "남" -> { drawable(R.drawable.ico_wind_s) }
-                    "남남서" -> { drawable(R.drawable.ico_wind_ssw) }
-                    "남서" -> { drawable(R.drawable.ico_wind_sw) }
-                    "서남서" -> { drawable(R.drawable.ico_wind_wsw) }
-                    "서" -> { drawable(R.drawable.ico_wind_w) }
-                    "서북서" -> { drawable(R.drawable.ico_wind_wnw) }
-                    "북서" -> { drawable(R.drawable.ico_wind_nw) }
-                    "북북서" -> { drawable(R.drawable.ico_wind_nnw) }
-                    else -> { drawable(R.drawable.cancel) }
-                },null,null,null
+                drawable(when(v) {
+                    "북" -> R.drawable.ico_wind_n
+                    "북북동" -> R.drawable.ico_wind_nne
+                    "북동" -> R.drawable.ico_wind_ne
+                    "동북동" -> R.drawable.ico_wind_ene
+                    "동" -> R.drawable.ico_wind_e
+                    "동남동" -> R.drawable.ico_wind_ese
+                    "남동" -> R.drawable.ico_wind_se
+                    "남남동" -> R.drawable.ico_wind_sse
+                    "남" -> R.drawable.ico_wind_s
+                    "남남서" -> R.drawable.ico_wind_ssw
+                    "남서" -> R.drawable.ico_wind_sw
+                    "서남서" -> R.drawable.ico_wind_wsw
+                    "서" -> R.drawable.ico_wind_w
+                    "서북서" -> R.drawable.ico_wind_wnw
+                    "북서" -> R.drawable.ico_wind_nw
+                    "북북서" -> R.drawable.ico_wind_nnw
+                    else -> R.drawable.cancel
+                }),null,null,null
             )
         }
     }

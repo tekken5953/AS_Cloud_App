@@ -1,13 +1,12 @@
 package app.airsignal.weather.firebase.fcm
 
-import android.content.Intent
-import androidx.legacy.content.WakefulBroadcastReceiver.startWakefulService
 import app.airsignal.weather.dao.StaticDataObject.TAG_N
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.*
@@ -19,7 +18,7 @@ class SubFCM: FirebaseMessagingService() {
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        Timber.tag(TAG_N).d("onMessageReceived(${message.data})")
+//        Timber.tag(TAG_N).d("onMessageReceived(${message.data})")
 
         // 포그라운드 노티피케이션 발생
         NotificationBuilder().sendNotification(
@@ -29,17 +28,13 @@ class SubFCM: FirebaseMessagingService() {
     }
 
     /** 토픽 구독 설정 **/
-    fun subTopic(topic: String): SubFCM {
-        instance.subscribeToTopic(topic)
-            .addOnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    val msg = "Subscribe failed"
-                    Timber.tag(TAG_N).w("$msg ${task.exception}")
-                } else {
-                    val msg = "Subscribed : $topic"
-                    Timber.tag(TAG_N).d(msg)
-                }
-            }
+    suspend fun subTopic(topic: String): SubFCM {
+        try {
+            instance.subscribeToTopic(topic).await()
+            Timber.tag(TAG_N).d("Subscribed : $topic")
+        } catch (e: Exception) {
+            Timber.tag(TAG_N).w("Subscribe failed: $e")
+        }
         return this
     }
 
@@ -50,26 +45,22 @@ class SubFCM: FirebaseMessagingService() {
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     val msg = "UnSubscribed failed"
-                    Timber.tag(TAG_N).w("$msg ${task.exception}")
                 } else {
                     val msg = "UnSubscribed : $encodedStream"
-                    Timber.tag(TAG_N).w(msg)
                 }
             }
         return this
     }
 
     // 어드민 계정 토픽
-    fun subAdminTopic() {
+    suspend fun subAdminTopic() {
         val encodedStream = encodeTopic("admin")
         subTopic(encodedStream)
     }
 
     /** 현재 위치 토픽 갱신 **/
-    fun renewTopic(old: String, new: String) {
+    suspend fun renewTopic(old: String, new: String) {
         val encodedStream = encodeTopic(new)
-        Timber.tag(TAG_N).i("renew topic - old : $old new : $new encoded stream : $encodedStream")
-
         unSubTopic(old).subTopic(encodedStream)
     }
 
@@ -84,12 +75,9 @@ class SubFCM: FirebaseMessagingService() {
         val token = withContext(Dispatchers.IO) {
             instance.token.addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
-                    Timber.tag("Notification")
-                        .w("Fetching FCM registration token failed by ${task.exception}")
                     return@OnCompleteListener
                 }
                 val token = task.result
-                Timber.tag(TAG_N).d("FCM 토큰 : $token")
             }).result
         }
         return token
@@ -98,6 +86,6 @@ class SubFCM: FirebaseMessagingService() {
     /** 새로운 토큰 발행 **/
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Timber.tag(TAG_N).d("sendRegistrationTokenToServer($token)")
+//        Timber.tag(TAG_N).d("sendRegistrationTokenToServer($token)")
     }
 }

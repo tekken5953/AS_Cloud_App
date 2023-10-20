@@ -207,13 +207,17 @@ class MainActivity
         initBinding()
         if (savedInstanceState == null) {
             binding.mainLoadingView.alpha = 1f
-            SubFCM().subTopic("patch")
+            CoroutineScope(Dispatchers.IO).launch {
+                SubFCM().subTopic("patch")
+            }
             changeBackgroundResource(null)
             window.statusBarColor = getColor(R.color.theme_view_color)
             window.navigationBarColor = getColor(R.color.theme_view_color)
-            binding.mainMotionLayout.isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
-            binding.mainMotionLayout.isEnabled = false
-            binding.mainMotionLayout.setTransition(R.id.start,R.id.end)
+            binding.mainMotionLayout.apply {
+                isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
+                isEnabled = false
+                setTransition(R.id.start,R.id.end)
+            }
         }
 
         if (getInitBackLogPerm(this)) {
@@ -289,18 +293,10 @@ class MainActivity
 
         // 사이드 메뉴 세팅
         binding.mainSideMenuIv.setOnClickListener(object : OnSingleClickListener() {
-            @SuppressLint("InflateParams")
             override fun onSingleClick(v: View?) {
                 sideMenuBuilder.show(sideMenuView, true)
             }
         })
-
-//        binding.indoorAirText.setOnClickListener {
-//            val intent = Intent(this, WebURLActivity::class.java)
-//            intent.putExtra("sort","as-eye")
-//            intent.putExtra("appBar",true)
-//            startActivity(intent)
-//        }
 
         // 공유하기 버튼 클릭
         binding.mainShareIv.setOnClickListener(object : OnSingleClickListener() {
@@ -473,56 +469,48 @@ class MainActivity
 
     // 시간별 날씨 색션 컬러 변경
     private fun setSectionTextColor(t1: TextView, t2: TextView, t3: TextView) {
-        if (dailyWeatherAdapter.getIsWhite()) {
-            t1.typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_bold.ttf")
-            t2.typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_regular.ttf")
-            t3.typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_regular.ttf")
-            t1.setTextColor(getColor(R.color.white))
-            t2.setTextColor(getColor(R.color.sub_white))
-            t3.setTextColor(getColor(R.color.sub_white))
-        } else {
-            t1.typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_medium.ttf")
-            t2.typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_regular.ttf")
-            t3.typeface = Typeface.createFromAsset(assets, "spoqa_hansansneo_regular.ttf")
-            t1.setTextColor(getColor(R.color.main_blue_color))
-            t2.setTextColor(getColor(R.color.sub_black))
-            t3.setTextColor(getColor(R.color.sub_black))
-        }
+        val isWhite = dailyWeatherAdapter.getIsWhite()
+        t1.typeface = Typeface.createFromAsset(assets, if(isWhite)"spoqa_hansansneo_bold.ttf" else "spoqa_hansansneo_medium.ttf")
+        t2.typeface = Typeface.createFromAsset(assets, if(isWhite)"spoqa_hansansneo_regular.ttf" else "spoqa_hansansneo_regular.ttf")
+        t3.typeface = Typeface.createFromAsset(assets, if(isWhite)"spoqa_hansansneo_regular.ttf" else "spoqa_hansansneo_regular.ttf")
+        t1.setTextColor(getColor(if(isWhite)R.color.white else R.color.main_blue_color))
+        t2.setTextColor(getColor(if(isWhite)R.color.sub_white else R.color.sub_black))
+        t3.setTextColor(getColor(if(isWhite)R.color.sub_white else R.color.sub_black))
     }
 
     // 날씨 데이터 API 호출
+    private val permissionsUtil = RequestPermissionsUtil(this)
+
     private fun getDataSingleTime(isCurrent: Boolean) {
-        if (RequestPermissionsUtil(this).isNetworkPermitted()) {
-            if (RequestPermissionsUtil(this).isLocationPermitted()) {
-                val lastAddress = getUserLastAddress(this)
-                if (!isCurrent) {
-                    val addrArray = resources.getStringArray(R.array.address_korean)
-                    if (addrArray.contains(lastAddress)) {
-                        addrArray.forEachIndexed { index, s ->
-                            if (lastAddress == s) {
-                                loadSavedAddr(
-                                    addrArray[index],
-                                    resources.getStringArray(R.array.address_english)[index]
-                                )
-                            }
+        if (isNetworkAndLocationPermitted()) {
+            val lastAddress = getUserLastAddress(this)
+            if (!isCurrent) {
+                val addrArray = resources.getStringArray(R.array.address_korean)
+                if (addrArray.contains(lastAddress)) {
+                    addrArray.forEachIndexed { index, s ->
+                        if (lastAddress == s) {
+                            loadSavedAddr(
+                                addrArray[index],
+                                resources.getStringArray(R.array.address_english)[index]
+                            )
                         }
-                    } else {
-                        checkLocationAvailability()
                     }
                 } else {
                     checkLocationAvailability()
                 }
-
-                // TimeOut
-                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                    if (isProgressed()) { hideProgressBar() }
-                }, 1000 * 8)
             } else {
-                RequestPermissionsUtil(this@MainActivity).requestLocation()
+                checkLocationAvailability()
             }
-        } else {
-            ToastUtils(this).showMessage(getString(R.string.error_network))
+
+            // TimeOut
+            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                if (isProgressed()) { hideProgressBar() }
+            }, 1000 * 8)
         }
+    }
+
+    private fun isNetworkAndLocationPermitted(): Boolean {
+        return permissionsUtil.isNetworkPermitted() && permissionsUtil.isLocationPermitted()
     }
 
     // 저장된 주소로 데이터 호출
@@ -530,38 +518,43 @@ class MainActivity
         addr?.let { mAddr ->
             loadSavedViewModelData(mAddr)
 
-            RDBLogcat.writeGpsHistory(
-                this, isSearched = true,
-                gpsValue = mAddr,
-                responseData = null
-            )
+            val isSearched = true
+            val gpsValue = if (getUserLocation(this) == LANG_EN) enAddr?.trim() else mAddr.trim()
 
-            val gps = if (getUserLocation(this) == LANG_EN) enAddr?.trim() else mAddr.trim()
+            RDBLogcat.writeGpsHistory(this, isSearched, gpsValue ?: "잘못된 주소", null)
 
-            updateAddress(gps)
+            updateAddress(gpsValue)
+        }
+    }
+
+    private fun setProgressVisibility(show: Boolean) {
+        if (show) {
+            if (isProgressed) {
+                if (binding.mainMotionLayout.alpha == NOT_SHOWING_LOADING_FLOAT) {
+                    isProgressed = true
+                    binding.mainMotionLayout.alpha = SHOWING_LOADING_FLOAT
+                    binding.mainMotionLayout.isInteractionEnabled = false
+                    binding.mainMotionLayout.isEnabled = false
+                }
+            }
+        } else {
+            if (binding.mainMotionLayout.alpha == SHOWING_LOADING_FLOAT) {
+                binding.mainMotionLayout.alpha = NOT_SHOWING_LOADING_FLOAT
+                binding.mainMotionLayout.isInteractionEnabled = true
+                binding.mainMotionLayout.isEnabled = true
+            }
+            binding.mainGpsFix.clearAnimation()
         }
     }
 
     // 프로그래스 보이기
     private fun showProgressBar() {
-        if (isProgressed) {
-            if (binding.mainMotionLayout.alpha == NOT_SHOWING_LOADING_FLOAT) {
-                isProgressed = true
-                binding.mainMotionLayout.alpha = SHOWING_LOADING_FLOAT
-                binding.mainMotionLayout.isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
-                binding.mainMotionLayout.isEnabled = false
-            }
-        }
+        setProgressVisibility(true)
     }
 
     // 프로그래스 숨기기
     private fun hideProgressBar() {
-        if (binding.mainMotionLayout.alpha == SHOWING_LOADING_FLOAT) {
-            binding.mainMotionLayout.alpha = NOT_SHOWING_LOADING_FLOAT
-            binding.mainMotionLayout.isInteractionEnabled = true // 모션 레이아웃의 스와이프를 허용
-            binding.mainMotionLayout.isEnabled = true
-        }
-        binding.mainGpsFix.clearAnimation()
+        setProgressVisibility(false)
     }
 
     // 프로그래스 진행 여부
@@ -792,7 +785,7 @@ class MainActivity
     }
 
     // 토픽을 갱신하는 작업
-    private fun reNewTopicInMain(newAddr: String) {
+    private suspend fun reNewTopicInMain(newAddr: String) {
         val old = getTopicNotification(this)
         SubFCM().renewTopic(old,newAddr)
         SetAppInfo.setTopicNotification(this, newAddr)
@@ -843,7 +836,9 @@ class MainActivity
     private fun handleApiSuccess(result: ApiModel.GetEntireData) {
         try {
             val metaAddr = result.meta.address ?: "주소 호출 에러"
-            reNewTopicInMain(metaAddr)
+            CoroutineScope(Dispatchers.IO).launch {
+                reNewTopicInMain(metaAddr)
+            }
             runOnUiThread {
                 binding.mainDailyWeatherRv.scrollToPosition(0)
                 binding.mainWarningVp.currentItem = 0

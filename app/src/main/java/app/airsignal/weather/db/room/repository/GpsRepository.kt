@@ -7,6 +7,7 @@ import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * @author : Lee Jae Young
@@ -19,36 +20,40 @@ class GpsRepository(private val context: Context) {
 
     fun update(model: GpsEntity) {
         CoroutineScope(Dispatchers.IO).launch {
-            getInstance(context)!!.gpsRepository().updateCurrentGPS(model)
+            getInstance(context).gpsRepository().updateCurrentGPS(model)
             Logger.t(TAG_D).d("Update Model : $model")
         }
     }
 
     fun insert(model: GpsEntity) {
         CoroutineScope(Dispatchers.IO).launch {
-            getInstance(context)!!.gpsRepository().insertNewGPS(model)
+            getInstance(context).gpsRepository().insertNewGPS(model)
         }
     }
 
     fun findAll(): List<GpsEntity> {
-        return getInstance(context)!!.gpsRepository().findAll()
+        return getInstance(context).gpsRepository().findAll()
     }
 
     fun findById(name: String): GpsEntity {
-        return getInstance(context)!!.gpsRepository().findById(name)
+        return getInstance(context).gpsRepository().findById(name)
     }
 
     fun deleteFromAddress(addr: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            getInstance(context)!!.gpsRepository().deleteFromAddr(addr)
+            getInstance(context).gpsRepository().deleteFromAddr(addr)
         }
     }
 
-    fun findByAddress(addr: String): GpsEntity {
-        return getInstance(context)!!.gpsRepository().findByAddress(addr)
+    suspend fun findByAddressAsync(addr: String): GpsEntity {
+        return withContext(Dispatchers.IO) {
+            return@withContext getInstance(context).gpsRepository().findByAddress(addr)
+        }
     }
 
     fun clearDB() {
-        getInstance(context)!!.gpsRepository().clearDB()
+        CoroutineScope(Dispatchers.IO).launch {
+            getInstance(context).gpsRepository().clearDB()
+        }
     }
 }

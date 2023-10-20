@@ -90,31 +90,6 @@ class NotificationBuilder {
                 .setLargeIcon(imgPath)
         }
 
-        when (data["sort"]) {
-            FCM_DAILY -> {
-                val temp = parseStringToDoubleToInt(data["temp"].toString())
-                val rainType = data["rainType"]
-                val sky = data["sky"]
-                val thunder = data["thunder"]?.toDouble()
-                val lunar = data["lunar"]?.toInt()
-                setNotiBuilder(
-                    title = "${temp}˚ ${applySkyText(context, rainType, sky, thunder)}",
-                    subtext = getNotificationAddress(context),
-                    content = "최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
-                            "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚",
-                    imgPath = getSkyBitmap(context, rainType, sky, thunder, lunar ?: -1)
-                )
-            }
-            FCM_PATCH -> {
-                val payload = data["payload"] ?: "새로운 업데이트가 준비되었어요"
-                setNotiBuilder(title = "에어시그널 날씨", subtext = null, content = payload, null)
-            }
-            FCM_EVENT -> {
-                val payload = data["payload"] ?: "눌러서 이벤트를 확인하세요"
-                setNotiBuilder(title = "에어시그널 날씨", subtext = null, content = payload, null)
-            }
-        }
-
         if (getUserNotiEnable(context)) {
             notificationManager?.let {
                 it.createNotificationChannel(notificationChannel)
@@ -126,6 +101,44 @@ class NotificationBuilder {
             RDBLogcat.writeNotificationHistory(context, "체크 해제로 인한 알림 미발송",
                 "${GetAppInfo.getUserLastAddress(context)} $data")
         }
+
+        fun processFcmNotification(data: Map<String, String>, context: Context) {
+            val notificationTitle: String
+            val notificationContent: String
+
+            when (data["sort"]) {
+                FCM_DAILY -> {
+                    val temp = parseStringToDoubleToInt(data["temp"].toString())
+                    val rainType = data["rainType"]
+                    val sky = data["sky"]
+                    val thunder = data["thunder"]?.toDouble()
+                    val lunar = data["lunar"]?.toInt()
+
+                    notificationTitle = "${temp}˚ ${applySkyText(context, rainType, sky, thunder)}"
+                    notificationContent = "최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
+                            "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚"
+                }
+                FCM_PATCH, FCM_EVENT -> {
+                    val payload = data["payload"] ?: if (data["sort"] == FCM_PATCH) "새로운 업데이트가 준비되었어요" else "눌러서 이벤트를 확인하세요"
+                    notificationTitle = "에어시그널 날씨"
+                    notificationContent = payload
+                }
+                else -> {
+                    // 기본 처리 또는 예외 처리
+                    notificationTitle = "에어시그널 알림"
+                    notificationContent = "현재 날씨를 확인해보세요"
+                }
+            }
+
+            setNotiBuilder(
+                title = notificationTitle,
+                subtext = getNotificationAddress(context),
+                content = notificationContent,
+                imgPath = getSkyBitmap(context, data["rainType"], data["sky"], data["thunder"]?.toDouble(), data["lunar"]?.toInt() ?: -1)
+            )
+        }
+
+        processFcmNotification(data,context)
     }
 
    private fun applyRingtone(context: Context,ringtone: Ringtone) {
