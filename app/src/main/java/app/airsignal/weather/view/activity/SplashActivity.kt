@@ -26,6 +26,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okio.IOException
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -96,56 +97,60 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     // 앱 버전 뷰모델 데이터 호출
     private fun applyAppVersionData() {
-        if (!appVersionViewModel.fetchData().hasObservers()) {
-            appVersionViewModel.fetchData().observe(this) { result ->
-                result?.let { ver ->
-                    when (ver) {
-                        // 통신 성공
-                        is BaseRepository.ApiState.Success -> {
-                            binding.splashPB.visibility = View.GONE
-                            val versionName = GetSystemInfo.getApplicationVersionName(this)
-                            val versionCode = GetSystemInfo.getApplicationVersionCode(this)
-                            if ((ver.data.serviceName == versionName) || (ver.data.releaseName == versionName)) {
-                                enterPage()
-                            } else {
-                                MakeSingleDialog(this)
-                                    .makeDialog(getString(R.string.not_latest_go_to_store),
-                                getColor(R.color.main_blue_color),getString(R.string.download), true)
-                                    .setOnClickListener {
-                                        goToPlayStore(this@SplashActivity)
-                                    }
+        try {
+            if (!appVersionViewModel.fetchData().hasObservers()) {
+                appVersionViewModel.fetchData().observe(this) { result ->
+                    result?.let { ver ->
+                        when (ver) {
+                            // 통신 성공
+                            is BaseRepository.ApiState.Success -> {
+                                binding.splashPB.visibility = View.GONE
+                                val versionName = GetSystemInfo.getApplicationVersionName(this)
+                                val versionCode = GetSystemInfo.getApplicationVersionCode(this)
+                                if ((ver.data.serviceName == versionName) || (ver.data.releaseName == versionName)) {
+                                    enterPage()
+                                } else {
+                                    MakeSingleDialog(this)
+                                        .makeDialog(getString(R.string.not_latest_go_to_store),
+                                            getColor(R.color.main_blue_color),getString(R.string.download), true)
+                                        .setOnClickListener {
+                                            goToPlayStore(this@SplashActivity)
+                                        }
+                                }
                             }
-                        }
 
-                        // 통신 실패
-                        is BaseRepository.ApiState.Error -> {
-                            binding.splashPB.visibility = View.GONE
-                            when (ver.errorMessage) {
-                                ERROR_NETWORK -> {
-                                    if (GetLocation(this).isNetWorkConnected()) {
+                            // 통신 실패
+                            is BaseRepository.ApiState.Error -> {
+                                binding.splashPB.visibility = View.GONE
+                                when (ver.errorMessage) {
+                                    ERROR_NETWORK -> {
+                                        if (GetLocation(this).isNetWorkConnected()) {
+                                            makeDialog(getString(R.string.unknown_error))
+                                        } else {
+                                            makeDialog(getString(R.string.error_network_connect))
+                                        }
+                                    }
+
+                                    ERROR_SERVER_CONNECTING -> {
+                                        makeDialog(getString(R.string.error_server_down))
+                                    }
+
+                                    else -> {
                                         makeDialog(getString(R.string.unknown_error))
-                                    } else {
-                                        makeDialog(getString(R.string.error_network_connect))
                                     }
                                 }
-
-                                ERROR_SERVER_CONNECTING -> {
-                                    makeDialog(getString(R.string.error_server_down))
-                                }
-
-                                else -> {
-                                    makeDialog(getString(R.string.unknown_error))
-                                }
                             }
-                        }
 
-                        // 통신 중
-                        is BaseRepository.ApiState.Loading -> {
-                            binding.splashPB.visibility = View.VISIBLE
+                            // 통신 중
+                            is BaseRepository.ApiState.Loading -> {
+                                binding.splashPB.visibility = View.VISIBLE
+                            }
                         }
                     }
                 }
             }
+        } catch(e: IOException) {
+            makeDialog("앱 버전을 불러올 수 없습니다.")
         }
     }
 

@@ -80,6 +80,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okio.IOException
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -698,41 +699,49 @@ class SettingActivity
         val appInfoDataUsage: TextView = viewAppInfo.findViewById(R.id.appInfoDataUsage)
 
 
-        // 뷰모델 데이터 호출
-        appVersionViewModel.fetchData().observe(this) { result ->
-            result?.let { ver ->
-                when (ver) {
-                    is BaseRepository.ApiState.Success -> {
-                        val data = ver.data
-                        val versionName = getApplicationVersionName(this)
-                        val versionCode = getApplicationVersionCode(this)
+        try {
+            // 뷰모델 데이터 호출
+            appVersionViewModel.fetchData().observe(this) { result ->
+                result?.let { ver ->
+                    when (ver) {
+                        is BaseRepository.ApiState.Success -> {
+                            val data = ver.data
+                            val versionName = getApplicationVersionName(this)
+                            val versionCode = getApplicationVersionCode(this)
 
-                        appInfoVersionValue.text = "${versionName}.${versionCode}"
-                        if ("${data.serviceName}.${data.serviceCode}" == "${versionName}.${versionCode}"
-                            || "${versionName}.${versionCode}" == "${data.releaseName}.${data.releaseCode}") {
-                            appInfoIsRecent.text = getString(R.string.last_software)
-                            appInfoIsRecent.setTextColor(getColor(R.color.sub_gray_color))
-                            appInfoDownBtn.visibility = View.GONE
-                            appInfoVersionValue.visibility = View.VISIBLE
-                        } else {
-                            appInfoIsRecent.text =
-                                getString(R.string.not_latest_version)
-                            appInfoIsRecent.setTextColor(getColor(R.color.main_blue_color))
-                            appInfoDownBtn.visibility = View.VISIBLE
-                            appInfoVersionValue.visibility = View.GONE
+                            appInfoVersionValue.text = "${versionName}.${versionCode}"
+                            if ("${data.serviceName}.${data.serviceCode}" == "${versionName}.${versionCode}"
+                                || "${versionName}.${versionCode}" == "${data.releaseName}.${data.releaseCode}") {
+                                appInfoIsRecent.text = getString(R.string.last_software)
+                                appInfoIsRecent.setTextColor(getColor(R.color.sub_gray_color))
+                                appInfoDownBtn.visibility = View.GONE
+                                appInfoVersionValue.visibility = View.VISIBLE
+                            } else {
+                                appInfoIsRecent.text =
+                                    getString(R.string.not_latest_version)
+                                appInfoIsRecent.setTextColor(getColor(R.color.main_blue_color))
+                                appInfoDownBtn.visibility = View.VISIBLE
+                                appInfoVersionValue.visibility = View.GONE
+                            }
                         }
-                    }
-                    is BaseRepository.ApiState.Error -> {
-                        Toast.makeText(
-                            this@SettingActivity,
-                            getString(R.string.fail_to_get_version),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                        is BaseRepository.ApiState.Error -> {
+                            Toast.makeText(
+                                this@SettingActivity,
+                                getString(R.string.fail_to_get_version),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
 
-                    else -> {}
+                        else -> {}
+                    }
                 }
             }
+        } catch (e: IOException) {
+            Toast.makeText(
+                this@SettingActivity,
+                getString(R.string.fail_to_get_version),
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
         // 새로운 버전 다운로드 실행

@@ -109,6 +109,7 @@ import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.database.DatabaseException
 import kotlinx.coroutines.*
+import okio.IOException
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
 import java.util.*
@@ -808,28 +809,33 @@ class MainActivity
 
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel() {
-        getDataViewModel.fetchData().observe(this) { entireData ->
-            entireData?.let { eData ->
-                binding.mainSwipeLayout.isRefreshing = false
+        try {
+            getDataViewModel.fetchData().observe(this) { entireData ->
+                entireData?.let { eData ->
+                    binding.mainSwipeLayout.isRefreshing = false
 
-                when (eData) {
-                    is BaseRepository.ApiState.Success -> {
-                        handleApiSuccess(eData.data)
+                    when (eData) {
+                        is BaseRepository.ApiState.Success -> {
+                            handleApiSuccess(eData.data)
+                        }
+                        is BaseRepository.ApiState.Error -> {
+                            handleApiError(eData.errorMessage)
+                        }
+                        is BaseRepository.ApiState.Loading -> {
+                            showProgressBar()
+                        }
                     }
-                    is BaseRepository.ApiState.Error -> {
-                        handleApiError(eData.errorMessage)
+                } ?: run {
+                    if (isDataResponse) {
+                        isCalledButFail()
+                    } else {
+                        hideAllViews(error = ERROR_NULL_DATA)
                     }
-                    is BaseRepository.ApiState.Loading -> {
-                        showProgressBar()
-                    }
-                }
-            } ?: run {
-                if (isDataResponse) {
-                    isCalledButFail()
-                } else {
-                    hideAllViews(error = ERROR_NULL_DATA)
                 }
             }
+        } catch (e: IOException) {
+            binding.mainSwipeLayout.isRefreshing = false
+            handleApiError(ERROR_API_PROTOCOL)
         }
     }
 

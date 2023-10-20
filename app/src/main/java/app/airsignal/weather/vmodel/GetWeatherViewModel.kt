@@ -6,6 +6,7 @@ import app.airsignal.weather.repo.BaseRepository
 import app.airsignal.weather.repo.GetWeatherRepo
 import app.airsignal.weather.retrofit.ApiModel
 import kotlinx.coroutines.launch
+import okio.IOException
 
 /**
  * @author : Lee Jae Young
@@ -14,7 +15,7 @@ import kotlinx.coroutines.launch
 class GetWeatherViewModel(private val repo: GetWeatherRepo) : BaseViewModel("날씨 데이터 호출") {
 
     // MutableLiveData 값을 받아 View 로 전달해 줄 LiveData
-    private lateinit var getDataResultData: LiveData<BaseRepository.ApiState<ApiModel.GetEntireData>?>
+    private var getDataResultData: LiveData<BaseRepository.ApiState<ApiModel.GetEntireData>?>? = null
 
     // MutableLiveData 값을 갱신하기 위한 함수
     fun loadData(lat: Double?, lng: Double?, addr: String?): GetWeatherViewModel {
@@ -33,6 +34,6 @@ class GetWeatherViewModel(private val repo: GetWeatherRepo) : BaseViewModel("날
             e.printStackTrace()
         }
 
-        return getDataResultData
+        return getDataResultData ?: throw IOException()
     }
 }

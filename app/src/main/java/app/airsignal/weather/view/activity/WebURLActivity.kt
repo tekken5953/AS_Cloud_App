@@ -26,12 +26,12 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
         val webView = binding.webUrlWebView
 
         window.statusBarColor = getColor(R.color.theme_view_color)
+
+        @Suppress("DEPRECATION")
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility =
-                window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
         } else {
-            @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
@@ -70,25 +70,16 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             binding.webUrlLinear.visibility = View.GONE
         }
 
-        val url: String
-        when(intent.extras!!.getString("sort")) {
-            "as-eye" -> {
-                binding.webUrlTitle.text = "AS-EYE"
-                url = "about:blank"
-            }
-            "termsOfService" -> {
-                binding.webUrlTitle.text = getString(R.string.term_of_services)
-                url = termsOfServiceURL
-            }
-            "dataUsage" -> {
-                binding.webUrlTitle.text = getString(R.string.data_usages)
-                url = privacyPolicyURI
-            }
-            else -> {
-                binding.webUrlTitle.text = ""
-                url = "about:blank"
-            }
+        val sort = intent.extras?.getString("sort")
+
+        val (webUrlTitleText, url) = when (sort) {
+            "as-eye" -> "AS-EYE" to "about:blank"
+            "termsOfService" -> getString(R.string.term_of_services) to termsOfServiceURL
+            "dataUsage" -> getString(R.string.data_usages) to privacyPolicyURI
+            else -> "" to "about:blank"
         }
+
+        binding.webUrlTitle.text = webUrlTitleText
 
         webView.clearCache(true)
         webView.loadUrl(url) // 페이지 로딩

@@ -60,13 +60,10 @@ class AirQTitleAdapter(private val context: Context, list: ArrayList<AdapterMode
                 title.setTextColor(context.getColor(R.color.white))
                 title.setBackgroundResource(R.drawable.pm_rv_title_bg_s)
             } else {
-                if (isWhite) {
-                    title.setBackgroundResource(R.drawable.pm_rv_title_bg_ns_w)
-                    title.setTextColor(context.getColor(R.color.sub_white))
-                } else {
-                    title.setBackgroundResource(R.drawable.pm_rv_title_bg_ns_b)
-                    title.setTextColor(context.getColor(R.color.sub_black))
-                }
+                title.setBackgroundResource(
+                    if(isWhite)R.drawable.pm_rv_title_bg_ns_w else R.drawable.pm_rv_title_bg_ns_b)
+                title.setTextColor(
+                   context.getColor( if(isWhite)R.color.sub_white else R.color.sub_black))
             }
 
             itemView.setOnClickListener {

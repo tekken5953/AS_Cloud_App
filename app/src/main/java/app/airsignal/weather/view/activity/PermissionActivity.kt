@@ -29,7 +29,8 @@ class PermissionActivity :
         super.onResume()
         if (perm.isLocationPermitted()) {   // 위치 서비스 이용 가능?
             if (!perm.isNotificationPermitted()) {  // 알림 서비스 이용 가능?
-                if (getInitNotiPermission(this) == "") { // 알림 서비스 권한 호출이 처음?
+                val initNotiPermission = getInitNotiPermission(this)
+                if (initNotiPermission == "") { // 알림 서비스 권한 호출이 처음?
                     SetAppInfo.setInitNotiPermission(this, "Not Init")
                     perm.requestNotification()  // 알림 권한 요청
                 } else {
@@ -77,18 +78,20 @@ class PermissionActivity :
         )
 
         val userDataIndex = binding.permissionUserDataNotice.text.toString().indexOf(getString(R.string.data_usages).lowercase())
-
         val spanUserData = SpannableStringBuilder(binding.permissionUserDataNotice.text.toString())
+
         spanUserData.setSpan(UnderlineSpan(),
                 userDataIndex,
                 userDataIndex + getString(R.string.data_usages).length,
                 Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+
         spanUserData.setSpan(ForegroundColorSpan(getColor(R.color.main_blue_color)),
             userDataIndex,
             userDataIndex + getString(R.string.data_usages).length,
             Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
 
         binding.permissionUserDataNotice.text = spanUserData
+
         binding.permissionUserDataNotice.setOnClickListener {
             // 개인정보 처리방침 열림
             val intent = Intent(this@PermissionActivity, WebURLActivity::class.java)

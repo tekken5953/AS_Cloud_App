@@ -53,11 +53,7 @@ class WarningViewPagerAdapter(
             textView.text = dao
             textView.setTextColor(textColor)
 
-            if (mList.size == 0) {
-                viewPager2.visibility = View.GONE
-            } else {
-                viewPager2.visibility = View.VISIBLE
-            }
+            viewPager2.visibility = if(mList.size == 0) View.GONE else View.VISIBLE
 
             itemView.setOnClickListener {
                 val position = bindingAdapterPosition
