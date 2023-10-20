@@ -11,7 +11,6 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.*
 import android.os.Build.VERSION
-import android.telephony.CarrierConfigManager.Gps
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -109,7 +108,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.database.DatabaseException
-import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
@@ -1039,6 +1037,7 @@ class MainActivity
         }
 
         val dateNow: LocalDateTime = LocalDateTime.now()
+        val tempDate = LocalDateTime.parse(week.tempDate)
 
         // 주간별 날씨 아이템 추가
         repeat(7) {
@@ -1052,13 +1051,19 @@ class MainActivity
                             this, dateNow.dayOfWeek.value + it)}${getString(R.string.date)}"
                     }
                 }
+
+                val wfMinParse = if(tempDate.isBefore(dateNow)) wfMin[it+1] else wfMin[it]
+                val wfMaxParse = if(tempDate.isBefore(dateNow)) wfMax[it+1] else wfMax[it]
+                val taMinParse = if(tempDate.isBefore(dateNow)) taMin[it+1] else taMin[it]
+                val taMaxParse = if(tempDate.isBefore(dateNow)) taMax[it+1] else taMax[it]
+
                 addWeeklyWeatherItem(
                     date,
                     convertDateAppendZero(formedDate),
-                    getSkyImgSmall(this, wfMin[it], false)!!,
-                    getSkyImgSmall(this, wfMax[it], false)!!,
-                    "${taMin[it]!!.roundToInt()}˚",
-                    "${taMax[it]!!.roundToInt()}˚"
+                    getSkyImgSmall(this, wfMinParse, false)!!,
+                    getSkyImgSmall(this, wfMaxParse, false)!!,
+                    "${taMinParse?.roundToInt() ?: -999}˚",
+                    "${taMaxParse?.roundToInt() ?: -999}˚"
                 )
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(RDBLogcat.DATA_CALL_ERROR,

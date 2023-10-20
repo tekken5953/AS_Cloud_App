@@ -65,10 +65,10 @@ class ApiModel {
     data class WeeklyData(
 //        @SerializedName("today")
 //        val today: LocalDateTime,
-//        @SerializedName("rainDate")
-//        val rainDate: String?,
-//        @SerializedName("tempDate")
-//        val tempDate: String?,
+        @SerializedName("rainDate")
+        val rainDate: String?,
+        @SerializedName("tempDate")
+        val tempDate: String?,
         @SerializedName("rnSt0Am")
         val rnSt0Am: Double?,
         @SerializedName("rnSt0Pm")
