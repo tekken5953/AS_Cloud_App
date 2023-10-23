@@ -16,6 +16,7 @@ import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
+import app.airsignal.weather.view.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider
@@ -64,7 +65,6 @@ class KakaoLogin(private val activity: Activity) {
                             callback = mCallback
                         )
                     }
-
                 }
                 else {
                     // 로그인 성공 부분
@@ -135,25 +135,14 @@ class KakaoLogin(private val activity: Activity) {
     /** 자동 로그인 **/
     fun isValidToken(btn: AppCompatButton) {
         if (AuthApiClient.instance.hasToken()) {
-            UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
+            UserApiClient.instance.accessTokenInfo { _, error ->
                 if (error != null) {
                     btn.alpha = 1f
-                    if (error is KakaoSdkError && error.isInvalidTokenError()) {
+                    if (error is KakaoSdkError && error.isInvalidTokenError())
                         Logger.t("testtest").w("만료된 토큰입니다") // 만료된 토큰임 로그인 필요
-                    } else {
+                     else
                         Logger.t("testtest").e("기타 에러 발생 : $error") //기타 에러
-                    }
-                } else {
-                    //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
-                    RefreshUtils(activity).refreshActivity()
-                    tokenInfo?.let {
-//                        Logger.t(TAG_LOGIN)
-//                            .d(
-//                                "카카오 자동로그인 성공\n" +
-//                                        "user code is ${it}\n"
-//                            )
-                    }
-                }
+                } else RefreshUtils(activity).refreshActivity() //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
             }
         } else {
             // 토큰이 없음 로그인 필요
@@ -195,7 +184,7 @@ class KakaoLogin(private val activity: Activity) {
         try {
             UserApiClient.instance.logout { error ->
                 if (error != null) {
-                    app.airsignal.weather.view.ToastUtils(activity)
+                    ToastUtils(activity)
                         .showMessage("로그아웃에 실패했습니다",1)
                     writeLoginHistory(
                         isLogin = false, platform = LOGIN_KAKAO, email = getUserEmail(activity),

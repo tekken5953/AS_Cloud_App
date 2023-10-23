@@ -25,14 +25,10 @@ class SubAirView(context: Context, attrs: AttributeSet?)
     }
 
     // 타이틀 반환
-    fun getTitle(): TextView {
-        return subAirBinding.customSubAirTitle
-    }
+    fun getTitle(): TextView { return subAirBinding.customSubAirTitle }
 
     // 값 데이터 반환
-    fun getValue(): TextView {
-        return subAirBinding.customSubAirValue
-    }
+    fun getValue(): TextView { return subAirBinding.customSubAirValue }
 
     // 방위에 따른 아이콘 적용
     @SuppressLint("UseCompatTextViewDrawableApis")

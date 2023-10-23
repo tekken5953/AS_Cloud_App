@@ -36,11 +36,10 @@ class GetAppVersionRepo: BaseRepository() {
                     val responseBody = response.body()!!
 
                     try {
-                        if (response.isSuccessful) {
+                        if (response.isSuccessful)
                             _getAppVersionResult.postValue(ApiState.Success(responseBody))
-                        } else {
+                        else
                             _getAppVersionResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
-                        }
                     } catch(e: Exception) {
                         _getAppVersionResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
                     }

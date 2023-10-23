@@ -183,13 +183,9 @@ class SearchDialog(
         @SuppressLint("InflateParams")
         val searchItem = ArrayList<String>()
         val allTextArray =
-            if (isKorea())
-                resources.getStringArray(R.array.address_korean)
-            else
-                resources.getStringArray(R.array.address_english)
-
-        val adapter =
-            CustomArrayAdapter(editText, dataList = searchItem)
+            if (isKorea()) resources.getStringArray(R.array.address_korean)
+            else resources.getStringArray(R.array.address_english)
+        val adapter = CustomArrayAdapter(editText, dataList = searchItem)
         listView.adapter = adapter
 
         editText.setOnTouchListener { _, motionEvent ->
@@ -197,7 +193,6 @@ class SearchDialog(
                 if (motionEvent.action == MotionEvent.ACTION_UP &&
                     motionEvent.rawX >= editText.right - editText.compoundDrawablesRelative[2].bounds.width()
                 ) {
-                    // Clear the EditText when the clear button is clicked
                     editText.text.clear()
                     return@setOnTouchListener true
                 }
@@ -211,12 +206,8 @@ class SearchDialog(
 
         // 서치 뷰 텍스트 변환 콜벡
         editText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
-
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 if (s!!.isNotEmpty()) {
                     searchItem.clear()
@@ -230,9 +221,7 @@ class SearchDialog(
                         if (allList.replace(" ", "").lowercase().contains(nonSpacing) ||
                             convertAddress(allList).replace(" ", "").lowercase()
                                 .contains(nonSpacing)
-                        ) {
-                            searchItem.add(allList)
-                        }
+                        ) searchItem.add(allList)
                     }
                 } else {
                     noResult.visibility = View.VISIBLE
@@ -260,33 +249,21 @@ class SearchDialog(
                 val apply = viewSearched.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
                 val title = viewSearched.findViewById<TextView>(R.id.alertDoubleTitle)
 
-                val span =    if (resources.configuration.locales[0] == Locale.KOREA) {
+                val span =
+                    if (resources.configuration.locales[0] == Locale.KOREA)
                     SpannableStringBuilder("${searchItem[position]}을(를)\n추가하시겠습니까?")
-                } else {
-                    SpannableStringBuilder("Add ${searchItem[position]}?")
-                }
+                    else SpannableStringBuilder("Add ${searchItem[position]}?")
 
-                if (isKorea()) {
-                    span.setSpan(
-                        ForegroundColorSpan(
-                            ResourcesCompat.getColor(
-                                activity.resources,
-                                R.color.main_blue_color, null
-                            )
-                        ), 0,
-                        searchItem[position].length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                } else if (!isKorea()) {
-                    span.setSpan(
-                        ForegroundColorSpan(
-                            ResourcesCompat.getColor(
-                                activity.resources,
-                                R.color.main_blue_color, null
-                            )
-                        ), 4,
-                        4 + searchItem[position].length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                }
+                span.setSpan(
+                    ForegroundColorSpan(
+                        ResourcesCompat.getColor(
+                            activity.resources,
+                            R.color.main_blue_color, null
+                        )
+                    ), if (isKorea()) 0 else 4,
+                   if (isKorea()) searchItem[position].length else 4 + searchItem[position].length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
 
                 title.text = span
                 apply.text = activity.getString(R.string.add)
@@ -301,11 +278,10 @@ class SearchDialog(
                         val model = GpsEntity()
                         model.name = searchItem[position]
 
-                        val addrArray =  if (!isKorea()) {
-                            resources.getStringArray(R.array.address_english)
-                        } else {
-                            resources.getStringArray(R.array.address_korean)
-                        }
+                        val addrArray =  resources.getStringArray(
+                            if (!isKorea()) R.array.address_english
+                            else R.array.address_korean)
+
                         addrArray.forEachIndexed { index, s ->
                             if(s == searchItem[position]) {
                                 model.position = index
@@ -324,9 +300,7 @@ class SearchDialog(
                     }
                 }
 
-                cancel.setOnClickListener {
-                    builder.dismiss()
-                }
+                cancel.setOnClickListener { builder.dismiss() }
 
                 builder.show()
             }
@@ -337,29 +311,17 @@ class SearchDialog(
         val dialog = super.onCreateDialog(savedInstanceState)
         dialog.setCanceledOnTouchOutside(true)
 
-        if (layoutId == 1) {
-            dialog.setOnShowListener { dialogInterface ->
-                val bottomSheetDialog = dialogInterface as BottomSheetDialog
-                bottomSheetDialog.behavior.isDraggable = false
-                setupRatio(bottomSheetDialog, 100)
-            }
-            dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationSide
-        } else {
-            dialog.setOnShowListener { dialogInterface ->
-                val bottomSheetDialog = dialogInterface as BottomSheetDialog
-                setupRatio(bottomSheetDialog, 90)
-                bottomSheetDialog.behavior.isDraggable = true
-            }
-            dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationUp
+        dialog.setOnShowListener { dialogInterface ->
+            val bottomSheetDialog = dialogInterface as BottomSheetDialog
+            bottomSheetDialog.behavior.isDraggable = layoutId != 1
+            setupRatio(bottomSheetDialog, if (layoutId == 1) 100 else 90)
         }
 
         return dialog
     }
 
     // 레이아웃 노출
-    fun show(layoutId: Int) {
-        SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId)
-    }
+    fun show(layoutId: Int) { SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId) }
 
     private suspend fun dbUpdate(addrKr: String?, addrEn: String?) {
         withContext(Dispatchers.Default) {
@@ -409,9 +371,8 @@ class SearchDialog(
     private fun getWindowHeight(): Int {
         // Calculate window height for fullscreen use
         val displayMetrics = DisplayMetrics()
-        @Suppress("DEPRECATION") (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(
-            displayMetrics
-        )
+        @Suppress("DEPRECATION")
+        (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
         return displayMetrics.heightPixels
     }
 
@@ -435,9 +396,7 @@ class SearchDialog(
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
                 view.text = coloredText
-            } else {
-                view.text = fullText
-            }
+            } else  view.text = fullText
 
             return view
         }

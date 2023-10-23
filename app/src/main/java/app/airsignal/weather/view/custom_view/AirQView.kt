@@ -23,8 +23,8 @@ class AirQView(context: Context, attrs: AttributeSet?)
         val inflater = LayoutInflater.from(context)
         airBinding = CustomViewMainAirBinding.inflate(inflater, this, true)
 
-        attrs?.let {
-            val typedArray = context.obtainStyledAttributes(it, R.styleable.AirQView)
+        attrs?.let { set ->
+            val typedArray = context.obtainStyledAttributes(set, R.styleable.AirQView)
             typedArray.recycle()
         }
 

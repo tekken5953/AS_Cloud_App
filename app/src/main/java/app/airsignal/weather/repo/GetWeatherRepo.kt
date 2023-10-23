@@ -10,7 +10,6 @@ import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.dao.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.weather.dao.ErrorCode.ERROR_UNKNOWN
 import app.airsignal.weather.dao.StaticDataObject.TAG_R
-import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.firebase.db.RDBLogcat.writeErrorANR
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.retrofit.HttpClient.mMyAPIImpl
@@ -53,7 +52,6 @@ class GetWeatherRepo : BaseRepository() {
                                 _getDataResult.postValue(ApiState.Success(responseBody))
                             } else {
                                 _getDataResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
-
                                 call.cancel()
                             }
                         } catch (e: NullPointerException) {
@@ -72,15 +70,12 @@ class GetWeatherRepo : BaseRepository() {
                             call.cancel()
                         } catch (e: Exception) {
                             when (e) {
-                                is SocketTimeoutException -> {
+                                is SocketTimeoutException ->
                                     _getDataResult.postValue(ApiState.Error(ERROR_TIMEOUT))
-                                }
-                                is NetworkErrorException -> {
+                                is NetworkErrorException ->
                                     _getDataResult.postValue(ApiState.Error(ERROR_NETWORK))
-                                }
-                                is NullPointerException -> {
+                                is NullPointerException ->
                                     _getDataResult.postValue(ApiState.Error(ERROR_NULL_POINT))
-                                }
                                 else -> {
                                     Logger.t(TAG_R).e("onFailure : ERROR_UNKNOWN")
                                     _getDataResult.postValue(ApiState.Error(ERROR_UNKNOWN))

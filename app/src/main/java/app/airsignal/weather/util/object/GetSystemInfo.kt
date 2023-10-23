@@ -31,15 +31,9 @@ object GetSystemInfo {
     /** 현재 설정된 국가를 반환 **/
     fun getLocale(context: Context): Locale {
         return when (getUserLocation(context)) {
-            LANG_KR -> {
-                Locale.KOREA
-            }
-            LANG_EN -> {
-                Locale.ENGLISH
-            }
-            else -> {
-                Locale.getDefault()
-            }
+            LANG_KR -> Locale.KOREA
+            LANG_EN -> Locale.ENGLISH
+            else -> Locale.getDefault()
         }
     }
 
@@ -51,16 +45,15 @@ object GetSystemInfo {
                 context.applicationContext.contentResolver,
                 Settings.Secure.ANDROID_ID
             )
-        } catch (e: java.lang.NullPointerException) {
-            ""
-        }
+        } catch (e: java.lang.NullPointerException) { "" }
     }
 
     /** 현재 앱 버전 반환 **/
     fun getApplicationVersionName(context: Context): String {
         try {
             val packageManager = context.packageManager
-            val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
+            @Suppress("DEPRECATION") val packageInfo =
+                packageManager.getPackageInfo(context.packageName, 0)
             return packageInfo.versionName
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
@@ -73,6 +66,7 @@ object GetSystemInfo {
     fun getApplicationVersionCode(context: Context): String {
         try {
             val packageManager = context.packageManager
+            @Suppress("DEPRECATION")
             val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
             val appVersionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
             return appVersionCode.toString()

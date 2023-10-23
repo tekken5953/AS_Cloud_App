@@ -8,11 +8,9 @@ class GpsWorkManager(context: Context, params: WorkerParameters) : Worker(contex
 
     override fun doWork(): Result {
         val loc = GetLocation(applicationContext)
-        if (loc.isNetWorkConnected()) {
-            loc.getGpsInBackground()
-        } else {
-            return Result.failure()
-        }
+        if (loc.isNetWorkConnected()) loc.getGpsInBackground()
+        else return Result.failure()
+
         return Result.success()
     }
 }

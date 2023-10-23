@@ -125,11 +125,9 @@ class FirstLocCheckDialog(
 
     // 디바이스 높이 구하기
     private fun getWindowHeight(): Int {
-        // Calculate window height for fullscreen use
         val displayMetrics = DisplayMetrics()
-        @Suppress("DEPRECATION") (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(
-            displayMetrics
-        )
+        @Suppress("DEPRECATION")
+        (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
         return displayMetrics.heightPixels
     }
 }

@@ -16,8 +16,8 @@ class CustomerServiceView(context: Context, attrs: AttributeSet?)
         val inflater = LayoutInflater.from(context)
         customerBinding = CustomViewCustomerItemBinding.inflate(inflater, this, true)
 
-        attrs?.let {
-            val typedArray = context.obtainStyledAttributes(it, R.styleable.CustomerServiceView)
+        attrs?.let { set ->
+            val typedArray = context.obtainStyledAttributes(set, R.styleable.CustomerServiceView)
             val title = typedArray.getString(R.styleable.CustomerServiceView_customerTitle)
             val value = typedArray.getString(R.styleable.CustomerServiceView_customerValue)
             typedArray.recycle()

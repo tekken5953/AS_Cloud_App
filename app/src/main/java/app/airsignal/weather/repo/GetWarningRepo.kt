@@ -34,11 +34,10 @@ class GetWarningRepo: BaseRepository() {
                     val responseBody = response.body()!!
 
                     try {
-                        if (response.isSuccessful) {
+                        if (response.isSuccessful)
                             _getWarningResult.postValue(ApiState.Success(responseBody))
-                        } else {
+                        else
                             _getWarningResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
-                        }
                     } catch(e: Exception) {
                         _getWarningResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
                     }

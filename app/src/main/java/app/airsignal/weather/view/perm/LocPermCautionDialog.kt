@@ -49,15 +49,13 @@ class LocPermCautionDialog(
 
         // 권한 재요청 아이콘 애니메이션 적용
         locIcon.animation =
-            AnimationUtils.loadAnimation(context,R.anim.loc_perm_caution_icon_anim).apply {
-                start()
-            }
+            AnimationUtils.loadAnimation(context,R.anim.loc_perm_caution_icon_anim)
+                .apply { start() }
 
         // 권한 재요청 그림자 애니메이션 적용
         locShadow.animation =
-            AnimationUtils.loadAnimation(context,R.anim.loc_perm_caution_shadow_anim).apply {
-                start()
-            }
+            AnimationUtils.loadAnimation(context,R.anim.loc_perm_caution_shadow_anim)
+                .apply { start() }
 
         // 확인 버튼 클릭
         okBtn.setOnClickListener {
@@ -69,23 +67,21 @@ class LocPermCautionDialog(
 
     // 다이얼로그 생성
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setCanceledOnTouchOutside(false)
+        super.onCreateDialog(savedInstanceState).apply {
+            this.setCanceledOnTouchOutside(false)
+            this.setOnShowListener { dialogInterface ->
+                val bottomSheetDialog = dialogInterface as BottomSheetDialog
+                bottomSheetDialog.behavior.isDraggable = false
+                setupRatio(bottomSheetDialog, 60)
+            }
+            this.window?.attributes?.windowAnimations = R.style.DialogAnimationBottom
 
-        dialog.setOnShowListener { dialogInterface ->
-            val bottomSheetDialog = dialogInterface as BottomSheetDialog
-            bottomSheetDialog.behavior.isDraggable = false
-            setupRatio(bottomSheetDialog, 60)
+            return this
         }
-        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationBottom
-
-        return dialog
     }
 
     // 레이아웃 노출
-    fun show() {
-        LocPermCautionDialog(activity, fm, tagId).showNow(fm, tagId)
-    }
+    fun show() { LocPermCautionDialog(activity, fm, tagId).showNow(fm, tagId) }
 
     // 바텀 다이얼로그 세팅
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog, ratio: Int) {
@@ -106,11 +102,9 @@ class LocPermCautionDialog(
 
     // 디바이스 높이 구하기
     private fun getWindowHeight(): Int {
-        // Calculate window height for fullscreen use
         val displayMetrics = DisplayMetrics()
-        @Suppress("DEPRECATION") (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(
-            displayMetrics
-        )
+        @Suppress("DEPRECATION")
+        (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
         return displayMetrics.heightPixels
     }
 }

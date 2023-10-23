@@ -19,7 +19,6 @@ class GetWeatherViewModel(private val repo: GetWeatherRepo) : BaseViewModel("날
 
     // MutableLiveData 값을 갱신하기 위한 함수
     fun loadData(lat: Double?, lng: Double?, addr: String?): GetWeatherViewModel {
-//        repo._getDataResult.value = BaseRepository.ApiState.Loading
         repo.loadDataResult(lat, lng, addr)
         return this
     }
@@ -27,12 +26,8 @@ class GetWeatherViewModel(private val repo: GetWeatherRepo) : BaseViewModel("날
     // LiveData 에 MutableLiveData 값 적용 후 View 에 전달
     fun fetchData(): LiveData<BaseRepository.ApiState<ApiModel.GetEntireData>?> {
         try {
-            viewModelScope.launch {
-                getDataResultData = repo._getDataResult
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+            viewModelScope.launch { getDataResultData = repo._getDataResult }
+        } catch (e: Exception) { e.printStackTrace() }
 
         return getDataResultData ?: throw IOException()
     }

@@ -24,15 +24,12 @@ object HttpClient {
     fun getInstance(isWidget: Boolean): HttpClient {
         if (!isWidget) {
             instance ?: synchronized(HttpClient::class.java) {   // 멀티스레드에서 동시생성하는 것을 막음
-                instance ?: HttpClient.also {
-                    instance = it
-                }
+                instance ?: HttpClient.also { client -> instance = client }
             }
         } else {
-            try {
-                instance = HttpClient
-            } catch (e: Exception) {
-                RDBLogcat.writeErrorANR(thread = Thread.currentThread().name, msg = "인스턴스 생성 실패 - ${e.localizedMessage!!}")
+            try { instance = HttpClient } catch (e: Exception) {
+                RDBLogcat.writeErrorANR(thread = Thread.currentThread().name,
+                    msg = "인스턴스 생성 실패 - ${e.localizedMessage!!}")
             }
         }
         return instance!!
@@ -44,15 +41,14 @@ object HttpClient {
          * 클라이언트 빌더 Interceptor 구분 **/
         val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
             retryOnConnectionFailure(retryOnConnectionFailure = true)
-            connectTimeout(30, TimeUnit.SECONDS)
+            connectTimeout(20, TimeUnit.SECONDS)
             readTimeout(12, TimeUnit.SECONDS)
             writeTimeout(12, TimeUnit.SECONDS)
-            addInterceptor {
-                val request = it.request().newBuilder()
+            addInterceptor { chain ->
+                val request = chain.request().newBuilder()
                     .addHeader("Connection", "close")
                     .build()
-
-                it.proceed(request)
+                chain.proceed(request)
             }.build()
         }
 

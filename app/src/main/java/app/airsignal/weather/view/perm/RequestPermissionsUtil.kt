@@ -76,9 +76,7 @@ class RequestPermissionsUtil(private val context: Context) {
         for (perm in permissionsLocation) {
             if (ContextCompat.checkSelfPermission(context, perm)
                 != PackageManager.PERMISSION_GRANTED
-            ) {
-                return false
-            }
+            ) return false
         }
         return true
     }
@@ -88,13 +86,9 @@ class RequestPermissionsUtil(private val context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             for (perm in permissionNotification) {
                 return ContextCompat.checkSelfPermission(
-                    context,
-                    perm
-                ) == PackageManager.PERMISSION_GRANTED
+                    context, perm) == PackageManager.PERMISSION_GRANTED
             }
-        } else {
-            return true
-        }
+        } else return true
         return true
     }
 
@@ -111,10 +105,7 @@ class RequestPermissionsUtil(private val context: Context) {
         for (perm in permissionsLocation) {
             if (ContextCompat.checkSelfPermission(context, perm)
                 != PackageManager.PERMISSION_DENIED
-            ) {
-                Timber.tag(TAG_P).i(ContextCompat.checkSelfPermission(context, perm).toString())
-                return false
-            }
+            ) return false
         }
         return true
     }
@@ -129,26 +120,18 @@ class RequestPermissionsUtil(private val context: Context) {
                     perm
                 ) == PackageManager.PERMISSION_DENIED
             }
-        } else {
-            return true
-        }
+        } else return true
+
         return true
     }
 
     /** 권한 요청 거부 횟수에 따른 반환 **/
     fun isShouldShowRequestPermissionRationale(activity: Activity, perm: String): Boolean {
         return when (getInitLocPermission(activity)) {
-            "" -> {
-                true
-            }
-            "Second" -> {
-                true
-            }
+            "" -> true
+            "Second" -> true
             else -> {
-                shouldShowRequestPermissionRationale(
-                    activity,
-                    perm
-                )
+                shouldShowRequestPermissionRationale(activity, perm)
                 false
             }
         }

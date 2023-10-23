@@ -2,6 +2,7 @@ package app.airsignal.weather.vmodel
 
 import androidx.lifecycle.ViewModel
 import app.airsignal.weather.dao.StaticDataObject
+import app.airsignal.weather.dao.StaticDataObject.TAG_R
 import kotlinx.coroutines.Job
 import timber.log.Timber
 
@@ -11,9 +12,7 @@ open class BaseViewModel(msg: String?) : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        if (job != null)
-            job?.cancel()
-        if (message != null)
-            Timber.tag(StaticDataObject.TAG_R).i("%s 뷰모델 인스턴스 소멸", message)
+        if (job != null) job?.cancel()
+        if (message != null) Timber.tag(TAG_R).i("%s 뷰모델 인스턴스 소멸", message)
     }
 }

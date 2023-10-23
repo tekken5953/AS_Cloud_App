@@ -12,7 +12,5 @@ class LinearLayoutManagerWrapper: LinearLayoutManager {
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int)
             : super(context, attrs, defStyleAttr, defStyleRes)
 
-    override fun supportsPredictiveItemAnimations(): Boolean {
-        return false
-    }
+    override fun supportsPredictiveItemAnimations(): Boolean { return false }
 }

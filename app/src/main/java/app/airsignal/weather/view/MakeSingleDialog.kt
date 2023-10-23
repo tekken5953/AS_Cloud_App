@@ -32,14 +32,11 @@ class MakeSingleDialog(private val context: Context) {
 
             val title = view.findViewById<TextView>(R.id.alertSingleTitle)
             apply = view.findViewById(R.id.alertSingleApplyBtn)
-
             apply.backgroundTintList = ColorStateList.valueOf(color)
 
             title.text = textTitle
             apply.text = buttonText
-            apply.setOnClickListener {
-                exitProcess(0)
-            }
+            apply.setOnClickListener { exitProcess(0) }
 
             this.show()
 
@@ -47,7 +44,5 @@ class MakeSingleDialog(private val context: Context) {
         }
     }
 
-    fun dismiss() {
-        builder.dismiss()
-    }
+    fun dismiss() { builder.dismiss() }
 }

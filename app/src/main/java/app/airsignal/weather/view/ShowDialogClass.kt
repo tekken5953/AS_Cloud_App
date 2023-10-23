@@ -25,15 +25,9 @@ class ShowDialogClass(private val activity: Activity) {
     init {
         // 폰트 크기 설정
         when(getUserFontScale(activity)) {
-            TEXT_SCALE_SMALL -> {
-                SetSystemInfo.setTextSizeSmall(activity)
-            }
-            TEXT_SCALE_BIG -> {
-                SetSystemInfo.setTextSizeLarge(activity)
-            }
-            else -> {
-                SetSystemInfo.setTextSizeDefault(activity)
-            }
+            TEXT_SCALE_SMALL -> SetSystemInfo.setTextSizeSmall(activity)
+            TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(activity)
+            else -> SetSystemInfo.setTextSizeDefault(activity)
         }
     }
 
@@ -55,8 +49,7 @@ class ShowDialogClass(private val activity: Activity) {
 
     /** 다이얼로그 뷰 소멸 **/
     fun dismiss() {
-        if (alertDialog.isShowing)
-            alertDialog.dismiss()
+        if (alertDialog.isShowing) alertDialog.dismiss()
     }
 
     /** 다이얼로그 뷰 갱신 **/
