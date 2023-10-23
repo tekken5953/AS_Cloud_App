@@ -42,9 +42,7 @@ class WarningViewPagerAdapter(
         holder.bind(mList[position])
     }
 
-    fun changeTextColor(color: Int) {
-        textColor = color
-    }
+    fun changeTextColor(color: Int) { textColor = color }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val textView = view.findViewById<TextView>(R.id.vpWarningText)
@@ -56,8 +54,7 @@ class WarningViewPagerAdapter(
             viewPager2.visibility = if(mList.size == 0) View.GONE else View.VISIBLE
 
             itemView.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
+                if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                     try {
                         if (mList.size != 0) {
                             val intent = Intent(context, WarningDetailActivity::class.java)

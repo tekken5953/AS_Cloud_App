@@ -30,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.viewpager2.widget.ViewPager2
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import androidx.work.WorkQuery
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
 import app.airsignal.weather.dao.AdapterModel
@@ -62,11 +63,8 @@ import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyImg
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyText
-import app.airsignal.weather.util.`object`.DataTypeParser.dateAppendZero
-import app.airsignal.weather.util.`object`.DataTypeParser.parseDayOfWeekToKorean
-import app.airsignal.weather.util.`object`.DataTypeParser.parseLocalDateTimeToLong
-import app.airsignal.weather.util.`object`.DataTypeParser.parseTimeToMinutes
 import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
+import app.airsignal.weather.util.`object`.DataTypeParser.dateAppendZero
 import app.airsignal.weather.util.`object`.DataTypeParser.getComparedTemp
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataColor
@@ -77,6 +75,9 @@ import app.airsignal.weather.util.`object`.DataTypeParser.isRainyDay
 import app.airsignal.weather.util.`object`.DataTypeParser.millsToString
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentHumid
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentWindSpeed
+import app.airsignal.weather.util.`object`.DataTypeParser.parseDayOfWeekToKorean
+import app.airsignal.weather.util.`object`.DataTypeParser.parseLocalDateTimeToLong
+import app.airsignal.weather.util.`object`.DataTypeParser.parseTimeToMinutes
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSky
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
@@ -248,12 +249,7 @@ class MainActivity
         addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
         addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
         addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
-        addUvLegendItem(
-            3,
-            "8 - 10",
-            getColor(R.color.uv_very_high),
-            getString(R.string.uv_very_high)
-        )
+        addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), getString(R.string.uv_very_high))
         addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
         // 스크롤 최상단으로 올리기 버튼
@@ -1315,9 +1311,7 @@ class MainActivity
     private fun changeBackgroundResource(id: Int?) {
         id?.let {
             window.setBackgroundDrawableResource(it)
-        } ?: apply {
-            window.setBackgroundDrawableResource(R.color.theme_view_color)
-        }
+        } ?: window.setBackgroundDrawableResource(R.color.theme_view_color)
     }
 
     // 필드값이 없을 때 -100 출력 됨
@@ -1354,19 +1348,13 @@ class MainActivity
         val comparisonText = when {
             compared == null -> ""
             compared < 0 -> {
-                if (isKorea) {
-                    "어제보다 ${compared.absoluteValue}˚ 낮아요"
-                } else {
-                    "${compared.absoluteValue}˚ lower than yesterday"
-                }
+                if (isKorea) "어제보다 ${compared.absoluteValue}˚ 낮아요"
+                else "${compared.absoluteValue}˚ lower than yesterday"
             }
             compared == 0.0 -> getString(R.string.similar_temp)
             else -> {
-                if (isKorea) {
-                    "어제보다 ${compared.absoluteValue}˚ 높아요"
-                } else {
-                    "${compared.absoluteValue}˚ upper than yesterday"
-                }
+                if (isKorea) "어제보다 ${compared.absoluteValue}˚ 높아요"
+                else "${compared.absoluteValue}˚ upper than yesterday"
             }
         }
 
@@ -1394,12 +1382,8 @@ class MainActivity
     // 에러 버튼에 클릭 리스너 설정
     private fun setOnClickListenerForErrorButton(error: String) {
         val buttonTextResId = when (error) {
-            ERROR_NOT_SERVICED_LOCATION -> {
-                R.string.register_new_address
-            }
-            ERROR_GPS_CONNECTED -> {
-                R.string.enable_gps
-            }
+            ERROR_NOT_SERVICED_LOCATION -> R.string.register_new_address
+            ERROR_GPS_CONNECTED -> R.string.enable_gps
             else -> R.string.renew_data
         }
 
@@ -1412,12 +1396,8 @@ class MainActivity
                         val bottomSheet = SearchDialog(this@MainActivity, 1, supportFragmentManager, BottomSheetDialogFragment().tag)
                         bottomSheet.show(1)
                     }
-                    ERROR_GPS_CONNECTED -> {
-                        GetLocation(this@MainActivity).requestSystemGPSEnable()
-                    }
-                    else -> {
-                        getDataSingleTime(isCurrent = false)
-                    }
+                    ERROR_GPS_CONNECTED -> GetLocation(this@MainActivity).requestSystemGPSEnable()
+                    else -> getDataSingleTime(isCurrent = false)
                 }
             }
         }
@@ -1432,25 +1412,21 @@ class MainActivity
 
     // 모든 뷰 숨김 처리 및 에러 메시지 표시
     private fun hideAllViews(error: String?) {
+        val isNight = isThemeNight(this@MainActivity)
+        val backgroundResourceId = if (isNight) R.color.black else R.color.white
+
         error?.let { e ->
             setOnClickListenerForErrorButton(e)
             updateViewsForError(e)
         }
-
-        val isNight = isThemeNight(this@MainActivity)
-        val backgroundResourceId = if (isNight) R.color.black else R.color.white
-
         binding.mainSkyImg.apply {
             changeBackgroundResource(backgroundResourceId)
             setImageDrawable(getR(if (isNight) R.drawable.ico_error_b else R.drawable.ico_error_w))
         }
     }
 
-
     // 통신에 성공할 경우 레이아웃 처리
-    private fun showAllViews() {
-        setVisibilityForViews(VISIBLE, null)
-    }
+    private fun showAllViews() { setVisibilityForViews(VISIBLE, null) }
 
     // 레이아웃 숨김처리에 따른 뷰 세팅
     private fun setVisibilityForViews(visibility: Int, error: String?) {
@@ -1576,9 +1552,7 @@ class MainActivity
         binding.subAirRainP.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainSkyStarImg.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainShareIv.alpha = if (visibility == VISIBLE) 1f else 0f
-//        binding.indoorAirText.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainSkyText.alpha = if (visibility == VISIBLE) 1f else 0f
-
         binding.mainErrorRenewBtn.isClickable = visibility == GONE
     }
 
@@ -1612,10 +1586,7 @@ class MainActivity
         val item = AdapterModel.AirQTitleItem(
             false, position, nameKR, name, unit, value, convertValueToGrade(name, value.toDouble())
         )
-
-        if (!airQList.contains(item)) {
-            addAirQItem(position, nameKR, name, unit, value, item.grade)
-        }
+        if (!airQList.contains(item)) addAirQItem(position, nameKR, name, unit, value, item.grade)
     }
 
     // 비동기적으로 데이터베이스 작업을 처리하는 확장 함수
@@ -1639,11 +1610,8 @@ class MainActivity
         }
 
         // Room DAO 를 사용하여 데이터베이스 업데이트 또는 삽입 수행
-        if (gpsDbIsEmpty(roomDB)) {
-            roomDB.insert(model)
-        } else {
-            roomDB.update(model)
-        }
+        if (gpsDbIsEmpty(roomDB)) roomDB.insert(model)
+        else roomDB.update(model)
     }
 
     // 현재 위치 정보로 DB 갱신
@@ -1664,38 +1632,24 @@ class MainActivity
     // 자외선 범주 아이템 추가
     private fun addUvLegendItem(index: Int, value: String, color: Int, grade: String) {
         val item = AdapterModel.UVLegendItem(value, color, grade)
-
         uvLegendList.add(index, item)
     }
 
     // 자외선 단계별 대응요령 아이템 추가
-    private fun addUvResponseItem(text: String) {
-        val item = AdapterModel.UVResponseItem(text)
-
-        uvResponseList.add(item)
+    private fun addUvResponseItem(text: Array<String>) {
+        val itemList = text.map {AdapterModel.UVResponseItem(it)}
+        uvResponseList.addAll(itemList)
     }
 
     // 자외선 지수에 따른 대처요령 불러오기
     private fun getUvArray(grade: String): Array<String> {
         return when (grade) {
-            "위험" -> {
-                resources.getStringArray(R.array.uv_caution)
-            }
-            "매우높음" -> {
-                resources.getStringArray(R.array.uv_very_high)
-            }
-            "높음" -> {
-                resources.getStringArray(R.array.uv_high)
-            }
-            "보통" -> {
-                resources.getStringArray(R.array.uv_normal)
-            }
-            "낮음" -> {
-                resources.getStringArray(R.array.uv_low)
-            }
-            else -> {
-                resources.getStringArray(R.array.uv_none)
-            }
+            "위험" -> resources.getStringArray(R.array.uv_caution)
+            "매우높음" -> resources.getStringArray(R.array.uv_very_high)
+            "높음" -> resources.getStringArray(R.array.uv_high)
+            "보통" -> resources.getStringArray(R.array.uv_normal)
+            "낮음" -> resources.getStringArray(R.array.uv_low)
+            else -> resources.getStringArray(R.array.uv_none)
         }
     }
 
@@ -1704,9 +1658,7 @@ class MainActivity
     private fun applyUvResponseItem(grade: String) {
         uvResponseList.clear()
         val cautionArray = getUvArray(grade)
-        cautionArray.forEach {
-            addUvResponseItem(it)
-        }
+        addUvResponseItem(cautionArray)
     }
 
     // 메인화면 배경에 따라 텍스트의 색상을 변경
@@ -1755,12 +1707,17 @@ class MainActivity
 
         // 글자색 변경 함수
         fun changeTextColor(color: Int, subColor: Int, isWhite: Boolean) {
-            changeColorTextViews.forEach { it.setTextColor(color) }
-            changeColorSubTextViews.forEach { it.setTextColor(subColor) }
-            changeTintLineViews.forEach { it.setBackgroundColor(color) }
-            binding.dailySectionAfterTomorrow.setTextColor(subColor)
+            // 일괄 처리를 통한 업데이트 지연
+            val delayMillis = 100L // 원하는 지연 시간(ms) 설정
+            CoroutineScope(Dispatchers.Main).launch {
+                changeColorTextViews.forEach { it.setTextColor(color) }
+                changeColorSubTextViews.forEach { it.setTextColor(subColor) }
+                changeTintLineViews.forEach { it.setBackgroundColor(color) }
+                changeTintImageViews.forEach { it.imageTintList = ColorStateList.valueOf(color) }
+                delay(delayMillis)
+            }
+
             binding.dailySectionTomorrow.setTextColor(subColor)
-            changeTintImageViews.forEach { it.imageTintList = ColorStateList.valueOf(color) }
             binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
                 .setTint(color)
             binding.subAirWind.getValue().compoundDrawableTintList =
@@ -1839,15 +1796,10 @@ class MainActivity
 
     private fun checkLocationAvailability() {
         val locationClass = GetLocation(this)
-        if (!locationClass.isNetWorkConnected()) {
-            hideAllViews(ERROR_NETWORK)
-        } else if (locationClass.isGPSConnected()) {
-            requestLocationWithGPS()
-        } else if (locationClass.isNetworkProviderConnected()) {
-            requestLocationWithNetworkProvider()
-        } else {
-            hideAllViews(ERROR_GPS_CONNECTED)
-        }
+        if (!locationClass.isNetWorkConnected()) hideAllViews(ERROR_NETWORK)
+        else if (locationClass.isGPSConnected()) requestLocationWithGPS()
+        else if (locationClass.isNetworkProviderConnected()) requestLocationWithNetworkProvider()
+        else hideAllViews(ERROR_GPS_CONNECTED)
     }
 
     @SuppressLint("MissingPermission")
@@ -1858,7 +1810,8 @@ class MainActivity
             location?.let { loc ->
                 hideProgressBar()
                 if (isKorea(loc.latitude, loc.longitude)) {
-                    val addr = GetLocation(this@MainActivity).getAddress(loc.latitude, loc.longitude)
+                    val addr = GetLocation(this@MainActivity)
+                        .getAddress(loc.latitude, loc.longitude)
                     processAddress(loc.latitude, loc.longitude, addr)
                 } else {
                     hideAllViews(ERROR_NOT_SERVICED_LOCATION)
@@ -1889,15 +1842,11 @@ class MainActivity
                 val mLng = lat.toDouble()
                 val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
                 if (isKorea(mLat, mLng)) {
-                    Toast.makeText(this, getString(R.string.last_location_call_msg),
-                        Toast.LENGTH_SHORT).show()
+                   ToastUtils(this).showMessage(getString(R.string.last_location_call_msg),1)
                     processAddress(mLat, mLng, addr)
-                } else {
-                    hideAllViews(ERROR_NOT_SERVICED_LOCATION)
-                }
+                } else hideAllViews(ERROR_NOT_SERVICED_LOCATION)
             }
         } catch(e: NumberFormatException) {
-            e.printStackTrace()
             handleLocationFailure(e.stackTraceToString())
             hideAllViews(ERROR_GET_LOCATION_FAILED)
         }
@@ -1950,14 +1899,8 @@ class MainActivity
         }
     }
 
-    private fun getR(id: Int)
-    : Drawable? {
-        return ResourcesCompat.getDrawable(resources,id,null)
-    }
-    private fun getC(id: Int)
-    : Int {
-        return ResourcesCompat.getColor(resources,id,null)
-    }
+    private fun getR(id: Int): Drawable? { return ResourcesCompat.getDrawable(resources,id,null) }
+    private fun getC(id: Int): Int { return ResourcesCompat.getColor(resources,id,null) }
 
     // 뷰 백그라운드 적용
     private fun <T> applyBackground(view: T, res: Int?) {
@@ -1969,13 +1912,21 @@ class MainActivity
     }
 
     private fun workStart() {
-        // WorkRequest 생성
-        val workRequest = PeriodicWorkRequestBuilder<GpsWorkManager>(
-            repeatInterval = 30, // 작업을 반복할 주기 (분)
-            repeatIntervalTimeUnit = TimeUnit.MINUTES
-        ).build()
+        val workManager = WorkManager.getInstance(this)
+        val workQuery = WorkQuery.Builder.fromTags(listOf("gps_work")).build()
+        val workInfo = workManager.getWorkInfos(workQuery).get()
 
-        // WorkRequest 예약
-        WorkManager.getInstance(this).enqueue(workRequest)
+        if (workInfo.isEmpty()) {
+            // WorkRequest 생성
+            val workRequest = PeriodicWorkRequestBuilder<GpsWorkManager>(
+                repeatInterval = 30, // 작업을 반복할 주기 (30분)
+                repeatIntervalTimeUnit = TimeUnit.MINUTES
+            )
+                .addTag("gps_work") // 태그 추가
+                .build()
+
+            // WorkRequest 예약
+            workManager.enqueue(workRequest)
+        }
     }
 }

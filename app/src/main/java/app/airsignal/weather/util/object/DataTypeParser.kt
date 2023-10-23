@@ -154,7 +154,7 @@ object DataTypeParser {
                 if (!isNight) ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_sunny, null)
                 else ResourcesCompat.getDrawable(context.resources, applyLunarImg(lunar), null)
             "구름많음" ->
-                if (!isNight) ResourcesCompat.getDrawable(context.resources, R.drawable.test_sun_cloudy, null)
+                if (!isNight) ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_m_cloudy, null)
                 else ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_m_ncloudy, null)
             "흐림" ->
                 if (!isNight) ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_cloudy, null)

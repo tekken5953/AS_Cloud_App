@@ -28,21 +28,16 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
         window.statusBarColor = getColor(R.color.theme_view_color)
 
         @Suppress("DEPRECATION")
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        } else {
-            window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        }
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        else window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
 
         binding.webUrlBackIv.setOnClickListener {
             if (!webView.canGoBack()) finish() else webView.goBack()
         }
 
-        binding.webUrlTop.setOnClickListener {
-            webView.pageUp(true)
-        }
+        binding.webUrlTop.setOnClickListener { webView.pageUp(true) }
 
         // 웹뷰 세팅
         webView.settings.apply {
@@ -64,15 +59,13 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             webViewClient = WebViewClient()
         }
 
-        if (intent.extras!!.getBoolean("appBar")) {
-            binding.webUrlLinear.visibility = View.VISIBLE
-        } else {
-            binding.webUrlLinear.visibility = View.GONE
-        }
+        if (intent.extras!!.getBoolean("appBar")) binding.webUrlLinear.visibility = View.VISIBLE
+        else binding.webUrlLinear.visibility = View.GONE
+
 
         val sort = intent.extras?.getString("sort")
 
-        val (webUrlTitleText, url) = when (sort) {
+        val (webUrlTitleText,url) = when (sort) {
             "as-eye" -> "AS-EYE" to "about:blank"
             "termsOfService" -> getString(R.string.term_of_services) to termsOfServiceURL
             "dataUsage" -> getString(R.string.data_usages) to privacyPolicyURI

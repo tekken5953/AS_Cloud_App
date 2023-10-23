@@ -14,21 +14,19 @@ import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.repo.BaseRepository
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.LoggerUtil
-import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.util.`object`.GetSystemInfo.goToPlayStore
 import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.view.MakeSingleDialog
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okio.IOException
 import org.koin.androidx.viewmodel.ext.android.viewModel
-
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity<ActivitySplashBinding>() {
@@ -38,26 +36,18 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     override fun onResume() {
         super.onResume()
-
         appVersionViewModel.loadDataResult()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         SetSystemInfo.setStatusBar(this)
 
         initBinding()
-
         FirebaseDatabase.getInstance()
         LoggerUtil().getInstance()
-
         applyAppVersionData()
-
-        FirebaseMessaging.getInstance()
-        CoroutineScope(Dispatchers.IO).launch {
-            SubFCM().getToken()
-        }
+        CoroutineScope(Dispatchers.IO).launch { SubFCM().getToken() }
 
         // 유저 디바이스 설정 - 앱 버전
         RDBLogcat.writeUserPref(
@@ -86,13 +76,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
     private fun enterPage() {
-        if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
-            EnterPageUtil(this@SplashActivity).toMain(
-                getUserLoginPlatform(this)
-            )
-        } else {
-            EnterPageUtil(this@SplashActivity).toPermission()
-        }
+        if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted())
+            EnterPageUtil(this@SplashActivity).toMain(getUserLoginPlatform(this))
+        else EnterPageUtil(this@SplashActivity).toPermission()
     }
 
     // 앱 버전 뷰모델 데이터 호출
@@ -124,27 +110,16 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                 binding.splashPB.visibility = View.GONE
                                 when (ver.errorMessage) {
                                     ERROR_NETWORK -> {
-                                        if (GetLocation(this).isNetWorkConnected()) {
+                                        if (GetLocation(this).isNetWorkConnected())
                                             makeDialog(getString(R.string.unknown_error))
-                                        } else {
-                                            makeDialog(getString(R.string.error_network_connect))
-                                        }
+                                        else makeDialog(getString(R.string.error_network_connect))
                                     }
-
-                                    ERROR_SERVER_CONNECTING -> {
-                                        makeDialog(getString(R.string.error_server_down))
-                                    }
-
-                                    else -> {
-                                        makeDialog(getString(R.string.unknown_error))
-                                    }
+                                    ERROR_SERVER_CONNECTING -> makeDialog(getString(R.string.error_server_down))
+                                    else -> makeDialog(getString(R.string.unknown_error))
                                 }
                             }
-
                             // 통신 중
-                            is BaseRepository.ApiState.Loading -> {
-                                binding.splashPB.visibility = View.VISIBLE
-                            }
+                            is BaseRepository.ApiState.Loading -> binding.splashPB.visibility = View.VISIBLE
                         }
                     }
                 }

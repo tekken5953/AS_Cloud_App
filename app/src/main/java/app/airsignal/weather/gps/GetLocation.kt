@@ -120,7 +120,7 @@ class GetLocation(private val context: Context) {
     /** 백그라운드에서 위치 갱신 **/
     @SuppressLint("MissingPermission")
     fun getGpsInBackground() {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(applicationContext)
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
         val onSuccess: (Location?) -> Unit = { location ->
             location?.let { loc ->
@@ -128,13 +128,9 @@ class GetLocation(private val context: Context) {
                 val longitude = loc.longitude
                 updateCurrentAddress(latitude, longitude, getAddress(latitude, longitude)!!)
                 writeGpsHistory(
-                    applicationContext, isSearched = false,
-                    gpsValue = "WorkManager : ${latitude},${longitude} : ${
-                        getAddress(
-                            latitude,
-                            longitude
-                        )
-                    }",
+                    context, isSearched = false,
+                    gpsValue = "WorkManager : ${latitude},${longitude} : " +
+                            "${getAddress(latitude, longitude)}",
                     responseData = null
                 )
             }
