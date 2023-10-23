@@ -62,10 +62,10 @@ import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyImg
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyText
-import app.airsignal.weather.util.`object`.DataTypeParser.convertDateAppendZero
-import app.airsignal.weather.util.`object`.DataTypeParser.convertDayOfWeekToKorean
-import app.airsignal.weather.util.`object`.DataTypeParser.convertLocalDateTimeToLong
-import app.airsignal.weather.util.`object`.DataTypeParser.convertTimeToMinutes
+import app.airsignal.weather.util.`object`.DataTypeParser.dateAppendZero
+import app.airsignal.weather.util.`object`.DataTypeParser.parseDayOfWeekToKorean
+import app.airsignal.weather.util.`object`.DataTypeParser.parseLocalDateTimeToLong
+import app.airsignal.weather.util.`object`.DataTypeParser.parseTimeToMinutes
 import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
 import app.airsignal.weather.util.`object`.DataTypeParser.getComparedTemp
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
@@ -995,11 +995,11 @@ class MainActivity
 
         result.realtime.forEachIndexed { realtimeIndex, dailyIndex ->
             val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
-            val dailyTime = millsToString(convertLocalDateTimeToLong(forecastToday), "HHmm")
+            val dailyTime = millsToString(parseLocalDateTimeToLong(forecastToday), "HHmm")
             val sunset = sun.sunset ?: "0600"
             val sunrise = sun.sunrise ?: "1900"
             val entireSun = if (getEntireSun(sunrise, sunset) == 0) 1 else getEntireSun(sunrise, sunset)
-            val dailySunProgress = 100 * (convertTimeToMinutes(dailyTime) - convertTimeToMinutes(sunrise)) / entireSun
+            val dailySunProgress = 100 * (parseTimeToMinutes(dailyTime) - parseTimeToMinutes(sunrise)) / entireSun
             val isNight = getIsNight(dailySunProgress)
 
             if (realtimeIndex == 0) {
@@ -1048,7 +1048,7 @@ class MainActivity
                     0 -> { getString(R.string.today) }
                     1 -> { getString(R.string.tomorrow) }
                     else -> {
-                        "${convertDayOfWeekToKorean(
+                        "${parseDayOfWeekToKorean(
                             this, dateNow.dayOfWeek.value + it)}${getString(R.string.date)}"
                     }
                 }
@@ -1060,7 +1060,7 @@ class MainActivity
 
                 addWeeklyWeatherItem(
                     date,
-                    convertDateAppendZero(formedDate),
+                    dateAppendZero(formedDate),
                     getSkyImgSmall(this, wfMinParse, false)!!,
                     getSkyImgSmall(this, wfMaxParse, false)!!,
                     "${taMinParse?.roundToInt() ?: -999}˚",

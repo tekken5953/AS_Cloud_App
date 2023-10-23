@@ -21,10 +21,6 @@ import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_TOPIC_DAILY
 import app.airsignal.weather.dao.StaticDataObject.WARNING_FIXED
 import app.airsignal.weather.db.SharedPreferenceManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * @author : Lee Jae Young
@@ -76,8 +72,8 @@ object GetAppInfo {
     }
 
     fun getEntireSun(sunRise: String, sunSet: String): Int {
-        val sunsetTime = DataTypeParser.convertTimeToMinutes(sunSet)
-        val sunriseTime = DataTypeParser.convertTimeToMinutes(sunRise)
+        val sunsetTime = DataTypeParser.parseTimeToMinutes(sunSet)
+        val sunriseTime = DataTypeParser.parseTimeToMinutes(sunRise)
         return sunsetTime - sunriseTime
     }
 
@@ -87,7 +83,7 @@ object GetAppInfo {
             "HHmm"
         )
         val degreeToSunRise =
-            DataTypeParser.convertTimeToMinutes(currentTime) - DataTypeParser.convertTimeToMinutes(
+            DataTypeParser.parseTimeToMinutes(currentTime) - DataTypeParser.parseTimeToMinutes(
                 sunRise
             )
         val currentSun = if (degreeToSunRise < 0) {

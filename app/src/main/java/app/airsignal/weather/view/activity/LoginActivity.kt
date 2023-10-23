@@ -16,6 +16,9 @@ import app.airsignal.weather.login.NaverLogin
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.`object`.SetSystemInfo
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
@@ -67,7 +70,9 @@ class LoginActivity
                     val task = GoogleSignIn.getSignedInAccountFromIntent(data)
 
                     if (task.result.email == notificationAdmin) {
-                        SubFCM().subAdminTopic()
+                        CoroutineScope(Dispatchers.IO).launch {
+                            SubFCM().subAdminTopic()
+                        }
                     }
                     googleLogin.handleSignInResult(task, isAuto = false)
                     EnterPageUtil(this).toMain(LOGIN_GOOGLE)
