@@ -42,12 +42,11 @@ class AddressListAdapter(
     private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
 
     override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
+        parent: ViewGroup, viewType: Int
     ): AddressListAdapter.ViewHolder {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-
         val view: View = inflater.inflate(R.layout.list_item_address_list, parent, false)
+
         return ViewHolder(view)
     }
 
@@ -120,23 +119,15 @@ class AddressListAdapter(
                     updateCheckBoxVisible(false)
                     builder.dismiss()
                 }
-
-                cancel.setOnClickListener {
-                    builder.dismiss()
-                }
-
+                cancel.setOnClickListener { builder.dismiss() }
                 builder.show()
             }
 
             itemView.setOnClickListener {
                 val position = bindingAdapterPosition
-
                 if (position != RecyclerView.NO_POSITION) {
-                    try {
-                        onClickListener.onItemClick(it, position)
-                    } catch (e: UninitializedPropertyAccessException) {
-                        e.printStackTrace()
-                    }
+                    try { onClickListener.onItemClick(it, position) }
+                    catch (e: UninitializedPropertyAccessException) { e.printStackTrace() }
                 }
             }
         }
@@ -145,10 +136,10 @@ class AddressListAdapter(
     // 첫번째 인덱스 색상 변경
     private fun applyColorFirstIndex(isChecked: Boolean, textView: TextView, imgView: ImageView) {
         textView.setTextColor(context.getColor(
-            if(isChecked)R.color.main_blue_color else R.color.theme_text_color))
+            if(isChecked) R.color.main_blue_color else R.color.theme_text_color))
         imgView.imageTintList =
             ColorStateList.valueOf(context.getColor(
-                if(isChecked)R.color.main_blue_color else R.color.theme_text_color))
+                if(isChecked) R.color.main_blue_color else R.color.theme_text_color))
     }
 
     // 삭제버튼 보이기/숨기기

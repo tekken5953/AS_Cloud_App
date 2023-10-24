@@ -52,8 +52,8 @@ object GetSystemInfo {
     fun getApplicationVersionName(context: Context): String {
         try {
             val packageManager = context.packageManager
-            @Suppress("DEPRECATION") val packageInfo =
-                packageManager.getPackageInfo(context.packageName, 0)
+            @Suppress("DEPRECATION")
+            val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
             return packageInfo.versionName
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()

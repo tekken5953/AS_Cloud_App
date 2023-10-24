@@ -8,7 +8,6 @@ object StaticDataObject {
     const val NOTIFICATION_TOPIC_DAILY = "Notification_Daily"
     const val INITIALIZED_LOC_PERMISSION = "initialized_loc_permission"
     const val INITIALIZED_NOTI_PERMISSION = "initialized_noti_permission"
-    const val LAST_REFRESH_WIDGET_TIME = "widget_last_refresh"
     const val IS_INIT_BACK_LOC_PERMISSION = "is_back_location_enable"
     const val IS_PERMED_BACK_LOG = "is_permed_back_log"
     const val WARNING_FIXED = "warning_fixed"

@@ -78,25 +78,17 @@ object GetAppInfo {
     }
 
     fun getCurrentSun(sunRise: String, sunSet: String): Int {
-        val currentTime = DataTypeParser.millsToString(
-            DataTypeParser.getCurrentTime(),
-            "HHmm"
-        )
+        val currentTime = DataTypeParser.millsToString(DataTypeParser.getCurrentTime(), "HHmm")
         val degreeToSunRise =
-            DataTypeParser.parseTimeToMinutes(currentTime) - DataTypeParser.parseTimeToMinutes(
-                sunRise
-            )
+            DataTypeParser.parseTimeToMinutes(currentTime) - DataTypeParser.parseTimeToMinutes(sunRise)
         val currentSun = if (degreeToSunRise < 0) {
             ((100 * (degreeToSunRise + 2400)) / getEntireSun(sunRise, sunSet)) % 100 + 100
-        } else {
-            (100 * degreeToSunRise) / getEntireSun(sunRise, sunSet)
-        }
+        } else { (100 * degreeToSunRise) / getEntireSun(sunRise, sunSet) }
+
         return currentSun
     }
 
-    fun getIsNight(progress: Int): Boolean {
-        return progress >= 100 || progress < 0
-    }
+    fun getIsNight(progress: Int): Boolean { return progress >= 100 || progress < 0 }
 
     fun getNotificationAddress(context: Context): String {
         return SharedPreferenceManager(context).getString(NOTIFICATION_ADDRESS)

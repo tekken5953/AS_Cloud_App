@@ -37,18 +37,16 @@ object DataTypeParser {
 
     /** 위젯용 현재시간 타임포멧 **/
     fun currentDateTimeString(format: String): String {
-        @SuppressLint("SimpleDateFormat") val mFormat =
-            SimpleDateFormat(format)
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = System.currentTimeMillis()
+        @SuppressLint("SimpleDateFormat") val mFormat = SimpleDateFormat(format)
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+        }
         return mFormat.format(calendar.time)
     }
 
     /** 데이터 포멧에 맞춰서 시간변환 **/
     fun millsToString(mills: Long, pattern: String): String {
-        @SuppressLint("SimpleDateFormat") val format =
-            SimpleDateFormat(pattern, Locale.getDefault())
-        return format.format(Date(mills))
+        return SimpleDateFormat(pattern, Locale.getDefault()).format(Date(mills))
     }
 
     /** Email을 RealtimeDB의 child 형식에 맞게 변환**/
@@ -58,49 +56,44 @@ object DataTypeParser {
 
     /** Current의 rainType의 에러 방지 **/
     fun modifyCurrentRainType(rainTypeCurrent: String, rainTypeReal: String): String {
-        return when(rainTypeCurrent) {
-            "비","눈","비/눈","소나기","없음" -> rainTypeCurrent
-            else -> rainTypeReal
-        }
+        val rainList = listOf("비","눈","비/눈","소나기","없음")
+        return if (rainTypeCurrent in rainList) rainTypeCurrent else rainTypeReal
     }
 
     /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트 **/
     fun applySkyText(context: Context, rain: String?, sky: String?, thunder: Double?): String {
         return if (rain != "없음") if ((thunder == null) || (thunder < 0.2))  rain!! else  context.getString(R.string.thunder_sunny)
-         else if ((thunder == null) || (thunder < 0.2))  sky!! else  context.getString(R.string.thunder_rainy)
-
+         else if ((thunder == null) || (thunder < 0.2)) sky!! else  context.getString(R.string.thunder_rainy)
     }
 
     fun translateSkyText(sky: String): String {
-        return when(sky) {
-            "맑음" -> "clear"
-            "구름많음","흐림" -> "cloudy"
-            "소나기","비","구름많고 소나기","흐리고 비","구름많고 비","흐리고 소나기" -> "rainy"
-            "구름많고 눈","흐리고 눈","눈" -> "snowy"
-            "구름많고 비/눈","흐리고 비/눈","비/눈"-> "rainy/snowy"
-            else -> ""
-        }
+        val skyMap = mapOf(
+            "맑음" to "clear",
+            setOf("구름많음", "흐림") to "cloudy",
+            setOf("소나기", "비", "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기") to "rainy",
+            setOf("구름많고 눈", "흐리고 눈", "눈") to "snowy",
+            setOf("구름많고 비/눈", "흐리고 비/눈", "비/눈") to "rainy/snowy"
+        )
+        return skyMap[sky] ?: ""
     }
 
     /** 달 모양 반환 **/
     private fun applyLunarImg(date: Int): Int {
         return when (date) {
             29,30,1 -> R.drawable.moon_sak
-            2,3,4,5 -> R.drawable.moon_cho
-            6,7,8,9 -> R.drawable.moon_sang_d
-            10,11,12,13 -> R.drawable.moon_sang_m
-            14,15,16 -> R.drawable.moon_bo
-            17,18,19,20 -> R.drawable.moon_ha_d
-            21,22,23,24-> R.drawable.moon_ha_m
-            25,26,27,28 -> R.drawable.moon_g
+            in 2..5 -> R.drawable.moon_cho
+            in 6..9 -> R.drawable.moon_sang_d
+            in 10..13 -> R.drawable.moon_sang_m
+            in 14..16 -> R.drawable.moon_bo
+            in 17..20 -> R.drawable.moon_ha_d
+            in 21..24-> R.drawable.moon_ha_m
+            in 25..28 -> R.drawable.moon_g
             else -> R.drawable.moon_bo
         }
     }
 
     /** 비가 오는지 안오는지 Flag **/
-    fun isRainyDay(rainType: String?): Boolean {
-        return rainType != "없음"
-    }
+    fun isRainyDay(rainType: String?): Boolean { return rainType != "없음" }
 
     /** 어제 날씨와 오늘 날씨의 비교 값 반환 **/
     fun getComparedTemp(yesterday: Double?, today: Double?): Double? {
@@ -116,96 +109,83 @@ object DataTypeParser {
     /** Current의 Temperature의 에러 방지 **/
     fun modifyCurrentTempType(tempCurrent: Double?, tempReal: Double): Double {
         return try {
-            tempCurrent?.let { tc ->
-                if (tc < 50.0 && tc > -50.0) tc else tempReal
-            } ?: tempReal
-        } catch (e: Exception) {
-            return tempReal
-        }
+            tempCurrent?.let { tc -> if (tc < 50.0 && tc > -50.0) tc else tempReal } ?: tempReal
+        } catch (e: Exception) { return tempReal }
     }
 
     fun modifyCurrentWindSpeed(windC: Double?, windR: Double): Double {
-        return windC?.let { c ->
-            if (c >= -100 && c <= 500) c else windR
-        } ?: windR
+        return windC?.let { c -> if (c >= -100 && c <= 500) c else windR } ?: windR
     }
 
     fun modifyCurrentHumid(humidC: Double?, humidR: Double): Double {
-        return humidC?.let { h ->
-            if (h >= -100 && h <= 100) h else humidR
-        } ?: humidR
+        return humidC?.let { h -> if (h >= -100 && h <= 100) h else humidR } ?: humidR
     }
 
     /** rain type에 따른 이미지 설정 **/
     private fun getRainTypeLarge(context: Context, rain: String?): Drawable? {
-        return when (rain) {
-            "비" -> getDrawable(context, R.drawable.b_ico_cloudy_rainy)
-            "눈" -> getDrawable(context, R.drawable.b_ico_snow)
-            "비/눈" -> getDrawable(context, R.drawable.b_ico_rainy_snow)
-            "소나기" -> getDrawable(context, R.drawable.b_ico_rainy)
-            else -> getDrawable(context, R.drawable.cancel)
-        }
+        val rainMap = mapOf(
+            "비" to R.drawable.b_ico_cloudy_rainy,
+            "눈" to R.drawable.b_ico_snow,
+            "비/눈" to R.drawable.b_ico_rainy_snow,
+            "소나기" to R.drawable.b_ico_rainy
+        )
+        return rainMap[rain]?.let{ getDrawable(context,it)} ?: getDrawable(context,R.drawable.cancel)
     }
 
     /** sky value에 따른 이미지 설정 **/
     fun getSkyImgLarge(context: Context, sky: String?, isNight: Boolean, lunar: Int): Drawable? {
-        return when (sky) {
-            "맑음" ->
-                if (!isNight) getDrawable(context, R.drawable.b_ico_sunny)
-                else getDrawable(context, applyLunarImg(lunar))
-            "구름많음" ->
-                if (!isNight) getDrawable(context, R.drawable.b_ico_m_cloudy)
-                else getDrawable(context, R.drawable.b_ico_m_ncloudy)
-            "흐림" -> getDrawable(context, R.drawable.b_ico_cloudy)
-            "소나기", "비" -> getDrawable(context, R.drawable.b_ico_rainy)
-            "구름많고 눈", "눈", "흐리고 눈" -> getDrawable(context, R.drawable.b_ico_snow)
-            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
-                getDrawable(context, R.drawable.b_ico_cloudy_rainy)
-            "구름많고 비/눈", "흐리고 비/눈", "비/눈" ->
-                getDrawable(context, R.drawable.b_ico_rainy_snow)
-            else -> getDrawable(context, R.drawable.cancel)
-        }
+        val skyMap = mapOf(
+            "맑음" to if(isNight) applyLunarImg(lunar) else R.drawable.b_ico_sunny,
+            "구름많음" to if(isNight) R.drawable.b_ico_m_ncloudy else R.drawable.b_ico_m_cloudy,
+            "흐림" to R.drawable.b_ico_cloudy,
+            setOf("소나기", "비") to R.drawable.b_ico_rainy,
+            setOf("구름많고 눈", "눈", "흐리고 눈") to R.drawable.b_ico_snow,
+            setOf("구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기") to R.drawable.b_ico_cloudy_rainy,
+            setOf("구름많고 비/눈", "흐리고 비/눈", "비/눈") to R.drawable.b_ico_rainy_snow
+        )
+
+        return skyMap[sky ?: ""]?.let { getDrawable(context, it) } ?: getDrawable(context, R.drawable.cancel)
     }
 
     /** rain type에 따른 이미지 설정 **/
     private fun getRainTypeSmall(context: Context, rain: String?): Drawable? {
-        return when (rain) {
-            "비" -> getDrawable(context, R.drawable.b_ico_cloudy_rainy)
-            "눈" -> getDrawable(context, R.drawable.sm_snow)
-            "비/눈" -> getDrawable(context, R.drawable.b_ico_rainy_snow)
-            "소나기" -> getDrawable(context, R.drawable.b_ico_rainy)
-            else -> getDrawable(context, R.drawable.cancel)
-        }
+        val rainMap = mapOf(
+            "비" to R.drawable.b_ico_cloudy_rainy,
+            "눈" to R.drawable.sm_snow,
+            "비/눈" to R.drawable.b_ico_rainy_snow,
+            "소나기" to R.drawable.b_ico_rainy
+        )
+
+        return rainMap[rain ?: ""]?.let { getDrawable(context,it) } ?: getDrawable(context,R.drawable.cancel)
     }
 
     /** sky value에 따른 이미지 설정 **/
     fun getSkyImgSmall(context: Context, sky: String?, isNight: Boolean): Drawable? {
-        return when (sky) {
-            "맑음" ->
-                if (!isNight) getDrawable(context, R.drawable.b_ico_sunny)
-                else getDrawable(context, R.drawable.sm_good_n)
-            "구름많음" ->
-                if (!isNight) getDrawable(context, R.drawable.b_ico_m_cloudy)
-                else getDrawable(context, R.drawable.b_ico_m_ncloudy)
-            "흐림" -> getDrawable(context, R.drawable.b_ico_cloudy)
-            "소나기", "비" -> getDrawable(context, R.drawable.b_ico_rainy)
-            "구름많고 눈", "눈", "흐리고 눈" -> getDrawable(context, R.drawable.sm_snow)
-            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
-                getDrawable(context, R.drawable.b_ico_cloudy_rainy)
-            "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> getDrawable(context, R.drawable.b_ico_rainy_snow)
-            else -> getDrawable(context, R.drawable.cancel)
-        }
+        val skyMap = mapOf(
+            "맑음" to if (!isNight) R.drawable.b_ico_sunny else R.drawable.sm_good_n,
+        "구름많음" to if (!isNight) R.drawable.b_ico_m_cloudy else R.drawable.b_ico_m_ncloudy,
+        "흐림" to R.drawable.b_ico_cloudy,
+        setOf("소나기", "비") to R.drawable.b_ico_rainy,
+        setOf("구름많고 눈", "눈", "흐리고 눈") to R.drawable.sm_snow,
+        setOf("구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기") to R.drawable.b_ico_cloudy_rainy,
+        setOf("구름많고 비/눈", "흐리고 비/눈", "비/눈") to R.drawable.b_ico_rainy_snow
+        )
+
+        return skyMap[sky ?: ""]?.let { getDrawable(context, it) } ?: getDrawable(context, R.drawable.cancel)
     }
 
     /** 시간별 날씨 날짜 이름 **/
     fun getDailyItemDate(context: Context, localDateTime: LocalDateTime): String {
-        return when(ChronoUnit.DAYS.between(localDateTime.toLocalDate(),
-            parseLongToLocalDateTime(getCurrentTime()).toLocalDate()).absoluteValue) {
-            0L -> context.getString(R.string.daily_today)
-            1L -> context.getString(R.string.daily_tomorrow)
-            2L -> context.getString(R.string.daily_next_tomorrow)
-            else -> ""
-        }
+        val betweenDate = ChronoUnit.DAYS.between(localDateTime.toLocalDate(),
+            parseLongToLocalDateTime(getCurrentTime()).toLocalDate()).absoluteValue
+
+        val localDateTimeMap = mapOf (
+            0L to R.string.daily_today,
+            1L to R.string.daily_tomorrow,
+            2L to R.string.daily_next_tomorrow
+        )
+
+        return localDateTimeMap[betweenDate]?.let { context.getString(it) } ?: ""
     }
 
     /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지 **/

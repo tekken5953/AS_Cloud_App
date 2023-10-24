@@ -2,6 +2,7 @@ package app.airsignal.weather.util.`object`
 
 import android.app.Activity
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
@@ -64,13 +65,15 @@ object SetSystemInfo {
 
     /** UV 범주 색상 적용 **/
     fun setUvBackgroundColor(context: Context, flag: String, cardView: CardView) {
-        when (flag) {
-            "낮음" -> cardView.setCardBackgroundColor(context.getColor(R.color.uv_low))
-            "보통" -> cardView.setCardBackgroundColor(context.getColor(R.color.uv_normal))
-            "높음" -> cardView.setCardBackgroundColor(context.getColor(R.color.uv_high))
-            "매우높음" -> cardView.setCardBackgroundColor(context.getColor(R.color.uv_very_high))
-            "위험" -> cardView.setCardBackgroundColor(context.getColor(R.color.uv_caution))
-        }
+        val flagMap = mapOf(
+            "낮음" to R.color.uv_low,
+            "보통" to R.color.uv_normal,
+            "높음" to R.color.uv_high,
+            "매우높음" to R.color.uv_very_high,
+            "위험" to R.color.uv_caution
+        )
+
+        return flagMap[flag]?.let { cardView.setCardBackgroundColor(ColorStateList.valueOf(it))}!!
     }
 
     /** 상태 바 설정 **/
@@ -80,12 +83,10 @@ object SetSystemInfo {
             statusBarColor = activity.getColor(R.color.theme_view_color)
             navigationBarColor = activity.getColor(android.R.color.transparent)
 
-            if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-                this.decorView.systemUiVisibility =
+            this.decorView.systemUiVisibility =
+                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
                     this.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-            } else if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_NO) {
-                this.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            }
+                else View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
     }
 }
