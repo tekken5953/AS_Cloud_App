@@ -404,9 +404,8 @@ class MainActivity
 
             if (getUserLocation(this) == LANG_EN ||
                     getLocale(this) == Locale.ENGLISH
-            ) {
-                warning.visibility = GONE
-            } else {
+            ) warning.visibility = GONE
+            else {
                 warning.visibility = VISIBLE
                 warning.setOnClickListener(object : OnSingleClickListener() {
                     override fun onSingleClick(v: View?) {
@@ -544,14 +543,10 @@ class MainActivity
     }
 
     // 프로그래스 보이기
-    private fun showProgressBar() {
-        setProgressVisibility(true)
-    }
+    private fun showProgressBar() { setProgressVisibility(true) }
 
     // 프로그래스 숨기기
-    private fun hideProgressBar() {
-        setProgressVisibility(false)
-    }
+    private fun hideProgressBar() { setProgressVisibility(false) }
 
     // 프로그래스 진행 여부
     private fun isProgressed(): Boolean {
@@ -562,9 +557,7 @@ class MainActivity
     private fun initializing() {
 
         val displayMetrics = DisplayMetrics()
-        @Suppress("DEPRECATION") windowManager.defaultDisplay.getMetrics(
-            displayMetrics
-        )
+        @Suppress("DEPRECATION") windowManager.defaultDisplay.getMetrics(displayMetrics)
 
         // 자동 로그인
         SilentLoginClass().login(this@MainActivity)
@@ -614,12 +607,8 @@ class MainActivity
             if (dailyWeatherList.size >= getHourCountToTomorrow()) {
                 tomorrowSection.visibility = VISIBLE
                 binding.mainDailyWeatherRv.scrollToPosition(getHourCountToTomorrow())
-                binding.mainDailyWeatherRv.post {
-                    scrollSmoothFirst(getHourCountToTomorrow())
-                }
-            } else {
-                tomorrowSection.visibility = GONE
-            }
+                binding.mainDailyWeatherRv.post { scrollSmoothFirst(getHourCountToTomorrow()) }
+            } else tomorrowSection.visibility = GONE
         }
 
         // 모레 클릭
@@ -629,9 +618,7 @@ class MainActivity
                 binding.mainDailyWeatherRv.post {
                     scrollSmoothFirst(getHourCountToTomorrow() + 24)
                 }
-            } else {
-                afterTomorrowSection.visibility = GONE
-            }
+            } else afterTomorrowSection.visibility = GONE
         }
 
         // 시간별 날씨 스크롤에 따른 탭 변화
@@ -690,11 +677,9 @@ class MainActivity
                                     todaySection,
                                     tomorrowSection
                                 )
-                            }
-                            else -> {}
+                            } else -> {}
                         }
-                    }
-                    else -> {}
+                    } else -> {}
                 }
             }
         })
@@ -705,10 +690,7 @@ class MainActivity
                 try {
                     val model = airQList[position]
 
-                    applyAirQView(
-                        model.name, model.nameKR,
-                        model.value, model.unit
-                    )
+                    applyAirQView(model.name, model.nameKR, model.value, model.unit)
 
                     airQList.forEach {
                         it.isSelect = it.position == airQList[position].position
@@ -1049,18 +1031,16 @@ class MainActivity
                     }
                 }
 
-                val wfMinParse = if(tempDate.isBefore(dateNow)) wfMin[it+1] else wfMin[it]
-                val wfMaxParse = if(tempDate.isBefore(dateNow)) wfMax[it+1] else wfMax[it]
-                val taMinParse = if(tempDate.isBefore(dateNow)) taMin[it+1] else taMin[it]
-                val taMaxParse = if(tempDate.isBefore(dateNow)) taMax[it+1] else taMax[it]
+                val isBefore = tempDate.dayOfMonth < dateNow.dayOfMonth
+                val index = if (isBefore) it+1 else it
 
                 addWeeklyWeatherItem(
                     date,
                     dateAppendZero(formedDate),
-                    getSkyImgSmall(this, wfMinParse, false)!!,
-                    getSkyImgSmall(this, wfMaxParse, false)!!,
-                    "${taMinParse?.roundToInt() ?: -999}˚",
-                    "${taMaxParse?.roundToInt() ?: -999}˚"
+                    getSkyImgSmall(this, wfMin[index], false)!!,
+                    getSkyImgSmall(this, wfMax[index], false)!!,
+                    "${taMin[index]?.roundToInt() ?: -999}˚",
+                    "${taMax[index]?.roundToInt() ?: -999}˚"
                 )
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(RDBLogcat.DATA_CALL_ERROR,
@@ -1137,9 +1117,9 @@ class MainActivity
                         binding.mainUvValue.text =
                             "${translateUV(this, mFlag)}\n$mValue"
                     }
-                } ?: apply { binding.mainUVBox.visibility = GONE }
-            } ?: apply { binding.mainUVBox.visibility = GONE }
-        } ?: apply { binding.mainUVBox.visibility = GONE }
+                } ?: run { binding.mainUVBox.visibility = GONE }
+            } ?: run { binding.mainUVBox.visibility = GONE }
+        } ?: run { binding.mainUVBox.visibility = GONE }
     }
 
     private fun updateSunTimes(sun: ApiModel.SunData, sunTomorrow: ApiModel.SunTomorrow?) {
@@ -1224,7 +1204,7 @@ class MainActivity
     private fun updateAddress(addr: String?) {
         // UI 업데이트: 주소 텍스트뷰에 주소를 설정하고 데이터 로딩을 시작합니다.
         binding.mainGpsTitleTv.text = addr
-        binding.mainTopBarGpsTitle.text = addr!!.trim().split(" ").last()
+        binding.mainTopBarGpsTitle.text = addr ?: " ".trim().split(" ").last()
     }
 
     // 기상 경보 업데이트
@@ -1262,12 +1242,8 @@ class MainActivity
                 binding.mainTermsTitle.text = b.getString("title")
                 binding.mainTermsDate.text = b.getString("date")
                 binding.mainTermsExplain.text = b.getString("explain")
-            } ?: run {
-                binding.nestedTerms24Box.visibility = GONE
-            }
-        } ?: run {
-            binding.nestedTerms24Box.visibility = GONE
-        }
+            } ?: run { binding.nestedTerms24Box.visibility = GONE }
+        } ?: run { binding.nestedTerms24Box.visibility = GONE }
     }
 
     // 외부 공기질 데이터 아이템 추가

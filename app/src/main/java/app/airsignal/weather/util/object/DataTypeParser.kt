@@ -74,7 +74,7 @@ object DataTypeParser {
     fun translateSkyText(sky: String): String {
         return when(sky) {
             "맑음" -> "clear"
-            "구름많음","흐림" -> "at cloudy"
+            "구름많음","흐림" -> "cloudy"
             "소나기","비","구름많고 소나기","흐리고 비","구름많고 비","흐리고 소나기" -> "rainy"
             "구름많고 눈","흐리고 눈","눈" -> "snowy"
             "구름많고 비/눈","흐리고 비/눈","비/눈"-> "rainy/snowy"
@@ -139,11 +139,11 @@ object DataTypeParser {
     /** rain type에 따른 이미지 설정 **/
     private fun getRainTypeLarge(context: Context, rain: String?): Drawable? {
         return when (rain) {
-            "비" -> ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_cloudy_rainy, null)
-            "눈" -> ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_snow, null)
-            "비/눈" -> ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_rainy_snow, null)
-            "소나기" -> ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_rainy, null)
-            else -> ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
+            "비" -> getDrawable(context, R.drawable.b_ico_cloudy_rainy)
+            "눈" -> getDrawable(context, R.drawable.b_ico_snow)
+            "비/눈" -> getDrawable(context, R.drawable.b_ico_rainy_snow)
+            "소나기" -> getDrawable(context, R.drawable.b_ico_rainy)
+            else -> getDrawable(context, R.drawable.cancel)
         }
     }
 
@@ -151,35 +151,30 @@ object DataTypeParser {
     fun getSkyImgLarge(context: Context, sky: String?, isNight: Boolean, lunar: Int): Drawable? {
         return when (sky) {
             "맑음" ->
-                if (!isNight) ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_sunny, null)
-                else ResourcesCompat.getDrawable(context.resources, applyLunarImg(lunar), null)
+                if (!isNight) getDrawable(context, R.drawable.b_ico_sunny)
+                else getDrawable(context, applyLunarImg(lunar))
             "구름많음" ->
-                if (!isNight) ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_m_cloudy, null)
-                else ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_m_ncloudy, null)
-            "흐림" ->
-                if (!isNight) ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_cloudy, null)
-                else ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_ncloudy, null)
-            "소나기", "비" ->
-                ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_rainy, null)
-            "구름많고 눈", "눈", "흐리고 눈" ->
-                ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_snow, null)
+                if (!isNight) getDrawable(context, R.drawable.b_ico_m_cloudy)
+                else getDrawable(context, R.drawable.b_ico_m_ncloudy)
+            "흐림" -> getDrawable(context, R.drawable.b_ico_cloudy)
+            "소나기", "비" -> getDrawable(context, R.drawable.b_ico_rainy)
+            "구름많고 눈", "눈", "흐리고 눈" -> getDrawable(context, R.drawable.b_ico_snow)
             "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
-                ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_cloudy_rainy, null)
+                getDrawable(context, R.drawable.b_ico_cloudy_rainy)
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" ->
-                ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_rainy_snow, null)
-            else -> ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
-
+                getDrawable(context, R.drawable.b_ico_rainy_snow)
+            else -> getDrawable(context, R.drawable.cancel)
         }
     }
 
     /** rain type에 따른 이미지 설정 **/
     private fun getRainTypeSmall(context: Context, rain: String?): Drawable? {
         return when (rain) {
-            "비" -> ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudrain, null)
-            "눈" -> ResourcesCompat.getDrawable(context.resources, R.drawable.sm_snow, null)
-            "비/눈" -> ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudsnow, null)
-            "소나기" -> ResourcesCompat.getDrawable(context.resources, R.drawable.sm_rainy, null)
-            else -> ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
+            "비" -> getDrawable(context, R.drawable.b_ico_cloudy_rainy)
+            "눈" -> getDrawable(context, R.drawable.sm_snow)
+            "비/눈" -> getDrawable(context, R.drawable.b_ico_rainy_snow)
+            "소나기" -> getDrawable(context, R.drawable.b_ico_rainy)
+            else -> getDrawable(context, R.drawable.cancel)
         }
     }
 
@@ -187,22 +182,18 @@ object DataTypeParser {
     fun getSkyImgSmall(context: Context, sky: String?, isNight: Boolean): Drawable? {
         return when (sky) {
             "맑음" ->
-                if (!isNight) ResourcesCompat.getDrawable(context.resources, R.drawable.sm_good, null)
-                else ResourcesCompat.getDrawable(context.resources, R.drawable.sm_good_n, null)
+                if (!isNight) getDrawable(context, R.drawable.b_ico_sunny)
+                else getDrawable(context, R.drawable.sm_good_n)
             "구름많음" ->
-                if (!isNight) ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudy, null)
-                else ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudy_n, null)
-            "흐림" ->
-                if (!isNight) ResourcesCompat.getDrawable(context.resources, R.drawable.sm_more_cloudy, null)
-                else ResourcesCompat.getDrawable(context.resources, R.drawable.sm_more_cloudy_n, null)
-            "소나기", "비" -> ResourcesCompat.getDrawable(context.resources, R.drawable.sm_rainy, null)
-            "구름많고 눈", "눈", "흐리고 눈" ->
-                ResourcesCompat.getDrawable(context.resources, R.drawable.sm_snow, null)
+                if (!isNight) getDrawable(context, R.drawable.b_ico_m_cloudy)
+                else getDrawable(context, R.drawable.b_ico_m_ncloudy)
+            "흐림" -> getDrawable(context, R.drawable.b_ico_cloudy)
+            "소나기", "비" -> getDrawable(context, R.drawable.b_ico_rainy)
+            "구름많고 눈", "눈", "흐리고 눈" -> getDrawable(context, R.drawable.sm_snow)
             "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
-                ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudrain, null)
-            "구름많고 비/눈", "흐리고 비/눈", "비/눈" ->
-                ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudsnow, null)
-            else -> ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
+                getDrawable(context, R.drawable.b_ico_cloudy_rainy)
+            "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> getDrawable(context, R.drawable.b_ico_rainy_snow)
+            else -> getDrawable(context, R.drawable.cancel)
         }
     }
 
@@ -227,45 +218,28 @@ object DataTypeParser {
         isNight: Boolean?,
         lunar: Int
     ): Drawable? {
-        return if (rain != "없음") {
-            if ((thunder == null) || (thunder < 0.2))
-                if (isLarge) getRainTypeLarge(context, rain!!)
-                    ?: ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
-                else getRainTypeSmall(context, rain!!)
-                    ?: ResourcesCompat.getDrawable(context.resources, R.drawable.cancel, null)
-            else
-                if (isLarge)
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.b_ico_cloudy_th, null)
-                else if (isNight!!)
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudy_nth, null)
-                else
-                    ResourcesCompat.getDrawable(context.resources, R.drawable.sm_cloudy_th, null)
-        } else
-            if ((thunder == null) || (thunder < 0.2)) {
-                if (isLarge) {
-                    if (isNight!!) getSkyImgLarge(context, sky!!, isNight, lunar)!!
-                    else getSkyImgLarge(context, sky!!, isNight, lunar)!!
-                } else if (isNight!!) getSkyImgSmall(context, sky!!, isNight)!!
-                else getSkyImgSmall(context, sky!!, isNight)!!
-            } else {
-                if (isLarge) ResourcesCompat.getDrawable(
-                    context.resources,
-                    R.drawable.b_ico_rainy_th,
-                    null
-                )
-                 else ResourcesCompat.getDrawable(context.resources, R.drawable.sm_rainy_th, null)
-            }
+        return if (rain != "없음" && (thunder == null || thunder < 0.2)) {
+            if (isLarge) getRainTypeLarge(context, rain!!) ?: getDrawable(context, R.drawable.cancel)
+            else getRainTypeSmall(context, rain!!) ?: getDrawable(context, R.drawable.cancel)
+        } else if (rain == "없음" && (thunder == null || thunder < 0.2)) {
+            if (isLarge) getSkyImgLarge(context, sky!!, isNight ?: false, lunar)
+            else getSkyImgSmall(context, sky!!, isNight ?: false)
+        } else {
+            getDrawable(context, R.drawable.b_ico_cloudy_th)
+        }
     }
 
     /** 등급에 따른 색상 변환 **/
     fun getDataColor(context: Context, grade: Int): Int {
-        return when (grade) {
-            1 -> ResourcesCompat.getColor(context.resources, R.color.air_good, null)
-            2 -> ResourcesCompat.getColor(context.resources, R.color.air_normal, null)
-            3 -> ResourcesCompat.getColor(context.resources, R.color.air_bad, null)
-            4 -> ResourcesCompat.getColor(context.resources, R.color.air_very_bad, null)
-            else -> ResourcesCompat.getColor(context.resources, R.color.progressError, null)
-        }
+        val colorMap = mapOf (
+            1 to R.color.air_good,
+            2 to R.color.air_normal,
+            3 to R.color.air_bad,
+            4 to R.color.air_very_bad
+        )
+
+        return colorMap[grade]?.let { ResourcesCompat.getColor(context.resources, it, null) }
+            ?:  ResourcesCompat.getColor(context.resources, R.color.progressError, null)
     }
 
     /** 등급에 따른 텍스트 변환 **/
@@ -286,16 +260,17 @@ object DataTypeParser {
 
     /** 요일 변환 **/
     fun parseDayOfWeekToKorean(context: Context, dayOfWeek: Int): String {
-        return when (dayOfWeek % 7) {
-            1 -> context.getString(R.string.mon)
-            2 -> context.getString(R.string.tue)
-            3 -> context.getString(R.string.wen)
-            4 -> context.getString(R.string.thr)
-            5 -> context.getString(R.string.fir)
-            6 -> context.getString(R.string.sat)
-            0 -> context.getString(R.string.sun)
-            else -> ""
-        }
+        val dayMap = mapOf (
+            1 to R.string.mon,
+            2 to R.string.tue,
+            3 to R.string.wen,
+            4 to R.string.thr,
+            5 to R.string.fir,
+            6 to R.string.sat,
+            7 to R.string.sun
+        )
+
+        return dayMap[dayOfWeek]?.let { context.getString(it % 7) } ?: ""
     }
 
     /** 주소 포멧팅 **/
@@ -316,38 +291,40 @@ object DataTypeParser {
 
     /** 하늘상태를 국가에 맞게 변경 **/
     fun translateSky(context: Context, sky: String): String {
-        return when(sky) {
-            "맑음" -> context.getString(R.string.sky_sunny)
-            "구름많음" -> context.getString(R.string.sky_sunny_cloudy)
-            "흐림" -> context.getString(R.string.sky_cloudy)
-            "소나기" -> context.getString(R.string.sky_shower)
-            "비" -> context.getString(R.string.sky_rainy)
-            "구름많고 눈" -> context.getString(R.string.sky_sunny_cloudy_snowy)
-            "눈" -> context.getString(R.string.sky_snowy)
-            "흐리고 눈" -> context.getString(R.string.sky_cloudy_snowy)
-            "구름많고 소나기" -> context.getString(R.string.sky_sunny_cloudy_shower)
-            "흐리고 비" -> context.getString(R.string.sky_cloudy_rainy)
-            "구름많고 비" -> context.getString(R.string.sky_sunny_cloudy_rainy)
-            "흐리고 소나기" -> context.getString(R.string.sky_cloudy_shower)
-            "구름많고 비/눈" -> context.getString(R.string.sky_sunny_cloudy_rainy_snowy)
-            "흐리고 비/눈" -> context.getString(R.string.sky_cloudy_rainy_snowy)
-            "비/눈" -> context.getString(R.string.sky_rainy_snowy)
-            context.getString(R.string.thunder_sunny) -> context.getString(R.string.thunder_sunny)
-            context.getString(R.string.thunder_rainy) -> context.getString(R.string.thunder_rainy)
-            else -> ""
-        }
+        val skyMap = mapOf(
+            "맑음" to R.string.sky_sunny,
+            "구름많음" to R.string.sky_sunny_cloudy,
+            "흐림" to R.string.sky_cloudy,
+            "소나기" to R.string.sky_shower,
+            "비" to R.string.sky_rainy,
+            "구름많고 눈" to R.string.sky_sunny_cloudy_snowy,
+            "눈" to R.string.sky_snowy,
+            "흐리고 눈" to R.string.sky_cloudy_snowy,
+            "구름많고 소나기" to R.string.sky_sunny_cloudy_shower,
+            "흐리고 비" to R.string.sky_cloudy_rainy,
+            "구름많고 비" to R.string.sky_sunny_cloudy_rainy,
+            "흐리고 소나기" to R.string.sky_cloudy_shower,
+            "구름많고 비/눈" to R.string.sky_sunny_cloudy_rainy_snowy,
+            "흐리고 비/눈" to R.string.sky_cloudy_rainy_snowy,
+            "비/눈" to R.string.sky_rainy_snowy,
+            context.getString(R.string.thunder_sunny) to R.string.thunder_sunny,
+            context.getString(R.string.thunder_rainy) to R.string.thunder_rainy
+        )
+
+        return skyMap[sky]?.let { context.getString(it) } ?: ""
     }
 
     /** 자외선 지수 번역 **/
     fun translateUV(context: Context, uv: String): String {
-        return when(uv) {
-            "낮음" -> context.getString(R.string.uv_low)
-            "보통" -> context.getString(R.string.uv_normal)
-            "높음" -> context.getString(R.string.uv_high)
-            "매우높음" -> context.getString(R.string.uv_very_high)
-            "위험" -> context.getString(R.string.uv_caution)
-            else -> ""
-        }
+        val uvMap = mapOf(
+            "낮음" to R.string.uv_low,
+            "보통" to R.string.uv_normal,
+            "높음" to R.string.uv_high,
+            "매우높음" to R.string.uv_very_high,
+            "위험" to R.string.uv_caution
+        )
+
+        return uvMap[uv]?.let { context.getString(it) } ?: ""
     }
 
     /** LocalDateTime을 Long으로 파싱 **/
@@ -362,50 +339,21 @@ object DataTypeParser {
 
     /** 공기질 데이터 등급변환 **/
     fun convertValueToGrade(s: String, v: Double): Int {
-        return when(s) {
-            "SO2" ->
-                when(v) {
-                    in 0.0..0.02 -> 1
-                    in 0.021..0.05 -> 2
-                    in 0.051..0.15 -> 3
-                    else -> 4
-                }
-            "CO" ->
-                when(v) {
-                    in 0.0..2.0 -> 1
-                    in 2.01..9.0 -> 2
-                    in 9.01..15.0 -> 3
-                    else -> 4
-                }
-            "O3" ->
-                when(v) {
-                    in 0.0..0.03 -> 1
-                    in 0.031..0.09 -> 2
-                    in 0.091..0.15 -> 3
-                    else -> 4
-                }
-            "NO2" ->
-                when(v) {
-                    in 0.0..0.03 -> 1
-                    in 0.031..0.06 -> 2
-                    in 0.061..0.2 -> 3
-                    else -> 4
-                }
-            "PM2.5" ->
-                when(v) {
-                    in 0.0..15.0 -> 1
-                    in 16.0..35.0 -> 2
-                    in 36.0..75.0 -> 3
-                    else -> 4
-                }
-            "PM10" ->
-                when(v) {
-                    in 0.0..30.0 -> 1
-                    in 31.0..80.0 -> 2
-                    in 81.0..150.0 -> 3
-                    else ->  4
-                }
-            else -> 0
+        val gradeRanges = when (s) {
+            "SO2" -> listOf(0.02, 0.05, 0.15)
+            "CO" -> listOf(2.0, 9.0, 15.0)
+            "O3" -> listOf(0.03, 0.09, 0.15)
+            "NO2" -> listOf(0.03, 0.06, 0.2)
+            "PM2.5" -> listOf(15.0, 35.0, 75.0)
+            "PM10" -> listOf(30.0, 80.0, 150.0)
+            else -> return 0 // 알 수 없는 물질
+        }
+
+        return when {
+            v <= gradeRanges[0] -> 1
+            v <= gradeRanges[1] -> 2
+            v <= gradeRanges[2] -> 3
+            else -> 4
         }
     }
 
@@ -426,5 +374,9 @@ object DataTypeParser {
             if (input[index] == targetChar) return index
         }
         return -1 // 문자가 없는 경우 -1을 반환
+    }
+
+    private fun getDrawable(context: Context, resId: Int): Drawable? {
+        return ResourcesCompat.getDrawable(context.resources, resId, null)
     }
 }
