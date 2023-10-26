@@ -5,6 +5,7 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.util.`object`.DataTypeParser.millsToString
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
 import app.airsignal.weather.util.`object`.GetSystemInfo
+import app.airsignal.weather.util.`object`.GetSystemInfo.androidID
 import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -41,9 +42,6 @@ object RDBLogcat {
     private const val GPS_SEARCHED = "검색된 주소"
     private const val GPS_NOT_SEARCHED = "실시간 데이터"
     private const val WIDGET_HISTORY = "위젯"
-    const val WIDGET_ACTION = "액션"
-    const val WIDGET_DOZE_MODE = "도즈모드"
-    const val WIDGET_ERROR = "위젯 에러"
     const val LOGIN_GOOGLE = "구글"
     const val LOGIN_KAKAO = "카카오"
     const val LOGIN_PHONE = "phone"
@@ -52,8 +50,6 @@ object RDBLogcat {
     private const val NOTIFICATION_HISTORY = "알림"
     private const val ERROR_HISTORY = "에러"
     private const val ERROR_ANR = "ANR 에러"
-    const val WIDGET_INSTALL = "위젯 설치"
-    const val WIDGET_UNINSTALL = "위젯 삭제"
     const val LOGIN_FAILED = "로그인 시도 실패"
     const val DATA_CALL_ERROR = "데이터 호출 실패"
 
@@ -75,22 +71,16 @@ object RDBLogcat {
     private fun isLogin(context: Context): String {
         return try {
             if (getUserEmail(context) != "") LOGIN_ON else LOGIN_OFF
-        } catch(e: java.lang.NullPointerException) {
-            LOGIN_OFF
-        }
+        } catch(e: java.lang.NullPointerException) { LOGIN_OFF }
     }
 
     /** 유니크 아이디 받아오기 - 로그인(이메일) 비로그인(디바이스아이디) **/
     private fun getAndroidIdForLog(context: Context): String {
         return try {
-            if (getUserEmail(context) != "") {
+            if (getUserEmail(context) != "")
                 getUserEmail(context).replace(".","_")
-            } else {
-                GetSystemInfo.androidID(context)
-            }
-        } catch (e: NullPointerException) {
-            ""
-        }
+            else GetSystemInfo.androidID(context)
+        } catch (e: NullPointerException) { "" }
     }
 
     /** 아이디까지의 레퍼런스 경로 **/
@@ -105,14 +95,11 @@ object RDBLogcat {
             .child(sort)
             .child(title)
         if (sort == USER_PREF_SETUP_INIT) {
-            if (!userRef.get().isSuccessful) {
-                userRef.setValue(value.toString())
-            }
-        } else if (sort == USER_PREF_SETUP_COUNT) {
+            if (!userRef.get().isSuccessful) userRef.setValue(value.toString())
+        } else if (sort == USER_PREF_SETUP_COUNT)
             userRef.setValue(userRef.get().result.value.toString().toInt() + 1)
-        } else {
-            userRef.setValue(value.toString())
-        }
+         else userRef.setValue(value.toString())
+
     }
 
     /** 유저 로그인 정보 **/
@@ -130,7 +117,7 @@ object RDBLogcat {
             child(LOGIN_PREF_PHONE).setValue(phone)
             child(LOGIN_PREF_NAME).setValue(name)
             child(LOGIN_PREF_PROFILE).setValue(profile)
-            child(LOGIN_PREF_DEVICE_ID).setValue(GetSystemInfo.androidID(context))
+            child(LOGIN_PREF_DEVICE_ID).setValue(androidID(context))
         }
     }
 
@@ -169,15 +156,9 @@ object RDBLogcat {
                 .child(getDate())
                 .child(if (isSearched) GPS_SEARCHED else GPS_NOT_SEARCHED)
                 .child(getTime())
-
-            if (responseData != null) {
-                gpsRef.setValue("$responseData")
-            } else {
-                gpsRef.setValue(gpsValue)
-            }
-        }catch (e: DatabaseException) {
-            e.printStackTrace()
-        }
+            if (responseData != null) gpsRef.setValue("$responseData")
+            else gpsRef.setValue(gpsValue)
+        } catch (e: DatabaseException) { e.printStackTrace() }
     }
 
     /** 위젯 정보 **/

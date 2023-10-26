@@ -50,9 +50,7 @@ object DataTypeParser {
     }
 
     /** Email을 RealtimeDB의 child 형식에 맞게 변환**/
-    fun formatEmailToRDB(email: String): String {
-        return email.replace(".", "_")
-    }
+    fun formatEmailToRDB(email: String): String { return email.replace(".", "_") }
 
     /** Current의 rainType의 에러 방지 **/
     fun modifyCurrentRainType(rainTypeCurrent: String, rainTypeReal: String): String {
@@ -147,6 +145,20 @@ object DataTypeParser {
         return skyMap[sky ?: ""]?.let { getDrawable(context, it) } ?: getDrawable(context, R.drawable.cancel)
     }
 
+    fun getSkyImgWidget(sky: String?, isNight: Boolean): Int {
+        val skyMap = mapOf(
+            "맑음" to if(isNight) R.drawable.w_ico_status else R.drawable.b_ico_sunny,
+            "구름많음" to if(isNight) R.drawable.b_ico_m_ncloudy else R.drawable.b_ico_m_cloudy,
+            "흐림" to R.drawable.b_ico_cloudy,
+            setOf("소나기", "비") to R.drawable.b_ico_rainy,
+            setOf("구름많고 눈", "눈", "흐리고 눈") to R.drawable.b_ico_snow,
+            setOf("구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기") to R.drawable.b_ico_cloudy_rainy,
+            setOf("구름많고 비/눈", "흐리고 비/눈", "비/눈") to R.drawable.b_ico_rainy_snow
+        )
+
+        return skyMap[sky ?: ""] ?: R.drawable.cancel
+    }
+
     /** rain type에 따른 이미지 설정 **/
     private fun getRainTypeSmall(context: Context, rain: String?): Drawable? {
         val rainMap = mapOf(
@@ -163,12 +175,12 @@ object DataTypeParser {
     fun getSkyImgSmall(context: Context, sky: String?, isNight: Boolean): Drawable? {
         val skyMap = mapOf(
             "맑음" to if (!isNight) R.drawable.b_ico_sunny else R.drawable.sm_good_n,
-        "구름많음" to if (!isNight) R.drawable.b_ico_m_cloudy else R.drawable.b_ico_m_ncloudy,
-        "흐림" to R.drawable.b_ico_cloudy,
-        setOf("소나기", "비") to R.drawable.b_ico_rainy,
-        setOf("구름많고 눈", "눈", "흐리고 눈") to R.drawable.sm_snow,
-        setOf("구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기") to R.drawable.b_ico_cloudy_rainy,
-        setOf("구름많고 비/눈", "흐리고 비/눈", "비/눈") to R.drawable.b_ico_rainy_snow
+            "구름많음" to if (!isNight) R.drawable.b_ico_m_cloudy else R.drawable.b_ico_m_ncloudy,
+            "흐림" to R.drawable.b_ico_cloudy,
+            setOf("소나기", "비") to R.drawable.b_ico_rainy,
+            setOf("구름많고 눈", "눈", "흐리고 눈") to R.drawable.sm_snow,
+            setOf("구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기") to R.drawable.b_ico_cloudy_rainy,
+            setOf("구름많고 비/눈", "흐리고 비/눈", "비/눈") to R.drawable.b_ico_rainy_snow
         )
 
         return skyMap[sky ?: ""]?.let { getDrawable(context, it) } ?: getDrawable(context, R.drawable.cancel)
@@ -178,7 +190,6 @@ object DataTypeParser {
     fun getDailyItemDate(context: Context, localDateTime: LocalDateTime): String {
         val betweenDate = ChronoUnit.DAYS.between(localDateTime.toLocalDate(),
             parseLongToLocalDateTime(getCurrentTime()).toLocalDate()).absoluteValue
-
         val localDateTimeMap = mapOf (
             0L to R.string.daily_today,
             1L to R.string.daily_tomorrow,
@@ -247,16 +258,16 @@ object DataTypeParser {
             4 to R.string.thr,
             5 to R.string.fir,
             6 to R.string.sat,
-            7 to R.string.sun
+            0 to R.string.sun
         )
 
-        return dayMap[dayOfWeek]?.let { context.getString(it % 7) } ?: ""
+        return dayMap[dayOfWeek % 7]?.let { context.getString(it) } ?: ""
     }
 
     /** 주소 포멧팅 **/
     fun convertAddress(addr: String): String {
         return addr.replace("특별시", "시").replace("광역시", "시")
-            .replace("제주특별자치도", "제주도")
+            .replace("특별자치도", "도")
     }
 
     /** HH:mm 포맷의 시간을 분으로 변환 **/

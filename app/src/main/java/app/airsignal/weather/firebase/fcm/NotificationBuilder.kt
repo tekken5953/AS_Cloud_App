@@ -39,14 +39,10 @@ class NotificationBuilder {
         const val FCM_EVENT = "event"
         const val NOTIFICATION_CHANNEL_ID = "500"             // FCM 채널 ID
         const val NOTIFICATION_CHANNEL_NAME = "AIRSIGNAL"     // FCM 채널 NAME
+        const val NOTIFICATION_CHANNEL_DESCRIPTION = "Channel description"
     }
 
     fun sendNotification(context: Context, data: Map<String,String>) {
-//        // Get the layouts to use in the custom notification
-//        val notificationLayout = RemoteViews(context.packageName, R.layout.notification_small)
-//        val notificationLayoutExpanded = RemoteViews(context.packageName, R.layout.notification_large)
-//        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
 
@@ -67,13 +63,12 @@ class NotificationBuilder {
                 NotificationManager.IMPORTANCE_DEFAULT
             else NotificationManager.IMPORTANCE_LOW
         ).apply {
-            description = "Channel description"
+            description = NOTIFICATION_CHANNEL_DESCRIPTION
             lockscreenVisibility = View.VISIBLE
             setSound(sound,AudioAttributes.Builder().build())
         }
 
         val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-//        val ringtone = RingtoneManager.getRingtone(context, sound)
 
         fun setNotiBuilder(title: String, subtext: String?, content: String, imgPath: Bitmap?
         ) {
@@ -93,7 +88,6 @@ class NotificationBuilder {
         if (getUserNotiEnable(context)) {
             notificationManager?.let {
                 it.createNotificationChannel(notificationChannel)
-//                applyVibrate(context)
                 it.notify(1, notificationBuilder.build())
             }
             RDBLogcat.writeNotificationHistory(context,data["sort"].toString(),data.toString())
@@ -113,13 +107,13 @@ class NotificationBuilder {
                     val sky = data["sky"]
                     val thunder = data["thunder"]?.toDouble()
                     val lunar = data["lunar"]?.toInt()
-
                     notificationTitle = "${temp}˚ ${applySkyText(context, rainType, sky, thunder)}"
                     notificationContent = "최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
                             "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚"
                 }
                 FCM_PATCH, FCM_EVENT -> {
-                    val payload = data["payload"] ?: if (data["sort"] == FCM_PATCH) "새로운 업데이트가 준비되었어요" else "눌러서 이벤트를 확인하세요"
+                    val payload = data["payload"] ?: if (data["sort"] == FCM_PATCH)
+                        "새로운 업데이트가 준비되었어요" else "눌러서 이벤트를 확인하세요"
                     notificationTitle = "에어시그널 날씨"
                     notificationContent = payload
                 }
@@ -134,7 +128,11 @@ class NotificationBuilder {
                 title = notificationTitle,
                 subtext = getNotificationAddress(context),
                 content = notificationContent,
-                imgPath = getSkyBitmap(context, data["rainType"], data["sky"], data["thunder"]?.toDouble(), data["lunar"]?.toInt() ?: -1)
+                imgPath = getSkyBitmap(context,
+                    data["rainType"],
+                    data["sky"],
+                    data["thunder"]?.toDouble(),
+                    data["lunar"]?.toInt() ?: -1)
             )
         }
 
@@ -143,17 +141,13 @@ class NotificationBuilder {
 
    private fun applyRingtone(context: Context,ringtone: Ringtone) {
        if (getUserNotiSound(context)) {
-           if (ringtone.isPlaying) {
-               ringtone.stop()
-           }
+           if (ringtone.isPlaying) ringtone.stop()
            ringtone.play()
        }
    }
 
     private fun applyVibrate(context: Context) {
-        CoroutineScope(Dispatchers.Default).launch {
-            VibrateUtil(context).noti(longArrayOf(0,100,100))
-        }
+        VibrateUtil(context).noti(longArrayOf(0,100,100))
     }
 
     private fun getSkyBitmap(

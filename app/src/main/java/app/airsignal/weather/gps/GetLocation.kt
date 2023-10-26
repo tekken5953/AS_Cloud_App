@@ -14,6 +14,7 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.ErrorCode
 import app.airsignal.weather.dao.ErrorCode.ERROR_GET_DATA
 import app.airsignal.weather.dao.ErrorCode.ERROR_LOCATION_IOException
+import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
@@ -22,6 +23,7 @@ import app.airsignal.weather.firebase.db.RDBLogcat.writeGpsHistory
 import app.airsignal.weather.util.AddressFromRegex
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.util.`object`.GetSystemInfo
+import app.airsignal.weather.util.`object`.SetAppInfo
 import app.airsignal.weather.util.`object`.SetAppInfo.setNotificationAddress
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
 import com.google.android.gms.location.LocationServices
@@ -30,6 +32,7 @@ import com.navercorp.nid.NaverIdLoginSDK.applicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.io.IOException
 import java.util.*
 
@@ -109,11 +112,8 @@ class GetLocation(private val context: Context) {
 
             setUserLastAddr(context, addr)
 
-            if (roomDB.findAll().isEmpty()) {
-                roomDB.insert(model)
-            } else {
-                roomDB.update(model)
-            }
+            if (roomDB.findAll().isEmpty()) roomDB.insert(model)
+             else roomDB.update(model)
         }
     }
 
@@ -126,7 +126,11 @@ class GetLocation(private val context: Context) {
             location?.let { loc ->
                 val latitude = loc.latitude
                 val longitude = loc.longitude
-                updateCurrentAddress(latitude, longitude, getAddress(latitude, longitude)!!)
+
+                SetAppInfo.setLastLat(context, latitude)
+                SetAppInfo.setLastLng(context, longitude)
+
+                updateCurrentAddress(latitude, longitude, getAddress(latitude, longitude) ?: "")
                 writeGpsHistory(
                     context, isSearched = false,
                     gpsValue = "WorkManager : ${latitude},${longitude} : " +

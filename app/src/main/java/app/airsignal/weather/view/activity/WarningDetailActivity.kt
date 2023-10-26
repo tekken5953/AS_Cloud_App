@@ -48,9 +48,8 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
 
         val regexAddress = if (intent.extras?.getBoolean("isMain") == true) {
             AddressFromRegex(getUserLastAddress(this)).getWarningAddress()
-        } else {
-            getWarningFixed(this)
-        }
+        } else { getWarningFixed(this) }
+
         // 수정 된 주소에 따른 적용
         val regexAddr =
             if (regexAddress != "Error") regexAddress
@@ -82,10 +81,8 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
                                 if (content.isNotEmpty()) {
                                     hideNoResult()
                                     warningList.addAll(content.map { it.replace("○", "").trim()})
-                                    warningAdapter.notifyItemRangeInserted(0,warningList.size)
-                                } else {
-                                    showNoResult()
-                                }
+                                    warningAdapter.notifyItemRangeInserted(0, warningList.size)
+                                } else showNoResult()
                             } ?: showNoResult()
                         }
                         is BaseRepository.ApiState.Error -> {
@@ -96,7 +93,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
                             binding.warningPb.visibility = View.VISIBLE
                         }
                     }
-                } ?: apply {
+                } ?: run {
                     showNoResult()
                     warningAdapter.notifyDataSetChanged()
                 }
@@ -110,35 +107,27 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     @SuppressLint("SetTextI18n")
     private fun showNoResult() {
         val noResultTextView = binding.warningNoResult
-        val noResultPb = binding.warningPb
         val isNationwide = binding.warningAddr.text.toString() == "전국"
 
-        noResultTextView.text = if (isNationwide) {
-            "현재 전국의 기상특보가 없습니다."
-        } else {
-            "현재 지역의 기상 특보가 없습니다.\n전국으로 검색하시겠습니까?"
+        noResultTextView.run {
+            this.text = if (isNationwide) "현재 전국의 기상특보가 없습니다."
+            else "현재 지역의 기상 특보가 없습니다.\n전국으로 검색하시겠습니까?"
+
+            this.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null,
+                if (!isNationwide) ResourcesCompat.getDrawable(resources, R.drawable.search, null)
+                else null, null
+            )
+
+            this.isClickable = !isNationwide
+
+            if (!isNationwide) this.bringToFront()
+
+            TextViewCompat.setCompoundDrawableTintList(this,
+                ColorStateList.valueOf(getColor(R.color.theme_text_color)))
+
+            binding.warningNoResult.visibility = View.VISIBLE
+            binding.warningPb.visibility = View.GONE
         }
-
-        noResultTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(
-            null,
-            null,
-            if (!isNationwide) ResourcesCompat.getDrawable(resources, R.drawable.search, null) else null,
-            null
-        )
-
-        noResultTextView.isClickable = !isNationwide
-
-        if (!isNationwide) {
-            noResultTextView.bringToFront()
-        }
-
-        TextViewCompat.setCompoundDrawableTintList(
-            noResultTextView,
-            ColorStateList.valueOf(getColor(R.color.theme_text_color))
-        )
-
-        binding.warningNoResult.visibility = View.VISIBLE
-        binding.warningPb.visibility = View.GONE
     }
 
     private fun hideNoResult() {
@@ -149,52 +138,52 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
 
     // 지역명을 지역 코드로 변환
     private fun parseRegionToCode(region: String): Int {
-        return when (parseRegionFullName(region)) {
-            "서울시", "경기도", "인천 광역시" -> 108
-            "강원도" -> 105
-            "충청남도" -> 133
-            "충청북도" -> 131
-            "전라남도" -> 156
-            "전라북도" -> 146
-            "경상남도" -> 159
-            "경상북도" -> 143
-            "제주도" -> 184
-            else -> 109
-        }
+        val fullName = parseRegionFullName(region)
+        val regionMap = mapOf(
+            setOf("서울시", "경기도", "인천 광역시") to 108,
+            "강원도" to 105,
+            "충청남도" to 133,
+            "충청북도" to 131,
+            "전라남도" to 156,
+            "전라북도" to 146,
+            "경상남도" to 159,
+            "경상북도" to 143,
+            "제주도" to 184
+        )
+        return regionMap[fullName] ?: 109
     }
 
     // 지역명을 전체 명칭으로 변환
     private fun parseRegionFullName(region: String): String {
-        return when (region) {
-            "서울" -> "서울시"
-            "경기" -> "경기도"
-            "인천" -> "인천 광역시"
-            "강원" -> "강원도"
-            "충남" -> "충청남도"
-            "충북" -> "충청북도"
-            "전남" -> "전라남도"
-            "전북" -> "전라북도"
-            "경남" -> "경상남도"
-            "경북" -> "경상북도"
-            "제주" -> "제주도"
-            else -> region
-        }
+        val regionMap = mapOf("서울" to "서울시",
+        "경기" to "경기도",
+        "인천" to "인천 광역시",
+        "강원" to "강원도",
+        "충남" to "충청남도",
+        "충북" to "충청북도",
+        "전남" to "전라남도",
+        "전북" to "전라북도",
+        "경남" to "경상남도",
+        "경북" to "경상북도",
+        "제주" to "제주도")
+        return regionMap[region] ?: region
     }
 
     private fun parseStringToIndex(region: String): Int {
-        return when (parseRegionFullName(region)) {
-            "서울시" -> 1
-            "경기도" -> 2
-            "인천 광역시" -> 3
-            "강원도" -> 4
-            "충청남도" -> 5
-            "충청북도" -> 6
-            "전라남도" -> 7
-            "전라북도" -> 8
-            "경상남도" -> 9
-            "경상북도" -> 10
-            "제주도" -> 11
-            else -> 0
-        }
+        val fullName = parseRegionFullName(region)
+        val regionMap = mapOf(
+            "서울시" to 1,
+            "경기도" to 2,
+            "인천 광역시" to 3,
+            "강원도" to 4,
+            "충청남도" to 5,
+            "충청북도" to 6,
+            "전라남도" to 7,
+            "전라북도" to 8,
+            "경상남도" to 9,
+            "경상북도" to 10,
+            "제주도" to 11
+        )
+        return regionMap[fullName] ?: 0
     }
 }

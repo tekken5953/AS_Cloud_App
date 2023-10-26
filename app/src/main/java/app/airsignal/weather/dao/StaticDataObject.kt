@@ -25,4 +25,5 @@ object StaticDataObject {
     const val REQUEST_NOTIFICATION = 0x0000002                    // 알림권한 요청 Result Code
     const val REQUEST_BACKGROUND_LOCATION = 0x0000003
     const val TAG_N = "Tag_Notification"                  // FCM 기본 태그 Key
+    const val TAG_W = "Tag_Widget"
 }

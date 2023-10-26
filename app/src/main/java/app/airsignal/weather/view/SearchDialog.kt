@@ -71,6 +71,7 @@ class SearchDialog(
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -126,21 +127,24 @@ class SearchDialog(
             // 등록 된 주소 보여주기 세팅
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
-            GpsRepository(activity).findAll().forEach { entity ->
-                if (entity.name == CURRENT_GPS_ID) {
-                    currentAddress.text = getCurrentLocation(activity).replace(getString(R.string.korea), "")
-
-                    if (getCurrentLocation(activity) == getUserLastAddress(activity)) {
-                        currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))
-                        currentGpsImg.imageTintList =
-                            ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
-                    } else {
-                        currentAddress.setTextColor(activity.getColor(R.color.theme_text_color))
-                        currentGpsImg.imageTintList =
-                            ColorStateList.valueOf(activity.getColor(R.color.theme_text_color))
+            GlobalScope.launch {
+                GpsRepository(activity).findAll().forEach { entity ->
+                    withContext(Dispatchers.Main) {
+                        if (entity.name == CURRENT_GPS_ID) {
+                            currentAddress.text = getCurrentLocation(activity).replace(getString(R.string.korea), "")
+                            if (getCurrentLocation(activity) == getUserLastAddress(activity)) {
+                                currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))
+                                currentGpsImg.imageTintList =
+                                    ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
+                            } else {
+                                currentAddress.setTextColor(activity.getColor(R.color.theme_text_color))
+                                currentGpsImg.imageTintList =
+                                    ColorStateList.valueOf(activity.getColor(R.color.theme_text_color))
+                            }
+                        } else {
+                            addCurrentItem(entity.addrKr.toString(), entity.addrEn.toString())
+                        }
                     }
-                } else {
-                    addCurrentItem(entity.addrKr.toString(), entity.addrEn.toString())
                 }
             }
 

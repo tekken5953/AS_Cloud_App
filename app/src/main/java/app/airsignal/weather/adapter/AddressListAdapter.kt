@@ -73,9 +73,7 @@ class AddressListAdapter(
 
         @SuppressLint("InflateParams")
         fun bind(dao: AdapterModel.AddressListItem) {
-
             address.text = if (isEnglish()) dao.en else dao.kr
-
             delete.animate().alpha(if(visible)1f else 0f).duration = 500
             delete.visibility = if(visible)View.VISIBLE else View.GONE
 
@@ -83,44 +81,47 @@ class AddressListAdapter(
                 val builder = Dialog(context)
                 val view = LayoutInflater.from(context)
                     .inflate(R.layout.dialog_alert_double_btn, null)
-                builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
-                builder.setContentView(view)
-                builder.create()
+                builder.run {
+                    this.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    this.requestWindowFeature(Window.FEATURE_NO_TITLE)
+                    this.setContentView(view)
+                    this.create()
 
-                val cancel = view.findViewById<AppCompatButton>(R.id.alertDoubleCancelBtn)
-                val apply = view.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
-                val title = view.findViewById<TextView>(R.id.alertDoubleTitle)
 
-                apply.text = context.getString(R.string.delete)
-                cancel.text = context.getString(R.string.cancel)
+                    val cancel = view.findViewById<AppCompatButton>(R.id.alertDoubleCancelBtn)
+                    val apply = view.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
+                    val title = view.findViewById<TextView>(R.id.alertDoubleTitle)
 
-                val span = SpannableStringBuilder(
-                    if(isEnglish())"Delete ${address.text}?"
-                    else "${address.text}을(를)\n삭제하시겠습니까?")
+                    apply.text = context.getString(R.string.delete)
+                    cancel.text = context.getString(R.string.cancel)
 
-                span.setSpan(
-                    ForegroundColorSpan(
-                        ResourcesCompat.getColor(
-                            context.resources,
-                            R.color.theme_alert_double_apply_color, null
-                        )
-                    ), if(isEnglish())7 else 0,
-                    if(isEnglish())7 + address.text.length else address.text.length,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
+                    val span = SpannableStringBuilder(
+                        if(isEnglish())"Delete ${address.text}?"
+                        else "${address.text}을(를)\n삭제하시겠습니까?")
 
-                title.text = span
+                    span.setSpan(
+                        ForegroundColorSpan(
+                            ResourcesCompat.getColor(
+                                context.resources,
+                                R.color.theme_alert_double_apply_color, null
+                            )
+                        ), if(isEnglish())7 else 0,
+                        if(isEnglish())7 + address.text.length else address.text.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
 
-                apply.setOnClickListener {
-                    db.deleteFromAddress(address.text.toString())
-                    mList.removeAt(bindingAdapterPosition)
-                    notifyItemRemoved(bindingAdapterPosition)
-                    updateCheckBoxVisible(false)
-                    builder.dismiss()
+                    title.text = span
+
+                    apply.setOnClickListener {
+                        db.deleteFromAddress(address.text.toString())
+                        mList.removeAt(bindingAdapterPosition)
+                        notifyItemRemoved(bindingAdapterPosition)
+                        updateCheckBoxVisible(false)
+                        this.dismiss()
+                    }
+                    cancel.setOnClickListener { this.dismiss() }
+                    this.show()
                 }
-                cancel.setOnClickListener { builder.dismiss() }
-                builder.show()
             }
 
             itemView.setOnClickListener {

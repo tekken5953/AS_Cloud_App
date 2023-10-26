@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.coroutineContext
 
 /**
  * @author : Lee Jae Young
@@ -31,8 +32,8 @@ class GpsRepository(private val context: Context) {
         }
     }
 
-    fun findAll(): List<GpsEntity> {
-        return getInstance(context).gpsRepository().findAll()
+    suspend fun findAll(): List<GpsEntity> = withContext(Dispatchers.IO) {
+        return@withContext getInstance(context).gpsRepository().findAll()
     }
 
     fun findById(name: String): GpsEntity {

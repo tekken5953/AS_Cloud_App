@@ -13,24 +13,19 @@ import java.util.*
 
 
 class SubFCM: FirebaseMessagingService() {
-    private val instance = FirebaseMessaging.getInstance()
-
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 //        Timber.tag(TAG_N).d("onMessageReceived(${message.data})")
 
         // 포그라운드 노티피케이션 발생
-        NotificationBuilder().sendNotification(
-            applicationContext,
-            message.data
-        )
+        NotificationBuilder().sendNotification(applicationContext, message.data)
     }
 
     /** 토픽 구독 설정 **/
     suspend fun subTopic(topic: String): SubFCM {
         try {
-            instance.subscribeToTopic(topic).await()
+            FirebaseMessaging.getInstance().subscribeToTopic(topic).await()
             Timber.tag(TAG_N).d("Subscribed : $topic")
         } catch (e: Exception) {
             Timber.tag(TAG_N).w("Subscribe failed: $e")
@@ -41,7 +36,7 @@ class SubFCM: FirebaseMessagingService() {
     /** 토픽 구독 해제 **/
     private fun unSubTopic(topic: String): SubFCM {
         val encodedStream = encodeTopic(topic)
-        instance.unsubscribeFromTopic(encodedStream)
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     val msg = "UnSubscribed failed"
@@ -73,11 +68,10 @@ class SubFCM: FirebaseMessagingService() {
     /** 현재 토큰정보 불러오기 **/
     suspend fun getToken(): String? {
         val token = withContext(Dispatchers.IO) {
-            instance.token.addOnCompleteListener(OnCompleteListener { task ->
+            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     return@OnCompleteListener
                 }
-                val token = task.result
             }).result
         }
         return token
@@ -86,6 +80,5 @@ class SubFCM: FirebaseMessagingService() {
     /** 새로운 토큰 발행 **/
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-//        Timber.tag(TAG_N).d("sendRegistrationTokenToServer($token)")
     }
 }

@@ -1586,8 +1586,10 @@ class MainActivity
         }
 
         // Room DAO 를 사용하여 데이터베이스 업데이트 또는 삽입 수행
-        if (gpsDbIsEmpty(roomDB)) roomDB.insert(model)
-        else roomDB.update(model)
+        CoroutineScope(Dispatchers.IO).launch {
+            if (gpsDbIsEmpty(roomDB)) roomDB.insert(model)
+            else roomDB.update(model)
+        }
     }
 
     // 현재 위치 정보로 DB 갱신
@@ -1601,7 +1603,7 @@ class MainActivity
     }
 
     // DB가 비어있는지 확인
-    private fun gpsDbIsEmpty(db: GpsRepository): Boolean {
+    private suspend fun gpsDbIsEmpty(db: GpsRepository): Boolean {
         return db.findAll().isEmpty()
     }
 
@@ -1854,8 +1856,6 @@ class MainActivity
                 setUserLastAddr(this@MainActivity, addr)
                 setCurrentLocation(this@MainActivity, addr)
                 updateCurrentAddress(lat, lng, addr)
-                setLastLat(this@MainActivity, lat)
-                setLastLng(this@MainActivity,lng)
             }
 
             // 주소 문자열에서 불필요한 부분을 제거

@@ -14,6 +14,7 @@ import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.repo.BaseRepository
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.LoggerUtil
+import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.util.`object`.GetSystemInfo.goToPlayStore
@@ -44,10 +45,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         SetSystemInfo.setStatusBar(this)
 
         initBinding()
-        FirebaseDatabase.getInstance()
         LoggerUtil().getInstance()
         applyAppVersionData()
-        CoroutineScope(Dispatchers.IO).launch { SubFCM().getToken() }
 
         // 유저 디바이스 설정 - 앱 버전
         RDBLogcat.writeUserPref(
@@ -57,20 +56,19 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             value = "${GetSystemInfo.getApplicationVersionName(this)}.${GetSystemInfo.getApplicationVersionCode(this)}"
         )
 
-        // 유저 디바이스 설정 - 디바이스 모델
-        RDBLogcat.writeUserPref(
-            this,
-            sort = RDBLogcat.USER_PREF_DEVICE,
-            title = RDBLogcat.USER_PREF_DEVICE_DEVICE_MODEL,
-            value = Build.MODEL
-        )
-
         // 유저 디바이스 설정 - SDK 버전
         RDBLogcat.writeUserPref(
             this,
             sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_SDK_VERSION,
             value = Build.VERSION.SDK_INT
+        )
+
+        // 초기설정 로그 저장 - 마지막 접속 시간
+        RDBLogcat.writeUserPref(
+            this, sort = RDBLogcat.USER_PREF_SETUP,
+            title = RDBLogcat.USER_PREF_SETUP_LAST_LOGIN,
+            value = "${DataTypeParser.parseLongToLocalDateTime(DataTypeParser.getCurrentTime())}"
         )
     }
 

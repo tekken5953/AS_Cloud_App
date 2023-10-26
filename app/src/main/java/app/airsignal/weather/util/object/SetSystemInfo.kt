@@ -65,7 +65,7 @@ object SetSystemInfo {
 
     /** UV 범주 색상 적용 **/
     fun setUvBackgroundColor(context: Context, flag: String, cardView: CardView) {
-        val flagMap = mapOf(
+        val flagMap = mapOf (
             "낮음" to R.color.uv_low,
             "보통" to R.color.uv_normal,
             "높음" to R.color.uv_high,
@@ -73,7 +73,7 @@ object SetSystemInfo {
             "위험" to R.color.uv_caution
         )
 
-        return flagMap[flag]?.let { cardView.setCardBackgroundColor(ColorStateList.valueOf(it))}!!
+        flagMap[flag]?.let { cardView.setCardBackgroundColor(context.getColor(it))}!!
     }
 
     /** 상태 바 설정 **/

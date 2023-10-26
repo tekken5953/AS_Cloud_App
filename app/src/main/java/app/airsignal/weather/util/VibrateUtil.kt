@@ -6,6 +6,9 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class VibrateUtil(private val context: Context) {
     private val vib by lazy {
@@ -21,17 +24,21 @@ class VibrateUtil(private val context: Context) {
 
     /** 기본 진동 발생 메서드 **/
     fun make(duration: Int) {
-        vib.vibrate(
-            VibrationEffect.createOneShot(
-                duration.toLong(), VibrationEffect.DEFAULT_AMPLITUDE
+        CoroutineScope(Dispatchers.Default).launch {
+            vib.vibrate(
+                VibrationEffect.createOneShot(
+                    duration.toLong(), VibrationEffect.DEFAULT_AMPLITUDE
+                )
             )
-        )
+        }
     }
 
     /** 알림 진동 발생 **/
     fun noti(array: LongArray) {
-        vib.vibrate(
-            VibrationEffect.createWaveform(array, -1)
-        )
+        CoroutineScope(Dispatchers.Default).launch {
+            vib.vibrate(
+                VibrationEffect.createWaveform(array, -1)
+            )
+        }
     }
 }

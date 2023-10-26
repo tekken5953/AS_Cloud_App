@@ -1,6 +1,7 @@
 package app.airsignal.weather.view.activity
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -12,18 +13,27 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityPermissionBinding
 import app.airsignal.weather.firebase.db.RDBLogcat
+import app.airsignal.weather.firebase.db.RDBLogcat.writeUserPref
 import app.airsignal.weather.util.EnterPageUtil
-import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.util.`object`.*
+import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
+import app.airsignal.weather.util.`object`.DataTypeParser.parseLongToLocalDateTime
 import app.airsignal.weather.util.`object`.GetAppInfo.getInitNotiPermission
+import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
+import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionCode
+import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionName
+import app.airsignal.weather.util.`object`.SetAppInfo.setInitNotiPermission
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserNoti
+import app.airsignal.weather.util.`object`.SetSystemInfo.setStatusBar
 import app.airsignal.weather.view.perm.FirstLocCheckDialog
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PermissionActivity :
     BaseActivity<ActivityPermissionBinding>() {
     override val resID: Int get() = R.layout.activity_permission
     private val perm = RequestPermissionsUtil(this)
+    private val enter by lazy {EnterPageUtil(this)}
 
     override fun onResume() {
         super.onResume()
@@ -31,19 +41,19 @@ class PermissionActivity :
             if (!perm.isNotificationPermitted()) {  // 알림 서비스 이용 가능?
                 val initNotiPermission = getInitNotiPermission(this)
                 if (initNotiPermission == "") { // 알림 서비스 권한 호출이 처음?
-                    SetAppInfo.setInitNotiPermission(this, "Not Init")
+                    setInitNotiPermission(this, "Not Init")
                     perm.requestNotification()  // 알림 권한 요청
                 } else {
                     Toast.makeText(
                         this, getString(R.string.noti_always_can),
                         Toast.LENGTH_SHORT
                     ).show()
-                    EnterPageUtil(this).toMain(GetAppInfo.getUserLoginPlatform(this))
+                    enter.toMain(getUserLoginPlatform(this))
                 }
             } else {
                 setUserNoti(this, IgnoredKeyFile.notiEnable, true)
                 setUserNoti(this, IgnoredKeyFile.notiVibrate, true)
-                EnterPageUtil(this).toMain(GetAppInfo.getUserLoginPlatform(this))
+                enter.toMain(getUserLoginPlatform(this))
             }
         }
     }
@@ -54,27 +64,28 @@ class PermissionActivity :
 
         initBinding()
 
-        SetSystemInfo.setStatusBar(this)
+        setStatusBar(this)
 
         // 초기설정 로그 저장 - 초기 설치 날짜
         RDBLogcat.writeUserPref(
             this, sort = RDBLogcat.USER_PREF_SETUP,
             title = RDBLogcat.USER_PREF_SETUP_INIT,
-            value = "${DataTypeParser.parseLongToLocalDateTime(DataTypeParser.getCurrentTime())}"
-        )
-
-        // 초기설정 로그 저장 - 마지막 접속 시간
-        RDBLogcat.writeUserPref(
-            this, sort = RDBLogcat.USER_PREF_SETUP,
-            title = RDBLogcat.USER_PREF_SETUP_LAST_LOGIN,
-            value = "${DataTypeParser.parseLongToLocalDateTime(DataTypeParser.getCurrentTime())}"
+            value = "${parseLongToLocalDateTime(getCurrentTime())}"
         )
 
         // 초기설정 로그 저장 - 디바이스 SDK 버전
         RDBLogcat.writeUserPref(
             this, sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
-            value = "${GetSystemInfo.getApplicationVersionName(this)}.${GetSystemInfo.getApplicationVersionCode(this)}"
+            value = "${getApplicationVersionName(this)}.${getApplicationVersionCode(this)}"
+        )
+
+        // 유저 디바이스 설정 - 디바이스 모델
+        writeUserPref(
+            this,
+            sort = RDBLogcat.USER_PREF_DEVICE,
+            title = RDBLogcat.USER_PREF_DEVICE_DEVICE_MODEL,
+            value = Build.MODEL
         )
 
         val userDataIndex = binding.permissionUserDataNotice.text.toString().indexOf(getString(R.string.data_usages).lowercase())
@@ -94,10 +105,12 @@ class PermissionActivity :
 
         binding.permissionUserDataNotice.setOnClickListener {
             // 개인정보 처리방침 열림
-            val intent = Intent(this@PermissionActivity, WebURLActivity::class.java)
-            intent.putExtra("sort","dataUsage")
-            intent.putExtra("appBar",true)
-            startActivity(intent)
+            val intent = Intent(this@PermissionActivity,
+                WebURLActivity::class.java).run {
+                putExtra("sort","dataUsage")
+                putExtra("appBar",true)
+                startActivity(intent)
+            }
         }
 
         binding.permissionUserDataNotice.linksClickable = true
@@ -118,13 +131,10 @@ class PermissionActivity :
         }
     }
 
-    @Deprecated(
-        "Deprecated in Java", ReplaceWith(
-            "EnterPageUtil(this).fullyExit()",
-            "com.example.airsignal_app.util.EnterPageUtil"
-        )
-    )
+    @Deprecated("Deprecated in Java", ReplaceWith(
+        "EnterPageUtil(this).fullyExit()",
+        "app.airsignal.weather.util.EnterPageUtil"))
     override fun onBackPressed() {
-        EnterPageUtil(this).fullyExit()
+        enter.fullyExit()
     }
 }
