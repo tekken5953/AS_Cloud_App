@@ -100,6 +100,9 @@ class GetLocation(private val context: Context) {
     /** 현재 주소 DB에 업데이트 **/
     private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
         CoroutineScope(Dispatchers.IO).launch {
+            SetAppInfo.setLastLat(context, lat)
+            SetAppInfo.setLastLng(context, lng)
+
             val roomDB = GpsRepository(context)
             val model = GpsEntity(
                 name = CURRENT_GPS_ID,
@@ -126,9 +129,6 @@ class GetLocation(private val context: Context) {
             location?.let { loc ->
                 val latitude = loc.latitude
                 val longitude = loc.longitude
-
-                SetAppInfo.setLastLat(context, latitude)
-                SetAppInfo.setLastLng(context, longitude)
 
                 updateCurrentAddress(latitude, longitude, getAddress(latitude, longitude) ?: "")
                 writeGpsHistory(

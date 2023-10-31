@@ -2,6 +2,7 @@ package app.airsignal.weather.db
 
 import android.content.Context
 import android.content.SharedPreferences
+import kotlinx.coroutines.CloseableCoroutineDispatcher
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -9,7 +10,6 @@ import org.json.JSONObject
  * @author : Lee Jae Young
  * @since : 2023-03-07 오전 9:43
  **/
-
 
 class SharedPreferenceManager(context: Context) {
     @Suppress("PrivatePropertyName") private val PREFERENCES_NAME = "rebuild_preference"
@@ -26,7 +26,7 @@ class SharedPreferenceManager(context: Context) {
     private val editor: SharedPreferences.Editor = prefs.edit()
 
     /**String 값 저장 **/
-    fun setString(key: String, value: String) : SharedPreferenceManager{
+    fun setString(key: String, value: String) : SharedPreferenceManager {
         editor.putString(key, value)
         editor.apply()
         return this

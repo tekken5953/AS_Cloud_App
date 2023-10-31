@@ -1,7 +1,6 @@
 package app.airsignal.weather.retrofit
 
 import com.google.gson.annotations.SerializedName
-import java.time.LocalDateTime
 
 class ApiModel {
 
@@ -375,7 +374,7 @@ class ApiModel {
     )
 
     // 4x2 위젯 - 전체 데이터
-    data class Widget4x2Data(
+    data class WidgetData(
         @SerializedName("quality")
         val quality: Widget4x2Quality,
         @SerializedName("current")

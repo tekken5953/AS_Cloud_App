@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
 import app.airsignal.weather.util.`object`.GetAppInfo
+import com.orhanobut.logger.Logger
 import com.triggertrap.seekarc.SeekArc
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,8 +20,7 @@ class SunProgress(private val seekArc: SeekArc) {
                 this.sweepAngle = 180
                 this.arcColor = Color.parseColor("#E1E1E1")
                 val isNight = GetAppInfo.getIsNight(currentSun)
-
-                this.isClockwise = false
+                this.isClockwise = !isNight
                 this.startAngle = if (isNight) 180 else 90
                 this.arcRotation = if (isNight) 90 else 180
                 this.progressColor = Color.parseColor(if (isNight) "#7E5DFF" else "#FF8A48")

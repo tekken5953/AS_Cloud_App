@@ -65,14 +65,16 @@ object DataTypeParser {
     }
 
     fun translateSkyText(sky: String): String {
-        val skyMap = mapOf(
-            "맑음" to "clear",
-            setOf("구름많음", "흐림") to "cloudy",
-            setOf("소나기", "비", "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기") to "rainy",
-            setOf("구름많고 눈", "흐리고 눈", "눈") to "snowy",
-            setOf("구름많고 비/눈", "흐리고 비/눈", "비/눈") to "rainy/snowy"
-        )
-        return skyMap[sky] ?: ""
+        val id = when (sky) {
+            "맑음" -> "clear"
+            "구름많음", "흐림" -> "cloudy"
+            "소나기", "비", "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> "rainy"
+            "구름많고 눈", "흐리고 눈", "눈" -> "snowy"
+            "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> "rainy/snowy"
+            else -> ""
+        }
+
+        return id
     }
 
     /** 달 모양 반환 **/
@@ -132,31 +134,43 @@ object DataTypeParser {
 
     /** sky value에 따른 이미지 설정 **/
     fun getSkyImgLarge(context: Context, sky: String?, isNight: Boolean, lunar: Int): Drawable? {
-        val skyMap = mapOf(
-            "맑음" to if(isNight) applyLunarImg(lunar) else R.drawable.b_ico_sunny,
-            "구름많음" to if(isNight) R.drawable.b_ico_m_ncloudy else R.drawable.b_ico_m_cloudy,
-            "흐림" to R.drawable.b_ico_cloudy,
-            setOf("소나기", "비") to R.drawable.b_ico_rainy,
-            setOf("구름많고 눈", "눈", "흐리고 눈") to R.drawable.b_ico_snow,
-            setOf("구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기") to R.drawable.b_ico_cloudy_rainy,
-            setOf("구름많고 비/눈", "흐리고 비/눈", "비/눈") to R.drawable.b_ico_rainy_snow
-        )
+        val id = when(sky) {
+            "맑음" ->
+                if (!isNight) R.drawable.b_ico_sunny
+                else  applyLunarImg(lunar)
+            "구름많음" ->
+                if (!isNight)  R.drawable.b_ico_m_cloudy
+                else  R.drawable.b_ico_m_ncloudy
+            "흐림" -> R.drawable.b_ico_cloudy
+            "소나기", "비" -> R.drawable.b_ico_rainy
+            "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.b_ico_snow
+            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
+                R.drawable.b_ico_cloudy_rainy
+            "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
+            else -> R.drawable.cancel
+        }
 
-        return skyMap[sky ?: ""]?.let { getDrawable(context, it) } ?: getDrawable(context, R.drawable.cancel)
+        return getDrawable(context,id)
     }
 
     fun getSkyImgWidget(sky: String?, isNight: Boolean): Int {
-        val skyMap = mapOf(
-            "맑음" to if(isNight) R.drawable.w_ico_status else R.drawable.b_ico_sunny,
-            "구름많음" to if(isNight) R.drawable.b_ico_m_ncloudy else R.drawable.b_ico_m_cloudy,
-            "흐림" to R.drawable.b_ico_cloudy,
-            setOf("소나기", "비") to R.drawable.b_ico_rainy,
-            setOf("구름많고 눈", "눈", "흐리고 눈") to R.drawable.b_ico_snow,
-            setOf("구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기") to R.drawable.b_ico_cloudy_rainy,
-            setOf("구름많고 비/눈", "흐리고 비/눈", "비/눈") to R.drawable.b_ico_rainy_snow
-        )
+        val id = when (sky) {
+            "맑음" ->
+                if (!isNight) R.drawable.w_ico_status
+                else R.drawable.b_ico_sunny
+            "구름많음" ->
+                if (!isNight) R.drawable.b_ico_m_cloudy
+                else R.drawable.b_ico_m_ncloudy
+            "흐림" -> R.drawable.b_ico_cloudy
+            "소나기", "비" -> R.drawable.b_ico_rainy
+            "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.b_ico_snow
+            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
+                R.drawable.b_ico_cloudy_rainy
+            "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
+            else -> R.drawable.cancel
+        }
 
-        return skyMap[sky ?: ""] ?: R.drawable.cancel
+        return id
     }
 
     /** rain type에 따른 이미지 설정 **/
@@ -173,17 +187,23 @@ object DataTypeParser {
 
     /** sky value에 따른 이미지 설정 **/
     fun getSkyImgSmall(context: Context, sky: String?, isNight: Boolean): Drawable? {
-        val skyMap = mapOf(
-            "맑음" to if (!isNight) R.drawable.b_ico_sunny else R.drawable.sm_good_n,
-            "구름많음" to if (!isNight) R.drawable.b_ico_m_cloudy else R.drawable.b_ico_m_ncloudy,
-            "흐림" to R.drawable.b_ico_cloudy,
-            setOf("소나기", "비") to R.drawable.b_ico_rainy,
-            setOf("구름많고 눈", "눈", "흐리고 눈") to R.drawable.sm_snow,
-            setOf("구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기") to R.drawable.b_ico_cloudy_rainy,
-            setOf("구름많고 비/눈", "흐리고 비/눈", "비/눈") to R.drawable.b_ico_rainy_snow
-        )
+        val id = when(sky) {
+            "맑음" ->
+                if (!isNight) R.drawable.b_ico_sunny
+                else  R.drawable.sm_good_n
+            "구름많음" ->
+                if (!isNight)  R.drawable.b_ico_m_cloudy
+                else  R.drawable.b_ico_m_ncloudy
+            "흐림" -> R.drawable.b_ico_cloudy
+            "소나기", "비" -> R.drawable.b_ico_rainy
+            "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.sm_snow
+            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
+                R.drawable.b_ico_cloudy_rainy
+            "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
+            else -> R.drawable.cancel
+        }
 
-        return skyMap[sky ?: ""]?.let { getDrawable(context, it) } ?: getDrawable(context, R.drawable.cancel)
+        return getDrawable(context,id)
     }
 
     /** 시간별 날씨 날짜 이름 **/

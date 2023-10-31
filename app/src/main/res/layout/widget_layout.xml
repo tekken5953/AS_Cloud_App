@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="146dp"
+    android:layout_height="146dp"
+    android:background="@drawable/w_bg_night"
+    android:padding="@dimen/widget_margin">
+
+    <ImageView
+        android:id="@+id/widgetRefresh"
+        android:layout_width="23dp"
+        android:layout_height="23dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="4dp"
+        android:contentDescription="@string/cd_icon_refresh_data"
+        android:src="@drawable/w_btn_refresh"
+        app:tint="@color/white" />
+
+    <TextView
+        android:id="@+id/widgetTime"
+        style="@style/basicTextView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="5dp"
+        android:textColor="@color/white"
+        android:textSize="13sp" />
+
+    <ImageView
+        android:id="@+id/widgetSkyImg"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:contentDescription="@string/cd_img_sky"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/widgetAddress"
+        android:layout_marginEnd="5dp" />
+
+    <TextView
+        android:id="@+id/widgetTempValue"
+        style="@style/basicMediumTextView"
+        android:layout_below="@+id/widgetRefresh"
+        android:layout_alignStart="@+id/widgetRefresh"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/white"
+        android:textSize="28sp" />
+
+    <TextView
+        android:id="@+id/widgetSkyText"
+        style="@style/basicTextView"
+        android:layout_below="@+id/widgetTempValue"
+        android:layout_alignStart="@+id/widgetRefresh"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/white"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/widgetAddress"
+        style="@style/basicTextView"
+        android:layout_below="@+id/widgetSkyText"
+        android:layout_alignStart="@+id/widgetSkyText"
+        android:layout_alignEnd="@+id/widgetTime"
+        android:layout_marginTop="5dp"
+        android:ellipsize="start"
+        android:gravity="start"
+        android:lines="1"
+        android:textColor="@color/white"
+        android:textSize="13sp" />
+
+</RelativeLayout>

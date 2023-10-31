@@ -116,6 +116,7 @@ import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
+import kotlin.collections.ArrayDeque
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -957,6 +958,7 @@ class MainActivity
             week.taMax0, week.taMax1, week.taMax2, week.taMax3, week.taMax4,
             week.taMax5, week.taMax6, week.taMax7
         )
+
         // 최저/최대 기온 적용
         result.today?.let { mToday ->
             binding.mainMinValue.text = "${filteringNullData(mToday.min)}˚"
@@ -1008,7 +1010,7 @@ class MainActivity
                     "${forecastToday.hour}${getString(R.string.hour)}",
                     skyImg,
                     temperature,
-                    dailyIndex.forecast!!,
+                    dailyIndex.forecast ?: "",
                     isRainyDay(rainType),
                     rainP
                 )
@@ -1023,24 +1025,21 @@ class MainActivity
             try {
                 val formedDate = dateNow.plusDays(it.toLong())
                 val date: String = when (it) {
-                    0 -> { getString(R.string.today) }
-                    1 -> { getString(R.string.tomorrow) }
-                    else -> {
-                        "${parseDayOfWeekToKorean(
-                            this, dateNow.dayOfWeek.value + it)}${getString(R.string.date)}"
-                    }
+                    0 -> getString(R.string.today)
+                    1 -> getString(R.string.tomorrow)
+                    else -> { "${parseDayOfWeekToKorean(this, 
+                        dateNow.dayOfWeek.value + it)}${getString(R.string.date)}" }
                 }
-
                 val isBefore = tempDate.dayOfMonth < dateNow.dayOfMonth
                 val index = if (isBefore) it+1 else it
 
                 addWeeklyWeatherItem(
                     date,
                     dateAppendZero(formedDate),
-                    getSkyImgSmall(this, wfMin[index], false)!!,
-                    getSkyImgSmall(this, wfMax[index], false)!!,
-                    "${taMin[index]?.roundToInt() ?: -999}˚",
-                    "${taMax[index]?.roundToInt() ?: -999}˚"
+                    getSkyImgSmall(this, wfMin[index]!!, isNight = false)!!,
+                    getSkyImgSmall(this, wfMax[index]!!, isNight = true)!!,
+                    "${taMin[index]?.roundToInt()!!}˚",
+                    "${taMax[index]?.roundToInt()!!}˚"
                 )
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(RDBLogcat.DATA_CALL_ERROR,
@@ -1786,11 +1785,15 @@ class MainActivity
 
         val onSuccess: (Location?) -> Unit = { location ->
             location?.let { loc ->
+                val lat = loc.latitude
+                val lng = loc.longitude
+                setLastLat(this, lat)
+                setLastLng(this, lng)
                 hideProgressBar()
-                if (isKorea(loc.latitude, loc.longitude)) {
+                if (isKorea(lat, lng)) {
                     val addr = GetLocation(this@MainActivity)
-                        .getAddress(loc.latitude, loc.longitude)
-                    processAddress(loc.latitude, loc.longitude, addr)
+                        .getAddress(lat, lng)
+                    processAddress(lat, lng, addr)
                 } else {
                     hideAllViews(ERROR_NOT_SERVICED_LOCATION)
                 }
@@ -1820,7 +1823,7 @@ class MainActivity
                 val mLng = lat.toDouble()
                 val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
                 if (isKorea(mLat, mLng)) {
-                   ToastUtils(this).showMessage(getString(R.string.last_location_call_msg),1)
+                    ToastUtils(this).showMessage(getString(R.string.last_location_call_msg), 1)
                     processAddress(mLat, mLng, addr)
                 } else hideAllViews(ERROR_NOT_SERVICED_LOCATION)
             }

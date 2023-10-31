@@ -16,7 +16,7 @@ public interface MyApiImpl {
             @Query("addr") String addr);
 
     @GET("forecast")    // 위젯 데이터 호출
-    Call<ApiModel.Widget4x2Data> getWidgetForecast(
+    Call<ApiModel.WidgetData> getWidgetForecast(
             @Query("lat") Double lat,
             @Query("lng") Double lng,
             @Query("rcount") Integer count);
@@ -30,7 +30,7 @@ public interface MyApiImpl {
     @GET("version") // 앱 버전 호출
     Call<ApiModel.AppVersion> getVersion();
 
-    @GET("forecast/broadcast")
+    @GET("forecast/broadcast") // 기상특보 데이터 호출
     Call<ApiModel.BroadCastWeather> getBroadCast(
             @Query("code") int code);
 }

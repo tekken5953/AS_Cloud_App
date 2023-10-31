@@ -72,7 +72,8 @@
             android:exported="false"
             android:screenOrientation="portrait"
             android:hardwareAccelerated="true"
-            tools:targetApi="s" />
+            tools:targetApi="s"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true"
