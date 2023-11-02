@@ -8,8 +8,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.widget.RemoteViews
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.StaticDataObject.TAG_W
 import app.airsignal.weather.firebase.db.RDBLogcat
@@ -20,6 +23,7 @@ import app.airsignal.weather.util.AddressFromRegex
 import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.currentDateTimeString
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.CoroutineScope
@@ -98,15 +102,21 @@ open class WidgetProvider : AppWidgetProvider() {
         Timber.tag(TAG_W).i("onDeleted")
     }
 
-//    override fun onReceive(context: Context?, intent: Intent?) {
-//        super.onReceive(context, intent)
-//        val appWidgetId = intent!!.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-//        if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && intent.action == REFRESH_BUTTON_CLICKED) {
-//            val views = RemoteViews(context!!.packageName, R.layout.widget_layout)
-//            views.setOnClickPendingIntent(R.id.widgetRefresh, applyRefreshPendingIntent(context,appWidgetId))
-//            fetch(context, views)
-//        }
-//    }
+    override fun onReceive(context: Context?, intent: Intent?) {
+        super.onReceive(context, intent)
+        val appWidgetId = intent!!.getIntExtra(
+            AppWidgetManager.EXTRA_APPWIDGET_ID,
+            AppWidgetManager.INVALID_APPWIDGET_ID
+        )
+        if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && intent.action == REFRESH_BUTTON_CLICKED) {
+            val views = RemoteViews(context!!.packageName, R.layout.widget_layout)
+            views.setOnClickPendingIntent(
+                R.id.widgetRefresh,
+                applyRefreshPendingIntent(context, appWidgetId)
+            )
+            fetch(context, views)
+        }
+    }
 
     private fun applyRefreshPendingIntent(context: Context, appWidgetId: Int): PendingIntent {
         val refreshBtnIntent = Intent(context, WidgetProvider::class.java)
@@ -120,9 +130,15 @@ open class WidgetProvider : AppWidgetProvider() {
         )
     }
 
+
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context, views: RemoteViews) {
-
+        val perm = RequestPermissionsUtil(context)
+        @RequiresApi(Build.VERSION_CODES.Q)
+        if (!perm.isBackgroundRequestLocation()) {
+            Toast.makeText(context, "위치 권한 '항상허용' 필요", Toast.LENGTH_SHORT).show()
+            perm.requestBackgroundLocation()
+        }
         CoroutineScope(Dispatchers.Default).launch {
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
             val onSuccess: (Location?) -> Unit = { location ->
@@ -149,25 +165,6 @@ open class WidgetProvider : AppWidgetProvider() {
                 .addOnSuccessListener(onSuccess)
                 .addOnFailureListener(onFailure)
         }
-
-//        @Suppress("DEPRECATION")
-//        val locationRequest = com.google.android.gms.location.LocationRequest()
-//        val locationSettingsRequest = LocationSettingsRequest.Builder()
-//            .addLocationRequest(locationRequest)
-//            .build()
-//        val settingsClient = LocationServices.getSettingsClient(context)
-//        settingsClient.checkLocationSettings(locationSettingsRequest)
-//            .addOnSuccessListener {
-//                // 위치 서비스가 활성화된 경우, 데이터를 호출하고 위젯을 업데이트
-//                fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-//                    .addOnSuccessListener(onSuccess)
-//                    .addOnFailureListener(onFailure)
-//            }
-//            .addOnFailureListener {
-//                Timber.tag(TAG_W).e(it.stackTraceToString())
-//                // 위치 서비스가 비활성화된 경우, 사용자에게 위치 서비스를 활성화하라는 메시지 표시
-//                Toast.makeText(context, "위치 서비스를 활성화 해주세요", Toast.LENGTH_SHORT).show()
-//            }
     }
 
     private suspend fun requestWeather(lat: Double, lng: Double): ApiModel.WidgetData? {
