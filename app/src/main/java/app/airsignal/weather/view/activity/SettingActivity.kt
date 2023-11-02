@@ -68,9 +68,9 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setUserNoti
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserTheme
 import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.util.`object`.SetSystemInfo.setStatusBar
-import app.airsignal.weather.view.ShowDialogClass
+import app.airsignal.weather.view.dialog.ShowDialogClass
 import app.airsignal.weather.view.custom_view.CustomerServiceView
-import app.airsignal.weather.view.custom_view.SnackBarUtils
+import app.airsignal.weather.view.util.SnackBarUtils
 import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.vmodel.GetAppVersionViewModel

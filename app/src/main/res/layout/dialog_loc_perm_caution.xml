@@ -31,8 +31,8 @@
 
     <ImageView
         android:id="@+id/permCautionImg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:src="@drawable/ico_gps_big"
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/cd_icon_location"

@@ -35,7 +35,9 @@ import timber.log.Timber
  **/
 open class WidgetProvider : AppWidgetProvider() {
 
-    init { LoggerUtil().getInstance() }
+    init {
+        LoggerUtil().getInstance()
+    }
 
     companion object {
         const val REFRESH_BUTTON_CLICKED = "refreshButtonClicked"
@@ -60,7 +62,9 @@ open class WidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetId: Int,
         newOptions: Bundle
-    ) { super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions) }
+    ) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+    }
 
     // 위젯 메타 데이터를 구성 할 때 updatePeriodMillis 라는 업데이트 주기 값을 설정하게 되며, 이 주기에 따라 호출 됩니다.
     // 또한 앱 위젯이 추가 될 떄에도 호출 되므로 Service 와의 상호작용 등의 초기 설정이 필요 할 경우에도 이 메소드를 통해 구현합니다
@@ -69,9 +73,12 @@ open class WidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        for(appWidgetId in appWidgetIds) {
+        for (appWidgetId in appWidgetIds) {
             val views = RemoteViews(context.packageName, R.layout.widget_layout)
-            views.setOnClickPendingIntent(R.id.widgetRefresh, applyRefreshPendingIntent(context,appWidgetId))
+            views.setOnClickPendingIntent(
+                R.id.widgetRefresh,
+                applyRefreshPendingIntent(context, appWidgetId)
+            )
 
             fetch(context, views)
         }
@@ -91,15 +98,15 @@ open class WidgetProvider : AppWidgetProvider() {
         Timber.tag(TAG_W).i("onDeleted")
     }
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        super.onReceive(context, intent)
-        val appWidgetId = intent!!.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
-        if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && intent.action == REFRESH_BUTTON_CLICKED) {
-            val views = RemoteViews(context!!.packageName, R.layout.widget_layout)
-            views.setOnClickPendingIntent(R.id.widgetRefresh, applyRefreshPendingIntent(context,appWidgetId))
-            fetch(context, views)
-        }
-    }
+//    override fun onReceive(context: Context?, intent: Intent?) {
+//        super.onReceive(context, intent)
+//        val appWidgetId = intent!!.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+//        if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && intent.action == REFRESH_BUTTON_CLICKED) {
+//            val views = RemoteViews(context!!.packageName, R.layout.widget_layout)
+//            views.setOnClickPendingIntent(R.id.widgetRefresh, applyRefreshPendingIntent(context,appWidgetId))
+//            fetch(context, views)
+//        }
+//    }
 
     private fun applyRefreshPendingIntent(context: Context, appWidgetId: Int): PendingIntent {
         val refreshBtnIntent = Intent(context, WidgetProvider::class.java)
@@ -115,32 +122,33 @@ open class WidgetProvider : AppWidgetProvider() {
 
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context, views: RemoteViews) {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
-        val onSuccess: (Location?) -> Unit = { location ->
-            CoroutineScope(Dispatchers.Default).launch {
-                location?.let { loc ->
-                    val lat = loc.latitude
-                    val lng = loc.longitude
-                    val data = requestWeather(lat, lng)
-                    val addr = getAddress(context, lat, lng)
+        CoroutineScope(Dispatchers.Default).launch {
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+            val onSuccess: (Location?) -> Unit = { location ->
+                CoroutineScope(Dispatchers.IO).launch {
+                    location?.let { loc ->
+                        val lat = loc.latitude
+                        val lng = loc.longitude
+                        val data = requestWeather(lat, lng)
+                        val addr = getAddress(context, lat, lng)
 
-                    Timber.tag(TAG_W).i("fetch address : $addr data : $data")
+                        Timber.tag(TAG_W).i("fetch address : $addr data : $data")
 
-                    withContext(Dispatchers.Main) {
-                        updateUI(context, views, data, addr)
+                        withContext(Dispatchers.Main) {
+                            updateUI(context, views, data, addr)
+                        }
                     }
                 }
             }
+            val onFailure: (e: Exception) -> Unit = {
+                it.printStackTrace()
+                RDBLogcat.writeWidgetHistory(context, "widget error", it.localizedMessage)
+            }
+            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                .addOnSuccessListener(onSuccess)
+                .addOnFailureListener(onFailure)
         }
-        val onFailure: (e: Exception) -> Unit = {
-            it.printStackTrace()
-            RDBLogcat.writeWidgetHistory(context, "widget error", it.localizedMessage)
-        }
-
-        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-            .addOnSuccessListener(onSuccess)
-            .addOnFailureListener(onFailure)
 
 //        @Suppress("DEPRECATION")
 //        val locationRequest = com.google.android.gms.location.LocationRequest()
@@ -162,29 +170,42 @@ open class WidgetProvider : AppWidgetProvider() {
 //            }
     }
 
-    private suspend fun requestWeather(lat: Double, lng: Double) : ApiModel.WidgetData? {
+    private suspend fun requestWeather(lat: Double, lng: Double): ApiModel.WidgetData? {
         return HttpClient.getInstance(true).mMyAPIImpl.getWidgetForecast(lat, lng, 1)
             .awaitResponse().body()
     }
 
-    private fun getAddress(context: Context, lat: Double, lng: Double) : String? {
-        return AddressFromRegex(GetLocation(context).getAddress(lat,lng) ?: "").getNotificationAddress()
+    private fun getAddress(context: Context, lat: Double, lng: Double): String? {
+        return AddressFromRegex(
+            GetLocation(context).getAddress(lat, lng) ?: ""
+        ).getNotificationAddress()
     }
 
-    private fun updateUI(context: Context, views: RemoteViews, data: ApiModel.WidgetData?, addr: String?) {
+    private fun updateUI(
+        context: Context,
+        views: RemoteViews,
+        data: ApiModel.WidgetData?,
+        addr: String?
+    ) {
         val currentTime = currentDateTimeString("HH:mm")
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val componentName =
             ComponentName(context, WidgetProvider::class.java)
-        RDBLogcat.writeWidgetHistory(context,"data", data.toString())
+        RDBLogcat.writeWidgetHistory(context, "data", data.toString())
 
         views.apply {
             this.setTextViewText(R.id.widgetTime, currentTime)
             data?.let {
-                this.setTextViewText(R.id.widgetTempValue, "${it.current.temperature ?: 0.0.toInt()}˚")
+                this.setTextViewText(
+                    R.id.widgetTempValue,
+                    "${it.current.temperature ?: 0}˚"
+                )
                 this.setTextViewText(R.id.widgetSkyText, "${it.realtime[0].sky}")
                 this.setTextViewText(R.id.widgetAddress, addr ?: "")
-                this.setImageViewResource(R.id.widgetSkyImg, getSkyImgWidget(it.realtime[0].sky,true))
+                this.setImageViewResource(
+                    R.id.widgetSkyImg,
+                    getSkyImgWidget(it.realtime[0].sky, true)
+                )
             }
         }
 

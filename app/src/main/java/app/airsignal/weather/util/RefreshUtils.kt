@@ -31,10 +31,8 @@ class RefreshUtils(private val context: Context) {
         }
         Handler(Looper.getMainLooper()).postDelayed ({
            this.refreshActivity()
-            pbLayout?.let {
-                it.visibility = View.GONE
-            }
-        }, (sec * 1000).toLong())
+            pbLayout?.let { it.visibility = View.GONE }
+        }, sec * 1000L)
     }
 
     /** 어플리케이션 재시작 **/

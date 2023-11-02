@@ -1,7 +1,6 @@
 package app.airsignal.weather.login
 
 import android.app.Activity
-import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPhone
@@ -19,7 +18,7 @@ import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginPref
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
-import app.airsignal.weather.view.ToastUtils
+import app.airsignal.weather.view.util.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
@@ -118,9 +117,7 @@ class NaverLogin(private val activity: Activity) {
             )
         }
 
-        override fun onError(errorCode: Int, message: String) {
-            onFailure(errorCode, message)
-        }
+        override fun onError(errorCode: Int, message: String) { onFailure(errorCode, message) }
     }
 
     /** 로그인 콜벡 메서드 **/

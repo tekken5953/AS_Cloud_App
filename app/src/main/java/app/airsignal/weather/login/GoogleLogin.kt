@@ -2,7 +2,6 @@ package app.airsignal.weather.login
 
 import android.app.Activity
 import android.content.Intent
-import android.widget.ProgressBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.dao.IgnoredKeyFile.googleDefaultClientId
@@ -17,6 +16,7 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setUserEmail
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserId
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLoginPlatform
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserProfile
+import app.airsignal.weather.view.util.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -67,7 +67,7 @@ class GoogleLogin(private val activity: Activity) {
                 }
             }
             .addOnCanceledListener {
-                app.airsignal.weather.view.ToastUtils(activity)
+                ToastUtils(activity)
                     .showMessage("로그아웃에 실패했습니다",1)
             }
     }
@@ -79,7 +79,7 @@ class GoogleLogin(private val activity: Activity) {
                 handleSignInResult(it,isAuto = true)
             }
             .addOnFailureListener {
-                app.airsignal.weather.view.ToastUtils(activity)
+                ToastUtils(activity)
                     .showMessage("마지막 로그인 세션을 찾을 수 없습니다",1)
             }
     }

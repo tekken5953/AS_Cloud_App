@@ -102,7 +102,11 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setLastLng
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
 import app.airsignal.weather.util.`object`.SetSystemInfo.setUvBackgroundColor
 import app.airsignal.weather.view.*
+import app.airsignal.weather.view.dialog.MakeDoubleDialog
+import app.airsignal.weather.view.dialog.SearchDialog
+import app.airsignal.weather.view.dialog.SideMenuBuilder
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.airsignal.weather.view.util.ToastUtils
 import app.airsignal.weather.vmodel.GetWeatherViewModel
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
@@ -116,7 +120,6 @@ import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayDeque
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -1044,7 +1047,6 @@ class MainActivity
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(RDBLogcat.DATA_CALL_ERROR,
                     "updateWeatherItems : ${e.stackTraceToString()}")
-                e.printStackTrace()
             }
         }
     }
@@ -1823,7 +1825,8 @@ class MainActivity
                 val mLng = lat.toDouble()
                 val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
                 if (isKorea(mLat, mLng)) {
-                    ToastUtils(this).showMessage(getString(R.string.last_location_call_msg), 1)
+                    ToastUtils(this)
+                        .showMessage(getString(R.string.last_location_call_msg), 1)
                     processAddress(mLat, mLng, addr)
                 } else hideAllViews(ERROR_NOT_SERVICED_LOCATION)
             }

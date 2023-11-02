@@ -101,13 +101,7 @@ class AddressFromRegex(private val address: String) {
 
     // 문자열에서 띄워쓰기 개수 반환
     private fun countSpacesInStringBuilder(s: String): Int {
-        var count = 0
-        for (element in s) {
-            if (element == ' ') {
-                count++
-            }
-        }
-        return count
+        return s.count{ it == ' ' }
     }
 
     // 도로명 주소인지 검사
