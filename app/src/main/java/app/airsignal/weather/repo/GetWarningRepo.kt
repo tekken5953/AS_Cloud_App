@@ -7,7 +7,6 @@ import app.airsignal.weather.dao.ErrorCode.ERROR_NETWORK
 import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.dao.ErrorCode.ERROR_UNKNOWN
 import app.airsignal.weather.retrofit.ApiModel
-import app.airsignal.weather.retrofit.HttpClient.mMyAPIImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,7 +25,7 @@ class GetWarningRepo: BaseRepository() {
     fun loadDataResult(code: Int) {
         CoroutineScope(Dispatchers.Default).launch {
             _getWarningResult.postValue(ApiState.Loading)
-            mMyAPIImpl.getBroadCast(code).enqueue(object : Callback<ApiModel.BroadCastWeather> {
+            impl.getBroadCast(code).enqueue(object : Callback<ApiModel.BroadCastWeather> {
                 override fun onResponse(
                     call: Call<ApiModel.BroadCastWeather>,
                     response: Response<ApiModel.BroadCastWeather>

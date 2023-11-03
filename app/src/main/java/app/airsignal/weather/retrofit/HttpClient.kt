@@ -14,7 +14,6 @@ import javax.inject.Singleton
 @SuppressLint("SetTextI18n")
 object HttpClient {
     /** API Interface 생성 **/
-    lateinit var mMyAPIImpl: MyApiImpl
 
     /** 인스턴스가 메인 메모리를 바로 참조 -> 중복생성 방지 **/
     @Volatile
@@ -35,7 +34,9 @@ object HttpClient {
         return instance!!
     }
 
-    fun setClientBuilder(): HttpClient {
+    fun setClientBuilder(): MyApiImpl {
+        val mMyAPIImpl: MyApiImpl
+
         /** OkHttp 빌드
          *
          * 클라이언트 빌더 Interceptor 구분 **/
@@ -72,6 +73,6 @@ object HttpClient {
             mMyAPIImpl = retrofit.create(app.airsignal.weather.retrofit.MyApiImpl::class.java) // API 인터페이스 형태로 레트로핏 클라이언트 생성
         }
 
-        return this
+        return mMyAPIImpl
     }
 }

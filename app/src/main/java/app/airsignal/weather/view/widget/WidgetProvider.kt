@@ -158,7 +158,7 @@ open class WidgetProvider : AppWidgetProvider() {
                 }
             }
             val onFailure: (e: Exception) -> Unit = {
-                it.printStackTrace()
+                Timber.tag(TAG_W).e(it.stackTraceToString())
                 RDBLogcat.writeWidgetHistory(context, "widget error", it.localizedMessage)
             }
             fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
@@ -168,14 +168,20 @@ open class WidgetProvider : AppWidgetProvider() {
     }
 
     private suspend fun requestWeather(lat: Double, lng: Double): ApiModel.WidgetData? {
-        return HttpClient.getInstance(true).mMyAPIImpl.getWidgetForecast(lat, lng, 1)
+        val body =  HttpClient.getInstance(true).setClientBuilder()
+        .getWidgetForecast(lat, lng, 1)
             .awaitResponse().body()
+        Timber.tag(TAG_W).i("body : $body")
+        return body
     }
 
     private fun getAddress(context: Context, lat: Double, lng: Double): String? {
-        return AddressFromRegex(
+        val addr = AddressFromRegex(
             GetLocation(context).getAddress(lat, lng) ?: ""
         ).getNotificationAddress()
+
+        Timber.tag(TAG_W).i("addr : $addr")
+        return addr
     }
 
     private fun updateUI(
@@ -184,28 +190,32 @@ open class WidgetProvider : AppWidgetProvider() {
         data: ApiModel.WidgetData?,
         addr: String?
     ) {
-        val currentTime = currentDateTimeString("HH:mm")
-        val appWidgetManager = AppWidgetManager.getInstance(context)
-        val componentName =
-            ComponentName(context, WidgetProvider::class.java)
-        RDBLogcat.writeWidgetHistory(context, "data", data.toString())
+        try {
+            val currentTime = currentDateTimeString("HH:mm")
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+            val componentName =
+                ComponentName(context, WidgetProvider::class.java)
+            RDBLogcat.writeWidgetHistory(context, "data", data.toString())
 
-        views.apply {
-            this.setTextViewText(R.id.widgetTime, currentTime)
-            data?.let {
-                this.setTextViewText(
-                    R.id.widgetTempValue,
-                    "${it.current.temperature ?: 0}˚"
-                )
-                this.setTextViewText(R.id.widgetSkyText, "${it.realtime[0].sky}")
-                this.setTextViewText(R.id.widgetAddress, addr ?: "")
-                this.setImageViewResource(
-                    R.id.widgetSkyImg,
-                    getSkyImgWidget(it.realtime[0].sky, true)
-                )
+            views.apply {
+                this.setTextViewText(R.id.widgetTime, currentTime)
+                data?.let {
+                    this.setTextViewText(
+                        R.id.widgetTempValue,
+                        "${it.current.temperature ?: 0}˚"
+                    )
+                    this.setTextViewText(R.id.widgetSkyText, "${it.realtime[0].sky}")
+                    this.setTextViewText(R.id.widgetAddress, addr ?: "")
+                    this.setImageViewResource(
+                        R.id.widgetSkyImg,
+                        getSkyImgWidget(it.realtime[0].sky, true)
+                    )
+                }
             }
-        }
 
-        appWidgetManager.updateAppWidget(componentName, views)
+            appWidgetManager.updateAppWidget(componentName, views)
+        } catch (e: Exception) {
+            Timber.tag(TAG_W).e(e.stackTraceToString())
+        }
     }
 }

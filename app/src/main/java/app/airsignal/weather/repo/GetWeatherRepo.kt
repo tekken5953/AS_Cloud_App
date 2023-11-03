@@ -12,7 +12,6 @@ import app.airsignal.weather.dao.ErrorCode.ERROR_UNKNOWN
 import app.airsignal.weather.dao.StaticDataObject.TAG_R
 import app.airsignal.weather.firebase.db.RDBLogcat.writeErrorANR
 import app.airsignal.weather.retrofit.ApiModel
-import app.airsignal.weather.retrofit.HttpClient.mMyAPIImpl
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentHumid
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentRainType
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentTempType
@@ -38,7 +37,7 @@ class GetWeatherRepo : BaseRepository() {
     fun loadDataResult(lat: Double?, lng: Double?, addr: String?) {
         CoroutineScope(Dispatchers.Default).launch {
             _getDataResult.postValue(ApiState.Loading)
-            mMyAPIImpl.getForecast(lat, lng, addr)
+            impl.getForecast(lat, lng, addr)
                 .enqueue(object : Callback<ApiModel.GetEntireData> {
                     override fun onResponse(
                         call: Call<ApiModel.GetEntireData>,

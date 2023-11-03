@@ -2,14 +2,11 @@ package app.airsignal.weather.repo
 
 import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import app.airsignal.weather.dao.ErrorCode.ERROR_API_PROTOCOL
 import app.airsignal.weather.dao.ErrorCode.ERROR_NETWORK
 import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.dao.ErrorCode.ERROR_UNKNOWN
 import app.airsignal.weather.retrofit.ApiModel
-import app.airsignal.weather.retrofit.HttpClient.mMyAPIImpl
-import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,7 +25,7 @@ class GetAppVersionRepo: BaseRepository() {
     fun loadDataResult() {
         CoroutineScope(Dispatchers.Default).launch {
             _getAppVersionResult.postValue(ApiState.Loading)
-            mMyAPIImpl.version.enqueue(object : Callback<ApiModel.AppVersion> {
+            impl.version.enqueue(object : Callback<ApiModel.AppVersion> {
                 override fun onResponse(
                     call: Call<ApiModel.AppVersion>,
                     response: Response<ApiModel.AppVersion>

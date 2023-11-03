@@ -68,11 +68,11 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setUserNoti
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserTheme
 import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.util.`object`.SetSystemInfo.setStatusBar
-import app.airsignal.weather.view.dialog.ShowDialogClass
 import app.airsignal.weather.view.custom_view.CustomerServiceView
-import app.airsignal.weather.view.util.SnackBarUtils
+import app.airsignal.weather.view.dialog.ShowDialogClass
 import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.airsignal.weather.view.util.SnackBarUtils
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -339,7 +339,6 @@ class SettingActivity
                 HttpClient
                     .getInstance(false)
                     .setClientBuilder()
-                    .mMyAPIImpl
                     .notice.enqueue(object : Callback<List<AdapterModel.NoticeItem>> {
                         @SuppressLint("NotifyDataSetChanged")
                         override fun onResponse(
@@ -347,7 +346,6 @@ class SettingActivity
                             response: Response<List<AdapterModel.NoticeItem>>
                         ) {
                             try {
-                                Timber.tag("noticeItem").i(response.body().toString())
                                 val list = response.body()!!
                                 list.forEachIndexed { i, item ->
                                     val createdTime =  LocalDateTime.parse(item.created)
@@ -945,7 +943,6 @@ class SettingActivity
             setContentView(view)
             setCancelable(false)
         }
-
         builder.create()
 
         val title = view.findViewById<TextView>(R.id.alertSingleTitle)
