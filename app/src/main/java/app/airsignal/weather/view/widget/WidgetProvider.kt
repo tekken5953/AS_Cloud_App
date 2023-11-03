@@ -1,19 +1,23 @@
 package app.airsignal.weather.view.widget
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import app.airsignal.weather.R
+import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.dao.StaticDataObject.TAG_W
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.gps.GetLocation
@@ -22,7 +26,9 @@ import app.airsignal.weather.retrofit.HttpClient
 import app.airsignal.weather.util.AddressFromRegex
 import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.currentDateTimeString
+import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
+import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -37,8 +43,8 @@ import timber.log.Timber
  * @author : Lee Jae Young
  * @since : 2023-07-04 오후 4:27
  **/
+@SuppressLint("MissingPermission")
 open class WidgetProvider : AppWidgetProvider() {
-
     init {
         LoggerUtil().getInstance()
     }
@@ -47,16 +53,89 @@ open class WidgetProvider : AppWidgetProvider() {
         const val REFRESH_BUTTON_CLICKED = "refreshButtonClicked"
     }
 
+
+    override fun onReceive(context: Context?, intent: Intent?) {
+        val mContext = context!!.applicationContext
+        val views = RemoteViews(mContext.packageName, R.layout.widget_layout)
+        val perm = RequestPermissionsUtil(mContext)
+        @RequiresApi(Build.VERSION_CODES.Q)
+        if (!perm.isBackgroundRequestLocation()) {
+            Toast.makeText(mContext, "위치 권한 '항상허용' 필요", Toast.LENGTH_SHORT).show()
+            perm.requestBackgroundLocation()
+        }
+        val appWidgetId = intent!!.getIntExtra(
+            AppWidgetManager.EXTRA_APPWIDGET_ID,
+            AppWidgetManager.INVALID_APPWIDGET_ID
+        )
+        if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && intent.action == REFRESH_BUTTON_CLICKED) {
+            if (mContext != null) {
+                refresh(context.applicationContext,appWidgetId)
+            } else {
+                Timber.tag(TAG_W).e("context is null")
+            }
+        }
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(mContext)
+        val onSuccess: (Location?) -> Unit = { location ->
+            CoroutineScope(Dispatchers.Default).launch {
+                location?.let { loc ->
+                    val lat = loc.latitude
+                    val lng = loc.longitude
+                    val data = requestWeather(lat, lng)
+                    val addr = getAddress(mContext, lat, lng)
+
+                    Timber.tag(StaticDataObject.TAG_W).i("fetch address : $addr data : $data")
+
+                    withContext(Dispatchers.Main) {
+                        updateUI(mContext, views, data, addr)
+                    }
+                }
+            }
+        }
+        val onFailure: (e: Exception) -> Unit = {
+            Timber.tag(StaticDataObject.TAG_W).e(it.stackTraceToString())
+            RDBLogcat.writeWidgetHistory(mContext, "widget error", it.localizedMessage)
+        }
+        CoroutineScope(Dispatchers.Default).launch {
+            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                .addOnSuccessListener(onSuccess)
+                .addOnFailureListener(onFailure)
+        }
+    }
+
     // 앱 위젯은 여러개가 등록 될 수 있는데, 최초의 앱 위젯이 등록 될 때 호출 됩니다. (각 앱 위젯 인스턴스가 등록 될때마다 호출 되는 것이 아님)
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
         Timber.tag(TAG_W).i("onEnabled")
+
+        val refreshBtnIntent = Intent(context, WidgetProvider::class.java).apply {
+            putExtra("mode","data")
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            11,
+            refreshBtnIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val alarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,60000,pendingIntent)
     }
 
     // onEnabled() 와는 반대로 마지막의 최종 앱 위젯 인스턴스가 삭제 될 때 호출 됩니다
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
         Timber.tag(TAG_W).i("onDisabled")
+        val refreshBtnIntent = Intent(context, WidgetProvider::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            11,
+            refreshBtnIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val alarmManager = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.cancel(pendingIntent)
     }
 
     // android 4.1 에 추가 된 메소드 이며, 앱 위젯이 등록 될 때와 앱 위젯의 크기가 변경 될 때 호출 됩니다.
@@ -77,15 +156,13 @@ open class WidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        for (appWidgetId in appWidgetIds) {
-            val views = RemoteViews(context.packageName, R.layout.widget_layout)
-            views.setOnClickPendingIntent(
-                R.id.widgetRefresh,
-                applyRefreshPendingIntent(context, appWidgetId)
-            )
-
-            fetch(context, views)
-        }
+//        for (appWidgetId in appWidgetIds) {
+//            try {
+//                refresh(context.applicationContext,appWidgetId)
+//            } catch (e: Exception) {
+//                RDBLogcat.writeWidgetHistory(context.applicationContext,"error",e.stackTraceToString())
+//            }
+//        }
     }
 
     // 이 메소드는 앱 데이터가 구글 시스템에 백업 된 이후 복원 될 때 만약 위젯 데이터가 있다면 데이터가 복구 된 이후 호출 됩니다.
@@ -102,65 +179,62 @@ open class WidgetProvider : AppWidgetProvider() {
         Timber.tag(TAG_W).i("onDeleted")
     }
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        super.onReceive(context, intent)
-        val appWidgetId = intent!!.getIntExtra(
-            AppWidgetManager.EXTRA_APPWIDGET_ID,
-            AppWidgetManager.INVALID_APPWIDGET_ID
-        )
-        if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID && intent.action == REFRESH_BUTTON_CLICKED) {
-            val views = RemoteViews(context!!.packageName, R.layout.widget_layout)
-            views.setOnClickPendingIntent(
-                R.id.widgetRefresh,
-                applyRefreshPendingIntent(context, appWidgetId)
-            )
-            fetch(context, views)
-        }
-    }
+    private fun refresh(context: Context,appWidgetId: Int) {
+        val views = RemoteViews(context.packageName, R.layout.widget_layout)
 
-    private fun applyRefreshPendingIntent(context: Context, appWidgetId: Int): PendingIntent {
-        val refreshBtnIntent = Intent(context, WidgetProvider::class.java)
-        refreshBtnIntent.action = REFRESH_BUTTON_CLICKED
-        refreshBtnIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        return PendingIntent.getBroadcast(
+        val refreshBtnIntent = Intent(context, WidgetProvider::class.java).apply {
+            action = REFRESH_BUTTON_CLICKED
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+        }
+
+        val pendingIntent = PendingIntent.getBroadcast(
             context,
             appWidgetId,
             refreshBtnIntent,
             PendingIntent.FLAG_IMMUTABLE
         )
+
+        views.setOnClickPendingIntent(
+            R.id.widgetRefresh,
+            pendingIntent
+        )
+
+        AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId, views)
+
+        CoroutineScope(Dispatchers.Default).launch {
+            fetch(context, views)
+        }
     }
-
-
     @SuppressLint("MissingPermission")
-    private fun fetch(context: Context, views: RemoteViews) {
+    private suspend fun fetch(context: Context, views: RemoteViews) {
         val perm = RequestPermissionsUtil(context)
         @RequiresApi(Build.VERSION_CODES.Q)
         if (!perm.isBackgroundRequestLocation()) {
             Toast.makeText(context, "위치 권한 '항상허용' 필요", Toast.LENGTH_SHORT).show()
             perm.requestBackgroundLocation()
         }
-        CoroutineScope(Dispatchers.Default).launch {
-            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-            val onSuccess: (Location?) -> Unit = { location ->
-                CoroutineScope(Dispatchers.IO).launch {
-                    location?.let { loc ->
-                        val lat = loc.latitude
-                        val lng = loc.longitude
-                        val data = requestWeather(lat, lng)
-                        val addr = getAddress(context, lat, lng)
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        val onSuccess: (Location?) -> Unit = { location ->
+            CoroutineScope(Dispatchers.Default).launch {
+                location?.let { loc ->
+                    val lat = loc.latitude
+                    val lng = loc.longitude
+                    val data = requestWeather(lat, lng)
+                    val addr = getAddress(context, lat, lng)
 
-                        Timber.tag(TAG_W).i("fetch address : $addr data : $data")
+                    Timber.tag(TAG_W).i("fetch address : $addr data : $data")
 
-                        withContext(Dispatchers.Main) {
-                            updateUI(context, views, data, addr)
-                        }
+                    withContext(Dispatchers.Main) {
+                        updateUI(context, views, data, addr)
                     }
                 }
             }
-            val onFailure: (e: Exception) -> Unit = {
-                Timber.tag(TAG_W).e(it.stackTraceToString())
-                RDBLogcat.writeWidgetHistory(context, "widget error", it.localizedMessage)
-            }
+        }
+        val onFailure: (e: Exception) -> Unit = {
+            Timber.tag(TAG_W).e(it.stackTraceToString())
+            RDBLogcat.writeWidgetHistory(context, "widget error", it.localizedMessage)
+        }
+        CoroutineScope(Dispatchers.Default).launch {
             fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
                 .addOnSuccessListener(onSuccess)
                 .addOnFailureListener(onFailure)
@@ -176,8 +250,9 @@ open class WidgetProvider : AppWidgetProvider() {
     }
 
     private fun getAddress(context: Context, lat: Double, lng: Double): String? {
+        val loc = GetLocation(context).getAddress(lat, lng)
         val addr = AddressFromRegex(
-            GetLocation(context).getAddress(lat, lng) ?: ""
+            loc ?: ""
         ).getNotificationAddress()
 
         Timber.tag(TAG_W).i("addr : $addr")
@@ -191,31 +266,52 @@ open class WidgetProvider : AppWidgetProvider() {
         addr: String?
     ) {
         try {
+            val appContext = context.applicationContext
             val currentTime = currentDateTimeString("HH:mm")
-            val appWidgetManager = AppWidgetManager.getInstance(context)
+            val sunrise = data?.sun?.sunrise ?: "0000"
+            val sunset = data?.sun?.sunset ?: "0000"
+            val isNight = GetAppInfo.getIsNight(sunrise,sunset)
+            val appWidgetManager = AppWidgetManager.getInstance(appContext)
             val componentName =
-                ComponentName(context, WidgetProvider::class.java)
-            RDBLogcat.writeWidgetHistory(context, "data", data.toString())
+                ComponentName(appContext, this@WidgetProvider.javaClass)
+            RDBLogcat.writeWidgetHistory(appContext, "data", data.toString())
 
-            views.apply {
+            views.run {
                 this.setTextViewText(R.id.widgetTime, currentTime)
                 data?.let {
                     this.setTextViewText(
                         R.id.widgetTempValue,
                         "${it.current.temperature ?: 0}˚"
                     )
-                    this.setTextViewText(R.id.widgetSkyText, "${it.realtime[0].sky}")
                     this.setTextViewText(R.id.widgetAddress, addr ?: "")
-                    this.setImageViewResource(
-                        R.id.widgetSkyImg,
-                        getSkyImgWidget(it.realtime[0].sky, true)
+                    this.setImageViewResource(R.id.widgetSkyImg,
+                        getSkyImgWidget(it.realtime[0].sky, isNight)
                     )
+                    val bg = getBackgroundImgWidget(sky = it.realtime[0].sky, isNight)
+                    setInt(
+                        R.id.widgetBackground, "setBackgroundResource",
+                        bg
+                    )
+                    applyColor(appContext,views,bg)
                 }
             }
 
             appWidgetManager.updateAppWidget(componentName, views)
         } catch (e: Exception) {
             Timber.tag(TAG_W).e(e.stackTraceToString())
+        }
+    }
+
+    private fun applyColor(context: Context,views: RemoteViews, bg:Int) {
+        val textArray = arrayOf(R.id.widgetTempValue, R.id.widgetTime, R.id.widgetAddress)
+        views.run {
+            textArray.forEach {
+                when (bg) {
+                    R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> this.setTextColor(it,context.getColor(R.color.black))
+                    R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> this.setTextColor(it,context.getColor(R.color.white))
+                    else -> this.setTextColor(it,context.getColor(android.R.color.transparent))
+                }
+            }
         }
     }
 }

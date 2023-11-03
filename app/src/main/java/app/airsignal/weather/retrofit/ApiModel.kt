@@ -384,7 +384,9 @@ class ApiModel {
         @SerializedName("thunder")
         val thunder: Double?,
         @SerializedName("realtime")
-        val realtime: List<Widget4x2Realtime>
+        val realtime: List<Widget4x2Realtime>,
+//        @SerializedName("today")
+//        val today: TodayTemp
     )
 
     // 기상 특보 검색

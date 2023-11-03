@@ -90,6 +90,15 @@ object GetAppInfo {
 
     fun getIsNight(progress: Int): Boolean { return progress >= 100 || progress < 0 }
 
+    fun getIsNight(sunrise: String, sunset: String): Boolean {
+        val dailySunProgress = 100 * (DataTypeParser.parseTimeToMinutes(
+            DataTypeParser.millsToString(DataTypeParser.getCurrentTime(), "HHmm")
+        ) - DataTypeParser.parseTimeToMinutes(sunrise))/
+                if (GetAppInfo.getEntireSun(sunrise, sunset) == 0) 1
+                else GetAppInfo.getEntireSun(sunrise, sunset)
+        return dailySunProgress >= 100 || dailySunProgress < 0
+    }
+
     fun getNotificationAddress(context: Context): String {
         return SharedPreferenceManager(context).getString(NOTIFICATION_ADDRESS)
     }

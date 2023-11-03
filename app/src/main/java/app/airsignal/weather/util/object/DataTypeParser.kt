@@ -173,6 +173,19 @@ object DataTypeParser {
         return id
     }
 
+    fun getBackgroundImgWidget(sky: String?, isNight: Boolean): Int {
+        val backgroundResource = when (sky) {
+            "맑음", "구름많음" -> if(isNight) R.drawable.w_bg_night else R.drawable.w_bg_sunny
+            "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
+            "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
+            "번개,뇌우", "비/번개" -> R.drawable.w_bg_cloudy
+            "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.w_bg_snow
+            else -> R.drawable.w_bg_snow
+        }
+
+        return backgroundResource
+    }
+
     /** rain type에 따른 이미지 설정 **/
     private fun getRainTypeSmall(context: Context, rain: String?): Drawable? {
         val rainMap = mapOf(
