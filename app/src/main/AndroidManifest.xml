@@ -142,16 +142,20 @@
             android:directBootAware="true"
             tools:ignore="Instantiatable">
             <intent-filter>
+                <action android:name="app.airsignal.weather.view.widget.REFRESH_DATA"/>
+                <action android:name="app.airsignal.weather.view.widget.ENTER_APP"/>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.appwidget.action.APPWIDGET_ENABLED" />
                 <action android:name="android.intent.action.DATE_CHANGED" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_provider" />
+                android:name="android.appwidget.AppWidgetProvider"
+                android:resource="@xml/widget_provider_2x2" />
+            <meta-data
+                android:name="android.appwidget.AppWidgetProvider"
+                android:resource="@xml/widget_provider_4x1"/>
         </receiver>
     </application>
 

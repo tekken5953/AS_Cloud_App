@@ -3,7 +3,9 @@ package app.airsignal.weather.retrofit
 import android.annotation.SuppressLint
 import app.airsignal.weather.dao.IgnoredKeyFile.hostingServerURL
 import app.airsignal.weather.firebase.db.RDBLogcat
+import com.google.firebase.annotations.concurrent.Background
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.InternalCoroutinesApi
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -13,8 +15,6 @@ import javax.inject.Singleton
 @Singleton
 @SuppressLint("SetTextI18n")
 object HttpClient {
-    /** API Interface 생성 **/
-
     /** 인스턴스가 메인 메모리를 바로 참조 -> 중복생성 방지 **/
     @Volatile
     private var instance: HttpClient? = null
@@ -35,16 +35,14 @@ object HttpClient {
     }
 
     fun setClientBuilder(): MyApiImpl {
-        val mMyAPIImpl: MyApiImpl
-
         /** OkHttp 빌드
          *
          * 클라이언트 빌더 Interceptor 구분 **/
         val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
             retryOnConnectionFailure(retryOnConnectionFailure = true)
-            connectTimeout(20, TimeUnit.SECONDS)
-            readTimeout(12, TimeUnit.SECONDS)
-            writeTimeout(12, TimeUnit.SECONDS)
+            connectTimeout(12, TimeUnit.SECONDS)
+            readTimeout(8, TimeUnit.SECONDS)
+            writeTimeout(8, TimeUnit.SECONDS)
             addInterceptor { chain ->
                 val request = chain.request().newBuilder()
                     .addHeader("Connection", "close")
@@ -66,13 +64,8 @@ object HttpClient {
                 .build()
         }
 
-        if (instance != null)
-            mMyAPIImpl = retrofit.create(app.airsignal.weather.retrofit.MyApiImpl::class.java) // API 인터페이스 형태로 레트로핏 클라이언트 생성
-        else {
-            instance = HttpClient
-            mMyAPIImpl = retrofit.create(app.airsignal.weather.retrofit.MyApiImpl::class.java) // API 인터페이스 형태로 레트로핏 클라이언트 생성
-        }
+        if (instance == null) instance = HttpClient // API 인터페이스 형태로 레트로핏 클라이언트 생성
 
-        return mMyAPIImpl
+        return retrofit.create(MyApiImpl::class.java)
     }
 }

@@ -214,6 +214,7 @@ class MainActivity
             binding.mainLoadingView.alpha = 1f
             CoroutineScope(Dispatchers.IO).launch {
                 SubFCM().subTopic("patch")
+                SubFCM().subTopic("daily")
             }
             changeBackgroundResource(null)
             window.statusBarColor = getColor(R.color.theme_view_color)
@@ -225,17 +226,17 @@ class MainActivity
             }
         }
 
-        if (getInitBackLogPerm(this)) {
-            if (VERSION.SDK_INT >= 29) {
-                if (RequestPermissionsUtil(this).isBackgroundRequestLocation()) {
-                    workStart()
-                }
-            } else {
-                if (isPermedBackLoc(this)) {
-                    workStart()
-                }
-            }
-        }
+//        if (getInitBackLogPerm(this)) {
+//            if (VERSION.SDK_INT >= 29) {
+//                if (RequestPermissionsUtil(this).isBackgroundRequestLocation()) {
+//                    workStart()
+//                }
+//            } else {
+//                if (isPermedBackLoc(this)) {
+//                    workStart()
+//                }
+//            }
+//        }
 
         adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
 
@@ -1041,8 +1042,8 @@ class MainActivity
                     dateAppendZero(formedDate),
                     getSkyImgSmall(this, wfMin[index]!!, isNight = false)!!,
                     getSkyImgSmall(this, wfMax[index]!!, isNight = true)!!,
-                    "${taMin[index]?.roundToInt()!!}˚",
-                    "${taMax[index]?.roundToInt()!!}˚"
+                    "${taMin[index]!!.roundToInt()}˚",
+                    "${taMax[index]!!.roundToInt()}˚"
                 )
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(RDBLogcat.DATA_CALL_ERROR,

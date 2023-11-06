@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="280dp"
+    android:layout_height="70dp"
+    android:id="@+id/widget4x1Background"
+    android:background="@drawable/w_bg_cloudy"
+    android:padding="@dimen/widget_margin">
+
+    <ImageView
+        android:id="@+id/widget4x1Refresh"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="4dp"
+        android:contentDescription="@string/cd_icon_refresh_data"
+        android:src="@drawable/w_btn_refresh"
+        app:tint="@color/white" />
+
+    <ImageView
+        android:id="@+id/widget4x1SkyImg"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="2dp"
+        android:contentDescription="@string/cd_img_sky" />
+
+    <TextView
+        android:id="@+id/widget4x1TempValue"
+        style="@style/basicMediumTextView"
+        android:fontFamily="@font/spoqa_hansansneo_medium"
+        android:layout_above="@id/widget4x1Address"
+        android:letterSpacing="-0.04"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="2dp"
+        android:textColor="@color/white"
+        android:textSize="32sp" />
+
+    <TextView
+        android:id="@+id/widget4x1Address"
+        style="@style/basicTextView"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="4dp"
+        android:ellipsize="start"
+        android:gravity="start"
+        android:lines="1"
+        android:textColor="@color/white"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/widget4x1Time"
+        style="@style/basicTextView"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:letterSpacing="-0.04"
+        android:textColor="@color/white"
+        android:textSize="13sp" />
+
+</RelativeLayout>

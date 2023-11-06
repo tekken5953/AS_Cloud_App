@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="146dp"
     android:layout_height="146dp"
-    android:id="@+id/widgetBackground"
+    android:id="@+id/widget2x2Background"
     android:background="@drawable/w_bg_cloudy"
-    android:padding="@dimen/widget_margin">
+    android:padding="@dimen/widget2x2_margin">
 
     <ImageView
-        android:id="@+id/widgetRefresh"
+        android:id="@+id/widget2x2Refresh"
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_marginStart="2dp"
@@ -18,7 +18,7 @@
         app:tint="@color/white" />
 
     <ImageView
-        android:id="@+id/widgetSkyImg"
+        android:id="@+id/widget2x2SkyImg"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_alignParentEnd="true"
@@ -26,10 +26,10 @@
         android:contentDescription="@string/cd_img_sky" />
 
     <TextView
-        android:id="@+id/widgetTempValue"
+        android:id="@+id/widget2x2TempValue"
         style="@style/basicMediumTextView"
         android:fontFamily="@font/spoqa_hansansneo_medium"
-        android:layout_above="@id/widgetAddress"
+        android:layout_above="@id/widget2x2Address"
         android:letterSpacing="-0.04"
         android:layout_marginStart="2dp"
         android:layout_marginBottom="2dp"
@@ -37,7 +37,7 @@
         android:textSize="32sp" />
 
     <TextView
-        android:id="@+id/widgetAddress"
+        android:id="@+id/widget2x2Address"
         style="@style/basicTextView"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="2dp"
@@ -49,7 +49,7 @@
         android:textSize="13sp" />
 
     <TextView
-        android:id="@+id/widgetTime"
+        android:id="@+id/widget2x2Time"
         style="@style/basicTextView"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"

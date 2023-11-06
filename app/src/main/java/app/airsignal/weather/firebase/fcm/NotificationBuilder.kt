@@ -100,43 +100,55 @@ class NotificationBuilder {
             val notificationTitle: String
             val notificationContent: String
 
-            when (data["sort"]) {
-                FCM_DAILY -> {
-                    val temp = parseStringToDoubleToInt(data["temp"].toString())
-                    val rainType = data["rainType"]
-                    val sky = data["sky"]
-                    val thunder = data["thunder"]?.toDouble()
-                    val lunar = data["lunar"]?.toInt()
-                    notificationTitle = "${temp}˚ ${applySkyText(context, rainType, sky, thunder)}"
-                    notificationContent = "최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
-                            "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚"
+            try {
+                when (data["sort"]) {
+                    FCM_DAILY -> {
+                        val temp = parseStringToDoubleToInt(data["temp"].toString())
+                        val rainType = data["rainType"]
+                        val sky = data["sky"]
+                        val thunder = data["thunder"]?.toDouble()
+                        val lunar = data["lunar"]?.toInt()
+                        notificationTitle =
+                            "${temp}˚ ${applySkyText(context, rainType, sky, thunder)}"
+                        notificationContent =
+                            "최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
+                                    "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚"
+                    }
+                    FCM_PATCH, FCM_EVENT -> {
+                        val payload = data["payload"] ?: if (data["sort"] == FCM_PATCH)
+                            "새로운 업데이트가 준비되었어요" else "눌러서 이벤트를 확인하세요"
+                        notificationTitle = "에어시그널 날씨"
+                        notificationContent = payload
+                    }
+                    else -> {
+                        // 기본 처리 또는 예외 처리
+                        notificationTitle = "에어시그널 알림"
+                        notificationContent = "현재 날씨를 확인해보세요"
+                    }
                 }
-                FCM_PATCH, FCM_EVENT -> {
-                    val payload = data["payload"] ?: if (data["sort"] == FCM_PATCH)
-                        "새로운 업데이트가 준비되었어요" else "눌러서 이벤트를 확인하세요"
-                    notificationTitle = "에어시그널 날씨"
-                    notificationContent = payload
-                }
-                else -> {
-                    // 기본 처리 또는 예외 처리
-                    notificationTitle = "에어시그널 알림"
-                    notificationContent = "현재 날씨를 확인해보세요"
-                }
+
+                setNotiBuilder(
+                    title = notificationTitle,
+                    subtext = getNotificationAddress(context),
+                    content = notificationContent,
+                    imgPath = getSkyBitmap(
+                        context,
+                        data["rainType"],
+                        data["sky"],
+                        data["thunder"]?.toDouble(),
+                        data["lunar"]?.toInt() ?: -1
+                    )
+                )
+
+                processFcmNotification(data, context)
+            } catch (e: Exception) {
+                RDBLogcat.writeNotificationHistory(
+                    context.applicationContext,
+                    "에러",
+                    e.localizedMessage
+                )
             }
-
-            setNotiBuilder(
-                title = notificationTitle,
-                subtext = getNotificationAddress(context),
-                content = notificationContent,
-                imgPath = getSkyBitmap(context,
-                    data["rainType"],
-                    data["sky"],
-                    data["thunder"]?.toDouble(),
-                    data["lunar"]?.toInt() ?: -1)
-            )
         }
-
-        processFcmNotification(data,context)
     }
 
    private fun applyRingtone(context: Context,ringtone: Ringtone) {

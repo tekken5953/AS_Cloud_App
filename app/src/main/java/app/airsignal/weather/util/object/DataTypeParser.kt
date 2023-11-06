@@ -153,24 +153,32 @@ object DataTypeParser {
         return getDrawable(context,id)
     }
 
-    fun getSkyImgWidget(sky: String?, isNight: Boolean): Int {
-        val id = when (sky) {
-            "맑음" ->
-                if (!isNight) R.drawable.w_ico_status
-                else R.drawable.b_ico_sunny
-            "구름많음" ->
-                if (!isNight) R.drawable.b_ico_m_cloudy
-                else R.drawable.b_ico_m_ncloudy
-            "흐림" -> R.drawable.b_ico_cloudy
-            "소나기", "비" -> R.drawable.b_ico_rainy
-            "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.b_ico_snow
-            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
-                R.drawable.b_ico_cloudy_rainy
-            "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
-            else -> R.drawable.cancel
+    fun getSkyImgWidget(rainType: String?, sky: String?, isNight: Boolean): Int {
+        return if (rainType == "없음" || rainType == null) {
+            when (sky) {
+                "맑음" ->
+                    if (!isNight) R.drawable.w_ico_status
+                    else R.drawable.b_ico_sunny
+                "구름많음" ->
+                    if (!isNight) R.drawable.b_ico_m_cloudy
+                    else R.drawable.b_ico_m_ncloudy
+                "흐림" -> R.drawable.b_ico_cloudy
+                "소나기", "비" -> R.drawable.b_ico_rainy
+                "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.b_ico_snow
+                "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
+                    R.drawable.b_ico_cloudy_rainy
+                "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
+                else -> R.drawable.cancel
+            }
+        } else {
+            when(rainType) {
+                "비" -> R.drawable.b_ico_cloudy_rainy
+                "눈" -> R.drawable.sm_snow
+                "비/눈" -> R.drawable.b_ico_rainy_snow
+                "소나기" -> R.drawable.b_ico_rainy
+                else -> R.drawable.cancel
+            }
         }
-
-        return id
     }
 
     fun getBackgroundImgWidget(sky: String?, isNight: Boolean): Int {

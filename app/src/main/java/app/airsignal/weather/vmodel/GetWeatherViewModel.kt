@@ -13,7 +13,6 @@ import okio.IOException
  * @since : 2023-04-06 오후 2:02
  **/
 class GetWeatherViewModel(private val repo: GetWeatherRepo) : BaseViewModel("날씨 데이터 호출") {
-
     // MutableLiveData 값을 받아 View 로 전달해 줄 LiveData
     private var getDataResultData: LiveData<BaseRepository.ApiState<ApiModel.GetEntireData>?>? = null
 
