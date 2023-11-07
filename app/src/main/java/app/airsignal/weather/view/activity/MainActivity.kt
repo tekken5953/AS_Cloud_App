@@ -945,22 +945,22 @@ class MainActivity
         // 주간 오전 날씨
         val wfMin = listOf(
             week.wf0Am, week.wf1Am, week.wf2Am, week.wf3Am,
-            week.wf4Am, week.wf5Am, week.wf6Am, week.wf7Am
+            week.wf4Am, week.wf5Am, week.wf6Am
         )
         // 주간 오후 날씨
         val wfMax = listOf(
             week.wf0Pm, week.wf1Pm, week.wf2Pm, week.wf3Pm,
-            week.wf4Pm, week.wf5Pm, week.wf6Pm, week.wf7Pm
+            week.wf4Pm, week.wf5Pm, week.wf6Pm
         )
         // 주간 최저 기온
         val taMin = listOf(
             week.taMin0, week.taMin1, week.taMin2, week.taMin3,
-            week.taMin4, week.taMin5, week.taMin6, week.taMin7
+            week.taMin4, week.taMin5, week.taMin6
         )
         // 주간 최고 기온
         val taMax = listOf(
             week.taMax0, week.taMax1, week.taMax2, week.taMax3, week.taMax4,
-            week.taMax5, week.taMax6, week.taMax7
+            week.taMax5, week.taMax6
         )
 
         // 최저/최대 기온 적용
@@ -1037,13 +1037,13 @@ class MainActivity
                 val isBefore = tempDate.dayOfMonth < dateNow.dayOfMonth
                 val index = if (isBefore) it+1 else it
 
-                addWeeklyWeatherItem(
+                addWeeklyWeatherItem (
                     date,
                     dateAppendZero(formedDate),
-                    getSkyImgSmall(this, wfMin[index]!!, isNight = false)!!,
-                    getSkyImgSmall(this, wfMax[index]!!, isNight = true)!!,
-                    "${taMin[index]!!.roundToInt()}˚",
-                    "${taMax[index]!!.roundToInt()}˚"
+                    getSkyImgSmall(this, wfMin[it]!!, isNight = false)!!,
+                    getSkyImgSmall(this, wfMax[it]!!, isNight = true)!!,
+                    "${taMin[it]!!.roundToInt()}˚",
+                    "${taMax[it]!!.roundToInt()}˚"
                 )
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(RDBLogcat.DATA_CALL_ERROR,

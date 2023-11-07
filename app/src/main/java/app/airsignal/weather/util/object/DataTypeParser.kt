@@ -157,11 +157,11 @@ object DataTypeParser {
         return if (rainType == "없음" || rainType == null) {
             when (sky) {
                 "맑음" ->
-                    if (!isNight) R.drawable.w_ico_status
+                    if (isNight) R.drawable.w_ico_status
                     else R.drawable.b_ico_sunny
                 "구름많음" ->
-                    if (!isNight) R.drawable.b_ico_m_cloudy
-                    else R.drawable.b_ico_m_ncloudy
+                    if (isNight) R.drawable.b_ico_m_ncloudy
+                    else R.drawable.b_ico_m_cloudy
                 "흐림" -> R.drawable.b_ico_cloudy
                 "소나기", "비" -> R.drawable.b_ico_rainy
                 "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.b_ico_snow
@@ -181,17 +181,25 @@ object DataTypeParser {
         }
     }
 
-    fun getBackgroundImgWidget(sky: String?, isNight: Boolean): Int {
-        val backgroundResource = when (sky) {
-            "맑음", "구름많음" -> if(isNight) R.drawable.w_bg_night else R.drawable.w_bg_sunny
-            "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
-            "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
-            "번개,뇌우", "비/번개" -> R.drawable.w_bg_cloudy
-            "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.w_bg_snow
-            else -> R.drawable.w_bg_snow
+    fun getBackgroundImgWidget(rainType: String?, sky: String?, isNight: Boolean): Int {
+        return if (rainType == "없음" || rainType == null) {
+            when (sky) {
+                "맑음", "구름많음" -> if (isNight) R.drawable.w_bg_night else R.drawable.w_bg_sunny
+                "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
+                "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
+                "번개,뇌우", "비/번개" -> R.drawable.w_bg_cloudy
+                "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.w_bg_snow
+                else -> R.drawable.w_bg_snow
+            }
+        } else {
+            when (rainType) {
+                "비" -> R.drawable.w_bg_cloudy
+                "눈" -> R.drawable.w_bg_snow
+                "비/눈" -> R.drawable.w_bg_snow
+                "소나기" -> R.drawable.w_bg_cloudy
+                else -> R.drawable.w_bg_snow
+            }
         }
-
-        return backgroundResource
     }
 
     /** rain type에 따른 이미지 설정 **/
