@@ -4,20 +4,8 @@
     android:layout_width="146dp"
     android:layout_height="146dp"
     android:id="@+id/widget2x2Background"
-    android:background="@drawable/w_bg_cloudy"
+    android:background="@drawable/w_bg_snow"
     android:padding="@dimen/widget_margin">
-
-    <TextView
-        android:id="@+id/widget2x2Perm"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="위치 권한\n'항상허용' 필요"
-        android:visibility="gone"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:fontFamily="@font/spoqa_hansansneo_medium"
-        android:gravity="center"/>
-
     <ImageView
         android:id="@+id/widget2x2Refresh"
         android:layout_width="26dp"

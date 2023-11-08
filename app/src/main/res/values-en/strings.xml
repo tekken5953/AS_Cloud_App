@@ -121,10 +121,10 @@
     <string name="edit">Edit</string>
     <string name="searched_address">Registered address</string>
     <string name="current_address">Current address</string>
-    <string name="login_with_kakao">Sign in with Kakao</string>
-    <string name="login_with_google">Sign in with Google</string>
-    <string name="want_logout">Do sign out?</string>
-    <string name="login_with_naver">Sign in with Naver</string>
+    <string name="login_with_kakao">Login with Kakao</string>
+    <string name="login_with_google">Login with Google</string>
+    <string name="want_logout">Do Logout?</string>
+    <string name="login_with_naver">Login with Naver</string>
     <string name="data_call_error">Data call failed</string>
     <string name="gps_call_error">Gps is disabled.\nTurn on it or Add new address</string>
     <string name="address_call_error">Address call failed</string>

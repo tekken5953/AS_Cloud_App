@@ -3,22 +3,15 @@ package app.airsignal.weather.view.widget
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.os.Bundle
 import android.widget.RemoteViews
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.StaticDataObject.TAG_W
 import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.gps.GetLocation
-import app.airsignal.weather.koin.BaseApplication
 import app.airsignal.weather.retrofit.ApiModel
-import app.airsignal.weather.retrofit.HttpClient
-import app.airsignal.weather.util.AddressFromRegex
-import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.currentDateTimeString
 import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
@@ -27,52 +20,13 @@ import app.airsignal.weather.view.activity.SplashActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.*
-import retrofit2.awaitResponse
 import timber.log.Timber
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-07-04 오후 4:27
  **/
-open class WidgetProvider : AppWidgetProvider() {
-
-    init { LoggerUtil().getInstance() }
-
-    companion object {
-        const val REFRESH_BUTTON_CLICKED = "app.airsignal.weather.view.widget.REFRESH_DATA"
-        const val ENTER_APPLICATION = "app.airsignal.weather.view.widget.ENTER_APP"
-    }
-
-    override fun onEnabled(context: Context) {
-        super.onEnabled(context)
-        Timber.tag(TAG_W).i("onEnabled")
-    }
-
-    override fun onDisabled(context: Context) {
-        super.onDisabled(context)
-        Timber.tag(TAG_W).i("onDisabled")
-    }
-
-    override fun onAppWidgetOptionsChanged(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetId: Int,
-        newOptions: Bundle
-    ) {
-        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        Timber.tag(TAG_W).i("onAppWidgetOptionsChanged")
-    }
-
-    override fun onRestored(context: Context, oldWidgetIds: IntArray, newWidgetIds: IntArray) {
-        super.onRestored(context, oldWidgetIds, newWidgetIds)
-        Timber.tag(TAG_W).i("onRestored")
-    }
-
-    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        super.onDeleted(context, appWidgetIds)
-        Timber.tag(TAG_W).i("onDeleted")
-    }
-
+open class WidgetProvider : BaseWidgetProvider() {
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -83,7 +37,7 @@ open class WidgetProvider : AppWidgetProvider() {
                 RDBLogcat.writeWidgetHistory(context.applicationContext, "lifecycle", "onUpdate")
                 refresh(context.applicationContext, appWidgetId)
             } catch (e: Exception) {
-                RDBLogcat.writeWidgetHistory(context.applicationContext,"error",e.stackTraceToString())
+                RDBLogcat.writeWidgetHistory(context.applicationContext,"error", e.stackTraceToString())
             }
         }
     }
@@ -105,33 +59,34 @@ open class WidgetProvider : AppWidgetProvider() {
     }
 
     private fun refresh(context: Context, appWidgetId: Int) {
-        val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
+        try {
+            val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
 
-        val refreshBtnIntent = Intent(context, WidgetProvider::class.java).run {
-            this.action = REFRESH_BUTTON_CLICKED
-            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-        }
-
-        val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
-            .run {
-                this.action = ENTER_APPLICATION
-                PendingIntent.getActivity(context, appWidgetId, this, PendingIntent.FLAG_IMMUTABLE)
+            val refreshBtnIntent = Intent(context, WidgetProvider::class.java).run {
+                this.action = REFRESH_BUTTON_CLICKED
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
             }
 
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            appWidgetId,
-            refreshBtnIntent,
-            PendingIntent.FLAG_IMMUTABLE
-        )
+            val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
+                .run {
+                    this.action = ENTER_APPLICATION
+                    PendingIntent.getActivity(context, appWidgetId, this, PendingIntent.FLAG_IMMUTABLE)
+                }
 
-        views.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                appWidgetId,
+                refreshBtnIntent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
 
-        views.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
-
-        CoroutineScope(Dispatchers.IO).launch {
-            fetch(context, views)
-            RDBLogcat.writeWidgetHistory(context.applicationContext, "lifecycle", "refresh")
+            views.run {
+                this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
+                this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
+                fetch(context, this@run)
+            }
+        } catch (e: Exception) {
+            RDBLogcat.writeWidgetHistory(context.applicationContext, "refresh failed", e.stackTraceToString())
         }
     }
 
@@ -147,7 +102,6 @@ open class WidgetProvider : AppWidgetProvider() {
                         val data = requestWeather(lat, lng)
                         val addr = getAddress(context, lat, lng)
 
-                        Timber.tag(TAG_W).i("fetch address : $addr data : $data")
                         RDBLogcat.writeWidgetHistory(context, "위치", "data : $data")
 
                         withContext(Dispatchers.Main) {
@@ -164,21 +118,13 @@ open class WidgetProvider : AppWidgetProvider() {
                 fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
                     .addOnSuccessListener(onSuccess)
                     .addOnFailureListener(onFailure)
+                    .addOnCanceledListener {
+                        RDBLogcat.writeWidgetHistory(context, "addOnCanceledListener", resultData.toString())
+                    }
             }
         } catch(e: Exception) {
             RDBLogcat.writeWidgetHistory(context,"fetch error",e.localizedMessage)
         }
-    }
-
-    private suspend fun requestWeather(lat: Double, lng: Double): ApiModel.WidgetData? {
-        return  HttpClient.getInstance(true).setClientBuilder()
-            .getWidgetForecast(lat, lng, 1)
-            .awaitResponse().body()
-    }
-
-    private fun getAddress(context: Context, lat: Double, lng: Double): String {
-        val loc = GetLocation(context).getAddress(lat, lng)
-        return AddressFromRegex(loc ?: "").getNotificationAddress()
     }
 
     private fun updateUI(
@@ -223,22 +169,26 @@ open class WidgetProvider : AppWidgetProvider() {
     private fun applyColor(context: Context,views: RemoteViews, bg: Int) {
         val textArray = arrayOf(R.id.widget2x2TempValue, R.id.widget2x2Time, R.id.widget2x2Address)
         views.run {
-            this.setInt(R.id.widget2x2Refresh,"setColorFilter",context.getColor(
-                when(bg) {
-                    R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.black }
-                    R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> { R.color.white }
-                    else -> android.R.color.transparent
-                }
-            ))
-
-            textArray.forEach {
-                this.setTextColor(it,context.getColor(
-                    when(bg) {
+            this.setInt(
+                R.id.widget2x2Refresh, "setColorFilter", context.getColor(
+                    when (bg) {
                         R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.black }
                         R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> { R.color.white }
                         else -> android.R.color.transparent
                     }
-                ))
+                )
+            )
+
+            textArray.forEach {
+                this.setTextColor(
+                    it, context.getColor(
+                        when (bg) {
+                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.black }
+                            R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> { R.color.white }
+                            else -> android.R.color.transparent
+                        }
+                    )
+                )
             }
         }
     }
