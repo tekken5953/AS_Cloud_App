@@ -46,7 +46,7 @@ class RequestPermissionsUtil(private val context: Context) {
     /** 위치정보 권한 요청**/
     fun requestLocation() {
         try{
-            ActivityCompat.requestPermissions(
+            requestPermissions(
                 context as Activity,
                 permissionsLocation,
                 REQUEST_LOCATION
@@ -63,7 +63,7 @@ class RequestPermissionsUtil(private val context: Context) {
             if (ActivityCompat.checkSelfPermission(context, permissionNotification[0])
                 != PackageManager.PERMISSION_GRANTED
             ) {
-                ActivityCompat.requestPermissions(
+                requestPermissions(
                     context as Activity,
                     permissionNotification,
                     REQUEST_NOTIFICATION
@@ -116,10 +116,7 @@ class RequestPermissionsUtil(private val context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             for (perm in permissionNotification) {
                 Timber.tag(TAG_P).i(ContextCompat.checkSelfPermission(context, perm).toString())
-                return ContextCompat.checkSelfPermission(
-                    context,
-                    perm
-                ) == PackageManager.PERMISSION_DENIED
+                return ContextCompat.checkSelfPermission(context, perm) == PackageManager.PERMISSION_DENIED
             }
         } else return true
 
@@ -148,7 +145,7 @@ class RequestPermissionsUtil(private val context: Context) {
     /** 백그라운드에서 위치 접근 권한 요청 **/
     @RequiresApi(Build.VERSION_CODES.Q)
     fun requestBackgroundLocation() {
-        ActivityCompat.requestPermissions(
+        requestPermissions(
             context as Activity,
             arrayOf(permissionsLocationBackground),
             REQUEST_BACKGROUND_LOCATION

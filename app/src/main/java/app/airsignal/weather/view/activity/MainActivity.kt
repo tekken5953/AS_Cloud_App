@@ -10,7 +10,6 @@ import android.graphics.drawable.GradientDrawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.*
-import android.os.Build.VERSION
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -83,7 +82,6 @@ import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.util.`object`.GetAppInfo.getEntireSun
-import app.airsignal.weather.util.`object`.GetAppInfo.getInitBackLogPerm
 import app.airsignal.weather.util.`object`.GetAppInfo.getIsNight
 import app.airsignal.weather.util.`object`.GetAppInfo.getLastLat
 import app.airsignal.weather.util.`object`.GetAppInfo.getLastLng
@@ -91,7 +89,6 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getTopicNotification
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
-import app.airsignal.weather.util.`object`.GetAppInfo.isPermedBackLoc
 import app.airsignal.weather.util.`object`.GetSystemInfo.getLocale
 import app.airsignal.weather.util.`object`.GetSystemInfo.isThemeNight
 import app.airsignal.weather.util.`object`.SetAppInfo
@@ -407,9 +404,8 @@ class MainActivity
                 adViewClass.loadAdView(adView)
             }
 
-            if (getUserLocation(this) == LANG_EN ||
-                    getLocale(this) == Locale.ENGLISH
-            ) warning.visibility = GONE
+            if (getUserLocation(this) == LANG_EN || getLocale(this) == Locale.ENGLISH)
+                warning.visibility = GONE
             else {
                 warning.visibility = VISIBLE
                 warning.setOnClickListener(object : OnSingleClickListener() {
@@ -448,9 +444,7 @@ class MainActivity
     }
 
     // 진동 발생
-    private fun mVib() {
-        vib.make(20)
-    }
+    private fun mVib() { vib.make(20) }
 
     // 시간별 날씨 스크롤 첫번째 인덱스로 이동
     private fun scrollSmoothFirst(position: Int) {
@@ -487,8 +481,8 @@ class MainActivity
             if (!isCurrent) {
                 val addrArray = resources.getStringArray(R.array.address_korean)
                 if (addrArray.contains(lastAddress)) {
-                    addrArray.forEachIndexed { index, s ->
-                        if (lastAddress == s) {
+                    addrArray.forEachIndexed { index, address ->
+                        if (lastAddress == address) {
                             loadSavedAddr(
                                 addrArray[index],
                                 resources.getStringArray(R.array.address_english)[index]
@@ -729,9 +723,7 @@ class MainActivity
                                     )
                                     return@forEach
                                 }
-                            } catch (e: NullPointerException) {
-                                e.printStackTrace()
-                            }
+                            } catch (e: NullPointerException) { e.printStackTrace() }
                         }
                         startAnimation(fadeIn)
                         alpha = 1f
@@ -874,9 +866,7 @@ class MainActivity
             hideProgressBar()
             try {
                 RDBLogcat.writeErrorANR("handleApiError", "handleApiError : $errorMessage")
-            } catch(e: DatabaseException) {
-                e.printStackTrace()
-            }
+            } catch(e: DatabaseException) { e.printStackTrace() }
             if (GetLocation(this).isNetWorkConnected()) {
                 hideAllViews(error = errorMessage)
             } else {
@@ -1268,10 +1258,10 @@ class MainActivity
     // 하늘상태에 따라 윈도우 배경 변경
     private fun applyWindowBackground(progress: Int, sky: String?) {
         val isNight = getIsNight(progress)
-        if (isNight) {
+        if (isNight && (sky == "맑음" || sky == "구름많음")) {
             changeBackgroundResource(R.drawable.main_bg_night)
             binding.mainSkyStarImg.setImageDrawable(getR(R.drawable.bg_nightsky))
-            changeTextColorStyle(sky?:"구름많음", true)
+            changeTextColorStyle(sky, true)
         } else {
             binding.mainSkyStarImg.setImageDrawable(null)
             val backgroundResource = when (sky) {
@@ -1794,8 +1784,7 @@ class MainActivity
                 setLastLng(this, lng)
                 hideProgressBar()
                 if (isKorea(lat, lng)) {
-                    val addr = GetLocation(this@MainActivity)
-                        .getAddress(lat, lng)
+                    val addr = GetLocation(this@MainActivity).getAddress(lat, lng)
                     processAddress(lat, lng, addr)
                 } else {
                     hideAllViews(ERROR_NOT_SERVICED_LOCATION)

@@ -21,11 +21,6 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         const val ENTER_APPLICATION = "app.airsignal.weather.view.widget.ENTER_APP"
     }
 
-    override fun onEnabled(context: Context) {
-        super.onEnabled(context)
-        Timber.tag(StaticDataObject.TAG_W).i("onEnabled")
-    }
-
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
         Timber.tag(StaticDataObject.TAG_W).i("onDisabled")
@@ -60,6 +55,6 @@ open class BaseWidgetProvider: AppWidgetProvider() {
 
      fun getAddress(context: Context, lat: Double, lng: Double): String {
         val loc = GetLocation(context).getAddress(lat, lng)
-        return AddressFromRegex(loc ?: "").getNotificationAddress()
+        return AddressFromRegex(loc).getNotificationAddress()
     }
 }

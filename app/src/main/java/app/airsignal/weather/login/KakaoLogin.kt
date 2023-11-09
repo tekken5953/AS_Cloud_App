@@ -26,10 +26,6 @@ import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.common.model.KakaoSdkError
 import com.kakao.sdk.user.UserApiClient
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 /**
  * @author : Lee Jae Young
@@ -132,35 +128,53 @@ class KakaoLogin(private val activity: Activity) {
     }
 
     /** 자동 로그인 **/
-    fun isValidToken(btn: AppCompatButton) {
+    private fun isValidToken(): String? {
+        var token:String? = null
         if (AuthApiClient.instance.hasToken()) {
-            UserApiClient.instance.accessTokenInfo { _, error ->
-                if (error != null) {
-                    btn.alpha = 1f
-                    if (error is KakaoSdkError && error.isInvalidTokenError())
+            UserApiClient.instance.accessTokenInfo { info, error ->
+                token = if (error != null) {
+                    if (error is KakaoSdkError && error.isInvalidTokenError()) {
                         Logger.t("testtest").w("만료된 토큰입니다") // 만료된 토큰임 로그인 필요
-                     else
+                        "valid"
+                    } else {
                         Logger.t("testtest").e("기타 에러 발생 : $error") //기타 에러
-                } else RefreshUtils(activity).refreshActivity() //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
+                        "error"
+                    }
+                } else info.toString()//토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
             }
+            return token
         } else {
             // 토큰이 없음 로그인 필요
-            btn.alpha = 1f
+           return "has not token"
         }
     }
 
     /** 카카오 자동 로그인
      * @return OAuthToken? **/
+//    private fun loginSilenceKakao(): OAuthToken? {
+//        val token = TokenManagerProvider.instance.manager.getToken()
+//        val isValid = isValidToken()
+//        return if (isValid == "valid" || isValid == "error") {
+//            Toast.makeText(activity, "다시 로그인해주세요", Toast.LENGTH_SHORT).show()
+//            disconnectFromKakao(null)
+//            null
+//        } else if (isValid == "has not token") {
+//            Toast.makeText(activity, "만료된 토큰입니다", Toast.LENGTH_SHORT).show()
+//            disconnectFromKakao(null)
+//            null
+//        }
+//        else {
+//            token
+//        }
+//    }
     private fun loginSilenceKakao(): OAuthToken? {
         return TokenManagerProvider.instance.manager.getToken()
     }
 
     private fun enterMainPage() {
-        CoroutineScope(Dispatchers.IO).launch {
-            saveUserSettings()
-            delay(1000)
-            EnterPageUtil(activity).toMain(LOGIN_KAKAO)
-        }
+        saveUserSettings()
+        Thread.sleep(1000)
+        EnterPageUtil(activity).toMain(LOGIN_KAKAO)
     }
 
     private fun saveUserSettings() {

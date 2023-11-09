@@ -9,6 +9,7 @@ import android.content.Intent
 import android.location.Location
 import android.widget.RemoteViews
 import app.airsignal.weather.R
+import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.dao.StaticDataObject.TAG_W
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.retrofit.ApiModel
@@ -27,6 +28,13 @@ import timber.log.Timber
  * @since : 2023-07-04 오후 4:27
  **/
 open class WidgetProvider : BaseWidgetProvider() {
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        Timber.tag(TAG_W).i("onEnabled")
+        val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
+        fetch(context.applicationContext,views)
+    }
+
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -35,7 +43,42 @@ open class WidgetProvider : BaseWidgetProvider() {
         for (appWidgetId in appWidgetIds) {
             try {
                 RDBLogcat.writeWidgetHistory(context.applicationContext, "lifecycle", "onUpdate")
-                refresh(context.applicationContext, appWidgetId)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
+
+                    val refreshBtnIntent = Intent(context, WidgetProvider::class.java).run {
+                        this.action = REFRESH_BUTTON_CLICKED
+                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                    }
+
+                    val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
+                        .run {
+                            this.action = ENTER_APPLICATION
+                            PendingIntent.getActivity(
+                                context,
+                                appWidgetId,
+                                this,
+                                PendingIntent.FLAG_IMMUTABLE
+                            )
+                        }
+
+                    val pendingIntent = PendingIntent.getBroadcast(
+                        context,
+                        appWidgetId,
+                        refreshBtnIntent,
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+
+                    views.run {
+                        this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
+                        this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
+                    }
+
+                    withContext(Dispatchers.Default) {
+                        appWidgetManager.updateAppWidget(appWidgetId, views)
+                        fetch(context.applicationContext, views)
+                    }
+                }
             } catch (e: Exception) {
                 RDBLogcat.writeWidgetHistory(context.applicationContext,"error", e.stackTraceToString())
             }
@@ -51,42 +94,11 @@ open class WidgetProvider : BaseWidgetProvider() {
         if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID
             && intent.action == REFRESH_BUTTON_CLICKED) {
             if (context != null) {
-                refresh(context.applicationContext,appWidgetId)
+                fetch(context.applicationContext,
+                    RemoteViews(context.packageName, R.layout.widget_layout_2x2))
             } else {
                 Timber.tag(TAG_W).e("context is null")
             }
-        }
-    }
-
-    private fun refresh(context: Context, appWidgetId: Int) {
-        try {
-            val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
-
-            val refreshBtnIntent = Intent(context, WidgetProvider::class.java).run {
-                this.action = REFRESH_BUTTON_CLICKED
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            }
-
-            val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
-                .run {
-                    this.action = ENTER_APPLICATION
-                    PendingIntent.getActivity(context, appWidgetId, this, PendingIntent.FLAG_IMMUTABLE)
-                }
-
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                appWidgetId,
-                refreshBtnIntent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
-
-            views.run {
-                this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
-                this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
-                fetch(context, this@run)
-            }
-        } catch (e: Exception) {
-            RDBLogcat.writeWidgetHistory(context.applicationContext, "refresh failed", e.stackTraceToString())
         }
     }
 

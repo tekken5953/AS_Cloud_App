@@ -18,6 +18,7 @@ import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
+import app.airsignal.weather.firebase.db.RDBLogcat.writeErrorANR
 import app.airsignal.weather.firebase.db.RDBLogcat.writeErrorNotANR
 import app.airsignal.weather.firebase.db.RDBLogcat.writeGpsHistory
 import app.airsignal.weather.util.AddressFromRegex
@@ -40,7 +41,7 @@ import java.util.*
 class GetLocation(private val context: Context) {
 
     /** 현재 주소를 불러옵니다 **/
-    fun getAddress(lat: Double, lng: Double): String? {
+    fun getAddress(lat: Double, lng: Double): String {
         return try {
             val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
 
@@ -54,32 +55,29 @@ class GetLocation(private val context: Context) {
             }
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
-            } else {
-                "No Address"
-            }
+            } else { "No Address" }
         } catch (e: Exception) {
             when (e) {
                 is IOException -> {
-                    writeErrorNotANR(
-                        context,
-                        sort = ERROR_LOCATION_IOException,
+                    writeErrorANR(
+                        ERROR_LOCATION_IOException,
                         msg = e.localizedMessage!!
                     )
-                    null
+                    ""
                 }
                 is IndexOutOfBoundsException -> {
-                    writeErrorNotANR(context, sort = ERROR_GET_DATA, msg = e.localizedMessage!!)
-                    null
+                    writeErrorANR(ERROR_GET_DATA, msg = e.localizedMessage?: "index error")
+                    ""
                 }
                 else -> {
-                    writeErrorNotANR(context, sort = ERROR_GET_DATA, msg = e.localizedMessage!!)
-                    null
+                    writeErrorANR(ERROR_GET_DATA, msg = e.localizedMessage?: "index error")
+                    ""
                 }
             }
         }
     }
 
-    /** getAddressLine으로 불러온 주소 포멧**/
+    /** getAddressLine 으로 불러온 주소 포멧**/
     private fun formattingFullAddress(fullAddr: String): String {
         val addressParts = fullAddr.split(" ").toTypedArray() // 공백을 기준으로 주소 요소 분리
         var formattedAddress = ""
@@ -130,11 +128,11 @@ class GetLocation(private val context: Context) {
                 val latitude = loc.latitude
                 val longitude = loc.longitude
 
-                updateCurrentAddress(latitude, longitude, getAddress(latitude, longitude) ?: "")
+                updateCurrentAddress(latitude, longitude, getAddress(latitude, longitude))
                 writeGpsHistory(
                     context, isSearched = false,
                     gpsValue = "WorkManager : ${latitude},${longitude} : " +
-                            "${getAddress(latitude, longitude)}",
+                            getAddress(latitude, longitude),
                     responseData = null
                 )
             }

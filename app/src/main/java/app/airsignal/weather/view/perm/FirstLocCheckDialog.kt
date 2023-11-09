@@ -28,7 +28,7 @@ import kotlinx.coroutines.*
  * @author : Lee Jae Young
  * @since : 2023-04-11 오전 11:53
  **/
-class FirstLocCheckDialog(
+class  FirstLocCheckDialog(
     mActivity: Activity,
     private val fm: FragmentManager, private val tagId: String?
 ) : BottomSheetDialogFragment() {
@@ -63,12 +63,7 @@ class FirstLocCheckDialog(
                             perm.requestLocation()
                         }
                         "Second" -> {
-                            LocPermCautionDialog(
-                                activity,
-                                fm,
-                                BottomSheetDialogFragment().tag
-                            )
-                                .show()
+                            LocPermCautionDialog(activity, fm, BottomSheetDialogFragment().tag).show()
                         }
                     }
                 } else {
@@ -101,9 +96,7 @@ class FirstLocCheckDialog(
     }
 
     // 레이아웃 노출
-    fun show() {
-        FirstLocCheckDialog(activity, fm, tagId).showNow(fm, tagId)
-    }
+    fun show() { FirstLocCheckDialog(activity, fm, tagId).showNow(fm, tagId) }
 
     // 바텀 다이얼로그 세팅
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog, ratio: Int) {
