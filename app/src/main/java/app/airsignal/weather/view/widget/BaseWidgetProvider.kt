@@ -46,7 +46,6 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         Timber.tag(StaticDataObject.TAG_W).i("onDeleted")
     }
 
-
     suspend fun requestWeather(lat: Double, lng: Double): ApiModel.WidgetData? {
         return  HttpClient.getInstance(true).setClientBuilder()
             .getWidgetForecast(lat, lng, 1)
@@ -54,7 +53,8 @@ open class BaseWidgetProvider: AppWidgetProvider() {
     }
 
      fun getAddress(context: Context, lat: Double, lng: Double): String {
-        val loc = GetLocation(context).getAddress(lat, lng)
-        return AddressFromRegex(loc).getNotificationAddress()
+         val loc = GetLocation(context).getAddress(lat, lng)
+         val result = AddressFromRegex(loc).getNotificationAddress()
+         return if (result == "") AddressFromRegex(loc).getSecondAddress() else result
     }
 }

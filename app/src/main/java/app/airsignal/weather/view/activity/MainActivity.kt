@@ -27,9 +27,6 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.viewpager2.widget.ViewPager2
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.WorkQuery
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
 import app.airsignal.weather.dao.AdapterModel
@@ -55,11 +52,11 @@ import app.airsignal.weather.firebase.admob.AdViewClass
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.gps.GetLocation
-import app.airsignal.weather.gps.GpsWorkManager
 import app.airsignal.weather.login.SilentLoginClass
 import app.airsignal.weather.repo.BaseRepository
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.util.*
+import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyImg
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
@@ -116,7 +113,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -1012,7 +1008,6 @@ class MainActivity
         }
 
         val dateNow: LocalDateTime = LocalDateTime.now()
-        val tempDate = LocalDateTime.parse(week.tempDate)
 
         // 주간별 날씨 아이템 추가
         repeat(7) {
@@ -1024,8 +1019,6 @@ class MainActivity
                     else -> { "${parseDayOfWeekToKorean(this, 
                         dateNow.dayOfWeek.value + it)}${getString(R.string.date)}" }
                 }
-                val isBefore = tempDate.dayOfMonth < dateNow.dayOfMonth
-                val index = if (isBefore) it+1 else it
 
                 addWeeklyWeatherItem (
                     date,
@@ -1170,9 +1163,17 @@ class MainActivity
         binding.mainSensTitle.text = getString(R.string.sens_temp)
 
         val sensibleTemp = try {
-            SensibleTempFormula().getSensibleTemp(ta = current.temperature, rh = currentHumidity, v = currentWindSpeed).roundToInt()
+            DataTypeParser.parseDoubleToDecimal(
+                SensibleTempFormula().getSensibleTemp(
+                    ta = current.temperature,
+                    rh = currentHumidity,
+                    v = currentWindSpeed), digit = 1)
         } catch (e: Exception) {
-            SensibleTempFormula().getSensibleTemp(ta = real0.temp, rh = currentHumidity, v = currentWindSpeed).roundToInt()
+            DataTypeParser.parseDoubleToDecimal(
+                SensibleTempFormula().getSensibleTemp(
+                    ta = real0.temp,
+                    rh = currentHumidity,
+                    v = currentWindSpeed),1)
         }
 
         binding.mainSensValue.text = "$sensibleTemp˚"
@@ -1326,7 +1327,7 @@ class MainActivity
             }
         }
 
-        tv.visibility = if (comparisonText.isNotEmpty()) View.VISIBLE else View.GONE
+        tv.visibility = if (comparisonText.isNotEmpty()) View.VISIBLE else GONE
         tv.text = comparisonText
     }
 
@@ -1880,25 +1881,6 @@ class MainActivity
             (view as View).background = getR(it)
         } ?: apply {
             (view as View).background = null
-        }
-    }
-
-    private fun workStart() {
-        val workManager = WorkManager.getInstance(this)
-        val workQuery = WorkQuery.Builder.fromTags(listOf("gps_work")).build()
-        val workInfo = workManager.getWorkInfos(workQuery).get()
-
-        if (workInfo.isEmpty()) {
-            // WorkRequest 생성
-            val workRequest = PeriodicWorkRequestBuilder<GpsWorkManager>(
-                repeatInterval = 30, // 작업을 반복할 주기 (30분)
-                repeatIntervalTimeUnit = TimeUnit.MINUTES
-            )
-                .addTag("gps_work") // 태그 추가
-                .build()
-
-            // WorkRequest 예약
-            workManager.enqueue(workRequest)
         }
     }
 }

@@ -127,7 +127,7 @@ class SearchDialog(
             // 등록 된 주소 보여주기 세팅
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
-            GlobalScope.launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 GpsRepository(activity).findAll().forEach { entity ->
                     withContext(Dispatchers.Main) {
                         if (entity.name == CURRENT_GPS_ID) {
@@ -143,6 +143,7 @@ class SearchDialog(
                             }
                         } else {
                             addCurrentItem(entity.addrKr.toString(), entity.addrEn.toString())
+                            currentAdapter.notifyDataSetChanged()
                         }
                     }
                 }

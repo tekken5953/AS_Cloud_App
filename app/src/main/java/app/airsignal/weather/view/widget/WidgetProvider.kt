@@ -43,41 +43,36 @@ open class WidgetProvider : BaseWidgetProvider() {
         for (appWidgetId in appWidgetIds) {
             try {
                 RDBLogcat.writeWidgetHistory(context.applicationContext, "lifecycle", "onUpdate")
-                CoroutineScope(Dispatchers.IO).launch {
-                    val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
+                val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
 
-                    val refreshBtnIntent = Intent(context, WidgetProvider::class.java).run {
-                        this.action = REFRESH_BUTTON_CLICKED
-                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                val refreshBtnIntent = Intent(context, WidgetProvider::class.java).run {
+                    this.action = REFRESH_BUTTON_CLICKED
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                }
+
+                val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
+                    .run {
+                        this.action = ENTER_APPLICATION
+                        PendingIntent.getActivity(
+                            context,
+                            appWidgetId,
+                            this,
+                            PendingIntent.FLAG_IMMUTABLE
+                        )
                     }
 
-                    val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
-                        .run {
-                            this.action = ENTER_APPLICATION
-                            PendingIntent.getActivity(
-                                context,
-                                appWidgetId,
-                                this,
-                                PendingIntent.FLAG_IMMUTABLE
-                            )
-                        }
+                val pendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    appWidgetId,
+                    refreshBtnIntent,
+                    PendingIntent.FLAG_IMMUTABLE
+                )
 
-                    val pendingIntent = PendingIntent.getBroadcast(
-                        context,
-                        appWidgetId,
-                        refreshBtnIntent,
-                        PendingIntent.FLAG_IMMUTABLE
-                    )
-
-                    views.run {
-                        this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
-                        this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
-                    }
-
-                    withContext(Dispatchers.Default) {
-                        appWidgetManager.updateAppWidget(appWidgetId, views)
-                        fetch(context.applicationContext, views)
-                    }
+                views.run {
+                    this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
+                    this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
+                    appWidgetManager.updateAppWidget(appWidgetId, this)
+                    fetch(context.applicationContext, this)
                 }
             } catch (e: Exception) {
                 RDBLogcat.writeWidgetHistory(context.applicationContext,"error", e.stackTraceToString())
@@ -96,9 +91,7 @@ open class WidgetProvider : BaseWidgetProvider() {
             if (context != null) {
                 fetch(context.applicationContext,
                     RemoteViews(context.packageName, R.layout.widget_layout_2x2))
-            } else {
-                Timber.tag(TAG_W).e("context is null")
-            }
+            } else { Timber.tag(TAG_W).e("context is null") }
         }
     }
 
@@ -180,16 +173,19 @@ open class WidgetProvider : BaseWidgetProvider() {
 
     private fun applyColor(context: Context,views: RemoteViews, bg: Int) {
         val textArray = arrayOf(R.id.widget2x2TempValue, R.id.widget2x2Time, R.id.widget2x2Address)
+        val imgArray = arrayOf(R.id.widget2x2Refresh)
         views.run {
-            this.setInt(
-                R.id.widget2x2Refresh, "setColorFilter", context.getColor(
-                    when (bg) {
-                        R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.black }
-                        R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> { R.color.white }
-                        else -> android.R.color.transparent
-                    }
+            imgArray.forEach {
+                this.setInt(
+                    it, "setColorFilter", context.getColor(
+                        when (bg) {
+                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.black }
+                            R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> { R.color.white }
+                            else -> android.R.color.transparent
+                        }
+                    )
                 )
-            )
+            }
 
             textArray.forEach {
                 this.setTextColor(

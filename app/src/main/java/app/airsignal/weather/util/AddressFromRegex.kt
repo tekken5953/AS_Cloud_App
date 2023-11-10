@@ -79,6 +79,25 @@ class AddressFromRegex(private val address: String) {
         }
     }
 
+    fun getSecondAddress(): String {
+        val sb = StringBuilder()
+        return try {
+            generatePatternSecond().forEach { second ->
+                if (!second.findAll(address).none()) {
+                    sb.append(second.find(address)!!.value)
+                }
+            }
+            if (sb.isEmpty()) {
+                getAddress().split(" ").last()
+            } else {
+                sb.toString()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            address.replace("대한민국","").replace("South Korea","")
+        }
+    }
+
     /** 알림 전용 주소 반환 **/
     fun getNotificationAddress(): String {
         val sb = StringBuilder()
