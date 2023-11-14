@@ -155,7 +155,7 @@
                 android:resource="@xml/widget_provider"/>
         </receiver>
         <receiver
-            android:name=".view.widget.WidgetProvider41"
+            android:name=".view.widget.WidgetProvider42"
             android:exported="false"
             android:enabled="true"
             android:directBootAware="true"
@@ -171,7 +171,7 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_provider41"/>
+                android:resource="@xml/widget_provider42"/>
         </receiver>
     </application>
 </manifest>

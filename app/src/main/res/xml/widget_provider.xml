@@ -3,6 +3,6 @@
     android:initialLayout="@layout/widget_layout_2x2"
     android:minWidth="150dp"
     android:minHeight="150dp"
-    android:previewImage="@drawable/previmg"
+    android:previewImage="@drawable/w_preview_2x2"
     android:resizeMode="none"
     android:updatePeriodMillis="1800000" />

@@ -9,50 +9,46 @@ class AddressFromRegex(private val address: String) {
 
     /** 축약 된 주소 반환 **/
     fun getAddress(): String {
-        val s1: StringBuilder = StringBuilder()
-        val s2: StringBuilder = StringBuilder()
-        val s3: StringBuilder = StringBuilder()
-        val s4: StringBuilder = StringBuilder()
-        val sr: StringBuilder = StringBuilder()
+        val sbArray: Array<StringBuilder> = Array(5) {StringBuilder()}
 
         generatePatternFirst().forEach { first ->
             if (!first.findAll(address).none()) {
                 val value = first.find(address)!!.value
-                if (!s1.contains(value))
-                    s1.append("$value ")
+                if (!sbArray[0].contains(value))
+                    sbArray[0].append("$value ")
             }
         }
         generatePatternSecond().forEach { second ->
             if (!second.findAll(address).none()) {
                 val value = second.find(address)!!.value
-                if (!s1.contains(value))
-                    s2.append("$value ")
+                if (!sbArray[0].contains(value))
+                    sbArray[1].append("$value ")
             }
         }
         generatePatternThird().forEach { third ->
             if (!third.findAll(address).none()) {
                 val value = third.find(address)!!.value
-                if (!s1.contains(value) && !s2.contains(value))
-                    s3.append("$value ")
+                if (!sbArray[0].contains(value) && !sbArray[1].contains(value))
+                    sbArray[2].append("$value ")
             }
         }
         generatePatternFourth().forEach { fourth ->
             if (!fourth.findAll(address).none()) {
                 val value = fourth.find(address)!!.value
-                if (!s1.contains(value) && !s2.contains(value) && !s3.contains(value))
-                    s4.append(value)
+                if (!sbArray[0].contains(value) && !sbArray[1].contains(value) && !sbArray[2].contains(value))
+                    sbArray[3].append(value)
             }
         }
         generatePatternRoad().forEach { road ->
             if (!road.findAll(address).none()) {
                 val value = road.find(address)!!.value
-                if (!s1.contains(value) && !s2.contains(value))
-                    sr.append(value)
+                if (!sbArray[0].contains(value) && !sbArray[1].contains(value))
+                    sbArray[4].append(value)
             }
         }
 
         val fullAddress = address.replace("대한민국", "").replace("South Korea", "")
-        val formatAddress = if (isRoadAddress()) "${s1}${s2}${sr}" else "${s1}${s2}${s3}${s4}"
+        val formatAddress = if (isRoadAddress()) "${sbArray[0]}${sbArray[1]}${sbArray[4]}" else "${sbArray[0]}${sbArray[1]}${sbArray[2]}${sbArray[3]}"
         return if (countSpacesInStringBuilder(formatAddress) < 2 || formatAddress == "") {
             fullAddress
         } else formatAddress
@@ -68,11 +64,7 @@ class AddressFromRegex(private val address: String) {
                 }
             }
 
-            if (sb.isEmpty()) {
-                getAddress().split(" ").last()
-            } else {
-                sb.toString()
-            }
+            if (sb.isEmpty()) { getAddress().split(" ").last() } else { sb.toString() }
         } catch (e: Exception) {
             e.printStackTrace()
             "Error"
@@ -87,11 +79,7 @@ class AddressFromRegex(private val address: String) {
                     sb.append(second.find(address)!!.value)
                 }
             }
-            if (sb.isEmpty()) {
-                getAddress().split(" ").last()
-            } else {
-                sb.toString()
-            }
+            if (sb.isEmpty()) { getAddress().split(" ").last() } else { sb.toString() }
         } catch (e: Exception) {
             e.printStackTrace()
             address.replace("대한민국","").replace("South Korea","")
@@ -107,11 +95,7 @@ class AddressFromRegex(private val address: String) {
                     sb.append(third.find(address)!!.value)
                 }
             }
-            if (sb.isEmpty()) {
-                getAddress().split(" ").last()
-            } else {
-                sb.toString()
-            }
+            if (sb.isEmpty()) { getAddress().split(" ").last() } else { sb.toString() }
         } catch (e: Exception) {
             e.printStackTrace()
             address.replace("대한민국","").replace("South Korea","")
@@ -126,9 +110,7 @@ class AddressFromRegex(private val address: String) {
     // 도로명 주소인지 검사
     private fun isRoadAddress(): Boolean {
         val roadList = generatePatternRoad()
-        roadList.forEach { list ->
-            return list.find(address) != null
-        }
+        roadList.forEach { list -> return list.find(address) != null }
         return false
     }
 

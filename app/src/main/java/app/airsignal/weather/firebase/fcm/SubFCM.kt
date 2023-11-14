@@ -1,5 +1,6 @@
 package app.airsignal.weather.firebase.fcm
 
+import android.os.Bundle
 import app.airsignal.weather.dao.StaticDataObject.TAG_N
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -39,9 +40,9 @@ class SubFCM: FirebaseMessagingService() {
         FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream)
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
-                    val msg = "UnSubscribed failed"
+                    Timber.tag(TAG_N).w("UnSubscribed failed")
                 } else {
-                    val msg = "UnSubscribed : $encodedStream"
+                    Timber.tag(TAG_N).i("UnSubscribed : $encodedStream")
                 }
             }
         return this
@@ -59,6 +60,12 @@ class SubFCM: FirebaseMessagingService() {
         unSubTopic(old).subTopic(encodedStream)
     }
 
+    /**
+     * 토픽 인코딩
+     *
+     * @param topic
+     * @return Encoded Topic
+     */
     private fun encodeTopic(topic: String): String {
         val encoder: Base64.Encoder = Base64.getEncoder()
         return encoder.encodeToString(topic.toByteArray())

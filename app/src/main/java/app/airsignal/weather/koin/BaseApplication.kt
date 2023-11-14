@@ -46,7 +46,7 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     /* viewModel : 뷰모델 의존성 제거 객체 생성 */
 
     private val myModule = module {
-        single<Context> { applicationContext }
+        factory<Context> { applicationContext }
         single { GetLocation(get()) }
         single { HttpClient }
         single { GetWeatherRepo() }

@@ -1145,11 +1145,9 @@ class MainActivity
 
         // 서브 날씨(습도,바람,강수확률) 적용
         binding.subAirHumid.fetchData(
-            "${currentHumidity.roundToInt()}%", R.drawable.ico_main_humidity, null
-        )
+            "${currentHumidity.roundToInt()}%", R.drawable.ico_main_humidity, null)
         binding.subAirWind.fetchData(
-            "${currentWindSpeed.roundToInt()}m/s", R.drawable.ico_main_wind, real0.vector
-        )
+            "${currentWindSpeed.roundToInt()}m/s", R.drawable.ico_main_wind, current.vector?:real0.vector)
         binding.subAirRainP.fetchData("${currentRainP}%", R.drawable.ico_main_rain, null)
 
         // 온도 비교 업데이트

@@ -2,15 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="280dp"
-    android:layout_height="70dp"
-    android:id="@+id/widget4x1Background"
+    android:layout_height="140dp"
+    android:id="@+id/widget4x2Background"
     android:background="@drawable/w_bg_cloudy"
     android:padding="@dimen/widget_margin">
 
     <ImageView
-        android:id="@+id/widget4x1Refresh"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
+        android:id="@+id/widget4x2Refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:layout_marginTop="4dp"
         android:contentDescription="@string/cd_icon_refresh_data"
@@ -18,7 +18,7 @@
         app:tint="@color/white" />
 
     <ImageView
-        android:id="@+id/widget4x1SkyImg"
+        android:id="@+id/widget4x2SkyImg"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_alignParentEnd="true"
@@ -26,10 +26,10 @@
         android:contentDescription="@string/cd_img_sky" />
 
     <TextView
-        android:id="@+id/widget4x1TempValue"
+        android:id="@+id/widget4x2TempValue"
         style="@style/basicMediumTextView"
         android:fontFamily="@font/spoqa_hansansneo_medium"
-        android:layout_above="@id/widget4x1Address"
+        android:layout_above="@id/widget4x2Address"
         android:letterSpacing="-0.04"
         android:layout_marginStart="2dp"
         android:layout_marginBottom="2dp"
@@ -37,7 +37,7 @@
         android:textSize="32sp" />
 
     <TextView
-        android:id="@+id/widget4x1Address"
+        android:id="@+id/widget4x2Address"
         style="@style/basicTextView"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="2dp"
@@ -49,7 +49,7 @@
         android:textSize="13sp" />
 
     <TextView
-        android:id="@+id/widget4x1Time"
+        android:id="@+id/widget4x2Time"
         style="@style/basicTextView"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"

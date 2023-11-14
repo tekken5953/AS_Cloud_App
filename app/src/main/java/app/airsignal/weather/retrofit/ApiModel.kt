@@ -300,7 +300,7 @@ class ApiModel {
         @SerializedName("temperature")
         var temperature: Double,
         @SerializedName("vector")
-        val vector: String,
+        val vector: String?,
         @SerializedName("windSpeed")
         var windSpeed: Double,
     )

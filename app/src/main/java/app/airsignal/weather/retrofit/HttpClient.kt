@@ -6,10 +6,12 @@ import app.airsignal.weather.firebase.db.RDBLogcat
 import com.google.firebase.annotations.concurrent.Background
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.InternalCoroutinesApi
+import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import java.util.zip.GZIPInputStream
 import javax.inject.Singleton
 
 @Singleton
@@ -40,19 +42,21 @@ object HttpClient {
          * 클라이언트 빌더 Interceptor 구분 **/
         val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
             retryOnConnectionFailure(retryOnConnectionFailure = true)
+            connectionPool(ConnectionPool())
             connectTimeout(12, TimeUnit.SECONDS)
             readTimeout(8, TimeUnit.SECONDS)
             writeTimeout(8, TimeUnit.SECONDS)
             addInterceptor { chain ->
                 val request = chain.request().newBuilder()
                     .addHeader("Connection", "close")
+                    .addHeader("Platform", "android")
                     .build()
                 chain.proceed(request)
             }.build()
         }
 
         /** Gson Converter 생성**/
-        val gson = GsonBuilder().setLenient().create()
+        val gson = GsonBuilder().setLenient().setPrettyPrinting().create()
 
         /** 서버 URL 주소에 연결, GSON Convert 활성화**/
         val retrofit: Retrofit by lazy {

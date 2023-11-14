@@ -9,9 +9,10 @@ import android.content.Intent
 import android.location.Location
 import android.widget.RemoteViews
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.dao.StaticDataObject.TAG_W
 import app.airsignal.weather.firebase.db.RDBLogcat
+import app.airsignal.weather.firebase.fcm.SubFCM
+import app.airsignal.weather.firebase.fcm.WidgetBuilder
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.util.`object`.DataTypeParser.currentDateTimeString
 import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
@@ -20,7 +21,9 @@ import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.view.activity.SplashActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.*
+import org.koin.core.context.GlobalContext
 import timber.log.Timber
 
 /**
@@ -30,9 +33,11 @@ import timber.log.Timber
 open class WidgetProvider : BaseWidgetProvider() {
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
+        val koinContext = GlobalContext.get()
+        val appContext = koinContext.get<Context>()
         Timber.tag(TAG_W).i("onEnabled")
-        val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
-        fetch(context.applicationContext,views)
+        val views = RemoteViews(appContext.packageName, R.layout.widget_layout_2x2)
+        fetch(appContext,views)
     }
 
     override fun onUpdate(
@@ -40,58 +45,65 @@ open class WidgetProvider : BaseWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
+        val koinContext = GlobalContext.get()
+        val appContext = koinContext.get<Context>()
         for (appWidgetId in appWidgetIds) {
             try {
-                RDBLogcat.writeWidgetHistory(context.applicationContext, "lifecycle", "onUpdate")
-                val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
+                RDBLogcat.writeWidgetHistory(appContext, "lifecycle", "onUpdate")
+                val views = RemoteViews(appContext.packageName, R.layout.widget_layout_2x2)
+                CoroutineScope(Dispatchers.Default).launch {
+                    WidgetBuilder().sendNotification(appContext).run {
+                        val refreshBtnIntent = Intent(appContext, WidgetProvider::class.java).run {
+                            this.action = REFRESH_BUTTON_CLICKED
+                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                        }
 
-                val refreshBtnIntent = Intent(context, WidgetProvider::class.java).run {
-                    this.action = REFRESH_BUTTON_CLICKED
-                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                }
+                        val enterPending: PendingIntent = Intent(appContext, SplashActivity::class.java)
+                            .run {
+                                this.action = ENTER_APPLICATION
+                                PendingIntent.getActivity(
+                                    appContext,
+                                    appWidgetId,
+                                    this,
+                                    PendingIntent.FLAG_IMMUTABLE
+                                )
+                            }
 
-                val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
-                    .run {
-                        this.action = ENTER_APPLICATION
-                        PendingIntent.getActivity(
-                            context,
+                        val pendingIntent = PendingIntent.getBroadcast(
+                            appContext,
                             appWidgetId,
-                            this,
+                            refreshBtnIntent,
                             PendingIntent.FLAG_IMMUTABLE
                         )
+
+                        views.run {
+                            this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
+                            this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
+                            appWidgetManager.updateAppWidget(appWidgetId, this)
+                            fetch(appContext, this)
+                        }
                     }
-
-                val pendingIntent = PendingIntent.getBroadcast(
-                    context,
-                    appWidgetId,
-                    refreshBtnIntent,
-                    PendingIntent.FLAG_IMMUTABLE
-                )
-
-                views.run {
-                    this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
-                    this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
-                    appWidgetManager.updateAppWidget(appWidgetId, this)
-                    fetch(context.applicationContext, this)
                 }
             } catch (e: Exception) {
-                RDBLogcat.writeWidgetHistory(context.applicationContext,"error", e.stackTraceToString())
+                RDBLogcat.writeErrorANR(Thread.currentThread().toString(), "onUpdate error ${e.stackTraceToString()}")
             }
         }
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
         super.onReceive(context, intent)
+        val koinContext = GlobalContext.get()
+        val appContext = koinContext.get<Context>()
         val appWidgetId = intent?.getIntExtra(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
         )
+        val views = RemoteViews(appContext.packageName, R.layout.widget_layout_2x2)
         if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID
             && intent.action == REFRESH_BUTTON_CLICKED) {
-            if (context != null) {
-                fetch(context.applicationContext,
-                    RemoteViews(context.packageName, R.layout.widget_layout_2x2))
-            } else { Timber.tag(TAG_W).e("context is null") }
+            fetch(appContext, RemoteViews(appContext.packageName, R.layout.widget_layout_2x2))
+            views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.refreshing)
+            AppWidgetManager.getInstance(appContext).updateAppWidget(appWidgetId,views)
         }
     }
 
@@ -110,6 +122,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                         RDBLogcat.writeWidgetHistory(context, "위치", "data : $data")
 
                         withContext(Dispatchers.Main) {
+                            delay(1000)
                             updateUI(context, views, data, addr)
                         }
                     }
@@ -117,18 +130,18 @@ open class WidgetProvider : BaseWidgetProvider() {
             }
             val onFailure: (e: Exception) -> Unit = {
                 Timber.tag(TAG_W).e(it.stackTraceToString())
-                RDBLogcat.writeWidgetHistory(context, "widget error", it.localizedMessage)
+                RDBLogcat.writeErrorANR(Thread.currentThread().toString(), "widget error ${it.localizedMessage}")
             }
             CoroutineScope(Dispatchers.Default).launch {
                 fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
                     .addOnSuccessListener(onSuccess)
                     .addOnFailureListener(onFailure)
                     .addOnCanceledListener {
-                        RDBLogcat.writeWidgetHistory(context, "addOnCanceledListener", resultData.toString())
+                        RDBLogcat.writeErrorANR(Thread.currentThread().toString(), "addOnCanceledListener - $resultData")
                     }
             }
         } catch(e: Exception) {
-            RDBLogcat.writeWidgetHistory(context,"fetch error",e.localizedMessage)
+            RDBLogcat.writeErrorANR(Thread.currentThread().toString(), "fetch error ${e.localizedMessage}")
         }
     }
 
@@ -139,16 +152,16 @@ open class WidgetProvider : BaseWidgetProvider() {
         addr: String?
     ) {
         try {
-            val appContext = context.applicationContext
             val currentTime = currentDateTimeString("HH:mm")
             val sunrise = data?.sun?.sunrise ?: "0000"
             val sunset = data?.sun?.sunset ?: "0000"
             val isNight = GetAppInfo.getIsNight(sunrise,sunset)
-            val appWidgetManager = AppWidgetManager.getInstance(appContext)
+            val appWidgetManager = AppWidgetManager.getInstance(context)
             val componentName =
-                ComponentName(appContext, this@WidgetProvider.javaClass)
+                ComponentName(context, this@WidgetProvider.javaClass)
 
             views.run {
+                views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
                 this.setTextViewText(R.id.widget2x2Time, currentTime)
                 data?.let {
                     this.setTextViewText(
@@ -160,14 +173,13 @@ open class WidgetProvider : BaseWidgetProvider() {
                     val bg = getBackgroundImgWidget(rainType = it.current.rainType,
                         sky = it.realtime[0].sky, isNight)
                     setInt(R.id.widget2x2Background, "setBackgroundResource", bg)
-                    applyColor(appContext,views,bg)
+                    applyColor(context,views,bg)
                 }
             }
 
             appWidgetManager.updateAppWidget(componentName, views)
         } catch (e: Exception) {
-            RDBLogcat.writeWidgetHistory(context, "updateUI error", e.stackTraceToString())
-            Timber.tag(TAG_W).e(e.stackTraceToString())
+            RDBLogcat.writeErrorANR(Thread.currentThread().toString(), "updateUI error ${e.stackTraceToString()}")
         }
     }
 
@@ -177,7 +189,7 @@ open class WidgetProvider : BaseWidgetProvider() {
         views.run {
             imgArray.forEach {
                 this.setInt(
-                    it, "setColorFilter", context.getColor(
+                    it, "setColorFilter", context.applicationContext.getColor(
                         when (bg) {
                             R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.black }
                             R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> { R.color.white }
@@ -189,7 +201,7 @@ open class WidgetProvider : BaseWidgetProvider() {
 
             textArray.forEach {
                 this.setTextColor(
-                    it, context.getColor(
+                    it, context.applicationContext.getColor(
                         when (bg) {
                             R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.black }
                             R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> { R.color.white }

@@ -8,12 +8,15 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.VectorDrawable
 import android.media.AudioAttributes
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import android.view.View
 import androidx.core.app.NotificationCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.util.VibrateUtil
@@ -43,39 +46,42 @@ class NotificationBuilder {
     }
 
     fun sendNotification(context: Context, data: Map<String,String>) {
+        val appContext = context.applicationContext
         val notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
+            appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
 
-        if(data["sort"] == FCM_PATCH) {
+        if (data["sort"] == FCM_PATCH) {
             intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(GetSystemInfo.getPlayStoreURL(context))
+            intent.data = Uri.parse(GetSystemInfo.getPlayStoreURL(appContext))
         } else {
-            intent = Intent(context, SplashActivity::class.java)
+            intent = Intent(appContext, SplashActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP and Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent =
+            PendingIntent.getActivity(appContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
         val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationChannel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
             NOTIFICATION_CHANNEL_NAME,
-            if (getUserNotiVibrate(context))
+            if (getUserNotiVibrate(appContext))
                 NotificationManager.IMPORTANCE_DEFAULT
             else NotificationManager.IMPORTANCE_LOW
         ).apply {
             description = NOTIFICATION_CHANNEL_DESCRIPTION
             lockscreenVisibility = View.VISIBLE
-            setSound(sound,AudioAttributes.Builder().build())
+            setSound(sound, AudioAttributes.Builder().build())
         }
 
-        val notificationBuilder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+        val notificationBuilder = NotificationCompat.Builder(appContext, NOTIFICATION_CHANNEL_ID)
 
-        fun setNotiBuilder(title: String, subtext: String?, content: String, imgPath: Bitmap?
+        fun setNotiBuilder(
+            title: String, subtext: String?, content: String, imgPath: Bitmap?
         ) {
             notificationBuilder
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
-                .setColor(context.getColor(R.color.main_blue_color))
+                .setColor(appContext.getColor(R.color.main_blue_color))
                 .setWhen(System.currentTimeMillis())
                 .setSubText(subtext)
                 .setSmallIcon(R.drawable.ic_stat_airsignal_default)
@@ -85,69 +91,54 @@ class NotificationBuilder {
                 .setLargeIcon(imgPath)
         }
 
-        if (getUserNotiEnable(context)) {
+        when (data["sort"]) {
+            FCM_DAILY -> {
+                val temp = parseStringToDoubleToInt(data["temp"].toString())
+                val rainType = data["rainType"]
+                val sky = data["sky"]
+                val thunder = data["thunder"]?.toDouble()
+                val lunar = data["lunar"]?.toInt()
+                setNotiBuilder(
+                    title = "${temp}˚ ${applySkyText(appContext, rainType, sky, thunder)}",
+                    subtext = getNotificationAddress(appContext),
+                    content = "최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
+                            "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚",
+                    imgPath = getSkyBitmap(appContext, rainType, sky, thunder, lunar ?: -1)
+                )
+            }
+            FCM_PATCH -> {
+                val payload = data["payload"] ?: "새로운 업데이트가 준비되었어요"
+                setNotiBuilder(title = "에어시그널 날씨", subtext = null, content = payload, null)
+            }
+            FCM_EVENT -> {
+                val payload = data["payload"] ?: "눌러서 이벤트를 확인하세요"
+                setNotiBuilder(title = "에어시그널 날씨", subtext = null, content = payload, null)
+            }
+        }
+
+        if (getUserNotiEnable(appContext)) {
+            notificationManager?.let {
+                it.createNotificationChannel(notificationChannel)
+//                applyVibrate(appContext)
+                it.notify(1, notificationBuilder.build())
+            }
+            RDBLogcat.writeNotificationHistory(appContext,data["sort"].toString(),data.toString())
+        } else {
+            RDBLogcat.writeNotificationHistory(appContext, "체크 해제로 인한 알림 미발송",
+                "${GetAppInfo.getUserLastAddress(appContext)} $data")
+        }
+
+        if (getUserNotiEnable(appContext)) {
             notificationManager?.let {
                 it.createNotificationChannel(notificationChannel)
                 it.notify(1, notificationBuilder.build())
             }
-            RDBLogcat.writeNotificationHistory(context,data["sort"].toString(),data.toString())
+            RDBLogcat.writeNotificationHistory(context, data["sort"].toString(), data.toString())
         } else {
-            RDBLogcat.writeNotificationHistory(context, "체크 해제로 인한 알림 미발송",
-                "${GetAppInfo.getUserLastAddress(context)} $data")
-        }
-
-        fun processFcmNotification(data: Map<String, String>, context: Context) {
-            val notificationTitle: String
-            val notificationContent: String
-
-            try {
-                when (data["sort"]) {
-                    FCM_DAILY -> {
-                        val temp = parseStringToDoubleToInt(data["temp"].toString())
-                        val rainType = data["rainType"]
-                        val sky = data["sky"]
-                        val thunder = data["thunder"]?.toDouble()
-                        val lunar = data["lunar"]?.toInt()
-                        notificationTitle =
-                            "${temp}˚ ${applySkyText(context, rainType, sky, thunder)}"
-                        notificationContent =
-                            "최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
-                                    "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚"
-                    }
-                    FCM_PATCH, FCM_EVENT -> {
-                        val payload = data["payload"] ?: if (data["sort"] == FCM_PATCH)
-                            "새로운 업데이트가 준비되었어요" else "눌러서 이벤트를 확인하세요"
-                        notificationTitle = "에어시그널 날씨"
-                        notificationContent = payload
-                    }
-                    else -> {
-                        // 기본 처리 또는 예외 처리
-                        notificationTitle = "에어시그널 알림"
-                        notificationContent = "현재 날씨를 확인해보세요"
-                    }
-                }
-
-                setNotiBuilder(
-                    title = notificationTitle,
-                    subtext = getNotificationAddress(context),
-                    content = notificationContent,
-                    imgPath = getSkyBitmap(
-                        context,
-                        data["rainType"],
-                        data["sky"],
-                        data["thunder"]?.toDouble(),
-                        data["lunar"]?.toInt() ?: -1
-                    )
-                )
-
-                processFcmNotification(data, context)
-            } catch (e: Exception) {
-                RDBLogcat.writeNotificationHistory(
-                    context.applicationContext,
-                    "에러",
-                    e.localizedMessage
-                )
-            }
+            RDBLogcat.writeNotificationHistory(
+                appContext, "체크 해제로 인한 알림 미발송",
+                "${GetAppInfo.getUserLastAddress(appContext)} $data"
+            )
         }
     }
 
@@ -169,14 +160,14 @@ class NotificationBuilder {
         thunder: Double?,
         lunar: Int?
     ): Bitmap? {
-        val bitmapDrawable = getSkyImgLarge(
-            context,
-            applySkyText(context, rain, sky, thunder),
-            false,
-            lunar ?: -1
-        ) as BitmapDrawable
-
-        return bitmapDrawable.bitmap
+        return when
+                (val bitmapDrawable = getSkyImgLarge(context,
+                applySkyText(context, rain, sky, thunder),
+                false, lunar ?: -1)) {
+            is BitmapDrawable -> { bitmapDrawable.bitmap }
+            is VectorDrawable -> { (bitmapDrawable).toBitmap() }
+            else -> { null }
+        }
     }
 
     private fun parseStringToDoubleToInt(s: String): Int {
