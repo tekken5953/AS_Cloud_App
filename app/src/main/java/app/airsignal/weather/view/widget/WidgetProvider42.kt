@@ -30,8 +30,8 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         super.onEnabled(context)
         val appContext = context.applicationContext
         Timber.tag(TAG_W).i("onEnabled")
-        val views = RemoteViews(appContext.packageName, R.layout.widget_layout_2x2)
-        fetch(appContext,views)
+        val views = RemoteViews(appContext.packageName, R.layout.widget_layout_4x2)
+//        fetch(appContext,views)
     }
 
     override fun onUpdate(

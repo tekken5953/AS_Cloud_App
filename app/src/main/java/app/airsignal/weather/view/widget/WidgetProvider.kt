@@ -122,7 +122,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                         RDBLogcat.writeWidgetHistory(context, "위치", "data : $data")
 
                         withContext(Dispatchers.Main) {
-                            delay(1000)
+                            delay(500)
                             updateUI(context, views, data, addr)
                         }
                     }
@@ -191,7 +191,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                 this.setInt(
                     it, "setColorFilter", context.applicationContext.getColor(
                         when (bg) {
-                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.black }
+                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.wblack }
                             R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> { R.color.white }
                             else -> android.R.color.transparent
                         }
@@ -203,7 +203,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                 this.setTextColor(
                     it, context.applicationContext.getColor(
                         when (bg) {
-                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.black }
+                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.wblack }
                             R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> { R.color.white }
                             else -> android.R.color.transparent
                         }

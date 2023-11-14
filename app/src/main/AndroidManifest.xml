@@ -158,6 +158,7 @@
             android:name=".view.widget.WidgetProvider42"
             android:exported="false"
             android:enabled="true"
+            android:label="@string/widget_4x2_description"
             android:directBootAware="true"
             tools:ignore="Instantiatable">
             <intent-filter>

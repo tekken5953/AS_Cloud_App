@@ -879,7 +879,7 @@ class MainActivity
         hideProgressBar()
         Toast.makeText(
             this@MainActivity,
-            getString(R.string.error_data_reposonse),
+            getString(R.string.error_data_response),
             Toast.LENGTH_SHORT
         ).show()
     }

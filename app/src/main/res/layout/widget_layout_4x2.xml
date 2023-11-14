@@ -1,62 +1,289 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/w42Background"
     android:layout_width="280dp"
     android:layout_height="140dp"
-    android:id="@+id/widget4x2Background"
-    android:background="@drawable/w_bg_cloudy"
+    android:background="@drawable/widget_bg4x2_sunny"
     android:padding="@dimen/widget_margin">
 
     <ImageView
-        android:id="@+id/widget4x2Refresh"
+        android:id="@+id/w42Location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
+        android:layout_alignTop="@+id/w42Address"
+        android:layout_alignBottom="@+id/w42Address"
+        android:layout_marginStart="6dp"
+        android:src="@drawable/w_ico_location" />
+
+    <TextView
+        android:id="@+id/w42Address"
+        style="@style/basicTextView"
         android:layout_marginTop="4dp"
-        android:contentDescription="@string/cd_icon_refresh_data"
-        android:src="@drawable/w_btn_refresh"
-        app:tint="@color/white" />
+        android:text="수정구"
+        android:layout_toEndOf="@+id/w42Location"
+        android:textColor="@color/wblack"
+        android:textSize="12sp" />
 
     <ImageView
-        android:id="@+id/widget4x2SkyImg"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:id="@+id/w42Refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/w_btn_refresh"
+        app:tint="@color/wblack"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="2dp"
-        android:contentDescription="@string/cd_img_sky" />
+        android:layout_alignTop="@+id/w42Address"
+        android:layout_alignBottom="@+id/w42Address"
+        android:layout_marginEnd="6dp"/>
 
     <TextView
-        android:id="@+id/widget4x2TempValue"
-        style="@style/basicMediumTextView"
-        android:fontFamily="@font/spoqa_hansansneo_medium"
-        android:layout_above="@id/widget4x2Address"
-        android:letterSpacing="-0.04"
-        android:layout_marginStart="2dp"
-        android:layout_marginBottom="2dp"
-        android:textColor="@color/white"
-        android:textSize="32sp" />
-
-    <TextView
-        android:id="@+id/widget4x2Address"
+        android:id="@+id/w42Time"
         style="@style/basicTextView"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="2dp"
-        android:layout_marginBottom="4dp"
-        android:ellipsize="start"
-        android:gravity="start"
-        android:lines="1"
-        android:textColor="@color/white"
-        android:textSize="13sp" />
+        android:textSize="10sp"
+        android:textColor="@color/wblack"
+        android:text="12:34"
+        android:layout_toStartOf="@+id/w42Refresh"
+        android:layout_alignTop="@+id/w42Address"
+        android:layout_alignBottom="@+id/w42Address"
+        android:layout_marginEnd="3dp"/>
+
+    <ImageView
+        android:id="@+id/w42SkyImg"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/w42Address"
+        android:layout_marginTop="18dp"
+        android:src="@drawable/b_ico_sunny" />
 
     <TextView
-        android:id="@+id/widget4x2Time"
+        android:id="@+id/w42Temp"
         style="@style/basicTextView"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
-        android:letterSpacing="-0.04"
-        android:textColor="@color/white"
-        android:textSize="13sp" />
+        android:textSize="30sp"
+        android:text="23˚"
+        android:textColor="@color/wblack"
+        android:layout_toEndOf="@+id/w42SkyImg"
+        android:layout_below="@+id/w42Address"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="5dp"/>
 
+    <LinearLayout
+        android:id="@+id/w42MinMaxLinear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toEndOf="@+id/w42Temp"
+        android:layout_alignTop="@+id/w42Temp"
+        android:layout_alignBottom="@+id/w42Temp"
+        android:gravity="center_vertical"
+        android:layout_marginStart="2dp">
+        <TextView
+            android:id="@+id/w42MinTemp"
+            style="@style/basicTextView"
+            android:textSize="12sp"
+            android:textColor="@color/wblack"
+            android:text="14˚"
+            app:drawableStartCompat="@drawable/arrow_bottom" />
+
+        <TextView
+            android:id="@+id/w42MaxTemp"
+            style="@style/basicTextView"
+            android:textSize="12sp"
+            android:textColor="@color/wblack"
+            android:text="14˚"
+            app:drawableStartCompat="@drawable/arrow_top" />
+    </LinearLayout>
+
+<!--    <LinearLayout-->
+<!--        android:id="@+id/w42DailyLinear"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@+id/w42Temp"-->
+<!--        android:layout_alignStart="@+id/w42Location"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:gravity="center_vertical"-->
+<!--        android:orientation="horizontal">-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="vertical">-->
+<!--            <TextView-->
+<!--                android:id="@+id/w42DailyTime1"-->
+<!--                style="@style/basicTextView"-->
+<!--                android:textSize="11sp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:textColor="@color/wblack"-->
+<!--                android:text="13시"/>-->
+<!--            <ImageView-->
+<!--                android:id="@+id/w42DailySky1"-->
+<!--                android:layout_width="12dp"-->
+<!--                android:layout_height="12dp"-->
+<!--                android:layout_marginTop="4dp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:src="@drawable/b_ico_sunny"/>-->
+<!--            <TextView-->
+<!--                android:id="@+id/w42DailyTemp1"-->
+<!--                style="@style/basicTextView"-->
+<!--                android:textSize="12sp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:textColor="@color/wblack"-->
+<!--                android:text="13˚"-->
+<!--                android:layout_marginTop="4dp"/>-->
+<!--        </LinearLayout>-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="vertical"-->
+<!--            android:layout_marginStart="12dp">-->
+<!--            <TextView-->
+<!--                android:id="@+id/w42DailyTime2"-->
+<!--                style="@style/basicTextView"-->
+<!--                android:textSize="11sp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:textColor="@color/wblack"-->
+<!--                android:text="14시"/>-->
+<!--            <ImageView-->
+<!--                android:id="@+id/w42DailySky2"-->
+<!--                android:layout_width="12dp"-->
+<!--                android:layout_height="12dp"-->
+<!--                android:layout_marginTop="4dp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:src="@drawable/b_ico_sunny"/>-->
+<!--            <TextView-->
+<!--                android:id="@+id/w42DailyTemp2"-->
+<!--                style="@style/basicTextView"-->
+<!--                android:textSize="12sp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:textColor="@color/wblack"-->
+<!--                android:text="13˚"-->
+<!--                android:layout_marginTop="4dp"/>-->
+<!--        </LinearLayout>-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="vertical"-->
+<!--            android:layout_marginStart="12dp">-->
+<!--            <TextView-->
+<!--                android:id="@+id/w42DailyTime3"-->
+<!--                style="@style/basicTextView"-->
+<!--                android:textSize="11sp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:textColor="@color/wblack"-->
+<!--                android:text="15시"/>-->
+<!--            <ImageView-->
+<!--                android:id="@+id/w42DailySky3"-->
+<!--                android:layout_width="12dp"-->
+<!--                android:layout_height="12dp"-->
+<!--                android:layout_marginTop="4dp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:src="@drawable/b_ico_sunny"/>-->
+<!--            <TextView-->
+<!--                android:id="@+id/w42DailyTemp3"-->
+<!--                style="@style/basicTextView"-->
+<!--                android:textSize="12sp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:textColor="@color/wblack"-->
+<!--                android:text="13˚"-->
+<!--                android:layout_marginTop="4dp"/>-->
+<!--        </LinearLayout>-->
+<!--        <LinearLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:orientation="vertical"-->
+<!--            android:layout_marginStart="12dp">-->
+<!--            <TextView-->
+<!--                android:id="@+id/w42DailyTime4"-->
+<!--                style="@style/basicTextView"-->
+<!--                android:textSize="11sp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:textColor="@color/wblack"-->
+<!--                android:text="16시"/>-->
+<!--            <ImageView-->
+<!--                android:id="@+id/w42DailySky4"-->
+<!--                android:layout_width="12dp"-->
+<!--                android:layout_height="12dp"-->
+<!--                android:layout_marginTop="4dp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:src="@drawable/b_ico_sunny"/>-->
+<!--            <TextView-->
+<!--                android:id="@+id/w42DailyTemp4"-->
+<!--                style="@style/basicTextView"-->
+<!--                android:textSize="12sp"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:textColor="@color/wblack"-->
+<!--                android:text="13˚"-->
+<!--                android:layout_marginTop="4dp"/>-->
+<!--        </LinearLayout>-->
+<!--    </LinearLayout>-->
+
+    <LinearLayout
+        android:id="@+id/w42AirLinear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="bottom"
+        android:layout_marginStart="10dp"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_weight="0.33">
+            <TextView
+                style="@style/basicTextView"
+                android:textSize="13sp"
+                android:text="습도"
+                android:textColor="@color/wblack"
+                android:alpha="0.8"/>
+            <TextView
+                style="@style/basicMediumTextView"
+                android:textSize="13sp"
+                android:text="38%"
+                android:layout_marginStart="4dp"
+                android:textColor="@color/wblack"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_weight="0.33">
+            <TextView
+                style="@style/basicTextView"
+                android:textSize="13sp"
+                android:text="미세"
+                android:alpha="0.8"
+                android:textColor="@color/wblack"/>
+            <TextView
+                style="@style/basicMediumTextView"
+                android:textSize="13sp"
+                android:text="보통"
+                android:layout_marginStart="4dp"
+                android:textColor="@color/wblack"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_weight="0.33">
+            <TextView
+                style="@style/basicTextView"
+                android:textSize="13sp"
+                android:text="초미세"
+                android:alpha="0.8"
+                android:textColor="@color/wblack"/>
+            <TextView
+                style="@style/basicMediumTextView"
+                android:textSize="13sp"
+                android:text="좋음"
+                android:layout_marginStart="4dp"
+                android:textColor="@color/wblack"/>
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

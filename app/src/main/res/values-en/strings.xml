@@ -246,6 +246,8 @@
     <string name="exclamation_mark">Exclamation mark</string>
     <string name="cd_ad_view">Advertisement View</string>
     <string name="last_location_call_msg">Address calls failed and call up the last address.</string>
-    <string name="error_data_reposonse">Fail to response data</string>
+    <string name="error_data_response">Fail to response data</string>
     <string name="indoor_air_check">check indoor air</string>
+    <string name="widget_2x2_description">Airsignal 2x2</string>
+    <string name="widget_4x2_description">Airsignal 4x2</string>
 </resources>
