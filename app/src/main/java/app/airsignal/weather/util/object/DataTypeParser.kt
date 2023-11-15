@@ -181,23 +181,29 @@ object DataTypeParser {
         }
     }
 
-    fun getBackgroundImgWidget(rainType: String?, sky: String?, isNight: Boolean): Int {
+    fun getBackgroundImgWidget(sort: String, rainType: String?, sky: String?, isNight: Boolean): Int {
         return if (rainType == "없음" || rainType == null) {
             when (sky) {
-                "맑음", "구름많음" -> if (isNight) R.drawable.w_bg_night else R.drawable.w_bg_sunny
+                "맑음", "구름많음" -> {
+                    if (sort == "22")
+                        if (isNight) R.drawable.w_bg_night else R.drawable.w_bg_sunny
+                    else
+                        if (isNight) R.drawable.widget_bg4x2_night else R.drawable.widget_bg4x2_sunny
+                }
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
                 "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
-                "번개,뇌우", "비/번개" -> R.drawable.w_bg_cloudy
-                "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.w_bg_snow
-                else -> R.drawable.w_bg_snow
+                "번개,뇌우", "비/번개" -> {
+                    if (sort == "22") R.drawable.w_bg_cloudy else  R.drawable.widget_bg4x2_cloud
+                }
+                "구름많고 눈", "눈", "흐리고 눈" -> {
+                    if (sort == "22") R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
+                }
+                else -> if (sort == "22") R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
             }
         } else {
             when (rainType) {
-                "비" -> R.drawable.w_bg_cloudy
-                "눈" -> R.drawable.w_bg_snow
-                "비/눈" -> R.drawable.w_bg_snow
-                "소나기" -> R.drawable.w_bg_cloudy
-                else -> R.drawable.w_bg_snow
+                "비","소나기" -> if(sort == "22") R.drawable.w_bg_cloudy else R.drawable.widget_bg4x2_cloud
+                else -> if(sort == "22") R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
             }
         }
     }

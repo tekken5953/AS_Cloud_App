@@ -10,6 +10,7 @@ import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.dao.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.weather.dao.ErrorCode.ERROR_UNKNOWN
 import app.airsignal.weather.dao.StaticDataObject.TAG_R
+import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.firebase.db.RDBLogcat.writeErrorANR
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentHumid
@@ -50,6 +51,7 @@ class GetWeatherRepo : BaseRepository() {
                                     .d("Success API : ${ApiState.Success(responseBody).data}")
                                 _getDataResult.postValue(ApiState.Success(responseBody))
                             } else {
+                                writeErrorANR(Thread.currentThread().toString(),response.body().toString())
                                 _getDataResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
                                 call.cancel()
                             }

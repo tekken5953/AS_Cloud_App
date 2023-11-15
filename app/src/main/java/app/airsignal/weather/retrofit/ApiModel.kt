@@ -337,18 +337,14 @@ class ApiModel {
         val lunar: LunarDate?
     )
 
-    // 4x2 위젯 - 미세먼지 등급
-    data class Widget4x2Quality(
-        @SerializedName("pm10Grade1h")
-        val pm10Grade1h: Int?
-    )
-
     // 4x2 위젯 - 실시간 정보
     data class Widget4x2Current(
         @SerializedName("rainType")
         val rainType: String?,
         @SerializedName("temperature")
-        val temperature: Double?
+        val temperature: Double?,
+        @SerializedName("humidity")
+        var humidity: Double
     )
 
     // 4x2 위젯 - 일출/일몰
@@ -370,13 +366,14 @@ class ApiModel {
         @SerializedName("rainType")
         val rainType: String?,
         @SerializedName("temperature")
-        val temp: Double?
+        val temp: Double?,
+
     )
 
     // 4x2 위젯 - 전체 데이터
     data class WidgetData(
         @SerializedName("quality")
-        val quality: Widget4x2Quality,
+        val quality: AirQualityData,
         @SerializedName("current")
         val current: Widget4x2Current,
         @SerializedName("sun")
@@ -385,8 +382,10 @@ class ApiModel {
         val thunder: Double?,
         @SerializedName("realtime")
         val realtime: List<Widget4x2Realtime>,
-//        @SerializedName("today")
-//        val today: TodayTemp
+        @SerializedName("today")
+        val today: TodayTemp,
+        @SerializedName("lunar")
+        val lunar: LunarDate?
     )
 
     // 기상 특보 검색

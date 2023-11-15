@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission
         android:name="android.permission.BIND_REMOTEVIEWS"
         tools:ignore="ProtectedPermissions" />
@@ -137,42 +139,45 @@
 
         <receiver
             android:name=".view.widget.WidgetProvider"
+            android:directBootAware="true"
             android:enabled="true"
             android:exported="false"
-            android:directBootAware="true"
             tools:ignore="Instantiatable">
             <intent-filter>
-                <action android:name="app.airsignal.weather.view.widget.REFRESH_DATA"/>
-                <action android:name="app.airsignal.weather.view.widget.ENTER_APP"/>
+                <action android:name="app.airsignal.weather.view.widget.REFRESH_DATA" />
+                <action android:name="app.airsignal.weather.view.widget.ENTER_APP" />
                 <action android:name="android.intent.action.DATE_CHANGED" />
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.appwidget.action.APPWIDGET_ENABLE" />
+                <action android:name="app.airsignal.weather.view.widget.ENTER_PERM"/>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_provider"/>
+                android:resource="@xml/widget_provider" />
         </receiver>
         <receiver
             android:name=".view.widget.WidgetProvider42"
-            android:exported="false"
-            android:enabled="true"
-            android:label="@string/widget_4x2_description"
             android:directBootAware="true"
+            android:enabled="true"
+            android:exported="false"
+            android:label="@string/widget_4x2_description"
             tools:ignore="Instantiatable">
             <intent-filter>
-                <action android:name="app.airsignal.weather.view.widget.REFRESH_DATA"/>
-                <action android:name="app.airsignal.weather.view.widget.ENTER_APP"/>
+                <action android:name="app.airsignal.weather.view.widget.REFRESH_DATA42" />
+                <action android:name="app.airsignal.weather.view.widget.ENTER_APP42" />
                 <action android:name="android.intent.action.DATE_CHANGED" />
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.appwidget.action.APPWIDGET_ENABLE" />
+                <action android:name="app.airsignal.weather.view.widget.ENTER_PERM42"/>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/widget_provider42"/>
+                android:resource="@xml/widget_provider42" />
         </receiver>
     </application>
+
 </manifest>

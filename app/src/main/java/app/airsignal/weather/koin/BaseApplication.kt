@@ -19,8 +19,17 @@ import org.koin.dsl.module
 import kotlin.system.exitProcess
 
 class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
+    companion object {
+        private lateinit var appContext: Context
+
+        fun getAppContext(): Context {
+            return appContext
+        }
+    }
+
     override fun onCreate() {
         super.onCreate()
+        appContext = applicationContext
         Thread.setDefaultUncaughtExceptionHandler(this)
 
         startKoin {

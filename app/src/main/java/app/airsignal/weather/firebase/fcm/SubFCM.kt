@@ -1,6 +1,5 @@
 package app.airsignal.weather.firebase.fcm
 
-import android.os.Bundle
 import app.airsignal.weather.dao.StaticDataObject.TAG_N
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -14,11 +13,11 @@ import java.util.*
 
 
 class SubFCM: FirebaseMessagingService() {
+
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 //        Timber.tag(TAG_N).d("onMessageReceived(${message.data})")
-
         // 포그라운드 노티피케이션 발생
         NotificationBuilder().sendNotification(applicationContext, message.data)
     }

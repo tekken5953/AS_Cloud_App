@@ -1,15 +1,14 @@
 package app.airsignal.weather.firebase.fcm
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.graphics.Bitmap
 import android.view.View
 import androidx.core.app.NotificationCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.firebase.db.RDBLogcat
-
+import com.google.firebase.messaging.Constants.MessagePayloadKeys.SENDER_ID
+import com.google.firebase.messaging.FirebaseMessaging
 
 class WidgetBuilder {
 
@@ -19,7 +18,7 @@ class WidgetBuilder {
         const val NOTIFICATION_CHANNEL_DESCRIPTION = "Channel description"
     }
 
-    fun sendNotification(context: Context) {
+    fun sendNotification(context: Context) : Context {
         val appContext = context.applicationContext
         val notificationManager =
             appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
@@ -40,6 +39,7 @@ class WidgetBuilder {
         }
 
         RDBLogcat.writeNotificationHistory(context, "widget noti","notify")
+        return context
     }
 
     private fun setNotiBuilder(
