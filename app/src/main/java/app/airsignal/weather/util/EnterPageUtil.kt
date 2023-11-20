@@ -7,6 +7,8 @@ import app.airsignal.weather.view.activity.LoginActivity
 import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.activity.PermissionActivity
 import app.airsignal.weather.view.activity.WarningDetailActivity
+import app.airsignal.weather.view.aseye.activity.EyeDetailActivity
+import app.airsignal.weather.view.aseye.activity.EyeListActivity
 import kotlin.system.exitProcess
 
 /**
@@ -38,6 +40,14 @@ class EnterPageUtil(private val activity: Activity) {
     /**로그인 페이지로 이동한다*/
     fun toLogin() {
         val intent = Intent(activity, LoginActivity::class.java)
+        activity.run {
+            this.startActivity(intent)
+            this.overridePendingTransition(0,0)
+        }
+    }
+
+    fun toEye() {
+        val intent = Intent(activity, EyeListActivity::class.java)
         activity.run {
             this.startActivity(intent)
             this.overridePendingTransition(0,0)

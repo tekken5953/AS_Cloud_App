@@ -393,6 +393,7 @@ class MainActivity
             val warning = sideMenuView.findViewById<TextView>(R.id.navMenuWarning)
             val headerTr = sideMenuView.findViewById<TableRow>(R.id.headerTr)
             val adView = sideMenuView.findViewById<AdView>(R.id.navMenuAdview)
+            val eye = sideMenuView.findViewById<TextView>(R.id.navMenuEye)
 
             sideMenuBuilder.apply {
                 setBackPressed(cancel)
@@ -415,13 +416,27 @@ class MainActivity
 
             headerTr.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
-                    if (getUserLoginPlatform(this@MainActivity) == "")
-                        EnterPageUtil(this@MainActivity).toLogin()
+                    if (getUserLoginPlatform(this@MainActivity) == ""){
+                        CompletableFuture.supplyAsync {
+                            sideMenuBuilder.dismiss()
+                        }.thenAccept {
+                            EnterPageUtil(this@MainActivity).toLogin()
+                        }
+                    }
                 }
             })
             weather.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
                     sideMenuBuilder.dismiss()
+                }
+            })
+            eye.setOnClickListener(object : OnSingleClickListener(){
+                override fun onSingleClick(v: View?) {
+                    CompletableFuture.supplyAsync {
+                        sideMenuBuilder.dismiss()
+                    }.thenAccept {
+                        EnterPageUtil(this@MainActivity).toEye()
+                    }
                 }
             })
             setting.setOnClickListener(object : OnSingleClickListener() {

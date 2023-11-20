@@ -3,6 +3,19 @@ package app.airsignal.weather.view.aseye
 import com.google.gson.annotations.SerializedName
 
 class EyeDataModel {
+    data class DeviceModel(
+        @SerializedName("name")
+        var name: String,
+        @SerializedName("serial")
+        val serial: String,
+        @SerializedName("power")
+        val power: Boolean?,
+        @SerializedName("report")
+        val report: Int?,
+        @SerializedName("isAdd")
+        val isAdd: Boolean
+    )
+
     data class AirValueModel(
         @SerializedName("pmValid")
         val pmValid: Int,

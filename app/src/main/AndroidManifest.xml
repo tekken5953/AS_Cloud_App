@@ -27,14 +27,21 @@
         android:windowSoftInputMode="adjustNothing"
         tools:replace="android:icon,android:label">
         <activity
-            android:name=".view.aseye.EyeDetailActivity"
+            android:name=".view.widget.WidgetPermActivity"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.aseye.activity.EyeDetailActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.aseye.EyeListActivity"
+            android:name=".view.aseye.activity.EyeListActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -149,7 +156,8 @@
                 <action android:name="android.intent.action.DATE_CHANGED" />
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.appwidget.action.APPWIDGET_ENABLE" />
-                <action android:name="app.airsignal.weather.view.widget.ENTER_PERM"/>
+                <action android:name="app.airsignal.weather.view.widget.ENTER_PERM" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
@@ -170,7 +178,8 @@
                 <action android:name="android.intent.action.DATE_CHANGED" />
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.appwidget.action.APPWIDGET_ENABLE" />
-                <action android:name="app.airsignal.weather.view.widget.ENTER_PERM42"/>
+                <action android:name="app.airsignal.weather.view.widget.ENTER_PERM42" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 

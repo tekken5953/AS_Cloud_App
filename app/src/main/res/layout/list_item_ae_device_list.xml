@@ -1,51 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="85dp"
     android:layout_marginTop="18dp"
-    android:background="@drawable/ae_device_bg">
+    android:id="@+id/listItemAeDeviceContainer"
+    android:background="@drawable/ae_device_bg_e">
+
+    <ImageView
+        android:id="@+id/listItemAeDeviceAdd"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/add"
+        android:visibility="gone"
+        app:tint="@color/ae_power_on_color" />
+
 
     <TextView
         android:id="@+id/listItemAeDeviceName"
         style="@style/basicMediumTextView"
-        android:text="사무실"
-        android:textColor="@color/theme_text_color"
-        android:textSize="16sp"
+        android:layout_marginStart="13dp"
         android:layout_marginTop="20dp"
-        android:layout_marginStart="13dp"/>
+        android:textColor="@color/theme_text_color"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/listItemAeDeviceSerial"
         style="@style/basicTextView"
-        android:text="AS-442421"
-        android:textSize="14sp"
-        android:textColor="#959595"
-        android:layout_toEndOf="@+id/listItemAeDeviceName"
         android:layout_alignTop="@+id/listItemAeDeviceName"
         android:layout_alignBottom="@+id/listItemAeDeviceName"
-        android:layout_marginStart="12dp"/>
+        android:layout_marginStart="12dp"
+        android:layout_toEndOf="@+id/listItemAeDeviceName"
+        android:textColor="@color/ae_sub_color"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/listItemAeDevicePower"
         style="@style/basicMediumTextView"
-        android:text="켜짐"
-        android:textColor="#29B1FD"
-        android:textSize="18sp"
         android:layout_below="@+id/listItemAeDeviceName"
         android:layout_alignStart="@+id/listItemAeDeviceName"
         android:layout_marginTop="3dp"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginBottom="15dp"
+        android:textColor="#29B1FD"
+        android:textSize="18sp" />
 
     <TextView
+        android:id="@+id/listItemAeDeviceReport"
         style="@style/basicMediumTextView"
-        android:text="2"
-        android:textColor="@color/white"
-        android:textSize="14sp"
         android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
         android:layout_marginEnd="25dp"
         android:background="@drawable/ae_alert_bg"
-        android:layout_centerVertical="true"/>
-
-
+        android:textColor="@color/white"
+        android:textSize="14sp" />
 
 </RelativeLayout>

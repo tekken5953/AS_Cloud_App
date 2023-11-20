@@ -251,4 +251,5 @@
     <string name="widget_2x2_description">Airsignal 2x2</string>
     <string name="widget_4x2_description">Airsignal 4x2</string>
     <string name="cd_icon_address">Address</string>
+    <string name="as_eye">AS-EYE</string>
 </resources>

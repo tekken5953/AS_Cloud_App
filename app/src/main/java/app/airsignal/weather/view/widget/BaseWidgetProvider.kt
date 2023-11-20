@@ -98,8 +98,11 @@ open class BaseWidgetProvider: AppWidgetProvider() {
     fun requestPermissions(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val perm = RequestPermissionsUtil(context)
-            if (!perm.isBackgroundRequestLocation())
-                perm.requestBackgroundLocation()
+            if (!perm.isBackgroundRequestLocation()) {
+                val intent = Intent(context, WidgetPermActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                context.startActivity(intent)
+            }
         }
         requestWhitelist(context)
     }

@@ -110,9 +110,6 @@ open class WidgetProvider : BaseWidgetProvider() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
                             requestPermissions(context)
-                            views.setViewVisibility(R.id.widget4x2Perm, View.VISIBLE)
-                        } else {
-                            views.setViewVisibility(R.id.widget4x2Perm, View.GONE)
                         }
                     }
                     views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_refreshing)
@@ -123,7 +120,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                             AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId,views)
                             fetch(context, RemoteViews(context.packageName, R.layout.widget_layout_2x2))
                         }
-                    },3000)
+                    },5000)
                     AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId,views)
                 }
             }

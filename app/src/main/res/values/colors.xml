@@ -46,6 +46,7 @@
     <color name="theme_alert_double_cancel_color">#D9D9D9</color>
     <color name="theme_alert_double_apply_color">#F74B4B</color>
     <color name="theme_ae_category_color">#2E2E2E</color>
+    <color name="ae_device_bg_d">#E8E8E8</color>
 
     <color name="theme_sun_tomorrow_night">#30159C</color>
     <color name="theme_sun_tomorrow_day">#FF8A48</color>
@@ -53,5 +54,7 @@
     <color name="sub_white">#BFCEE3</color>
 
     <color name="lottie_loading_color">#FFAE64</color>
-
+    <color name="ae_bg_color">#F6F6F6</color>
+    <color name="ae_sub_color">#959595</color>
+    <color name="ae_power_on_color">#29B1FD</color>
 </resources>

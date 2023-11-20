@@ -3,9 +3,12 @@ package app.airsignal.weather.view.perm
 import android.Manifest
 import android.annotation.TargetApi
 import android.app.Activity
+import android.app.Service
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
@@ -151,4 +154,6 @@ class RequestPermissionsUtil(private val context: Context) {
             REQUEST_BACKGROUND_LOCATION
         )
     }
+
+
 }

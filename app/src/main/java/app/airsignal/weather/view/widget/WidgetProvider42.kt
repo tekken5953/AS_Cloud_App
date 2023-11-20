@@ -86,7 +86,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                                 "isSuccess is $isSuccess"
                             )
                         }
-                    }, 3000)
+                    }, 5000)
                 }
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
