@@ -4,13 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.OnAdapterItemClick
 import app.airsignal.weather.databinding.ActivityEyeListBinding
-import app.airsignal.weather.view.aseye.EyeDataModel
+import app.airsignal.weather.view.aseye.dao.EyeDataModel
 import app.airsignal.weather.view.aseye.adapter.EyeCategoryAdapter
 import app.airsignal.weather.view.aseye.adapter.EyeDeviceAdapter
 

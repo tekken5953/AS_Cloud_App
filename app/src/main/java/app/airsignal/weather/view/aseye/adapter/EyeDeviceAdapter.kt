@@ -13,7 +13,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.OnAdapterItemClick
-import app.airsignal.weather.view.aseye.EyeDataModel
+import app.airsignal.weather.view.aseye.dao.EyeDataModel
 import java.util.*
 
 class EyeDeviceAdapter(
@@ -48,7 +48,7 @@ class EyeDeviceAdapter(
         var deviceName: TextView = itemView.findViewById(R.id.listItemAeDeviceName)
         val serial: TextView = itemView.findViewById(R.id.listItemAeDeviceSerial)
         val power: TextView = itemView.findViewById(R.id.listItemAeDevicePower)
-        val report: TextView = itemView.findViewById(R.id.listItemAeDeviceReport)
+        val report: ImageView = itemView.findViewById(R.id.listItemAeDeviceReport)
         val addDevice: ImageView = itemView.findViewById(R.id.listItemAeDeviceAdd)
         val container: RelativeLayout = itemView.findViewById(R.id.listItemAeDeviceContainer)
 
@@ -91,7 +91,6 @@ class EyeDeviceAdapter(
                 report.visibility = View.GONE
             } else {
                 report.visibility = View.VISIBLE
-                report.text = dao.report.toString()
             }
 
             itemView.setOnClickListener {

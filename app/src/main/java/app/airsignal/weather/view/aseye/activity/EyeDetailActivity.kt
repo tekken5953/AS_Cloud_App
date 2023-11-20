@@ -7,10 +7,12 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
+import app.airsignal.weather.adapter.WarningViewPagerAdapter
 import app.airsignal.weather.databinding.ActivityEyeDetailBinding
 import app.airsignal.weather.view.aseye.fragment.EyeDetailLifeFragment
 import app.airsignal.weather.view.aseye.fragment.EyeDetailLiveFragment
 import app.airsignal.weather.view.aseye.fragment.EyeDetailReportFragment
+import java.util.ArrayList
 
 class EyeDetailActivity : AppCompatActivity() {
     companion object {

@@ -1,4 +1,4 @@
-package app.airsignal.weather.view.aseye
+package app.airsignal.weather.view.aseye.dao
 
 import com.google.gson.annotations.SerializedName
 
@@ -14,6 +14,13 @@ class EyeDataModel {
         val report: Int?,
         @SerializedName("isAdd")
         val isAdd: Boolean
+    )
+
+    data class EyeReportModel(
+        @SerializedName("title")
+        val title: String,
+        @SerializedName("content")
+        val content: String
     )
 
     data class AirValueModel(

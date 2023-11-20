@@ -45,14 +45,13 @@
         android:textColor="#29B1FD"
         android:textSize="18sp" />
 
-    <TextView
+    <ImageView
         android:id="@+id/listItemAeDeviceReport"
-        style="@style/basicMediumTextView"
+        android:layout_width="29dp"
+        android:layout_height="29dp"
+        android:src="@drawable/caution_test"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="25dp"
-        android:background="@drawable/ae_alert_bg"
-        android:textColor="@color/white"
-        android:textSize="14sp" />
+        android:layout_marginEnd="25dp" />
 
 </RelativeLayout>
