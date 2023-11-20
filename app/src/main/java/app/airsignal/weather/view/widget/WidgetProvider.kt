@@ -7,11 +7,12 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.view.View
 import android.widget.RemoteViews
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.koin.BaseApplication.Companion.getAppContext
 import app.airsignal.weather.retrofit.ApiModel
@@ -21,10 +22,10 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
 import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.view.activity.SplashActivity
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.*
-import timber.log.Timber
 import kotlin.math.roundToInt
 
 
@@ -59,6 +60,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                 val enterPending: PendingIntent = Intent(appContext, SplashActivity::class.java)
                     .run {
                         this.action = ENTER_APPLICATION
+                        this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         PendingIntent.getActivity(
                             appContext,
                             appWidgetId,
@@ -73,23 +75,21 @@ open class WidgetProvider : BaseWidgetProvider() {
                     refreshBtnIntent,
                     PendingIntent.FLAG_IMMUTABLE
                 )
-                Timber.tag(StaticDataObject.TAG_W).i("widget22Id :  $appWidgetId")
                 RDBLogcat.writeWidgetHistory(context, "lifecycle", "onUpdate22")
                 views.run {
                     this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
                     this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
-                    appWidgetManager.updateAppWidget(appWidgetId, this)
                     fetch(appContext, this@run)
                     Handler(Looper.getMainLooper()).postDelayed({
                         if(!isSuccess) {
                             fetch(context,this@run)
-                            RDBLogcat.writeWidgetHistory(context, "retry fetch22", context.applicationInfo.name)
+                            RDBLogcat.writeWidgetHistory(context, "retry fetch22", "isSuccess is $isSuccess")
                         }
                     },3000)
                 }
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
-                    Thread.currentThread().toString(),
+                    "Error",
                     "onUpdate error ${e.stackTraceToString()}"
                 )
             }
@@ -107,9 +107,16 @@ open class WidgetProvider : BaseWidgetProvider() {
             val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
             if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                 if (intent.action == REFRESH_BUTTON_CLICKED) {
-                    requestWhitelist(context)
-                    fetch(appContext, RemoteViews(context.packageName, R.layout.widget_layout_2x2))
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                            requestPermissions(context)
+                            views.setViewVisibility(R.id.widget4x2Perm, View.VISIBLE)
+                        } else {
+                            views.setViewVisibility(R.id.widget4x2Perm, View.GONE)
+                        }
+                    }
                     views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_refreshing)
+                    fetch(appContext, RemoteViews(context.packageName, R.layout.widget_layout_2x2))
                     Handler(Looper.getMainLooper()).postDelayed({
                         if(!isSuccess) {
                             views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
@@ -135,7 +142,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                         val data = requestWeather(lat, lng)
                         val addr = getAddress(context, lat, lng)
 
-                        RDBLogcat.writeWidgetHistory(context, "위치", "data22 : $data")
+                        RDBLogcat.writeWidgetHistory(context, "위치", "data22 is $data")
 
                         withContext(Dispatchers.Main) {
                             delay(500)
@@ -145,18 +152,18 @@ open class WidgetProvider : BaseWidgetProvider() {
                 }
             }
             val onFailure: (e: Exception) -> Unit = {
-                RDBLogcat.writeErrorANR(Thread.currentThread().toString(), "widget error ${it.localizedMessage}")
+                RDBLogcat.writeErrorANR("Error", "widget error ${it.localizedMessage}")
             }
             CoroutineScope(Dispatchers.Default).launch {
                 fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
                     .addOnSuccessListener(onSuccess)
                     .addOnFailureListener(onFailure)
                     .addOnCanceledListener {
-                        RDBLogcat.writeErrorANR(Thread.currentThread().toString(), "addOnCanceledListener - $resultData")
+                        RDBLogcat.writeErrorANR("Error", "addOnCanceledListener is $resultData")
                     }
             }
         } catch(e: Exception) {
-            RDBLogcat.writeErrorANR(Thread.currentThread().toString(), "fetch error ${e.localizedMessage}")
+            RDBLogcat.writeErrorANR("Error", "fetch error ${e.localizedMessage}")
         }
     }
 
@@ -203,7 +210,7 @@ open class WidgetProvider : BaseWidgetProvider() {
 
             appWidgetManager.updateAppWidget(componentName, views)
         } catch (e: Exception) {
-            RDBLogcat.writeErrorANR(Thread.currentThread().toString(), "updateUI error ${e.stackTraceToString()}")
+            RDBLogcat.writeErrorANR("Error", "updateUI error ${e.stackTraceToString()}")
         }
     }
 

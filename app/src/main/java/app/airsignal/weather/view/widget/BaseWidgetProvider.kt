@@ -6,15 +6,23 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
+import androidx.annotation.RequiresApi
 import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.retrofit.HttpClient
 import app.airsignal.weather.util.AddressFromRegex
 import app.airsignal.weather.util.LoggerUtil
+import app.airsignal.weather.util.`object`.GetAppInfo
+import app.airsignal.weather.util.`object`.SetAppInfo
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.awaitResponse
 import timber.log.Timber
 
@@ -33,7 +41,6 @@ open class BaseWidgetProvider: AppWidgetProvider() {
 
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        Timber.tag(StaticDataObject.TAG_W).i("onDisabled")
     }
 
     override fun onAppWidgetOptionsChanged(
@@ -47,12 +54,10 @@ open class BaseWidgetProvider: AppWidgetProvider() {
 
     override fun onRestored(context: Context, oldWidgetIds: IntArray, newWidgetIds: IntArray) {
         super.onRestored(context, oldWidgetIds, newWidgetIds)
-        Timber.tag(StaticDataObject.TAG_W).i("onRestored")
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         super.onDeleted(context, appWidgetIds)
-        Timber.tag(StaticDataObject.TAG_W).i("onDeleted")
     }
 
     suspend fun requestWeather(lat: Double, lng: Double): ApiModel.WidgetData? {
@@ -69,16 +74,33 @@ open class BaseWidgetProvider: AppWidgetProvider() {
 
     @SuppressLint("BatteryLife")
     fun requestWhitelist(context: Context) {
-        val intent = Intent()
         val packageName: String = context.packageName
         val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager?
         if (!pm!!.isIgnoringBatteryOptimizations(packageName)) {
-            intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-            intent.data = Uri.parse("package:$packageName")
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        } else {
-            intent.action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
+            val intent = Intent().apply {
+                action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                data = Uri.parse("package:$packageName")
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            }
+            context.startActivity(intent)
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun requestBackPerm(context: Context) {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri: Uri = Uri.fromParts("package", context.applicationContext.packageName, null)
+        intent.data = uri
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(intent)
+    }
+
+    fun requestPermissions(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val perm = RequestPermissionsUtil(context)
+            if (!perm.isBackgroundRequestLocation())
+                perm.requestBackgroundLocation()
+        }
+        requestWhitelist(context)
     }
 }

@@ -12,7 +12,6 @@ import android.os.Looper
 import android.widget.RemoteViews
 import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.StaticDataObject.TAG_W
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.koin.BaseApplication.Companion.getAppContext
 import app.airsignal.weather.retrofit.ApiModel
@@ -24,7 +23,6 @@ import app.airsignal.weather.view.activity.SplashActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.*
-import timber.log.Timber
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
 
@@ -59,6 +57,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 val enterPending: PendingIntent = Intent(appContext, SplashActivity::class.java)
                     .run {
                         this.action = ENTER_APPLICATION_42
+                        this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         PendingIntent.getActivity(
                             appContext,
                             appWidgetId,
@@ -73,12 +72,10 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     refreshBtnIntent,
                     PendingIntent.FLAG_IMMUTABLE
                 )
-                Timber.tag(TAG_W).i("widget42Id :  $appWidgetId")
                 RDBLogcat.writeWidgetHistory(context, "lifecycle", "onUpdate42")
                 views.run {
                     this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
                     this.setOnClickPendingIntent(R.id.w42Background, enterPending)
-                    appWidgetManager.updateAppWidget(appWidgetId, this)
                     fetch(appContext, this@run)
                     Handler(Looper.getMainLooper()).postDelayed({
                         if (!isSuccess) {
@@ -86,14 +83,14 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                             RDBLogcat.writeWidgetHistory(
                                 context,
                                 "retry fetch42",
-                                context.applicationInfo.name
+                                "isSuccess is $isSuccess"
                             )
                         }
                     }, 3000)
                 }
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
-                    Thread.currentThread().toString(),
+                    "Error",
                     "onUpdate error42 ${e.stackTraceToString()}"
                 )
             }
@@ -111,9 +108,9 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
             if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                 if (intent.action == REFRESH_BUTTON_CLICKED_42) {
-                    requestWhitelist(context)
-                    fetch(appContext, RemoteViews(context.packageName, R.layout.widget_layout_4x2))
+                    requestPermissions(context)
                     views.setImageViewResource(R.id.w42Refresh, R.drawable.w_refreshing42)
+                    fetch(appContext, RemoteViews(context.packageName, R.layout.widget_layout_4x2))
                     Handler(Looper.getMainLooper()).postDelayed({
                         if(!isSuccess) {
                             views.setImageViewResource(R.id.w42Refresh, R.drawable.w_btn_refresh42)
@@ -139,7 +136,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                         val data = requestWeather(lat, lng)
                         val addr = getAddress(context, lat, lng)
 
-                        RDBLogcat.writeWidgetHistory(context, "위치", "data42 : $data")
+                        RDBLogcat.writeWidgetHistory(context, "위치", "data42 is $data")
                         withContext(Dispatchers.Main) {
                             delay(500)
                             updateUI(context, views, data, addr)
@@ -149,7 +146,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             }
             val onFailure: (e: Exception) -> Unit = {
                 RDBLogcat.writeErrorANR(
-                    Thread.currentThread().toString(),
+                    "Error",
                     "widget error42 ${it.localizedMessage}"
                 )
             }
@@ -160,12 +157,12 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     .addOnCanceledListener {
                         RDBLogcat.writeErrorANR(
                             Thread.currentThread().toString(),
-                            "addOnCanceledListener42 - $resultData"
+                            "addOnCanceledListener42 is $resultData"
                         )
                     }
             }
         } catch(e: Exception) {
-            RDBLogcat.writeErrorANR(Thread.currentThread().toString(), "fetch error42 ${e.localizedMessage}")
+            RDBLogcat.writeErrorANR("Error", "fetch error42 ${e.localizedMessage}")
         }
     }
 
@@ -189,9 +186,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 views.setImageViewResource(R.id.w42Refresh, R.drawable.w_btn_refresh42)
                 this.setTextViewText(R.id.w42Time, currentTime)
                 data?.let {
-                    this.setTextViewText(
-                        R.id.w42Temp, "${it.current.temperature?.roundToInt() ?: 0}˚"
-                    )
+                    this.setTextViewText(R.id.w42Temp, "${it.current.temperature?.roundToInt() ?: 0}˚")
                     this.setTextViewText(R.id.w42Address, addr ?: "")
                     this.setImageViewResource(
                         R.id.w42SkyImg,
@@ -294,8 +289,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
 
             appWidgetManager.updateAppWidget(componentName, views)
         } catch (e: Exception) {
-            Timber.tag(TAG_W).e(e.stackTraceToString())
-            RDBLogcat.writeErrorANR(Thread.currentThread().toString(), "updateUI error42 ${e.localizedMessage}")
+            RDBLogcat.writeErrorANR("Error", "updateUI error42 ${e.localizedMessage}")
         }
     }
 
