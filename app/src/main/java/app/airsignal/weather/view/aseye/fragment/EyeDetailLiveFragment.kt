@@ -10,14 +10,15 @@ import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.EyeDetailLiveFragmentBinding
 import app.airsignal.weather.view.activity.MainActivity
+import app.airsignal.weather.view.aseye.activity.EyeDetailActivity
 
 class EyeDetailLiveFragment : Fragment() {
-    lateinit var mainActivity: MainActivity
+    lateinit var mActivity: EyeDetailActivity
     private lateinit var binding : EyeDetailLiveFragmentBinding
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is MainActivity) mainActivity = context
+        if (context is EyeDetailActivity) mActivity = context
     }
 
     override fun onCreateView(
@@ -31,5 +32,17 @@ class EyeDetailLiveFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.aeLiveTemp.fetchData("23")
+        binding.aeLiveHumid.fetchData("48")
+        binding.aeLiveLight.fetchData("23")
+        binding.aeLiveNoise.fetchData("23")
+
+        binding.aeLivePM25.fetchData("350")
+        binding.aeLivePM10.fetchData("5")
+        binding.aeLiveCO2.fetchData("1500")
+        binding.aeLiveCO.fetchData("5")
+        binding.aeLiveTVOC.fetchData("0.0153")
+        binding.aeLiveNO2.fetchData("153")
     }
 }

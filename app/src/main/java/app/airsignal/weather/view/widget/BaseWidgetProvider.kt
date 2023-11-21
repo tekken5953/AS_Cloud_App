@@ -6,12 +6,12 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.PowerManager
+import android.os.*
 import android.provider.Settings
+import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
 import app.airsignal.weather.dao.StaticDataObject
+import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.retrofit.HttpClient

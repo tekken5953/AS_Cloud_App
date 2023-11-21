@@ -57,4 +57,14 @@
     <color name="ae_bg_color">#F6F6F6</color>
     <color name="ae_sub_color">#959595</color>
     <color name="ae_power_on_color">#29B1FD</color>
+
+
+    <color name="ae_good_main">#29B1FD</color>
+    <color name="ae_good_sub">#2029B1FD</color>
+    <color name="ae_normal_main">#1EDC00</color>
+    <color name="ae_normal_sub">#201EDC00</color>
+    <color name="ae_bad_main">#FD8F29</color>
+    <color name="ae_bad_sub">#20FD8F29</color>
+    <color name="ae_very_bad_main">#FD2975</color>
+    <color name="ae_very_bad_sub">#20FD2975</color>
 </resources>

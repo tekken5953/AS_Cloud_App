@@ -79,13 +79,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                 views.run {
                     this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
                     this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
-                    fetch(appContext, this@run)
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if(!isSuccess) {
-                            fetch(context,this@run)
-                            RDBLogcat.writeWidgetHistory(context, "retry fetch22", "isSuccess is $isSuccess")
-                        }
-                    },3000)
+                    retryFetch(context.applicationContext,appContext,this)
                 }
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
@@ -113,18 +107,26 @@ open class WidgetProvider : BaseWidgetProvider() {
                         }
                     }
                     views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_refreshing)
-                    fetch(appContext, RemoteViews(context.packageName, R.layout.widget_layout_2x2))
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if(!isSuccess) {
-                            views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
-                            AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId,views)
-                            fetch(context, RemoteViews(context.packageName, R.layout.widget_layout_2x2))
-                        }
-                    },5000)
+                    retryFetch(context.applicationContext,appContext,views)
                     AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId,views)
                 }
             }
         }
+    }
+
+    private fun retryFetch(context: Context, appContext: Context, views: RemoteViews) {
+        fetch(context.applicationContext, views)
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (!isSuccess) {
+                views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
+                fetch(appContext, views)
+                RDBLogcat.writeWidgetHistory(
+                    context,
+                    "retry fetch42",
+                    "isSuccess is $isSuccess"
+                )
+            }
+        }, 3000)
     }
 
     @SuppressLint("MissingPermission")

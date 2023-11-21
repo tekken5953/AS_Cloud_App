@@ -1,5 +1,6 @@
 package app.airsignal.weather.view.aseye.dao
 
+import android.graphics.Color
 import com.google.gson.annotations.SerializedName
 
 class EyeDataModel {
@@ -21,6 +22,14 @@ class EyeDataModel {
         val title: String,
         @SerializedName("content")
         val content: String
+    )
+
+    data class LifeModel(
+        val nameEn: String,
+        val nameKr: String,
+        val value: Int,
+        val pbColor: Int,
+        val backColor: Int
     )
 
     data class AirValueModel(

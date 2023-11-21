@@ -12,6 +12,7 @@ import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
 import app.airsignal.weather.view.activity.MainActivity
+import app.airsignal.weather.view.aseye.activity.EyeDetailActivity
 import app.airsignal.weather.view.aseye.adapter.ReportViewPagerAdapter
 import app.airsignal.weather.view.aseye.dao.EyeDataModel
 import kotlinx.coroutines.*
@@ -19,7 +20,7 @@ import timber.log.Timber
 
 class EyeDetailReportFragment : Fragment() {
 
-    lateinit var mainActivity: MainActivity
+    lateinit var mActivity: EyeDetailActivity
     private lateinit var binding : EyeDetailReportFragmentBinding
     private val autoJob = Job()
 
@@ -39,7 +40,7 @@ class EyeDetailReportFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is MainActivity) mainActivity = context
+        if (context is EyeDetailActivity) mActivity = context
     }
 
     override fun onCreateView(
@@ -48,7 +49,6 @@ class EyeDetailReportFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_detail_report_fragment, container, false)
-
         return binding.root
     }
 
@@ -61,6 +61,7 @@ class EyeDetailReportFragment : Fragment() {
             isClickable = true
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             offscreenPageLimit = 3
+            scrollIndicators = View.SCROLL_INDICATOR_BOTTOM
         }
 
         addViewPagerItem("CO2(이산화탄소)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
@@ -71,11 +72,12 @@ class EyeDetailReportFragment : Fragment() {
 
     // 기상특보 자동 슬라이드 적용
     private fun warningSlideAuto() {
-        val vp = binding.reportVp
         if (reportViewPagerItem.size > 1) {
-            vp.currentItem = if (vp.currentItem + 1 < reportViewPagerItem.size) vp.currentItem + 1 else 0
             CoroutineScope(autoJob + Dispatchers.Main).launch {
                 delay(3500)
+                val vp = binding.reportVp
+                vp.currentItem =
+                    if (vp.currentItem + 1 < reportViewPagerItem.size) vp.currentItem + 1 else 0
                 warningSlideAuto()
             }
 
