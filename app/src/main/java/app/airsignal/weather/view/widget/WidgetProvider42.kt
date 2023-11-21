@@ -108,12 +108,15 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     }
 
     private fun retryFetch(context: Context, appContext: Context, views: RemoteViews) {
+        val componentName =
+            ComponentName(context, this@WidgetProvider42.javaClass)
         fetch(context.applicationContext, views)
         Handler(Looper.getMainLooper()).postDelayed({
             if (!isSuccess) {
                 views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
                 fetch(appContext, views)
                 RDBLogcat.writeWidgetHistory(context, "retry fetch42", "isSuccess is $isSuccess")
+                AppWidgetManager.getInstance(context).updateAppWidget(componentName,views)
             }
         }, 3000)
     }

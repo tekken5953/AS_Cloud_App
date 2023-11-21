@@ -79,7 +79,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                 views.run {
                     this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
                     this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
-                    retryFetch(context.applicationContext,appContext,this)
+                    retryFetch(appContext,context.applicationContext,this)
                 }
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
@@ -107,7 +107,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                         }
                     }
                     views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_refreshing)
-                    retryFetch(context.applicationContext,appContext,views)
+                    retryFetch(appContext,context.applicationContext,views)
                     AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId,views)
                 }
             }
@@ -115,7 +115,9 @@ open class WidgetProvider : BaseWidgetProvider() {
     }
 
     private fun retryFetch(context: Context, appContext: Context, views: RemoteViews) {
-        fetch(context.applicationContext, views)
+        val componentName =
+            ComponentName(context, this@WidgetProvider.javaClass)
+        fetch(context, views)
         Handler(Looper.getMainLooper()).postDelayed({
             if (!isSuccess) {
                 views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
@@ -125,6 +127,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                     "retry fetch42",
                     "isSuccess is $isSuccess"
                 )
+                AppWidgetManager.getInstance(context).updateAppWidget(componentName,views)
             }
         }, 3000)
     }
