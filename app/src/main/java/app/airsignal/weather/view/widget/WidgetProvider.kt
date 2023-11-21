@@ -79,13 +79,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                 views.run {
                     this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
                     this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
-                    fetch(appContext, this@run)
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if(!isSuccess) {
-                            fetch(context,this@run)
-                            RDBLogcat.writeWidgetHistory(context, "retry fetch22", "isSuccess is $isSuccess")
-                        }
-                    },3000)
+                    retryFetch(context.applicationContext,appContext,this)
                 }
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
@@ -110,24 +104,29 @@ open class WidgetProvider : BaseWidgetProvider() {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
                             requestPermissions(context)
-                            views.setViewVisibility(R.id.widget4x2Perm, View.VISIBLE)
-                        } else {
-                            views.setViewVisibility(R.id.widget4x2Perm, View.GONE)
                         }
                     }
                     views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_refreshing)
-                    fetch(appContext, RemoteViews(context.packageName, R.layout.widget_layout_2x2))
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if(!isSuccess) {
-                            views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
-                            AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId,views)
-                            fetch(context, RemoteViews(context.packageName, R.layout.widget_layout_2x2))
-                        }
-                    },3000)
+                    retryFetch(context.applicationContext,appContext,views)
                     AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId,views)
                 }
             }
         }
+    }
+
+    private fun retryFetch(context: Context, appContext: Context, views: RemoteViews) {
+        fetch(context.applicationContext, views)
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (!isSuccess) {
+                views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
+                fetch(appContext, views)
+                RDBLogcat.writeWidgetHistory(
+                    context,
+                    "retry fetch42",
+                    "isSuccess is $isSuccess"
+                )
+            }
+        }, 3000)
     }
 
     @SuppressLint("MissingPermission")
@@ -216,7 +215,7 @@ open class WidgetProvider : BaseWidgetProvider() {
 
     private fun applyColor(context: Context,views: RemoteViews, bg: Int) {
         val textArray = arrayOf(R.id.widget2x2TempValue, R.id.widget2x2Time, R.id.widget2x2Address,
-        R.id.widget2x2Pm25Title,R.id.widget2x2Pm25Value)
+            R.id.widget2x2Pm25Title,R.id.widget2x2Pm25Value)
         val imgArray = arrayOf(R.id.widget2x2Refresh,R.id.widget2x2LocIv)
         views.run {
             imgArray.forEach {

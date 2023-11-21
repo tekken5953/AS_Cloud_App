@@ -6,12 +6,12 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.PowerManager
+import android.os.*
 import android.provider.Settings
+import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
 import app.airsignal.weather.dao.StaticDataObject
+import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.retrofit.HttpClient
@@ -66,10 +66,10 @@ open class BaseWidgetProvider: AppWidgetProvider() {
             .awaitResponse().body()
     }
 
-     fun getAddress(context: Context, lat: Double, lng: Double): String {
-         val loc = GetLocation(context).getAddress(lat, lng)
-         val result = AddressFromRegex(loc).getNotificationAddress()
-         return if (result == "") AddressFromRegex(loc).getSecondAddress() else result
+    fun getAddress(context: Context, lat: Double, lng: Double): String {
+        val loc = GetLocation(context).getAddress(lat, lng)
+        val result = AddressFromRegex(loc).getNotificationAddress()
+        return if (result == "") AddressFromRegex(loc).getSecondAddress() else result
     }
 
     @SuppressLint("BatteryLife")
@@ -98,8 +98,11 @@ open class BaseWidgetProvider: AppWidgetProvider() {
     fun requestPermissions(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val perm = RequestPermissionsUtil(context)
-            if (!perm.isBackgroundRequestLocation())
-                perm.requestBackgroundLocation()
+            if (!perm.isBackgroundRequestLocation()) {
+                val intent = Intent(context, WidgetPermActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                context.startActivity(intent)
+            }
         }
         requestWhitelist(context)
     }

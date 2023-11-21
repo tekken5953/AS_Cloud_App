@@ -76,17 +76,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 views.run {
                     this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
                     this.setOnClickPendingIntent(R.id.w42Background, enterPending)
-                    fetch(appContext, this@run)
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if (!isSuccess) {
-                            fetch(context, this@run)
-                            RDBLogcat.writeWidgetHistory(
-                                context,
-                                "retry fetch42",
-                                "isSuccess is $isSuccess"
-                            )
-                        }
-                    }, 3000)
+                    retryFetch(context.applicationContext,appContext,this)
                 }
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
@@ -110,18 +100,22 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 if (intent.action == REFRESH_BUTTON_CLICKED_42) {
                     requestPermissions(context)
                     views.setImageViewResource(R.id.w42Refresh, R.drawable.w_refreshing42)
-                    fetch(appContext, RemoteViews(context.packageName, R.layout.widget_layout_4x2))
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        if(!isSuccess) {
-                            views.setImageViewResource(R.id.w42Refresh, R.drawable.w_btn_refresh42)
-                            AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId,views)
-                            fetch(context, RemoteViews(context.packageName, R.layout.widget_layout_4x2))
-                        }
-                    },3000)
+                    retryFetch(context.applicationContext,appContext,views)
                     AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId,views)
                 }
             }
         }
+    }
+
+    private fun retryFetch(context: Context, appContext: Context, views: RemoteViews) {
+        fetch(context.applicationContext, views)
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (!isSuccess) {
+                views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
+                fetch(appContext, views)
+                RDBLogcat.writeWidgetHistory(context, "retry fetch42", "isSuccess is $isSuccess")
+            }
+        }, 3000)
     }
 
     @SuppressLint("MissingPermission")
@@ -136,7 +130,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                         val data = requestWeather(lat, lng)
                         val addr = getAddress(context, lat, lng)
 
-                        RDBLogcat.writeWidgetHistory(context, "위치", "data42 is $data")
+                        RDBLogcat.writeWidgetHistory(context, "위치","data42 is $data")
                         withContext(Dispatchers.Main) {
                             delay(500)
                             updateUI(context, views, data, addr)
@@ -145,10 +139,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 }
             }
             val onFailure: (e: Exception) -> Unit = {
-                RDBLogcat.writeErrorANR(
-                    "Error",
-                    "widget error42 ${it.localizedMessage}"
-                )
+                RDBLogcat.writeErrorANR("Error", "widget error42 ${it.localizedMessage}")
             }
             CoroutineScope(Dispatchers.Default).launch {
                 fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
@@ -188,13 +179,8 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 data?.let {
                     this.setTextViewText(R.id.w42Temp, "${it.current.temperature?.roundToInt() ?: 0}˚")
                     this.setTextViewText(R.id.w42Address, addr ?: "")
-                    this.setImageViewResource(
-                        R.id.w42SkyImg,
-                        DataTypeParser.getSkyImgWidget(
-                            it.current.rainType,
-                            it.realtime[0].sky,
-                            isNight
-                        )
+                    this.setImageViewResource(R.id.w42SkyImg,
+                        DataTypeParser.getSkyImgWidget(it.current.rainType, it.realtime[0].sky, isNight)
                     )
                     val bg = DataTypeParser.getBackgroundImgWidget(
                         "42",
@@ -295,9 +281,9 @@ open class WidgetProvider42 : BaseWidgetProvider() {
 
     private fun applyColor(context: Context, views: RemoteViews, bg: Int) {
         val textArray = arrayOf(R.id.w42Temp, R.id.w42Time, R.id.w42Address,R.id.w42MinMaxTemp,
-        R.id.w42DailyTemp1,R.id.w42DailyTemp2,R.id.w42DailyTemp3,R.id.w42DailyTime1,R.id.w42DailyTime2
-        ,R.id.w42DailyTime3,R.id.w42HumidTitle,R.id.w42HumidValue,R.id.w42Pm10Title,R.id.w42Pm10Value
-        ,R.id.w42Pm25Title,R.id.w42Pm25Value)
+            R.id.w42DailyTemp1,R.id.w42DailyTemp2,R.id.w42DailyTemp3,R.id.w42DailyTime1,R.id.w42DailyTime2
+            ,R.id.w42DailyTime3,R.id.w42HumidTitle,R.id.w42HumidValue,R.id.w42Pm10Title,R.id.w42Pm10Value
+            ,R.id.w42Pm25Title,R.id.w42Pm25Value)
         val imgArray = arrayOf(R.id.w42Location,R.id.w42Refresh)
         views.run {
             imgArray.forEach {
