@@ -76,7 +76,8 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 views.run {
                     this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
                     this.setOnClickPendingIntent(R.id.w42Background, enterPending)
-                    retryFetch(context.applicationContext,appContext,this)
+                    appWidgetManager.updateAppWidget(appWidgetId,this)
+                    fetch(context, views)
                 }
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
@@ -100,22 +101,11 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 if (intent.action == REFRESH_BUTTON_CLICKED_42) {
                     requestPermissions(context)
                     views.setImageViewResource(R.id.w42Refresh, R.drawable.w_refreshing42)
-                    retryFetch(context.applicationContext,appContext,views)
+                    fetch(context, views)
                     AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId,views)
                 }
             }
         }
-    }
-
-    private fun retryFetch(context: Context, appContext: Context, views: RemoteViews) {
-        fetch(context.applicationContext, views)
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (!isSuccess) {
-                views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
-                fetch(appContext, views)
-                RDBLogcat.writeWidgetHistory(context, "retry fetch42", "isSuccess is $isSuccess")
-            }
-        }, 3000)
     }
 
     @SuppressLint("MissingPermission")
