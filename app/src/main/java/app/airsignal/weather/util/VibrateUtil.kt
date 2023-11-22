@@ -1,7 +1,6 @@
 package app.airsignal.weather.util
 
 import android.content.Context
-import android.content.Context.VIBRATOR_SERVICE
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -9,6 +8,7 @@ import android.os.VibratorManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class VibrateUtil(private val context: Context) {
     private val vib by lazy {
@@ -18,16 +18,16 @@ class VibrateUtil(private val context: Context) {
             vibratorManager.defaultVibrator
         } else {
             @Suppress("DEPRECATION")
-            context.getSystemService(VIBRATOR_SERVICE) as Vibrator
+            context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         }
     }
 
     /** 기본 진동 발생 메서드 **/
-    fun make(duration: Int) {
+    fun make(duration: Long) {
         CoroutineScope(Dispatchers.Default).launch {
             vib.vibrate(
                 VibrationEffect.createOneShot(
-                    duration.toLong(), VibrationEffect.DEFAULT_AMPLITUDE
+                    duration, VibrationEffect.DEFAULT_AMPLITUDE
                 )
             )
         }
@@ -36,9 +36,7 @@ class VibrateUtil(private val context: Context) {
     /** 알림 진동 발생 **/
     fun noti(array: LongArray) {
         CoroutineScope(Dispatchers.Default).launch {
-            vib.vibrate(
-                VibrationEffect.createWaveform(array, -1)
-            )
+            vib.vibrate(VibrationEffect.createWaveform(array, -1))
         }
     }
 }

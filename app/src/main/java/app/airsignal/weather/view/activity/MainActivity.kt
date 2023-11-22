@@ -440,7 +440,7 @@ class MainActivity
     }
 
     // 진동 발생
-    private fun mVib() { vib.make(20) }
+    private fun mVib() { vib.make(20L) }
 
     // 시간별 날씨 스크롤 첫번째 인덱스로 이동
     private fun scrollSmoothFirst(position: Int) {
