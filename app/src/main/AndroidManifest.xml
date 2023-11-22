@@ -188,5 +188,4 @@
                 android:resource="@xml/widget_provider42" />
         </receiver>
     </application>
-
 </manifest>

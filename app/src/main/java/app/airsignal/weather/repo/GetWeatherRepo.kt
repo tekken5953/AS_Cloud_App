@@ -17,6 +17,7 @@ import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentHumid
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentRainType
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentTempType
 import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentWindSpeed
+import com.google.gson.JsonSyntaxException
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.awaitResponse
 import java.net.SocketTimeoutException
 
 /**
@@ -58,6 +60,9 @@ class GetWeatherRepo : BaseRepository() {
                         } catch (e: NullPointerException) {
                             Logger.t(TAG_R).e(e.stackTraceToString())
                             _getDataResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
+                        } catch (e: JsonSyntaxException) {
+                            Logger.t(TAG_R).e(response.body().toString())
+                            _getDataResult.postValue(ApiState.Error(ERROR_GET_DATA))
                         }
                     }
 

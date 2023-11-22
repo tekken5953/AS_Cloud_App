@@ -23,7 +23,6 @@ class EyeDetailReportFragment : Fragment() {
     lateinit var mActivity: EyeDetailActivity
     private lateinit var binding : EyeDetailReportFragmentBinding
     private val autoJob = Job()
-
     private val reportViewPagerItem = ArrayList<EyeDataModel.EyeReportModel>()
     private val reportViewPagerAdapter by lazy {
         ReportViewPagerAdapter(
@@ -63,11 +62,16 @@ class EyeDetailReportFragment : Fragment() {
             offscreenPageLimit = 3
             scrollIndicators = View.SCROLL_INDICATOR_BOTTOM
         }
-
-        addViewPagerItem("CO2(이산화탄소)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
-        addViewPagerItem("PM2.5(초미세먼지)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
         reportViewPagerAdapter.notifyDataSetChanged()
         warningSlideAuto()
+    }
+
+    fun onDataReceived(data: EyeDataModel.EyeReportModel?) {
+        data?.let {
+            addViewPagerItem("CO2(이산화탄소)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
+            addViewPagerItem("PM2.5(초미세먼지)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
+            addViewPagerItem(it.title,it.content)
+        }
     }
 
     // 기상특보 자동 슬라이드 적용

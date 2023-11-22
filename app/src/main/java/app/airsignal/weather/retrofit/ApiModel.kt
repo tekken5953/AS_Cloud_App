@@ -1,6 +1,7 @@
 package app.airsignal.weather.retrofit
 
 import com.google.gson.annotations.SerializedName
+import javax.annotation.Nullable
 
 class ApiModel {
 

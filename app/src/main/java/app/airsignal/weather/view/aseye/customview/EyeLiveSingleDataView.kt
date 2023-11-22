@@ -1,4 +1,4 @@
-package app.airsignal.weather.view.aseye
+package app.airsignal.weather.view.aseye.customview
 
 import android.annotation.SuppressLint
 import android.content.Context

@@ -34,16 +34,14 @@ class SubFCM: FirebaseMessagingService() {
     }
 
     /** 토픽 구독 해제 **/
-    private fun unSubTopic(topic: String): SubFCM {
+    private suspend fun unSubTopic(topic: String): SubFCM {
         val encodedStream = encodeTopic(topic)
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream)
-            .addOnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Timber.tag(TAG_N).w("UnSubscribed failed")
-                } else {
-                    Timber.tag(TAG_N).i("UnSubscribed : $encodedStream")
-                }
-            }
+        try {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream).await()
+            Timber.tag(TAG_N).w("UnSubscribed failed")
+        } catch (e: Exception) {
+            Timber.tag(TAG_N).i("UnSubscribed : $encodedStream")
+        }
         return this
     }
 

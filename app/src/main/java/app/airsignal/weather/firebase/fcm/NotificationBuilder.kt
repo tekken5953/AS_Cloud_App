@@ -118,11 +118,13 @@ class NotificationBuilder {
 
         if (getUserNotiEnable(appContext)) {
             notificationManager?.let {
+                it.deleteNotificationChannel(notificationChannel.toString())
                 it.createNotificationChannel(notificationChannel)
 //                applyVibrate(appContext)
+                it.cancel(1)
                 it.notify(1, notificationBuilder.build())
             }
-            RDBLogcat.writeNotificationHistory(appContext,data["sort"].toString(),data.toString())
+            RDBLogcat.writeNotificationHistory(appContext,data["sort"].toString(),"${getNotificationAddress(appContext)} $data")
         } else {
             RDBLogcat.writeNotificationHistory(appContext, "체크 해제로 인한 알림 미발송",
                 "${GetAppInfo.getUserLastAddress(appContext)} $data")

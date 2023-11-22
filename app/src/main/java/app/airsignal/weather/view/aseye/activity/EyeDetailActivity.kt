@@ -2,16 +2,22 @@ package app.airsignal.weather.view.aseye.activity
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.add
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.WarningViewPagerAdapter
 import app.airsignal.weather.databinding.ActivityEyeDetailBinding
+import app.airsignal.weather.view.aseye.customview.EyeSettingView
+import app.airsignal.weather.view.aseye.dao.EyeDataModel
 import app.airsignal.weather.view.aseye.fragment.EyeDetailLifeFragment
 import app.airsignal.weather.view.aseye.fragment.EyeDetailLiveFragment
 import app.airsignal.weather.view.aseye.fragment.EyeDetailReportFragment
+import app.airsignal.weather.view.dialog.ShowDialogClass
 import java.util.ArrayList
 
 class EyeDetailActivity : AppCompatActivity() {
@@ -48,83 +54,77 @@ class EyeDetailActivity : AppCompatActivity() {
                 tabItemSelected(FRAGMENT_LIFE)
         }
 
-        binding.aeDetailBack.setOnClickListener {
-            finish()
+        binding.aeDetailBack.setOnClickListener { finish() }
+
+        binding.aeDetailSetting.setOnClickListener {
+            val settingView =
+                LayoutInflater.from(this).inflate(R.layout.dialog_ae_setting, null, false)
+            val settingBack = settingView.findViewById<ImageView>(R.id.aeSettingBack)
+            ShowDialogClass(this).setBackPressed(settingBack).show(settingView, true)
+            val settingName = settingView.findViewById<EyeSettingView>(R.id.aeSettingName)
+            val settingNoti = settingView.findViewById<EyeSettingView>(R.id.aeSettingNotification)
+            val settingSerial = settingView.findViewById<EyeSettingView>(R.id.aeSettingSerial)
+            val settingWifi = settingView.findViewById<EyeSettingView>(R.id.aeSettingWifi)
+            settingName.fetchData("사무실")
+            settingSerial.fetchData("AS-442421")
+            settingWifi.fetchData("A8:81:7C:5A:3D:57")
+
+            settingName.setOnClickListener { }
+            settingNoti.setOnClickListener { }
         }
     }
 
     private fun transactionFragment(frag: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.aeDetailFrame, frag)
-        if (!supportFragmentManager.isStateSaved) {
-            transaction.commit()
-        }
+        if (!supportFragmentManager.isStateSaved) { transaction.commit() }
     }
 
     private fun tabItemSelected(id: Int) {
         when (id) {
             FRAGMENT_REPORT -> {
+                val reportFragment = EyeDetailReportFragment()
+                val data = EyeDataModel.EyeReportModel("test","test")
                 currentFragment = id
-                transactionFragment(EyeDetailReportFragment())
+                reportFragment.onDataReceived(data)
+                transactionFragment(reportFragment)
                 changeTabResource(id)
             }
             FRAGMENT_LIVE -> {
+                val liveFragment = EyeDetailLiveFragment()
+                val data = EyeDataModel.EyeReportModel("test","test")
                 currentFragment = id
-                transactionFragment(EyeDetailLiveFragment())
+                liveFragment.onDataReceived(data)
+                transactionFragment(liveFragment)
                 changeTabResource(id)
             }
             FRAGMENT_LIFE -> {
+                val lifeFragment = EyeDetailLifeFragment()
+                val data = EyeDataModel.EyeReportModel("test","test")
+                lifeFragment.onDataReceived(data)
                 currentFragment = id
-                transactionFragment(EyeDetailLifeFragment())
+                transactionFragment(lifeFragment)
                 changeTabResource(id)
             }
+            else -> throw IllegalArgumentException("Invalid fragment id : $id")
         }
     }
 
     private fun changeTabResource(id: Int) {
-        when (id) {
-            FRAGMENT_REPORT -> {
-                binding.asDetailTabReport.run {
-                    background = getDr(R.drawable.ae_detail_tap_enable)
-                    setTextColor(getColor(R.color.white))
-                }
-                binding.asDetailTabLive.run {
-                    background = null
-                    setTextColor(getColor(R.color.ae_sub_color))
-                }
-                binding.asDetailTabLife.run {
-                    background = null
-                    setTextColor(getColor(R.color.ae_sub_color))
-                }
-            }
-            FRAGMENT_LIVE -> {
-                binding.asDetailTabLive.run {
-                    background = getDr(R.drawable.ae_detail_tap_enable)
-                    setTextColor(getColor(R.color.white))
-                }
-                binding.asDetailTabReport.run {
-                    background = null
-                    setTextColor(getColor(R.color.ae_sub_color))
-                }
-                binding.asDetailTabLife.run {
-                    background = null
-                    setTextColor(getColor(R.color.ae_sub_color))
-                }
-            }
-            FRAGMENT_LIFE -> {
-                binding.asDetailTabLife.run {
-                    background = getDr(R.drawable.ae_detail_tap_enable)
-                    setTextColor(getColor(R.color.white))
-                }
-                binding.asDetailTabLive.run {
-                    background = null
-                    setTextColor(getColor(R.color.ae_sub_color))
-                }
-                binding.asDetailTabReport.run {
-                    background = null
-                    setTextColor(getColor(R.color.ae_sub_color))
-                }
-            }
+        val tabMap = mapOf (
+            FRAGMENT_REPORT to binding.asDetailTabReport,
+            FRAGMENT_LIVE to binding.asDetailTabLive,
+            FRAGMENT_LIFE to binding.asDetailTabLife
+        )
+
+        val selectedTab = tabMap[id] ?: throw IllegalArgumentException("Invalid fragment id: $id")
+
+        tabMap.values.forEach { tab ->
+            tab.background = if (tab == selectedTab) {getDr(R.drawable.ae_detail_tap_enable)}
+            else { null }
+
+            tab.setTextColor(if (tab == selectedTab) {getColor(R.color.white)}
+            else { getColor(R.color.ae_sub_color) })
         }
     }
 

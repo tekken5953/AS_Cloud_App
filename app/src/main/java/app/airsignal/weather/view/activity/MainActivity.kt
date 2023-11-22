@@ -1225,7 +1225,8 @@ class MainActivity
         } else {
             // 기상특보 세팅
             summary?.let { sList ->
-                val filteredList = sList.map { summary -> summary.replace("○", "").replace("\n", "").trim() }
+                val filteredList = sList.map { summary ->
+                    summary.replace("○", "").replace("\n", "").trim() }
                 warningList.addAll(filteredList)
 
                 if (warningList.isNotEmpty()) {

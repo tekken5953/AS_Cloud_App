@@ -9,8 +9,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.EyeDetailLiveFragmentBinding
+import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.aseye.activity.EyeDetailActivity
+import app.airsignal.weather.view.aseye.dao.EyeDataModel
+import java.util.Random
 
 class EyeDetailLiveFragment : Fragment() {
     lateinit var mActivity: EyeDetailActivity
@@ -27,22 +30,33 @@ class EyeDetailLiveFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_detail_live_fragment, container, false)
+
+        binding.aeLiveRefreshIcon.setOnClickListener {
+            Thread.sleep(2000)
+            fetchData()
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        fetchData()
+    }
+    fun onDataReceived(data: EyeDataModel.EyeReportModel?) {
+    }
 
-        binding.aeLiveTemp.fetchData("23")
-        binding.aeLiveHumid.fetchData("48")
-        binding.aeLiveLight.fetchData("23")
-        binding.aeLiveNoise.fetchData("23")
+    private fun fetchData() {
+        binding.aeLiveRefreshTime.text = DataTypeParser.currentDateTimeString("hh시 mm분 ss초")
+        binding.aeLiveTemp.fetchData(Random().nextInt(50).toString())
+        binding.aeLiveHumid.fetchData(Random().nextInt(50).toString())
+        binding.aeLiveLight.fetchData(Random().nextInt(50).toString())
+        binding.aeLiveNoise.fetchData(Random().nextInt(50).toString())
 
-        binding.aeLivePM25.fetchData("350")
-        binding.aeLivePM10.fetchData("5")
-        binding.aeLiveCO2.fetchData("1500")
-        binding.aeLiveCO.fetchData("5")
-        binding.aeLiveTVOC.fetchData("0.0153")
-        binding.aeLiveNO2.fetchData("153")
+        binding.aeLivePM25.fetchData(Random().nextInt(5000).toString())
+        binding.aeLivePM10.fetchData(Random().nextInt(5000).toString())
+        binding.aeLiveCO2.fetchData(Random().nextInt(5000).toString())
+        binding.aeLiveCO.fetchData(Random().nextInt(5000).toString())
+        binding.aeLiveTVOC.fetchData(Random().nextInt(5000).toString())
+        binding.aeLiveNO2.fetchData(Random().nextInt(5000).toString())
     }
 }

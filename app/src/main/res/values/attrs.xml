@@ -30,4 +30,9 @@
         <attr name="titleEnDouble" format="string"/>
         <attr name="unitDouble" format="string"/>
     </declare-styleable>
+
+    <declare-styleable name="EyeSettingView">
+        <attr name="settingLeft" format="string"/>
+        <attr name="isArrow" format="boolean"/>
+    </declare-styleable>
 </resources>

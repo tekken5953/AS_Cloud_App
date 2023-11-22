@@ -21,6 +21,9 @@
         android:layout_alignStart="@+id/vpAeTitle"
         android:layout_marginTop="6dp"
         android:layout_marginBottom="20dp"
+        android:layout_toStartOf="@+id/vpAeAlert"
+        android:layout_marginEnd="10dp"
+        android:gravity="start"
         android:text="수치가 높습니다. 창문을 열어 환기를 시켜주세요"
         android:textColor="@color/ae_sub_color"
         android:textSize="14sp" />
@@ -30,6 +33,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignTop="@+id/vpAeTitle"
+        android:layout_alignBottom="@+id/vpAeContent"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="16dp"
         android:src="@drawable/caution_test" />

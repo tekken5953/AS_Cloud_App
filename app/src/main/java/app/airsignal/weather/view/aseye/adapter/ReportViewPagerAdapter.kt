@@ -23,7 +23,6 @@ class ReportViewPagerAdapter(
 ) :
     RecyclerView.Adapter<ReportViewPagerAdapter.ViewHolder>() {
     private val mList = list
-    private var textColor: Int = Color.WHITE
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -50,15 +49,6 @@ class ReportViewPagerAdapter(
             content.text = dao.content
 
             viewPager2.visibility = if(mList.size == 0) View.GONE else View.VISIBLE
-
-            itemView.setOnClickListener {
-                if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
-                    try {
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-            }
         }
     }
 }

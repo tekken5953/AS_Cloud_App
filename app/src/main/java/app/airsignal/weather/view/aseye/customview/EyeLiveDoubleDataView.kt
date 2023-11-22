@@ -1,4 +1,4 @@
-package app.airsignal.weather.view.aseye
+package app.airsignal.weather.view.aseye.customview
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.CustomViewEyeDoubleBinding
-import app.airsignal.weather.databinding.CustomViewEyeSingleBinding
 
 /**
  * @author : Lee Jae Young
