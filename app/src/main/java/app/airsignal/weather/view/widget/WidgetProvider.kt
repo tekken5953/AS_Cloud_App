@@ -28,12 +28,12 @@ import com.google.android.gms.location.Priority
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
-
 /**
  * @author : Lee Jae Young
  * @since : 2023-07-04 오후 4:27
  **/
 open class WidgetProvider : BaseWidgetProvider() {
+
     private var isSuccess = false
 
     override fun onEnabled(context: Context) {
@@ -117,6 +117,7 @@ open class WidgetProvider : BaseWidgetProvider() {
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context,views: RemoteViews) {
         try {
+            val mContext = context.applicationContext
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
             val onSuccess: (Location?) -> Unit = { location ->
                 CoroutineScope(Dispatchers.Default).launch {
@@ -124,13 +125,13 @@ open class WidgetProvider : BaseWidgetProvider() {
                         val lat = loc.latitude
                         val lng = loc.longitude
                         val data = requestWeather(lat, lng)
-                        val addr = getAddress(context, lat, lng)
+                        val addr = getAddress(mContext, lat, lng)
 
-                        RDBLogcat.writeWidgetHistory(context, "위치", "data22 is $data")
+                        RDBLogcat.writeWidgetHistory(mContext, "위치", "data22 is $data")
 
                         withContext(Dispatchers.Main) {
                             delay(500)
-                            updateUI(context, views, data, addr)
+                            updateUI(mContext, views, data, addr)
                         }
                     }
                 }

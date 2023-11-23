@@ -111,6 +111,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context, views: RemoteViews) {
         try {
+            val mContext = context.applicationContext
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
             val onSuccess: (Location?) -> Unit = { location ->
                 CoroutineScope(Dispatchers.Default).launch {
@@ -118,12 +119,12 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                         val lat = loc.latitude
                         val lng = loc.longitude
                         val data = requestWeather(lat, lng)
-                        val addr = getAddress(context, lat, lng)
+                        val addr = getAddress(mContext, lat, lng)
 
-                        RDBLogcat.writeWidgetHistory(context, "위치","data42 is $data")
+                        RDBLogcat.writeWidgetHistory(mContext, "위치","data42 is $data")
                         withContext(Dispatchers.Main) {
                             delay(500)
-                            updateUI(context, views, data, addr)
+                            updateUI(mContext, views, data, addr)
                         }
                     }
                 }
