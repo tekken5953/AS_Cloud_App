@@ -339,6 +339,8 @@ class ApiModel {
 
     // 4x2 위젯 - 실시간 정보
     data class Widget4x2Current(
+        @SerializedName("forecast")
+        val currentTime: String,
         @SerializedName("rainType")
         val rainType: String?,
         @SerializedName("temperature")

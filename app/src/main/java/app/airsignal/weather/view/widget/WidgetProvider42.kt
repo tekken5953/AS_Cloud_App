@@ -183,11 +183,15 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     this.setTextViewText(R.id.w42Temp, "${it.current.temperature?.roundToInt() ?: 0}˚")
                     this.setTextViewText(R.id.w42Address, addr ?: "")
                     this.setImageViewResource(R.id.w42SkyImg,
-                        DataTypeParser.getSkyImgWidget(it.current.rainType, it.realtime[0].sky, isNight)
+                        DataTypeParser.getSkyImgWidget(
+                            if(currentIsAfterRealtime(it.current.currentTime,it.realtime[0].forecast))
+                                it.current.rainType
+                            else it.realtime[0].rainType, it.realtime[0].sky, isNight)
                     )
                     val bg = DataTypeParser.getBackgroundImgWidget(
                         "42",
-                        rainType = it.current.rainType,
+                        rainType =  if(currentIsAfterRealtime(it.current.currentTime,it.realtime[0].forecast))
+                            it.current.rainType else it.realtime[0].rainType,
                         sky = it.realtime[0].sky, isNight
                     )
                     setInt(R.id.w42Background, "setBackgroundResource", bg)

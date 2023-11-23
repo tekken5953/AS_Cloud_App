@@ -1184,7 +1184,7 @@ class MainActivity
         changeTextColorStyle(
             applySkyText(
                 this,
-                current.rainType,
+                if(currentIsAfterRealtime(current.currentTime,realtime.forecast))current.rainType else realtime.rainType,
                 realtime.sky, thunder
             ),
             getIsNight(currentSun)

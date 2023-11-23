@@ -22,14 +22,10 @@ class WidgetPermActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             if (!perm.isBackgroundRequestLocation()) {
                 perm.requestBackgroundLocation()
-            } else {
-                requestWhiteList()
             }
-            finish()
-        } else {
-            requestWhiteList()
-            finish()
         }
+
+        finish()
     }
 
     @SuppressLint("BatteryLife")

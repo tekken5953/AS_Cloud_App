@@ -25,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.awaitResponse
 import timber.log.Timber
+import java.time.LocalDateTime
 
 open class BaseWidgetProvider: AppWidgetProvider() {
     init { LoggerUtil().getInstance() }
@@ -105,5 +106,13 @@ open class BaseWidgetProvider: AppWidgetProvider() {
             }
         }
         requestWhitelist(context)
+    }
+
+    fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean {
+        val timeFormed = LocalDateTime.parse(currentTime)
+        val realtimeFormed = LocalDateTime.parse(realTime)
+        return realtimeFormed?.let {
+            timeFormed.isAfter(it)
+        } ?: true
     }
 }

@@ -124,7 +124,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                 fetch(appContext, views)
                 RDBLogcat.writeWidgetHistory(
                     context,
-                    "retry fetch42",
+                    "retry fetch22",
                     "isSuccess is $isSuccess"
                 )
                 AppWidgetManager.getInstance(context).updateAppWidget(componentName,views)
@@ -193,7 +193,16 @@ open class WidgetProvider : BaseWidgetProvider() {
                         R.id.widget2x2TempValue,"${it.current.temperature?.roundToInt() ?: 0}˚")
                     this.setTextViewText(R.id.widget2x2Address, addr ?: "")
                     this.setImageViewResource(R.id.widget2x2SkyImg,
-                        getSkyImgWidget(it.current.rainType, it.realtime[0].sky, isNight)
+                        getSkyImgWidget(
+                            if(currentIsAfterRealtime(it.current.currentTime,it.realtime[0].forecast))
+                                it.current.rainType
+                            else it.realtime[0].rainType, it.realtime[0].sky, isNight)
+                    )
+                    val bg = getBackgroundImgWidget(
+                        "22",
+                        rainType =  if(currentIsAfterRealtime(it.current.currentTime,it.realtime[0].forecast))
+                            it.current.rainType else it.realtime[0].rainType,
+                        sky = it.realtime[0].sky, isNight
                     )
                     this.setTextViewText(R.id.widget2x2Pm25Title,"미세먼지")
                     this.setTextViewText(
@@ -203,8 +212,6 @@ open class WidgetProvider : BaseWidgetProvider() {
                             )
                         )
                     )
-                    val bg = getBackgroundImgWidget("22",rainType = it.current.rainType,
-                        sky = it.realtime[0].sky, isNight)
                     setInt(R.id.widget2x2Background, "setBackgroundResource", bg)
                     applyColor(context,views,bg)
                 }
