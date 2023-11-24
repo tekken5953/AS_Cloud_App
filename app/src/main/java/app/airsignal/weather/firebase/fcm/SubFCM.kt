@@ -17,7 +17,7 @@ class SubFCM: FirebaseMessagingService() {
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-//        Timber.tag(TAG_N).d("onMessageReceived(${message.data})")
+        Timber.tag(TAG_N).d("onMessageReceived(${message.data})")
         // 포그라운드 노티피케이션 발생
         NotificationBuilder().sendNotification(applicationContext, message.data)
     }
@@ -34,14 +34,16 @@ class SubFCM: FirebaseMessagingService() {
     }
 
     /** 토픽 구독 해제 **/
-    private suspend fun unSubTopic(topic: String): SubFCM {
+    private fun unSubTopic(topic: String): SubFCM {
         val encodedStream = encodeTopic(topic)
-        try {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream).await()
-            Timber.tag(TAG_N).w("UnSubscribed failed")
-        } catch (e: Exception) {
-            Timber.tag(TAG_N).i("UnSubscribed : $encodedStream")
-        }
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream)
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Timber.tag(TAG_N).w("UnSubscribed failed")
+                } else {
+                    Timber.tag(TAG_N).i("UnSubscribed : $encodedStream")
+                }
+            }
         return this
     }
 

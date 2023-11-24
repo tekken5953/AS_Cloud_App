@@ -176,7 +176,6 @@ object RDBLogcat {
         val widgetPref = default(context)
             .child(WIDGET_HISTORY)
             .child(getDate())
-            .child(GPS_HISTORY)
 
         if (response != null) {
             widgetPref

@@ -10,7 +10,6 @@ import android.location.Location
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.view.View
 import android.widget.RemoteViews
 import app.airsignal.weather.R
 import app.airsignal.weather.firebase.db.RDBLogcat
@@ -25,15 +24,19 @@ import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
+import com.google.firebase.messaging.SendException
 import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 import kotlin.math.roundToInt
+
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-07-04 오후 4:27
  **/
 open class WidgetProvider : BaseWidgetProvider() {
-
     private var isSuccess = false
 
     override fun onEnabled(context: Context) {
@@ -79,7 +82,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                 views.run {
                     this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
                     this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
-                    fetch(context, views)
+                    fetch(context.applicationContext, views)
                 }
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
@@ -92,7 +95,6 @@ open class WidgetProvider : BaseWidgetProvider() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         super.onReceive(context, intent)
-        val appContext = getAppContext()
         val appWidgetId = intent?.getIntExtra(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
@@ -107,48 +109,97 @@ open class WidgetProvider : BaseWidgetProvider() {
                         }
                     }
                     views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_refreshing)
-                    fetch(context, views)
                     AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId,views)
+                    callFetch(context.applicationContext,views)
                 }
             }
         }
     }
 
+    private fun callFetch(context: Context,views: RemoteViews) {
+        val componentName =
+            ComponentName(context, this@WidgetProvider.javaClass)
+        views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
+        AppWidgetManager.getInstance(context).updateAppWidget(componentName,views)
+        fetch(context.applicationContext, views)
+    }
+
     @SuppressLint("MissingPermission")
-    private fun fetch(context: Context,views: RemoteViews) {
+    private fun fetch(context: Context, views: RemoteViews) {
         try {
-            val mContext = context.applicationContext
-            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-            val onSuccess: (Location?) -> Unit = { location ->
-                CoroutineScope(Dispatchers.Default).launch {
-                    location?.let { loc ->
-                        val lat = loc.latitude
-                        val lng = loc.longitude
-                        val data = requestWeather(lat, lng)
-                        val addr = getAddress(mContext, lat, lng)
+            CoroutineScope(Dispatchers.Default).launch {
+                val job =
+                    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val tokenResult = task.result
+                            try {
+                                val message = RemoteMessage.Builder(tokenResult)
+                                    .setMessageId("FCM TOKEN")
+                                    .build()
+                                @Suppress("DEPRECATION")
+                                FirebaseMessaging.getInstance().send(message)
+                                RDBLogcat.writeWidgetHistory(
+                                    context,
+                                    "success send fcm 22",
+                                    tokenResult
+                                )
+                            } catch (e: SendException) {
+                                RDBLogcat.writeWidgetHistory(
+                                    context,
+                                    "fail to send fcm 22",
+                                    e.localizedMessage
+                                )
+                            }
+                        } else {
+                            RDBLogcat.writeWidgetHistory(
+                                context,
+                                "Success but fail get token 22",
+                                task.exception.toString()
+                            )
+                        }
+                    }.addOnFailureListener {
+                        RDBLogcat.writeWidgetHistory(
+                            context,
+                            "fail get token 22",
+                            it.localizedMessage
+                        )
+                    }
 
-                        RDBLogcat.writeWidgetHistory(mContext, "위치", "data22 is $data")
+                job.await()
 
-                        withContext(Dispatchers.Main) {
-                            delay(500)
-                            updateUI(mContext, views, data, addr)
+                val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+                val onSuccess: (Location?) -> Unit = { location ->
+                    CoroutineScope(Dispatchers.Default).launch {
+                        location?.let { loc ->
+                            val lat = loc.latitude
+                            val lng = loc.longitude
+                            val data = requestWeather(lat, lng)
+                            val addr = getAddress(context, lat, lng)
+
+                            RDBLogcat.writeWidgetHistory(context, "위치", "data22 is $data")
+                            withContext(Dispatchers.Main) {
+                                delay(500)
+                                updateUI(context, views, data, addr)
+                            }
                         }
                     }
                 }
-            }
-            val onFailure: (e: Exception) -> Unit = {
-                RDBLogcat.writeErrorANR("Error", "widget error ${it.localizedMessage}")
-            }
-            CoroutineScope(Dispatchers.Default).launch {
+                val onFailure: (e: Exception) -> Unit = {
+                    RDBLogcat.writeErrorANR("Error", "widget error22 ${it.localizedMessage}")
+                }
+
                 fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
                     .addOnSuccessListener(onSuccess)
                     .addOnFailureListener(onFailure)
                     .addOnCanceledListener {
-                        RDBLogcat.writeErrorANR("Error", "addOnCanceledListener is $resultData")
+                        RDBLogcat.writeErrorANR(
+                            Thread.currentThread().toString(),
+                            "addOnCanceledListener22 is $resultData"
+                        )
                     }
             }
-        } catch(e: Exception) {
-            RDBLogcat.writeErrorANR("Error", "fetch error ${e.localizedMessage}")
+        } catch (e: Exception) {
+            RDBLogcat.writeErrorANR("Error", "fetch error22 ${e.localizedMessage}")
         }
     }
 
@@ -176,7 +227,16 @@ open class WidgetProvider : BaseWidgetProvider() {
                         R.id.widget2x2TempValue,"${it.current.temperature?.roundToInt() ?: 0}˚")
                     this.setTextViewText(R.id.widget2x2Address, addr ?: "")
                     this.setImageViewResource(R.id.widget2x2SkyImg,
-                        getSkyImgWidget(it.current.rainType, it.realtime[0].sky, isNight)
+                        getSkyImgWidget(
+                            if(currentIsAfterRealtime(it.current.currentTime,it.realtime[0].forecast))
+                                it.current.rainType
+                            else it.realtime[0].rainType, it.realtime[0].sky, isNight)
+                    )
+                    val bg = getBackgroundImgWidget(
+                        "22",
+                        rainType =  if (currentIsAfterRealtime(it.current.currentTime,it.realtime[0].forecast))
+                            it.current.rainType else it.realtime[0].rainType,
+                        sky = it.realtime[0].sky, isNight
                     )
                     this.setTextViewText(R.id.widget2x2Pm25Title,"미세먼지")
                     this.setTextViewText(
@@ -186,8 +246,6 @@ open class WidgetProvider : BaseWidgetProvider() {
                             )
                         )
                     )
-                    val bg = getBackgroundImgWidget("22",rainType = it.current.rainType,
-                        sky = it.realtime[0].sky, isNight)
                     setInt(R.id.widget2x2Background, "setBackgroundResource", bg)
                     applyColor(context,views,bg)
                 }
@@ -201,7 +259,7 @@ open class WidgetProvider : BaseWidgetProvider() {
 
     private fun applyColor(context: Context,views: RemoteViews, bg: Int) {
         val textArray = arrayOf(R.id.widget2x2TempValue, R.id.widget2x2Time, R.id.widget2x2Address,
-        R.id.widget2x2Pm25Title,R.id.widget2x2Pm25Value)
+            R.id.widget2x2Pm25Title,R.id.widget2x2Pm25Value)
         val imgArray = arrayOf(R.id.widget2x2Refresh,R.id.widget2x2LocIv)
         views.run {
             imgArray.forEach {

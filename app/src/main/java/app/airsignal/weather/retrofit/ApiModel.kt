@@ -1,7 +1,6 @@
 package app.airsignal.weather.retrofit
 
 import com.google.gson.annotations.SerializedName
-import javax.annotation.Nullable
 
 class ApiModel {
 
@@ -340,6 +339,8 @@ class ApiModel {
 
     // 4x2 위젯 - 실시간 정보
     data class Widget4x2Current(
+        @SerializedName("forecast")
+        val currentTime: String,
         @SerializedName("rainType")
         val rainType: String?,
         @SerializedName("temperature")
@@ -369,7 +370,7 @@ class ApiModel {
         @SerializedName("temperature")
         val temp: Double?,
 
-    )
+        )
 
     // 4x2 위젯 - 전체 데이터
     data class WidgetData(

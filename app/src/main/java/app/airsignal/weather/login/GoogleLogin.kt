@@ -40,6 +40,15 @@ class GoogleLogin(private val activity: Activity) {
         lastLogin = GoogleSignIn.getLastSignedInAccount(activity)
     }
 
+    private fun getAccessToken(): String? {
+        return try {
+            lastLogin?.idToken
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     /** 로그인 진행 + 로그인 버튼 비활성화 **/
     fun login(mBtn: AppCompatButton, result: ActivityResultLauncher<Intent>) {
         try {

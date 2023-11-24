@@ -20,11 +20,15 @@ import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.util.`object`.SetAppInfo
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
+import com.google.firebase.messaging.SendException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.awaitResponse
 import timber.log.Timber
+import java.time.LocalDateTime
 
 open class BaseWidgetProvider: AppWidgetProvider() {
     init { LoggerUtil().getInstance() }
@@ -66,10 +70,10 @@ open class BaseWidgetProvider: AppWidgetProvider() {
             .awaitResponse().body()
     }
 
-     fun getAddress(context: Context, lat: Double, lng: Double): String {
-         val loc = GetLocation(context).getAddress(lat, lng)
-         val result = AddressFromRegex(loc).getNotificationAddress()
-         return if (result == "") AddressFromRegex(loc).getSecondAddress() else result
+    fun getAddress(context: Context, lat: Double, lng: Double): String {
+        val loc = GetLocation(context).getAddress(lat, lng)
+        val result = AddressFromRegex(loc).getNotificationAddress()
+        return if (result == "") AddressFromRegex(loc).getSecondAddress() else result
     }
 
     @SuppressLint("BatteryLife")
@@ -105,5 +109,26 @@ open class BaseWidgetProvider: AppWidgetProvider() {
             }
         }
         requestWhitelist(context)
+    }
+
+    fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean {
+        val timeFormed = LocalDateTime.parse(currentTime)
+        val realtimeFormed = LocalDateTime.parse(realTime)
+        return realtimeFormed?.let {
+            timeFormed.isAfter(it)
+        } ?: true
+    }
+
+    // FCM 메시지 보내기
+    fun sendFCMMessage(token: String) {
+        try {
+            val message = RemoteMessage.Builder(token)
+                .setMessageId("FCM TOKEN")
+                .build()
+            @Suppress("DEPRECATION")
+            FirebaseMessaging.getInstance().send(message)
+        } catch (e: SendException) {
+            e.printStackTrace()
+        }
     }
 }
