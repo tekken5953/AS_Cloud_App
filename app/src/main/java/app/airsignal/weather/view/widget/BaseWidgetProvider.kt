@@ -20,6 +20,9 @@ import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.util.`object`.SetAppInfo
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
+import com.google.firebase.messaging.SendException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -114,5 +117,18 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         return realtimeFormed?.let {
             timeFormed.isAfter(it)
         } ?: true
+    }
+
+    // FCM 메시지 보내기
+    fun sendFCMMessage(token: String) {
+        try {
+            val message = RemoteMessage.Builder(token)
+                .setMessageId("FCM TOKEN")
+                .build()
+            @Suppress("DEPRECATION")
+            FirebaseMessaging.getInstance().send(message)
+        } catch (e: SendException) {
+            e.printStackTrace()
+        }
     }
 }

@@ -7,8 +7,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.os.Handler
-import android.os.Looper
 import android.widget.RemoteViews
 import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
@@ -22,7 +20,9 @@ import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.view.activity.SplashActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.*
+import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
 
@@ -76,7 +76,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 views.run {
                     this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
                     this.setOnClickPendingIntent(R.id.w42Background, enterPending)
-                    retryFetch(context.applicationContext,appContext,this)
+                    callFetch(context.applicationContext,this)
                 }
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
@@ -100,25 +100,20 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 if (intent.action == REFRESH_BUTTON_CLICKED_42) {
                     requestPermissions(context)
                     views.setImageViewResource(R.id.w42Refresh, R.drawable.w_refreshing42)
-                    retryFetch(context.applicationContext,appContext,views)
+                    callFetch(context.applicationContext,views)
                     AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId,views)
                 }
             }
         }
     }
 
-    private fun retryFetch(context: Context, appContext: Context, views: RemoteViews) {
+    private fun callFetch(context: Context, views: RemoteViews) {
         val componentName =
             ComponentName(context, this@WidgetProvider42.javaClass)
+        views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
+        RDBLogcat.writeWidgetHistory(context, "fetch42", "isSuccess is $isSuccess")
+        AppWidgetManager.getInstance(context).updateAppWidget(componentName,views)
         fetch(context.applicationContext, views)
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (!isSuccess) {
-                views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
-                fetch(appContext, views)
-                RDBLogcat.writeWidgetHistory(context, "retry fetch42", "isSuccess is $isSuccess")
-                AppWidgetManager.getInstance(context).updateAppWidget(componentName,views)
-            }
-        }, 3000)
     }
 
     @SuppressLint("MissingPermission")
@@ -127,16 +122,32 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
             val onSuccess: (Location?) -> Unit = { location ->
                 CoroutineScope(Dispatchers.Default).launch {
-                    location?.let { loc ->
-                        val lat = loc.latitude
-                        val lng = loc.longitude
-                        val data = requestWeather(lat, lng)
-                        val addr = getAddress(context, lat, lng)
+                    val job = FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val tokenResult = task.result
+                            sendFCMMessage(tokenResult)
+                            RDBLogcat.writeWidgetHistory(context, "Widget FCM42", "Success get token")
+                        } else {
+                            RDBLogcat.writeWidgetHistory(context, "Widget FCM42", "Success but fail get token ${task.exception.toString()}")
+                        }
+                    }.addOnFailureListener {
+                        RDBLogcat.writeWidgetHistory(context, "Widget FCM42", "fail get token : ${it.localizedMessage}")
+                    }
 
-                        RDBLogcat.writeWidgetHistory(context, "위치","data42 is $data")
-                        withContext(Dispatchers.Main) {
-                            delay(500)
-                            updateUI(context, views, data, addr)
+                    job.await()
+
+                    withContext(Dispatchers.Default) {
+                        location?.let { loc ->
+                            val lat = loc.latitude
+                            val lng = loc.longitude
+                            val data = requestWeather(lat, lng)
+                            val addr = getAddress(context, lat, lng)
+
+                            RDBLogcat.writeWidgetHistory(context, "위치","data42 is $data")
+                            withContext(Dispatchers.Main) {
+                                delay(500)
+                                updateUI(context, views, data, addr)
+                            }
                         }
                     }
                 }
