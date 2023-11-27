@@ -13,6 +13,7 @@ import app.airsignal.weather.dao.IgnoredKeyFile.userProfile
 import app.airsignal.weather.dao.StaticDataObject.TAG_LOGIN
 import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_NAVER
+import app.airsignal.weather.firebase.db.RDBLogcat.writeErrorNotANR
 import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginPref
 import app.airsignal.weather.util.EnterPageUtil
@@ -131,6 +132,7 @@ class NaverLogin(private val activity: Activity) {
         override fun onFailure(httpStatus: Int, message: String) {
             val errorCode = NaverIdLoginSDK.getLastErrorCode().code
             val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
+            writeErrorNotANR(activity,"naver login","error $errorCode $errorDescription")
             toast.showMessage("로그인이 필요합니다",1)
         }
 

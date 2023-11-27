@@ -16,7 +16,7 @@ import app.airsignal.weather.view.aseye.adapter.EyeLifeAdapter
 import app.airsignal.weather.view.aseye.dao.EyeDataModel
 
 class EyeDetailLifeFragment : Fragment() {
-    lateinit var mActivity: EyeDetailActivity
+    private lateinit var mActivity: EyeDetailActivity
     private lateinit var binding : EyeDetailLifeFragmentBinding
 
     private val lifeList = ArrayList<EyeDataModel.LifeModel>()

@@ -155,7 +155,6 @@
                 <action android:name="android.intent.action.DATE_CHANGED" />
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.appwidget.action.APPWIDGET_ENABLE" />
-                <action android:name="app.airsignal.weather.view.widget.ENTER_PERM" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -177,7 +176,6 @@
                 <action android:name="android.intent.action.DATE_CHANGED" />
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.appwidget.action.APPWIDGET_ENABLE" />
-                <action android:name="app.airsignal.weather.view.widget.ENTER_PERM42" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

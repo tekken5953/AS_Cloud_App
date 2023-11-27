@@ -8,26 +8,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
-import android.widget.RemoteViews
-import androidx.annotation.RequiresApi
-import app.airsignal.weather.dao.StaticDataObject
-import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.retrofit.HttpClient
 import app.airsignal.weather.util.AddressFromRegex
 import app.airsignal.weather.util.LoggerUtil
-import app.airsignal.weather.util.`object`.GetAppInfo
-import app.airsignal.weather.util.`object`.SetAppInfo
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.RemoteMessage
-import com.google.firebase.messaging.SendException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import retrofit2.awaitResponse
-import timber.log.Timber
 import java.time.LocalDateTime
 
 open class BaseWidgetProvider: AppWidgetProvider() {
@@ -36,11 +23,9 @@ open class BaseWidgetProvider: AppWidgetProvider() {
     companion object {
         const val REFRESH_BUTTON_CLICKED = "app.airsignal.weather.view.widget.REFRESH_DATA"
         const val ENTER_APPLICATION = "app.airsignal.weather.view.widget.ENTER_APP"
-        const val ENTER_PERM = "app.airsignal.weather.view.widget.ENTER_PERM"
 
         const val REFRESH_BUTTON_CLICKED_42 = "app.airsignal.weather.view.widget.REFRESH_DATA42"
         const val ENTER_APPLICATION_42 = "app.airsignal.weather.view.widget.ENTER_APP42"
-        const val ENTER_PERM_42 = "app.airsignal.weather.view.widget.ENTER_PERM42"
     }
 
     override fun onDisabled(context: Context) {
@@ -90,15 +75,6 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
-    fun requestBackPerm(context: Context) {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-        val uri: Uri = Uri.fromParts("package", context.applicationContext.packageName, null)
-        intent.data = uri
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        context.startActivity(intent)
-    }
-
     fun requestPermissions(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val perm = RequestPermissionsUtil(context)
@@ -117,18 +93,5 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         return realtimeFormed?.let {
             timeFormed.isAfter(it)
         } ?: true
-    }
-
-    // FCM 메시지 보내기
-    fun sendFCMMessage(token: String) {
-        try {
-            val message = RemoteMessage.Builder(token)
-                .setMessageId("FCM TOKEN")
-                .build()
-            @Suppress("DEPRECATION")
-            FirebaseMessaging.getInstance().send(message)
-        } catch (e: SendException) {
-            e.printStackTrace()
-        }
     }
 }

@@ -105,7 +105,7 @@ class PermissionActivity :
 
         binding.permissionUserDataNotice.setOnClickListener {
             // 개인정보 처리방침 열림
-            val intent = Intent(this@PermissionActivity,
+            Intent(this@PermissionActivity,
                 WebURLActivity::class.java).run {
                 putExtra("sort","dataUsage")
                 putExtra("appBar",true)

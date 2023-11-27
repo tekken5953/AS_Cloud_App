@@ -85,7 +85,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             is BaseRepository.ApiState.Success -> {
                                 binding.splashPB.visibility = View.GONE
                                 val versionName = GetSystemInfo.getApplicationVersionName(this)
-                                val versionCode = GetSystemInfo.getApplicationVersionCode(this)
                                 if ((ver.data.serviceName == versionName) || (ver.data.releaseName == versionName)) {
                                     enterPage()
                                 } else {

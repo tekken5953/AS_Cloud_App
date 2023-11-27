@@ -20,18 +20,4 @@ class WidgetPermActivity : AppCompatActivity() {
             finish()
         }
     }
-
-//    @SuppressLint("BatteryLife")
-//    private fun requestWhiteList() {
-//        val packageName: String = packageName
-//        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager?
-//        if (!pm!!.isIgnoringBatteryOptimizations(packageName)) {
-//            val intent = Intent().apply {
-//                action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-//                data = Uri.parse("package:$packageName")
-//                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//            }
-//            startActivity(intent)
-//        }
-//    }
 }

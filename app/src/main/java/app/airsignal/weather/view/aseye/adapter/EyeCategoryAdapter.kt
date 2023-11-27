@@ -41,7 +41,7 @@ class EyeCategoryAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var categoryName: TextView = itemView.findViewById(R.id.listItemAeCategoryText)
+        private var categoryName: TextView = itemView.findViewById(R.id.listItemAeCategoryText)
 
         @SuppressLint("InflateParams")
         fun bind(dao: String) {

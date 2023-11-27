@@ -1,5 +1,6 @@
 package app.airsignal.weather.view.dialog
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.res.ColorStateList
@@ -12,6 +13,7 @@ import app.airsignal.weather.R
 class MakeDoubleDialog(private val context: Context) {
     val builder = Dialog(context)
 
+    @SuppressLint("InflateParams")
     fun make(titleString: String, applyString: String, cancelString: String, applyColor: Int)
             : Pair<AppCompatButton, AppCompatButton> {
         val view = LayoutInflater.from(context)

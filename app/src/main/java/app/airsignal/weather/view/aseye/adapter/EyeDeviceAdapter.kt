@@ -45,12 +45,12 @@ class EyeDeviceAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var deviceName: TextView = itemView.findViewById(R.id.listItemAeDeviceName)
-        val serial: TextView = itemView.findViewById(R.id.listItemAeDeviceSerial)
-        val power: TextView = itemView.findViewById(R.id.listItemAeDevicePower)
+        private var deviceName: TextView = itemView.findViewById(R.id.listItemAeDeviceName)
+        private val serial: TextView = itemView.findViewById(R.id.listItemAeDeviceSerial)
+        private val power: TextView = itemView.findViewById(R.id.listItemAeDevicePower)
         val report: ImageView = itemView.findViewById(R.id.listItemAeDeviceReport)
-        val addDevice: ImageView = itemView.findViewById(R.id.listItemAeDeviceAdd)
-        val container: RelativeLayout = itemView.findViewById(R.id.listItemAeDeviceContainer)
+        private val addDevice: ImageView = itemView.findViewById(R.id.listItemAeDeviceAdd)
+        private val container: RelativeLayout = itemView.findViewById(R.id.listItemAeDeviceContainer)
 
         @SuppressLint("InflateParams")
         fun bind(dao: EyeDataModel.DeviceModel) {

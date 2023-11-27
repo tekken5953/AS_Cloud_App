@@ -49,6 +49,7 @@
             android:layout_height="26dp"
             android:layout_marginEnd="16dp"
             android:src="@drawable/setting"
+            android:contentDescription="@string/option"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toBottomOf="@+id/aeDetailBack"
             app:layout_constraintEnd_toEndOf="parent"
@@ -71,7 +72,7 @@
                 android:textSize="16sp"
                 android:textColor="@color/white"
                 android:background="@drawable/ae_detail_tap_enable"
-                android:text=" 리포트 "
+                android:text="@string/report"
                 android:layout_weight="0.33"/>
 
             <TextView
@@ -80,7 +81,7 @@
                 android:layout_height="32dp"
                 android:textSize="16sp"
                 android:textColor="@color/ae_sub_color"
-                android:text="실시간 지수"
+                android:text="@string/live_value"
                 android:layout_weight="0.33"
                 android:layout_marginStart="10dp"/>
 
@@ -90,7 +91,7 @@
                 android:layout_height="32dp"
                 android:textSize="16sp"
                 android:textColor="@color/ae_sub_color"
-                android:text="센서 수명"
+                android:text="@string/sensor_life"
                 android:layout_weight="0.33"
                 android:layout_marginStart="10dp"/>
         </LinearLayout>

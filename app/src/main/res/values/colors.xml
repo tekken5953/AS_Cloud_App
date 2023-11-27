@@ -27,7 +27,6 @@
     <color name="uv_very_high">#F87171</color>
     <color name="uv_caution">#7D38F2</color>
 
-    <color name="bg_black_color">#3D3D3D</color>
     <color name="ripple_white">#B4cccccc</color>
 
     <color name="main_black">#4F4F4F</color>
@@ -40,16 +39,11 @@
     <color name="theme_sub_color">#7C7C7C</color>
     <color name="theme_line_color">#EBEBEB</color>
     <color name="theme_box_solid_color">#FFFFFF</color>
-    <color name="theme_box_stroke_color">#F4F4F4</color>
-    <color name="theme_main_bg_color">#EBEBEB</color>
-    <color name="theme_pm_title_bg_color">#EBEBEB</color>
     <color name="theme_alert_double_cancel_color">#D9D9D9</color>
     <color name="theme_alert_double_apply_color">#F74B4B</color>
     <color name="theme_ae_category_color">#2E2E2E</color>
     <color name="ae_device_bg_d">#E8E8E8</color>
 
-    <color name="theme_sun_tomorrow_night">#30159C</color>
-    <color name="theme_sun_tomorrow_day">#FF8A48</color>
 
     <color name="sub_white">#BFCEE3</color>
 

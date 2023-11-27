@@ -16,7 +16,7 @@ import app.airsignal.weather.view.aseye.dao.EyeDataModel
 import java.util.Random
 
 class EyeDetailLiveFragment : Fragment() {
-    lateinit var mActivity: EyeDetailActivity
+    private lateinit var mActivity: EyeDetailActivity
     private lateinit var binding : EyeDetailLiveFragmentBinding
 
     override fun onAttach(context: Context) {

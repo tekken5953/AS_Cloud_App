@@ -1,25 +1,20 @@
 package app.airsignal.weather.gps
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.location.*
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
-import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.ErrorCode
 import app.airsignal.weather.dao.ErrorCode.ERROR_GET_DATA
 import app.airsignal.weather.dao.ErrorCode.ERROR_LOCATION_IOException
-import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.firebase.db.RDBLogcat.writeErrorANR
-import app.airsignal.weather.firebase.db.RDBLogcat.writeErrorNotANR
 import app.airsignal.weather.firebase.db.RDBLogcat.writeGpsHistory
 import app.airsignal.weather.util.AddressFromRegex
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
@@ -29,11 +24,9 @@ import app.airsignal.weather.util.`object`.SetAppInfo.setNotificationAddress
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.navercorp.nid.NaverIdLoginSDK.applicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.io.IOException
 import java.util.*
 

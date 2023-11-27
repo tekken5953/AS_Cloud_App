@@ -8,8 +8,6 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import android.widget.RemoteViews
 import app.airsignal.weather.R
 import app.airsignal.weather.firebase.db.RDBLogcat
@@ -24,11 +22,7 @@ import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.RemoteMessage
-import com.google.firebase.messaging.SendException
 import kotlinx.coroutines.*
-import kotlinx.coroutines.tasks.await
 import kotlin.math.roundToInt
 
 
@@ -87,7 +81,7 @@ open class WidgetProvider : BaseWidgetProvider() {
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
                     "Error",
-                    "onUpdate error ${e.stackTraceToString()}"
+                    "onUpdate error ${e.localizedMessage}"
                 )
             }
         }
@@ -108,64 +102,18 @@ open class WidgetProvider : BaseWidgetProvider() {
                             requestPermissions(context)
                         }
                     }
-                    views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_refreshing)
-                    AppWidgetManager.getInstance(context).updateAppWidget(appWidgetId,views)
-                    callFetch(context.applicationContext,views)
+                    fetch(context.applicationContext,views)
                 }
             }
         }
-    }
-
-    private fun callFetch(context: Context,views: RemoteViews) {
-        val componentName =
-            ComponentName(context, this@WidgetProvider.javaClass)
-        views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
-        AppWidgetManager.getInstance(context).updateAppWidget(componentName,views)
-        fetch(context.applicationContext, views)
     }
 
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context, views: RemoteViews) {
         try {
             CoroutineScope(Dispatchers.Default).launch {
-                val job =
-                    FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val tokenResult = task.result
-                            try {
-                                val message = RemoteMessage.Builder(tokenResult)
-                                    .setMessageId("FCM TOKEN")
-                                    .build()
-                                @Suppress("DEPRECATION")
-                                FirebaseMessaging.getInstance().send(message)
-                                RDBLogcat.writeWidgetHistory(
-                                    context,
-                                    "success send fcm 22",
-                                    tokenResult
-                                )
-                            } catch (e: SendException) {
-                                RDBLogcat.writeWidgetHistory(
-                                    context,
-                                    "fail to send fcm 22",
-                                    e.localizedMessage
-                                )
-                            }
-                        } else {
-                            RDBLogcat.writeWidgetHistory(
-                                context,
-                                "Success but fail get token 22",
-                                task.exception.toString()
-                            )
-                        }
-                    }.addOnFailureListener {
-                        RDBLogcat.writeWidgetHistory(
-                            context,
-                            "fail get token 22",
-                            it.localizedMessage
-                        )
-                    }
-
-                job.await()
+                WidgetFCM(context).sendFCMMessage().join()
+                delay(500)
 
                 val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
                 val onSuccess: (Location?) -> Unit = { location ->
@@ -176,7 +124,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                             val data = requestWeather(lat, lng)
                             val addr = getAddress(context, lat, lng)
 
-                            RDBLogcat.writeWidgetHistory(context, "위치", "data22 is $data")
+                            RDBLogcat.writeWidgetHistory(context, "data", "data22 is $data")
                             withContext(Dispatchers.Main) {
                                 delay(500)
                                 updateUI(context, views, data, addr)
@@ -253,7 +201,7 @@ open class WidgetProvider : BaseWidgetProvider() {
 
             appWidgetManager.updateAppWidget(componentName, views)
         } catch (e: Exception) {
-            RDBLogcat.writeErrorANR("Error", "updateUI error ${e.stackTraceToString()}")
+            RDBLogcat.writeErrorANR("Error", "updateUI error ${e.localizedMessage}")
         }
     }
 

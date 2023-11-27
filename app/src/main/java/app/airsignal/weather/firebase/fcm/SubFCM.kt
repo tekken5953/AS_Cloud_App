@@ -1,6 +1,7 @@
 package app.airsignal.weather.firebase.fcm
 
 import app.airsignal.weather.dao.StaticDataObject.TAG_N
+import app.airsignal.weather.firebase.db.RDBLogcat
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -17,9 +18,12 @@ class SubFCM: FirebaseMessagingService() {
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        Timber.tag(TAG_N).d("onMessageReceived(${message.data})")
-        // 포그라운드 노티피케이션 발생
-        NotificationBuilder().sendNotification(applicationContext, message.data)
+        RDBLogcat.writeNotificationHistory(applicationContext,"위젯","onMessageReceived(${message.data})")
+
+        if (message.data["sort"] != "widget") {
+            // 포그라운드 노티피케이션 발생
+            NotificationBuilder().sendNotification(applicationContext, message.data)
+        }
     }
 
     /** 토픽 구독 설정 **/

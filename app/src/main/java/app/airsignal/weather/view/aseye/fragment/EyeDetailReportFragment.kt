@@ -20,7 +20,7 @@ import timber.log.Timber
 
 class EyeDetailReportFragment : Fragment() {
 
-    lateinit var mActivity: EyeDetailActivity
+    private lateinit var mActivity: EyeDetailActivity
     private lateinit var binding : EyeDetailReportFragmentBinding
     private val autoJob = Job()
     private val reportViewPagerItem = ArrayList<EyeDataModel.EyeReportModel>()

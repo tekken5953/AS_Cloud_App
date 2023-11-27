@@ -176,16 +176,10 @@ object RDBLogcat {
         val widgetPref = default(context)
             .child(WIDGET_HISTORY)
             .child(getDate())
-
-        if (response != null) {
-            widgetPref
-                .child(getTime())
-                .setValue("$address : $response")
-        } else {
-            widgetPref
-                .child(getTime())
-                .setValue(address)
-        }
+        widgetPref
+            .child(address)
+            .child(getTime())
+            .setValue(response ?: "")
     }
 
     /** 알림 기록 **/

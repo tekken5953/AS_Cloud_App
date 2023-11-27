@@ -7,7 +7,6 @@
 
     <TextView
         style="@style/basicTextView"
-        android:text="장치이름"
         android:id="@+id/listItemAeAddGroupName"
         android:textColor="@color/theme_text_color"
         android:textSize="16sp"
@@ -15,7 +14,6 @@
 
     <TextView
         style="@style/basicTextView"
-        android:text="AS-123456"
         android:id="@+id/listItemAeAddGroupSerial"
         android:textColor="@color/ae_sub_color"
         android:textSize="16sp"

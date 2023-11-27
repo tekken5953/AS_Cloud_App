@@ -1,5 +1,6 @@
 package app.airsignal.weather.view.aseye.activity
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -30,6 +31,7 @@ class EyeDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEyeDetailBinding
 
+    @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_eye_detail)

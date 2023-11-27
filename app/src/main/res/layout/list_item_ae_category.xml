@@ -8,7 +8,6 @@
         android:id="@+id/listItemAeCategoryText"
         style="@style/basicMediumTextView"
         android:textSize="20sp"
-        android:text="전체"
         android:textColor="@color/theme_ae_category_color"/>
 
 </RelativeLayout>

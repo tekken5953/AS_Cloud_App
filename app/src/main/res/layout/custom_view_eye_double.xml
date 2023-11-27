@@ -41,6 +41,7 @@
             android:id="@+id/customEyeDoubleSmile"
             android:layout_width="46dp"
             android:layout_height="46dp"
+            android:contentDescription="@string/grade_smile"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="10dp"

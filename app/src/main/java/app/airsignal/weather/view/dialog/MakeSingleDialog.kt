@@ -1,5 +1,6 @@
 package app.airsignal.weather.view.dialog
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.res.ColorStateList
@@ -15,6 +16,7 @@ class MakeSingleDialog(private val context: Context) {
     val builder = Dialog(context)
 
     // 버튼이 하나인 다이얼로그 생성
+    @SuppressLint("InflateParams")
     fun makeDialog(
         textTitle: String,
         color: Int,

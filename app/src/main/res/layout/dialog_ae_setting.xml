@@ -20,7 +20,7 @@
         android:layout_centerHorizontal="true"
         android:layout_alignTop="@+id/aeSettingBack"
         android:layout_alignBottom="@+id/aeSettingBack"
-        android:text="설정"
+        android:text="@string/setting"
         android:textColor="@color/theme_text_color"
         android:textSize="16sp" />
 

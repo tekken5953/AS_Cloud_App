@@ -29,7 +29,7 @@ class EyeListActivity : AppCompatActivity() {
     private val categoryItem = ArrayList<String>()
     private val categoryAdapter by lazy { EyeCategoryAdapter(this,categoryItem) }
 
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint("NotifyDataSetChanged", "InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_eye_list)
@@ -74,7 +74,6 @@ class EyeListActivity : AppCompatActivity() {
                     }
                     startActivity(intent)
                 } else {
-
                 }
             }
         })
