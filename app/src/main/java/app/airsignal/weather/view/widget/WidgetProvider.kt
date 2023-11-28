@@ -11,7 +11,6 @@ import android.os.Build
 import android.widget.RemoteViews
 import app.airsignal.weather.R
 import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.koin.BaseApplication.Companion.getAppContext
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.currentDateTimeString
@@ -35,9 +34,6 @@ open class WidgetProvider : BaseWidgetProvider() {
 
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        val appContext = getAppContext()
-        val views = RemoteViews(appContext.packageName, R.layout.widget_layout_2x2)
-        fetch(appContext,views)
     }
 
     override fun onUpdate(
@@ -45,39 +41,10 @@ open class WidgetProvider : BaseWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        val appContext = getAppContext()
         for (appWidgetId in appWidgetIds) {
             try {
-                val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
-                val refreshBtnIntent = Intent(appContext, WidgetProvider::class.java).run {
-                    this.action = REFRESH_BUTTON_CLICKED
-                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                }
-
-                val enterPending: PendingIntent = Intent(appContext, SplashActivity::class.java)
-                    .run {
-                        this.action = ENTER_APPLICATION
-                        this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        PendingIntent.getActivity(
-                            appContext,
-                            appWidgetId,
-                            this,
-                            PendingIntent.FLAG_IMMUTABLE
-                        )
-                    }
-
-                val pendingIntent = PendingIntent.getBroadcast(
-                    appContext,
-                    appWidgetId,
-                    refreshBtnIntent,
-                    PendingIntent.FLAG_IMMUTABLE
-                )
                 RDBLogcat.writeWidgetHistory(context, "lifecycle", "onUpdate22")
-                views.run {
-                    this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
-                    this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
-                    fetch(context.applicationContext, views)
-                }
+                WidgetFCM(context).sendFCMMessage("22",appWidgetId)
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
                     "Error",
@@ -94,7 +61,6 @@ open class WidgetProvider : BaseWidgetProvider() {
             AppWidgetManager.INVALID_APPWIDGET_ID
         )
         if (context != null) {
-            val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
             if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                 if (intent.action == REFRESH_BUTTON_CLICKED) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -102,8 +68,42 @@ open class WidgetProvider : BaseWidgetProvider() {
                             requestPermissions(context)
                         }
                     }
-                    fetch(context.applicationContext,views)
+                    WidgetFCM(context).sendFCMMessage("22",appWidgetId)
                 }
+            }
+        }
+    }
+
+    fun processUpdate(context: Context, appWidgetId: Int) {
+        CoroutineScope(Dispatchers.Default).launch {
+            val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
+            val refreshBtnIntent = Intent(context, WidgetProvider::class.java).run {
+                this.action = REFRESH_BUTTON_CLICKED
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+            }
+
+            val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
+                .run {
+                    this.action = ENTER_APPLICATION
+                    this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    PendingIntent.getActivity(
+                        context,
+                        appWidgetId,
+                        this,
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+                }
+
+            val pendingIntent = PendingIntent.getBroadcast(
+                context,
+                appWidgetId,
+                refreshBtnIntent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
+            views.run {
+                this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
+                this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
+                fetch(context.applicationContext, views)
             }
         }
     }
@@ -111,41 +111,36 @@ open class WidgetProvider : BaseWidgetProvider() {
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context, views: RemoteViews) {
         try {
-            CoroutineScope(Dispatchers.Default).launch {
-                WidgetFCM(context).sendFCMMessage().join()
-                delay(500)
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+            val onSuccess: (Location?) -> Unit = { location ->
+                CoroutineScope(Dispatchers.Default).launch {
+                    location?.let { loc ->
+                        val lat = loc.latitude
+                        val lng = loc.longitude
+                        val data = requestWeather(lat, lng)
+                        val addr = getAddress(context, lat, lng)
 
-                val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-                val onSuccess: (Location?) -> Unit = { location ->
-                    CoroutineScope(Dispatchers.Default).launch {
-                        location?.let { loc ->
-                            val lat = loc.latitude
-                            val lng = loc.longitude
-                            val data = requestWeather(lat, lng)
-                            val addr = getAddress(context, lat, lng)
-
-                            RDBLogcat.writeWidgetHistory(context, "data", "data22 is $data")
-                            withContext(Dispatchers.Main) {
-                                delay(500)
-                                updateUI(context, views, data, addr)
-                            }
+                        RDBLogcat.writeWidgetHistory(context, "data", "data22 is $data")
+                        withContext(Dispatchers.Main) {
+                            delay(500)
+                            updateUI(context, views, data, addr)
                         }
                     }
                 }
-                val onFailure: (e: Exception) -> Unit = {
-                    RDBLogcat.writeErrorANR("Error", "widget error22 ${it.localizedMessage}")
-                }
-
-                fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                    .addOnSuccessListener(onSuccess)
-                    .addOnFailureListener(onFailure)
-                    .addOnCanceledListener {
-                        RDBLogcat.writeErrorANR(
-                            Thread.currentThread().toString(),
-                            "addOnCanceledListener22 is $resultData"
-                        )
-                    }
             }
+            val onFailure: (e: Exception) -> Unit = {
+                RDBLogcat.writeErrorANR("Error", "widget error42 ${it.localizedMessage}")
+            }
+
+            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                .addOnSuccessListener(onSuccess)
+                .addOnFailureListener(onFailure)
+                .addOnCanceledListener {
+                    RDBLogcat.writeErrorANR(
+                        Thread.currentThread().toString(),
+                        "addOnCanceledListener22 is $resultData"
+                    )
+                }
         } catch (e: Exception) {
             RDBLogcat.writeErrorANR("Error", "fetch error22 ${e.localizedMessage}")
         }

@@ -1,7 +1,10 @@
 package app.airsignal.weather.firebase.fcm
 
+import android.appwidget.AppWidgetManager
 import app.airsignal.weather.dao.StaticDataObject.TAG_N
 import app.airsignal.weather.firebase.db.RDBLogcat
+import app.airsignal.weather.view.widget.WidgetProvider
+import app.airsignal.weather.view.widget.WidgetProvider42
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -18,11 +21,25 @@ class SubFCM: FirebaseMessagingService() {
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        RDBLogcat.writeNotificationHistory(applicationContext,"위젯","onMessageReceived(${message.data})")
-
         if (message.data["sort"] != "widget") {
             // 포그라운드 노티피케이션 발생
             NotificationBuilder().sendNotification(applicationContext, message.data)
+        } else {
+            RDBLogcat.writeNotificationHistory(applicationContext,"위젯","success fcm priority is ${parsePriority(message.priority)}")
+            if (message.data["layout"] == "22") {
+                WidgetProvider().processUpdate(applicationContext, message.data["widgetId"]?.toInt() ?: -1)
+            } else if (message.data["layout"] == "42") {
+                WidgetProvider42().processUpdate(applicationContext, message.data["widgetId"]?.toInt() ?: -1)
+            }
+        }
+    }
+
+    private fun parsePriority(priority: Int): String {
+        return when(priority) {
+            0 -> {"unknown"}
+            1 -> {"high"}
+            2 -> {"normal"}
+            else -> {"error"}
         }
     }
 

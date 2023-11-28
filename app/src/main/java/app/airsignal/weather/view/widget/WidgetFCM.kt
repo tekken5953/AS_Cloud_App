@@ -12,8 +12,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
 class WidgetFCM(private val context: Context) {
-    suspend fun sendFCMMessage(): Job {
-        return CoroutineScope(Dispatchers.Default).launch {
+    fun sendFCMMessage(sort:String, appWidgetId: Int) {
+        CoroutineScope(Dispatchers.Default).launch {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                 CoroutineScope(Dispatchers.Default).launch {
                     if (task.isSuccessful) {
@@ -31,9 +31,9 @@ class WidgetFCM(private val context: Context) {
 
                         // 메시지 데이터 추가 (원하는 내용으로 수정)
                         val data = JSONObject()
-                        data.put("title", "FCM Message")
-                        data.put("body", "Sent FCM message.")
                         data.put("sort", "widget")
+                        data.put("widgetId", appWidgetId)
+                        data.put("layout", sort)
                         message.put("data", data)
 
                         // OkHttpClient 생성
@@ -43,7 +43,8 @@ class WidgetFCM(private val context: Context) {
                         val request = Request.Builder()
                             .url(fcmEndpoint)
                             .post(
-                                message.toString().toRequestBody("application/json".toMediaType())
+                                message.toString()
+                                    .toRequestBody("application/json".toMediaType())
                             )
                             .addHeader("Authorization", "key=$serverKey")
                             .build()
