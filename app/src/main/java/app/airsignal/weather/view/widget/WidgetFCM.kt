@@ -1,17 +1,18 @@
 package app.airsignal.weather.view.widget
 
-import android.content.Context
 import app.airsignal.weather.dao.IgnoredKeyFile.fcmServerKey
-import app.airsignal.weather.firebase.db.RDBLogcat
 import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
-class WidgetFCM(private val context: Context) {
+class WidgetFCM() {
     fun sendFCMMessage(sort:String, appWidgetId: Int) {
         CoroutineScope(Dispatchers.Default).launch {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
@@ -51,22 +52,7 @@ class WidgetFCM(private val context: Context) {
 
                         withContext(Dispatchers.IO) {
                             // HTTP 요청 실행
-                            val response = client.newCall(request).execute()
-
-                            // 응답 확인
-                            if (response.isSuccessful) {
-                                RDBLogcat.writeWidgetHistory(
-                                    context.applicationContext,
-                                    "fcm",
-                                    "true : ${response.body?.string()}"
-                                )
-                            } else {
-                                RDBLogcat.writeWidgetHistory(
-                                    context.applicationContext,
-                                    "fcm",
-                                    "fail : ${response.body?.string()}"
-                                )
-                            }
+                            client.newCall(request).execute()
                         }
                     }
                 }

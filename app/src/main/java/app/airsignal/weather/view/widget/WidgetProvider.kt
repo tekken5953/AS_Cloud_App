@@ -44,7 +44,7 @@ open class WidgetProvider : BaseWidgetProvider() {
         for (appWidgetId in appWidgetIds) {
             try {
                 RDBLogcat.writeWidgetHistory(context, "lifecycle", "onUpdate22")
-                WidgetFCM(context).sendFCMMessage("22",appWidgetId)
+                WidgetFCM().sendFCMMessage("22",appWidgetId)
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
                     "Error",
@@ -68,7 +68,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                             requestPermissions(context)
                         }
                     }
-                    WidgetFCM(context).sendFCMMessage("22",appWidgetId)
+                    WidgetFCM().sendFCMMessage("22",appWidgetId)
                 }
             }
         }
@@ -111,36 +111,35 @@ open class WidgetProvider : BaseWidgetProvider() {
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context, views: RemoteViews) {
         try {
-            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-            val onSuccess: (Location?) -> Unit = { location ->
-                CoroutineScope(Dispatchers.Default).launch {
-                    location?.let { loc ->
-                        val lat = loc.latitude
-                        val lng = loc.longitude
-                        val data = requestWeather(lat, lng)
-                        val addr = getAddress(context, lat, lng)
+            CoroutineScope(Dispatchers.IO).launch {
+                val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+                val onSuccess: (Location?) -> Unit = { location ->
+                    CoroutineScope(Dispatchers.Default).launch {
+                        location?.let { loc ->
+                            val lat = loc.latitude
+                            val lng = loc.longitude
+                            val data = requestWeather(lat, lng)
+                            val addr = getAddress(context, lat, lng)
 
-                        RDBLogcat.writeWidgetHistory(context, "data", "data22 is $data")
-                        withContext(Dispatchers.Main) {
-                            delay(500)
-                            updateUI(context, views, data, addr)
+                            RDBLogcat.writeWidgetHistory(context, "data", "data22 is $data")
+                            withContext(Dispatchers.Default) {
+                                delay(500)
+                                updateUI(context, views, data, addr)
+                            }
                         }
                     }
                 }
-            }
-            val onFailure: (e: Exception) -> Unit = {
-                RDBLogcat.writeErrorANR("Error", "widget error42 ${it.localizedMessage}")
-            }
-
-            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                .addOnSuccessListener(onSuccess)
-                .addOnFailureListener(onFailure)
-                .addOnCanceledListener {
-                    RDBLogcat.writeErrorANR(
-                        Thread.currentThread().toString(),
-                        "addOnCanceledListener22 is $resultData"
-                    )
+                val onFailure: (e: Exception) -> Unit = {
+                    RDBLogcat.writeErrorANR("data", "widget error22 ${it.localizedMessage}")
                 }
+
+                fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                    .addOnSuccessListener(onSuccess)
+                    .addOnFailureListener(onFailure)
+                    .addOnCanceledListener {
+                        RDBLogcat.writeErrorANR("data", "widget22 canceled")
+                    }
+            }
         } catch (e: Exception) {
             RDBLogcat.writeErrorANR("Error", "fetch error22 ${e.localizedMessage}")
         }

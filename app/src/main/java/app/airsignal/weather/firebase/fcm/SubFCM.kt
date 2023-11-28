@@ -1,6 +1,5 @@
 package app.airsignal.weather.firebase.fcm
 
-import android.appwidget.AppWidgetManager
 import app.airsignal.weather.dao.StaticDataObject.TAG_N
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.view.widget.WidgetProvider
@@ -25,7 +24,8 @@ class SubFCM: FirebaseMessagingService() {
             // 포그라운드 노티피케이션 발생
             NotificationBuilder().sendNotification(applicationContext, message.data)
         } else {
-            RDBLogcat.writeNotificationHistory(applicationContext,"위젯","success fcm priority is ${parsePriority(message.priority)}")
+//            WidgetNotificationBuilder().sendNotification(applicationContext,message.data)
+            RDBLogcat.writeNotificationHistory(applicationContext,"위젯","${parsePriority(message.priority)},${message.data["layout"]},${message.data["widgetId"]}")
             if (message.data["layout"] == "22") {
                 WidgetProvider().processUpdate(applicationContext, message.data["widgetId"]?.toInt() ?: -1)
             } else if (message.data["layout"] == "42") {

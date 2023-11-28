@@ -44,7 +44,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         for (appWidgetId in appWidgetIds) {
             try {
                 RDBLogcat.writeWidgetHistory(context, "lifecycle", "onUpdate42")
-                WidgetFCM(context).sendFCMMessage("42",appWidgetId)
+                WidgetFCM().sendFCMMessage("42",appWidgetId)
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
                     "Error",
@@ -69,7 +69,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                             requestPermissions(context)
                         }
                     }
-                    WidgetFCM(context).sendFCMMessage("42",appWidgetId)
+                    WidgetFCM().sendFCMMessage("42",appWidgetId)
                 }
             }
         }
@@ -104,7 +104,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             views.run {
                 this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
                 this.setOnClickPendingIntent(R.id.w42Background, enterPending)
-                fetch(context.applicationContext, views)
+                fetch(context, views)
             }
         }
     }
@@ -112,36 +112,35 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context, views: RemoteViews) {
         try {
-            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-            val onSuccess: (Location?) -> Unit = { location ->
-                CoroutineScope(Dispatchers.Default).launch {
-                    location?.let { loc ->
-                        val lat = loc.latitude
-                        val lng = loc.longitude
-                        val data = requestWeather(lat, lng)
-                        val addr = getAddress(context, lat, lng)
+            CoroutineScope(Dispatchers.IO).launch {
+                val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+                val onSuccess: (Location?) -> Unit = { location ->
+                    CoroutineScope(Dispatchers.Default).launch {
+                        location?.let { loc ->
+                            val lat = loc.latitude
+                            val lng = loc.longitude
+                            val data = requestWeather(lat, lng)
+                            val addr = getAddress(context, lat, lng)
 
-                        RDBLogcat.writeWidgetHistory(context, "data", "data42 is $data")
-                        withContext(Dispatchers.Main) {
-                            delay(500)
-                            updateUI(context, views, data, addr)
+                            RDBLogcat.writeWidgetHistory(context, "data", "data42 is $data")
+                            withContext(Dispatchers.Default) {
+                                delay(500)
+                                updateUI(context, views, data, addr)
+                            }
                         }
                     }
                 }
-            }
-            val onFailure: (e: Exception) -> Unit = {
-                RDBLogcat.writeErrorANR("Error", "widget error42 ${it.localizedMessage}")
-            }
-
-            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                .addOnSuccessListener(onSuccess)
-                .addOnFailureListener(onFailure)
-                .addOnCanceledListener {
-                    RDBLogcat.writeErrorANR(
-                        Thread.currentThread().toString(),
-                        "addOnCanceledListener42 is $resultData"
-                    )
+                val onFailure: (e: Exception) -> Unit = {
+                    RDBLogcat.writeWidgetHistory(context, "data", "widget error42 ${it.localizedMessage}")
                 }
+
+                fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                    .addOnSuccessListener(onSuccess)
+                    .addOnFailureListener(onFailure)
+                    .addOnCanceledListener {
+                        RDBLogcat.writeWidgetHistory(context, "data", "widget42 cancel $resultData")
+                    }
+            }
         } catch (e: Exception) {
             RDBLogcat.writeErrorANR("Error", "fetch error42 ${e.localizedMessage}")
         }
