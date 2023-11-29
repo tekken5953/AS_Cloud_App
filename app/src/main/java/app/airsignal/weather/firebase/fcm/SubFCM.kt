@@ -24,13 +24,13 @@ class SubFCM: FirebaseMessagingService() {
             // 포그라운드 노티피케이션 발생
             NotificationBuilder().sendNotification(applicationContext, message.data)
         } else {
-//            WidgetNotificationBuilder().sendNotification(applicationContext,message.data)
-            RDBLogcat.writeNotificationHistory(applicationContext,"위젯","${parsePriority(message.priority)},${message.data["layout"]},${message.data["widgetId"]}")
-            if (message.data["layout"] == "22") {
-                WidgetProvider().processUpdate(applicationContext, message.data["widgetId"]?.toInt() ?: -1)
-            } else if (message.data["layout"] == "42") {
-                WidgetProvider42().processUpdate(applicationContext, message.data["widgetId"]?.toInt() ?: -1)
-            }
+            WidgetNotificationBuilder().sendNotification(applicationContext,message.data)
+//            RDBLogcat.writeNotificationHistory(applicationContext,"위젯","${parsePriority(message.priority)},${message.data["layout"]},${message.data["widgetId"]}")
+//            if (message.data["layout"] == "22") {
+//                WidgetProvider().processUpdate(applicationContext, message.data["widgetId"]?.toInt() ?: -1)
+//            } else if (message.data["layout"] == "42") {
+//                WidgetProvider42().processUpdate(applicationContext, message.data["widgetId"]?.toInt() ?: -1)
+//            }
         }
     }
 

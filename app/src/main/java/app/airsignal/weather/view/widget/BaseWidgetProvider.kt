@@ -8,13 +8,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
+import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.retrofit.HttpClient
 import app.airsignal.weather.util.AddressFromRegex
 import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import com.google.firebase.messaging.FirebaseMessagingService
 import retrofit2.awaitResponse
 import java.time.LocalDateTime
 
@@ -50,10 +50,17 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         super.onDeleted(context, appWidgetIds)
     }
 
-    suspend fun requestWeather(lat: Double, lng: Double): ApiModel.WidgetData? {
-        return  HttpClient.getInstance(true).setClientBuilder()
-            .getWidgetForecast(lat, lng, 4)
-            .awaitResponse().body()
+    suspend fun requestWeather(context: Context,lat: Double, lng: Double): ApiModel.WidgetData? {
+        try {
+            val response = HttpClient.getInstance(true).setClientBuilder()
+                .getWidgetForecast(lat, lng, 4)
+                .awaitResponse().body()
+            RDBLogcat.writeWidgetHistory(context, "data", "data is $response")
+            return response
+        } catch (e: Exception) {
+            RDBLogcat.writeWidgetHistory(context, "error", "weather call error cause ${e.localizedMessage}")
+        }
+        return null
     }
 
     fun getAddress(context: Context, lat: Double, lng: Double): String {
@@ -62,18 +69,8 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         return if (result == "") AddressFromRegex(loc).getSecondAddress() else result
     }
 
-    @SuppressLint("BatteryLife")
-    fun requestWhitelist(context: Context) {
-        val packageName: String = context.packageName
-        val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager?
-        if (!pm!!.isIgnoringBatteryOptimizations(packageName)) {
-            val intent = Intent().apply {
-                action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                data = Uri.parse("package:$packageName")
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            }
-            context.startActivity(intent)
-        }
+    fun checkBackPerm(context: Context): Boolean {
+        return RequestPermissionsUtil(context).isBackgroundRequestLocation()
     }
 
     fun requestPermissions(context: Context) {
@@ -85,14 +82,16 @@ open class BaseWidgetProvider: AppWidgetProvider() {
                 context.startActivity(intent)
             }
         }
-        requestWhitelist(context)
     }
 
     fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean {
         val timeFormed = LocalDateTime.parse(currentTime)
         val realtimeFormed = LocalDateTime.parse(realTime)
-        return realtimeFormed?.let {
-            timeFormed.isAfter(it)
-        } ?: true
+        return realtimeFormed?.let { timeFormed.isAfter(it) } ?: true
+    }
+
+    fun isDeviceInDozeMode(context: Context): Boolean {
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager?
+        return powerManager?.isDeviceIdleMode == true
     }
 }

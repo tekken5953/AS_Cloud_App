@@ -223,18 +223,6 @@ class MainActivity
             }
         }
 
-//        if (getInitBackLogPerm(this)) {
-//            if (VERSION.SDK_INT >= 29) {
-//                if (RequestPermissionsUtil(this).isBackgroundRequestLocation()) {
-//                    workStart()
-//                }
-//            } else {
-//                if (isPermedBackLoc(this)) {
-//                    workStart()
-//                }
-//            }
-//        }
-
         adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
 
         binding.dataVM = getDataViewModel

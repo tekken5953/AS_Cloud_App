@@ -35,7 +35,7 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
 
     // ANR 에러 발생 시 로그 저장 후 종료
     override fun uncaughtException(p0: Thread, p1: Throwable) {
-        RDBLogcat.writeErrorANR(thread = "Thread : ${p0.name}", msg = "Error Msg: ${p1.stackTraceToString()}")
+        RDBLogcat.writeErrorANR(thread = "Thread is ${p0.name}", msg = "Error Msg is ${p1.stackTraceToString()}")
         if (p0.name == "WidgetProvider") {
             HttpClient.getInstance(true).setClientBuilder()
         } else {

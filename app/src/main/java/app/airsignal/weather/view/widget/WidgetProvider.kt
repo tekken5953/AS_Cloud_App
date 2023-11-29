@@ -7,7 +7,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.os.Build
 import android.widget.RemoteViews
 import app.airsignal.weather.R
 import app.airsignal.weather.firebase.db.RDBLogcat
@@ -22,6 +21,9 @@ import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.*
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 import kotlin.math.roundToInt
 
 
@@ -63,12 +65,11 @@ open class WidgetProvider : BaseWidgetProvider() {
         if (context != null) {
             if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                 if (intent.action == REFRESH_BUTTON_CLICKED) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                        if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
-                            requestPermissions(context)
-                        }
+                    if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                        requestPermissions(context)
+                    } else {
+                        WidgetFCM().sendFCMMessage("22",appWidgetId)
                     }
-                    WidgetFCM().sendFCMMessage("22",appWidgetId)
                 }
             }
         }
@@ -103,45 +104,48 @@ open class WidgetProvider : BaseWidgetProvider() {
             views.run {
                 this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
                 this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
-                fetch(context.applicationContext, views)
+                fetch(context, views)
             }
         }
     }
 
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context, views: RemoteViews) {
-        try {
-            CoroutineScope(Dispatchers.IO).launch {
-                val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-                val onSuccess: (Location?) -> Unit = { location ->
-                    CoroutineScope(Dispatchers.Default).launch {
-                        location?.let { loc ->
-                            val lat = loc.latitude
-                            val lng = loc.longitude
-                            val data = requestWeather(lat, lng)
-                            val addr = getAddress(context, lat, lng)
-
-                            RDBLogcat.writeWidgetHistory(context, "data", "data22 is $data")
-                            withContext(Dispatchers.Default) {
-                                delay(500)
-                                updateUI(context, views, data, addr)
+        CoroutineScope(Dispatchers.Default).launch {
+            if (checkBackPerm(context)) {
+                try {
+                    val locationResult = suspendCoroutine<Location?> { continuation ->
+                        LocationServices.getFusedLocationProviderClient(context)
+                            .lastLocation
+                            .addOnSuccessListener { location ->
+                                continuation.resume(location)
                             }
-                        }
+                            .addOnFailureListener { exception ->
+                                continuation.resumeWithException(exception)
+                            }
                     }
-                }
-                val onFailure: (e: Exception) -> Unit = {
-                    RDBLogcat.writeErrorANR("data", "widget error22 ${it.localizedMessage}")
-                }
+                    locationResult?.let {
+                        val lat = it.latitude
+                        val lng = it.longitude
+                        val addr = getAddress(context, lat, lng)
+                        val data = requestWeather(context, lat, lng)
 
-                fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                    .addOnSuccessListener(onSuccess)
-                    .addOnFailureListener(onFailure)
-                    .addOnCanceledListener {
-                        RDBLogcat.writeErrorANR("data", "widget22 canceled")
+                        withContext(Dispatchers.Main) {
+                            delay(500)
+                            updateUI(context, views, data, addr)
+                        }
+                    } ?: run {
+                        RDBLogcat.writeWidgetHistory(
+                            context, "data",
+                            "get fail cause location is null"
+                        )
                     }
+                } catch (e: Exception) {
+                    RDBLogcat.writeErrorANR("Error", "fetch error42 ${e.localizedMessage}")
+                }
+            } else {
+                requestPermissions(context)
             }
-        } catch (e: Exception) {
-            RDBLogcat.writeErrorANR("Error", "fetch error22 ${e.localizedMessage}")
         }
     }
 

@@ -144,17 +144,6 @@ class NotificationBuilder {
         }
     }
 
-   private fun applyRingtone(context: Context,ringtone: Ringtone) {
-       if (getUserNotiSound(context)) {
-           if (ringtone.isPlaying) ringtone.stop()
-           ringtone.play()
-       }
-   }
-
-    private fun applyVibrate(context: Context) {
-        VibrateUtil(context).noti(longArrayOf(0,100,100))
-    }
-
     private fun getSkyBitmap(
         context: Context,
         rain: String?,

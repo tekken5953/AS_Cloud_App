@@ -1,6 +1,5 @@
 package app.airsignal.weather.view.aseye.dao
 
-import android.graphics.Color
 import com.google.gson.annotations.SerializedName
 
 class EyeDataModel {

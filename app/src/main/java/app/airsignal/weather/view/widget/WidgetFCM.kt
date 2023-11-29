@@ -27,7 +27,7 @@ class WidgetFCM() {
 
                         // 메시지 생성
                         val message = JSONObject()
-                        message.put("to", "Bearer $token")
+                        message.put("to", token)
                         message.put("priority", "high")
 
                         // 메시지 데이터 추가 (원하는 내용으로 수정)

@@ -13,11 +13,9 @@ class WidgetPermActivity : AppCompatActivity() {
 
         val perm = RequestPermissionsUtil(this)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (!perm.isBackgroundRequestLocation()) {
-                perm.requestBackgroundLocation()
-            }
-            finish()
+        if (!perm.isBackgroundRequestLocation()) {
+            perm.requestBackgroundLocation()
         }
+        finish()
     }
 }

@@ -139,20 +139,24 @@ class RequestPermissionsUtil(private val context: Context) {
     }
 
     /** 백그라운드에서 위치 접근 권한 허용 여부 검사 **/
-    @RequiresApi(Build.VERSION_CODES.Q)
     fun isBackgroundRequestLocation(): Boolean {
-        return ContextCompat.checkSelfPermission(context, permissionsLocationBackground) ==
-                PackageManager.PERMISSION_GRANTED
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ContextCompat.checkSelfPermission(context, permissionsLocationBackground) ==
+                    PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
     }
 
     /** 백그라운드에서 위치 접근 권한 요청 **/
-    @RequiresApi(Build.VERSION_CODES.Q)
     fun requestBackgroundLocation() {
-        requestPermissions(
-            context as Activity,
-            arrayOf(permissionsLocationBackground),
-            REQUEST_BACKGROUND_LOCATION
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            requestPermissions(
+                context as Activity,
+                arrayOf(permissionsLocationBackground),
+                REQUEST_BACKGROUND_LOCATION
+            )
+        }
     }
 
 

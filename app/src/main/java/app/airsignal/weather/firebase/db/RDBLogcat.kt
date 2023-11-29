@@ -1,6 +1,7 @@
 package app.airsignal.weather.firebase.db
 
 import android.content.Context
+import android.os.Build
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.util.`object`.DataTypeParser.millsToString
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
@@ -118,6 +119,7 @@ object RDBLogcat {
             child(LOGIN_PREF_NAME).setValue(name)
             child(LOGIN_PREF_PROFILE).setValue(profile)
             child(LOGIN_PREF_DEVICE_ID).setValue(androidID(context))
+            child(USER_PREF_DEVICE_SDK_VERSION).setValue(Build.VERSION.SDK_INT)
         }
     }
 

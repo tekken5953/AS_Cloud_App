@@ -120,7 +120,6 @@ class GetLocation(private val context: Context) {
             location?.let { loc ->
                 val latitude = loc.latitude
                 val longitude = loc.longitude
-
                 updateCurrentAddress(latitude, longitude, getAddress(latitude, longitude))
                 writeGpsHistory(
                     context, isSearched = false,
