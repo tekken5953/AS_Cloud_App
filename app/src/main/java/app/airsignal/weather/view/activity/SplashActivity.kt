@@ -21,8 +21,9 @@ import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.view.dialog.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.vmodel.GetAppVersionViewModel
-import okio.IOException
+import com.google.firebase.FirebaseApp
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.IOException
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity<ActivitySplashBinding>() {
@@ -40,6 +41,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         SetSystemInfo.setStatusBar(this)
 
         initBinding()
+        FirebaseApp.initializeApp(this)
         LoggerUtil().getInstance()
         applyAppVersionData()
 
@@ -48,7 +50,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             this,
             sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
-            value = "${GetSystemInfo.getApplicationVersionName(this)}.${GetSystemInfo.getApplicationVersionCode(this)}"
+            value = "name is ${GetSystemInfo.getApplicationVersionName(this)} code is ${GetSystemInfo.getApplicationVersionCode(this)}"
         )
 
         // 유저 디바이스 설정 - SDK 버전

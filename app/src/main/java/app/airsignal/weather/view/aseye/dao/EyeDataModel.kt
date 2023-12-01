@@ -1,29 +1,50 @@
 package app.airsignal.weather.view.aseye.dao
 
 import com.google.gson.annotations.SerializedName
+import java.time.LocalDateTime
 
 class EyeDataModel {
-    data class DeviceModel(
-        @SerializedName("name")
-        var name: String,
+    data class Device(
+        @SerializedName("created_at")
+        val created_at: LocalDateTime,
+        @SerializedName("is_master")
+        val isMaster: Boolean,
+        @SerializedName("email")
+        var email: String,
+        @SerializedName("alias")
+        val alias: String,
         @SerializedName("serial")
-        val serial: String,
-        @SerializedName("power")
-        val power: Boolean?,
-        @SerializedName("report")
-        val report: Int?,
-        @SerializedName("isAdd")
-        val isAdd: Boolean
+        val serial: Serial
     )
 
-    data class EyeReportModel(
+    data class EntireData(
+        @SerializedName("last_modify")
+        val lastModify: LocalDateTime,
+        @SerializedName("measured")
+        val measured: Measured,
+        @SerializedName("report")
+        val report: List<String>
+    )
+
+    data class Serial(
+        @SerializedName("last_modify")
+        val lastModify: LocalDateTime,
+        @SerializedName("serial")
+        val serial: String,
+        @SerializedName("report")
+        val report: Boolean,
+        @SerializedName("power")
+        val power: Boolean
+    )
+
+    data class EyeReportAdapter(
         @SerializedName("title")
         val title: String,
         @SerializedName("content")
         val content: String
     )
 
-    data class LifeModel(
+    data class Life(
         val nameEn: String,
         val nameKr: String,
         val value: Int,
@@ -31,17 +52,13 @@ class EyeDataModel {
         val backColor: Int
     )
 
-    data class AirValueModel(
-        @SerializedName("pmValid")
-        val pmValid: Int,
+    data class Measured(
         @SerializedName("pm2p5Value")
         val pm2p5Value: Float,
         @SerializedName("pm2p5Lvl")
         val pm2p5Lvl: Int,
         @SerializedName("pm2p5AQI")
         val pm2p5AQI: Float,
-        @SerializedName("thValid")
-        val thValid: Int,
         @SerializedName("tempValue")
         val tempValue: Float,
         @SerializedName("tempLvl")
@@ -50,38 +67,26 @@ class EyeDataModel {
         val humidValue: Float,
         @SerializedName("humidLvl")
         val humidLvl: Int,
-        @SerializedName("coValid")
-        val coValid: Int,
         @SerializedName("coValue")
         val coValue: Float,
         @SerializedName("coLvl")
         val coLvl: Int,
-        @SerializedName("co2Valid")
-        val co2Valid: Int,
         @SerializedName("co2Value")
         val co2Value: Float,
-        @SerializedName("tvocValid")
-        val tvocValid: Int,
         @SerializedName("co2Lvl")
         val co2Lvl: Int,
         @SerializedName("tvocValue")
         val tvocValue: Float,
         @SerializedName("tvocLvl")
         val tvocLvl: Int,
-        @SerializedName("no2Valid")
-        val no2Valid: Int,
         @SerializedName("no2Value")
         val no2Value: Float,
         @SerializedName("no2Lvl")
         val no2Lvl: Int,
-        @SerializedName("lightValid")
-        val lightValid: Int,
         @SerializedName("lightValue")
         val lightValue: Float,
         @SerializedName("lightLvl")
         val lightLvl: Int,
-        @SerializedName("gyroValid")
-        val gyroValid: Int,
         @SerializedName("gyroXValue")
         val gyroXValue: Float,
         @SerializedName("gyroYValue")
@@ -96,7 +101,7 @@ class EyeDataModel {
         val CAILvl: Int
     )
 
-    data class SettingModel(
+    data class Setting(
         @SerializedName("fwVer")
         val fwVer: String,  // x.x.x.x
         @SerializedName("installTime")
@@ -105,7 +110,7 @@ class EyeDataModel {
         val measureChk: Long    // 0 or 1 or 2 or 4 or 8 or 16 or 32 or 64 or 128 or 256
     )
 
-    data class LifecycleModel(
+    data class Lifecycle(
         @SerializedName("pm2p5LifeRemain")
         val pm2p5LifeRemain: Int,
         @SerializedName("pm2p5LifePercent")
@@ -162,61 +167,71 @@ class EyeDataModel {
         val gyroInstallTime: Int,
     )
 
-    data class DisplayModel(
+    data class Display(
         @SerializedName("displayMode")
         val displayMode: Int,   // 0 or 1
         @SerializedName("displayBrightness")
         val displayBrightness: Int  // percent
     )
 
-    data class EarthquakeModel(
+    data class Earthquake(
         @SerializedName("earthquakeEnabled")
         val earthquakeEnabled: Int  // 0 or 1
     )
 
-    data class WifiModel(
+    data class Wifi(
         @SerializedName("ssid")
         val ssid: String,
         @SerializedName("password")
         val password: String
     )
 
-    data class BleModel(
+    data class Ble(
         @SerializedName("bleEnabled")
         val bleEnabled: Int,    // 0 or 1
         @SerializedName("bleDataReport")
         val bleDataReport: Int  // 10 ~ 3,600(sec)
     )
 
-    data class LocationModel(
+    data class Location(
         @SerializedName("latitude")
         val latitude: Double,
         @SerializedName("longitude")
         val longitude: Double
     )
 
-    data class AlarmModel(
+    data class Alarm(
         @SerializedName("alarmState")
         val alarmState: Int // 0 or 1
     )
 
-    data class ReportModel(
+    data class Interval(
         @SerializedName("reportTime")
-        val reportTime: Int // 10 ~ 3,600(sec)
+        val interval: Int // 10 ~ 3,600(sec)
     )
 
-    data class PowerModel(
+    data class Power(
         @SerializedName("power")
         val power: Int // 0 - off
     )
 
-    data class RebootModel(
+    data class Reboot(
         @SerializedName("complete")
         val complete: Int // 0 or 1
     )
 
-    data class StatusModel(
+    data class Status(
         @SerializedName("status")
         val status: Int // 0 or 1
+    )
+
+    data class Category(
+        val name: String,
+        val device: List<Device>?
+    )
+
+    data class Group(
+        var isChecked: Boolean,
+        val device: Device
     )
 }

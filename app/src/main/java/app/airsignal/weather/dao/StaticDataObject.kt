@@ -16,7 +16,8 @@ object StaticDataObject {
     const val LANG_KR = "korea"
     const val LANG_EN = "english"
     const val LANG_SYS = "system"
-    const val LAST_REFRESH = "last_refresh"
+    const val LAST_REFRESH42 = "last_refresh_42"
+    const val LAST_REFRESH22 = "last_refresh_22"
     const val TEXT_SCALE_BIG = "big"
     const val TEXT_SCALE_SMALL = "small"
     const val TEXT_SCALE_DEFAULT = "default"
@@ -27,4 +28,5 @@ object StaticDataObject {
     const val REQUEST_BACKGROUND_LOCATION = 0x0000003
     const val TAG_N = "Tag_Notification"                  // FCM 기본 태그 Key
     const val TAG_W = "Tag_Widget"
+    const val CHECK_GPS_BACKGROUND = "BACKGROUND_GPS_OK"  // GPS WorkManager ID 값
 }

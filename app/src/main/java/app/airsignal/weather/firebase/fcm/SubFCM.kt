@@ -22,7 +22,7 @@ class SubFCM: FirebaseMessagingService() {
         super.onMessageReceived(message)
         if (message.data["sort"] != "widget") {
             // 포그라운드 노티피케이션 발생
-            NotificationBuilder().sendNotification(applicationContext, message.data)
+            NotificationBuilder().sendNotification(applicationContext,message.data)
         } else {
             WidgetNotificationBuilder().sendNotification(applicationContext,message.data)
 //            RDBLogcat.writeNotificationHistory(applicationContext,"위젯","${parsePriority(message.priority)},${message.data["layout"]},${message.data["widgetId"]}")

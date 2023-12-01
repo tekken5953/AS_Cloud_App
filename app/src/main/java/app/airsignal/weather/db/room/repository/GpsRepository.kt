@@ -3,6 +3,7 @@ package app.airsignal.weather.db.room.repository
 import android.content.Context
 import app.airsignal.weather.db.database.GpsDataBase.Companion.getInstance
 import app.airsignal.weather.db.room.model.GpsEntity
+import app.airsignal.weather.firebase.db.RDBLogcat
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +23,10 @@ class GpsRepository(private val context: Context) {
     fun update(model: GpsEntity) {
         CoroutineScope(Dispatchers.IO).launch {
             getInstance(context).gpsRepository().updateCurrentGPS(model)
-            Logger.t(TAG_D).d("Update Model : $model")
+            RDBLogcat.writeWorkManager(
+                context.applicationContext,
+                gpsValue = "DB update to ${model.lat},${model.lng}"
+            )
         }
     }
 

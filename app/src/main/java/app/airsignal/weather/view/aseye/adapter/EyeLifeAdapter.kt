@@ -9,14 +9,13 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.util.getColumnIndex
 import app.airsignal.weather.R
 import app.airsignal.weather.view.aseye.dao.EyeDataModel
 import java.util.*
 
 class EyeLifeAdapter(
     private val context: Context,
-    list: ArrayList<EyeDataModel.LifeModel>
+    list: ArrayList<EyeDataModel.Life>
 ) :
     RecyclerView.Adapter<EyeLifeAdapter.ViewHolder>() {
     private val mList = list
@@ -44,7 +43,7 @@ class EyeLifeAdapter(
         private val pb: ProgressBar = itemView.findViewById(R.id.listItemAeLifePb)
 
         @SuppressLint("InflateParams")
-        fun bind(dao: EyeDataModel.LifeModel) {
+        fun bind(dao: EyeDataModel.Life) {
             nameEn.text = dao.nameEn
             nameKr.text = dao.nameKr
             lifeValue.text = dao.value.toString()

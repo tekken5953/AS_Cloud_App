@@ -11,19 +11,17 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
-import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.aseye.activity.EyeDetailActivity
 import app.airsignal.weather.view.aseye.adapter.ReportViewPagerAdapter
 import app.airsignal.weather.view.aseye.dao.EyeDataModel
 import kotlinx.coroutines.*
-import timber.log.Timber
 
 class EyeDetailReportFragment : Fragment() {
 
     private lateinit var mActivity: EyeDetailActivity
     private lateinit var binding : EyeDetailReportFragmentBinding
     private val autoJob = Job()
-    private val reportViewPagerItem = ArrayList<EyeDataModel.EyeReportModel>()
+    private val reportViewPagerItem = ArrayList<EyeDataModel.EyeReportAdapter>()
     private val reportViewPagerAdapter by lazy {
         ReportViewPagerAdapter(
             requireActivity(),
@@ -66,7 +64,7 @@ class EyeDetailReportFragment : Fragment() {
         warningSlideAuto()
     }
 
-    fun onDataReceived(data: EyeDataModel.EyeReportModel?) {
+    fun onDataReceived(data: EyeDataModel.EyeReportAdapter?) {
         data?.let {
             addViewPagerItem("CO2(이산화탄소)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
             addViewPagerItem("PM2.5(초미세먼지)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
@@ -78,7 +76,7 @@ class EyeDetailReportFragment : Fragment() {
     private fun warningSlideAuto() {
         if (reportViewPagerItem.size > 1) {
             CoroutineScope(autoJob + Dispatchers.Main).launch {
-                delay(3500)
+                delay(5000)
                 val vp = binding.reportVp
                 vp.currentItem =
                     if (vp.currentItem + 1 < reportViewPagerItem.size) vp.currentItem + 1 else 0
@@ -90,7 +88,7 @@ class EyeDetailReportFragment : Fragment() {
     }
 
     private fun addViewPagerItem(title: String, content: String) {
-        val item = EyeDataModel.EyeReportModel(title,content)
+        val item = EyeDataModel.EyeReportAdapter(title,content)
         reportViewPagerItem.add(item)
     }
 }

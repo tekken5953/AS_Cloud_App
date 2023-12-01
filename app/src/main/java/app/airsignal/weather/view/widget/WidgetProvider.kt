@@ -8,7 +8,10 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.widget.RemoteViews
+import android.widget.Toast
 import app.airsignal.weather.R
+import app.airsignal.weather.dao.StaticDataObject
+import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.util.`object`.DataTypeParser
@@ -46,7 +49,7 @@ open class WidgetProvider : BaseWidgetProvider() {
         for (appWidgetId in appWidgetIds) {
             try {
                 RDBLogcat.writeWidgetHistory(context, "lifecycle", "onUpdate22")
-                WidgetFCM().sendFCMMessage("22",appWidgetId)
+                processDozeMode(context, appWidgetId)
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
                     "Error",
@@ -65,14 +68,31 @@ open class WidgetProvider : BaseWidgetProvider() {
         if (context != null) {
             if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                 if (intent.action == REFRESH_BUTTON_CLICKED) {
-                    if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
-                        requestPermissions(context)
+                    if (isRefreshable(context, "22")) {
+                        if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                            requestPermissions(context)
+                        } else {
+                            processDozeMode(context, appWidgetId)
+                        }
+                        RDBLogcat.writeWidgetHistory(
+                            context.applicationContext, "lifecycle",
+                            "onReceive42 doze is ${isDeviceInDozeMode(context.applicationContext)}"
+                        )
                     } else {
-                        WidgetFCM().sendFCMMessage("22",appWidgetId)
+                        Toast.makeText(
+                            context.applicationContext,
+                            "갱신은 1분 주기로 가능합니다",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
         }
+    }
+
+    private fun processDozeMode(context: Context, appWidgetId: Int) {
+        if (isDeviceInDozeMode(context)) WidgetFCM().sendFCMMessage("22", appWidgetId)
+        else processUpdate(context, appWidgetId)
     }
 
     fun processUpdate(context: Context, appWidgetId: Int) {
@@ -114,34 +134,26 @@ open class WidgetProvider : BaseWidgetProvider() {
         CoroutineScope(Dispatchers.Default).launch {
             if (checkBackPerm(context)) {
                 try {
-                    val locationResult = suspendCoroutine<Location?> { continuation ->
-                        LocationServices.getFusedLocationProviderClient(context)
-                            .lastLocation
-                            .addOnSuccessListener { location ->
-                                continuation.resume(location)
-                            }
-                            .addOnFailureListener { exception ->
-                                continuation.resumeWithException(exception)
-                            }
-                    }
-                    locationResult?.let {
-                        val lat = it.latitude
-                        val lng = it.longitude
-                        val addr = getAddress(context, lat, lng)
-                        val data = requestWeather(context, lat, lng)
+                    val roomDB = GpsRepository(context).findById(StaticDataObject.CURRENT_GPS_ID)
+                    val lat = roomDB.lat
+                    val lng = roomDB.lng
+                    lat?.let { mLat ->
+                        lng?.let { mLng ->
+                            val addr = getAddress(context, mLat, mLng)
+                            val data = requestWeather(context, mLat, mLng)
 
-                        withContext(Dispatchers.Main) {
-                            delay(500)
-                            updateUI(context, views, data, addr)
+                            withContext(Dispatchers.Main) {
+                                RDBLogcat.writeWidgetHistory(context, "data", "data22 is $data")
+                                delay(500)
+                                updateUI(context, views, data, addr)
+                            }
                         }
-                    } ?: run {
-                        RDBLogcat.writeWidgetHistory(
-                            context, "data",
-                            "get fail cause location is null"
-                        )
+                    }
+                    withContext(Dispatchers.IO) {
+                        BaseWidgetProvider().setRefreshTime(context,"22")
                     }
                 } catch (e: Exception) {
-                    RDBLogcat.writeErrorANR("Error", "fetch error42 ${e.localizedMessage}")
+                    RDBLogcat.writeErrorANR("Error", "fetch error22 ${e.localizedMessage}")
                 }
             } else {
                 requestPermissions(context)
@@ -160,7 +172,7 @@ open class WidgetProvider : BaseWidgetProvider() {
             val currentTime = currentDateTimeString("HH:mm")
             val sunrise = data?.sun?.sunrise ?: "0000"
             val sunset = data?.sun?.sunset ?: "0000"
-            val isNight = GetAppInfo.getIsNight(sunrise,sunset)
+            val isNight = GetAppInfo.getIsNight(sunrise, sunset)
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val componentName =
                 ComponentName(context, this@WidgetProvider.javaClass)
@@ -170,30 +182,42 @@ open class WidgetProvider : BaseWidgetProvider() {
                 this.setTextViewText(R.id.widget2x2Time, currentTime)
                 data?.let {
                     this.setTextViewText(
-                        R.id.widget2x2TempValue,"${it.current.temperature?.roundToInt() ?: 0}˚")
+                        R.id.widget2x2TempValue, "${it.current.temperature?.roundToInt() ?: 0}˚"
+                    )
                     this.setTextViewText(R.id.widget2x2Address, addr ?: "")
-                    this.setImageViewResource(R.id.widget2x2SkyImg,
+                    this.setImageViewResource(
+                        R.id.widget2x2SkyImg,
                         getSkyImgWidget(
-                            if(currentIsAfterRealtime(it.current.currentTime,it.realtime[0].forecast))
+                            if (currentIsAfterRealtime(
+                                    it.current.currentTime,
+                                    it.realtime[0].forecast
+                                )
+                            )
                                 it.current.rainType
-                            else it.realtime[0].rainType, it.realtime[0].sky, isNight)
+                            else it.realtime[0].rainType, it.realtime[0].sky, isNight
+                        )
                     )
                     val bg = getBackgroundImgWidget(
                         "22",
-                        rainType =  if (currentIsAfterRealtime(it.current.currentTime,it.realtime[0].forecast))
+                        rainType = if (currentIsAfterRealtime(
+                                it.current.currentTime,
+                                it.realtime[0].forecast
+                            )
+                        )
                             it.current.rainType else it.realtime[0].rainType,
                         sky = it.realtime[0].sky, isNight
                     )
-                    this.setTextViewText(R.id.widget2x2Pm25Title,"미세먼지")
+                    this.setTextViewText(R.id.widget2x2Pm25Title, "미세먼지")
                     this.setTextViewText(
                         R.id.widget2x2Pm25Value, DataTypeParser.getDataText(
-                            context, DataTypeParser.convertValueToGrade("PM2.5",
+                            context, DataTypeParser.convertValueToGrade(
+                                "PM2.5",
                                 it.quality.pm25Value24?.toDouble() ?: 0.0
                             )
                         )
                     )
                     setInt(R.id.widget2x2Background, "setBackgroundResource", bg)
-                    applyColor(context,views,bg)
+                    applyColor(context, views, bg)
                 }
             }
 
@@ -203,17 +227,23 @@ open class WidgetProvider : BaseWidgetProvider() {
         }
     }
 
-    private fun applyColor(context: Context,views: RemoteViews, bg: Int) {
-        val textArray = arrayOf(R.id.widget2x2TempValue, R.id.widget2x2Time, R.id.widget2x2Address,
-            R.id.widget2x2Pm25Title,R.id.widget2x2Pm25Value)
-        val imgArray = arrayOf(R.id.widget2x2Refresh,R.id.widget2x2LocIv)
+    private fun applyColor(context: Context, views: RemoteViews, bg: Int) {
+        val textArray = arrayOf(
+            R.id.widget2x2TempValue, R.id.widget2x2Time, R.id.widget2x2Address,
+            R.id.widget2x2Pm25Title, R.id.widget2x2Pm25Value
+        )
+        val imgArray = arrayOf(R.id.widget2x2Refresh, R.id.widget2x2LocIv)
         views.run {
             imgArray.forEach {
                 this.setInt(
                     it, "setColorFilter", context.applicationContext.getColor(
                         when (bg) {
-                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.wblack }
-                            R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> { R.color.white }
+                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> {
+                                R.color.wblack
+                            }
+                            R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> {
+                                R.color.white
+                            }
                             else -> android.R.color.transparent
                         }
                     )
@@ -224,8 +254,12 @@ open class WidgetProvider : BaseWidgetProvider() {
                 this.setTextColor(
                     it, context.applicationContext.getColor(
                         when (bg) {
-                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.wblack }
-                            R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> { R.color.white }
+                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> {
+                                R.color.wblack
+                            }
+                            R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> {
+                                R.color.white
+                            }
                             else -> android.R.color.transparent
                         }
                     )

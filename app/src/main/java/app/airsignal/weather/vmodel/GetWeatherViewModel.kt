@@ -6,7 +6,7 @@ import app.airsignal.weather.repo.BaseRepository
 import app.airsignal.weather.repo.GetWeatherRepo
 import app.airsignal.weather.retrofit.ApiModel
 import kotlinx.coroutines.launch
-import okio.IOException
+import java.io.IOException
 
 /**
  * @author : Lee Jae Young

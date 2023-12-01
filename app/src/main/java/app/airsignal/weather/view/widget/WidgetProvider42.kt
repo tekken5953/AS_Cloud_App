@@ -2,30 +2,39 @@ package app.airsignal.weather.view.widget
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.widget.RemoteViews
+import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
+import app.airsignal.weather.dao.StaticDataObject
+import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
+import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
 import app.airsignal.weather.util.`object`.GetAppInfo
+import app.airsignal.weather.util.`object`.SetAppInfo
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
+import com.google.android.gms.location.Priority
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 import kotlin.math.roundToInt
+
 
 /**
  * @author : Lee Jae Young
@@ -49,7 +58,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     context, "lifecycle",
                     "onUpdate42 doze is ${isDeviceInDozeMode(context.applicationContext)}"
                 )
-                WidgetFCM().sendFCMMessage("42", appWidgetId)
+                processDozeMode(context,appWidgetId)
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
                     "Error",
@@ -68,18 +77,27 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         if (context != null) {
             if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                 if (intent.action == REFRESH_BUTTON_CLICKED_42) {
-                    RDBLogcat.writeWidgetHistory(
-                        context.applicationContext, "lifecycle",
-                        "onReceive42 doze is ${isDeviceInDozeMode(context.applicationContext)}"
-                    )
-                    if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
-                        requestPermissions(context)
+                    if (isRefreshable(context,"42")) {
+                        RDBLogcat.writeWidgetHistory(
+                            context.applicationContext, "lifecycle",
+                            "onReceive42 doze is ${isDeviceInDozeMode(context.applicationContext)}"
+                        )
+                        if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                            requestPermissions(context)
+                        } else {
+                            processDozeMode(context,appWidgetId)
+                        } 
                     } else {
-                        WidgetFCM().sendFCMMessage("42", appWidgetId)
+                        Toast.makeText(context.applicationContext, "갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         }
+    }
+
+    private fun processDozeMode(context: Context, appWidgetId: Int) {
+        if (isDeviceInDozeMode(context)) WidgetFCM().sendFCMMessage("42", appWidgetId)
+        else processUpdate(context,appWidgetId)
     }
 
     fun processUpdate(context: Context, appWidgetId: Int) {
@@ -126,31 +144,23 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         CoroutineScope(Dispatchers.Default).launch {
             if (checkBackPerm(context)) {
                 try {
-                    val locationResult = suspendCoroutine<Location?> { continuation ->
-                        LocationServices.getFusedLocationProviderClient(context)
-                            .lastLocation
-                            .addOnSuccessListener { location ->
-                                continuation.resume(location)
-                            }
-                            .addOnFailureListener { exception ->
-                                continuation.resumeWithException(exception)
-                            }
-                    }
-                    locationResult?.let {
-                        val lat = it.latitude
-                        val lng = it.longitude
-                        val addr = getAddress(context, lat, lng)
-                        val data = requestWeather(context, lat, lng)
+                    val roomDB = GpsRepository(context).findById(StaticDataObject.CURRENT_GPS_ID)
+                    val lat = roomDB.lat
+                    val lng = roomDB.lng
+                    lat?.let { mLat ->
+                        lng?.let { mLng ->
+                            val addr = getAddress(context, mLat, mLng)
+                            val data = requestWeather(context, mLat, mLng)
 
-                        withContext(Dispatchers.Main) {
-                            delay(500)
-                            updateUI(context, views, data, addr)
+                            withContext(Dispatchers.Main) {
+                                RDBLogcat.writeWidgetHistory(context, "data", "data42 is $data")
+                                delay(500)
+                                updateUI(context, views, data, addr)
+                            }
                         }
-                    } ?: run {
-                        RDBLogcat.writeWidgetHistory(
-                            context, "data",
-                            "get fail cause location is null"
-                        )
+                    }
+                    withContext(Dispatchers.IO) {
+                        BaseWidgetProvider().setRefreshTime(context,"42")
                     }
                 } catch (e: Exception) {
                     RDBLogcat.writeErrorANR("Error", "fetch error42 ${e.localizedMessage}")
@@ -298,6 +308,20 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         } catch (e: Exception) {
             RDBLogcat.writeErrorANR("Error", "updateUI error42 ${e.localizedMessage}")
         }
+    }
+
+    private fun getLocation(context: Context) {
+        val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler?
+        val componentName = ComponentName(context, WidgetProvider42::class.java)
+
+        val jobInfo = JobInfo.Builder(1, componentName)
+            .setMinimumLatency(1000) // 최소 지연 시간 (1초 이상)
+            .setOverrideDeadline(3000) // 최대 시간 (3초 이내)
+            .setPersisted(true)
+            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+            .build()
+
+        jobScheduler!!.schedule(jobInfo)
     }
 
     private fun applyColor(context: Context, views: RemoteViews, bg: Int) {

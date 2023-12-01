@@ -83,7 +83,7 @@ class EyeDetailActivity : AppCompatActivity() {
         when (id) {
             FRAGMENT_REPORT -> {
                 val reportFragment = EyeDetailReportFragment()
-                val data = EyeDataModel.EyeReportModel("test","test")
+                val data = EyeDataModel.EyeReportAdapter("test","test")
                 currentFragment = id
                 reportFragment.onDataReceived(data)
                 transactionFragment(reportFragment)
@@ -91,7 +91,7 @@ class EyeDetailActivity : AppCompatActivity() {
             }
             FRAGMENT_LIVE -> {
                 val liveFragment = EyeDetailLiveFragment()
-                val data = EyeDataModel.EyeReportModel("test","test")
+                val data = EyeDataModel.EyeReportAdapter("test","test")
                 currentFragment = id
                 liveFragment.onDataReceived(data)
                 transactionFragment(liveFragment)
@@ -99,7 +99,7 @@ class EyeDetailActivity : AppCompatActivity() {
             }
             FRAGMENT_LIFE -> {
                 val lifeFragment = EyeDetailLifeFragment()
-                val data = EyeDataModel.EyeReportModel("test","test")
+                val data = EyeDataModel.EyeReportAdapter("test","test")
                 lifeFragment.onDataReceived(data)
                 currentFragment = id
                 transactionFragment(lifeFragment)

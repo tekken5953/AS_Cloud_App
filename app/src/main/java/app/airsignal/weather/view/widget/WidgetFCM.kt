@@ -1,6 +1,7 @@
 package app.airsignal.weather.view.widget
 
 import app.airsignal.weather.dao.IgnoredKeyFile.fcmServerKey
+import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -58,5 +59,9 @@ class WidgetFCM() {
                 }
             }
         }
+    }
+
+        private fun getOauthAccessToken(): String? {
+        return GoogleCredentials.getApplicationDefault().accessToken.tokenValue ?: null
     }
 }

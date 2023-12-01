@@ -15,9 +15,8 @@ import app.airsignal.weather.dao.StaticDataObject.INITIALIZED_LOC_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.INITIALIZED_NOTI_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.IS_INIT_BACK_LOC_PERMISSION
 import app.airsignal.weather.dao.StaticDataObject.IS_PERMED_BACK_LOG
-import app.airsignal.weather.dao.StaticDataObject.LAST_LAT
-import app.airsignal.weather.dao.StaticDataObject.LAST_LNG
-import app.airsignal.weather.dao.StaticDataObject.LAST_REFRESH
+import app.airsignal.weather.dao.StaticDataObject.LAST_REFRESH22
+import app.airsignal.weather.dao.StaticDataObject.LAST_REFRESH42
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_ADDRESS
 import app.airsignal.weather.dao.StaticDataObject.NOTIFICATION_TOPIC_DAILY
 import app.airsignal.weather.dao.StaticDataObject.WARNING_FIXED
@@ -128,15 +127,11 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getString(WARNING_FIXED)
     }
 
-    fun getLastLat(context: Context): String {
-        return SharedPreferenceManager(context).getString(LAST_LAT)
+    fun getLastRefreshTime42(context: Context): Long {
+        return SharedPreferenceManager(context).getLong(LAST_REFRESH42)
     }
 
-    fun getLastLng(context: Context): String {
-        return SharedPreferenceManager(context).getString(LAST_LNG)
-    }
-
-    fun getLastRefreshTime(context: Context): Long {
-        return SharedPreferenceManager(context).getLong(LAST_REFRESH)
+    fun getLastRefreshTime22(context: Context): Long {
+        return SharedPreferenceManager(context).getLong(LAST_REFRESH22)
     }
 }

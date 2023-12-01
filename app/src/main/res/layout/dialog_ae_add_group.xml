@@ -47,10 +47,8 @@
         android:layout_height="match_parent"
         android:layout_below="@+id/addGroupEt"
         android:layout_above="@+id/addGroupLinear"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="20dp"
         tools:listitem="@layout/list_item_add_group"
         app:layoutManager=".util.LinearLayoutManagerWrapper"/>
 
@@ -68,9 +66,8 @@
             android:layout_marginEnd="24dp"
             android:background="@drawable/ae_group_add_btn_bg"
             android:fontFamily="@font/spoqa_hansansneo_bold"
-            android:enabled="false"
             android:text="@string/group_add_btn"
-            android:textColor="#9C9C9C"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:elevation="0dp"
             android:translationZ="0dp" />

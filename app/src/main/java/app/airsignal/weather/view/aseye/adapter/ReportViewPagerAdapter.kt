@@ -2,7 +2,6 @@ package app.airsignal.weather.view.aseye.adapter
 
 import android.app.Activity
 import android.content.Context
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +17,7 @@ import app.airsignal.weather.view.aseye.dao.EyeDataModel
  **/
 class ReportViewPagerAdapter(
     private val context: Activity,
-    list: ArrayList<EyeDataModel.EyeReportModel>,
+    list: ArrayList<EyeDataModel.EyeReportAdapter>,
     private val viewPager2: ViewPager2
 ) :
     RecyclerView.Adapter<ReportViewPagerAdapter.ViewHolder>() {
@@ -44,7 +43,7 @@ class ReportViewPagerAdapter(
         private val title = view.findViewById<TextView>(R.id.vpAeTitle)
         private val content = view.findViewById<TextView>(R.id.vpAeContent)
 
-        fun bind(dao: EyeDataModel.EyeReportModel) {
+        fun bind(dao: EyeDataModel.EyeReportAdapter) {
             title.text = dao.title
             content.text = dao.content
 

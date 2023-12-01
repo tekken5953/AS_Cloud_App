@@ -36,6 +36,18 @@
         android:textColor="@color/ae_sub_color"
         android:textSize="14sp" />
 
+    <ImageView
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:src="@drawable/verify"
+        app:tint="@color/main_blue_color"
+        android:layout_toEndOf="@+id/listItemAeDeviceSerial"
+        android:layout_alignTop="@+id/listItemAeDeviceSerial"
+        android:layout_alignBottom="@+id/listItemAeDeviceSerial"
+        android:layout_marginStart="3dp"
+        android:id="@+id/listItemAeDeviceVerify"
+        android:visibility="gone"/>
+
     <TextView
         android:id="@+id/listItemAeDevicePower"
         style="@style/basicMediumTextView"

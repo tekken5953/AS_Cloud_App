@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="70dp"
-    android:layout_marginStart="17dp"
-    android:layout_marginEnd="17dp">
+    android:layout_marginStart="18dp"
+    android:layout_marginEnd="18dp">
 
     <TextView
         style="@style/basicTextView"
@@ -20,11 +20,11 @@
         android:layout_below="@+id/listItemAeAddGroupName"
         android:layout_marginTop="2dp"/>
 
-    <RadioButton
+    <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:id="@+id/listItemAeAddGroupRadio"/>
+        android:id="@+id/listItemAeAddGroupCheck"/>
 
 </RelativeLayout>

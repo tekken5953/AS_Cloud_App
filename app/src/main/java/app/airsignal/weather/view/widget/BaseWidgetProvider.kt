@@ -1,21 +1,24 @@
 package app.airsignal.weather.view.widget
 
-import android.annotation.SuppressLint
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.os.*
-import android.provider.Settings
+import android.os.Build
+import android.os.Bundle
+import android.os.PowerManager
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.retrofit.HttpClient
 import app.airsignal.weather.util.AddressFromRegex
 import app.airsignal.weather.util.LoggerUtil
+import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
+import app.airsignal.weather.util.`object`.GetAppInfo
+import app.airsignal.weather.util.`object`.SetAppInfo
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import retrofit2.awaitResponse
+import timber.log.Timber
 import java.time.LocalDateTime
 
 open class BaseWidgetProvider: AppWidgetProvider() {
@@ -52,13 +55,15 @@ open class BaseWidgetProvider: AppWidgetProvider() {
 
     suspend fun requestWeather(context: Context,lat: Double, lng: Double): ApiModel.WidgetData? {
         try {
-            val response = HttpClient.getInstance(true).setClientBuilder()
+            return HttpClient.getInstance(true).setClientBuilder()
                 .getWidgetForecast(lat, lng, 4)
                 .awaitResponse().body()
-            RDBLogcat.writeWidgetHistory(context, "data", "data is $response")
-            return response
         } catch (e: Exception) {
-            RDBLogcat.writeWidgetHistory(context, "error", "weather call error cause ${e.localizedMessage}")
+            RDBLogcat.writeWidgetHistory(
+                context,
+                "error",
+                "weather call error cause ${e.localizedMessage}"
+            )
         }
         return null
     }
@@ -93,5 +98,23 @@ open class BaseWidgetProvider: AppWidgetProvider() {
     fun isDeviceInDozeMode(context: Context): Boolean {
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager?
         return powerManager?.isDeviceIdleMode == true
+    }
+
+    fun isRefreshable(context: Context, type: String): Boolean {
+        val currentTime = getCurrentTime()
+        val lastRefresh = when (type) {
+            "42" -> GetAppInfo.getLastRefreshTime42(context)
+            "22" -> GetAppInfo.getLastRefreshTime22(context)
+            else -> currentTime
+        }
+        return currentTime - lastRefresh >= 1000 * 60
+    }
+
+    fun setRefreshTime(context: Context, type: String) {
+        if (type == "42") {
+            SetAppInfo.setLastRefreshTime42(context, getCurrentTime())
+        } else if (type == "22") {
+            SetAppInfo.setLastRefreshTime22(context, getCurrentTime())
+        }
     }
 }

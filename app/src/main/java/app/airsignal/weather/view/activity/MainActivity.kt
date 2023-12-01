@@ -11,7 +11,6 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.*
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -28,6 +27,9 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.viewpager2.widget.ViewPager2
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
 import app.airsignal.weather.dao.AdapterModel
@@ -43,6 +45,7 @@ import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.dao.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
 import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
+import app.airsignal.weather.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
@@ -52,6 +55,7 @@ import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.firebase.admob.AdViewClass
 import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.firebase.fcm.SubFCM
+import app.airsignal.weather.gps.GPSWorker
 import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.login.SilentLoginClass
 import app.airsignal.weather.repo.BaseRepository
@@ -81,8 +85,6 @@ import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.util.`object`.GetAppInfo
 import app.airsignal.weather.util.`object`.GetAppInfo.getEntireSun
 import app.airsignal.weather.util.`object`.GetAppInfo.getIsNight
-import app.airsignal.weather.util.`object`.GetAppInfo.getLastLat
-import app.airsignal.weather.util.`object`.GetAppInfo.getLastLng
 import app.airsignal.weather.util.`object`.GetAppInfo.getTopicNotification
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
@@ -92,8 +94,6 @@ import app.airsignal.weather.util.`object`.GetSystemInfo.isThemeNight
 import app.airsignal.weather.util.`object`.SetAppInfo
 import app.airsignal.weather.util.`object`.SetAppInfo.removeSingleKey
 import app.airsignal.weather.util.`object`.SetAppInfo.setCurrentLocation
-import app.airsignal.weather.util.`object`.SetAppInfo.setLastLat
-import app.airsignal.weather.util.`object`.SetAppInfo.setLastLng
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
 import app.airsignal.weather.util.`object`.SetSystemInfo.setUvBackgroundColor
 import app.airsignal.weather.view.*
@@ -106,17 +106,16 @@ import app.airsignal.weather.vmodel.GetWeatherViewModel
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.database.DatabaseException
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.*
-import okio.IOException
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
+import java.io.IOException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -221,6 +220,7 @@ class MainActivity
                 isEnabled = false
                 setTransition(R.id.start,R.id.end)
             }
+            createWorkManager()
         }
 
         adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
@@ -868,7 +868,7 @@ class MainActivity
         runOnUiThread {
             hideProgressBar()
             try {
-                RDBLogcat.writeErrorANR("handleApiError", "handleApiError : $errorMessage")
+                RDBLogcat.writeErrorANR("handleApiError", "handleApiError cause $errorMessage")
             } catch(e: DatabaseException) { e.printStackTrace() }
             if (GetLocation(this).isNetWorkConnected()) {
                 hideAllViews(error = errorMessage)
@@ -1037,7 +1037,7 @@ class MainActivity
                 )
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(RDBLogcat.DATA_CALL_ERROR,
-                    "updateWeatherItems : ${e.stackTraceToString()}")
+                    "updateWeatherItems is ${e.stackTraceToString()}")
             }
         }
     }
@@ -1348,7 +1348,7 @@ class MainActivity
             ERROR_GPS_CONNECTED -> getString(R.string.gps_call_error)
             ERROR_GET_DATA -> getString(R.string.data_call_error)
             else -> {
-                RDBLogcat.writeErrorANR(getString(R.string.unknown_error), "setErrorMessage : $error" )
+                RDBLogcat.writeErrorANR(getString(R.string.unknown_error), "setErrorMessage is $error" )
                 getString(R.string.unknown_error)
             }
         }
@@ -1564,46 +1564,11 @@ class MainActivity
         if (!airQList.contains(item)) addAirQItem(position, nameKR, name, unit, value, item.grade)
     }
 
-    // 비동기적으로 데이터베이스 작업을 처리하는 확장 함수
-    private fun updateDatabaseWithLocationData(
-        roomDB: GpsRepository,
-        mLat: Double,
-        mLng: Double,
-        mAddr: String?
-    ) {
-        mAddr?.let {
-            setUserLastAddr(this@MainActivity, it)
-        }
-        val model = GpsEntity().apply {
-            name = CURRENT_GPS_ID
-            position = -1
-            lat = mLat
-            lng = mLng
-            addrKr = mAddr
-            addrEn = mAddr
-            timeStamp = getCurrentTime()
-        }
 
-        // Room DAO 를 사용하여 데이터베이스 업데이트 또는 삽입 수행
-        CoroutineScope(Dispatchers.IO).launch {
-            if (gpsDbIsEmpty(roomDB)) roomDB.insert(model)
-            else roomDB.update(model)
-        }
-    }
 
     // 현재 위치 정보로 DB 갱신
     private fun updateCurrentAddress(mLat: Double, mLng: Double, mAddr: String?) {
-        val roomDB = GpsRepository(this@MainActivity)
-
-        // 데이터베이스 작업 비동기 처리
-        CoroutineScope(Dispatchers.IO).launch {
-            updateDatabaseWithLocationData(roomDB, mLat, mLng, mAddr)
-        }
-    }
-
-    // DB가 비어있는지 확인
-    private suspend fun gpsDbIsEmpty(db: GpsRepository): Boolean {
-        return db.findAll().isEmpty()
+        GetLocation(this@MainActivity).updateDatabaseWithLocationData(mLat, mLng,null)
     }
 
     // 자외선 범주 아이템 추가
@@ -1782,13 +1747,10 @@ class MainActivity
     @SuppressLint("MissingPermission")
     private fun requestLocationWithGPS() {
         val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
         val onSuccess: (Location?) -> Unit = { location ->
             location?.let { loc ->
                 val lat = loc.latitude
                 val lng = loc.longitude
-                setLastLat(this, lat)
-                setLastLng(this, lng)
                 hideProgressBar()
                 if (isKorea(lat, lng)) {
                     val addr = GetLocation(this@MainActivity).getAddress(lat, lng)
@@ -1815,9 +1777,10 @@ class MainActivity
 
     private fun callSavedLoc() {
         try {
-            val lat = getLastLat(this@MainActivity)
-            val lng = getLastLng(this@MainActivity)
-            if (lat != "" && lng != "") {
+            val db = GpsRepository(this).findById(CURRENT_GPS_ID)
+            val lat = db.lat
+            val lng = db.lng
+            if (lat != null && lng != null) {
                 val mLat = lat.toDouble()
                 val mLng = lat.toDouble()
                 val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
@@ -1848,7 +1811,7 @@ class MainActivity
         isCalledButFail()
         val msg = errorMessage ?: "errorMsg is NULL"
         RDBLogcat.writeErrorANR(ERROR_LOCATION_FAILED,
-            "handleLocationFailure : $msg"
+            "handleLocationFailure cause $msg"
         )
     }
 
@@ -1888,5 +1851,19 @@ class MainActivity
         } ?: apply {
             (view as View).background = null
         }
+    }
+
+    private fun createWorkManager() {
+        val workManager = WorkManager.getInstance(this)
+        val workRequest =
+            PeriodicWorkRequest.Builder(GPSWorker::class.java, 30, TimeUnit.MINUTES)
+                .build()
+
+        workManager.enqueueUniquePeriodicWork(
+            CHECK_GPS_BACKGROUND,
+            ExistingPeriodicWorkPolicy.KEEP, workRequest
+        )
+
+        RDBLogcat.writeWorkManager(this, gpsValue = "WorkManager 생성")
     }
 }

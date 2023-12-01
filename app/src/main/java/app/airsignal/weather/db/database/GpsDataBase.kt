@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.scheme.GpsScheme
 
-@Database(entities = [GpsEntity::class], version = 3)
+@Database(entities = [GpsEntity::class], version = 3, exportSchema = false)
 abstract class GpsDataBase : RoomDatabase() {
     abstract fun gpsRepository(): GpsScheme
 

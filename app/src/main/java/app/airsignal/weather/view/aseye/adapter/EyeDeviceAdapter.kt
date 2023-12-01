@@ -3,6 +3,7 @@ package app.airsignal.weather.view.aseye.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +19,7 @@ import java.util.*
 
 class EyeDeviceAdapter(
     private val context: Context,
-    list: ArrayList<EyeDataModel.DeviceModel>
+    list: ArrayList<EyeDataModel.Device>
 ) :
     RecyclerView.Adapter<EyeDeviceAdapter.ViewHolder>() {
     private val mList = list
@@ -51,13 +52,14 @@ class EyeDeviceAdapter(
         val report: ImageView = itemView.findViewById(R.id.listItemAeDeviceReport)
         private val addDevice: ImageView = itemView.findViewById(R.id.listItemAeDeviceAdd)
         private val container: RelativeLayout = itemView.findViewById(R.id.listItemAeDeviceContainer)
+        private val verify: ImageView = itemView.findViewById(R.id.listItemAeDeviceVerify)
 
         @SuppressLint("InflateParams")
-        fun bind(dao: EyeDataModel.DeviceModel) {
-            deviceName.text = dao.name
-            serial.text = dao.serial
+        fun bind(dao: EyeDataModel.Device) {
+            deviceName.text = dao.alias
+            serial.text = dao.serial.serial
 
-            dao.power?.let {
+            dao.serial.power.let {
                 if (it) {
                     power.text = "켜짐"
                     power.setTextColor(context.getColor(R.color.ae_power_on_color))
@@ -67,30 +69,30 @@ class EyeDeviceAdapter(
                     power.setTextColor(context.getColor(R.color.ae_sub_color))
                     container.background = getRs(R.drawable.ae_device_bg_d)
                 }
-            } ?: apply {
-                power.text = "에러"
-                power.setTextColor(context.getColor(R.color.ae_sub_color))
-                container.background = getRs(R.drawable.ae_device_bg_d)
             }
 
-            if (dao.isAdd) {
+            if (dao.alias == "") {
                 deviceName.visibility = View.GONE
                 serial.visibility = View.GONE
                 power.visibility = View.GONE
-                report.visibility = View.GONE
                 addDevice.visibility = View.VISIBLE
             } else {
                 deviceName.visibility = View.VISIBLE
                 serial.visibility = View.VISIBLE
                 power.visibility = View.VISIBLE
-                report.visibility = View.VISIBLE
                 addDevice.visibility = View.GONE
             }
 
-            if (dao.report == null) {
-                report.visibility = View.GONE
-            } else {
+            if (dao.serial.report) {
                 report.visibility = View.VISIBLE
+            } else {
+                report.visibility = View.GONE
+            }
+
+            if (dao.isMaster) {
+                verify.visibility = View.VISIBLE
+            } else {
+                verify.visibility = View.GONE
             }
 
             itemView.setOnClickListener {

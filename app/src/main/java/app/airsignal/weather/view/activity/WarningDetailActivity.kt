@@ -16,9 +16,8 @@ import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.util.`object`.GetAppInfo.getWarningFixed
 import app.airsignal.weather.util.`object`.SetSystemInfo
 import app.airsignal.weather.vmodel.GetWarningViewModel
-import com.orhanobut.logger.Logger
-import okio.IOException
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.IOException
 
 class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     override val resID: Int get() = R.layout.activity_warning_detail

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import app.airsignal.weather.repo.BaseRepository
 import app.airsignal.weather.repo.GetAppVersionRepo
 import app.airsignal.weather.retrofit.ApiModel
-import okio.IOException
+import java.io.IOException
 
 /**
  * @author : Lee Jae Young

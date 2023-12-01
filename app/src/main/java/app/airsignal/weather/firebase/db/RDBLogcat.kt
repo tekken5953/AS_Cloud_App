@@ -5,7 +5,6 @@ import android.os.Build
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.util.`object`.DataTypeParser.millsToString
 import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
-import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.util.`object`.GetSystemInfo.androidID
 import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.DatabaseReference
@@ -53,6 +52,7 @@ object RDBLogcat {
     private const val ERROR_ANR = "ANR 에러"
     const val LOGIN_FAILED = "로그인 시도 실패"
     const val DATA_CALL_ERROR = "데이터 호출 실패"
+    private const val WORK_MANAGER = "워크 매니저"
 
     /** 유저 로그 레퍼런스 **/
     private val db = FirebaseDatabase.getInstance()
@@ -80,7 +80,7 @@ object RDBLogcat {
         return try {
             if (getUserEmail(context) != "")
                 getUserEmail(context).replace(".","_")
-            else GetSystemInfo.androidID(context)
+            else androidID(context)
         } catch (e: NullPointerException) { "" }
     }
 
@@ -92,57 +92,62 @@ object RDBLogcat {
 
     /** 유저 설치 정보 **/
     fun <T> writeUserPref(context: Context, sort: String, title: String, value: T?) {
-        val userRef = default(context)
-            .child(sort)
-            .child(title)
-        if (sort == USER_PREF_SETUP_INIT) {
-            if (!userRef.get().isSuccessful) userRef.setValue(value.toString())
-        } else if (sort == USER_PREF_SETUP_COUNT)
-            userRef.setValue(userRef.get().result.value.toString().toInt() + 1)
-         else userRef.setValue(value.toString())
-
+        try{
+            val userRef = default(context)
+                .child(sort)
+                .child(title)
+            if (sort == USER_PREF_SETUP_INIT) {
+                if (!userRef.get().isSuccessful) userRef.setValue(modify(value.toString()))
+            } else if (sort == USER_PREF_SETUP_COUNT)
+                userRef.setValue(userRef.get().result.value.toString().toInt() + 1)
+            else userRef.setValue(modify(value.toString()))
+        } catch (e: DatabaseException) { e.printStackTrace() }
     }
 
     /** 유저 로그인 정보 **/
     fun writeLoginPref(context: Context, platform: String,
         email: String, phone: String?, name: String?, profile: String?) {
-        val formEmail = email.replace(".","_")
-        val prefRef = ref.child(LOGIN_ON)
-            .child(getAndroidIdForLog(context))
-            .child(LOGIN_ON)
-            .child(platform)
-            .child(LOGIN_PREF)
+        try{
+            val formEmail = email.replace(".","_")
+            val prefRef = ref.child(LOGIN_ON)
+                .child(getAndroidIdForLog(context))
+                .child(LOGIN_ON)
+                .child(platform)
+                .child(LOGIN_PREF)
 
-        prefRef.run {
-            child(LOGIN_PREF_EMAIL).setValue(formEmail)
-            child(LOGIN_PREF_PHONE).setValue(phone)
-            child(LOGIN_PREF_NAME).setValue(name)
-            child(LOGIN_PREF_PROFILE).setValue(profile)
-            child(LOGIN_PREF_DEVICE_ID).setValue(androidID(context))
-            child(USER_PREF_DEVICE_SDK_VERSION).setValue(Build.VERSION.SDK_INT)
-        }
+            prefRef.run {
+                child(LOGIN_PREF_EMAIL).setValue(formEmail)
+                child(LOGIN_PREF_PHONE).setValue(phone)
+                child(LOGIN_PREF_NAME).setValue(modify(name.toString()))
+                child(LOGIN_PREF_PROFILE).setValue(profile)
+                child(LOGIN_PREF_DEVICE_ID).setValue(androidID(context))
+                child(USER_PREF_DEVICE_SDK_VERSION).setValue(Build.VERSION.SDK_INT)
+            }
+        } catch (e: DatabaseException) { e.printStackTrace() }
     }
 
     /** 로그인 기록 **/
     fun writeLoginHistory(isLogin: Boolean, platform: String, email: String,
                           isAuto: Boolean?, isSuccess: Boolean) {
-        val formedMail = email.replace(".","_")
-        if (isLogin) {
-            ref .child(LOGIN_ON)
-                .child(formedMail)
-                .child(LOGIN_ON)
-                .child(platform)
-                .child(if (isAuto!!) AUTO_LOGIN else OPTIONAL_LOGIN)
-                .child(getDate()).child(getTime())
-                .setValue(if (isSuccess) SUCCESS_LOGIN else FAILED_LOGIN)
-        } else {
-            ref .child(LOGIN_ON)
-                .child(formedMail)
-                .child(SIGN_OUT)
-                .child(platform)
-                .child(getDate()).child(getTime())
-                .setValue(if(isSuccess) "성공" else "실패")
-        }
+        try {
+            val formedMail = email.replace(".","_")
+            if (isLogin) {
+                ref .child(LOGIN_ON)
+                    .child(formedMail)
+                    .child(LOGIN_ON)
+                    .child(platform)
+                    .child(if (isAuto!!) AUTO_LOGIN else OPTIONAL_LOGIN)
+                    .child(getDate()).child(getTime())
+                    .setValue(if (isSuccess) SUCCESS_LOGIN else FAILED_LOGIN)
+            } else {
+                ref .child(LOGIN_ON)
+                    .child(formedMail)
+                    .child(SIGN_OUT)
+                    .child(platform)
+                    .child(getDate()).child(getTime())
+                    .setValue(if(isSuccess) "성공" else "실패")
+            }
+        } catch (e: DatabaseException) { e.printStackTrace() }
     }
 
     /** 위치 정보 기록 **/
@@ -158,8 +163,21 @@ object RDBLogcat {
                 .child(getDate())
                 .child(if (isSearched) GPS_SEARCHED else GPS_NOT_SEARCHED)
                 .child(getTime())
-            if (responseData != null) gpsRef.setValue("$responseData")
-            else gpsRef.setValue(gpsValue)
+            if (responseData != null) gpsRef.setValue(modify(responseData))
+            else gpsRef.setValue(modify(gpsValue))
+        } catch (e: DatabaseException) { e.printStackTrace() }
+    }
+
+    fun writeWorkManager(
+        context: Context,
+        gpsValue: String
+    ) {
+        try {
+            val gpsRef = default(context)
+                .child(WORK_MANAGER)
+                .child(getDate())
+                .child(getTime())
+            gpsRef.setValue(modify(gpsValue))
         } catch (e: DatabaseException) { e.printStackTrace() }
     }
 
@@ -168,20 +186,22 @@ object RDBLogcat {
         default(context)
             .child(WIDGET_HISTORY)
             .child(getDate())
-            .child(sort)
+            .child(modify(sort))
             .child(getTime())
-            .setValue(value)
+            .setValue(modify(value))
     }
 
     /** 위젯 호출 기록 **/
     fun writeWidgetHistory(context: Context, address: String, response: String?) {
-        val widgetPref = default(context)
-            .child(WIDGET_HISTORY)
-            .child(getDate())
-        widgetPref
-            .child(address)
-            .child(getTime())
-            .setValue(response ?: "")
+        try {
+            val widgetPref = default(context)
+                .child(WIDGET_HISTORY)
+                .child(getDate())
+            widgetPref
+                .child(modify(address))
+                .child(getTime())
+                .setValue(modify(response ?: ""))
+        } catch (e: DatabaseException) { e.printStackTrace() }
     }
 
     /** 알림 기록 **/
@@ -190,9 +210,9 @@ object RDBLogcat {
             default(context)
                 .child(NOTIFICATION_HISTORY)
                 .child(getDate())
-                .child(topic)
+                .child(modify(topic))
                 .child(getTime())
-                .setValue(response)
+                .setValue(modify(response?:""))
         } catch (e: DatabaseException) {
             e.printStackTrace()
         }
@@ -200,29 +220,44 @@ object RDBLogcat {
 
     /** 에러 로그 - 비정상 종료 **/
     fun writeErrorANR(thread: String, msg: String) {
-        ref.child(ERROR_HISTORY)
-            .child(getDate())
-            .child(ERROR_ANR)
-            .child(thread)
-            .child(getTime())
-            .setValue(msg)
+        try {
+            ref.child(ERROR_HISTORY)
+                .child(getDate())
+                .child(ERROR_ANR)
+                .child(modify(thread))
+                .child(getTime())
+                .setValue(modify(msg))
+        } catch (e: DatabaseException) { e.printStackTrace() }
     }
 
     /** 에러 로그 - 일반 **/
     fun writeErrorNotANR(context: Context, sort: String, msg: String) {
-        default(context)
-            .child(ERROR_HISTORY)
-            .child(getDate())
-            .child(sort)
-            .child(getTime())
-            .setValue(msg)
+        try {
+            default(context)
+                .child(ERROR_HISTORY)
+                .child(getDate())
+                .child(modify(sort))
+                .child(getTime())
+                .setValue(modify(msg))
+        } catch (e: DatabaseException) { e.printStackTrace() }
     }
 
     /** Admob 로드 에러 **/
     fun writeAdError(code: String,errorMsg: String) {
-        ref.child("admob")
-            .child("Fail to Load")
-            .child(code)
-            .setValue(errorMsg)
+        try {
+            ref.child("admob")
+                .child("Fail to Load")
+                .child(modify(code))
+                .setValue(modify(errorMsg))
+        } catch (e: DatabaseException) { e.printStackTrace() }
+    }
+
+    private fun modify(s: String): String {
+        val array = arrayOf('.', '#', '$', '[', ']')
+        array.forEach {
+            if (s.contains(it))
+                s.replace(it, ' ')
+        }
+        return s
     }
 }

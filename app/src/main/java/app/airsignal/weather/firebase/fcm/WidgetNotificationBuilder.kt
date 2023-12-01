@@ -9,8 +9,12 @@ import android.view.View
 import androidx.core.app.NotificationCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.firebase.db.RDBLogcat
+import app.airsignal.weather.view.widget.BaseWidgetProvider
 import app.airsignal.weather.view.widget.WidgetProvider
 import app.airsignal.weather.view.widget.WidgetProvider42
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.logging.Handler
 
 
@@ -24,9 +28,8 @@ class WidgetNotificationBuilder {
     }
 
     fun sendNotification(context: Context, data: Map<String,String>) {
-        val appContext = context.applicationContext
         val notificationManager =
-            appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
         val notificationChannel = NotificationChannel(
             WIDGET_NOTIFICATION_CHANNEL_ID,
             WIDGET_NOTIFICATION_CHANNEL_NAME,
@@ -36,7 +39,7 @@ class WidgetNotificationBuilder {
             lockscreenVisibility = View.GONE
         }
 
-        val notificationBuilder = NotificationCompat.Builder(appContext, WIDGET_NOTIFICATION_CHANNEL_ID).apply {
+        val notificationBuilder = NotificationCompat.Builder(context, WIDGET_NOTIFICATION_CHANNEL_ID).apply {
             this.setPriority(NotificationCompat.PRIORITY_HIGH)
             .setTimeoutAfter(1)
             .setSilent(true)
@@ -46,27 +49,28 @@ class WidgetNotificationBuilder {
             .setSmallIcon(R.drawable.ic_stat_airsignal_default)
         }
 
+        CoroutineScope(Dispatchers.IO).launch {
+            if (data["layout"] == "22") {
+                WidgetProvider().processUpdate(
+                    context,
+                    data["widgetId"]?.toInt() ?: -1
+                )
+            } else if (data["layout"] == "42") {
+                WidgetProvider42().processUpdate(
+                    context,
+                    data["widgetId"]?.toInt() ?: -1
+                )
+            }
+            RDBLogcat.writeNotificationHistory(
+                context,
+                "위젯",
+                "${data["layout"]}, ${data["widgetId"]}"
+            )
+        }
+
         notificationManager?.let {
             it.createNotificationChannel(notificationChannel)
             it.notify(2, notificationBuilder.build())
-            android.os.Handler(Looper.getMainLooper()).postDelayed({
-                RDBLogcat.writeNotificationHistory(
-                    appContext,
-                    "위젯",
-                    "${data["layout"]}, ${data["widgetId"]}"
-                )
-                if (data["layout"] == "22") {
-                    WidgetProvider().processUpdate(
-                        appContext,
-                        data["widgetId"]?.toInt() ?: -1
-                    )
-                } else if (data["layout"] == "42") {
-                    WidgetProvider42().processUpdate(
-                        appContext,
-                        data["widgetId"]?.toInt() ?: -1
-                    )
-                }
-            },1000)
         }
     }
 }

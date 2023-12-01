@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
@@ -12,21 +13,20 @@ import app.airsignal.weather.adapter.OnAdapterItemClick
 import app.airsignal.weather.view.aseye.dao.EyeDataModel
 import java.util.*
 
-class EyeCategoryAdapter(
+class AddGroupAdapter(
     private val context: Context,
-    list: ArrayList<EyeDataModel.Category>
+    list: ArrayList<EyeDataModel.Group>
 ) :
-    RecyclerView.Adapter<EyeCategoryAdapter.ViewHolder>() {
+    RecyclerView.Adapter<AddGroupAdapter.ViewHolder>() {
     private val mList = list
-    private var selectedPosition = 0
 
     private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
-    ): EyeCategoryAdapter.ViewHolder {
+    ): AddGroupAdapter.ViewHolder {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view: View = inflater.inflate(R.layout.list_item_ae_category, parent, false)
+        val view: View = inflater.inflate(R.layout.list_item_add_group, parent, false)
 
         return ViewHolder(view)
     }
@@ -37,20 +37,23 @@ class EyeCategoryAdapter(
 
     override fun getItemCount(): Int = mList.size
 
-    override fun onBindViewHolder(holder: EyeCategoryAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AddGroupAdapter.ViewHolder, position: Int) {
         holder.bind(mList[position])
+
+        holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
+            changeSelected(position,isChecked)
+        }
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private var categoryName: TextView = itemView.findViewById(R.id.listItemAeCategoryText)
+        private val alias: TextView = itemView.findViewById(R.id.listItemAeAddGroupName)
+        private val serial: TextView = itemView.findViewById(R.id.listItemAeAddGroupSerial)
+        val checkBox: CheckBox = itemView.findViewById(R.id.listItemAeAddGroupCheck)
 
         @SuppressLint("InflateParams")
-        fun bind(dao: EyeDataModel.Category) {
-            categoryName.text = dao.name
-
-            if (bindingAdapterPosition == selectedPosition)
-                categoryName.setTextColor(context.getColor(R.color.theme_ae_category_color))
-            else categoryName.setTextColor(context.getColor(R.color.ae_sub_color))
+        fun bind(dao: EyeDataModel.Group) {
+            alias.text = dao.device.alias
+            serial.text = dao.device.serial.serial
 
             itemView.setOnClickListener {
                 val position = bindingAdapterPosition
@@ -63,8 +66,16 @@ class EyeCategoryAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun changeSelected(position: Int) {
-        selectedPosition = position
+    fun changeSelected(p: Int, b: Boolean) {
+        mList[p].isChecked = b
         notifyDataSetChanged()
+    }
+
+    fun getChecked(p: Int): Boolean {
+        return mList[p].isChecked
+    }
+
+    fun getCheckedCount(): Int {
+        return mList.count{it.isChecked}
     }
 }

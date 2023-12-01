@@ -10,7 +10,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.EyeDetailLifeFragmentBinding
-import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.aseye.activity.EyeDetailActivity
 import app.airsignal.weather.view.aseye.adapter.EyeLifeAdapter
 import app.airsignal.weather.view.aseye.dao.EyeDataModel
@@ -19,7 +18,7 @@ class EyeDetailLifeFragment : Fragment() {
     private lateinit var mActivity: EyeDetailActivity
     private lateinit var binding : EyeDetailLifeFragmentBinding
 
-    private val lifeList = ArrayList<EyeDataModel.LifeModel>()
+    private val lifeList = ArrayList<EyeDataModel.Life>()
     private val lifeAdapter by lazy { EyeLifeAdapter(requireActivity(), lifeList)}
 
     override fun onAttach(context: Context) {
@@ -51,13 +50,13 @@ class EyeDetailLifeFragment : Fragment() {
         addLifeItem("TEMP·HUM","온도·습도",40, R.color.ae_normal_main,R.color.ae_normal_sub)
         lifeAdapter.notifyDataSetChanged()
     }
-    fun onDataReceived(data: EyeDataModel.EyeReportModel?) {
+    fun onDataReceived(data: EyeDataModel.EyeReportAdapter?) {
 
     }
 
 
     private fun addLifeItem(nameEn: String, nameKr: String, lifeValue: Int, pbColor: Int, backColor: Int) {
-        val item = EyeDataModel.LifeModel(nameEn, nameKr,lifeValue,pbColor,backColor)
+        val item = EyeDataModel.Life(nameEn, nameKr,lifeValue,pbColor,backColor)
         lifeList.add(item)
     }
 }

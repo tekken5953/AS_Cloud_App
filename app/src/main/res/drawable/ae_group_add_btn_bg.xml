@@ -2,20 +2,9 @@
 <ripple  xmlns:android="http://schemas.android.com/apk/res/android"
     android:color="@color/ripple_white">
     <item android:id="@android:id/background">
-        <selector>
-            <item android:state_enabled="false">
-                <shape>
-                    <corners android:radius="12dp"/>
-                    <solid android:color="@color/ae_device_bg_d"/>
-                </shape>
-            </item>
-            <item android:state_enabled="true">
-                <shape>
-                    <corners android:radius="12dp"/>
-                    <solid android:color="@color/ae_power_on_color"/>
-                </shape>
-            </item>
-        </selector>
-
+        <shape>
+            <corners android:radius="12dp"/>
+            <solid android:color="@color/ae_power_on_color"/>
+        </shape>
     </item>
 </ripple>

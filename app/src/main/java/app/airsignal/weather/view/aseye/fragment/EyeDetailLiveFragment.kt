@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.EyeDetailLiveFragmentBinding
 import app.airsignal.weather.util.`object`.DataTypeParser
-import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.aseye.activity.EyeDetailActivity
 import app.airsignal.weather.view.aseye.dao.EyeDataModel
 import java.util.Random
@@ -42,7 +41,7 @@ class EyeDetailLiveFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fetchData()
     }
-    fun onDataReceived(data: EyeDataModel.EyeReportModel?) {
+    fun onDataReceived(data: EyeDataModel.EyeReportAdapter?) {
     }
 
     private fun fetchData() {

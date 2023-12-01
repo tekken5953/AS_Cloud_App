@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 
 /**
  * @author : Lee Jae Young
@@ -37,7 +38,7 @@ class GetAppVersionRepo: BaseRepository() {
                             _getAppVersionResult.postValue(ApiState.Success(responseBody))
                         else
                             _getAppVersionResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
-                    } catch(e: Exception) {
+                    } catch(e: IOException) {
                         _getAppVersionResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
                     }
                 }

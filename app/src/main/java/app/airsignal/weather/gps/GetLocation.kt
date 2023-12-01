@@ -12,24 +12,24 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.ErrorCode.ERROR_GET_DATA
 import app.airsignal.weather.dao.ErrorCode.ERROR_LOCATION_IOException
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
+import app.airsignal.weather.db.database.GpsDataBase
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.firebase.db.RDBLogcat.writeErrorANR
 import app.airsignal.weather.firebase.db.RDBLogcat.writeGpsHistory
+import app.airsignal.weather.firebase.db.RDBLogcat.writeWorkManager
 import app.airsignal.weather.util.AddressFromRegex
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.util.`object`.GetSystemInfo
 import app.airsignal.weather.util.`object`.SetAppInfo
 import app.airsignal.weather.util.`object`.SetAppInfo.setNotificationAddress
 import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.io.IOException
 import java.util.*
-
 
 class GetLocation(private val context: Context) {
 
@@ -88,56 +88,57 @@ class GetLocation(private val context: Context) {
         }
     }
 
-    /** 현재 주소 DB에 업데이트 **/
-    private fun updateCurrentAddress(lat: Double, lng: Double, addr: String) {
+    // 비동기적으로 데이터베이스 작업을 처리하는 확장 함수
+    fun updateDatabaseWithLocationData(
+        mLat: Double,
+        mLng: Double,
+        mAddr: String?
+    ) {
+        val db = GpsRepository(context)
+        val model = GpsEntity().apply {
+            name = CURRENT_GPS_ID
+            position = -1
+            lat = mLat
+            lng = mLng
+            addrKr = mAddr
+            addrEn = mAddr
+            timeStamp = getCurrentTime()
+        }
+
+        // Room DAO 를 사용하여 데이터베이스 업데이트 또는 삽입 수행
         CoroutineScope(Dispatchers.IO).launch {
-            SetAppInfo.setLastLat(context, lat)
-            SetAppInfo.setLastLng(context, lng)
-
-            val roomDB = GpsRepository(context)
-            val model = GpsEntity(
-                name = CURRENT_GPS_ID,
-                position = -1,
-                lat = lat,
-                lng = lng,
-                addrKr = addr,
-                timeStamp = getCurrentTime()
-            )
-
-            setUserLastAddr(context, addr)
-
-            if (roomDB.findAll().isEmpty()) roomDB.insert(model)
-             else roomDB.update(model)
+            if (gpsDbIsEmpty(db)) db.insert(model)
+            else db.update(model)
         }
     }
 
-    /** 백그라운드에서 위치 갱신 **/
+    // DB가 비어있는지 확인
+    private suspend fun gpsDbIsEmpty(db: GpsRepository): Boolean {
+        return db.findAll().isEmpty()
+    }
+
     @SuppressLint("MissingPermission")
     fun getGpsInBackground() {
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        val locationManager = context.applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+        val locationListener: LocationListener = object : LocationListener {
+            override fun onLocationChanged(location: Location) {
+                // 위치 업데이트가 발생했을 때 실행되는 코드
+                val latitude = location.latitude
+                val longitude = location.longitude
+                updateDatabaseWithLocationData(latitude,longitude,null)
+            }
+            override fun onProviderEnabled(provider: String) {
+            }
 
-        val onSuccess: (Location?) -> Unit = { location ->
-            location?.let { loc ->
-                val latitude = loc.latitude
-                val longitude = loc.longitude
-                updateCurrentAddress(latitude, longitude, getAddress(latitude, longitude))
-                writeGpsHistory(
-                    context, isSearched = false,
-                    gpsValue = "WorkManager : ${latitude},${longitude} : " +
-                            getAddress(latitude, longitude),
-                    responseData = null
-                )
+            override fun onProviderDisabled(provider: String) {
             }
         }
-
-        val onFailure: (e: Exception) -> Unit = {
-            it.printStackTrace()
-            writeGpsHistory(context,false,"WorkManager GPS is Failed to call", it.localizedMessage)
-        }
-
-        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-            .addOnSuccessListener(onSuccess)
-            .addOnFailureListener(onFailure)
+        locationManager!!.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            1000 * 60 * 30,
+            500f,
+            locationListener
+        )
     }
 
     /** 디바이스 GPS 센서에 접근이 가능한지 확인 **/
