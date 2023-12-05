@@ -31,7 +31,6 @@ class GetLocation(private val context: Context) {
     fun getAddress(lat: Double, lng: Double): String {
         return try {
             val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
-
             @Suppress("DEPRECATION")
             val address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             val fullAddr = address[0].getAddressLine(0)

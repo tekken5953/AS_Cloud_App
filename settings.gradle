@@ -24,6 +24,5 @@ rootProject.name = "AirSignal_App"
 include ':app'
 include ':core-database'
 include ':core-network'
-include ':firebase'
 include ':core-viewmodel'
 include ':core-repository'

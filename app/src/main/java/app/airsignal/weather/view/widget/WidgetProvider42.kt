@@ -11,11 +11,12 @@ import android.content.Intent
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
+import app.airsignal.core_databse.db.room.repository.GpsRepository
 import app.airsignal.core_databse.db.sp.GetAppInfo
-import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.firebase.fcm.WidgetFCM
 import app.airsignal.weather.R
+import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject
+import app.airsignal.weather.firebase.fcm.WidgetFCM
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
@@ -134,7 +135,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         CoroutineScope(Dispatchers.Default).launch {
             if (checkBackPerm(context)) {
                 try {
-                    val roomDB = app.airsignal.core_databse.db.room.repository.GpsRepository(context)
+                    val roomDB = GpsRepository(context)
                         .findById(StaticDataObject.CURRENT_GPS_ID)
                     val lat = roomDB.lat
                     val lng = roomDB.lng
