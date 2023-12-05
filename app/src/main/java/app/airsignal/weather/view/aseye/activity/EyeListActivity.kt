@@ -56,8 +56,8 @@ class EyeListActivity : AppCompatActivity() {
                 categoryAdapter.changeSelected(position)
                 if (position == 0) {
                     addListItem(true, "사무실", "AS-442421", isReport = true, isPower = true)
-                    addListItem(true, "1층", "AS-123456", isReport = true, isPower = false)
-                    addListItem(false, "2층", "AS-345678", isReport = false, isPower = true)
+                    addListItem(false, "1층", "AS-123456", isReport = true, isPower = true)
+                    addListItem(true, "2층", "AS-345678", isReport = false, isPower = false)
                     addListItem(false, "3층", "AS-678908", isReport = false, isPower = false)
                     addListItem(false, "", null, isReport = false, isPower = false)
                 } else {
@@ -77,8 +77,8 @@ class EyeListActivity : AppCompatActivity() {
         })
 
         addListItem(true, "사무실", "AS-442421", isReport = true, isPower = true)
-        addListItem(true, "1층", "AS-123456", isReport = true, isPower = false)
-        addListItem(false, "2층", "AS-345678", isReport = false, isPower = true)
+        addListItem(false, "1층", "AS-123456", isReport = true, isPower = true)
+        addListItem(true, "2층", "AS-345678", isReport = false, isPower = false)
         addListItem(false, "3층", "AS-678908", isReport = false, isPower = false)
         addListItem(false, "", null, isReport = false, isPower = false)
         deviceListAdapter.notifyDataSetChanged()
@@ -140,6 +140,7 @@ class EyeListActivity : AppCompatActivity() {
                 }
             }
 
+            addBtn.animation = AnimationUtils.loadAnimation(this, R.anim.trans_bottom_to_top_add_group)
             rv.animation = AnimationUtils.loadAnimation(this, R.anim.fade_in_group_add)
             deviceListItem.forEachIndexed { i, d ->
                 if (i != deviceListItem.lastIndex) {

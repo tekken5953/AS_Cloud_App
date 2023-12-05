@@ -1724,7 +1724,7 @@ class MainActivity
             vp.currentItem = if (vp.currentItem + 1 < warningList.size) vp.currentItem + 1 else 0
             handler.postDelayed({
                 warningSlideAuto()
-            },3500)
+            },5000)
         }
     }
 

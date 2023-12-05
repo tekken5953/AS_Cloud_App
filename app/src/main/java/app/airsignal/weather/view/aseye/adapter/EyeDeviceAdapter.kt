@@ -3,7 +3,6 @@ package app.airsignal.weather.view.aseye.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.opengl.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,7 +51,7 @@ class EyeDeviceAdapter(
         val report: ImageView = itemView.findViewById(R.id.listItemAeDeviceReport)
         private val addDevice: ImageView = itemView.findViewById(R.id.listItemAeDeviceAdd)
         private val container: RelativeLayout = itemView.findViewById(R.id.listItemAeDeviceContainer)
-        private val verify: ImageView = itemView.findViewById(R.id.listItemAeDeviceVerify)
+        private val master: TextView = itemView.findViewById(R.id.listItemAeDeviceMaster)
 
         @SuppressLint("InflateParams")
         fun bind(dao: EyeDataModel.Device) {
@@ -61,12 +60,10 @@ class EyeDeviceAdapter(
 
             dao.serial.power.let {
                 if (it) {
-                    power.text = "켜짐"
-                    power.setTextColor(context.getColor(R.color.ae_power_on_color))
+                    power.visibility = View.VISIBLE
                     container.background = getRs(R.drawable.ae_device_bg_e)
                 } else {
-                    power.text = "꺼짐"
-                    power.setTextColor(context.getColor(R.color.ae_sub_color))
+                    power.visibility = View.GONE
                     container.background = getRs(R.drawable.ae_device_bg_d)
                 }
             }
@@ -74,12 +71,10 @@ class EyeDeviceAdapter(
             if (dao.alias == "") {
                 deviceName.visibility = View.GONE
                 serial.visibility = View.GONE
-                power.visibility = View.GONE
                 addDevice.visibility = View.VISIBLE
             } else {
                 deviceName.visibility = View.VISIBLE
                 serial.visibility = View.VISIBLE
-                power.visibility = View.VISIBLE
                 addDevice.visibility = View.GONE
             }
 
@@ -90,15 +85,19 @@ class EyeDeviceAdapter(
             }
 
             if (dao.isMaster) {
-                verify.visibility = View.VISIBLE
+                master.visibility = View.VISIBLE
             } else {
-                verify.visibility = View.GONE
+                master.visibility = View.GONE
             }
 
             itemView.setOnClickListener {
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    try { onClickListener.onItemClick(it, position) }
+                    try {
+                        if (dao.serial.power) {
+                            onClickListener.onItemClick(it, position)
+                        }
+                    }
                     catch (e: UninitializedPropertyAccessException) { e.printStackTrace() }
                 }
             }
