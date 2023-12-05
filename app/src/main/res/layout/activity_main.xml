@@ -7,7 +7,7 @@
 
         <variable
             name="dataVM"
-            type="app.airsignal.weather.vmodel.GetWeatherViewModel" />
+            type="app.airsignal.core_viewmodel.GetWeatherViewModel" />
 
     </data>
 

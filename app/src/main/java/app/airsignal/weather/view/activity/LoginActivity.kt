@@ -8,13 +8,13 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile.notificationAdmin
 import app.airsignal.weather.dao.StaticDataObject.TAG_LOGIN
 import app.airsignal.weather.databinding.ActivityLoginBinding
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_GOOGLE
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_GOOGLE
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
 import app.airsignal.weather.util.EnterPageUtil
-import app.airsignal.weather.util.`object`.SetSystemInfo
+import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +34,7 @@ class LoginActivity
         super.onCreate(savedInstanceState)
         initBinding()
 
-        SetSystemInfo.setStatusBar(this)
+        setStatusBar(this)
 
         // 구글 로그인 버튼 클릭
         binding.googleLoginButton.setOnClickListener {

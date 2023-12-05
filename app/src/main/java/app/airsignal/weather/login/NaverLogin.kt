@@ -11,14 +11,13 @@ import app.airsignal.weather.dao.IgnoredKeyFile.userEmail
 import app.airsignal.weather.dao.IgnoredKeyFile.userId
 import app.airsignal.weather.dao.IgnoredKeyFile.userProfile
 import app.airsignal.weather.dao.StaticDataObject.TAG_LOGIN
-import app.airsignal.weather.db.SharedPreferenceManager
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_NAVER
-import app.airsignal.weather.firebase.db.RDBLogcat.writeErrorNotANR
-import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginHistory
-import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginPref
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_NAVER
+import app.airsignal.weather.dao.RDBLogcat.writeErrorNotANR
+import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
+import app.airsignal.weather.dao.RDBLogcat.writeLoginPref
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.view.util.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.navercorp.nid.NaverIdLoginSDK
@@ -89,7 +88,7 @@ class NaverLogin(private val activity: Activity) {
     val profileCallback = object : NidProfileCallback<NidProfileResponse> {
         override fun onSuccess(result: NidProfileResponse) {
             result.profile?.let {
-                SharedPreferenceManager(activity)
+                app.airsignal.core_databse.db.SharedPreferenceManager(activity)
                     .setString(lastLoginPhone, it.mobile.toString())
                     .setString(userId, it.name.toString())
                     .setString(userProfile, it.profileImage!!)

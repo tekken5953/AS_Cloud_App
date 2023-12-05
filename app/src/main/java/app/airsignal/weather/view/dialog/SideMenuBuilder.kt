@@ -12,10 +12,10 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_BIG
 import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_SMALL
 import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserFontScale
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserProfileImage
-import app.airsignal.weather.util.`object`.SetSystemInfo
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserEmail
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserFontScale
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserProfileImage
+import app.airsignal.core_databse.db.sp.SetSystemInfo
 import com.bumptech.glide.Glide
 
 /**

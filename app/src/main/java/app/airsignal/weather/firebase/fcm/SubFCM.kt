@@ -1,9 +1,5 @@
 package app.airsignal.weather.firebase.fcm
 
-import app.airsignal.weather.dao.StaticDataObject.TAG_N
-import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.view.widget.WidgetProvider
-import app.airsignal.weather.view.widget.WidgetProvider42
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -11,7 +7,6 @@ import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.util.*
 
 
@@ -47,9 +42,8 @@ class SubFCM: FirebaseMessagingService() {
     suspend fun subTopic(topic: String): SubFCM {
         try {
             FirebaseMessaging.getInstance().subscribeToTopic(topic).await()
-            Timber.tag(TAG_N).d("Subscribed : $topic")
         } catch (e: Exception) {
-            Timber.tag(TAG_N).w("Subscribe failed: $e")
+            e.printStackTrace()
         }
         return this
     }
@@ -58,13 +52,6 @@ class SubFCM: FirebaseMessagingService() {
     private fun unSubTopic(topic: String): SubFCM {
         val encodedStream = encodeTopic(topic)
         FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream)
-            .addOnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Timber.tag(TAG_N).w("UnSubscribed failed")
-                } else {
-                    Timber.tag(TAG_N).i("UnSubscribed : $encodedStream")
-                }
-            }
         return this
     }
 

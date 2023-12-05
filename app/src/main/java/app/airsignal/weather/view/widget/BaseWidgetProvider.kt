@@ -7,18 +7,14 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
-import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.gps.GetLocation
-import app.airsignal.weather.retrofit.ApiModel
-import app.airsignal.weather.retrofit.HttpClient
+import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.util.AddressFromRegex
 import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
-import app.airsignal.weather.util.`object`.GetAppInfo
-import app.airsignal.weather.util.`object`.SetAppInfo
+import app.airsignal.core_databse.db.sp.GetAppInfo
+import app.airsignal.core_databse.db.sp.SetAppInfo
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import retrofit2.awaitResponse
-import timber.log.Timber
 import java.time.LocalDateTime
 
 open class BaseWidgetProvider: AppWidgetProvider() {
@@ -53,9 +49,9 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         super.onDeleted(context, appWidgetIds)
     }
 
-    suspend fun requestWeather(context: Context,lat: Double, lng: Double): ApiModel.WidgetData? {
+    suspend fun requestWeather(context: Context,lat: Double, lng: Double): app.airsignal.core_network.retrofit.ApiModel.WidgetData? {
         try {
-            return HttpClient.getInstance(true).setClientBuilder()
+            return app.airsignal.core_network.retrofit.HttpClient.getInstance(true).setClientBuilder()
                 .getWidgetForecast(lat, lng, 4)
                 .awaitResponse().body()
         } catch (e: Exception) {
@@ -68,10 +64,9 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         return null
     }
 
-    fun getAddress(context: Context, lat: Double, lng: Double): String {
-        val loc = GetLocation(context).getAddress(lat, lng)
-        val result = AddressFromRegex(loc).getNotificationAddress()
-        return if (result == "") AddressFromRegex(loc).getSecondAddress() else result
+    fun getWidgetAddress(addr: String): String {
+        val result = AddressFromRegex(addr).getNotificationAddress()
+        return if (result == "") AddressFromRegex(addr).getSecondAddress() else result
     }
 
     fun checkBackPerm(context: Context): Boolean {

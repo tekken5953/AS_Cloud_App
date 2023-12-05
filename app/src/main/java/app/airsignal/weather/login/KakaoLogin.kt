@@ -7,14 +7,13 @@ import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPhone
 import app.airsignal.weather.dao.IgnoredKeyFile.userEmail
 import app.airsignal.weather.dao.IgnoredKeyFile.userId
 import app.airsignal.weather.dao.IgnoredKeyFile.userProfile
-import app.airsignal.weather.db.SharedPreferenceManager
-import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_KAKAO
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_KAKAO_EMAIL
-import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginHistory
+import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO_EMAIL
+import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.view.util.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.kakao.sdk.auth.AuthApiClient
@@ -180,7 +179,7 @@ class KakaoLogin(private val activity: Activity) {
     private fun saveUserSettings() {
         UserApiClient.instance.me { user, _ ->
             user?.kakaoAccount?.let { account ->
-                SharedPreferenceManager(activity)
+                app.airsignal.core_databse.db.SharedPreferenceManager(activity)
                     .setString(lastLoginPhone, account.phoneNumber.toString())
                     .setString(userId, account.profile!!.nickname.toString())
                     .setString(userProfile, account.profile!!.profileImageUrl.toString())

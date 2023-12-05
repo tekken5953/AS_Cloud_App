@@ -3,33 +3,27 @@ package app.airsignal.weather.firebase.fcm
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
 import android.media.AudioAttributes
-import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
 import android.view.View
 import androidx.core.app.NotificationCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
+import app.airsignal.core_databse.db.sp.GetAppInfo
+import app.airsignal.core_databse.db.sp.GetAppInfo.getNotificationAddress
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserNotiEnable
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserNotiVibrate
+import app.airsignal.core_databse.db.sp.GetSystemInfo
+import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.R
-import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.util.VibrateUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgLarge
-import app.airsignal.weather.util.`object`.GetAppInfo
-import app.airsignal.weather.util.`object`.GetAppInfo.getNotificationAddress
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiEnable
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiSound
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiVibrate
-import app.airsignal.weather.util.`object`.GetSystemInfo
-import app.airsignal.weather.view.activity.SplashActivity
-import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
 
@@ -54,7 +48,8 @@ class NotificationBuilder {
             intent = Intent(Intent.ACTION_VIEW)
             intent.data = Uri.parse(GetSystemInfo.getPlayStoreURL(appContext))
         } else {
-            intent = Intent(appContext, SplashActivity::class.java)
+            intent = Intent("android.intent.action.MAIN")
+            intent.setPackage("app.airsignal.weather")
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP and Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
@@ -81,7 +76,7 @@ class NotificationBuilder {
             notificationBuilder
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)
-                .setColor(appContext.getColor(R.color.main_blue_color))
+                .setColor(Color.parseColor("#00C2FF"))
                 .setWhen(System.currentTimeMillis())
                 .setSubText(subtext)
                 .setSmallIcon(R.drawable.ic_stat_airsignal_default)

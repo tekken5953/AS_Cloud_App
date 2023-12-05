@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@+id/EyeRendingBack"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:contentDescription="@string/cd_icon_back"
+        android:src="@drawable/back_arrow" />
+
+    <ScrollView
+        android:id="@+id/EyeRendingScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/EyeRendingBtn"
+        android:layout_below="@+id/EyeRendingBack" />
+
+    <Button
+        android:id="@+id/EyeRendingBtn"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:fontFamily="@font/spoqa_hansansneo_bold"
+        android:text="자세히 보기"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:background="@drawable/eye_rending_btn_bg"/>
+
+</RelativeLayout>

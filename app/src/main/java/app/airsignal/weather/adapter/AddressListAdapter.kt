@@ -21,9 +21,8 @@ import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
-import app.airsignal.weather.db.room.repository.GpsRepository
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLastAddress
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLocation
 import java.util.*
 
 /**
@@ -37,7 +36,7 @@ class AddressListAdapter(
     RecyclerView.Adapter<AddressListAdapter.ViewHolder>() {
     private val mList = list
     private var visible = false
-    val db = GpsRepository(context)
+    val db = app.airsignal.core_databse.db.room.repository.GpsRepository(context)
 
     private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
 

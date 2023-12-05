@@ -13,8 +13,8 @@ class GPSWorker(private val context: Context, params: WorkerParameters)
 
     /** 워크 매니저 백그라운드 반복 **/
     override suspend fun doWork(): Result {
-        GetLocation(context).getGpsInBackground()
         return try {
+            GetLocation(context).getGpsInBackground()
             Result.success()
         } catch (e: Exception) {
             e.printStackTrace()

@@ -9,25 +9,19 @@ import android.net.NetworkInfo
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.ErrorCode.ERROR_GET_DATA
-import app.airsignal.weather.dao.ErrorCode.ERROR_LOCATION_IOException
+import app.airsignal.core_network.ErrorCode.ERROR_GET_DATA
+import app.airsignal.core_network.ErrorCode.ERROR_LOCATION_IOException
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
-import app.airsignal.weather.db.database.GpsDataBase
-import app.airsignal.weather.db.room.model.GpsEntity
-import app.airsignal.weather.db.room.repository.GpsRepository
-import app.airsignal.weather.firebase.db.RDBLogcat.writeErrorANR
-import app.airsignal.weather.firebase.db.RDBLogcat.writeGpsHistory
-import app.airsignal.weather.firebase.db.RDBLogcat.writeWorkManager
+import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.dao.RDBLogcat.writeErrorANR
 import app.airsignal.weather.util.AddressFromRegex
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
-import app.airsignal.weather.util.`object`.GetSystemInfo
-import app.airsignal.weather.util.`object`.SetAppInfo
-import app.airsignal.weather.util.`object`.SetAppInfo.setNotificationAddress
-import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
+import app.airsignal.core_databse.db.sp.GetSystemInfo
+import app.airsignal.core_databse.db.sp.SetAppInfo.setNotificationAddress
+import app.airsignal.core_databse.db.sp.SetAppInfo.setUserLastAddr
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.io.IOException
 import java.util.*
 
@@ -94,8 +88,8 @@ class GetLocation(private val context: Context) {
         mLng: Double,
         mAddr: String?
     ) {
-        val db = GpsRepository(context)
-        val model = GpsEntity().apply {
+        val db = app.airsignal.core_databse.db.room.repository.GpsRepository(context)
+        val model = app.airsignal.core_databse.db.room.model.GpsEntity().apply {
             name = CURRENT_GPS_ID
             position = -1
             lat = mLat
@@ -109,11 +103,15 @@ class GetLocation(private val context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             if (gpsDbIsEmpty(db)) db.insert(model)
             else db.update(model)
+            RDBLogcat.writeWorkManager(
+                context.applicationContext,
+                gpsValue = "DB update to ${model.lat},${model.lng},${model.addrKr}"
+            )
         }
     }
 
     // DB가 비어있는지 확인
-    private suspend fun gpsDbIsEmpty(db: GpsRepository): Boolean {
+    private suspend fun gpsDbIsEmpty(db: app.airsignal.core_databse.db.room.repository.GpsRepository): Boolean {
         return db.findAll().isEmpty()
     }
 
@@ -125,7 +123,8 @@ class GetLocation(private val context: Context) {
                 // 위치 업데이트가 발생했을 때 실행되는 코드
                 val latitude = location.latitude
                 val longitude = location.longitude
-                updateDatabaseWithLocationData(latitude,longitude,null)
+                updateDatabaseWithLocationData(latitude,longitude,
+                    getAddress(latitude,longitude))
             }
             override fun onProviderEnabled(provider: String) {
             }

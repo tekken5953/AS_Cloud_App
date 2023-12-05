@@ -1,8 +1,12 @@
 package app.airsignal.weather.util.`object`
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.view.View
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
 import java.text.SimpleDateFormat
@@ -42,20 +46,6 @@ object DataTypeParser {
             timeInMillis = System.currentTimeMillis()
         }
         return mFormat.format(calendar.time)
-    }
-
-    /** 데이터 포멧에 맞춰서 시간변환 **/
-    fun millsToString(mills: Long, pattern: String): String {
-        return SimpleDateFormat(pattern, Locale.getDefault()).format(Date(mills))
-    }
-
-    /** Email을 RealtimeDB의 child 형식에 맞게 변환**/
-    fun formatEmailToRDB(email: String): String { return email.replace(".", "_") }
-
-    /** Current의 rainType의 에러 방지 **/
-    fun modifyCurrentRainType(rainTypeCurrent: String, rainTypeReal: String): String {
-        val rainList = listOf("비","눈","비/눈","소나기","없음")
-        return if (rainTypeCurrent in rainList) rainTypeCurrent else rainTypeReal
     }
 
     /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트 **/
@@ -104,21 +94,6 @@ object DataTypeParser {
             }
         }
         return temp
-    }
-
-    /** Current의 Temperature의 에러 방지 **/
-    fun modifyCurrentTempType(tempCurrent: Double?, tempReal: Double): Double {
-        return try {
-            tempCurrent?.let { tc -> if (tc < 50.0 && tc > -50.0) tc else tempReal } ?: tempReal
-        } catch (e: Exception) { return tempReal }
-    }
-
-    fun modifyCurrentWindSpeed(windC: Double?, windR: Double): Double {
-        return windC?.let { c -> if (c >= -100 && c <= 500) c else windR } ?: windR
-    }
-
-    fun modifyCurrentHumid(humidC: Double?, humidR: Double): Double {
-        return humidC?.let { h -> if (h >= -100 && h <= 100) h else humidR } ?: humidR
     }
 
     /** rain type에 따른 이미지 설정 **/
@@ -325,16 +300,33 @@ object DataTypeParser {
             .replace("특별자치도", "도")
     }
 
-    /** HH:mm 포맷의 시간을 분으로 변환 **/
-    fun parseTimeToMinutes(time: String): Int {
-        return try {
-            val timeSplit = time.replace(" ", "")
-            val hour = timeSplit.substring(0, 2).toInt()
-            val minutes = timeSplit.substring(2, 4).toInt()
-            hour * 60 + minutes
-        } catch (e: java.lang.NumberFormatException) { 1 }
+    /** UV 범주 색상 적용 **/
+    fun setUvBackgroundColor(context: Context, flag: String, cardView: CardView) {
+        val flagMap = mapOf (
+            "낮음" to R.color.uv_low,
+            "보통" to R.color.uv_normal,
+            "높음" to R.color.uv_high,
+            "매우높음" to R.color.uv_very_high,
+            "위험" to R.color.uv_caution
+        )
+
+        flagMap[flag]?.let { cardView.setCardBackgroundColor(context.getColor(it))}!!
     }
 
+    /** 상태 바 설정 **/
+    @Suppress("DEPRECATION")
+    fun setStatusBar(activity: Activity) {
+        activity.window.apply {
+            statusBarColor = activity.getColor(R.color.theme_view_color)
+            navigationBarColor = activity.getColor(android.R.color.transparent)
+
+            this.decorView.systemUiVisibility =
+                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
+                    this.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+                else View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        }
+    }
+    
     /** 하늘상태를 국가에 맞게 변경 **/
     fun translateSky(context: Context, sky: String): String {
         val skyMap = mapOf(

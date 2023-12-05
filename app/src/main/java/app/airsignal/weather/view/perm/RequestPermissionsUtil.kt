@@ -3,12 +3,9 @@ package app.airsignal.weather.view.perm
 import android.Manifest
 import android.annotation.TargetApi
 import android.app.Activity
-import android.app.Service
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
@@ -17,8 +14,8 @@ import androidx.core.content.ContextCompat
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_BACKGROUND_LOCATION
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_LOCATION
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_NOTIFICATION
-import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.util.`object`.GetAppInfo.getInitLocPermission
+import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.core_databse.db.sp.GetAppInfo.getInitLocPermission
 import timber.log.Timber
 
 class RequestPermissionsUtil(private val context: Context) {

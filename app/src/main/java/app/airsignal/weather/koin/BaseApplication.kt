@@ -2,15 +2,19 @@ package app.airsignal.weather.koin
 
 import android.app.Application
 import android.content.Context
-import app.airsignal.weather.firebase.db.RDBLogcat
+import app.airsignal.core_databse.db.SharedPreferenceManager
+import app.airsignal.core_databse.db.room.model.GpsEntity
+import app.airsignal.core_databse.db.room.repository.GpsRepository
+import app.airsignal.core_network.retrofit.ApiModel
+import app.airsignal.core_network.retrofit.HttpClient
+import app.airsignal.core_repository.GetAppVersionRepo
+import app.airsignal.core_repository.GetWarningRepo
+import app.airsignal.core_repository.GetWeatherRepo
+import app.airsignal.core_viewmodel.GetAppVersionViewModel
+import app.airsignal.core_viewmodel.GetWarningViewModel
+import app.airsignal.core_viewmodel.GetWeatherViewModel
+import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.gps.GetLocation
-import app.airsignal.weather.repo.GetAppVersionRepo
-import app.airsignal.weather.repo.GetWarningRepo
-import app.airsignal.weather.repo.GetWeatherRepo
-import app.airsignal.weather.retrofit.HttpClient
-import app.airsignal.weather.vmodel.GetAppVersionViewModel
-import app.airsignal.weather.vmodel.GetWarningViewModel
-import app.airsignal.weather.vmodel.GetWeatherViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -29,7 +33,7 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
         startKoin {
             androidLogger()
             androidContext(this@BaseApplication)
-            modules(listOf(myModule))
+            modules(listOf(myModule,coreDatabaseModule,coreNetworkModule))
         }
     }
 
@@ -58,5 +62,16 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
         viewModel { GetAppVersionViewModel(get()) }
         viewModel { GetWeatherViewModel(get()) }
         viewModel { GetWarningViewModel(get()) }
+    }
+
+    private val coreDatabaseModule = module {
+        single { GpsEntity() }
+        single { GpsRepository(applicationContext) }
+        single { SharedPreferenceManager(get()) }
+    }
+
+    private val coreNetworkModule = module {
+        single { ApiModel() }
+        single { HttpClient }
     }
 }

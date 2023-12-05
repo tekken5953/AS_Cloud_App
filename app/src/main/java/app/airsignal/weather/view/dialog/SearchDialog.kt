@@ -27,18 +27,16 @@ import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_BIG
 import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_SMALL
-import app.airsignal.weather.db.room.model.GpsEntity
-import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.util.KeyboardController
 import app.airsignal.weather.util.`object`.DataTypeParser.convertAddress
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
-import app.airsignal.weather.util.`object`.GetAppInfo.getCurrentLocation
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserFontScale
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
-import app.airsignal.weather.util.`object`.GetSystemInfo.getLocale
-import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
-import app.airsignal.weather.util.`object`.SetSystemInfo
+import app.airsignal.core_databse.db.sp.GetAppInfo.getCurrentLocation
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserFontScale
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLastAddress
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLocation
+import app.airsignal.core_databse.db.sp.GetSystemInfo.getLocale
+import app.airsignal.core_databse.db.sp.SetAppInfo.setUserLastAddr
+import app.airsignal.core_databse.db.sp.SetSystemInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -57,7 +55,7 @@ class SearchDialog(
     private val layoutId = lId
     val currentList = ArrayList<AdapterModel.AddressListItem>()
     private val currentAdapter = AddressListAdapter(activity, currentList)
-    private val db by lazy { GpsRepository(activity) }
+    private val db by lazy { app.airsignal.core_databse.db.room.repository.GpsRepository(activity) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -128,7 +126,8 @@ class SearchDialog(
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
             CoroutineScope(Dispatchers.IO).launch {
-                GpsRepository(activity).findAll().forEach { entity ->
+                app.airsignal.core_databse.db.room.repository.GpsRepository(activity)
+                    .findAll().forEach { entity ->
                     withContext(Dispatchers.Main) {
                         if (entity.name == CURRENT_GPS_ID) {
                             currentAddress.text = getCurrentLocation(activity).replace(getString(R.string.korea), "")
@@ -280,7 +279,7 @@ class SearchDialog(
                 apply.setOnClickListener {
                     builder.dismiss()
                     CoroutineScope(Dispatchers.IO).launch {
-                        val model = GpsEntity()
+                        val model = app.airsignal.core_databse.db.room.model.GpsEntity()
                         model.name = searchItem[position]
 
                         val addrArray =  resources.getStringArray(
@@ -330,7 +329,7 @@ class SearchDialog(
 
     private suspend fun dbUpdate(addrKr: String?, addrEn: String?) {
         withContext(Dispatchers.Default) {
-            val model = GpsEntity()
+            val model = app.airsignal.core_databse.db.room.model.GpsEntity()
             model.name = CURRENT_GPS_ID
             model.addrKr = addrKr
             model.addrEn = addrEn

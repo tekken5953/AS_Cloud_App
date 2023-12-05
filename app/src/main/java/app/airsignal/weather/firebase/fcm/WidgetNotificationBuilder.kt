@@ -4,18 +4,15 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.os.Looper
 import android.view.View
 import androidx.core.app.NotificationCompat
+import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.R
-import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.view.widget.BaseWidgetProvider
 import app.airsignal.weather.view.widget.WidgetProvider
 import app.airsignal.weather.view.widget.WidgetProvider42
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.logging.Handler
 
 
 class WidgetNotificationBuilder {

@@ -30,36 +30,52 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import app.airsignal.core_databse.db.room.repository.GpsRepository
+import app.airsignal.core_databse.db.sp.GetAppInfo
+import app.airsignal.core_databse.db.sp.GetAppInfo.getEntireSun
+import app.airsignal.core_databse.db.sp.GetAppInfo.getIsNight
+import app.airsignal.core_databse.db.sp.GetAppInfo.getTopicNotification
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLastAddress
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLocation
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
+import app.airsignal.core_databse.db.sp.GetAppInfo.millsToString
+import app.airsignal.core_databse.db.sp.GetAppInfo.parseTimeToMinutes
+import app.airsignal.core_databse.db.sp.GetSystemInfo.getLocale
+import app.airsignal.core_databse.db.sp.GetSystemInfo.isThemeNight
+import app.airsignal.core_databse.db.sp.SetAppInfo
+import app.airsignal.core_databse.db.sp.SetAppInfo.removeSingleKey
+import app.airsignal.core_databse.db.sp.SetAppInfo.setCurrentLocation
+import app.airsignal.core_databse.db.sp.SetAppInfo.setUserLastAddr
+import app.airsignal.core_network.ErrorCode.ERROR_API_PROTOCOL
+import app.airsignal.core_network.ErrorCode.ERROR_GET_DATA
+import app.airsignal.core_network.ErrorCode.ERROR_GET_LOCATION_FAILED
+import app.airsignal.core_network.ErrorCode.ERROR_GPS_CONNECTED
+import app.airsignal.core_network.ErrorCode.ERROR_LOCATION_FAILED
+import app.airsignal.core_network.ErrorCode.ERROR_NETWORK
+import app.airsignal.core_network.ErrorCode.ERROR_NOT_SERVICED_LOCATION
+import app.airsignal.core_network.ErrorCode.ERROR_NULL_DATA
+import app.airsignal.core_network.ErrorCode.ERROR_SERVER_CONNECTING
+import app.airsignal.core_network.ErrorCode.ERROR_TIMEOUT
+import app.airsignal.core_network.NetworkUtils.modifyCurrentHumid
+import app.airsignal.core_network.NetworkUtils.modifyCurrentWindSpeed
+import app.airsignal.core_repository.BaseRepository
+import app.airsignal.core_viewmodel.GetWeatherViewModel
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
 import app.airsignal.weather.dao.AdapterModel
-import app.airsignal.weather.dao.ErrorCode.ERROR_API_PROTOCOL
-import app.airsignal.weather.dao.ErrorCode.ERROR_GET_DATA
-import app.airsignal.weather.dao.ErrorCode.ERROR_GET_LOCATION_FAILED
-import app.airsignal.weather.dao.ErrorCode.ERROR_GPS_CONNECTED
-import app.airsignal.weather.dao.ErrorCode.ERROR_LOCATION_FAILED
-import app.airsignal.weather.dao.ErrorCode.ERROR_NETWORK
-import app.airsignal.weather.dao.ErrorCode.ERROR_NOT_SERVICED_LOCATION
-import app.airsignal.weather.dao.ErrorCode.ERROR_NULL_DATA
-import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
-import app.airsignal.weather.dao.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
 import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
+import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.databinding.ActivityMainBinding
-import app.airsignal.weather.db.room.model.GpsEntity
-import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.firebase.admob.AdViewClass
-import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.gps.GPSWorker
 import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.login.SilentLoginClass
-import app.airsignal.weather.repo.BaseRepository
-import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyImg
@@ -67,50 +83,29 @@ import app.airsignal.weather.util.`object`.DataTypeParser.applySkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
 import app.airsignal.weather.util.`object`.DataTypeParser.dateAppendZero
 import app.airsignal.weather.util.`object`.DataTypeParser.getComparedTemp
-import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataColor
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
 import app.airsignal.weather.util.`object`.DataTypeParser.getHourCountToTomorrow
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgSmall
 import app.airsignal.weather.util.`object`.DataTypeParser.isRainyDay
-import app.airsignal.weather.util.`object`.DataTypeParser.millsToString
-import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentHumid
-import app.airsignal.weather.util.`object`.DataTypeParser.modifyCurrentWindSpeed
 import app.airsignal.weather.util.`object`.DataTypeParser.parseDayOfWeekToKorean
 import app.airsignal.weather.util.`object`.DataTypeParser.parseLocalDateTimeToLong
-import app.airsignal.weather.util.`object`.DataTypeParser.parseTimeToMinutes
+import app.airsignal.weather.util.`object`.DataTypeParser.setUvBackgroundColor
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSky
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
-import app.airsignal.weather.util.`object`.GetAppInfo
-import app.airsignal.weather.util.`object`.GetAppInfo.getEntireSun
-import app.airsignal.weather.util.`object`.GetAppInfo.getIsNight
-import app.airsignal.weather.util.`object`.GetAppInfo.getTopicNotification
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserLastAddress
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
-import app.airsignal.weather.util.`object`.GetSystemInfo.getLocale
-import app.airsignal.weather.util.`object`.GetSystemInfo.isThemeNight
-import app.airsignal.weather.util.`object`.SetAppInfo
-import app.airsignal.weather.util.`object`.SetAppInfo.removeSingleKey
-import app.airsignal.weather.util.`object`.SetAppInfo.setCurrentLocation
-import app.airsignal.weather.util.`object`.SetAppInfo.setUserLastAddr
-import app.airsignal.weather.util.`object`.SetSystemInfo.setUvBackgroundColor
 import app.airsignal.weather.view.*
 import app.airsignal.weather.view.dialog.MakeDoubleDialog
 import app.airsignal.weather.view.dialog.SearchDialog
 import app.airsignal.weather.view.dialog.SideMenuBuilder
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.view.util.ToastUtils
-import app.airsignal.weather.vmodel.GetWeatherViewModel
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.database.DatabaseException
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import timber.log.Timber
 import java.io.IOException
 import java.time.LocalDateTime
 import java.util.*
@@ -743,6 +738,7 @@ class MainActivity
         })
     }
 
+    @SuppressLint("MissingSuperCall")
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         // 뒤로가기 한번 클릭 시 토스트
@@ -811,7 +807,7 @@ class MainActivity
     }
 
     // API 통신이 성공일 때 처리
-    private fun handleApiSuccess(result: ApiModel.GetEntireData) {
+    private fun handleApiSuccess(result: app.airsignal.core_network.retrofit.ApiModel.GetEntireData) {
         try {
             val metaAddr = result.meta.address ?: "주소 호출 에러"
             CoroutineScope(Dispatchers.IO).launch {
@@ -869,7 +865,7 @@ class MainActivity
             hideProgressBar()
             try {
                 RDBLogcat.writeErrorANR("handleApiError", "handleApiError cause $errorMessage")
-            } catch(e: DatabaseException) { e.printStackTrace() }
+            } catch(e: Exception) { e.printStackTrace() }
             if (GetLocation(this).isNetWorkConnected()) {
                 hideAllViews(error = errorMessage)
             } else {
@@ -892,7 +888,7 @@ class MainActivity
     }
 
     // 결과에서 얻은 데이터로 UI 요소를 업데이트
-    private fun updateUIWithData(result: ApiModel.GetEntireData) {
+    private fun updateUIWithData(result: app.airsignal.core_network.retrofit.ApiModel.GetEntireData) {
         currentSun =
             GetAppInfo.getCurrentSun(result.sun.sunrise ?: "0600", result.sun.sunset ?: "1900")
         val lunar = result.lunar?.date ?: -1
@@ -926,7 +922,7 @@ class MainActivity
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updateWeatherItems(result: ApiModel.GetEntireData) {
+    private fun updateWeatherItems(result: app.airsignal.core_network.retrofit.ApiModel.GetEntireData) {
         // 일일 및 주간 날씨 항목 업데이트
         runOnUiThread {
             dailyWeatherList.clear()
@@ -1036,14 +1032,15 @@ class MainActivity
                     "${taMax[it]!!.roundToInt()}˚"
                 )
             } catch (e: Exception) {
-                RDBLogcat.writeErrorANR(RDBLogcat.DATA_CALL_ERROR,
+                RDBLogcat.writeErrorANR(
+                    RDBLogcat.DATA_CALL_ERROR,
                     "updateWeatherItems is ${e.stackTraceToString()}")
             }
         }
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updateAirQualityData(air: ApiModel.AirQualityData) {
+    private fun updateAirQualityData(air: app.airsignal.core_network.retrofit.ApiModel.AirQualityData) {
         // 대기 질 데이터 업데이트
         airQList.clear()
 
@@ -1095,7 +1092,7 @@ class MainActivity
     }
 
     @SuppressLint("SetTextI18n")
-    private fun updateUVData(uv: ApiModel.UV?) {
+    private fun updateUVData(uv: app.airsignal.core_network.retrofit.ApiModel.UV?) {
         // 자외선 데이터 업데이트
         // UV 값이 없으면 카드 없앰
         uv?.let {
@@ -1114,7 +1111,7 @@ class MainActivity
         } ?: run { binding.mainUVBox.visibility = GONE }
     }
 
-    private fun updateSunTimes(sun: ApiModel.SunData, sunTomorrow: ApiModel.SunTomorrow?) {
+    private fun updateSunTimes(sun: app.airsignal.core_network.retrofit.ApiModel.SunData, sunTomorrow: app.airsignal.core_network.retrofit.ApiModel.SunTomorrow?) {
         // 일출 및 일몰 시간 업데이트
         sunPb.animate(currentSun)
 
@@ -1136,9 +1133,9 @@ class MainActivity
 
     @SuppressLint("SetTextI18n")
     private fun updateCurrentTemperature(
-        yesterdayTemp: ApiModel.YesterdayTemp,
-        current: ApiModel.Current,
-        realtime: List<ApiModel.RealTimeData>) {
+        yesterdayTemp: app.airsignal.core_network.retrofit.ApiModel.YesterdayTemp,
+        current: app.airsignal.core_network.retrofit.ApiModel.Current,
+        realtime: List<app.airsignal.core_network.retrofit.ApiModel.RealTimeData>) {
         // 현재 온도 적용
         val real0 = realtime[0]
         val currentTemperature = current.temperature.toString()
@@ -1186,8 +1183,8 @@ class MainActivity
     }
 
     // 날씨 조건에 따라 배경 업데이트
-    private fun updateBackgroundBasedOnWeather(currentSun: Int, realtime: ApiModel.RealTimeData,
-                                               current: ApiModel.Current, thunder: Double) {
+    private fun updateBackgroundBasedOnWeather(currentSun: Int, realtime: app.airsignal.core_network.retrofit.ApiModel.RealTimeData,
+                                               current: app.airsignal.core_network.retrofit.ApiModel.Current, thunder: Double) {
         changeTextColorStyle(
             applySkyText(
                 this,
@@ -1568,7 +1565,7 @@ class MainActivity
 
     // 현재 위치 정보로 DB 갱신
     private fun updateCurrentAddress(mLat: Double, mLng: Double, mAddr: String?) {
-        GetLocation(this@MainActivity).updateDatabaseWithLocationData(mLat, mLng,null)
+        GetLocation(this@MainActivity).updateDatabaseWithLocationData(mLat, mLng,mAddr)
     }
 
     // 자외선 범주 아이템 추가

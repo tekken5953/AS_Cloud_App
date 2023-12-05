@@ -8,31 +8,21 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.location.Location
 import android.widget.RemoteViews
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.graphics.drawable.toBitmap
+import app.airsignal.core_databse.db.sp.GetAppInfo
+import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.firebase.fcm.WidgetFCM
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.StaticDataObject
-import app.airsignal.weather.db.room.repository.GpsRepository
-import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.retrofit.ApiModel
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
-import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
-import app.airsignal.weather.util.`object`.GetAppInfo
-import app.airsignal.weather.util.`object`.SetAppInfo
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 import kotlin.math.roundToInt
 
 
@@ -144,12 +134,13 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         CoroutineScope(Dispatchers.Default).launch {
             if (checkBackPerm(context)) {
                 try {
-                    val roomDB = GpsRepository(context).findById(StaticDataObject.CURRENT_GPS_ID)
+                    val roomDB = app.airsignal.core_databse.db.room.repository.GpsRepository(context)
+                        .findById(StaticDataObject.CURRENT_GPS_ID)
                     val lat = roomDB.lat
                     val lng = roomDB.lng
+                    val addr = getWidgetAddress(roomDB.addrKr ?: "")
                     lat?.let { mLat ->
                         lng?.let { mLng ->
-                            val addr = getAddress(context, mLat, mLng)
                             val data = requestWeather(context, mLat, mLng)
 
                             withContext(Dispatchers.Main) {
@@ -174,7 +165,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     private fun updateUI(
         context: Context,
         views: RemoteViews,
-        data: ApiModel.WidgetData?,
+        data: app.airsignal.core_network.retrofit.ApiModel.WidgetData?,
         addr: String?
     ) {
         try {

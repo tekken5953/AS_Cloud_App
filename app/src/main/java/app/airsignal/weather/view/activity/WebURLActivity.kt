@@ -11,7 +11,8 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile.privacyPolicyURI
 import app.airsignal.weather.dao.IgnoredKeyFile.termsOfServiceURL
 import app.airsignal.weather.databinding.ActivityWebUrlBinding
-import app.airsignal.weather.util.`object`.SetSystemInfo
+import app.airsignal.core_databse.db.sp.SetSystemInfo
+import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 
 class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
     override val resID: Int get() = R.layout.activity_web_url
@@ -21,7 +22,7 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
         super.onCreate(savedInstanceState)
         initBinding()
 
-        SetSystemInfo.setStatusBar(this)
+        setStatusBar(this)
 
         val webView = binding.webUrlWebView
 

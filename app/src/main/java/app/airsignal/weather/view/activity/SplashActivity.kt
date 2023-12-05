@@ -4,23 +4,23 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
+import app.airsignal.core_databse.db.sp.GetSystemInfo
+import app.airsignal.core_databse.db.sp.GetSystemInfo.goToPlayStore
+import app.airsignal.core_network.ErrorCode.ERROR_NETWORK
+import app.airsignal.core_network.ErrorCode.ERROR_SERVER_CONNECTING
+import app.airsignal.core_repository.BaseRepository
+import app.airsignal.core_viewmodel.GetAppVersionViewModel
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.ErrorCode.ERROR_NETWORK
-import app.airsignal.weather.dao.ErrorCode.ERROR_SERVER_CONNECTING
+import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivitySplashBinding
-import app.airsignal.weather.firebase.db.RDBLogcat
 import app.airsignal.weather.gps.GetLocation
-import app.airsignal.weather.repo.BaseRepository
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
-import app.airsignal.weather.util.`object`.GetSystemInfo
-import app.airsignal.weather.util.`object`.GetSystemInfo.goToPlayStore
-import app.airsignal.weather.util.`object`.SetSystemInfo
+import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.dialog.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.airsignal.weather.vmodel.GetAppVersionViewModel
 import com.google.firebase.FirebaseApp
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
@@ -38,7 +38,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        SetSystemInfo.setStatusBar(this)
+        setStatusBar(this)
 
         initBinding()
         FirebaseApp.initializeApp(this)

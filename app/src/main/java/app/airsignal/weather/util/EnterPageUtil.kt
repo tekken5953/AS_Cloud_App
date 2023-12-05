@@ -2,12 +2,11 @@ package app.airsignal.weather.util
 
 import android.app.Activity
 import android.content.Intent
-import app.airsignal.weather.util.`object`.SetAppInfo.setUserLoginPlatform
+import app.airsignal.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
 import app.airsignal.weather.view.activity.LoginActivity
 import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.activity.PermissionActivity
 import app.airsignal.weather.view.activity.WarningDetailActivity
-import app.airsignal.weather.view.aseye.activity.EyeDetailActivity
 import app.airsignal.weather.view.aseye.activity.EyeListActivity
 import kotlin.system.exitProcess
 
