@@ -22,12 +22,18 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
+import app.airsignal.core_network.retrofit.ApiModel
+import app.airsignal.core_repository.BaseRepository
+import app.airsignal.core_viewmodel.GetAppVersionViewModel
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.NoticeAdapter
-import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.IgnoredKeyFile.notiEnable
 import app.airsignal.weather.dao.IgnoredKeyFile.notiSound
 import app.airsignal.weather.dao.IgnoredKeyFile.notiVibrate
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_GOOGLE
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_NAVER
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_PHONE
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.dao.StaticDataObject.LANG_SYS
@@ -37,43 +43,36 @@ import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_SMALL
 import app.airsignal.weather.dao.StaticDataObject.THEME_DARK
 import app.airsignal.weather.dao.StaticDataObject.THEME_LIGHT
 import app.airsignal.weather.databinding.ActivitySettingBinding
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_GOOGLE
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_KAKAO
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_NAVER
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_PHONE
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
-import app.airsignal.weather.repo.BaseRepository
-import app.airsignal.weather.retrofit.HttpClient
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserFontScale
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserLocation
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiEnable
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiSound
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserNotiVibrate
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserTheme
-import app.airsignal.weather.util.`object`.GetAppInfo.isPermedBackLoc
-import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionCode
-import app.airsignal.weather.util.`object`.GetSystemInfo.getApplicationVersionName
-import app.airsignal.weather.util.`object`.GetSystemInfo.goToPlayStore
-import app.airsignal.weather.util.`object`.SetAppInfo.removeAllKeys
-import app.airsignal.weather.util.`object`.SetAppInfo.setInitBackLocPermission
-import app.airsignal.weather.util.`object`.SetAppInfo.setUserFontScale
-import app.airsignal.weather.util.`object`.SetAppInfo.setUserLocation
-import app.airsignal.weather.util.`object`.SetAppInfo.setUserNoti
-import app.airsignal.weather.util.`object`.SetAppInfo.setUserTheme
-import app.airsignal.weather.util.`object`.SetSystemInfo
-import app.airsignal.weather.util.`object`.SetSystemInfo.setStatusBar
-import app.airsignal.weather.view.perm.BackLocCheckDialog
-import app.airsignal.weather.view.ShowDialogClass
+import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.custom_view.CustomerServiceView
-import app.airsignal.weather.view.custom_view.SnackBarUtils
+import app.airsignal.weather.view.dialog.ShowDialogClass
+import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.airsignal.weather.vmodel.GetAppVersionViewModel
+import app.core_databse.db.sp.GetAppInfo.getUserEmail
+import app.core_databse.db.sp.GetAppInfo.getUserFontScale
+import app.core_databse.db.sp.GetAppInfo.getUserLocation
+import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
+import app.core_databse.db.sp.GetAppInfo.getUserNotiEnable
+import app.core_databse.db.sp.GetAppInfo.getUserNotiSound
+import app.core_databse.db.sp.GetAppInfo.getUserNotiVibrate
+import app.core_databse.db.sp.GetAppInfo.getUserTheme
+import app.core_databse.db.sp.GetAppInfo.isPermedBackLoc
+import app.core_databse.db.sp.GetSystemInfo.getApplicationVersionCode
+import app.core_databse.db.sp.GetSystemInfo.getApplicationVersionName
+import app.core_databse.db.sp.GetSystemInfo.goToPlayStore
+import app.core_databse.db.sp.SetAppInfo.removeAllKeys
+import app.core_databse.db.sp.SetAppInfo.setInitBackLocPermission
+import app.core_databse.db.sp.SetAppInfo.setUserFontScale
+import app.core_databse.db.sp.SetAppInfo.setUserLocation
+import app.core_databse.db.sp.SetAppInfo.setUserNoti
+import app.core_databse.db.sp.SetAppInfo.setUserTheme
+import app.core_databse.db.sp.SetSystemInfo
+import app.utils.SnackBarUtils
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.CoroutineScope
@@ -84,7 +83,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import timber.log.Timber
+import java.io.IOException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -93,8 +92,8 @@ class SettingActivity
     : BaseActivity<ActivitySettingBinding>() {
     override val resID: Int get() = R.layout.activity_setting
 
-    private val faqItem = arrayListOf<AdapterModel.FaqItem>()
-    private val noticeItem = arrayListOf<AdapterModel.NoticeItem>()
+    private val faqItem = arrayListOf<ApiModel.FaqItem>()
+    private val noticeItem = arrayListOf<ApiModel.NoticeItem>()
     private var isInit = true
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
     private var isBackAllow = false
@@ -335,18 +334,16 @@ class SettingActivity
             noticeItem.clear()
 
             CoroutineScope(Dispatchers.IO).launch {
-                HttpClient
+                app.airsignal.core_network.retrofit.HttpClient
                     .getInstance(false)
                     .setClientBuilder()
-                    .mMyAPIImpl
-                    .notice.enqueue(object : Callback<List<AdapterModel.NoticeItem>> {
+                    .notice.enqueue(object : Callback<List<ApiModel.NoticeItem>> {
                         @SuppressLint("NotifyDataSetChanged")
                         override fun onResponse(
-                            call: Call<List<AdapterModel.NoticeItem>>,
-                            response: Response<List<AdapterModel.NoticeItem>>
+                            call: Call<List<ApiModel.NoticeItem>>,
+                            response: Response<List<ApiModel.NoticeItem>>
                         ) {
                             try {
-                                Timber.tag("noticeItem").i(response.body().toString())
                                 val list = response.body()!!
                                 list.forEachIndexed { i, item ->
                                     val createdTime =  LocalDateTime.parse(item.created)
@@ -372,7 +369,7 @@ class SettingActivity
                         }
 
                         override fun onFailure(
-                            call: Call<List<AdapterModel.NoticeItem>>,
+                            call: Call<List<ApiModel.NoticeItem>>,
                             t: Throwable
                         ) {
                             nullText.visibility = View.VISIBLE
@@ -682,7 +679,7 @@ class SettingActivity
     }
 
     // 앱 버전 불러오기
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "InflateParams")
     private fun applyAppVersionResult() {
         val viewAppInfo: View =
             LayoutInflater.from(this).inflate(R.layout.dialog_app_info, null)
@@ -698,41 +695,49 @@ class SettingActivity
         val appInfoDataUsage: TextView = viewAppInfo.findViewById(R.id.appInfoDataUsage)
 
 
-        // 뷰모델 데이터 호출
-        appVersionViewModel.fetchData().observe(this) { result ->
-            result?.let { ver ->
-                when (ver) {
-                    is BaseRepository.ApiState.Success -> {
-                        val data = ver.data
-                        val versionName = getApplicationVersionName(this)
-                        val versionCode = getApplicationVersionCode(this)
+        try {
+            // 뷰모델 데이터 호출
+            appVersionViewModel.fetchData().observe(this) { result ->
+                result?.let { ver ->
+                    when (ver) {
+                        is BaseRepository.ApiState.Success -> {
+                            val data = ver.data
+                            val versionName = getApplicationVersionName(this)
+                            val versionCode = getApplicationVersionCode(this)
 
-                        appInfoVersionValue.text = "${versionName}.${versionCode}"
-                        if ("${data.serviceName}.${data.serviceCode}" == "${versionName}.${versionCode}"
-                            || "${versionName}.${versionCode}" == "${data.releaseName}.${data.releaseCode}") {
-                            appInfoIsRecent.text = getString(R.string.last_software)
-                            appInfoIsRecent.setTextColor(getColor(R.color.sub_gray_color))
-                            appInfoDownBtn.visibility = View.GONE
-                            appInfoVersionValue.visibility = View.VISIBLE
-                        } else {
-                            appInfoIsRecent.text =
-                                getString(R.string.not_latest_version)
-                            appInfoIsRecent.setTextColor(getColor(R.color.main_blue_color))
-                            appInfoDownBtn.visibility = View.VISIBLE
-                            appInfoVersionValue.visibility = View.GONE
+                            appInfoVersionValue.text = "${versionName}.${versionCode}"
+                            if ("${data.serviceName}.${data.serviceCode}" == "${versionName}.${versionCode}"
+                                || "${versionName}.${versionCode}" == "${data.releaseName}.${data.releaseCode}") {
+                                appInfoIsRecent.text = getString(R.string.last_software)
+                                appInfoIsRecent.setTextColor(getColor(R.color.sub_gray_color))
+                                appInfoDownBtn.visibility = View.GONE
+                                appInfoVersionValue.visibility = View.VISIBLE
+                            } else {
+                                appInfoIsRecent.text =
+                                    getString(R.string.not_latest_version)
+                                appInfoIsRecent.setTextColor(getColor(R.color.main_blue_color))
+                                appInfoDownBtn.visibility = View.VISIBLE
+                                appInfoVersionValue.visibility = View.GONE
+                            }
                         }
-                    }
-                    is BaseRepository.ApiState.Error -> {
-                        Toast.makeText(
-                            this@SettingActivity,
-                            getString(R.string.fail_to_get_version),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                        is BaseRepository.ApiState.Error -> {
+                            Toast.makeText(
+                                this@SettingActivity,
+                                getString(R.string.fail_to_get_version),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
 
-                    else -> {}
+                        else -> {}
+                    }
                 }
             }
+        } catch (e: IOException) {
+            Toast.makeText(
+                this@SettingActivity,
+                getString(R.string.fail_to_get_version),
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
         // 새로운 버전 다운로드 실행
@@ -925,6 +930,7 @@ class SettingActivity
     }
 
     // 언어 설정 변경 후 어플리케이션 재시작
+    @SuppressLint("InflateParams")
     private fun saveConfigChangeRestart() {
         val builder = Dialog(this)
         val view = LayoutInflater.from(this)
@@ -935,7 +941,6 @@ class SettingActivity
             setContentView(view)
             setCancelable(false)
         }
-
         builder.create()
 
         val title = view.findViewById<TextView>(R.id.alertSingleTitle)
@@ -949,12 +954,6 @@ class SettingActivity
         builder.show()
     }
 
-    // 자주묻는질문 아이템 추가하기
-    private fun addFaqItem(title: String, content: String) {
-        val item = AdapterModel.FaqItem(title, content)
-        faqItem.add(item)
-    }
-
     // 공지사항 아이템 추가하기
     private fun addNoticeItem(
         category: String?,
@@ -963,7 +962,7 @@ class SettingActivity
         title: String,
         content: String
     ) {
-        val item = AdapterModel.NoticeItem(category,created, modified, title, content)
+        val item = ApiModel.NoticeItem(category,created, modified, title, content)
         noticeItem.add(item)
     }
 

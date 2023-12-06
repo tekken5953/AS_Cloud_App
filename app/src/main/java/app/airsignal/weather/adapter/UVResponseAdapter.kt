@@ -46,13 +46,11 @@ class UVResponseAdapter(private val context: Context, list: ArrayList<AdapterMod
 
         fun bind(dao: AdapterModel.UVResponseItem) {
             text.text = dao.text
-            if (isWhite) {
-                text.setTextColor(context.getColor(R.color.white))
-                dot.imageTintList = ColorStateList.valueOf(context.getColor(R.color.white))
-            } else {
-                text.setTextColor(context.getColor(R.color.main_black))
-                dot.imageTintList = ColorStateList.valueOf(context.getColor(R.color.main_black))
-            }
+
+            text.setTextColor(if(isWhite)context.getColor(R.color.white) else context.getColor(R.color.main_black))
+            dot.imageTintList = ColorStateList.valueOf(
+                context.getColor(if(isWhite)R.color.white else R.color.main_black)
+            )
         }
     }
 }

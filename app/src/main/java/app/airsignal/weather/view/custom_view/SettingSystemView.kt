@@ -21,8 +21,8 @@ class SettingSystemView(context: Context, attrs: AttributeSet?)
         val inflater = LayoutInflater.from(context)
         systemBinding = CustomViewSettingSystemBinding.inflate(inflater, this, true)
 
-        attrs?.let {
-            val typedArray = context.obtainStyledAttributes(it, R.styleable.SettingSystemView)
+        attrs?.let { set ->
+            val typedArray = context.obtainStyledAttributes(set, R.styleable.SettingSystemView)
             val customText = typedArray.getString(R.styleable.SettingSystemView_left)
             typedArray.recycle()
 

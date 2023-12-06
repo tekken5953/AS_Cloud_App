@@ -9,8 +9,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserFontScale
-import app.airsignal.weather.util.`object`.SetSystemInfo
+import app.core_databse.db.sp.GetAppInfo.getUserFontScale
+import app.core_databse.db.sp.SetSystemInfo
 import com.bumptech.glide.Glide
 
 /**
@@ -74,19 +74,14 @@ class WeeklyWeatherAdapter(
             minText.text = dao.minText
             maxText.text = dao.maxText
 
-            if (isWhite) {
-                day.setTextColor(context.getColor(R.color.white))
-                date.setTextColor(context.getColor(R.color.sub_white))
-                minText.setTextColor(context.getColor(R.color.white))
-                maxText.setTextColor(context.getColor(R.color.white))
-                section.setTextColor(context.getColor(R.color.white))
-            } else {
-                day.setTextColor(context.getColor(R.color.main_black))
-                date.setTextColor(context.getColor(R.color.sub_black))
-                minText.setTextColor(context.getColor(R.color.main_black))
-                maxText.setTextColor(context.getColor(R.color.main_black))
-                section.setTextColor(context.getColor(R.color.main_black))
-            }
+            val applyColor = context.getColor(if(isWhite)R.color.white else R.color.main_black)
+            val applySubColor = context.getColor(if(isWhite)R.color.sub_white else R.color.sub_black)
+
+            day.setTextColor(applyColor)
+            date.setTextColor(applySubColor)
+            minText.setTextColor(applyColor)
+            maxText.setTextColor(applyColor)
+            section.setTextColor(applyColor)
 
             if (bindingAdapterPosition == 0) {
                 day.setTextColor(context.getColor(R.color.main_blue_color))

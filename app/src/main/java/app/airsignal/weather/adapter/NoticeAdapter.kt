@@ -6,14 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import app.airsignal.core_network.retrofit.ApiModel
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.AdapterModel
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-03-28 오전 11:52
  **/
-class NoticeAdapter(private val context: Context, list: ArrayList<AdapterModel.NoticeItem>) :
+class NoticeAdapter(private val context: Context, list: ArrayList<ApiModel.NoticeItem>) :
     RecyclerView.Adapter<NoticeAdapter.ViewHolder>() {
     private val mList = list
 
@@ -48,7 +48,7 @@ class NoticeAdapter(private val context: Context, list: ArrayList<AdapterModel.N
         private val title: TextView = itemView.findViewById(R.id.itemNoticeHeader)
         private val category: TextView = itemView.findViewById(R.id.itemNoticeCategory)
 
-        fun bind(dao: AdapterModel.NoticeItem) {
+        fun bind(dao: ApiModel.NoticeItem) {
             date.text = dao.created
             title.text = dao.title
             category.text = dao.category
@@ -59,7 +59,6 @@ class NoticeAdapter(private val context: Context, list: ArrayList<AdapterModel.N
 
             itemView.setOnClickListener {
                 val position = bindingAdapterPosition
-
                 if (position != RecyclerView.NO_POSITION) {
                     onClickListener.onItemClick(it, position)
                 }

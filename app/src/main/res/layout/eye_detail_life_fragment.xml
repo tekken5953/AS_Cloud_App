@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.activity.MainActivity">
+
+        <ImageView
+            android:id="@+id/aeLifeTitleIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ae_title_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/aeLifeTitleText"
+            style="@style/basicMediumTextView"
+            android:layout_marginStart="13dp"
+            android:text="@string/sensor_life"
+            android:contentDescription="@string/cd_life_sensor"
+            android:textColor="@color/theme_text_color"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/aeLifeTitleIcon"
+            app:layout_constraintStart_toEndOf="@+id/aeLifeTitleIcon"
+            app:layout_constraintTop_toTopOf="@+id/aeLifeTitleIcon" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/aeLifeTitleIcon"
+            android:id="@+id/aeLifeDataRv"
+            tools:listitem="@layout/list_item_ae_life_data"
+            tools:itemCount="6"
+            android:layout_marginTop="16dp"
+            app:layoutManager="app.utils.LinearLayoutManagerWrapper"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

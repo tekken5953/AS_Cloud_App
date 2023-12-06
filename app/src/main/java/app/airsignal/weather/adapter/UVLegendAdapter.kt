@@ -48,13 +48,9 @@ class UVLegendAdapter(private val context: Context, list: ArrayList<AdapterModel
             color.setBackgroundColor(dao.color)
             grade.text = dao.grade
 
-            if (isWhite) {
-                grade.setTextColor(context.getColor(R.color.white))
-                value.setTextColor(context.getColor(R.color.white))
-            } else {
-                grade.setTextColor(context.getColor(R.color.main_black))
-                value.setTextColor(context.getColor(R.color.main_black))
-            }
+            val applyColor = context.getColor(if(isWhite)R.color.white else R.color.main_black)
+            grade.setTextColor(applyColor)
+            value.setTextColor(applyColor)
         }
     }
 }

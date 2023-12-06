@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ae_device_bg_e"
+    android:layout_marginBottom="16dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="24dp">
+        <TextView
+            android:id="@+id/listItemAeLifeEn"
+            style="@style/basicMediumTextView"
+            android:textColor="@color/theme_text_color"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/listItemAeLifeKr"
+            style="@style/basicTextView"
+            android:layout_marginTop="2dp"
+            android:gravity="start"
+            android:textColor="@color/ae_sub_color"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/listItemAeLifeValue"
+        style="@style/basicMediumTextView"
+        android:layout_marginTop="16dp"
+        android:layout_toStartOf="@+id/listItemAeLifeUnit"
+        android:layout_marginEnd="2dp"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/listItemAeLifeUnit"
+        style="@style/basicTextView"
+        android:layout_alignBottom="@+id/listItemAeLifeValue"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="24dp"
+        android:text="%"
+        android:layout_marginBottom="3dp"
+        android:textColor="@color/ae_sub_color"
+        android:textSize="12sp" />
+
+    <ProgressBar
+        android:layout_width="150dp"
+        android:layout_height="10dp"
+        android:id="@+id/listItemAeLifePb"
+        android:layout_below="@+id/listItemAeLifeUnit"
+        style="@style/ProgressBarHorizontal"
+        android:progress="70"
+        android:max="100"
+        android:layout_alignEnd="@+id/listItemAeLifeUnit"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="16dp"/>
+
+</RelativeLayout>

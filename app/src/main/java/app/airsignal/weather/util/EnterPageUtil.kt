@@ -2,11 +2,12 @@ package app.airsignal.weather.util
 
 import android.app.Activity
 import android.content.Intent
-import app.airsignal.weather.util.`object`.SetAppInfo.setUserLoginPlatform
+import app.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
 import app.airsignal.weather.view.activity.LoginActivity
 import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.activity.PermissionActivity
 import app.airsignal.weather.view.activity.WarningDetailActivity
+import app.airsignal.weather.view.aseye.activity.EyeListActivity
 import kotlin.system.exitProcess
 
 /**
@@ -25,21 +26,31 @@ class EnterPageUtil(private val activity: Activity) {
      * @param sort 간편로그인의 분류 ex) "카카오"
      */
     fun toMain(sort: String?) {
-        sort?.let {
-            setUserLoginPlatform(activity, it)
-        }
+        sort?.let { setUserLoginPlatform(activity, it) }
         val intent = Intent(activity, MainActivity::class.java)
-        System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
-        activity.startActivity(intent)
-        activity.overridePendingTransition(0,0)
-        activity.finish()
+        activity.run {
+            System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
+            this.startActivity(intent)
+            this.overridePendingTransition(0,0)
+            this.finish()
+        }
     }
 
     /**로그인 페이지로 이동한다*/
     fun toLogin() {
         val intent = Intent(activity, LoginActivity::class.java)
-        activity.startActivity(intent)
-        activity.overridePendingTransition(0,0)
+        activity.run {
+            this.startActivity(intent)
+            this.overridePendingTransition(0,0)
+        }
+    }
+
+    fun toEye() {
+        val intent = Intent(activity, EyeListActivity::class.java)
+        activity.run {
+            this.startActivity(intent)
+            this.overridePendingTransition(0,0)
+        }
     }
 
     /** 액티비티를 완전히 종료한다 **/

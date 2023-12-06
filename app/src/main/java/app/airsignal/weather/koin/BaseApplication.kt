@@ -2,15 +2,21 @@ package app.airsignal.weather.koin
 
 import android.app.Application
 import android.content.Context
-import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.gps.GetLocation
-import app.airsignal.weather.repo.GetAppVersionRepo
-import app.airsignal.weather.repo.GetWarningRepo
-import app.airsignal.weather.repo.GetWeatherRepo
-import app.airsignal.weather.retrofit.HttpClient
-import app.airsignal.weather.vmodel.GetAppVersionViewModel
-import app.airsignal.weather.vmodel.GetWarningViewModel
-import app.airsignal.weather.vmodel.GetWeatherViewModel
+import app.core_databse.db.SharedPreferenceManager
+import app.core_databse.db.room.model.GpsEntity
+import app.core_databse.db.room.repository.GpsRepository
+import app.airsignal.core_network.retrofit.ApiModel
+import app.airsignal.core_network.retrofit.HttpClient
+import app.airsignal.core_repository.GetAppVersionRepo
+import app.airsignal.core_repository.GetWarningRepo
+import app.airsignal.core_repository.GetWeatherRepo
+import app.airsignal.core_viewmodel.GetAppVersionViewModel
+import app.airsignal.core_viewmodel.GetWarningViewModel
+import app.airsignal.core_viewmodel.GetWeatherViewModel
+import app.airsignal.weather.dao.RDBLogcat
+import app.location.GetLocation
+import app.utils.LoggerUtil
+import app.utils.TimberUtil
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -19,20 +25,31 @@ import org.koin.dsl.module
 import kotlin.system.exitProcess
 
 class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
+    companion object {
+        private lateinit var appContext: Context
+        lateinit var timber: TimberUtil
+        lateinit var logger: LoggerUtil
+    }
+
     override fun onCreate() {
         super.onCreate()
+        appContext = applicationContext
         Thread.setDefaultUncaughtExceptionHandler(this)
+        timber = TimberUtil()
+        timber.getInstance()
+        logger = LoggerUtil()
+        logger.getInstance()
 
         startKoin {
             androidLogger()
             androidContext(this@BaseApplication)
-            modules(listOf(myModule))
+            modules(listOf(myModule,coreDatabaseModule,coreNetworkModule))
         }
     }
 
     // ANR 에러 발생 시 로그 저장 후 종료
     override fun uncaughtException(p0: Thread, p1: Throwable) {
-        RDBLogcat.writeErrorANR(thread = "Thread : ${p0.name}", msg = "Error Msg: ${p1.stackTraceToString()}")
+        RDBLogcat.writeErrorANR(thread = "Thread is ${p0.name}", msg = "Error Msg is ${p1.stackTraceToString()}")
         if (p0.name == "WidgetProvider") {
             HttpClient.getInstance(true).setClientBuilder()
         } else {
@@ -46,7 +63,7 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     /* viewModel : 뷰모델 의존성 제거 객체 생성 */
 
     private val myModule = module {
-        single<Context> { applicationContext }
+        factory<Context> { applicationContext }
         single { GetLocation(get()) }
         single { HttpClient }
         single { GetWeatherRepo() }
@@ -55,5 +72,16 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
         viewModel { GetAppVersionViewModel(get()) }
         viewModel { GetWeatherViewModel(get()) }
         viewModel { GetWarningViewModel(get()) }
+    }
+
+    private val coreDatabaseModule = module {
+        single { GpsEntity() }
+        single { GpsRepository(applicationContext) }
+        single { SharedPreferenceManager(get()) }
+    }
+
+    private val coreNetworkModule = module {
+        single { ApiModel() }
+        single { HttpClient }
     }
 }

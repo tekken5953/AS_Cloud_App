@@ -11,7 +11,8 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile.privacyPolicyURI
 import app.airsignal.weather.dao.IgnoredKeyFile.termsOfServiceURL
 import app.airsignal.weather.databinding.ActivityWebUrlBinding
-import app.airsignal.weather.util.`object`.SetSystemInfo
+import app.core_databse.db.sp.SetSystemInfo
+import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 
 class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
     override val resID: Int get() = R.layout.activity_web_url
@@ -21,28 +22,23 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
         super.onCreate(savedInstanceState)
         initBinding()
 
-        SetSystemInfo.setStatusBar(this)
+        setStatusBar(this)
 
         val webView = binding.webUrlWebView
 
         window.statusBarColor = getColor(R.color.theme_view_color)
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES) {
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility =
-                window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        } else {
-            @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility =
-                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        }
+
+        @Suppress("DEPRECATION")
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        else window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+
 
         binding.webUrlBackIv.setOnClickListener {
             if (!webView.canGoBack()) finish() else webView.goBack()
         }
 
-        binding.webUrlTop.setOnClickListener {
-            webView.pageUp(true)
-        }
+        binding.webUrlTop.setOnClickListener { webView.pageUp(true) }
 
         // 웹뷰 세팅
         webView.settings.apply {
@@ -64,31 +60,20 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             webViewClient = WebViewClient()
         }
 
-        if (intent.extras!!.getBoolean("appBar")) {
-            binding.webUrlLinear.visibility = View.VISIBLE
-        } else {
-            binding.webUrlLinear.visibility = View.GONE
+        if (intent.extras!!.getBoolean("appBar")) binding.webUrlLinear.visibility = View.VISIBLE
+        else binding.webUrlLinear.visibility = View.GONE
+
+
+        val sort = intent.extras?.getString("sort")
+
+        val (webUrlTitleText,url) = when (sort) {
+            "as-eye" -> "AS-EYE" to "about:blank"
+            "termsOfService" -> getString(R.string.term_of_services) to termsOfServiceURL
+            "dataUsage" -> getString(R.string.data_usages) to privacyPolicyURI
+            else -> "" to "about:blank"
         }
 
-        val url: String
-        when(intent.extras!!.getString("sort")) {
-            "as-eye" -> {
-                binding.webUrlTitle.text = "AS-EYE"
-                url = "about:blank"
-            }
-            "termsOfService" -> {
-                binding.webUrlTitle.text = getString(R.string.term_of_services)
-                url = termsOfServiceURL
-            }
-            "dataUsage" -> {
-                binding.webUrlTitle.text = getString(R.string.data_usages)
-                url = privacyPolicyURI
-            }
-            else -> {
-                binding.webUrlTitle.text = ""
-                url = "about:blank"
-            }
-        }
+        binding.webUrlTitle.text = webUrlTitleText
 
         webView.clearCache(true)
         webView.loadUrl(url) // 페이지 로딩

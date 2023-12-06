@@ -1,12 +1,12 @@
 package app.airsignal.weather.login
 
 import android.app.Activity
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_GOOGLE
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_KAKAO
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_NAVER
-import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginHistory
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserLoginPlatform
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_GOOGLE
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_NAVER
+import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
+import app.core_databse.db.sp.GetAppInfo.getUserEmail
+import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
 
 /**
  * @author : Lee Jae Young

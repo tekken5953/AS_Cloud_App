@@ -2,21 +2,22 @@ package app.airsignal.weather.login
 
 import android.app.Activity
 import android.content.Intent
-import android.widget.ProgressBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.dao.IgnoredKeyFile.googleDefaultClientId
-import app.airsignal.weather.dao.StaticDataObject.TAG_LOGIN
-import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_FAILED
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_GOOGLE
-import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginHistory
-import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginPref
+import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_FAILED
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_GOOGLE
+import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
+import app.airsignal.weather.dao.RDBLogcat.writeLoginPref
+import app.airsignal.weather.dao.StaticDataObject.TAG_L
+import app.airsignal.weather.koin.BaseApplication.Companion.logger
 import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.`object`.SetAppInfo.setUserEmail
-import app.airsignal.weather.util.`object`.SetAppInfo.setUserId
-import app.airsignal.weather.util.`object`.SetAppInfo.setUserLoginPlatform
-import app.airsignal.weather.util.`object`.SetAppInfo.setUserProfile
+import app.core_databse.db.sp.SetAppInfo.setUserEmail
+import app.core_databse.db.sp.SetAppInfo.setUserId
+import app.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
+import app.core_databse.db.sp.SetAppInfo.setUserProfile
+import app.utils.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -24,7 +25,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
-import com.orhanobut.logger.Logger
 
 /**
  * @author : Lee Jae Young
@@ -40,6 +40,15 @@ class GoogleLogin(private val activity: Activity) {
         lastLogin = GoogleSignIn.getLastSignedInAccount(activity)
     }
 
+    private fun getAccessToken(): String? {
+        return try {
+            lastLogin?.idToken
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     /** 로그인 진행 + 로그인 버튼 비활성화 **/
     fun login(mBtn: AppCompatButton, result: ActivityResultLauncher<Intent>) {
         try {
@@ -47,7 +56,7 @@ class GoogleLogin(private val activity: Activity) {
             result.launch(signInIntent)
             mBtn.alpha = 0.7f
         } catch (e: Exception) {
-            Logger.t(TAG_LOGIN).e(e.stackTraceToString())
+            logger.e(TAG_L,e.stackTraceToString())
             RDBLogcat.writeErrorNotANR(activity, LOGIN_FAILED, e.localizedMessage!!)
         }
     }
@@ -67,7 +76,7 @@ class GoogleLogin(private val activity: Activity) {
                 }
             }
             .addOnCanceledListener {
-                app.airsignal.weather.view.ToastUtils(activity)
+                ToastUtils(activity)
                     .showMessage("로그아웃에 실패했습니다",1)
             }
     }
@@ -79,7 +88,7 @@ class GoogleLogin(private val activity: Activity) {
                 handleSignInResult(it,isAuto = true)
             }
             .addOnFailureListener {
-                app.airsignal.weather.view.ToastUtils(activity)
+                ToastUtils(activity)
                     .showMessage("마지막 로그인 세션을 찾을 수 없습니다",1)
             }
     }
@@ -119,7 +128,8 @@ class GoogleLogin(private val activity: Activity) {
             val id = account.id!!.lowercase()
             val photo: String = account?.photoUrl.toString()
             val token = account.idToken
-            Logger.t(TAG_LOGIN).d(
+            logger.d(
+                TAG_L,
                 """
                 gLogin
                 Id : ${id}Account$account
@@ -136,7 +146,7 @@ class GoogleLogin(private val activity: Activity) {
 
             saveLoginStatus(email, displayName, photo, isAuto)
         } catch (e: ApiException) {
-            Logger.t(TAG_LOGIN).e(e.stackTraceToString())
+            logger.e(TAG_L,e.stackTraceToString())
             e.printStackTrace()
         }
     }

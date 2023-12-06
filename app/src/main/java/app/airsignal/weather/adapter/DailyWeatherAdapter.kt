@@ -52,32 +52,21 @@ class DailyWeatherAdapter(
         holder.bind(mList[position]).apply {
             if (position == 0 ||
                 LocalDateTime.parse(mList[position - 1].date).toLocalDate()
-                    .compareTo(LocalDateTime.parse(mList[position].date).toLocalDate())
-                != 0) {
+                    .compareTo(LocalDateTime.parse(mList[position].date).toLocalDate()) != 0) {
                 if (!dateSection.contains(position)) {
                     dateSection.add(position)
                 }
             }
 
-            if (mList[position].isRain) {
-                holder.rain.visibility = View.VISIBLE
-            } else {
-                holder.rain.visibility = View.INVISIBLE
-            }
+            holder.rain.visibility = if(mList[position].isRain) View.VISIBLE else View.INVISIBLE
         }
     }
 
-    fun getDateSectionList(): ArrayList<Int> {
-        return dateSection
-    }
+    fun getDateSectionList(): ArrayList<Int> { return dateSection }
 
-    fun getIsWhite(): Boolean {
-        return isWhite
-    }
+    fun getIsWhite(): Boolean { return isWhite }
 
-    fun setIsWhite(b: Boolean) {
-        isWhite = b
-    }
+    fun setIsWhite(b: Boolean) { isWhite = b }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val time: TextView = itemView.findViewById(R.id.itemDailyTime)
@@ -92,13 +81,9 @@ class DailyWeatherAdapter(
             value.text = dao.value
             rain.text = "${dao.rainP?.toInt()}%"
 
-            if (isWhite) {
-                time.setTextColor(context.getColor(R.color.white))
-                value.setTextColor(context.getColor(R.color.white))
-            } else {
-                time.setTextColor(context.getColor(R.color.main_black))
-                value.setTextColor(context.getColor(R.color.main_black))
-            }
+            val applyColor = context.getColor(if(isWhite)R.color.white else R.color.main_black)
+            time.setTextColor(applyColor)
+            value.setTextColor(applyColor)
         }
     }
 }

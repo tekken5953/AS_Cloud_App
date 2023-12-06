@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/w42Background"
+    android:layout_width="280dp"
+    android:layout_height="140dp"
+    android:background="@drawable/widget_bg4x2_sunny"
+    android:padding="@dimen/widget_margin">
+
+    <ImageView
+        android:id="@+id/w42Location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/w42Address"
+        android:layout_alignBottom="@+id/w42Address"
+        android:contentDescription="@string/cd_img_location"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="1dp"
+        android:src="@drawable/w_ico_location" />
+
+    <TextView
+        android:id="@+id/w42Address"
+        style="@style/basicTextView"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="2dp"
+        android:layout_toEndOf="@+id/w42Location"
+        android:textColor="@color/wblack"
+        android:textSize="13sp" />
+
+    <ImageView
+        android:id="@+id/w42Refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/w42Address"
+        android:layout_alignBottom="@+id/w42Address"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="6dp"
+        android:contentDescription="@string/cd_refresh"
+        android:src="@drawable/w_btn_refresh"
+        app:tint="@color/wblack" />
+
+    <TextView
+        android:id="@+id/w42Time"
+        style="@style/basicTextView"
+        android:letterSpacing="0"
+        android:layout_alignTop="@+id/w42Address"
+        android:layout_alignBottom="@+id/w42Address"
+        android:layout_marginEnd="3dp"
+        android:layout_toStartOf="@+id/w42Refresh"
+        android:textColor="@color/wblack"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/w42SkyImg"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="2dp"
+        android:layout_alignTop="@+id/w42Temp"
+        android:contentDescription="@string/cd_sky_img"
+        android:layout_alignBottom="@+id/w42MinMaxTemp"/>
+
+    <TextView
+        android:id="@+id/w42Temp"
+        style="@style/basicTextView"
+        android:layout_below="@+id/w42Address"
+        android:layout_marginTop="7dp"
+        android:layout_marginStart="6dp"
+        android:layout_toEndOf="@+id/w42SkyImg"
+        android:textColor="@color/wblack"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/w42MinMaxTemp"
+        style="@style/basicTextView"
+        android:letterSpacing="0"
+        android:layout_below="@+id/w42Temp"
+        android:layout_marginStart="6dp"
+        android:layout_alignStart="@id/w42Temp"
+        android:textColor="@color/wblack"
+        android:textSize="13sp" />
+
+    <LinearLayout
+        android:id="@+id/w42DailyLinear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/w42Temp"
+        android:layout_alignEnd="@id/w42Refresh"
+        android:layout_marginEnd="2dp"
+        android:layout_alignBottom="@+id/w42MinMaxTemp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/w42DailyTime1"
+                style="@style/basicTextView"
+                android:layout_gravity="center_horizontal"
+                android:alpha="0.8"
+                android:textColor="@color/wblack"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/w42DailySky1"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="@string/cd_sky_img"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/w42DailyTemp1"
+                style="@style/basicTextView"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/wblack"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/w42DailyTime2"
+                style="@style/basicTextView"
+                android:layout_gravity="center_horizontal"
+                android:alpha="0.8"
+                android:textColor="@color/wblack"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/w42DailySky2"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="@string/cd_sky_img"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/w42DailyTemp2"
+                style="@style/basicTextView"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/wblack"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/w42DailyTime3"
+                style="@style/basicTextView"
+                android:layout_gravity="center_horizontal"
+                android:alpha="0.8"
+                android:textColor="@color/wblack"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/w42DailySky3"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="@string/cd_sky_img"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/w42DailyTemp3"
+                style="@style/basicTextView"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/wblack"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/w42AirLinear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:baselineAligned="false"
+        android:layout_marginTop="4dp"
+        android:layout_below="@+id/w42MinMaxTemp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/w42HumidTitle"
+                style="@style/basicTextView"
+                android:alpha="0.8"
+                android:textColor="@color/wblack"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/w42HumidValue"
+                style="@style/basicMediumTextView"
+                android:layout_marginStart="4dp"
+                android:textColor="@color/wblack"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/w42Pm10Title"
+                style="@style/basicTextView"
+                android:alpha="0.8"
+                android:textColor="@color/wblack"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/w42Pm10Value"
+                style="@style/basicMediumTextView"
+                android:layout_marginStart="4dp"
+                android:textColor="@color/wblack"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/w42Pm25Title"
+                style="@style/basicTextView"
+                android:alpha="0.8"
+                android:textColor="@color/wblack"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/w42Pm25Value"
+                style="@style/basicMediumTextView"
+                android:layout_marginStart="4dp"
+                android:textColor="@color/wblack"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

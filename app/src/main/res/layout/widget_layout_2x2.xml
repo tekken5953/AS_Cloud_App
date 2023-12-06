@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/widget2x2Background"
+    android:layout_width="140dp"
+    android:layout_height="140dp"
+    android:background="@drawable/w_bg_snow"
+    android:padding="@dimen/widget_margin">
+
+    <ImageView
+        android:id="@+id/widget2x2Refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/widget2x2Address"
+        android:layout_alignBottom="@+id/widget2x2Address"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="4dp"
+        android:contentDescription="@string/cd_icon_refresh_data"
+        android:src="@drawable/w_btn_refresh"
+        app:tint="@color/white" />
+
+    <TextView
+        android:id="@+id/widget2x2Time"
+        style="@style/basicTextView"
+        android:layout_alignTop="@+id/widget2x2Address"
+        android:layout_alignBottom="@+id/widget2x2Address"
+        android:layout_marginEnd="2dp"
+        android:layout_toStartOf="@+id/widget2x2Refresh"
+        android:letterSpacing="-0.04"
+        android:textColor="@color/white"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/widget2x2LocIv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/widget2x2Address"
+        android:layout_alignBottom="@+id/widget2x2Address"
+        android:layout_marginStart="4dp"
+        android:contentDescription="@string/cd_icon_address"
+        android:src="@drawable/w_ico_location"
+        app:tint="@color/white" />
+
+    <TextView
+        android:id="@+id/widget2x2Address"
+        style="@style/basicTextView"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="6dp"
+        android:layout_toEndOf="@+id/widget2x2LocIv"
+        android:ellipsize="start"
+        android:gravity="start"
+        android:lines="1"
+        android:textColor="@color/white"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/widget2x2TempValue"
+        style="@style/basicMediumTextView"
+        android:layout_below="@+id/widget2x2Address"
+        android:layout_alignStart="@+id/widget2x2LocIv"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/spoqa_hansansneo_medium"
+        android:letterSpacing="-0.04"
+        android:textColor="@color/white"
+        android:textSize="32sp" />
+
+    <ImageView
+        android:id="@+id/widget2x2SkyImg"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_alignTop="@+id/widget2x2TempValue"
+        android:layout_alignEnd="@+id/widget2x2Refresh"
+        android:layout_alignBottom="@+id/widget2x2TempValue"
+        android:layout_marginEnd="2dp"
+        android:contentDescription="@string/cd_img_sky" />
+
+    <TextView
+        android:id="@+id/widget2x2Pm25Title"
+        style="@style/basicTextView"
+        android:layout_below="@+id/widget2x2TempValue"
+        android:layout_alignStart="@+id/widget2x2LocIv"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="6dp"
+        android:alpha="0.8"
+        android:gravity="bottom"
+        android:textColor="@color/white"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/widget2x2Pm25Value"
+        style="@style/basicMediumTextView"
+        android:layout_alignTop="@+id/widget2x2Pm25Title"
+        android:layout_alignBottom="@+id/widget2x2Pm25Title"
+        android:layout_marginStart="4dp"
+        android:layout_toEndOf="@+id/widget2x2Pm25Title"
+        android:gravity="bottom"
+        android:textColor="@color/white"
+        android:textSize="13sp" />
+</RelativeLayout>

@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="DialogAnimationUp">
-        <item name="android:windowEnterAnimation">@anim/trans_bottom_to_top</item>
-        <item name="android:windowExitAnimation">@anim/trans_top_to_bottom</item>
-    </style>
-
     <style name="AlertDialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowTitleStyle">@null</item>
@@ -67,13 +62,8 @@
         <item name="background">?selectableItemBackground</item>
     </style>
 
-    <style name="DialogAnimationSide">
-        <item name="android:windowEnterAnimation">@anim/trans_right_to_left</item>
-        <item name="android:windowExitAnimation">@anim/trans_left_to_right</item>
-    </style>
-
     <style name="DialogAnimationBottom">
-        <item name="android:windowEnterAnimation">@anim/trans_bottom_to_top</item>
+        <item name="android:windowEnterAnimation">@anim/trans_bottom_to_top_add_group</item>
         <item name="android:windowExitAnimation">@anim/trans_top_to_bottom</item>
         <item name="background">@drawable/loc_perm_bg</item>
     </style>
@@ -109,5 +99,14 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="ProgressBarHorizontal" parent="android:Widget.ProgressBar.Horizontal">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/progress_style</item>
+    </style>
+
+    <style name="CustomCheckBoxStyle">
+        <item name="android:button">@drawable/custom_checkbox</item>
     </style>
 </resources>

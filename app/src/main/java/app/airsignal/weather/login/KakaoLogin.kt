@@ -1,21 +1,23 @@
 package app.airsignal.weather.login
 
 import android.app.Activity
-import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPhone
 import app.airsignal.weather.dao.IgnoredKeyFile.userEmail
 import app.airsignal.weather.dao.IgnoredKeyFile.userId
 import app.airsignal.weather.dao.IgnoredKeyFile.userProfile
-import app.airsignal.weather.db.SharedPreferenceManager
-import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_KAKAO
-import app.airsignal.weather.firebase.db.RDBLogcat.LOGIN_KAKAO_EMAIL
-import app.airsignal.weather.firebase.db.RDBLogcat.writeLoginHistory
+import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO
+import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO_EMAIL
+import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
+import app.airsignal.weather.dao.StaticDataObject.TAG_L
+import app.airsignal.weather.koin.BaseApplication.Companion.logger
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.`object`.GetAppInfo.getUserEmail
+import app.core_databse.db.SharedPreferenceManager
+import app.core_databse.db.sp.GetAppInfo.getUserEmail
+import app.utils.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider
@@ -25,11 +27,6 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.common.model.KakaoSdkError
 import com.kakao.sdk.user.UserApiClient
-import com.orhanobut.logger.Logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 /**
  * @author : Lee Jae Young
@@ -53,18 +50,17 @@ class KakaoLogin(private val activity: Activity) {
                     btn.alpha = 1f
                     // 사용자가 취소
                     if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled)) {
-                        Logger.t("testtest").d("카카오 로그인 취소")
+                        logger.d(TAG_L,"카카오 로그인 취소")
                         return@loginWithKakaoTalk
                     }
                     // 다른 오류
                     else {
-                        Logger.t("testtest").d("카카오 로그인 기타 오류 : ${error.localizedMessage}")
+                        logger.d(TAG_L,"카카오 로그인 기타 오류 : ${error.localizedMessage}")
                         UserApiClient.instance.loginWithKakaoAccount(
                             activity,
                             callback = mCallback
                         )
                     }
-
                 }
                 else {
                     // 로그인 성공 부분
@@ -133,46 +129,53 @@ class KakaoLogin(private val activity: Activity) {
     }
 
     /** 자동 로그인 **/
-    fun isValidToken(btn: AppCompatButton) {
+    private fun isValidToken(): String? {
+        var token:String? = null
         if (AuthApiClient.instance.hasToken()) {
-            UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
-                if (error != null) {
-                    btn.alpha = 1f
+            UserApiClient.instance.accessTokenInfo { info, error ->
+                token = if (error != null) {
                     if (error is KakaoSdkError && error.isInvalidTokenError()) {
-                        Logger.t("testtest").w("만료된 토큰입니다") // 만료된 토큰임 로그인 필요
+                        logger.w(TAG_L,"만료된 토큰입니다")  // 만료된 토큰임 로그인 필요
+                        "valid"
                     } else {
-                        Logger.t("testtest").e("기타 에러 발생 : $error") //기타 에러
+                        logger.e(TAG_L,"기타 에러 발생 : $error") //기타 에러
+                        "error"
                     }
-                } else {
-                    //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
-                    RefreshUtils(activity).refreshActivity()
-                    tokenInfo?.let {
-//                        Logger.t(TAG_LOGIN)
-//                            .d(
-//                                "카카오 자동로그인 성공\n" +
-//                                        "user code is ${it}\n"
-//                            )
-                    }
-                }
+                } else info.toString()//토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
             }
+            return token
         } else {
             // 토큰이 없음 로그인 필요
-            btn.alpha = 1f
+           return "has not token"
         }
     }
 
     /** 카카오 자동 로그인
      * @return OAuthToken? **/
+//    private fun loginSilenceKakao(): OAuthToken? {
+//        val token = TokenManagerProvider.instance.manager.getToken()
+//        val isValid = isValidToken()
+//        return if (isValid == "valid" || isValid == "error") {
+//            Toast.makeText(activity, "다시 로그인해주세요", Toast.LENGTH_SHORT).show()
+//            disconnectFromKakao(null)
+//            null
+//        } else if (isValid == "has not token") {
+//            Toast.makeText(activity, "만료된 토큰입니다", Toast.LENGTH_SHORT).show()
+//            disconnectFromKakao(null)
+//            null
+//        }
+//        else {
+//            token
+//        }
+//    }
     private fun loginSilenceKakao(): OAuthToken? {
         return TokenManagerProvider.instance.manager.getToken()
     }
 
     private fun enterMainPage() {
-        CoroutineScope(Dispatchers.IO).launch {
-            saveUserSettings()
-            delay(1000)
-            EnterPageUtil(activity).toMain(LOGIN_KAKAO)
-        }
+        saveUserSettings()
+        Thread.sleep(1000)
+        EnterPageUtil(activity).toMain(LOGIN_KAKAO)
     }
 
     private fun saveUserSettings() {
@@ -195,7 +198,7 @@ class KakaoLogin(private val activity: Activity) {
         try {
             UserApiClient.instance.logout { error ->
                 if (error != null) {
-                    app.airsignal.weather.view.ToastUtils(activity)
+                    ToastUtils(activity)
                         .showMessage("로그아웃에 실패했습니다",1)
                     writeLoginHistory(
                         isLogin = false, platform = LOGIN_KAKAO, email = getUserEmail(activity),

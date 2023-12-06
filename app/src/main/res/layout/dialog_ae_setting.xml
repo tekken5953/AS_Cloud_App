@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:id="@+id/aeSettingBack"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="16dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cd_icon_back"
+        android:src="@drawable/back_arrow"
+        android:layout_marginTop="16dp"
+        app:tint="@color/theme_text_color" />
+
+    <TextView
+        android:id="@+id/aeSettingTitle"
+        style="@style/basicMediumTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@+id/aeSettingBack"
+        android:layout_alignBottom="@+id/aeSettingBack"
+        android:text="@string/setting"
+        android:textColor="@color/theme_text_color"
+        android:textSize="16sp" />
+
+    <app.airsignal.weather.view.aseye.customview.EyeSettingView
+        android:id="@+id/aeSettingName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:settingLeft="제품명"
+        app:isArrow="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_below="@+id/aeSettingBack"
+        android:layout_marginTop="40dp"/>
+
+    <app.airsignal.weather.view.aseye.customview.EyeSettingView
+        android:id="@+id/aeSettingNotification"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:settingLeft="알림 설정"
+        app:isArrow="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_below="@+id/aeSettingName"/>
+
+    <app.airsignal.weather.view.aseye.customview.EyeSettingView
+        android:id="@+id/aeSettingSerial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:settingLeft="제품 시리얼 번호"
+        app:isArrow="false"
+        android:layout_below="@+id/aeSettingNotification"/>
+
+    <app.airsignal.weather.view.aseye.customview.EyeSettingView
+        android:id="@+id/aeSettingWifi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:settingLeft="Wi-Fi 주소"
+        app:isArrow="false"
+        android:layout_below="@+id/aeSettingSerial"/>
+</RelativeLayout>

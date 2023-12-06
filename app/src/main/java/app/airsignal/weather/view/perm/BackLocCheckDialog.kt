@@ -20,8 +20,8 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import app.airsignal.weather.R
-import app.airsignal.weather.util.`object`.GetAppInfo
-import app.airsignal.weather.util.`object`.SetAppInfo
+import app.core_databse.db.sp.GetAppInfo
+import app.core_databse.db.sp.SetAppInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -81,17 +81,12 @@ class BackLocCheckDialog(
                         )
                 ) {
                     when (GetAppInfo.getInitLocPermission(activity)) {
-                        "" -> {
-                            SetAppInfo.setInitLocPermission(activity, "Second")
-                            RequestPermissionsUtil(activity).requestBackgroundLocation()
-                            activity.recreate()
-                        }
-                        "Second" -> {
-                            SetAppInfo.setInitLocPermission(activity, "Done")
-                            RequestPermissionsUtil(activity).requestBackgroundLocation()
-                            activity.recreate()
-                        }
+                        "" -> SetAppInfo.setInitLocPermission(activity, "Second")
+                        "Second" -> SetAppInfo.setInitLocPermission(activity, "Done")
                     }
+
+                    RequestPermissionsUtil(activity).requestBackgroundLocation()
+                    activity.recreate()
                 } else {
                     val intent =
                         Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -106,24 +101,20 @@ class BackLocCheckDialog(
             title.text = getString(R.string.back_perm_down_title)
             subTitle.visibility = View.GONE
             apply.apply {
-                if (GetAppInfo.isPermedBackLoc(activity)) {
-                    this.text = getString(R.string.undo_active)
-                    this.backgroundTintList =
-                        ColorStateList.valueOf(activity.getColor(R.color.theme_alert_double_apply_color))
-                    this.setOnClickListener {
-                        SetAppInfo.setPermedBackLog(activity, false)
-                        dismissNow()
-                        activity.recreate()
-                    }
-                } else {
-                    this.text = getString(R.string.do_active)
-                    this.backgroundTintList =
-                        ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
-                    this.setOnClickListener {
-                        SetAppInfo.setPermedBackLog(activity, true)
-                        dismissNow()
-                        activity.recreate()
-                    }
+                val isPermedBackLoc = GetAppInfo.isPermedBackLoc(activity)
+                this.text = if (isPermedBackLoc) getString(R.string.undo_active)
+                else getString(R.string.do_active)
+                this.backgroundTintList =
+                    ColorStateList.valueOf(
+                        activity.getColor(
+                            if (isPermedBackLoc) R.color.theme_alert_double_apply_color
+                            else R.color.main_blue_color
+                        )
+                    )
+                this.setOnClickListener {
+                    SetAppInfo.setPermedBackLog(activity, !isPermedBackLoc)
+                    dismissNow()
+                    activity.recreate()
                 }
             }
         }
@@ -134,23 +125,21 @@ class BackLocCheckDialog(
 
     // 다이얼로그 생성
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setCanceledOnTouchOutside(false)
+        super.onCreateDialog(savedInstanceState).run {
+            this.setCanceledOnTouchOutside(false)
+            this.setOnShowListener { dialogInterface ->
+                val bottomSheetDialog = dialogInterface as BottomSheetDialog
+                bottomSheetDialog.behavior.isDraggable = false
+                setupRatio(bottomSheetDialog, 65)
+            }
+            this.window?.attributes?.windowAnimations = R.style.DialogAnimationBottom
 
-        dialog.setOnShowListener { dialogInterface ->
-            val bottomSheetDialog = dialogInterface as BottomSheetDialog
-            bottomSheetDialog.behavior.isDraggable = false
-            setupRatio(bottomSheetDialog, 65)
+            return this
         }
-        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationBottom
-
-        return dialog
     }
 
     // 레이아웃 노출
-    fun show() {
-        BackLocCheckDialog(activity, fm, tagId).showNow(fm, tagId)
-    }
+    fun show() { BackLocCheckDialog(activity, fm, tagId).showNow(fm, tagId) }
 
     // 바텀 다이얼로그 세팅
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog, ratio: Int) {

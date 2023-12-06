@@ -1,7 +1,6 @@
 package app.airsignal.weather.dao
 
 import android.graphics.drawable.Drawable
-import com.google.gson.annotations.SerializedName
 
 object AdapterModel {
 
@@ -23,28 +22,6 @@ object AdapterModel {
         val maxImg: Drawable?,
         val minText: String,
         val maxText: String
-    )
-
-    // 공지사항 리스트
-    data class NoticeItem(
-        @SerializedName("category")
-        val category: String?,
-        @SerializedName("created")
-        val created: String,
-        @SerializedName("modified")
-        val modified: String,
-        @SerializedName("title")
-        val title: String,
-        @SerializedName("content")
-        val content: String
-    )
-
-    // 자주 묻는 질문
-    data class FaqItem(
-        @SerializedName("title")
-        val title: String,
-        @SerializedName("content")
-        val content: String
     )
 
     // 자외선 지수 범례

@@ -6,6 +6,7 @@ pluginManagement {
         maven { url 'https://jitpack.io' }
         maven { url 'https://maven.google.com'}
         maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/'}
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 }
 dependencyResolutionManagement {
@@ -16,7 +17,14 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
         maven { url 'https://maven.google.com'}
         maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/'}
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 }
 rootProject.name = "AirSignal_App"
 include ':app'
+include ':core-database'
+include ':core-network'
+include ':core-viewmodel'
+include ':core-repository'
+include ':location'
+include ':utils'

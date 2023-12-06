@@ -16,8 +16,8 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import app.airsignal.weather.R
-import app.airsignal.weather.util.`object`.GetAppInfo
-import app.airsignal.weather.util.`object`.SetAppInfo
+import app.core_databse.db.sp.GetAppInfo
+import app.core_databse.db.sp.SetAppInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -28,7 +28,7 @@ import kotlinx.coroutines.*
  * @author : Lee Jae Young
  * @since : 2023-04-11 오전 11:53
  **/
-class FirstLocCheckDialog(
+class  FirstLocCheckDialog(
     mActivity: Activity,
     private val fm: FragmentManager, private val tagId: String?
 ) : BottomSheetDialogFragment() {
@@ -63,12 +63,7 @@ class FirstLocCheckDialog(
                             perm.requestLocation()
                         }
                         "Second" -> {
-                            LocPermCautionDialog(
-                                activity,
-                                fm,
-                                BottomSheetDialogFragment().tag
-                            )
-                                .show()
+                            LocPermCautionDialog(activity, fm, BottomSheetDialogFragment().tag).show()
                         }
                     }
                 } else {
@@ -101,9 +96,7 @@ class FirstLocCheckDialog(
     }
 
     // 레이아웃 노출
-    fun show() {
-        FirstLocCheckDialog(activity, fm, tagId).showNow(fm, tagId)
-    }
+    fun show() { FirstLocCheckDialog(activity, fm, tagId).showNow(fm, tagId) }
 
     // 바텀 다이얼로그 세팅
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog, ratio: Int) {
@@ -125,11 +118,9 @@ class FirstLocCheckDialog(
 
     // 디바이스 높이 구하기
     private fun getWindowHeight(): Int {
-        // Calculate window height for fullscreen use
         val displayMetrics = DisplayMetrics()
-        @Suppress("DEPRECATION") (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(
-            displayMetrics
-        )
+        @Suppress("DEPRECATION")
+        (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
         return displayMetrics.heightPixels
     }
 }

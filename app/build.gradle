@@ -2,7 +2,6 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
-    id 'kotlin-kapt'
 }
 
 android {
@@ -44,12 +43,21 @@ android {
         baseline = file("lint-baseline.xml")
     }
     buildToolsVersion '34.0.0'
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+    }
 }
 
 dependencies {
+    implementation project(path: ':core-database')
+    implementation project(path: ':core-network')
+    implementation project(path: ':core-viewmodel')
+    implementation project(path: ':core-repository')
+    implementation project(path: ':location')
+    implementation project(path: ':utils')
+
     apply plugin: 'com.google.android.gms.oss-licenses-plugin'
-
-
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
     modules {
         module("org.jetbrains.kotlin:kotlin-stdlib-jdk8") {
@@ -60,12 +68,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'com.google.android.material:material:1.9.0'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    // Mockito
-    testImplementation 'org.mockito:mockito-core:3.5.9'
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.0"
 
     // Google Login
     implementation 'com.google.android.gms:play-services-auth:20.6.0' // 구글 어스
@@ -75,32 +77,8 @@ dependencies {
     implementation 'com.navercorp.nid:oauth:5.4.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
 
-    // Firebase
-    implementation platform('com.google.firebase:firebase-bom:32.2.0')
-    implementation 'com.google.firebase:firebase-analytics' // Analytics
-    implementation 'com.google.firebase:firebase-messaging' // FCM
-    implementation 'com.google.firebase:firebase-messaging-directboot:23.1.2' // FCM
-    implementation 'com.google.firebase:firebase-database' // RDB
-
-    //server
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
-    implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
-
-    // logger
-    implementation "com.orhanobut:logger:2.2.0"
-    // Timber
-    implementation 'com.jakewharton.timber:timber:5.0.1'
-
     // Glide
     implementation("com.github.bumptech.glide:glide:4.11.0")
-
-    // Room
-    def room_android_version = "2.5.1"
-    implementation "androidx.room:room-runtime:$room_android_version"
-    kapt "androidx.room:room-compiler:$room_android_version"
-    implementation "androidx.room:room-ktx:$room_android_version"
 
     // Google Location
     implementation 'com.google.android.gms:play-services-maps:18.1.0' // 구글지도 라이브러리
@@ -109,13 +87,6 @@ dependencies {
     def koin_android_version = "3.3.2"
     // Koin main features for Android
     implementation "io.insert-koin:koin-android:$koin_android_version"
-
-    // Firebase Admob
-    implementation 'com.google.android.gms:play-services-ads:22.2.0'
-
-    // Firebase ui auth
-    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
-    implementation 'com.google.firebase:firebase-auth'
 
     // SeekArc - Sun Graph
     implementation 'com.github.Triggertrap:SeekArc:v1.1'
@@ -127,10 +98,34 @@ dependencies {
     // Warning Detail Spinner
     implementation "com.github.skydoves:powerspinner:1.2.7"
 
-    // Firebase In App Message
-    implementation("com.google.firebase:firebase-inappmessaging-display-ktx")
-
     // Lottie
     def lottieVersion = "5.2.0"
     implementation "com.airbnb.android:lottie:$lottieVersion"
+
+    // Firebase Main
+    implementation platform('com.google.firebase:firebase-bom:32.2.0')
+
+    // Firebase Analytics
+    implementation 'com.google.firebase:firebase-analytics'
+
+    // Firebase Cloud Messaging
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-messaging-directboot:23.1.2'
+    implementation 'com.google.auth:google-auth-library-oauth2-http:1.2.2'
+
+    // Firebase Realtime Database
+    implementation 'com.google.firebase:firebase-database'
+
+    // Firebase Admob
+    implementation 'com.google.android.gms:play-services-ads:22.2.0'
+
+    // Firebase ui auth
+    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
+    implementation 'com.google.firebase:firebase-auth'
+
+    // Firebase In App Messaging
+    implementation("com.google.firebase:firebase-inappmessaging-display-ktx")
+
+    // Warning Detail Spinner
+    implementation "com.github.skydoves:powerspinner:1.2.7"
 }

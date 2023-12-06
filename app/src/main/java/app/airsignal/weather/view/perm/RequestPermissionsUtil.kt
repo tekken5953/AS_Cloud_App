@@ -8,14 +8,15 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
+import app.core_databse.db.sp.GetAppInfo.getInitLocPermission
+import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_BACKGROUND_LOCATION
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_LOCATION
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_NOTIFICATION
-import app.airsignal.weather.firebase.db.RDBLogcat
-import app.airsignal.weather.util.`object`.GetAppInfo.getInitLocPermission
-import timber.log.Timber
+import app.airsignal.weather.koin.BaseApplication.Companion.timber
 
 class RequestPermissionsUtil(private val context: Context) {
 
@@ -45,7 +46,7 @@ class RequestPermissionsUtil(private val context: Context) {
     /** 위치정보 권한 요청**/
     fun requestLocation() {
         try{
-            ActivityCompat.requestPermissions(
+            requestPermissions(
                 context as Activity,
                 permissionsLocation,
                 REQUEST_LOCATION
@@ -62,7 +63,7 @@ class RequestPermissionsUtil(private val context: Context) {
             if (ActivityCompat.checkSelfPermission(context, permissionNotification[0])
                 != PackageManager.PERMISSION_GRANTED
             ) {
-                ActivityCompat.requestPermissions(
+                requestPermissions(
                     context as Activity,
                     permissionNotification,
                     REQUEST_NOTIFICATION
@@ -76,9 +77,7 @@ class RequestPermissionsUtil(private val context: Context) {
         for (perm in permissionsLocation) {
             if (ContextCompat.checkSelfPermission(context, perm)
                 != PackageManager.PERMISSION_GRANTED
-            ) {
-                return false
-            }
+            ) return false
         }
         return true
     }
@@ -88,13 +87,9 @@ class RequestPermissionsUtil(private val context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             for (perm in permissionNotification) {
                 return ContextCompat.checkSelfPermission(
-                    context,
-                    perm
-                ) == PackageManager.PERMISSION_GRANTED
+                    context, perm) == PackageManager.PERMISSION_GRANTED
             }
-        } else {
-            return true
-        }
+        } else return true
         return true
     }
 
@@ -111,10 +106,7 @@ class RequestPermissionsUtil(private val context: Context) {
         for (perm in permissionsLocation) {
             if (ContextCompat.checkSelfPermission(context, perm)
                 != PackageManager.PERMISSION_DENIED
-            ) {
-                Timber.tag(TAG_P).i(ContextCompat.checkSelfPermission(context, perm).toString())
-                return false
-            }
+            ) return false
         }
         return true
     }
@@ -123,51 +115,45 @@ class RequestPermissionsUtil(private val context: Context) {
     fun isNotiDenied(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             for (perm in permissionNotification) {
-                Timber.tag(TAG_P).i(ContextCompat.checkSelfPermission(context, perm).toString())
-                return ContextCompat.checkSelfPermission(
-                    context,
-                    perm
-                ) == PackageManager.PERMISSION_DENIED
+                return ContextCompat.checkSelfPermission(context, perm) == PackageManager.PERMISSION_DENIED
             }
-        } else {
-            return true
-        }
+        } else return true
+
         return true
     }
 
     /** 권한 요청 거부 횟수에 따른 반환 **/
     fun isShouldShowRequestPermissionRationale(activity: Activity, perm: String): Boolean {
         return when (getInitLocPermission(activity)) {
-            "" -> {
-                true
-            }
-            "Second" -> {
-                true
-            }
+            "" -> true
+            "Second" -> true
             else -> {
-                shouldShowRequestPermissionRationale(
-                    activity,
-                    perm
-                )
+                shouldShowRequestPermissionRationale(activity, perm)
                 false
             }
         }
     }
 
     /** 백그라운드에서 위치 접근 권한 허용 여부 검사 **/
-    @RequiresApi(Build.VERSION_CODES.Q)
     fun isBackgroundRequestLocation(): Boolean {
-        return ContextCompat.checkSelfPermission(context, permissionsLocationBackground) ==
-                PackageManager.PERMISSION_GRANTED
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ContextCompat.checkSelfPermission(context, permissionsLocationBackground) ==
+                    PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
     }
 
     /** 백그라운드에서 위치 접근 권한 요청 **/
-    @RequiresApi(Build.VERSION_CODES.Q)
     fun requestBackgroundLocation() {
-        ActivityCompat.requestPermissions(
-            context as Activity,
-            arrayOf(permissionsLocationBackground),
-            REQUEST_BACKGROUND_LOCATION
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            requestPermissions(
+                context as Activity,
+                arrayOf(permissionsLocationBackground),
+                REQUEST_BACKGROUND_LOCATION
+            )
+        }
     }
+
+
 }
