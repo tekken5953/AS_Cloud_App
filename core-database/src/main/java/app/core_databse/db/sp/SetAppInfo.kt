@@ -9,6 +9,7 @@ import app.core_databse.db.sp.SpDao.INITIALIZED_LOC_PERMISSION
 import app.core_databse.db.sp.SpDao.INITIALIZED_NOTI_PERMISSION
 import app.core_databse.db.sp.SpDao.IS_INIT_BACK_LOC_PERMISSION
 import app.core_databse.db.sp.SpDao.IS_PERMED_BACK_LOG
+import app.core_databse.db.sp.SpDao.LANDING_NOTIFICATION
 import app.core_databse.db.sp.SpDao.LAST_REFRESH22
 import app.core_databse.db.sp.SpDao.LAST_REFRESH42
 import app.core_databse.db.sp.SpDao.NOTIFICATION_ADDRESS
@@ -135,5 +136,9 @@ object SetAppInfo {
 
     fun setLastRefreshTime22(context: Context, time: Long) {
         SharedPreferenceManager(context).setLong(LAST_REFRESH22,time)
+    }
+
+    fun setLandingNotification(context: Context, b: Boolean) {
+        SharedPreferenceManager(context).setBoolean(LANDING_NOTIFICATION,b)
     }
 }

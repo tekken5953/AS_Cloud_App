@@ -11,6 +11,7 @@ import app.core_databse.db.sp.SpDao.LAST_REFRESH22
 import app.core_databse.db.sp.SpDao.LAST_REFRESH42
 import app.core_databse.db.sp.SpDao.NOTIFICATION_ADDRESS
 import app.core_databse.db.sp.SpDao.NOTIFICATION_TOPIC_DAILY
+import app.core_databse.db.sp.SpDao.LANDING_NOTIFICATION
 import app.core_databse.db.sp.SpDao.WARNING_FIXED
 import app.core_databse.db.sp.SpDao.lastAddress
 import app.core_databse.db.sp.SpDao.lastLoginPlatform
@@ -150,5 +151,9 @@ object GetAppInfo {
 
     fun getLastRefreshTime22(context: Context): Long {
         return SharedPreferenceManager(context).getLong(LAST_REFRESH22)
+    }
+
+    fun isLandingNotification(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(LANDING_NOTIFICATION)
     }
 }
