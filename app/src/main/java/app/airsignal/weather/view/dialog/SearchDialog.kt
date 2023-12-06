@@ -19,6 +19,14 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
+import app.core_databse.db.room.repository.GpsRepository
+import app.core_databse.db.sp.GetAppInfo.getCurrentLocation
+import app.core_databse.db.sp.GetAppInfo.getUserFontScale
+import app.core_databse.db.sp.GetAppInfo.getUserLastAddress
+import app.core_databse.db.sp.GetAppInfo.getUserLocation
+import app.core_databse.db.sp.GetSystemInfo.getLocale
+import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
+import app.core_databse.db.sp.SetSystemInfo
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.AddressListAdapter
 import app.airsignal.weather.adapter.OnAdapterItemClick
@@ -27,16 +35,10 @@ import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_BIG
 import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_SMALL
-import app.airsignal.weather.util.KeyboardController
 import app.airsignal.weather.util.`object`.DataTypeParser.convertAddress
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
-import app.airsignal.core_databse.db.sp.GetAppInfo.getCurrentLocation
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserFontScale
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLastAddress
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLocation
-import app.airsignal.core_databse.db.sp.GetSystemInfo.getLocale
-import app.airsignal.core_databse.db.sp.SetAppInfo.setUserLastAddr
-import app.airsignal.core_databse.db.sp.SetSystemInfo
+import app.core_databse.db.room.model.GpsEntity
+import app.utils.KeyboardController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -55,7 +57,7 @@ class SearchDialog(
     private val layoutId = lId
     val currentList = ArrayList<AdapterModel.AddressListItem>()
     private val currentAdapter = AddressListAdapter(activity, currentList)
-    private val db by lazy { app.airsignal.core_databse.db.room.repository.GpsRepository(activity) }
+    private val db by lazy { GpsRepository(activity) }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,7 +71,6 @@ class SearchDialog(
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -94,7 +95,7 @@ class SearchDialog(
             // 주소 등록 EditText 클릭
             changeAddressView.setOnClickListener {
                 changeAddressView.clearFocus()
-                dismissNow() // 현재 다이얼로그 사라짐
+                this@SearchDialog.dismiss() // 현재 다이얼로그 사라짐
                 SearchDialog(activity, 1, fm, tagId).showNow(fm, tagId) // 다이얼로그 재호출
             }
 
@@ -110,12 +111,12 @@ class SearchDialog(
 
             // 현재 주소 클릭 시 현재 주소로 데이터 호출
             currentAddress.setOnClickListener {
-                dismissNow()
+                this@SearchDialog.dismiss()
                 CoroutineScope(Dispatchers.IO).launch {
-                    dbUpdate(db.findById(CURRENT_GPS_ID).addrKr,db.findById(CURRENT_GPS_ID).addrEn)
+                    dbUpdate(-1, db.findById(CURRENT_GPS_ID).addrKr,db.findById(CURRENT_GPS_ID).addrEn,CURRENT_GPS_ID)
 
                     withContext(Dispatchers.Main) {
-                        dismissNow()
+                        this@SearchDialog.dismiss()
                         delay(100)
                         activity.recreate()
                     }
@@ -126,7 +127,7 @@ class SearchDialog(
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
             CoroutineScope(Dispatchers.IO).launch {
-                app.airsignal.core_databse.db.room.repository.GpsRepository(activity)
+                GpsRepository(activity)
                     .findAll().forEach { entity ->
                     withContext(Dispatchers.Main) {
                         if (entity.name == CURRENT_GPS_ID) {
@@ -153,10 +154,10 @@ class SearchDialog(
                 override fun onItemClick(v: View, position: Int) {
                     CoroutineScope(Dispatchers.Default).launch {
                         val currentAddr = currentList[position]
-                        dbUpdate(currentAddr.kr,currentAddr.en)
+                        dbUpdate(position,currentAddr.kr,currentAddr.en,currentAddr.kr ?: position.toString())
 
                         withContext(Dispatchers.Main) {
-                            dismissNow()
+                            this@SearchDialog.dismiss()
                             activity.recreate()
                         }
                     }
@@ -171,7 +172,7 @@ class SearchDialog(
             val searchBack: ImageView = view.findViewById(R.id.searchBack)
             val noResult: TextView = view.findViewById(R.id.searchAddressNoResult)
             searchBack.setOnClickListener {
-                dismissNow()
+                this@SearchDialog.dismiss()
                 show(0)
             }
             val listView: ListView = view.findViewById(R.id.searchAddressListView)
@@ -279,7 +280,7 @@ class SearchDialog(
                 apply.setOnClickListener {
                     builder.dismiss()
                     CoroutineScope(Dispatchers.IO).launch {
-                        val model = app.airsignal.core_databse.db.room.model.GpsEntity()
+                        val model = GpsEntity()
                         model.name = searchItem[position]
 
                         val addrArray =  resources.getStringArray(
@@ -294,10 +295,10 @@ class SearchDialog(
                             }
                         }
                         db.insert(model)
-                        dbUpdate(model.addrKr,model.addrEn)
+                        dbUpdate(position, model.addrKr,model.addrEn,model.name)
 
                         withContext(Dispatchers.Main) {
-                            dismissNow()
+                            builder.dismiss()
                             delay(100)
                             activity.recreate()
                         }
@@ -327,10 +328,11 @@ class SearchDialog(
     // 레이아웃 노출
     fun show(layoutId: Int) { SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId) }
 
-    private suspend fun dbUpdate(addrKr: String?, addrEn: String?) {
+    private suspend fun dbUpdate(position: Int, addrKr: String?, addrEn: String?, name: String) {
         withContext(Dispatchers.Default) {
-            val model = app.airsignal.core_databse.db.room.model.GpsEntity()
-            model.name = CURRENT_GPS_ID
+            val model = GpsEntity()
+            model.name = name
+            model.position = position
             model.addrKr = addrKr
             model.addrEn = addrEn
             model.timeStamp = getCurrentTime()

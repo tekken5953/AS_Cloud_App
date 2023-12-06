@@ -11,12 +11,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
+import app.core_databse.db.sp.GetAppInfo.getInitLocPermission
+import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_BACKGROUND_LOCATION
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_LOCATION
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_NOTIFICATION
-import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.core_databse.db.sp.GetAppInfo.getInitLocPermission
-import timber.log.Timber
+import app.airsignal.weather.koin.BaseApplication.Companion.timber
 
 class RequestPermissionsUtil(private val context: Context) {
 
@@ -115,7 +115,7 @@ class RequestPermissionsUtil(private val context: Context) {
     fun isNotiDenied(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             for (perm in permissionNotification) {
-                Timber.tag(TAG_P).i(ContextCompat.checkSelfPermission(context, perm).toString())
+                timber.i(TAG_P,ContextCompat.checkSelfPermission(context, perm).toString())
                 return ContextCompat.checkSelfPermission(context, perm) == PackageManager.PERMISSION_DENIED
             }
         } else return true

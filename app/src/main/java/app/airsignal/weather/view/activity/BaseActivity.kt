@@ -11,10 +11,10 @@ import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_BIG
 import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_SMALL
 import app.airsignal.weather.dao.StaticDataObject.THEME_DARK
 import app.airsignal.weather.dao.StaticDataObject.THEME_LIGHT
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserFontScale
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLocation
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserTheme
-import app.airsignal.core_databse.db.sp.SetSystemInfo
+import app.core_databse.db.sp.GetAppInfo.getUserFontScale
+import app.core_databse.db.sp.GetAppInfo.getUserLocation
+import app.core_databse.db.sp.GetAppInfo.getUserTheme
+import app.core_databse.db.sp.SetSystemInfo
 
 /**
  * @author : Lee Jae Young

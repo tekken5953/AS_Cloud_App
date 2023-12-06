@@ -27,25 +27,23 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.viewpager2.widget.ViewPager2
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
-import app.airsignal.core_databse.db.room.repository.GpsRepository
-import app.airsignal.core_databse.db.sp.GetAppInfo
-import app.airsignal.core_databse.db.sp.GetAppInfo.getEntireSun
-import app.airsignal.core_databse.db.sp.GetAppInfo.getIsNight
-import app.airsignal.core_databse.db.sp.GetAppInfo.getTopicNotification
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLastAddress
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLocation
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
-import app.airsignal.core_databse.db.sp.GetAppInfo.millsToString
-import app.airsignal.core_databse.db.sp.GetAppInfo.parseTimeToMinutes
-import app.airsignal.core_databse.db.sp.GetSystemInfo.getLocale
-import app.airsignal.core_databse.db.sp.GetSystemInfo.isThemeNight
-import app.airsignal.core_databse.db.sp.SetAppInfo
-import app.airsignal.core_databse.db.sp.SetAppInfo.removeSingleKey
-import app.airsignal.core_databse.db.sp.SetAppInfo.setCurrentLocation
-import app.airsignal.core_databse.db.sp.SetAppInfo.setUserLastAddr
+import app.address.AddressFromRegex
+import app.core_databse.db.room.repository.GpsRepository
+import app.core_databse.db.sp.GetAppInfo
+import app.core_databse.db.sp.GetAppInfo.getEntireSun
+import app.core_databse.db.sp.GetAppInfo.getIsNight
+import app.core_databse.db.sp.GetAppInfo.getTopicNotification
+import app.core_databse.db.sp.GetAppInfo.getUserLastAddress
+import app.core_databse.db.sp.GetAppInfo.getUserLocation
+import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
+import app.core_databse.db.sp.GetAppInfo.millsToString
+import app.core_databse.db.sp.GetAppInfo.parseTimeToMinutes
+import app.core_databse.db.sp.GetSystemInfo.getLocale
+import app.core_databse.db.sp.GetSystemInfo.isThemeNight
+import app.core_databse.db.sp.SetAppInfo
+import app.core_databse.db.sp.SetAppInfo.removeSingleKey
+import app.core_databse.db.sp.SetAppInfo.setCurrentLocation
+import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
 import app.airsignal.core_network.ErrorCode.ERROR_API_PROTOCOL
 import app.airsignal.core_network.ErrorCode.ERROR_GET_DATA
 import app.airsignal.core_network.ErrorCode.ERROR_GET_LOCATION_FAILED
@@ -60,21 +58,19 @@ import app.airsignal.core_network.NetworkUtils.modifyCurrentHumid
 import app.airsignal.core_network.NetworkUtils.modifyCurrentWindSpeed
 import app.airsignal.core_repository.BaseRepository
 import app.airsignal.core_viewmodel.GetWeatherViewModel
+import app.location.GetLocation
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
 import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.dao.StaticDataObject.CHECK_GPS_BACKGROUND
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.databinding.ActivityMainBinding
 import app.airsignal.weather.firebase.admob.AdViewClass
 import app.airsignal.weather.firebase.fcm.SubFCM
-import app.airsignal.weather.gps.GPSWorker
-import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.login.SilentLoginClass
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser
@@ -100,6 +96,10 @@ import app.airsignal.weather.view.dialog.SearchDialog
 import app.airsignal.weather.view.dialog.SideMenuBuilder
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.view.util.ToastUtils
+import app.utils.OnSingleClickListener
+import app.utils.SensibleTempFormula
+import app.utils.Term24Class
+import app.utils.VibrateUtil
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -110,7 +110,6 @@ import java.io.IOException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -215,7 +214,7 @@ class MainActivity
                 isEnabled = false
                 setTransition(R.id.start,R.id.end)
             }
-            createWorkManager()
+            GetLocation(this).createWorkManager()
         }
 
         adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
@@ -1561,8 +1560,6 @@ class MainActivity
         if (!airQList.contains(item)) addAirQItem(position, nameKR, name, unit, value, item.grade)
     }
 
-
-
     // 현재 위치 정보로 DB 갱신
     private fun updateCurrentAddress(mLat: Double, mLng: Double, mAddr: String?) {
         GetLocation(this@MainActivity).updateDatabaseWithLocationData(mLat, mLng,mAddr)
@@ -1848,19 +1845,5 @@ class MainActivity
         } ?: apply {
             (view as View).background = null
         }
-    }
-
-    private fun createWorkManager() {
-        val workManager = WorkManager.getInstance(this)
-        val workRequest =
-            PeriodicWorkRequest.Builder(GPSWorker::class.java, 30, TimeUnit.MINUTES)
-                .build()
-
-        workManager.enqueueUniquePeriodicWork(
-            CHECK_GPS_BACKGROUND,
-            ExistingPeriodicWorkPolicy.KEEP, workRequest
-        )
-
-        RDBLogcat.writeWorkManager(this, gpsValue = "WorkManager 생성")
     }
 }

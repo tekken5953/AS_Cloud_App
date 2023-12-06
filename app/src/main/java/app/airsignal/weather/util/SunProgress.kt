@@ -3,7 +3,7 @@ package app.airsignal.weather.util
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
-import app.airsignal.core_databse.db.sp.GetAppInfo
+import app.core_databse.db.sp.GetAppInfo
 import com.triggertrap.seekarc.SeekArc
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

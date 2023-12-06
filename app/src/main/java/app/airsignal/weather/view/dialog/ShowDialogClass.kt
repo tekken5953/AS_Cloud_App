@@ -8,8 +8,8 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_BIG
 import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_SMALL
 import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserFontScale
-import app.airsignal.core_databse.db.sp.SetSystemInfo
+import app.core_databse.db.sp.GetAppInfo.getUserFontScale
+import app.core_databse.db.sp.SetSystemInfo
 import java.util.concurrent.CompletableFuture
 
 /**

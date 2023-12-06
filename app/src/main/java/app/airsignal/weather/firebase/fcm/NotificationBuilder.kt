@@ -15,11 +15,11 @@ import android.net.Uri
 import android.view.View
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
-import app.airsignal.core_databse.db.sp.GetAppInfo
-import app.airsignal.core_databse.db.sp.GetAppInfo.getNotificationAddress
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserNotiEnable
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserNotiVibrate
-import app.airsignal.core_databse.db.sp.GetSystemInfo
+import app.core_databse.db.sp.GetAppInfo
+import app.core_databse.db.sp.GetAppInfo.getNotificationAddress
+import app.core_databse.db.sp.GetAppInfo.getUserNotiEnable
+import app.core_databse.db.sp.GetAppInfo.getUserNotiVibrate
+import app.core_databse.db.sp.GetSystemInfo
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.R
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyText

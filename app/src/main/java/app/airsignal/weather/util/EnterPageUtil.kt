@@ -2,7 +2,7 @@ package app.airsignal.weather.util
 
 import android.app.Activity
 import android.content.Intent
-import app.airsignal.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
+import app.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
 import app.airsignal.weather.view.activity.LoginActivity
 import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.activity.PermissionActivity

@@ -1128,7 +1128,7 @@
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/fab_bg"
                 android:contentDescription="@string/cd_icon_up"
-                android:src="@drawable/arrow_top"
+                android:src="@drawable/scroll_to_top"
                 app:tint="@color/theme_text_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />

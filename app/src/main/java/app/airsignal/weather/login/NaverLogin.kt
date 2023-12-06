@@ -2,6 +2,7 @@ package app.airsignal.weather.login
 
 import android.app.Activity
 import androidx.appcompat.widget.AppCompatButton
+import app.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPhone
 import app.airsignal.weather.dao.IgnoredKeyFile.naverDefaultClientId
@@ -10,22 +11,22 @@ import app.airsignal.weather.dao.IgnoredKeyFile.naverDefaultClientSecret
 import app.airsignal.weather.dao.IgnoredKeyFile.userEmail
 import app.airsignal.weather.dao.IgnoredKeyFile.userId
 import app.airsignal.weather.dao.IgnoredKeyFile.userProfile
-import app.airsignal.weather.dao.StaticDataObject.TAG_LOGIN
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_NAVER
 import app.airsignal.weather.dao.RDBLogcat.writeErrorNotANR
 import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.dao.RDBLogcat.writeLoginPref
+import app.airsignal.weather.dao.StaticDataObject.TAG_L
+import app.airsignal.weather.koin.BaseApplication.Companion.logger
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.view.util.ToastUtils
+import app.core_databse.db.SharedPreferenceManager
 import com.airbnb.lottie.LottieAnimationView
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
-import com.orhanobut.logger.Logger
 
 
 /**
@@ -88,7 +89,7 @@ class NaverLogin(private val activity: Activity) {
     val profileCallback = object : NidProfileCallback<NidProfileResponse> {
         override fun onSuccess(result: NidProfileResponse) {
             result.profile?.let {
-                app.airsignal.core_databse.db.SharedPreferenceManager(activity)
+                SharedPreferenceManager(activity)
                     .setString(lastLoginPhone, it.mobile.toString())
                     .setString(userId, it.name.toString())
                     .setString(userProfile, it.profileImage!!)
@@ -165,8 +166,8 @@ class NaverLogin(private val activity: Activity) {
             override fun onFailure(httpStatus: Int, message: String) {
                 // 서버에서 토큰 삭제에 실패했어도 클라이언트에 있는 토큰은 삭제되어 로그아웃된 상태입니다.
                 // 클라이언트에 토큰 정보가 없기 때문에 추가로 처리할 수 있는 작업은 없습니다.
-                Logger.t(TAG_LOGIN).e("errorCode: ${NaverIdLoginSDK.getLastErrorCode().code}")
-                Logger.t(TAG_LOGIN).e("errorDesc: ${NaverIdLoginSDK.getLastErrorDescription()}")
+                logger.e(TAG_L,"errorCode: ${NaverIdLoginSDK.getLastErrorCode().code}")
+                logger.e(TAG_L,"errorDesc: ${NaverIdLoginSDK.getLastErrorDescription()}")
                 activity.recreate()
             }
 

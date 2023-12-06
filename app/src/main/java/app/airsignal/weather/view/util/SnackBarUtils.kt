@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.CustomViewSnackbarBinding
-import app.airsignal.weather.util.VibrateUtil
+import app.utils.VibrateUtil
 import com.google.android.material.snackbar.Snackbar
 
 /**

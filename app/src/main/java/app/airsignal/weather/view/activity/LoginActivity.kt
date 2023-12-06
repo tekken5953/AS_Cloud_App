@@ -6,10 +6,11 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile.notificationAdmin
-import app.airsignal.weather.dao.StaticDataObject.TAG_LOGIN
 import app.airsignal.weather.databinding.ActivityLoginBinding
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_GOOGLE
+import app.airsignal.weather.dao.StaticDataObject.TAG_L
 import app.airsignal.weather.firebase.fcm.SubFCM
+import app.airsignal.weather.koin.BaseApplication.Companion.timber
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
@@ -19,7 +20,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 
 class LoginActivity
@@ -79,7 +79,7 @@ class LoginActivity
                 }
                 // 로그인 취소 됨
                 RESULT_CANCELED -> {
-                    Timber.tag(TAG_LOGIN).w("Cancel Google Login")
+                    timber.w(TAG_L,"Cancel Google Login")
                     binding.googleLoginButton.alpha = 1f
                 }
                 else -> {

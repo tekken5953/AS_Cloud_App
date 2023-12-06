@@ -11,7 +11,7 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile.privacyPolicyURI
 import app.airsignal.weather.dao.IgnoredKeyFile.termsOfServiceURL
 import app.airsignal.weather.databinding.ActivityWebUrlBinding
-import app.airsignal.core_databse.db.sp.SetSystemInfo
+import app.core_databse.db.sp.SetSystemInfo
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 
 class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {

@@ -2,6 +2,7 @@ package app.airsignal.weather.login
 
 import android.app.Activity
 import androidx.appcompat.widget.AppCompatButton
+import app.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
 import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPhone
 import app.airsignal.weather.dao.IgnoredKeyFile.userEmail
@@ -11,10 +12,12 @@ import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO_EMAIL
 import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
+import app.airsignal.weather.dao.StaticDataObject.TAG_L
+import app.airsignal.weather.koin.BaseApplication.Companion.logger
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.view.util.ToastUtils
+import app.core_databse.db.SharedPreferenceManager
 import com.airbnb.lottie.LottieAnimationView
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider
@@ -24,7 +27,6 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.common.model.KakaoSdkError
 import com.kakao.sdk.user.UserApiClient
-import com.orhanobut.logger.Logger
 
 /**
  * @author : Lee Jae Young
@@ -48,12 +50,12 @@ class KakaoLogin(private val activity: Activity) {
                     btn.alpha = 1f
                     // 사용자가 취소
                     if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled)) {
-                        Logger.t("testtest").d("카카오 로그인 취소")
+                        logger.d(TAG_L,"카카오 로그인 취소")
                         return@loginWithKakaoTalk
                     }
                     // 다른 오류
                     else {
-                        Logger.t("testtest").d("카카오 로그인 기타 오류 : ${error.localizedMessage}")
+                        logger.d(TAG_L,"카카오 로그인 기타 오류 : ${error.localizedMessage}")
                         UserApiClient.instance.loginWithKakaoAccount(
                             activity,
                             callback = mCallback
@@ -133,10 +135,10 @@ class KakaoLogin(private val activity: Activity) {
             UserApiClient.instance.accessTokenInfo { info, error ->
                 token = if (error != null) {
                     if (error is KakaoSdkError && error.isInvalidTokenError()) {
-                        Logger.t("testtest").w("만료된 토큰입니다") // 만료된 토큰임 로그인 필요
+                        logger.w(TAG_L,"만료된 토큰입니다")  // 만료된 토큰임 로그인 필요
                         "valid"
                     } else {
-                        Logger.t("testtest").e("기타 에러 발생 : $error") //기타 에러
+                        logger.e(TAG_L,"기타 에러 발생 : $error") //기타 에러
                         "error"
                     }
                 } else info.toString()//토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
@@ -179,7 +181,7 @@ class KakaoLogin(private val activity: Activity) {
     private fun saveUserSettings() {
         UserApiClient.instance.me { user, _ ->
             user?.kakaoAccount?.let { account ->
-                app.airsignal.core_databse.db.SharedPreferenceManager(activity)
+                SharedPreferenceManager(activity)
                     .setString(lastLoginPhone, account.phoneNumber.toString())
                     .setString(userId, account.profile!!.nickname.toString())
                     .setString(userProfile, account.profile!!.profileImageUrl.toString())

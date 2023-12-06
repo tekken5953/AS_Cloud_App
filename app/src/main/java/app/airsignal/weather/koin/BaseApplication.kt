@@ -2,9 +2,9 @@ package app.airsignal.weather.koin
 
 import android.app.Application
 import android.content.Context
-import app.airsignal.core_databse.db.SharedPreferenceManager
-import app.airsignal.core_databse.db.room.model.GpsEntity
-import app.airsignal.core_databse.db.room.repository.GpsRepository
+import app.core_databse.db.SharedPreferenceManager
+import app.core_databse.db.room.model.GpsEntity
+import app.core_databse.db.room.repository.GpsRepository
 import app.airsignal.core_network.retrofit.ApiModel
 import app.airsignal.core_network.retrofit.HttpClient
 import app.airsignal.core_repository.GetAppVersionRepo
@@ -14,7 +14,9 @@ import app.airsignal.core_viewmodel.GetAppVersionViewModel
 import app.airsignal.core_viewmodel.GetWarningViewModel
 import app.airsignal.core_viewmodel.GetWeatherViewModel
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.gps.GetLocation
+import app.location.GetLocation
+import app.utils.LoggerUtil
+import app.utils.TimberUtil
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -23,12 +25,20 @@ import org.koin.dsl.module
 import kotlin.system.exitProcess
 
 class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
-    companion object { private lateinit var appContext: Context }
+    companion object {
+        private lateinit var appContext: Context
+        lateinit var timber: TimberUtil
+        lateinit var logger: LoggerUtil
+    }
 
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
         Thread.setDefaultUncaughtExceptionHandler(this)
+        timber = TimberUtil()
+        timber.getInstance()
+        logger = LoggerUtil()
+        logger.getInstance()
 
         startKoin {
             androidLogger()

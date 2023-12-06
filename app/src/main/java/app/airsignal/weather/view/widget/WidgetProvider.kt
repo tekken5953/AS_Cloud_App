@@ -8,17 +8,18 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import android.widget.Toast
-import app.airsignal.core_databse.db.sp.GetAppInfo
-import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.firebase.fcm.WidgetFCM
+import app.core_databse.db.sp.GetAppInfo
 import app.airsignal.weather.R
+import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject
+import app.airsignal.weather.firebase.fcm.WidgetFCM
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.currentDateTimeString
 import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.core_databse.db.room.repository.GpsRepository
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
@@ -127,7 +128,7 @@ open class WidgetProvider : BaseWidgetProvider() {
         CoroutineScope(Dispatchers.Default).launch {
             if (checkBackPerm(context)) {
                 try {
-                    val roomDB = app.airsignal.core_databse.db.room.repository.GpsRepository(context)
+                    val roomDB = GpsRepository(context)
                         .findById(StaticDataObject.CURRENT_GPS_ID)
                     val lat = roomDB.lat
                     val lng = roomDB.lng
@@ -137,7 +138,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                             val data = requestWeather(context, mLat, mLng)
 
                             withContext(Dispatchers.Main) {
-                                RDBLogcat.writeWidgetHistory(context, "data", "data22 is $data")
+                                RDBLogcat.writeWidgetHistory(context, "data", "${roomDB.addrKr} data22 is $data")
                                 delay(500)
                                 updateUI(context, views, data, addr)
                             }

@@ -36,7 +36,7 @@
             tools:listitem="@layout/list_item_ae_life_data"
             tools:itemCount="6"
             android:layout_marginTop="16dp"
-            app:layoutManager=".util.LinearLayoutManagerWrapper"
+            app:layoutManager="app.utils.LinearLayoutManagerWrapper"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

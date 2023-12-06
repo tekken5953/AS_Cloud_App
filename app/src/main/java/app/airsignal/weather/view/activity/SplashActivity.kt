@@ -4,19 +4,18 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import app.airsignal.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
-import app.airsignal.core_databse.db.sp.GetSystemInfo
-import app.airsignal.core_databse.db.sp.GetSystemInfo.goToPlayStore
+import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
+import app.core_databse.db.sp.GetSystemInfo
+import app.core_databse.db.sp.GetSystemInfo.goToPlayStore
 import app.airsignal.core_network.ErrorCode.ERROR_NETWORK
 import app.airsignal.core_network.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.core_repository.BaseRepository
 import app.airsignal.core_viewmodel.GetAppVersionViewModel
+import app.location.GetLocation
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivitySplashBinding
-import app.airsignal.weather.gps.GetLocation
 import app.airsignal.weather.util.EnterPageUtil
-import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.dialog.MakeSingleDialog
@@ -42,7 +41,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
         initBinding()
         FirebaseApp.initializeApp(this)
-        LoggerUtil().getInstance()
         applyAppVersionData()
 
         // 유저 디바이스 설정 - 앱 버전

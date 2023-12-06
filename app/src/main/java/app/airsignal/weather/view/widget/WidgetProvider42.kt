@@ -8,11 +8,12 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
-import app.airsignal.core_databse.db.room.repository.GpsRepository
-import app.airsignal.core_databse.db.sp.GetAppInfo
+import app.core_databse.db.room.repository.GpsRepository
+import app.core_databse.db.sp.GetAppInfo
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject
@@ -22,7 +23,6 @@ import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import com.airbnb.lottie.model.content.BlurEffect
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
@@ -146,7 +146,8 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                             val data = requestWeather(context, mLat, mLng)
 
                             withContext(Dispatchers.Main) {
-                                RDBLogcat.writeWidgetHistory(context, "data", "data42 is $data")
+                                Log.d("testtest","widget $roomDB")
+                                RDBLogcat.writeWidgetHistory(context, "data", "${roomDB.addrKr} data42 is $data")
                                 delay(500)
                                 updateUI(context, views, data, addr)
                             }

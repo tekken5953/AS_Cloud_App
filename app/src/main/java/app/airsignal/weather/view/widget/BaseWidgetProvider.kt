@@ -7,18 +7,22 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
+import app.address.AddressFromRegex
+import app.core_databse.db.sp.GetAppInfo
+import app.core_databse.db.sp.SetAppInfo
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.util.AddressFromRegex
-import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
-import app.airsignal.core_databse.db.sp.GetAppInfo
-import app.airsignal.core_databse.db.sp.SetAppInfo
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.utils.LoggerUtil
+import app.utils.TimberUtil
 import retrofit2.awaitResponse
 import java.time.LocalDateTime
 
 open class BaseWidgetProvider: AppWidgetProvider() {
-    init { LoggerUtil().getInstance() }
+    init {
+        LoggerUtil().getInstance()
+        TimberUtil().getInstance()
+    }
 
     companion object {
         const val REFRESH_BUTTON_CLICKED = "app.airsignal.weather.view.widget.REFRESH_DATA"
