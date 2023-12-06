@@ -4,10 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.widget.AppCompatButton
-import app.core_databse.db.sp.SetAppInfo.setUserEmail
-import app.core_databse.db.sp.SetAppInfo.setUserId
-import app.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
-import app.core_databse.db.sp.SetAppInfo.setUserProfile
 import app.airsignal.weather.dao.IgnoredKeyFile.googleDefaultClientId
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_FAILED
@@ -17,7 +13,11 @@ import app.airsignal.weather.dao.RDBLogcat.writeLoginPref
 import app.airsignal.weather.dao.StaticDataObject.TAG_L
 import app.airsignal.weather.koin.BaseApplication.Companion.logger
 import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.view.util.ToastUtils
+import app.core_databse.db.sp.SetAppInfo.setUserEmail
+import app.core_databse.db.sp.SetAppInfo.setUserId
+import app.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
+import app.core_databse.db.sp.SetAppInfo.setUserProfile
+import app.utils.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount

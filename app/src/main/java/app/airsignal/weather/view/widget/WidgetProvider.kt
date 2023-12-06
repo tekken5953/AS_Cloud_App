@@ -70,7 +70,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                         }
                         RDBLogcat.writeWidgetHistory(
                             context.applicationContext, "lifecycle",
-                            "onReceive42 doze is ${isDeviceInDozeMode(context.applicationContext)}"
+                            "onReceive42}"
                         )
                     } else {
                         Toast.makeText(
@@ -249,12 +249,8 @@ open class WidgetProvider : BaseWidgetProvider() {
                 this.setTextColor(
                     it, context.applicationContext.getColor(
                         when (bg) {
-                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> {
-                                R.color.wblack
-                            }
-                            R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> {
-                                R.color.white
-                            }
+                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> { R.color.wblack }
+                            R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> { R.color.white }
                             else -> android.R.color.transparent
                         }
                     )

@@ -115,7 +115,6 @@ class RequestPermissionsUtil(private val context: Context) {
     fun isNotiDenied(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             for (perm in permissionNotification) {
-                timber.i(TAG_P,ContextCompat.checkSelfPermission(context, perm).toString())
                 return ContextCompat.checkSelfPermission(context, perm) == PackageManager.PERMISSION_DENIED
             }
         } else return true

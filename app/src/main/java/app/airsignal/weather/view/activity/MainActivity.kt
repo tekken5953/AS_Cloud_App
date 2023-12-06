@@ -10,6 +10,11 @@ import android.graphics.drawable.GradientDrawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.*
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +23,7 @@ import android.view.animation.*
 import android.widget.*
 import android.widget.LinearLayout.LayoutParams
 import android.widget.LinearLayout.VISIBLE
+import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
@@ -28,22 +34,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.viewpager2.widget.ViewPager2
 import app.address.AddressFromRegex
-import app.core_databse.db.room.repository.GpsRepository
-import app.core_databse.db.sp.GetAppInfo
-import app.core_databse.db.sp.GetAppInfo.getEntireSun
-import app.core_databse.db.sp.GetAppInfo.getIsNight
-import app.core_databse.db.sp.GetAppInfo.getTopicNotification
-import app.core_databse.db.sp.GetAppInfo.getUserLastAddress
-import app.core_databse.db.sp.GetAppInfo.getUserLocation
-import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
-import app.core_databse.db.sp.GetAppInfo.millsToString
-import app.core_databse.db.sp.GetAppInfo.parseTimeToMinutes
-import app.core_databse.db.sp.GetSystemInfo.getLocale
-import app.core_databse.db.sp.GetSystemInfo.isThemeNight
-import app.core_databse.db.sp.SetAppInfo
-import app.core_databse.db.sp.SetAppInfo.removeSingleKey
-import app.core_databse.db.sp.SetAppInfo.setCurrentLocation
-import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
 import app.airsignal.core_network.ErrorCode.ERROR_API_PROTOCOL
 import app.airsignal.core_network.ErrorCode.ERROR_GET_DATA
 import app.airsignal.core_network.ErrorCode.ERROR_GET_LOCATION_FAILED
@@ -58,7 +48,6 @@ import app.airsignal.core_network.NetworkUtils.modifyCurrentHumid
 import app.airsignal.core_network.NetworkUtils.modifyCurrentWindSpeed
 import app.airsignal.core_repository.BaseRepository
 import app.airsignal.core_viewmodel.GetWeatherViewModel
-import app.location.GetLocation
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
 import app.airsignal.weather.dao.AdapterModel
@@ -71,6 +60,7 @@ import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.databinding.ActivityMainBinding
 import app.airsignal.weather.firebase.admob.AdViewClass
 import app.airsignal.weather.firebase.fcm.SubFCM
+import app.airsignal.weather.koin.BaseApplication.Companion.timber
 import app.airsignal.weather.login.SilentLoginClass
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser
@@ -91,15 +81,26 @@ import app.airsignal.weather.util.`object`.DataTypeParser.translateSky
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.view.*
-import app.airsignal.weather.view.dialog.MakeDoubleDialog
-import app.airsignal.weather.view.dialog.SearchDialog
-import app.airsignal.weather.view.dialog.SideMenuBuilder
+import app.airsignal.weather.view.dialog.*
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.airsignal.weather.view.util.ToastUtils
-import app.utils.OnSingleClickListener
-import app.utils.SensibleTempFormula
-import app.utils.Term24Class
-import app.utils.VibrateUtil
+import app.core_databse.db.room.repository.GpsRepository
+import app.core_databse.db.sp.GetAppInfo
+import app.core_databse.db.sp.GetAppInfo.getEntireSun
+import app.core_databse.db.sp.GetAppInfo.getIsNight
+import app.core_databse.db.sp.GetAppInfo.getTopicNotification
+import app.core_databse.db.sp.GetAppInfo.getUserLastAddress
+import app.core_databse.db.sp.GetAppInfo.getUserLocation
+import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
+import app.core_databse.db.sp.GetAppInfo.millsToString
+import app.core_databse.db.sp.GetAppInfo.parseTimeToMinutes
+import app.core_databse.db.sp.GetSystemInfo.getLocale
+import app.core_databse.db.sp.GetSystemInfo.isThemeNight
+import app.core_databse.db.sp.SetAppInfo
+import app.core_databse.db.sp.SetAppInfo.removeSingleKey
+import app.core_databse.db.sp.SetAppInfo.setCurrentLocation
+import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
+import app.location.GetLocation
+import app.utils.*
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -416,12 +417,61 @@ class MainActivity
                     sideMenuBuilder.dismiss()
                 }
             })
-            eye.setOnClickListener(object : OnSingleClickListener(){
+            eye.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
-                    CompletableFuture.supplyAsync {
-                        sideMenuBuilder.dismiss()
-                    }.thenAccept {
-                        EnterPageUtil(this@MainActivity).toEye()
+                    sideMenuBuilder.dismiss()
+                    val rendingView = LayoutInflater
+                        .from(this@MainActivity)
+                        .inflate(R.layout.dialog_eye_rending, null)
+                    val rendingBack = rendingView.findViewById<ImageView>(R.id.eyeRendingBack)
+                    val rendingBtn = rendingView.findViewById<RelativeLayout>(R.id.eyeRendingRelative)
+                    val rendingText = rendingView.findViewById<TextView>(R.id.eyeRendingBtnTitle)
+                    val rendingCheck: CheckBox = rendingView.findViewById(R.id.eyeREndingBtnCheck)
+
+                    val notiPerm = RequestPermissionsUtil(this@MainActivity)
+
+                    rendingBtn.isEnabled = false
+
+                    val all = rendingText.text.toString()
+                    val span = SpannableStringBuilder(all)
+                    val tx = all.split('\n')[1]
+                    span.setSpan(
+                        RelativeSizeSpan(0.7f), all.indexOf(tx), all.lastIndex + 1,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    span.setSpan(
+                        ForegroundColorSpan(Color.parseColor("#90FFFFFF")),
+                        all.indexOf(tx),
+                        all.lastIndex + 1,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    ShowDialogClass(this@MainActivity).setBackPressed(rendingBack)
+                        .show(rendingView, true)
+                    rendingBack.bringToFront()
+                    if (tx != "") rendingText.text = span
+
+                    rendingCheck.setOnCheckedChangeListener { _, isChecked ->
+                         rendingBtn.isEnabled = isChecked
+                    }
+
+                    rendingBtn.setOnClickListener {
+                        if (rendingBtn.isEnabled) {
+                            if (!notiPerm.isNotificationPermitted()) {
+                                ToastUtils(this@MainActivity).showMessage("알림을 허용해주세요",1)
+                                notiPerm.requestNotification()
+                            } else {
+                                val subModal = MakeSingleDialog(this@MainActivity)
+                                subModal.makeDialog("출시가 완료되면 알림 메시지를 보낼게요",
+                                    getColor(R.color.main_blue_color),"확인",false)
+                                subModal.apply.setOnClickListener {
+                                    rendingBtn.isEnabled = false
+                                    rendingText.text = "출시 알림받기 완료"
+                                    rendingCheck.visibility = GONE
+                                    subModal.dismiss()
+                                    rendingBtn.requestLayout()
+                                }
+                            }
+                        }
                     }
                 }
             })

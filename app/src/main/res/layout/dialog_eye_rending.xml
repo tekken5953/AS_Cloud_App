@@ -2,33 +2,78 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#F6F6F6">
 
-    <ImageView
-        android:id="@+id/EyeRendingBack"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
-        android:contentDescription="@string/cd_icon_back"
-        android:src="@drawable/back_arrow" />
-
-    <ScrollView
-        android:id="@+id/EyeRendingScroll"
+    <FrameLayout
+        android:id="@+id/eyeRendingFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/EyeRendingBtn"
-        android:layout_below="@+id/EyeRendingBack" />
+        android:layout_above="@+id/eyeRendingLinear">
+        <ImageView
+            android:id="@+id/eyeRendingBack"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/cd_icon_back"
+            android:src="@drawable/back_arrow"
+            app:tint="@color/white"/>
 
-    <Button
-        android:id="@+id/EyeRendingBtn"
+        <ScrollView
+            android:id="@+id/eyeRendingScroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="ifContentScrolls"
+            android:scrollbars="none"
+            android:clipToPadding="false">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/landing"
+                android:scaleType="fitXY"/>
+        </ScrollView>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/eyeRendingLinear"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:fontFamily="@font/spoqa_hansansneo_bold"
-        android:text="자세히 보기"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:background="@drawable/eye_rending_btn_bg"/>
+        android:animateLayoutChanges="true">
+        <RelativeLayout
+            android:id="@+id/eyeRendingRelative"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:background="@drawable/rending_btn_bg_d"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:enabled="false"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="15dp">
 
+            <TextView
+                android:id="@+id/eyeRendingBtnTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="제품 출시 알림받기\n광고 및 이벤트성 알림 발송에 동의합니다"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/spoqa_hansansneo_bold"
+                android:lineHeight="24dp"
+                android:gravity="center"/>
+
+            <CheckBox
+                android:id="@+id/eyeREndingBtnCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:gravity="end"
+                android:layout_marginEnd="18dp"
+                style="@style/CustomCheckBoxStyle"/>
+
+        </RelativeLayout>
+    </LinearLayout>
 </RelativeLayout>

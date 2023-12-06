@@ -2,7 +2,6 @@ package app.airsignal.weather.login
 
 import android.app.Activity
 import androidx.appcompat.widget.AppCompatButton
-import app.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPhone
 import app.airsignal.weather.dao.IgnoredKeyFile.naverDefaultClientId
@@ -19,8 +18,9 @@ import app.airsignal.weather.dao.StaticDataObject.TAG_L
 import app.airsignal.weather.koin.BaseApplication.Companion.logger
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.view.util.ToastUtils
 import app.core_databse.db.SharedPreferenceManager
+import app.core_databse.db.sp.GetAppInfo.getUserEmail
+import app.utils.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin

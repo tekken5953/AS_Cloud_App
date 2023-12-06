@@ -8,21 +8,15 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import app.address.AddressFromRegex
-import app.core_databse.db.sp.GetAppInfo
-import app.core_databse.db.sp.SetAppInfo
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.utils.LoggerUtil
-import app.utils.TimberUtil
+import app.core_databse.db.sp.GetAppInfo
+import app.core_databse.db.sp.SetAppInfo
 import retrofit2.awaitResponse
 import java.time.LocalDateTime
 
 open class BaseWidgetProvider: AppWidgetProvider() {
-    init {
-        LoggerUtil().getInstance()
-        TimberUtil().getInstance()
-    }
 
     companion object {
         const val REFRESH_BUTTON_CLICKED = "app.airsignal.weather.view.widget.REFRESH_DATA"

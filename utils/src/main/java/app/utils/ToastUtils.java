@@ -1,4 +1,4 @@
-package app.airsignal.weather.view.util;
+package app.utils;
 
 import android.content.Context;
 import android.widget.Toast;

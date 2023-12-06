@@ -49,11 +49,18 @@ class AddGroupAdapter(
         private val alias: TextView = itemView.findViewById(R.id.listItemAeAddGroupName)
         private val serial: TextView = itemView.findViewById(R.id.listItemAeAddGroupSerial)
         val checkBox: CheckBox = itemView.findViewById(R.id.listItemAeAddGroupCheck)
+        private val master: TextView = itemView.findViewById(R.id.listItemAeAddGroupMaster)
 
         @SuppressLint("InflateParams")
         fun bind(dao: EyeDataModel.Group) {
             alias.text = dao.device.alias
             serial.text = dao.device.serial.serial
+
+            if (dao.device.isMaster) {
+                master.visibility = View.VISIBLE
+            } else {
+                master.visibility = View.GONE
+            }
 
             itemView.setOnClickListener {
                 val position = bindingAdapterPosition

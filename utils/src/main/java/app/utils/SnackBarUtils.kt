@@ -1,4 +1,4 @@
-package app.airsignal.weather.view.util
+package app.utils
 
 import android.graphics.drawable.Drawable
 import android.os.Handler
@@ -10,9 +10,8 @@ import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import app.airsignal.weather.R
-import app.airsignal.weather.databinding.CustomViewSnackbarBinding
-import app.utils.VibrateUtil
+import app.data_parsing.R
+import app.data_parsing.databinding.CustomViewSnackbarBinding
 import com.google.android.material.snackbar.Snackbar
 
 /**

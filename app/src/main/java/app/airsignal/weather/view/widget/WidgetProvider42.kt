@@ -2,8 +2,6 @@ package app.airsignal.weather.view.widget
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
-import android.app.job.JobInfo
-import android.app.job.JobScheduler
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
@@ -12,8 +10,6 @@ import android.util.Log
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
-import app.core_databse.db.room.repository.GpsRepository
-import app.core_databse.db.sp.GetAppInfo
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject
@@ -23,6 +19,8 @@ import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.core_databse.db.room.repository.GpsRepository
+import app.core_databse.db.sp.GetAppInfo
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
@@ -48,7 +46,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             try {
                 RDBLogcat.writeWidgetHistory(
                     context, "lifecycle",
-                    "onUpdate42 doze is ${isDeviceInDozeMode(context.applicationContext)}"
+                    "onUpdate42"
                 )
                 processDozeMode(context,appWidgetId)
             } catch (e: Exception) {
@@ -72,7 +70,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     if (isRefreshable(context,"42")) {
                         RDBLogcat.writeWidgetHistory(
                             context.applicationContext, "lifecycle",
-                            "onReceive42 doze is ${isDeviceInDozeMode(context.applicationContext)}"
+                            "onReceive42 doze}"
                         )
                         if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
                             requestPermissions(context)
@@ -122,11 +120,6 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
                 this.setOnClickPendingIntent(R.id.w42Background, enterPending)
             }
-            RDBLogcat.writeWidgetHistory(
-                context,
-                "doze",
-                "${isDeviceInDozeMode(context.applicationContext)}"
-            )
             fetch(context, views)
         }
     }
@@ -302,20 +295,6 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         } catch (e: Exception) {
             RDBLogcat.writeErrorANR("Error", "updateUI error42 ${e.localizedMessage}")
         }
-    }
-
-    private fun getLocation(context: Context) {
-        val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler?
-        val componentName = ComponentName(context, WidgetProvider42::class.java)
-
-        val jobInfo = JobInfo.Builder(1, componentName)
-            .setMinimumLatency(1000) // 최소 지연 시간 (1초 이상)
-            .setOverrideDeadline(3000) // 최대 시간 (3초 이내)
-            .setPersisted(true)
-            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-            .build()
-
-        jobScheduler!!.schedule(jobInfo)
     }
 
     private fun applyColor(context: Context, views: RemoteViews, bg: Int) {
