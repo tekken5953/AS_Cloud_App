@@ -9,13 +9,13 @@ import android.view.*
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_BIG
-import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_SMALL
 import app.airsignal.weather.util.RefreshUtils
 import app.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.core_databse.db.sp.GetAppInfo.getUserFontScale
 import app.core_databse.db.sp.GetAppInfo.getUserProfileImage
 import app.core_databse.db.sp.SetSystemInfo
+import app.core_databse.db.sp.SpDao.TEXT_SCALE_BIG
+import app.core_databse.db.sp.SpDao.TEXT_SCALE_SMALL
 import com.bumptech.glide.Glide
 
 /**
@@ -33,16 +33,6 @@ class SideMenuBuilder(private val context: Context) {
     fun setBackPressed(imageView: View): SideMenuBuilder {
         imageView.setOnClickListener {
             dismiss()
-        }
-        return this
-    }
-
-    /** 다이얼로그 뒤로가기 버튼 후 액티비티 갱신 **/
-    // 현재는 미사용
-    fun setBackPressRefresh(imageView: ImageView): SideMenuBuilder {
-        imageView.setOnClickListener {
-            dismiss()
-            RefreshUtils(context).refreshActivity()
         }
         return this
     }

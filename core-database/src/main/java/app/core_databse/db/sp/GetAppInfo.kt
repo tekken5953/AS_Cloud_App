@@ -133,10 +133,6 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getString(CURRENT_GPS_ID)
     }
 
-    fun getInitBackLogPerm(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(IS_INIT_BACK_LOC_PERMISSION)
-    }
-
     fun isPermedBackLoc(context: Context): Boolean {
         return SharedPreferenceManager(context).getBoolean(IS_PERMED_BACK_LOG)
     }

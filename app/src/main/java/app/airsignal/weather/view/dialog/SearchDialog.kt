@@ -29,15 +29,15 @@ import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
 import app.core_databse.db.sp.SetSystemInfo
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.AddressListAdapter
-import app.airsignal.weather.adapter.OnAdapterItemClick
+import app.utils.OnAdapterItemClick
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
-import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_BIG
-import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_SMALL
 import app.airsignal.weather.util.`object`.DataTypeParser.convertAddress
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.core_databse.db.room.model.GpsEntity
+import app.core_databse.db.sp.SpDao.TEXT_SCALE_BIG
+import app.core_databse.db.sp.SpDao.TEXT_SCALE_SMALL
 import app.utils.KeyboardController
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -137,9 +137,9 @@ class SearchDialog(
                                 currentGpsImg.imageTintList =
                                     ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
                             } else {
-                                currentAddress.setTextColor(activity.getColor(R.color.theme_text_color))
+                                currentAddress.setTextColor(activity.getColor(app.common_res.R.color.theme_text_color))
                                 currentGpsImg.imageTintList =
-                                    ColorStateList.valueOf(activity.getColor(R.color.theme_text_color))
+                                    ColorStateList.valueOf(activity.getColor(app.common_res.R.color.theme_text_color))
                             }
                         } else {
                             addCurrentItem(entity.addrKr.toString(), entity.addrEn.toString())

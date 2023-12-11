@@ -37,9 +37,6 @@ import app.airsignal.weather.dao.RDBLogcat.LOGIN_PHONE
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.dao.StaticDataObject.LANG_SYS
-import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_BIG
-import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_DEFAULT
-import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_SMALL
 import app.airsignal.weather.dao.StaticDataObject.THEME_DARK
 import app.airsignal.weather.dao.StaticDataObject.THEME_LIGHT
 import app.airsignal.weather.databinding.ActivitySettingBinding
@@ -50,9 +47,9 @@ import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.custom_view.CustomerServiceView
-import app.airsignal.weather.view.dialog.ShowDialogClass
 import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.core_customview.ShowDialogClass
 import app.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.core_databse.db.sp.GetAppInfo.getUserFontScale
 import app.core_databse.db.sp.GetAppInfo.getUserLocation
@@ -72,7 +69,10 @@ import app.core_databse.db.sp.SetAppInfo.setUserLocation
 import app.core_databse.db.sp.SetAppInfo.setUserNoti
 import app.core_databse.db.sp.SetAppInfo.setUserTheme
 import app.core_databse.db.sp.SetSystemInfo
-import app.utils.SnackBarUtils
+import app.core_databse.db.sp.SpDao.TEXT_SCALE_BIG
+import app.core_databse.db.sp.SpDao.TEXT_SCALE_DEFAULT
+import app.core_databse.db.sp.SpDao.TEXT_SCALE_SMALL
+import app.core_customview.SnackBarUtils
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.CoroutineScope
@@ -92,7 +92,6 @@ class SettingActivity
     : BaseActivity<ActivitySettingBinding>() {
     override val resID: Int get() = R.layout.activity_setting
 
-    private val faqItem = arrayListOf<ApiModel.FaqItem>()
     private val noticeItem = arrayListOf<ApiModel.NoticeItem>()
     private var isInit = true
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
@@ -606,8 +605,8 @@ class SettingActivity
     private fun showSnackBar(view: View, isAllow: Boolean) {
         val alertOn = ContextCompat.getDrawable(this, R.drawable.alert_on)!!
         val alertOff = ContextCompat.getDrawable(this, R.drawable.alert_off)!!
-        alertOn.setTint(getColor(R.color.theme_view_color))
-        alertOff.setTint(getColor(R.color.theme_view_color))
+        alertOn.setTint(getColor(app.common_res.R.color.theme_view_color))
+        alertOff.setTint(getColor(app.common_res.R.color.theme_view_color))
         if (isAllow) {
             if (!isInit) {
                 SnackBarUtils.make(
@@ -631,7 +630,7 @@ class SettingActivity
         val formatText = textView.text.split(System.lineSeparator())
         formatText.forEach {
             span.setSpan(
-                ForegroundColorSpan(getColor(R.color.theme_sub_color)),
+                ForegroundColorSpan(getColor(app.common_res.R.color.theme_sub_color)),
                 it.length, span.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )

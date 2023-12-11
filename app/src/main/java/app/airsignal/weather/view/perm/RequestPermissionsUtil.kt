@@ -11,18 +11,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
-import app.core_databse.db.sp.GetAppInfo.getInitLocPermission
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_BACKGROUND_LOCATION
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_LOCATION
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_NOTIFICATION
-import app.airsignal.weather.koin.BaseApplication.Companion.timber
+import app.core_databse.db.sp.GetAppInfo.getInitLocPermission
 
 class RequestPermissionsUtil(private val context: Context) {
-
-    companion object {
-        const val TAG_P = "TAG_Permission"
-    }
 
     private val permissionNetWork = Manifest.permission.INTERNET
 
@@ -99,27 +94,6 @@ class RequestPermissionsUtil(private val context: Context) {
             context,
             permissionNetWork
         ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    /** 위치 권한이 거부되어 있는지 확인 **/
-    fun isLocationDenied(): Boolean {
-        for (perm in permissionsLocation) {
-            if (ContextCompat.checkSelfPermission(context, perm)
-                != PackageManager.PERMISSION_DENIED
-            ) return false
-        }
-        return true
-    }
-
-    /** 알림 설정 권한 여부 검사 **/
-    fun isNotiDenied(): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            for (perm in permissionNotification) {
-                return ContextCompat.checkSelfPermission(context, perm) == PackageManager.PERMISSION_DENIED
-            }
-        } else return true
-
-        return true
     }
 
     /** 권한 요청 거부 횟수에 따른 반환 **/

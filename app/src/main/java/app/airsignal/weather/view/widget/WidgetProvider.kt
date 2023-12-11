@@ -14,12 +14,12 @@ import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.firebase.fcm.WidgetFCM
 import app.airsignal.weather.util.`object`.DataTypeParser
-import app.airsignal.weather.util.`object`.DataTypeParser.currentDateTimeString
 import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.core_databse.db.room.repository.GpsRepository
+import app.utils.TypeParser
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
@@ -164,7 +164,7 @@ open class WidgetProvider : BaseWidgetProvider() {
     ) {
         try {
             isSuccess = true
-            val currentTime = currentDateTimeString("HH:mm")
+            val currentTime = TypeParser.currentDateTimeString("HH:mm")
             val sunrise = data?.sun?.sunrise ?: "0000"
             val sunset = data?.sun?.sunset ?: "0000"
             val isNight = GetAppInfo.getIsNight(sunrise, sunset)
@@ -173,7 +173,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                 ComponentName(context, this@WidgetProvider.javaClass)
 
             views.run {
-                views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
+                views.setImageViewResource(R.id.widget2x2Refresh, app.common_res.R.drawable.w_btn_refresh)
                 this.setTextViewText(R.id.widget2x2Time, currentTime)
                 data?.let {
                     this.setTextViewText(

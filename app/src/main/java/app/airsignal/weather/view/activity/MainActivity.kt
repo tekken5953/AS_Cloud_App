@@ -80,6 +80,9 @@ import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.view.*
 import app.airsignal.weather.view.dialog.*
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.core_customview.MakeDoubleDialog
+import app.core_customview.MakeSingleDialog
+import app.core_customview.ShowDialogClass
 import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetAppInfo
 import app.core_databse.db.sp.GetAppInfo.getEntireSun
@@ -95,7 +98,6 @@ import app.core_databse.db.sp.GetSystemInfo.getLocale
 import app.core_databse.db.sp.GetSystemInfo.isThemeNight
 import app.core_databse.db.sp.SetAppInfo
 import app.core_databse.db.sp.SetAppInfo.removeSingleKey
-import app.core_databse.db.sp.SetAppInfo.setCurrentLocation
 import app.core_databse.db.sp.SetAppInfo.setLandingNotification
 import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
 import app.location.GetLocation
@@ -104,7 +106,6 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
@@ -180,9 +181,9 @@ class MainActivity
     override fun onResume() {
         super.onResume()
         addSideMenu()
-        getDataSingleTime(isCurrent = false)
         binding.nestedAdView.resume()
         applyRefreshScroll()
+        getDataSingleTime(isCurrent = false)
     }
 
     override fun onDestroy() {
@@ -199,136 +200,140 @@ class MainActivity
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initBinding()
-        if (savedInstanceState == null) {
-            binding.mainLoadingView.alpha = 1f
-            CoroutineScope(Dispatchers.IO).launch {
-                SubFCM().subTopic("patch")
-                SubFCM().subTopic("daily")
-            }
-            changeBackgroundResource(null)
-            window.statusBarColor = getColor(R.color.theme_view_color)
-            window.navigationBarColor = getColor(R.color.theme_view_color)
-            binding.mainMotionLayout.apply {
-                isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
-                isEnabled = false
-                setTransition(R.id.start, R.id.end)
-            }
-            GetLocation(this).createWorkManager()
-        }
-
-        adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
-
-        binding.dataVM = getDataViewModel
-
-        initializing()
-
-        sunPb.disableTouch()    // 일출/일몰 그래프 클릭 방지
-
-        // 메인 하단 스크롤 유도 화살표 애니메이션 적용
-        val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
-        binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
-
-        // UV 범주 아이템 추가
-        addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
-        addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
-        addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
-        addUvLegendItem(
-            3,
-            "8 - 10",
-            getColor(R.color.uv_very_high),
-            getString(R.string.uv_very_high)
-        )
-        addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
-
-        // 스크롤 최상단으로 올리기 버튼
-        binding.nestedFab.setOnClickListener(object : OnSingleClickListener() {
-            override fun onSingleClick(v: View?) {
-                binding.nestedScrollview.smoothScrollTo(0, 0, 500)
-            }
-        })
-
-        binding.mainTopBarGpsTitle.requestFocus()
-        binding.mainTopBarGpsTitle.setOnFocusChangeListener { v, hasFocus ->
-            v.isSelected = hasFocus
-        }
-        binding.mainTopBarGpsTitleScroll.isHorizontalScrollBarEnabled = false
-
-        // 플러스 모양 추가시 주소등록 다이얼로그
-        binding.mainAddAddress.setOnClickListener(object : OnSingleClickListener() {
-            override fun onSingleClick(v: View?) {
-                mVib()
-                val bottomSheet =
-                    SearchDialog(
-                        this@MainActivity, 0, supportFragmentManager,
-                        BottomSheetDialogFragment().tag
-                    )
-                bottomSheet.show(0)
-            }
-        })
-
-        // 현재 주소로 갱신
-        binding.mainGpsFix.setOnClickListener(object : OnSingleClickListener() {
-            override fun onSingleClick(v: View?) {
-                mVib()
-                v!!.startAnimation(rotateAnim)
-                getDataSingleTime(isCurrent = true)
-            }
-        })
-
-        // 사이드 메뉴 세팅
-        binding.mainSideMenuIv.setOnClickListener(object : OnSingleClickListener() {
-            override fun onSingleClick(v: View?) {
-                sideMenuBuilder.show(sideMenuView, true)
-            }
-        })
-
-        // 공유하기 버튼 클릭
-        binding.mainShareIv.setOnClickListener(object : OnSingleClickListener() {
-            override fun onSingleClick(v: View?) {
-                mVib()
-                val doubleDialog = MakeDoubleDialog(this@MainActivity)
-                if (getUserLocation(this@MainActivity) == LANG_EN) {
-                    doubleDialog.make(
-                        "Share with in English?",
-                        "Yes",
-                        "With in Korean",
-                        R.color.main_blue_color
-                    ).apply {
-                        this.first.setOnClickListener(object : OnSingleClickListener() {
-                            override fun onSingleClick(v: View?) {
-                                doubleDialog.dismiss()
-                                addShareMsg(LANG_EN)
-                            }
-                        })
-                        this.second.setOnClickListener(object : OnSingleClickListener() {
-                            override fun onSingleClick(v: View?) {
-                                doubleDialog.dismiss()
-                                addShareMsg(LANG_KR)
-                            }
-                        })
-                    }
-                } else {
-                    doubleDialog.dismiss()
-                    addShareMsg(LANG_KR)
+        try {
+            super.onCreate(savedInstanceState)
+            initBinding()
+            if (savedInstanceState == null) {
+                binding.mainLoadingView.alpha = 1f
+                CoroutineScope(Dispatchers.IO).launch {
+                    SubFCM().subTopic("patch")
+                    SubFCM().subTopic("daily")
                 }
+                changeBackgroundResource(null)
+                window.statusBarColor = getColor(app.common_res.R.color.theme_view_color)
+                window.navigationBarColor = getColor(app.common_res.R.color.theme_view_color)
+                binding.mainMotionLayout.apply {
+                    isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
+                    isEnabled = false
+                    setTransition(R.id.start, R.id.end)
+                }
+                GetLocation(this).createWorkManager()
             }
-        })
+
+            adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
+
+            binding.dataVM = getDataViewModel
+
+            initializing()
+
+            sunPb.disableTouch()    // 일출/일몰 그래프 클릭 방지
+
+            // 메인 하단 스크롤 유도 화살표 애니메이션 적용
+            val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
+            binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
+
+            // UV 범주 아이템 추가
+            addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
+            addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
+            addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
+            addUvLegendItem(
+                3,
+                "8 - 10",
+                getColor(R.color.uv_very_high),
+                getString(R.string.uv_very_high)
+            )
+            addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
+
+            // 스크롤 최상단으로 올리기 버튼
+            binding.nestedFab.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    binding.nestedScrollview.smoothScrollTo(0, 0, 500)
+                }
+            })
+
+            binding.mainTopBarGpsTitle.requestFocus()
+            binding.mainTopBarGpsTitle.setOnFocusChangeListener { v, hasFocus ->
+                v.isSelected = hasFocus
+            }
+            binding.mainTopBarGpsTitleScroll.isHorizontalScrollBarEnabled = false
+
+            // 플러스 모양 추가시 주소등록 다이얼로그
+            binding.mainAddAddress.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    mVib()
+                    val bottomSheet =
+                        SearchDialog(
+                            this@MainActivity, 0, supportFragmentManager,
+                            BottomSheetDialogFragment().tag
+                        )
+                    bottomSheet.show(0)
+                }
+            })
+
+            // 현재 주소로 갱신
+            binding.mainGpsFix.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    mVib()
+                    v!!.startAnimation(rotateAnim)
+                    getDataSingleTime(isCurrent = true)
+                }
+            })
+
+            // 사이드 메뉴 세팅
+            binding.mainSideMenuIv.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    sideMenuBuilder.show(sideMenuView, true)
+                }
+            })
+
+            // 공유하기 버튼 클릭
+            binding.mainShareIv.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    mVib()
+                    val doubleDialog = MakeDoubleDialog(this@MainActivity)
+                    if (getUserLocation(this@MainActivity) == LANG_EN) {
+                        doubleDialog.make(
+                            "Share with in English?",
+                            "Yes",
+                            "With in Korean",
+                            R.color.main_blue_color
+                        ).apply {
+                            this.first.setOnClickListener(object : OnSingleClickListener() {
+                                override fun onSingleClick(v: View?) {
+                                    doubleDialog.dismiss()
+                                    addShareMsg(LANG_EN)
+                                }
+                            })
+                            this.second.setOnClickListener(object : OnSingleClickListener() {
+                                override fun onSingleClick(v: View?) {
+                                    doubleDialog.dismiss()
+                                    addShareMsg(LANG_KR)
+                                }
+                            })
+                        }
+                    } else {
+                        doubleDialog.dismiss()
+                        addShareMsg(LANG_KR)
+                    }
+                }
+            })
 
 
-        binding.mainSwipeLayout.setColorSchemeColors(
-            Color.parseColor("#22D3EE"),
-            Color.parseColor("#4DCF7D"),
-            Color.parseColor("#FACC15"),
-            Color.parseColor("#F87171")
-        )
+            binding.mainSwipeLayout.setColorSchemeColors(
+                Color.parseColor("#22D3EE"),
+                Color.parseColor("#4DCF7D"),
+                Color.parseColor("#FACC15"),
+                Color.parseColor("#F87171")
+            )
 
-        // 스와이프 리프래시 레이아웃 리스너
-        binding.mainSwipeLayout.setOnRefreshListener {
-            Handler(Looper.getMainLooper()).postDelayed({
-                getDataSingleTime(false)
-            }, 500)
+            // 스와이프 리프래시 레이아웃 리스너
+            binding.mainSwipeLayout.setOnRefreshListener {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    getDataSingleTime(false)
+                }, 500)
+            }
+        } catch (e : androidx.fragment.app.Fragment.InstantiationException) {
+            RefreshUtils(this).refreshApplication()
         }
     }
 
@@ -438,7 +443,7 @@ class MainActivity
                     sideMenuBuilder.dismiss()
                     val rendingView = LayoutInflater
                         .from(this@MainActivity)
-                        .inflate(R.layout.dialog_eye_rending, null)
+                        .inflate(R.layout.dialog_eye_landing, null)
                     val rendingBack = rendingView.findViewById<ImageView>(R.id.eyeRendingBack)
                     val rendingBtn =
                         rendingView.findViewById<RelativeLayout>(R.id.eyeRendingRelative)
@@ -482,7 +487,7 @@ class MainActivity
                             } else {
                                 val subModal = MakeSingleDialog(this@MainActivity)
                                 subModal.makeDialog(
-                                    "출시가 완료되면 알림 메시지를 보낼게요",
+                                    "출시가 완료되면 알림 메시지를 보낼게요 ${String(Character.toChars(0x1F514))}",
                                     getColor(R.color.main_blue_color), "확인", false
                                 )
                                 subModal.apply.setOnClickListener {
@@ -987,11 +992,11 @@ class MainActivity
 
     private fun isCalledButFail() {
         hideProgressBar()
-        Toast.makeText(
-            this@MainActivity,
-            getString(R.string.error_data_response),
-            Toast.LENGTH_SHORT
-        ).show()
+//        Toast.makeText(
+//            this@MainActivity,
+//            getString(R.string.error_data_response),
+//            Toast.LENGTH_SHORT
+//        ).show()
     }
 
     // 결과에서 얻은 데이터로 UI 요소를 업데이트
@@ -1430,7 +1435,7 @@ class MainActivity
     private fun changeBackgroundResource(id: Int?) {
         id?.let {
             window.setBackgroundDrawableResource(it)
-        } ?: window.setBackgroundDrawableResource(R.color.theme_view_color)
+        } ?: window.setBackgroundDrawableResource(app.common_res.R.color.theme_view_color)
     }
 
     // 필드값이 없을 때 -100 출력 됨
@@ -1607,7 +1612,7 @@ class MainActivity
 
             binding.mainMotionSlideGuide.apply {
                 text = getString(R.string.error_guide)
-                setTextColor(getC(R.color.theme_text_color))
+                setTextColor(getC(app.common_res.R.color.theme_text_color))
             }
             applyBackground(binding.mainWarningBox, null)
             applyBackground(binding.nestedSubAirFrame, null)
@@ -1654,9 +1659,9 @@ class MainActivity
     // 이미지뷰의 이미지 틴트 적용
     private fun tintImageDrawables() {
         binding.mainAddAddress.imageTintList =
-            ColorStateList.valueOf(getColor(R.color.theme_text_color))
+            ColorStateList.valueOf(getColor(app.common_res.R.color.theme_text_color))
         binding.mainSideMenuIv.imageTintList =
-            ColorStateList.valueOf(getColor(R.color.theme_text_color))
+            ColorStateList.valueOf(getColor(app.common_res.R.color.theme_text_color))
     }
 
     // 텍스트뷰의 텍스트 지우기
@@ -2002,7 +2007,6 @@ class MainActivity
             // 주소 정보를 저장하고 업데이트
             CoroutineScope(Dispatchers.Main).launch {
                 setUserLastAddr(this@MainActivity, addr)
-                setCurrentLocation(this@MainActivity, addr)
                 updateCurrentAddress(lat, lng, addr)
             }
 

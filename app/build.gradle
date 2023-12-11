@@ -56,6 +56,9 @@ dependencies {
     implementation project(path: ':core-repository')
     implementation project(path: ':location')
     implementation project(path: ':utils')
+    implementation project(path: ':common-res')
+    implementation project(path: ':core-as-eye')
+    implementation project(path: ':core-customview')
 
     apply plugin: 'com.google.android.gms.oss-licenses-plugin'
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
@@ -79,10 +82,6 @@ dependencies {
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.11.0")
-
-    // Google Location
-    implementation 'com.google.android.gms:play-services-maps:18.1.0' // 구글지도 라이브러리
-    implementation 'com.google.android.gms:play-services-location:21.0.1' // 위치정보 라이브러리
 
     def koin_android_version = "3.3.2"
     // Koin main features for Android
@@ -128,4 +127,7 @@ dependencies {
 
     // Warning Detail Spinner
     implementation "com.github.skydoves:powerspinner:1.2.7"
+
+    // Google Location
+    implementation 'com.google.android.gms:play-services-location:21.0.1' // 위치정보 라이브러리
 }

@@ -171,7 +171,6 @@
     <string name="register_new_address">주소 등록</string>
 
     <string name="cd_ad_cancel">광고 숨기기</string>
-    <string name="cd_icon_back">뒤로가기</string>
     <string name="cd_icon_cancel">닫기</string>
     <string name="cd_icon_plus">등록</string>
     <string name="cd_icon_gps_fix">현재주소로 갱신</string>
@@ -235,19 +234,6 @@
     <string name="cd_refresh">갱신</string>
     <string name="cd_grade">등급</string>
     <string name="cd_add_device">장치 추가</string>
-    <string name="cd_caution_img">위험</string>
     <string name="cd_sky_img">날씨 이미지</string>
-    <string name="report">리포트</string>
-    <string name="live_value">실시간 지수</string>
-    <string name="sensor_life">센서 수명</string>
-    <string name="device_list">제품 목록</string>
     <string name="no_result_search_report">현재 지역의 기상 특보가 없습니다.\n전국으로 검색하시겠습니까?</string>
-    <string name="temp">온도</string>
-    <string name="add_group">그룹 추가</string>
-    <string name="group_name">그룹 이름</string>
-    <string name="group_add_btn">그룹 추가하기</string>
-    <string name="setting">설정</string>
-    <string name="cqi">통합 대기 환경지수</string>
-    <string name="virus_value">바이러스 위험 지수</string>
-    <string name="device_name">장치이름</string>
 </resources>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="basicMediumTextView">
+        <item name="android:letterSpacing">-0.04</item>
+        <item name="android:textColor">@color/theme_text_color</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_medium</item>
+    </style>
+
+    <style name="basicTextView">
+        <item name="android:letterSpacing">-0.04</item>
+        <item name="android:textColor">@color/theme_text_color</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_regular</item>
+    </style>
+
+    <style name="basicBoldTextView">
+        <item name="android:letterSpacing">-0.04</item>
+        <item name="android:textColor">@color/theme_text_color</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_bold</item>
+    </style>
+
+    <style name="settingMultiTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:letterSpacing">-0.04</item>
+        <item name="android:textColor">@color/theme_text_color</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:layout_weight">0.5</item>
+    </style>
+</resources>

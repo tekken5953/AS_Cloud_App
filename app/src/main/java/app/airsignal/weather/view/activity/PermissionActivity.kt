@@ -66,14 +66,14 @@ class PermissionActivity :
         setStatusBar(this)
 
         // 초기설정 로그 저장 - 초기 설치 날짜
-        RDBLogcat.writeUserPref(
+        writeUserPref(
             this, sort = RDBLogcat.USER_PREF_SETUP,
             title = RDBLogcat.USER_PREF_SETUP_INIT,
             value = "${parseLongToLocalDateTime(getCurrentTime())}"
         )
 
         // 초기설정 로그 저장 - 디바이스 SDK 버전
-        RDBLogcat.writeUserPref(
+        writeUserPref(
             this, sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
             value = "${getApplicationVersionName(this)}.${getApplicationVersionCode(this)}"

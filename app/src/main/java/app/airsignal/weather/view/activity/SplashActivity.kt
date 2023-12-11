@@ -18,7 +18,7 @@ import app.airsignal.weather.databinding.ActivitySplashBinding
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
-import app.airsignal.weather.view.dialog.MakeSingleDialog
+import app.core_customview.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.google.firebase.FirebaseApp
 import org.koin.androidx.viewmodel.ext.android.viewModel

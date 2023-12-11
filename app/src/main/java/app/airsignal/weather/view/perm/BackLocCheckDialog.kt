@@ -95,7 +95,7 @@ class BackLocCheckDialog(
                     intent.data = uri
                     startActivity(intent)
                 }
-                dismissNow()
+                dismiss()
             }
         } else {
             title.text = getString(R.string.back_perm_down_title)
@@ -113,13 +113,13 @@ class BackLocCheckDialog(
                     )
                 this.setOnClickListener {
                     SetAppInfo.setPermedBackLog(activity, !isPermedBackLoc)
-                    dismissNow()
+                    dismiss()
                     activity.recreate()
                 }
             }
         }
         cancel.setOnClickListener {
-            dismissNow()
+            dismiss()
         }
     }
 

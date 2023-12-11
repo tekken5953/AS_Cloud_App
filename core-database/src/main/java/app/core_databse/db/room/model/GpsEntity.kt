@@ -1,5 +1,6 @@
 package app.core_databse.db.room.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -16,11 +17,11 @@ import androidx.room.PrimaryKey
 @Entity
 data class GpsEntity(
     var position: Int,
-    var name: String = "",
-    var addrEn: String? = "",
+    @ColumnInfo(defaultValue = "") var name: String,
+    @ColumnInfo(defaultValue = "") var addrEn: String?,
     var lat: Double?,
     var lng: Double?,
-    var addrKr: String? = "",
+    @ColumnInfo(defaultValue = "") var addrKr: String? = "",
     var timeStamp: Long = System.currentTimeMillis()
 ) {
     @PrimaryKey(autoGenerate = true)

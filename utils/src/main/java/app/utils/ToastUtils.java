@@ -1,10 +1,7 @@
 package app.utils;
 
 import android.content.Context;
-import android.os.Looper;
 import android.widget.Toast;
-
-import java.util.logging.Handler;
 
 public class ToastUtils {
     private final Context mContext;

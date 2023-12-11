@@ -2,12 +2,12 @@ package app.airsignal.weather.util
 
 import android.app.Activity
 import android.content.Intent
-import app.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
 import app.airsignal.weather.view.activity.LoginActivity
 import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.activity.PermissionActivity
 import app.airsignal.weather.view.activity.WarningDetailActivity
-import app.airsignal.weather.view.aseye.activity.EyeListActivity
+import app.core_as_eye.activity.EyeListActivity
+import app.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
 import kotlin.system.exitProcess
 
 /**
@@ -45,14 +45,6 @@ class EnterPageUtil(private val activity: Activity) {
         }
     }
 
-    fun toEye() {
-        val intent = Intent(activity, EyeListActivity::class.java)
-        activity.run {
-            this.startActivity(intent)
-            this.overridePendingTransition(0,0)
-        }
-    }
-
     /** 액티비티를 완전히 종료한다 **/
     fun fullyExit() {
         activity.run {
@@ -69,15 +61,6 @@ class EnterPageUtil(private val activity: Activity) {
             startActivity(intent)
             overridePendingTransition(0,0)
             finish()
-        }
-    }
-
-    /** 기상 특보 페이지로 이동 **/
-    fun toWarning() {
-        val intent = Intent(activity, WarningDetailActivity::class.java)
-        activity.run {
-            startActivity(intent)
-            overridePendingTransition(0,0)
         }
     }
 }

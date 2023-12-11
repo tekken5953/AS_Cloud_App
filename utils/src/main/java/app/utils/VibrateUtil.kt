@@ -32,13 +32,4 @@ class VibrateUtil(private val context: Context) {
             )
         }
     }
-
-    /** 알림 진동 발생 **/
-    fun noti(array: LongArray) {
-        CoroutineScope(Dispatchers.Default).launch {
-            vib.vibrate(
-                VibrationEffect.createWaveform(array, -1)
-            )
-        }
-    }
 }

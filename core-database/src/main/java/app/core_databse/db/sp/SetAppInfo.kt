@@ -29,18 +29,6 @@ import app.core_databse.db.sp.SpDao.userProfile
  **/
 object SetAppInfo {
 
-    /** 몰입모드로 전환됩니다 **/
-    fun fullScreenMode(activity: Activity) {
-        @Suppress("DEPRECATION")
-        activity.window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                )
-    }
-
     fun setUserFontScale(context: Context, type: String) {
         SharedPreferenceManager(context).setString(userFontScale, type)
     }
@@ -114,10 +102,6 @@ object SetAppInfo {
     fun setInitNotiPermission(context: Context, s: String) {
         SharedPreferenceManager(context)
             .setString(INITIALIZED_NOTI_PERMISSION, s)
-    }
-
-    fun setCurrentLocation(context: Context, loc: String) {
-        SharedPreferenceManager(context).setString(CURRENT_GPS_ID, loc)
     }
 
     fun setInitBackLocPermission(context: Context,b: Boolean) {

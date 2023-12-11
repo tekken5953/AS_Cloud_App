@@ -29,15 +29,6 @@ class SubFCM: FirebaseMessagingService() {
         }
     }
 
-    private fun parsePriority(priority: Int): String {
-        return when(priority) {
-            0 -> {"unknown"}
-            1 -> {"high"}
-            2 -> {"normal"}
-            else -> {"error"}
-        }
-    }
-
     /** 토픽 구독 설정 **/
     suspend fun subTopic(topic: String): SubFCM {
         try {
@@ -94,5 +85,6 @@ class SubFCM: FirebaseMessagingService() {
     /** 새로운 토큰 발행 **/
     override fun onNewToken(token: String) {
         super.onNewToken(token)
+        println(token)
     }
 }

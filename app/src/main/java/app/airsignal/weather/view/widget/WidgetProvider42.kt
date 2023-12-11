@@ -21,6 +21,7 @@ import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetAppInfo
+import app.utils.TypeParser
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
@@ -166,7 +167,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     ) {
         try {
             isSuccess = true
-            val currentTime = DataTypeParser.currentDateTimeString("HH:mm")
+            val currentTime = TypeParser.currentDateTimeString("HH:mm")
             val sunrise = data?.sun?.sunrise ?: "0000"
             val sunset = data?.sun?.sunset ?: "0000"
             val isNight = GetAppInfo.getIsNight(sunrise, sunset)

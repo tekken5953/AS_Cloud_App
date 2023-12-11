@@ -13,8 +13,8 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
-class WidgetFCM() {
-    fun sendFCMMessage(sort:String, appWidgetId: Int) {
+class WidgetFCM {
+    fun sendFCMMessage(sort: String, appWidgetId: Int) {
         CoroutineScope(Dispatchers.Default).launch {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                 CoroutineScope(Dispatchers.Default).launch {
@@ -61,7 +61,7 @@ class WidgetFCM() {
         }
     }
 
-        private fun getOauthAccessToken(): String? {
-        return GoogleCredentials.getApplicationDefault().accessToken.tokenValue ?: null
-    }
+//    private fun getOauthAccessToken(): String? {
+//        return GoogleCredentials.getApplicationDefault().accessToken.tokenValue ?: null
+//    }
 }

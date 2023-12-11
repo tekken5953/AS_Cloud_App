@@ -42,16 +42,4 @@ class GpsRepository(private val context: Context) {
             getInstance(context).gpsRepository().deleteFromAddr(addr)
         }
     }
-
-    suspend fun findByAddressAsync(addr: String): GpsEntity {
-        return withContext(Dispatchers.IO) {
-            return@withContext getInstance(context).gpsRepository().findByAddress(addr)
-        }
-    }
-
-    fun clearDB() {
-        CoroutineScope(Dispatchers.IO).launch {
-            getInstance(context).gpsRepository().clearDB()
-        }
-    }
 }

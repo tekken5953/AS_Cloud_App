@@ -5,10 +5,10 @@ import app.core_databse.db.room.model.GpsEntity
 
 @Dao
 interface GpsScheme {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(GpsEntity::class, onConflict = OnConflictStrategy.REPLACE)
     fun insertNewGPS(gps: GpsEntity)
 
-    @Update(GpsEntity::class, onConflict = OnConflictStrategy.REPLACE)
+    @Update(GpsEntity::class)
     fun updateCurrentGPS(gps: GpsEntity)
 
     @Query("SELECT * FROM GpsEntity")

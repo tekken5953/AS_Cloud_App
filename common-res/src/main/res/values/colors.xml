@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ripple_white">#B4cccccc</color>
+    <color name="white">#FFFFFF</color>
+    <color name="theme_alert_double_cancel_color">#D9D9D9</color>
+    <color name="theme_alert_double_apply_color">#F74B4B</color>
+    <color name="theme_box_solid_color">#303136</color>
+    <color name="theme_view_color">#FFFFFF</color>
+    <color name="theme_text_color">#4F4F4F</color>
+    <color name="theme_sub_color">#7C7C7C</color>
+    <color name="theme_line_color">#EBEBEB</color>
+
+</resources>

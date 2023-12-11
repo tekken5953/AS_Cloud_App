@@ -1,6 +1,5 @@
 package app.airsignal.weather.util.`object`
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -9,7 +8,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
-import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -24,11 +22,6 @@ import kotlin.math.roundToInt
  * @since : 2023-03-20 오후 4:22
  **/
 object DataTypeParser {
-    /** pixel을 DP로 변환 **/
-    fun pixelToDp(context: Context, px: Int): Int {
-        return px / (context.resources.displayMetrics.densityDpi / 160)
-    }
-
     /** 현재시간 불러오기 **/
     fun getCurrentTime(): Long {
         return System.currentTimeMillis()
@@ -37,15 +30,6 @@ object DataTypeParser {
     fun getHourCountToTomorrow(): Int {
         val currentHour = parseLongToLocalDateTime(getCurrentTime()).hour
         return 24 - currentHour
-    }
-
-    /** 위젯용 현재시간 타임포멧 **/
-    fun currentDateTimeString(format: String): String {
-        @SuppressLint("SimpleDateFormat") val mFormat = SimpleDateFormat(format)
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = System.currentTimeMillis()
-        }
-        return mFormat.format(calendar.time)
     }
 
     /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트 **/
@@ -216,19 +200,6 @@ object DataTypeParser {
         return getDrawable(context,id)
     }
 
-    /** 시간별 날씨 날짜 이름 **/
-    fun getDailyItemDate(context: Context, localDateTime: LocalDateTime): String {
-        val betweenDate = ChronoUnit.DAYS.between(localDateTime.toLocalDate(),
-            parseLongToLocalDateTime(getCurrentTime()).toLocalDate()).absoluteValue
-        val localDateTimeMap = mapOf (
-            0L to R.string.daily_today,
-            1L to R.string.daily_tomorrow,
-            2L to R.string.daily_next_tomorrow
-        )
-
-        return localDateTimeMap[betweenDate]?.let { context.getString(it) } ?: ""
-    }
-
     /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 이미지 **/
     fun applySkyImg(
         context: Context,
@@ -317,7 +288,7 @@ object DataTypeParser {
     @Suppress("DEPRECATION")
     fun setStatusBar(activity: Activity) {
         activity.window.apply {
-            statusBarColor = activity.getColor(R.color.theme_view_color)
+            statusBarColor = activity.getColor(app.common_res.R.color.theme_view_color)
             navigationBarColor = activity.getColor(android.R.color.transparent)
 
             this.decorView.systemUiVisibility =

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ProgressBarHorizontal" parent="android:Widget.ProgressBar.Horizontal">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/progress_style</item>
+    </style>
+
+    <style name="CustomCheckBoxLanding">
+        <item name="android:button">@drawable/custom_checkbox</item>
+    </style>
+
+    <style name="CustomCheckBoxGroup">
+        <item name="android:button">@drawable/custom_checkbox_group</item>
+    </style>
+</resources>
