@@ -1,5 +1,8 @@
 package app.airsignal.weather.firebase.fcm
 
+import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_DAILY
+import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_EVENT
+import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_PATCH
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -15,18 +18,21 @@ class SubFCM: FirebaseMessagingService() {
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        if (message.data["sort"] != "widget") {
-            // 포그라운드 노티피케이션 발생
-            NotificationBuilder().sendNotification(applicationContext,message.data)
-        } else {
-            WidgetNotificationBuilder().sendNotification(applicationContext,message.data)
+        when(message.data["sort"]) {
+            "widget" -> {
+                WidgetNotificationBuilder().sendNotification(applicationContext,message.data)
+            }
+            FCM_PATCH, FCM_DAILY, FCM_EVENT -> {
+                NotificationBuilder().sendNotification(applicationContext,message.data)
+            }
+        }
+
 //            RDBLogcat.writeNotificationHistory(applicationContext,"위젯","${parsePriority(message.priority)},${message.data["layout"]},${message.data["widgetId"]}")
 //            if (message.data["layout"] == "22") {
 //                WidgetProvider().processUpdate(applicationContext, message.data["widgetId"]?.toInt() ?: -1)
 //            } else if (message.data["layout"] == "42") {
 //                WidgetProvider42().processUpdate(applicationContext, message.data["widgetId"]?.toInt() ?: -1)
 //            }
-        }
     }
 
     /** 토픽 구독 설정 **/

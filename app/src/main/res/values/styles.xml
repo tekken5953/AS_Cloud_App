@@ -49,4 +49,8 @@
         <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
+
+    <style name="CustomCheckBoxLanding">
+        <item name="android:button">@drawable/landing_check_box</item>
+    </style>
 </resources>

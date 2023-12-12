@@ -5,8 +5,6 @@ import android.content.Intent
 import app.airsignal.weather.view.activity.LoginActivity
 import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.activity.PermissionActivity
-import app.airsignal.weather.view.activity.WarningDetailActivity
-import app.core_as_eye.activity.EyeListActivity
 import app.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
 import kotlin.system.exitProcess
 

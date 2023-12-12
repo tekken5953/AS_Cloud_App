@@ -40,7 +40,7 @@ class GetLocation(private val context: Context) {
             CoroutineScope(Dispatchers.IO).launch {
                 val notiAddr = AddressFromRegex(fullAddr).getNotificationAddress()
                 setNotificationAddress(context, notiAddr)
-                setUserLastAddr(context, formattingFullAddress(fullAddr))
+                setUserLastAddr(context, fullAddr)
             }
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)

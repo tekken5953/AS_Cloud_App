@@ -19,6 +19,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.animation.*
+import android.webkit.WebSettings
+import android.webkit.WebView
 import android.widget.*
 import android.widget.LinearLayout.LayoutParams
 import android.widget.LinearLayout.VISIBLE
@@ -106,6 +108,8 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.FirebaseApp
+import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
@@ -206,6 +210,7 @@ class MainActivity
             if (savedInstanceState == null) {
                 binding.mainLoadingView.alpha = 1f
                 CoroutineScope(Dispatchers.IO).launch {
+                    FirebaseInAppMessaging.getInstance().triggerEvent("test_trigger")
                     SubFCM().subTopic("patch")
                     SubFCM().subTopic("daily")
                 }
@@ -441,23 +446,45 @@ class MainActivity
             eye.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
                     sideMenuBuilder.dismiss()
-                    val rendingView = LayoutInflater
+                    val landingView = LayoutInflater
                         .from(this@MainActivity)
                         .inflate(R.layout.dialog_eye_landing, null)
-                    val rendingBack = rendingView.findViewById<ImageView>(R.id.eyeRendingBack)
-                    val rendingBtn =
-                        rendingView.findViewById<RelativeLayout>(R.id.eyeRendingRelative)
-                    val rendingText = rendingView.findViewById<TextView>(R.id.eyeRendingBtnTitle)
-                    val rendingCheck: CheckBox = rendingView.findViewById(R.id.eyeREndingBtnCheck)
-
+                    val landingBack = landingView.findViewById<ImageView>(R.id.eyeLandingBack)
+                    val landingBtn =
+                        landingView.findViewById<RelativeLayout>(R.id.eyeLandingRelative)
+                    val landingText = landingView.findViewById<TextView>(R.id.eyeLandingBtnTitle)
+                    val landingCheck: CheckBox = landingView.findViewById(R.id.eyeLandingBtnCheck)
+                    val landingWebView: WebView = landingView.findViewById(R.id.eyeLandingWebView)
+                    val landingFab: ImageView = landingView.findViewById(R.id.eyeLandingFab)
                     val notiPerm = RequestPermissionsUtil(this@MainActivity)
-
                     val isLandingNoti = isLandingNotification(this@MainActivity)
+                    val url = "http://airsignal.kr/eye_landing.html"
 
-                    rendingBtn.isEnabled = false
-                    rendingCheck.visibility = if (isLandingNoti) GONE else VISIBLE
+                    val dialog = ShowDialogClass(this@MainActivity).setBackPressed(landingBack)
 
-                    val all = rendingText.text.toString()
+                    // 웹뷰 세팅
+                    landingWebView.settings.apply {
+                        javaScriptEnabled = false // 자바스크립트 허용
+                        builtInZoomControls = false // 줌 컨트롤러 생성
+                        setSupportZoom(false) // 핀치 줌 허용
+                        loadWithOverviewMode = true // 메타태그 허용
+                        useWideViewPort = true // 화면 맞추기
+                    }
+
+                    landingWebView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+                        landingFab.visibility = if (scrollY == 0) GONE else View.VISIBLE
+                    }
+
+                    landingFab.setOnClickListener {
+                        landingWebView.pageUp(true)
+                    }
+
+                    landingWebView.loadUrl(url)
+
+                    landingBtn.isActivated = !isLandingNoti
+                    landingCheck.visibility = if (isLandingNoti) GONE else VISIBLE
+
+                    val all = landingText.text.toString()
                     val span = SpannableStringBuilder(all)
                     val tx = all.split('\n')[1]
                     span.setSpan(
@@ -470,39 +497,39 @@ class MainActivity
                         all.lastIndex + 1,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                    ShowDialogClass(this@MainActivity).setBackPressed(rendingBack)
-                        .show(rendingView, true)
-                    rendingBack.bringToFront()
-                    if (!isLandingNoti) rendingText.text = span else rendingText.text = "출시 알림받기 완료 \uD83D\uDE00"
 
-                    rendingCheck.setOnCheckedChangeListener { _, isChecked ->
-                        rendingBtn.isEnabled = isChecked
-                    }
+                    landingBack.bringToFront()
+                    if (!isLandingNoti) landingText.text = span else landingText.text = "출시 알림받기 완료 \uD83D\uDE00"
 
-                    rendingBtn.setOnClickListener {
-                        if (rendingBtn.isEnabled) {
+                    landingBtn.setOnClickListener {
+                        if (!isLandingNoti) {
                             if (!notiPerm.isNotificationPermitted()) {
                                 ToastUtils(this@MainActivity).showMessage("알림을 허용해주세요")
                                 notiPerm.requestNotification()
                             } else {
-                                val subModal = MakeSingleDialog(this@MainActivity)
-                                subModal.makeDialog(
-                                    "출시가 완료되면 알림 메시지를 보낼게요 ${String(Character.toChars(0x1F514))}",
-                                    getColor(R.color.main_blue_color), "확인", false
-                                )
-                                subModal.apply.setOnClickListener {
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        setLandingNotification(this@MainActivity,true)
+                                if (landingCheck.isChecked) {
+                                    val subModal = MakeSingleDialog(this@MainActivity)
+                                    subModal.makeDialog(
+                                        "출시가 완료되면 알림 메시지를 보낼게요 ${String(Character.toChars(0x1F514))}",
+                                        getColor(R.color.main_blue_color), "확인", false
+                                    )
+                                    subModal.apply.setOnClickListener {
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            setLandingNotification(this@MainActivity,true)
+                                        }
+                                        landingBtn.isActivated = false
+                                        landingText.text = "출시 알림받기 완료"
+                                        landingCheck.visibility = GONE
+                                        subModal.dismiss()
+                                        dialog.dismiss()
                                     }
-                                    rendingBtn.isEnabled = false
-                                    rendingText.text = "출시 알림받기 완료"
-                                    rendingCheck.visibility = GONE
-                                    subModal.dismiss()
-                                    rendingBtn.requestLayout()
+                                } else {
+                                   ToastUtils(this@MainActivity).showMessage("알림 동의를 체크해주세요!")
                                 }
                             }
                         }
                     }
+                    dialog.show(landingView, true)
                 }
             })
             setting.setOnClickListener(object : OnSingleClickListener() {

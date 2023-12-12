@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
         <selector>
-            <item android:state_enabled="false">
+            <item android:state_activated="false">
                 <shape>
                     <solid
                         android:color="@color/ae_sub_color"/>
@@ -11,7 +11,7 @@
                         android:radius="10dp"/>
                 </shape>
             </item>
-            <item android:state_enabled="true">
+            <item android:state_activated="true">
                 <shape>
                     <solid
                         android:color="#5CC4FF"/>
