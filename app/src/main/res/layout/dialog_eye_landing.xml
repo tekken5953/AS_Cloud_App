@@ -6,12 +6,13 @@
     android:background="#F6F6F6">
 
     <FrameLayout
-        android:id="@+id/eyeRendingFrame"
+        android:id="@+id/eyeLandingFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/eyeRendingLinear">
+        android:layout_above="@+id/eyeLandingLinear"
+        android:background="#F6F6F6">
         <ImageView
-            android:id="@+id/eyeRendingBack"
+            android:id="@+id/eyeLandingBack"
             android:layout_width="26dp"
             android:layout_height="26dp"
             android:layout_marginStart="16dp"
@@ -20,40 +21,45 @@
             android:src="@drawable/back_arrow"
             app:tint="@color/white"/>
 
-        <ScrollView
-            android:id="@+id/eyeRendingScroll"
+        <WebView
+            android:id="@+id/eyeLandingWebView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:overScrollMode="ifContentScrolls"
+            android:clipToPadding="false"
             android:scrollbars="none"
-            android:clipToPadding="false">
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/landing"
-                android:scaleType="fitXY"/>
-        </ScrollView>
+            android:overScrollMode="never"/>
+
+        <ImageView
+            android:id="@+id/eyeLandingFab"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:padding="7dp"
+            android:visibility="gone"
+            android:src="@drawable/scroll_to_top"
+            app:tint="@color/black"
+            android:background="@drawable/fab_bg"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="10dp"/>
     </FrameLayout>
 
     <LinearLayout
-        android:id="@+id/eyeRendingLinear"
+        android:id="@+id/eyeLandingLinear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:animateLayoutChanges="true">
         <RelativeLayout
-            android:id="@+id/eyeRendingRelative"
+            android:id="@+id/eyeLandingRelative"
             android:layout_width="match_parent"
             android:layout_height="75dp"
-            android:background="@drawable/rending_btn_bg_d"
+            android:background="@drawable/landing_btn_bg_d"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:enabled="false"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="15dp">
 
             <TextView
-                android:id="@+id/eyeRendingBtnTitle"
+                android:id="@+id/eyeLandingBtnTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -65,7 +71,7 @@
                 android:gravity="center"/>
 
             <CheckBox
-                android:id="@+id/eyeREndingBtnCheck"
+                android:id="@+id/eyeLandingBtnCheck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
