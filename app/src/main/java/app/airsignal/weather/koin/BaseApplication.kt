@@ -12,7 +12,7 @@ import app.airsignal.core_viewmodel.GetWarningViewModel
 import app.airsignal.core_viewmodel.GetWeatherViewModel
 import app.airsignal.weather.dao.RDBLogcat
 import app.core_databse.db.SharedPreferenceManager
-import app.core_databse.db.room.model.GpsEntity
+import app.core_databse.db.database.GpsDataBase
 import app.core_databse.db.room.repository.GpsRepository
 import app.location.GetLocation
 import app.utils.LoggerUtil
@@ -30,6 +30,8 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
         lateinit var timber: TimberUtil
         lateinit var logger: LoggerUtil
     }
+
+    val database by lazy { GpsDataBase.getInstance(this) }
 
     override fun onCreate() {
         super.onCreate()
@@ -76,7 +78,6 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     }
 
     private val coreDatabaseModule = module {
-        single { GpsEntity() }
         single { GpsRepository(applicationContext) }
         single { SharedPreferenceManager(get()) }
     }

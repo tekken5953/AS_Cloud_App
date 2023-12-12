@@ -6,16 +6,16 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
-import app.core_databse.db.sp.GetAppInfo.getNotificationAddress
-import app.core_databse.db.sp.GetAppInfo.getUserLastAddress
-import app.core_databse.db.sp.GetAppInfo.getWarningFixed
+import app.address.AddressFromRegex
 import app.airsignal.core_repository.BaseRepository
 import app.airsignal.core_viewmodel.GetWarningViewModel
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.WarningDetailAdapter
 import app.airsignal.weather.databinding.ActivityWarningDetailBinding
-import app.address.AddressFromRegex
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
+import app.core_databse.db.sp.GetAppInfo.getNotificationAddress
+import app.core_databse.db.sp.GetAppInfo.getUserLastAddress
+import app.core_databse.db.sp.GetAppInfo.getWarningFixed
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 

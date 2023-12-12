@@ -8,6 +8,7 @@ import android.location.*
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.provider.Settings
+import android.util.Log
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
@@ -76,27 +77,24 @@ class GetLocation(private val context: Context) {
         mLng: Double,
         mAddr: String?
     ) {
-        val db = GpsRepository(context)
-        val model = GpsEntity().apply {
-            this.name = CURRENT_GPS_ID
-            position = -1
-            lat = mLat
-            lng = mLng
-            addrKr = mAddr
-            addrEn = mAddr
-            timeStamp = System.currentTimeMillis()
-        }
+        CoroutineScope(Dispatchers.Default).launch {
+            val db = GpsRepository(context)
+            val model = GpsEntity(
+                name = CURRENT_GPS_ID,
+                lat = mLat,
+                lng = mLng,
+                addrKr = mAddr,
+                addrEn = mAddr
+            )
 
-        // Room DAO 를 사용하여 데이터베이스 업데이트 또는 삽입 수행
-        CoroutineScope(Dispatchers.IO).launch {
-            if (gpsDbIsEmpty(db)) db.insert(model)
+            if (gpsDbIsEmpty(db)) db.insertWithCoroutine(model)
             else db.update(model)
         }
     }
 
     // DB가 비어있는지 확인
     private suspend fun gpsDbIsEmpty(db: GpsRepository): Boolean {
-        return db.findAll().isEmpty()
+        return db.findAllWithCoroutine().isEmpty()
     }
 
     @SuppressLint("MissingPermission")
@@ -107,8 +105,9 @@ class GetLocation(private val context: Context) {
                 // 위치 업데이트가 발생했을 때 실행되는 코드
                 val latitude = location.latitude
                 val longitude = location.longitude
-                updateDatabaseWithLocationData(latitude,longitude,
-                    getAddress(latitude,longitude))
+                val addr = getAddress(latitude,longitude)
+                updateDatabaseWithLocationData(latitude,longitude,addr)
+                Log.d("testtest","location changed in background : $addr")
             }
             override fun onProviderEnabled(provider: String) {
             }

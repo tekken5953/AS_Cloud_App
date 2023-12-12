@@ -20,6 +20,7 @@ dependencyResolutionManagement {
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 }
+
 rootProject.name = "AirSignal_App"
 include ':app'
 include ':core-database'

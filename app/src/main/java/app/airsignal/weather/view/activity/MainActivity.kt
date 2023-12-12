@@ -52,7 +52,6 @@ import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
 import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.databinding.ActivityMainBinding
@@ -100,6 +99,7 @@ import app.core_databse.db.sp.SetAppInfo
 import app.core_databse.db.sp.SetAppInfo.removeSingleKey
 import app.core_databse.db.sp.SetAppInfo.setLandingNotification
 import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
+import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
 import app.location.GetLocation
 import app.utils.*
 import com.google.android.gms.ads.AdView
@@ -1963,7 +1963,7 @@ class MainActivity
 
     private fun callSavedLoc() {
         try {
-            val db = GpsRepository(this).findById(CURRENT_GPS_ID)
+            val db = GpsRepository(this).findByName(CURRENT_GPS_ID)
             val lat = db.lat
             val lng = db.lng
             if (lat != null && lng != null) {
@@ -2005,7 +2005,7 @@ class MainActivity
     private fun processAddress(lat: Double, lng: Double, address: String?) {
         address?.let { addr ->
             // 주소 정보를 저장하고 업데이트
-            CoroutineScope(Dispatchers.Main).launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 setUserLastAddr(this@MainActivity, addr)
                 updateCurrentAddress(lat, lng, addr)
             }
