@@ -73,6 +73,8 @@ import app.core_databse.db.sp.SpDao.TEXT_SCALE_BIG
 import app.core_databse.db.sp.SpDao.TEXT_SCALE_DEFAULT
 import app.core_databse.db.sp.SpDao.TEXT_SCALE_SMALL
 import app.core_customview.SnackBarUtils
+import br.tiagohm.markdownview.MarkdownView
+import br.tiagohm.markdownview.css.styles.Github
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.CoroutineScope
@@ -316,7 +318,7 @@ class SettingActivity
             LayoutInflater.from(this).inflate(R.layout.dialog_detail, null)
         val detailDate: TextView = detailView.findViewById(R.id.detailNoticeDate)
         val detailTitle: TextView = detailView.findViewById(R.id.detailTitle)
-        val detailContent: TextView = detailView.findViewById(R.id.detailContent)
+        val detailContent: MarkdownView = detailView.findViewById(R.id.detailContent)
         val detailHeadLine: TextView = detailView.findViewById(R.id.detailHeadLine)
         val detailCategory: TextView = detailView.findViewById(R.id.detailNoticeCategory)
 
@@ -386,13 +388,18 @@ class SettingActivity
 
             noticeAdapter.setOnItemClickListener(object : NoticeAdapter.OnItemClickListener {
                 override fun onItemClick(v: View, position: Int) {
-                    detailDate.text = noticeItem[position].created
+                    val item = noticeItem[position]
+                    detailDate.text = item.created
                     detailDate.visibility = View.VISIBLE
-                    detailCategory.text = noticeItem[position].category
+                    detailCategory.text = item.category
                     detailCategory.visibility = View.VISIBLE
                     detailTitle.text = noticeTitle.text.toString()
-                    detailContent.text = noticeItem[position].content
-                    detailHeadLine.text = noticeItem[position].title
+                    detailHeadLine.text = item.title
+                    detailContent.apply {
+                        addStyleSheet(Github())
+                        if (item.content != "") loadMarkdown(item.content)
+                        else loadMarkdown("내용이 없습니다")
+                    }
                     ShowDialogClass(this@SettingActivity)
                         .setBackPressed(detailView.findViewById(R.id.detailBack))
                         .show(detailView, true)

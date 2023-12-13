@@ -175,7 +175,7 @@ class KakaoLogin(private val activity: Activity) {
     private fun enterMainPage() {
         saveUserSettings()
         Thread.sleep(1000)
-        EnterPageUtil(activity).toMain(LOGIN_KAKAO)
+        EnterPageUtil(activity).toMain(LOGIN_KAKAO,null)
     }
 
     private fun saveUserSettings() {

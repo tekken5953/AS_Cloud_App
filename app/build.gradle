@@ -127,4 +127,7 @@ dependencies {
 
     // Warning Detail Spinner
     implementation "com.github.skydoves:powerspinner:1.2.7"
+
+    // Android MarkDown Library
+    implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
 }

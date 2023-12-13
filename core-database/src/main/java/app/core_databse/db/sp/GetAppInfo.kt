@@ -152,4 +152,8 @@ object GetAppInfo {
     fun isLandingNotification(context: Context): Boolean {
         return SharedPreferenceManager(context).getBoolean(LANDING_NOTIFICATION)
     }
+
+    fun getInAppMsgEnabled(context: Context, name: String): Boolean {
+        return SharedPreferenceManager(context).getBoolean("${SpDao.IN_APP_MSG_NAME}$name")
+    }
 }

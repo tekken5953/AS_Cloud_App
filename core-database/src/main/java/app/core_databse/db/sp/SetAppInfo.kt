@@ -1,12 +1,10 @@
 package app.core_databse.db.sp
 
-import android.app.Activity
 import android.content.Context
-import android.view.View
 import app.core_databse.db.SharedPreferenceManager
-import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
 import app.core_databse.db.sp.SpDao.INITIALIZED_LOC_PERMISSION
 import app.core_databse.db.sp.SpDao.INITIALIZED_NOTI_PERMISSION
+import app.core_databse.db.sp.SpDao.IN_APP_MSG_NAME
 import app.core_databse.db.sp.SpDao.IS_INIT_BACK_LOC_PERMISSION
 import app.core_databse.db.sp.SpDao.IS_PERMED_BACK_LOG
 import app.core_databse.db.sp.SpDao.LANDING_NOTIFICATION
@@ -124,5 +122,9 @@ object SetAppInfo {
 
     fun setLandingNotification(context: Context, b: Boolean) {
         SharedPreferenceManager(context).setBoolean(LANDING_NOTIFICATION,b)
+    }
+
+    fun setInAppMsgEnabled(context: Context, name: String, enabled: Boolean) {
+        SharedPreferenceManager(context).setBoolean("$IN_APP_MSG_NAME$name", enabled)
     }
 }

@@ -20,8 +20,6 @@ import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
 import app.core_databse.db.sp.GetSystemInfo
 import app.core_databse.db.sp.GetSystemInfo.goToPlayStore
 import app.location.GetLocation
-import app.utils.LoggerUtil
-import com.google.firebase.installations.FirebaseInstallations
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 
@@ -69,9 +67,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     }
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
-    private fun enterPage() {
+    private fun enterPage(inAppMsgList: List<String>?) {
         if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted())
-            EnterPageUtil(this@SplashActivity).toMain(getUserLoginPlatform(this))
+            EnterPageUtil(this@SplashActivity).toMain(getUserLoginPlatform(this), inAppMsgList)
         else EnterPageUtil(this@SplashActivity).toPermission()
     }
 
@@ -87,7 +85,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                 binding.splashPB.visibility = View.GONE
                                 val versionName = GetSystemInfo.getApplicationVersionName(this)
                                 if ((ver.data.serviceName == versionName) || (ver.data.releaseName == versionName)) {
-                                    enterPage()
+                                    enterPage(ver.data.inAppMsg)
                                 } else {
                                     MakeSingleDialog(this)
                                         .makeDialog(getString(R.string.not_latest_go_to_store),
