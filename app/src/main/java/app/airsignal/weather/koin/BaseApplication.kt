@@ -2,9 +2,6 @@ package app.airsignal.weather.koin
 
 import android.app.Application
 import android.content.Context
-import app.core_databse.db.SharedPreferenceManager
-import app.core_databse.db.room.model.GpsEntity
-import app.core_databse.db.room.repository.GpsRepository
 import app.airsignal.core_network.retrofit.ApiModel
 import app.airsignal.core_network.retrofit.HttpClient
 import app.airsignal.core_repository.GetAppVersionRepo
@@ -14,6 +11,9 @@ import app.airsignal.core_viewmodel.GetAppVersionViewModel
 import app.airsignal.core_viewmodel.GetWarningViewModel
 import app.airsignal.core_viewmodel.GetWeatherViewModel
 import app.airsignal.weather.dao.RDBLogcat
+import app.core_databse.db.SharedPreferenceManager
+import app.core_databse.db.database.GpsDataBase
+import app.core_databse.db.room.repository.GpsRepository
 import app.location.GetLocation
 import app.utils.LoggerUtil
 import app.utils.TimberUtil
@@ -30,6 +30,8 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
         lateinit var timber: TimberUtil
         lateinit var logger: LoggerUtil
     }
+
+    val database by lazy { GpsDataBase.getInstance(this) }
 
     override fun onCreate() {
         super.onCreate()
@@ -50,6 +52,7 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     // ANR 에러 발생 시 로그 저장 후 종료
     override fun uncaughtException(p0: Thread, p1: Throwable) {
         RDBLogcat.writeErrorANR(thread = "Thread is ${p0.name}", msg = "Error Msg is ${p1.stackTraceToString()}")
+        p1.printStackTrace()
         if (p0.name == "WidgetProvider") {
             HttpClient.getInstance(true).setClientBuilder()
         } else {
@@ -75,7 +78,6 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     }
 
     private val coreDatabaseModule = module {
-        single { GpsEntity() }
         single { GpsRepository(applicationContext) }
         single { SharedPreferenceManager(get()) }
     }

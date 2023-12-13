@@ -1,14 +1,13 @@
 package app.core_databse.db.sp
 
-import android.app.Activity
 import android.content.Context
-import android.view.View
 import app.core_databse.db.SharedPreferenceManager
-import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
 import app.core_databse.db.sp.SpDao.INITIALIZED_LOC_PERMISSION
 import app.core_databse.db.sp.SpDao.INITIALIZED_NOTI_PERMISSION
+import app.core_databse.db.sp.SpDao.IN_APP_MSG_NAME
 import app.core_databse.db.sp.SpDao.IS_INIT_BACK_LOC_PERMISSION
 import app.core_databse.db.sp.SpDao.IS_PERMED_BACK_LOG
+import app.core_databse.db.sp.SpDao.LANDING_NOTIFICATION
 import app.core_databse.db.sp.SpDao.LAST_REFRESH22
 import app.core_databse.db.sp.SpDao.LAST_REFRESH42
 import app.core_databse.db.sp.SpDao.NOTIFICATION_ADDRESS
@@ -27,18 +26,6 @@ import app.core_databse.db.sp.SpDao.userProfile
  * @since : 2023-06-12 오후 2:28
  **/
 object SetAppInfo {
-
-    /** 몰입모드로 전환됩니다 **/
-    fun fullScreenMode(activity: Activity) {
-        @Suppress("DEPRECATION")
-        activity.window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_IMMERSIVE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                )
-    }
 
     fun setUserFontScale(context: Context, type: String) {
         SharedPreferenceManager(context).setString(userFontScale, type)
@@ -115,10 +102,6 @@ object SetAppInfo {
             .setString(INITIALIZED_NOTI_PERMISSION, s)
     }
 
-    fun setCurrentLocation(context: Context, loc: String) {
-        SharedPreferenceManager(context).setString(CURRENT_GPS_ID, loc)
-    }
-
     fun setInitBackLocPermission(context: Context,b: Boolean) {
         SharedPreferenceManager(context)
             .setBoolean(IS_INIT_BACK_LOC_PERMISSION, b)
@@ -135,5 +118,13 @@ object SetAppInfo {
 
     fun setLastRefreshTime22(context: Context, time: Long) {
         SharedPreferenceManager(context).setLong(LAST_REFRESH22,time)
+    }
+
+    fun setLandingNotification(context: Context, b: Boolean) {
+        SharedPreferenceManager(context).setBoolean(LANDING_NOTIFICATION,b)
+    }
+
+    fun setInAppMsgEnabled(context: Context, name: String, enabled: Boolean) {
+        SharedPreferenceManager(context).setBoolean("$IN_APP_MSG_NAME$name", enabled)
     }
 }

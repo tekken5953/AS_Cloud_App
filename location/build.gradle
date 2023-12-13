@@ -22,11 +22,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 }
 
@@ -43,4 +43,7 @@ dependencies {
 
     // WorkManager
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
+
+    // Google Location
+    implementation 'com.google.android.gms:play-services-location:21.0.1' // 위치정보 라이브러리
 }

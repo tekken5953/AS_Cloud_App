@@ -26,6 +26,7 @@ import app.core_databse.db.sp.SetAppInfo.setUserNoti
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.perm.FirstLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.core_databse.db.sp.SpDao.IN_APP_MSG_NAME
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PermissionActivity :
@@ -37,6 +38,7 @@ class PermissionActivity :
     override fun onResume() {
         super.onResume()
         if (perm.isLocationPermitted()) {   // 위치 서비스 이용 가능?
+            val inAppMsgList = intent.extras?.getStringArray(IN_APP_MSG_NAME)?.toList()
             if (!perm.isNotificationPermitted()) {  // 알림 서비스 이용 가능?
                 val initNotiPermission = getInitNotiPermission(this)
                 if (initNotiPermission == "") { // 알림 서비스 권한 호출이 처음?
@@ -47,12 +49,12 @@ class PermissionActivity :
                         this, getString(R.string.noti_always_can),
                         Toast.LENGTH_SHORT
                     ).show()
-                    enter.toMain(getUserLoginPlatform(this))
+                    enter.toMain(getUserLoginPlatform(this),inAppMsgList)
                 }
             } else {
                 setUserNoti(this, IgnoredKeyFile.notiEnable, true)
                 setUserNoti(this, IgnoredKeyFile.notiVibrate, true)
-                enter.toMain(getUserLoginPlatform(this))
+                enter.toMain(getUserLoginPlatform(this),inAppMsgList)
             }
         }
     }
@@ -66,14 +68,14 @@ class PermissionActivity :
         setStatusBar(this)
 
         // 초기설정 로그 저장 - 초기 설치 날짜
-        RDBLogcat.writeUserPref(
+        writeUserPref(
             this, sort = RDBLogcat.USER_PREF_SETUP,
             title = RDBLogcat.USER_PREF_SETUP_INIT,
             value = "${parseLongToLocalDateTime(getCurrentTime())}"
         )
 
         // 초기설정 로그 저장 - 디바이스 SDK 버전
-        RDBLogcat.writeUserPref(
+        writeUserPref(
             this, sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
             value = "${getApplicationVersionName(this)}.${getApplicationVersionCode(this)}"

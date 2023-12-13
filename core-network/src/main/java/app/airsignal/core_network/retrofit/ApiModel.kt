@@ -22,7 +22,9 @@ class ApiModel {
         @SerializedName("testName")
         val releaseName: String,
         @SerializedName("testCode")
-        val releaseCode: String
+        val releaseCode: String,
+        @SerializedName("inAppMsg")
+        val inAppMsg: List<String>?
     )
 
     /**

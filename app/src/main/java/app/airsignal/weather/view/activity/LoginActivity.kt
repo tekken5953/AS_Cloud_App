@@ -75,7 +75,7 @@ class LoginActivity
                         }
                     }
                     googleLogin.handleSignInResult(task, isAuto = false)
-                    EnterPageUtil(this).toMain(LOGIN_GOOGLE)
+                    EnterPageUtil(this).toMain(LOGIN_GOOGLE,null)
                 }
                 // 로그인 취소 됨
                 RESULT_CANCELED -> {

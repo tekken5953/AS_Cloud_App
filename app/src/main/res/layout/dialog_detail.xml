@@ -73,25 +73,16 @@
         android:layout_alignEnd="@+id/detailHeadLine"
         android:background="@color/theme_line_color" />
 
-    <ScrollView
+    <br.tiagohm.markdownview.MarkdownView
+        android:id="@+id/detailContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/theme_view_color"
         android:layout_below="@+id/detailView"
-        android:layout_marginTop="20dp"
-        android:layout_alignEnd="@+id/detailHeadLine"
-        android:layout_marginBottom="40dp"
         android:overScrollMode="never"
         android:clipToPadding="false"
         android:scrollbars="none"
-        android:layout_alignStart="@+id/detailHeadLine">
-        <TextView
-            android:id="@+id/detailContent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:letterSpacing="-0.04"
-            android:lineSpacingExtra="7dp"
-            android:fontFamily="@font/spoqa_hansansneo_regular"
-            android:textColor="@color/theme_text_color"
-            android:textSize="15sp" />
-    </ScrollView>
+        android:padding="0dp"
+        android:layout_margin="0dp"
+        app:escapeHtml="false" />
 </RelativeLayout>

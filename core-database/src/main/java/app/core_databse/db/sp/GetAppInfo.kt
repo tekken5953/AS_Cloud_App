@@ -11,6 +11,7 @@ import app.core_databse.db.sp.SpDao.LAST_REFRESH22
 import app.core_databse.db.sp.SpDao.LAST_REFRESH42
 import app.core_databse.db.sp.SpDao.NOTIFICATION_ADDRESS
 import app.core_databse.db.sp.SpDao.NOTIFICATION_TOPIC_DAILY
+import app.core_databse.db.sp.SpDao.LANDING_NOTIFICATION
 import app.core_databse.db.sp.SpDao.WARNING_FIXED
 import app.core_databse.db.sp.SpDao.lastAddress
 import app.core_databse.db.sp.SpDao.lastLoginPlatform
@@ -132,10 +133,6 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getString(CURRENT_GPS_ID)
     }
 
-    fun getInitBackLogPerm(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(IS_INIT_BACK_LOC_PERMISSION)
-    }
-
     fun isPermedBackLoc(context: Context): Boolean {
         return SharedPreferenceManager(context).getBoolean(IS_PERMED_BACK_LOG)
     }
@@ -150,5 +147,13 @@ object GetAppInfo {
 
     fun getLastRefreshTime22(context: Context): Long {
         return SharedPreferenceManager(context).getLong(LAST_REFRESH22)
+    }
+
+    fun isLandingNotification(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(LANDING_NOTIFICATION)
+    }
+
+    fun getInAppMsgEnabled(context: Context, name: String): Boolean {
+        return SharedPreferenceManager(context).getBoolean("${SpDao.IN_APP_MSG_NAME}$name")
     }
 }

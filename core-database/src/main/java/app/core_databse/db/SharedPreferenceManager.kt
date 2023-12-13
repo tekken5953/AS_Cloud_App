@@ -2,7 +2,6 @@ package app.core_databse.db
 
 import android.content.Context
 import android.content.SharedPreferences
-import kotlinx.coroutines.CloseableCoroutineDispatcher
 import org.json.JSONException
 import org.json.JSONObject
 

@@ -37,9 +37,6 @@ import app.airsignal.weather.dao.RDBLogcat.LOGIN_PHONE
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.dao.StaticDataObject.LANG_SYS
-import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_BIG
-import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_DEFAULT
-import app.airsignal.weather.dao.StaticDataObject.TEXT_SCALE_SMALL
 import app.airsignal.weather.dao.StaticDataObject.THEME_DARK
 import app.airsignal.weather.dao.StaticDataObject.THEME_LIGHT
 import app.airsignal.weather.databinding.ActivitySettingBinding
@@ -50,9 +47,9 @@ import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.custom_view.CustomerServiceView
-import app.airsignal.weather.view.dialog.ShowDialogClass
 import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.core_customview.ShowDialogClass
 import app.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.core_databse.db.sp.GetAppInfo.getUserFontScale
 import app.core_databse.db.sp.GetAppInfo.getUserLocation
@@ -72,7 +69,12 @@ import app.core_databse.db.sp.SetAppInfo.setUserLocation
 import app.core_databse.db.sp.SetAppInfo.setUserNoti
 import app.core_databse.db.sp.SetAppInfo.setUserTheme
 import app.core_databse.db.sp.SetSystemInfo
-import app.utils.SnackBarUtils
+import app.core_databse.db.sp.SpDao.TEXT_SCALE_BIG
+import app.core_databse.db.sp.SpDao.TEXT_SCALE_DEFAULT
+import app.core_databse.db.sp.SpDao.TEXT_SCALE_SMALL
+import app.core_customview.SnackBarUtils
+import br.tiagohm.markdownview.MarkdownView
+import br.tiagohm.markdownview.css.styles.Github
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.CoroutineScope
@@ -92,7 +94,6 @@ class SettingActivity
     : BaseActivity<ActivitySettingBinding>() {
     override val resID: Int get() = R.layout.activity_setting
 
-    private val faqItem = arrayListOf<ApiModel.FaqItem>()
     private val noticeItem = arrayListOf<ApiModel.NoticeItem>()
     private var isInit = true
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
@@ -317,7 +318,7 @@ class SettingActivity
             LayoutInflater.from(this).inflate(R.layout.dialog_detail, null)
         val detailDate: TextView = detailView.findViewById(R.id.detailNoticeDate)
         val detailTitle: TextView = detailView.findViewById(R.id.detailTitle)
-        val detailContent: TextView = detailView.findViewById(R.id.detailContent)
+        val detailContent: MarkdownView = detailView.findViewById(R.id.detailContent)
         val detailHeadLine: TextView = detailView.findViewById(R.id.detailHeadLine)
         val detailCategory: TextView = detailView.findViewById(R.id.detailNoticeCategory)
 
@@ -387,13 +388,18 @@ class SettingActivity
 
             noticeAdapter.setOnItemClickListener(object : NoticeAdapter.OnItemClickListener {
                 override fun onItemClick(v: View, position: Int) {
-                    detailDate.text = noticeItem[position].created
+                    val item = noticeItem[position]
+                    detailDate.text = item.created
                     detailDate.visibility = View.VISIBLE
-                    detailCategory.text = noticeItem[position].category
+                    detailCategory.text = item.category
                     detailCategory.visibility = View.VISIBLE
                     detailTitle.text = noticeTitle.text.toString()
-                    detailContent.text = noticeItem[position].content
-                    detailHeadLine.text = noticeItem[position].title
+                    detailHeadLine.text = item.title
+                    detailContent.apply {
+                        addStyleSheet(Github())
+                        if (item.content != "") loadMarkdown(item.content)
+                        else loadMarkdown("내용이 없습니다")
+                    }
                     ShowDialogClass(this@SettingActivity)
                         .setBackPressed(detailView.findViewById(R.id.detailBack))
                         .show(detailView, true)
@@ -606,8 +612,8 @@ class SettingActivity
     private fun showSnackBar(view: View, isAllow: Boolean) {
         val alertOn = ContextCompat.getDrawable(this, R.drawable.alert_on)!!
         val alertOff = ContextCompat.getDrawable(this, R.drawable.alert_off)!!
-        alertOn.setTint(getColor(R.color.theme_view_color))
-        alertOff.setTint(getColor(R.color.theme_view_color))
+        alertOn.setTint(getColor(app.common_res.R.color.theme_view_color))
+        alertOff.setTint(getColor(app.common_res.R.color.theme_view_color))
         if (isAllow) {
             if (!isInit) {
                 SnackBarUtils.make(
@@ -631,7 +637,7 @@ class SettingActivity
         val formatText = textView.text.split(System.lineSeparator())
         formatText.forEach {
             span.setSpan(
-                ForegroundColorSpan(getColor(R.color.theme_sub_color)),
+                ForegroundColorSpan(getColor(app.common_res.R.color.theme_sub_color)),
                 it.length, span.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )

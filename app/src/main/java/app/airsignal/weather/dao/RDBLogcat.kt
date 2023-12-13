@@ -201,16 +201,6 @@ object RDBLogcat {
         } catch (e: DatabaseException) { e.printStackTrace() }
     }
 
-    /** 위젯 정보 **/
-    fun writeWidgetPref(context: Context, sort: String, value: String) {
-        default(context)
-            .child(WIDGET_HISTORY)
-            .child(getDate())
-            .child(modify(sort))
-            .child(getTime())
-            .setValue(modify(value))
-    }
-
     /** 위젯 호출 기록 **/
     fun writeWidgetHistory(context: Context, address: String, response: String?) {
         try {

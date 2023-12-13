@@ -18,9 +18,10 @@
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app__name"
-        android:networkSecurityConfig="@xml/network_security_work"
+        android:allowBackup="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:networkSecurityConfig="@xml/network_security_work"
         android:theme="@style/Theme.AirSignal_App"
         android:windowSoftInputMode="adjustNothing"
         tools:replace="android:icon,android:label">
@@ -32,14 +33,14 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.aseye.activity.EyeDetailActivity"
+            android:name="app.core_as_eye.activity.EyeDetailActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value=""/>
         </activity>
         <activity
-            android:name=".view.aseye.activity.EyeListActivity"
+            android:name="app.core_as_eye.activity.EyeListActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

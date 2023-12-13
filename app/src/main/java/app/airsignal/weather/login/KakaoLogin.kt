@@ -128,27 +128,27 @@ class KakaoLogin(private val activity: Activity) {
         return AuthApiClient.instance.hasToken()
     }
 
-    /** 자동 로그인 **/
-    private fun isValidToken(): String? {
-        var token:String? = null
-        if (AuthApiClient.instance.hasToken()) {
-            UserApiClient.instance.accessTokenInfo { info, error ->
-                token = if (error != null) {
-                    if (error is KakaoSdkError && error.isInvalidTokenError()) {
-                        logger.w(TAG_L,"만료된 토큰입니다")  // 만료된 토큰임 로그인 필요
-                        "valid"
-                    } else {
-                        logger.e(TAG_L,"기타 에러 발생 : $error") //기타 에러
-                        "error"
-                    }
-                } else info.toString()//토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
-            }
-            return token
-        } else {
-            // 토큰이 없음 로그인 필요
-           return "has not token"
-        }
-    }
+//    /** 자동 로그인 **/
+//    private fun isValidToken(): String? {
+//        var token:String? = null
+//        if (AuthApiClient.instance.hasToken()) {
+//            UserApiClient.instance.accessTokenInfo { info, error ->
+//                token = if (error != null) {
+//                    if (error is KakaoSdkError && error.isInvalidTokenError()) {
+//                        logger.w(TAG_L,"만료된 토큰입니다")  // 만료된 토큰임 로그인 필요
+//                        "valid"
+//                    } else {
+//                        logger.e(TAG_L,"기타 에러 발생 : $error") //기타 에러
+//                        "error"
+//                    }
+//                } else info.toString()//토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
+//            }
+//            return token
+//        } else {
+//            // 토큰이 없음 로그인 필요
+//           return "has not token"
+//        }
+//    }
 
     /** 카카오 자동 로그인
      * @return OAuthToken? **/
@@ -175,7 +175,7 @@ class KakaoLogin(private val activity: Activity) {
     private fun enterMainPage() {
         saveUserSettings()
         Thread.sleep(1000)
-        EnterPageUtil(activity).toMain(LOGIN_KAKAO)
+        EnterPageUtil(activity).toMain(LOGIN_KAKAO,null)
     }
 
     private fun saveUserSettings() {
@@ -193,32 +193,32 @@ class KakaoLogin(private val activity: Activity) {
 //        //토큰 갱신하기 https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#refresh-token
 //    }
 
-    /** 카카오 로그아웃 + 기록 **/
-    fun logout(email: String) {
-        try {
-            UserApiClient.instance.logout { error ->
-                if (error != null) {
-                    ToastUtils(activity)
-                        .showMessage("로그아웃에 실패했습니다",1)
-                    writeLoginHistory(
-                        isLogin = false, platform = LOGIN_KAKAO, email = getUserEmail(activity),
-                        isAuto = null, isSuccess = false
-                    )
-                } else {
-                    writeLoginHistory(
-                        isLogin = false,
-                        platform = LOGIN_KAKAO,
-                        email = email,
-                        isAuto = null,
-                        isSuccess = true
-                    )
-                    RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = null)
-                }
-            }
-        } catch (e: UninitializedPropertyAccessException) {
-            e.printStackTrace()
-        }
-    }
+//    /** 카카오 로그아웃 + 기록 **/
+//    fun logout(email: String) {
+//        try {
+//            UserApiClient.instance.logout { error ->
+//                if (error != null) {
+//                    ToastUtils(activity)
+//                        .showMessage("로그아웃에 실패했습니다",1)
+//                    writeLoginHistory(
+//                        isLogin = false, platform = LOGIN_KAKAO, email = getUserEmail(activity),
+//                        isAuto = null, isSuccess = false
+//                    )
+//                } else {
+//                    writeLoginHistory(
+//                        isLogin = false,
+//                        platform = LOGIN_KAKAO,
+//                        email = email,
+//                        isAuto = null,
+//                        isSuccess = true
+//                    )
+//                    RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = null)
+//                }
+//            }
+//        } catch (e: UninitializedPropertyAccessException) {
+//            e.printStackTrace()
+//        }
+//    }
 
     /** 클라이언트와 완전히 연결 끊기 **/
     fun disconnectFromKakao(pb: LottieAnimationView?) {

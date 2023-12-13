@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="main_gray_color">#D9D9D9</color>
-
-    <color name="theme_view_color">#262626</color>
-    <color name="theme_text_color">#FFFFFF</color>
-    <color name="theme_sub_color">#9C9C9C</color>
-    <color name="theme_line_color">#44474D</color>
-    <color name="theme_box_solid_color">#303136</color>
+    <color name="cancel_color">#FFFFFF</color>
     <color name="theme_alert_double_cancel_color">#484C56</color>
     <color name="theme_alert_double_apply_color">#F74B4B</color>
-
-    <color name="cancel_color">#FFFFFF</color>
-    <color name="ae_bg_color">#F6F6F6</color>
-    <color name="ae_sub_color">#959595</color>
 </resources>

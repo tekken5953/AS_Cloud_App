@@ -1,19 +1,19 @@
 package app.location
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
+import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.location.*
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.provider.Settings
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import app.address.AddressFromRegex
+import app.airsignal.regex_address.R
 import app.core_databse.db.room.model.GpsEntity
 import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetSystemInfo
@@ -21,7 +21,6 @@ import app.core_databse.db.sp.SetAppInfo.setNotificationAddress
 import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
 import app.core_databse.db.sp.SpDao.CHECK_GPS_BACKGROUND
 import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
-import app.airsignal.regex_address.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,7 +40,7 @@ class GetLocation(private val context: Context) {
             CoroutineScope(Dispatchers.IO).launch {
                 val notiAddr = AddressFromRegex(fullAddr).getNotificationAddress()
                 setNotificationAddress(context, notiAddr)
-                setUserLastAddr(context, formattingFullAddress(fullAddr))
+                setUserLastAddr(context, fullAddr)
             }
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
@@ -78,39 +77,37 @@ class GetLocation(private val context: Context) {
         mLng: Double,
         mAddr: String?
     ) {
-        val db = GpsRepository(context)
-        val model = GpsEntity().apply {
-            this.name = CURRENT_GPS_ID
-            position = -1
-            lat = mLat
-            lng = mLng
-            addrKr = mAddr
-            addrEn = mAddr
-            timeStamp = System.currentTimeMillis()
-        }
+        CoroutineScope(Dispatchers.Default).launch {
+            val db = GpsRepository(context)
+            val model = GpsEntity(
+                name = CURRENT_GPS_ID,
+                lat = mLat,
+                lng = mLng,
+                addrKr = mAddr,
+                addrEn = mAddr
+            )
 
-        // Room DAO 를 사용하여 데이터베이스 업데이트 또는 삽입 수행
-        CoroutineScope(Dispatchers.IO).launch {
-            if (gpsDbIsEmpty(db)) db.insert(model)
+            if (gpsDbIsEmpty(db)) db.insertWithCoroutine(model)
             else db.update(model)
         }
     }
 
     // DB가 비어있는지 확인
     private suspend fun gpsDbIsEmpty(db: GpsRepository): Boolean {
-        return db.findAll().isEmpty()
+        return db.findAllWithCoroutine().isEmpty()
     }
 
     @SuppressLint("MissingPermission")
     fun getGpsInBackground() {
-        val locationManager = context.applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager?
+        val locationManager = context.applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager?
         val locationListener: LocationListener = object : LocationListener {
             override fun onLocationChanged(location: Location) {
                 // 위치 업데이트가 발생했을 때 실행되는 코드
                 val latitude = location.latitude
                 val longitude = location.longitude
-                updateDatabaseWithLocationData(latitude,longitude,
-                    getAddress(latitude,longitude))
+                val addr = getAddress(latitude,longitude)
+                updateDatabaseWithLocationData(latitude,longitude,addr)
+                Log.d("testtest","location changed in background : $addr")
             }
             override fun onProviderEnabled(provider: String) {
             }
@@ -128,7 +125,7 @@ class GetLocation(private val context: Context) {
 
     /** 디바이스 GPS 센서에 접근이 가능한지 확인 **/
     fun isGPSConnected(): Boolean {
-        val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
+        val lm = context.getSystemService(LOCATION_SERVICE) as LocationManager
         return lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
@@ -150,7 +147,7 @@ class GetLocation(private val context: Context) {
 
     /** 디바이스 네트워크 프로바이더 접근 가능한지 확인 **/
     fun isNetworkProviderConnected(): Boolean {
-        val lm = context.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager
+        val lm = context.getSystemService(LOCATION_SERVICE) as LocationManager
         return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 

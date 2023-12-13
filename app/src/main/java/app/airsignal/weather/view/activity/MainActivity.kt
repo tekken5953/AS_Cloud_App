@@ -12,7 +12,6 @@ import android.location.LocationManager
 import android.os.*
 import android.text.Spannable
 import android.text.SpannableStringBuilder
-import android.text.style.AbsoluteSizeSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.util.DisplayMetrics
@@ -20,10 +19,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.animation.*
+import android.webkit.WebSettings
+import android.webkit.WebView
 import android.widget.*
 import android.widget.LinearLayout.LayoutParams
 import android.widget.LinearLayout.VISIBLE
-import androidx.appcompat.widget.AppCompatButton
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
@@ -54,13 +54,11 @@ import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
 import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.dao.StaticDataObject.CURRENT_GPS_ID
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.databinding.ActivityMainBinding
 import app.airsignal.weather.firebase.admob.AdViewClass
 import app.airsignal.weather.firebase.fcm.SubFCM
-import app.airsignal.weather.koin.BaseApplication.Companion.timber
 import app.airsignal.weather.login.SilentLoginClass
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser
@@ -83,6 +81,9 @@ import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.view.*
 import app.airsignal.weather.view.dialog.*
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.core_customview.MakeDoubleDialog
+import app.core_customview.MakeSingleDialog
+import app.core_customview.ShowDialogClass
 import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetAppInfo
 import app.core_databse.db.sp.GetAppInfo.getEntireSun
@@ -91,20 +92,24 @@ import app.core_databse.db.sp.GetAppInfo.getTopicNotification
 import app.core_databse.db.sp.GetAppInfo.getUserLastAddress
 import app.core_databse.db.sp.GetAppInfo.getUserLocation
 import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
+import app.core_databse.db.sp.GetAppInfo.isLandingNotification
 import app.core_databse.db.sp.GetAppInfo.millsToString
 import app.core_databse.db.sp.GetAppInfo.parseTimeToMinutes
 import app.core_databse.db.sp.GetSystemInfo.getLocale
 import app.core_databse.db.sp.GetSystemInfo.isThemeNight
 import app.core_databse.db.sp.SetAppInfo
 import app.core_databse.db.sp.SetAppInfo.removeSingleKey
-import app.core_databse.db.sp.SetAppInfo.setCurrentLocation
+import app.core_databse.db.sp.SetAppInfo.setLandingNotification
 import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
+import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
 import app.location.GetLocation
 import app.utils.*
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.FirebaseApp
+import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
@@ -180,9 +185,9 @@ class MainActivity
     override fun onResume() {
         super.onResume()
         addSideMenu()
-        getDataSingleTime(isCurrent = false)
         binding.nestedAdView.resume()
         applyRefreshScroll()
+        getDataSingleTime(isCurrent = false)
     }
 
     override fun onDestroy() {
@@ -199,130 +204,141 @@ class MainActivity
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initBinding()
-        if (savedInstanceState == null) {
-            binding.mainLoadingView.alpha = 1f
-            CoroutineScope(Dispatchers.IO).launch {
-                SubFCM().subTopic("patch")
-                SubFCM().subTopic("daily")
-            }
-            changeBackgroundResource(null)
-            window.statusBarColor = getColor(R.color.theme_view_color)
-            window.navigationBarColor = getColor(R.color.theme_view_color)
-            binding.mainMotionLayout.apply {
-                isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
-                isEnabled = false
-                setTransition(R.id.start,R.id.end)
-            }
-            GetLocation(this).createWorkManager()
-        }
-
-        adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
-
-        binding.dataVM = getDataViewModel
-
-        initializing()
-
-        sunPb.disableTouch()    // 일출/일몰 그래프 클릭 방지
-
-        // 메인 하단 스크롤 유도 화살표 애니메이션 적용
-        val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
-        binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
-
-        // UV 범주 아이템 추가
-        addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
-        addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
-        addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
-        addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), getString(R.string.uv_very_high))
-        addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
-
-        // 스크롤 최상단으로 올리기 버튼
-        binding.nestedFab.setOnClickListener(object : OnSingleClickListener() {
-            override fun onSingleClick(v: View?) {
-                binding.nestedScrollview.smoothScrollTo(0, 0, 500)
-            }
-        })
-
-        binding.mainTopBarGpsTitle.requestFocus()
-        binding.mainTopBarGpsTitle.setOnFocusChangeListener { v, hasFocus ->
-            v.isSelected = hasFocus
-        }
-        binding.mainTopBarGpsTitleScroll.isHorizontalScrollBarEnabled = false
-
-        // 플러스 모양 추가시 주소등록 다이얼로그
-        binding.mainAddAddress.setOnClickListener(object : OnSingleClickListener() {
-            override fun onSingleClick(v: View?) {
-                mVib()
-                val bottomSheet =
-                    SearchDialog(
-                        this@MainActivity, 0, supportFragmentManager,
-                        BottomSheetDialogFragment().tag
-                    )
-                bottomSheet.show(0)
-            }
-        })
-
-        // 현재 주소로 갱신
-        binding.mainGpsFix.setOnClickListener(object : OnSingleClickListener() {
-            override fun onSingleClick(v: View?) {
-                mVib()
-                v!!.startAnimation(rotateAnim)
-                getDataSingleTime(isCurrent = true)
-            }
-        })
-
-        // 사이드 메뉴 세팅
-        binding.mainSideMenuIv.setOnClickListener(object : OnSingleClickListener() {
-            override fun onSingleClick(v: View?) {
-                sideMenuBuilder.show(sideMenuView, true)
-            }
-        })
-
-        // 공유하기 버튼 클릭
-        binding.mainShareIv.setOnClickListener(object : OnSingleClickListener() {
-            override fun onSingleClick(v: View?) {
-                mVib()
-                val doubleDialog = MakeDoubleDialog(this@MainActivity)
-                if (getUserLocation(this@MainActivity) == LANG_EN) {
-                    doubleDialog.make(
-                        "Share with in English?",
-                        "Yes",
-                        "With in Korean",
-                        R.color.main_blue_color
-                    ).apply {
-                        this.first.setOnClickListener(object : OnSingleClickListener() {
-                            override fun onSingleClick(v: View?) {
-                                doubleDialog.dismiss()
-                                addShareMsg(LANG_EN)
-                            }
-                        })
-                        this.second.setOnClickListener(object : OnSingleClickListener() {
-                            override fun onSingleClick(v: View?) {
-                                doubleDialog.dismiss()
-                                addShareMsg(LANG_KR)
-                            }
-                        })
-                    }
-                } else {
-                    doubleDialog.dismiss()
-                    addShareMsg(LANG_KR)
+        try {
+            super.onCreate(savedInstanceState)
+            initBinding()
+            if (savedInstanceState == null) {
+                binding.mainLoadingView.alpha = 1f
+                CoroutineScope(Dispatchers.IO).launch {
+                    FirebaseInAppMessaging.getInstance().triggerEvent("test_trigger")
+                    SubFCM().subTopic("patch")
+                    SubFCM().subTopic("daily")
                 }
+                changeBackgroundResource(null)
+                window.statusBarColor = getColor(app.common_res.R.color.theme_view_color)
+                window.navigationBarColor = getColor(app.common_res.R.color.theme_view_color)
+                binding.mainMotionLayout.apply {
+                    isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
+                    isEnabled = false
+                    setTransition(R.id.start, R.id.end)
+                }
+                GetLocation(this).createWorkManager()
             }
-        })
+
+            adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
+
+            binding.dataVM = getDataViewModel
+
+            initializing()
+
+            sunPb.disableTouch()    // 일출/일몰 그래프 클릭 방지
+
+            // 메인 하단 스크롤 유도 화살표 애니메이션 적용
+            val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
+            binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
+
+            // UV 범주 아이템 추가
+            addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
+            addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
+            addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
+            addUvLegendItem(
+                3,
+                "8 - 10",
+                getColor(R.color.uv_very_high),
+                getString(R.string.uv_very_high)
+            )
+            addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
+
+            // 스크롤 최상단으로 올리기 버튼
+            binding.nestedFab.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    binding.nestedScrollview.smoothScrollTo(0, 0, 500)
+                }
+            })
+
+            binding.mainTopBarGpsTitle.requestFocus()
+            binding.mainTopBarGpsTitle.setOnFocusChangeListener { v, hasFocus ->
+                v.isSelected = hasFocus
+            }
+            binding.mainTopBarGpsTitleScroll.isHorizontalScrollBarEnabled = false
+
+            // 플러스 모양 추가시 주소등록 다이얼로그
+            binding.mainAddAddress.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    mVib()
+                    val bottomSheet =
+                        SearchDialog(
+                            this@MainActivity, 0, supportFragmentManager,
+                            BottomSheetDialogFragment().tag
+                        )
+                    bottomSheet.show(0)
+                }
+            })
+
+            // 현재 주소로 갱신
+            binding.mainGpsFix.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    mVib()
+                    v!!.startAnimation(rotateAnim)
+                    getDataSingleTime(isCurrent = true)
+                }
+            })
+
+            // 사이드 메뉴 세팅
+            binding.mainSideMenuIv.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    sideMenuBuilder.show(sideMenuView, true)
+                }
+            })
+
+            // 공유하기 버튼 클릭
+            binding.mainShareIv.setOnClickListener(object : OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    mVib()
+                    val doubleDialog = MakeDoubleDialog(this@MainActivity)
+                    if (getUserLocation(this@MainActivity) == LANG_EN) {
+                        doubleDialog.make(
+                            "Share with in English?",
+                            "Yes",
+                            "With in Korean",
+                            R.color.main_blue_color
+                        ).apply {
+                            this.first.setOnClickListener(object : OnSingleClickListener() {
+                                override fun onSingleClick(v: View?) {
+                                    doubleDialog.dismiss()
+                                    addShareMsg(LANG_EN)
+                                }
+                            })
+                            this.second.setOnClickListener(object : OnSingleClickListener() {
+                                override fun onSingleClick(v: View?) {
+                                    doubleDialog.dismiss()
+                                    addShareMsg(LANG_KR)
+                                }
+                            })
+                        }
+                    } else {
+                        doubleDialog.dismiss()
+                        addShareMsg(LANG_KR)
+                    }
+                }
+            })
 
 
-        binding.mainSwipeLayout.setColorSchemeColors(
-            Color.parseColor("#22D3EE"),
-            Color.parseColor("#4DCF7D"),
-            Color.parseColor("#FACC15"),
-            Color.parseColor("#F87171"))
+            binding.mainSwipeLayout.setColorSchemeColors(
+                Color.parseColor("#22D3EE"),
+                Color.parseColor("#4DCF7D"),
+                Color.parseColor("#FACC15"),
+                Color.parseColor("#F87171")
+            )
 
-        // 스와이프 리프래시 레이아웃 리스너
-        binding.mainSwipeLayout.setOnRefreshListener {
-            Handler(Looper.getMainLooper()).postDelayed({
-                getDataSingleTime(false)
-            },500)
+            // 스와이프 리프래시 레이아웃 리스너
+            binding.mainSwipeLayout.setOnRefreshListener {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    getDataSingleTime(false)
+                }, 500)
+            }
+        } catch (e : androidx.fragment.app.Fragment.InstantiationException) {
+            RefreshUtils(this).refreshApplication()
         }
     }
 
@@ -355,17 +371,27 @@ class MainActivity
         // MotionLayout 상태 변경 리스너를 설정합니다.
         // 스와이프 리프래시 레이아웃의 상태를 모션레이아웃의 스와이프 상태에 맞춰서 변경합니다.
         binding.mainMotionLayout.setTransitionListener(object : MotionLayout.TransitionListener {
-            override fun onTransitionStarted(motionLayout: MotionLayout, startId: Int, endId: Int) {}
+            override fun onTransitionStarted(
+                motionLayout: MotionLayout,
+                startId: Int,
+                endId: Int
+            ) {
+            }
 
             override fun onTransitionChange(
-                motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float) {}
+                motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float
+            ) {
+            }
 
             override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
                 binding.mainSwipeLayout.isEnabled = motionLayout.currentState == R.id.start
             }
 
             override fun onTransitionTrigger(
-                motionLayout: MotionLayout, triggerId: Int, positive: Boolean, progress: Float) {}}
+                motionLayout: MotionLayout, triggerId: Int, positive: Boolean, progress: Float
+            ) {
+            }
+        }
         )
     }
 
@@ -403,7 +429,7 @@ class MainActivity
 
             headerTr.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
-                    if (getUserLoginPlatform(this@MainActivity) == ""){
+                    if (getUserLoginPlatform(this@MainActivity) == "") {
                         CompletableFuture.supplyAsync {
                             sideMenuBuilder.dismiss()
                         }.thenAccept {
@@ -420,19 +446,45 @@ class MainActivity
             eye.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
                     sideMenuBuilder.dismiss()
-                    val rendingView = LayoutInflater
+                    val landingView = LayoutInflater
                         .from(this@MainActivity)
-                        .inflate(R.layout.dialog_eye_rending, null)
-                    val rendingBack = rendingView.findViewById<ImageView>(R.id.eyeRendingBack)
-                    val rendingBtn = rendingView.findViewById<RelativeLayout>(R.id.eyeRendingRelative)
-                    val rendingText = rendingView.findViewById<TextView>(R.id.eyeRendingBtnTitle)
-                    val rendingCheck: CheckBox = rendingView.findViewById(R.id.eyeREndingBtnCheck)
-
+                        .inflate(R.layout.dialog_eye_landing, null)
+                    val landingBack = landingView.findViewById<ImageView>(R.id.eyeLandingBack)
+                    val landingBtn =
+                        landingView.findViewById<RelativeLayout>(R.id.eyeLandingRelative)
+                    val landingText = landingView.findViewById<TextView>(R.id.eyeLandingBtnTitle)
+                    val landingCheck: CheckBox = landingView.findViewById(R.id.eyeLandingBtnCheck)
+                    val landingWebView: WebView = landingView.findViewById(R.id.eyeLandingWebView)
+                    val landingFab: ImageView = landingView.findViewById(R.id.eyeLandingFab)
                     val notiPerm = RequestPermissionsUtil(this@MainActivity)
+                    val isLandingNoti = isLandingNotification(this@MainActivity)
+                    val url = "http://airsignal.kr/eye_landing.html"
 
-                    rendingBtn.isEnabled = false
+                    val dialog = ShowDialogClass(this@MainActivity).setBackPressed(landingBack)
 
-                    val all = rendingText.text.toString()
+                    // 웹뷰 세팅
+                    landingWebView.settings.apply {
+                        javaScriptEnabled = false // 자바스크립트 허용
+                        builtInZoomControls = false // 줌 컨트롤러 생성
+                        setSupportZoom(false) // 핀치 줌 허용
+                        loadWithOverviewMode = true // 메타태그 허용
+                        useWideViewPort = true // 화면 맞추기
+                    }
+
+                    landingWebView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+                        landingFab.visibility = if (scrollY == 0) GONE else View.VISIBLE
+                    }
+
+                    landingFab.setOnClickListener {
+                        landingWebView.pageUp(true)
+                    }
+
+                    landingWebView.loadUrl(url)
+
+                    landingBtn.isActivated = !isLandingNoti
+                    landingCheck.visibility = if (isLandingNoti) GONE else VISIBLE
+
+                    val all = landingText.text.toString()
                     val span = SpannableStringBuilder(all)
                     val tx = all.split('\n')[1]
                     span.setSpan(
@@ -445,34 +497,39 @@ class MainActivity
                         all.lastIndex + 1,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                    ShowDialogClass(this@MainActivity).setBackPressed(rendingBack)
-                        .show(rendingView, true)
-                    rendingBack.bringToFront()
-                    if (tx != "") rendingText.text = span
 
-                    rendingCheck.setOnCheckedChangeListener { _, isChecked ->
-                         rendingBtn.isEnabled = isChecked
-                    }
+                    landingBack.bringToFront()
+                    if (!isLandingNoti) landingText.text = span else landingText.text = "출시 알림받기 완료 \uD83D\uDE00"
 
-                    rendingBtn.setOnClickListener {
-                        if (rendingBtn.isEnabled) {
+                    landingBtn.setOnClickListener {
+                        if (!isLandingNoti) {
                             if (!notiPerm.isNotificationPermitted()) {
-                                ToastUtils(this@MainActivity).showMessage("알림을 허용해주세요",1)
+                                ToastUtils(this@MainActivity).showMessage("알림을 허용해주세요")
                                 notiPerm.requestNotification()
                             } else {
-                                val subModal = MakeSingleDialog(this@MainActivity)
-                                subModal.makeDialog("출시가 완료되면 알림 메시지를 보낼게요",
-                                    getColor(R.color.main_blue_color),"확인",false)
-                                subModal.apply.setOnClickListener {
-                                    rendingBtn.isEnabled = false
-                                    rendingText.text = "출시 알림받기 완료"
-                                    rendingCheck.visibility = GONE
-                                    subModal.dismiss()
-                                    rendingBtn.requestLayout()
+                                if (landingCheck.isChecked) {
+                                    val subModal = MakeSingleDialog(this@MainActivity)
+                                    subModal.makeDialog(
+                                        "출시가 완료되면 알림 메시지를 보낼게요 ${String(Character.toChars(0x1F514))}",
+                                        getColor(R.color.main_blue_color), "확인", false
+                                    )
+                                    subModal.apply.setOnClickListener {
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            setLandingNotification(this@MainActivity,true)
+                                        }
+                                        landingBtn.isActivated = false
+                                        landingText.text = "출시 알림받기 완료"
+                                        landingCheck.visibility = GONE
+                                        subModal.dismiss()
+                                        dialog.dismiss()
+                                    }
+                                } else {
+                                   ToastUtils(this@MainActivity).showMessage("알림 동의를 체크해주세요!")
                                 }
                             }
                         }
                     }
+                    dialog.show(landingView, true)
                 }
             })
             setting.setOnClickListener(object : OnSingleClickListener() {
@@ -491,7 +548,9 @@ class MainActivity
     }
 
     // 진동 발생
-    private fun mVib() { vib.make(20) }
+    private fun mVib() {
+        vib.make(20)
+    }
 
     // 시간별 날씨 스크롤 첫번째 인덱스로 이동
     private fun scrollSmoothFirst(position: Int) {
@@ -511,12 +570,21 @@ class MainActivity
     // 시간별 날씨 색션 컬러 변경
     private fun setSectionTextColor(t1: TextView, t2: TextView, t3: TextView) {
         val isWhite = dailyWeatherAdapter.getIsWhite()
-        t1.typeface = Typeface.createFromAsset(assets, if(isWhite)"spoqa_hansansneo_bold.ttf" else "spoqa_hansansneo_medium.ttf")
-        t2.typeface = Typeface.createFromAsset(assets, if(isWhite)"spoqa_hansansneo_regular.ttf" else "spoqa_hansansneo_regular.ttf")
-        t3.typeface = Typeface.createFromAsset(assets, if(isWhite)"spoqa_hansansneo_regular.ttf" else "spoqa_hansansneo_regular.ttf")
-        t1.setTextColor(getColor(if(isWhite)R.color.white else R.color.main_blue_color))
-        t2.setTextColor(getColor(if(isWhite)R.color.sub_white else R.color.sub_black))
-        t3.setTextColor(getColor(if(isWhite)R.color.sub_white else R.color.sub_black))
+        t1.typeface = Typeface.createFromAsset(
+            assets,
+            if (isWhite) "spoqa_hansansneo_bold.ttf" else "spoqa_hansansneo_medium.ttf"
+        )
+        t2.typeface = Typeface.createFromAsset(
+            assets,
+            if (isWhite) "spoqa_hansansneo_regular.ttf" else "spoqa_hansansneo_regular.ttf"
+        )
+        t3.typeface = Typeface.createFromAsset(
+            assets,
+            if (isWhite) "spoqa_hansansneo_regular.ttf" else "spoqa_hansansneo_regular.ttf"
+        )
+        t1.setTextColor(getColor(if (isWhite) R.color.white else R.color.main_blue_color))
+        t2.setTextColor(getColor(if (isWhite) R.color.sub_white else R.color.sub_black))
+        t3.setTextColor(getColor(if (isWhite) R.color.sub_white else R.color.sub_black))
     }
 
     // 날씨 데이터 API 호출
@@ -545,7 +613,9 @@ class MainActivity
 
             // TimeOut
             HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                if (isProgressed()) { hideProgressBar() }
+                if (isProgressed()) {
+                    hideProgressBar()
+                }
             }, 1000 * 8)
         }
     }
@@ -589,10 +659,14 @@ class MainActivity
     }
 
     // 프로그래스 보이기
-    private fun showProgressBar() { setProgressVisibility(true) }
+    private fun showProgressBar() {
+        setProgressVisibility(true)
+    }
 
     // 프로그래스 숨기기
-    private fun hideProgressBar() { setProgressVisibility(false) }
+    private fun hideProgressBar() {
+        setProgressVisibility(false)
+    }
 
     // 프로그래스 진행 여부
     private fun isProgressed(): Boolean {
@@ -674,7 +748,7 @@ class MainActivity
                 val sectionList = dailyWeatherAdapter.getDateSectionList()
                 // 현재 스크롤 위치 확인
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                when(sectionList.size) {
+                when (sectionList.size) {
                     1 -> {
                         setSectionTextColor(
                             todaySection,
@@ -723,9 +797,11 @@ class MainActivity
                                     todaySection,
                                     tomorrowSection
                                 )
-                            } else -> {}
+                            }
+                            else -> {}
                         }
-                    } else -> {}
+                    }
+                    else -> {}
                 }
             }
         })
@@ -770,7 +846,9 @@ class MainActivity
                                     )
                                     return@forEach
                                 }
-                            } catch (e: NullPointerException) { e.printStackTrace() }
+                            } catch (e: NullPointerException) {
+                                e.printStackTrace()
+                            }
                         }
                         startAnimation(fadeIn)
                         alpha = 1f
@@ -810,7 +888,7 @@ class MainActivity
     // 토픽을 갱신하는 작업
     private suspend fun reNewTopicInMain(newAddr: String) {
         val old = getTopicNotification(this)
-        SubFCM().renewTopic(old,newAddr)
+        SubFCM().renewTopic(old, newAddr)
         SetAppInfo.setTopicNotification(this, newAddr)
     }
 
@@ -879,16 +957,26 @@ class MainActivity
                 Thread.sleep(100)
                 isDataResponse = true
                 // 메인 날씨 텍스트 세팅
-                val skyText = if (currentIsAfterRealtime(result.current.currentTime,result.realtime[0].forecast)) {
-                    translateSky(this, applySkyText(
-                        this,
-                        result.current.rainType,
-                        result.realtime[0].sky, result.thunder))
+                val skyText = if (currentIsAfterRealtime(
+                        result.current.currentTime,
+                        result.realtime[0].forecast
+                    )
+                ) {
+                    translateSky(
+                        this, applySkyText(
+                            this,
+                            result.current.rainType,
+                            result.realtime[0].sky, result.thunder
+                        )
+                    )
                 } else {
-                    translateSky(this, applySkyText(
-                        this,
-                        result.realtime[0].rainType,
-                        result.realtime[0].sky, result.thunder))
+                    translateSky(
+                        this, applySkyText(
+                            this,
+                            result.realtime[0].rainType,
+                            result.realtime[0].sky, result.thunder
+                        )
+                    )
                 }
 
                 binding.mainSkyText.text = skyText
@@ -914,7 +1002,9 @@ class MainActivity
             hideProgressBar()
             try {
                 RDBLogcat.writeErrorANR("handleApiError", "handleApiError cause $errorMessage")
-            } catch(e: Exception) { e.printStackTrace() }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             if (GetLocation(this).isNetWorkConnected()) {
                 hideAllViews(error = errorMessage)
             } else {
@@ -929,11 +1019,11 @@ class MainActivity
 
     private fun isCalledButFail() {
         hideProgressBar()
-        Toast.makeText(
-            this@MainActivity,
-            getString(R.string.error_data_response),
-            Toast.LENGTH_SHORT
-        ).show()
+//        Toast.makeText(
+//            this@MainActivity,
+//            getString(R.string.error_data_response),
+//            Toast.LENGTH_SHORT
+//        ).show()
     }
 
     // 결과에서 얻은 데이터로 UI 요소를 업데이트
@@ -942,7 +1032,8 @@ class MainActivity
             GetAppInfo.getCurrentSun(result.sun.sunrise ?: "0600", result.sun.sunset ?: "1900")
         val lunar = result.lunar?.date ?: -1
         val realtimeFirst = result.realtime[0]
-        val isAfterRealtime = currentIsAfterRealtime(result.current.currentTime, realtimeFirst.forecast)
+        val isAfterRealtime =
+            currentIsAfterRealtime(result.current.currentTime, realtimeFirst.forecast)
 
         updateWeatherItems(result)
         updateAirQualityData(result.quality)
@@ -962,7 +1053,7 @@ class MainActivity
         binding.mainSkyImg.setImageDrawable(
             applySkyImg(
                 this,
-                if(isAfterRealtime) result.current.rainType else realtimeFirst.rainType,
+                if (isAfterRealtime) result.current.rainType else realtimeFirst.rainType,
                 realtimeFirst.sky, result.thunder,
                 isLarge = true, isNight = getIsNight(currentSun),
                 lunar
@@ -1020,16 +1111,22 @@ class MainActivity
             val dailyTime = millsToString(parseLocalDateTimeToLong(forecastToday), "HHmm")
             val sunset = sun.sunset ?: "0600"
             val sunrise = sun.sunrise ?: "1900"
-            val entireSun = if (getEntireSun(sunrise, sunset) == 0) 1 else getEntireSun(sunrise, sunset)
-            val dailySunProgress = 100 * (parseTimeToMinutes(dailyTime) - parseTimeToMinutes(sunrise)) / entireSun
+            val entireSun =
+                if (getEntireSun(sunrise, sunset) == 0) 1 else getEntireSun(sunrise, sunset)
+            val dailySunProgress =
+                100 * (parseTimeToMinutes(dailyTime) - parseTimeToMinutes(sunrise)) / entireSun
             val isNight = getIsNight(dailySunProgress)
 
             if (realtimeIndex == 0) {
-                val isAfterRealtime = currentIsAfterRealtime(current.currentTime, dailyIndex.forecast)
-                val skyImg = applySkyImg(this, if (isAfterRealtime) current.rainType else dailyIndex.rainType,
+                val isAfterRealtime =
+                    currentIsAfterRealtime(current.currentTime, dailyIndex.forecast)
+                val skyImg = applySkyImg(
+                    this, if (isAfterRealtime) current.rainType else dailyIndex.rainType,
                     if (isAfterRealtime) dailyIndex.sky else dailyIndex.sky, thunder,
-                    isLarge = false, isNight = isNight, lunar = lunar)!!
-                val temperature = if (isAfterRealtime) "${current.temperature.roundToInt()}˚" else "${dailyIndex.temp.roundToInt()}˚"
+                    isLarge = false, isNight = isNight, lunar = lunar
+                )!!
+                val temperature =
+                    if (isAfterRealtime) "${current.temperature.roundToInt()}˚" else "${dailyIndex.temp.roundToInt()}˚"
                 val rainType = if (isAfterRealtime) current.rainType else dailyIndex.rainType
                 val rainP = if (isAfterRealtime) dailyIndex.rainP ?: 0.0 else dailyIndex.rainP!!
 
@@ -1042,8 +1139,10 @@ class MainActivity
                     rainP
                 )
             } else {
-                val skyImg = applySkyImg(this, dailyIndex.rainType, dailyIndex.sky, thunder,
-                    isLarge = false, isNight = isNight, lunar = lunar)!!
+                val skyImg = applySkyImg(
+                    this, dailyIndex.rainType, dailyIndex.sky, thunder,
+                    isLarge = false, isNight = isNight, lunar = lunar
+                )!!
                 val temperature = "${dailyIndex.temp.roundToInt()}˚"
                 val rainType = dailyIndex.rainType
                 val rainP = dailyIndex.rainP!!
@@ -1068,11 +1167,17 @@ class MainActivity
                 val date: String = when (it) {
                     0 -> getString(R.string.today)
                     1 -> getString(R.string.tomorrow)
-                    else -> { "${parseDayOfWeekToKorean(this, 
-                        dateNow.dayOfWeek.value + it)}${getString(R.string.date)}" }
+                    else -> {
+                        "${
+                            parseDayOfWeekToKorean(
+                                this,
+                                dateNow.dayOfWeek.value + it
+                            )
+                        }${getString(R.string.date)}"
+                    }
                 }
 
-                addWeeklyWeatherItem (
+                addWeeklyWeatherItem(
                     date,
                     dateAppendZero(formedDate),
                     getSkyImgSmall(this, wfMin[it]!!, isNight = false)!!,
@@ -1083,7 +1188,8 @@ class MainActivity
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
                     RDBLogcat.DATA_CALL_ERROR,
-                    "updateWeatherItems is ${e.stackTraceToString()}")
+                    "updateWeatherItems is ${e.stackTraceToString()}"
+                )
             }
         }
     }
@@ -1128,13 +1234,21 @@ class MainActivity
 
         airQList[PM2p5_INDEX].isSelect = true   // 초기 데이터 = 초미세먼지
 
-        changeStrokeColor(binding.subAirPM25,
-            getDataColor(this,
-                convertValueToGrade("PM2.5",pm25.toDouble())))
+        changeStrokeColor(
+            binding.subAirPM25,
+            getDataColor(
+                this,
+                convertValueToGrade("PM2.5", pm25.toDouble())
+            )
+        )
 
-        changeStrokeColor(binding.subAirPM10,
-            getDataColor(this,
-                convertValueToGrade("PM10", pm10)))
+        changeStrokeColor(
+            binding.subAirPM10,
+            getDataColor(
+                this,
+                convertValueToGrade("PM10", pm10)
+            )
+        )
 
         binding.subAirPM25.text = "${getString(R.string.pm2_5_full)}   ${pm25.toInt()}"
         binding.subAirPM10.text = "${getString(R.string.pm10_full)}   ${(pm10.toInt())}"
@@ -1151,7 +1265,8 @@ class MainActivity
                         binding.mainUVBox.visibility = VISIBLE
                         applyUvResponseItem(mFlag)   // 자외선 단계별 대응요령 추가
                         setUvBackgroundColor(
-                            this, mFlag, binding.mainUVLegendCardView) // UV 범주 색상 변경
+                            this, mFlag, binding.mainUVLegendCardView
+                        ) // UV 범주 색상 변경
                         binding.mainUvValue.text =
                             "${translateUV(this, mFlag)}\n$mValue"
                     }
@@ -1160,7 +1275,10 @@ class MainActivity
         } ?: run { binding.mainUVBox.visibility = GONE }
     }
 
-    private fun updateSunTimes(sun: app.airsignal.core_network.retrofit.ApiModel.SunData, sunTomorrow: app.airsignal.core_network.retrofit.ApiModel.SunTomorrow?) {
+    private fun updateSunTimes(
+        sun: app.airsignal.core_network.retrofit.ApiModel.SunData,
+        sunTomorrow: app.airsignal.core_network.retrofit.ApiModel.SunTomorrow?
+    ) {
         // 일출 및 일몰 시간 업데이트
         sunPb.animate(currentSun)
 
@@ -1184,7 +1302,8 @@ class MainActivity
     private fun updateCurrentTemperature(
         yesterdayTemp: app.airsignal.core_network.retrofit.ApiModel.YesterdayTemp,
         current: app.airsignal.core_network.retrofit.ApiModel.Current,
-        realtime: List<app.airsignal.core_network.retrofit.ApiModel.RealTimeData>) {
+        realtime: List<app.airsignal.core_network.retrofit.ApiModel.RealTimeData>
+    ) {
         // 현재 온도 적용
         val real0 = realtime[0]
         val currentTemperature = current.temperature.toString()
@@ -1198,9 +1317,13 @@ class MainActivity
 
         // 서브 날씨(습도,바람,강수확률) 적용
         binding.subAirHumid.fetchData(
-            "${currentHumidity.roundToInt()}%", R.drawable.ico_main_humidity, null)
+            "${currentHumidity.roundToInt()}%", R.drawable.ico_main_humidity, null
+        )
         binding.subAirWind.fetchData(
-            "${currentWindSpeed.roundToInt()}m/s", R.drawable.ico_main_wind, current.vector?:real0.vector)
+            "${currentWindSpeed.roundToInt()}m/s",
+            R.drawable.ico_main_wind,
+            current.vector ?: real0.vector
+        )
         binding.subAirRainP.fetchData("${currentRainP}%", R.drawable.ico_main_rain, null)
 
         // 온도 비교 업데이트
@@ -1218,13 +1341,17 @@ class MainActivity
                 SensibleTempFormula().getSensibleTemp(
                     ta = current.temperature,
                     rh = currentHumidity,
-                    v = currentWindSpeed), digit = 1)
+                    v = currentWindSpeed
+                ), digit = 1
+            )
         } catch (e: Exception) {
             DataTypeParser.parseDoubleToDecimal(
                 SensibleTempFormula().getSensibleTemp(
                     ta = real0.temp,
                     rh = currentHumidity,
-                    v = currentWindSpeed),1)
+                    v = currentWindSpeed
+                ), 1
+            )
         }
 
         binding.mainSensValue.text = "$sensibleTemp˚"
@@ -1232,8 +1359,10 @@ class MainActivity
     }
 
     // 날씨 조건에 따라 배경 업데이트
-    private fun updateBackgroundBasedOnWeather(currentSun: Int, realtime: app.airsignal.core_network.retrofit.ApiModel.RealTimeData,
-                                               current: app.airsignal.core_network.retrofit.ApiModel.Current, thunder: Double) {
+    private fun updateBackgroundBasedOnWeather(
+        currentSun: Int, realtime: app.airsignal.core_network.retrofit.ApiModel.RealTimeData,
+        current: app.airsignal.core_network.retrofit.ApiModel.Current, thunder: Double
+    ) {
         changeTextColorStyle(
             applySkyText(
                 this,
@@ -1258,13 +1387,14 @@ class MainActivity
             warningList.clear()
         }
 
-        if (getUserLocation(this) == LANG_EN){
+        if (getUserLocation(this) == LANG_EN) {
             binding.mainWarningBox.setBackgroundColor(getColor(android.R.color.transparent))
         } else {
             // 기상특보 세팅
             summary?.let { sList ->
                 val filteredList = sList.map { summary ->
-                    summary.replace("○", "").replace("\n", "").trim() }
+                    summary.replace("○", "").replace("\n", "").trim()
+                }
                 warningList.addAll(filteredList)
 
                 if (warningList.isNotEmpty()) {
@@ -1332,7 +1462,7 @@ class MainActivity
     private fun changeBackgroundResource(id: Int?) {
         id?.let {
             window.setBackgroundDrawableResource(it)
-        } ?: window.setBackgroundDrawableResource(R.color.theme_view_color)
+        } ?: window.setBackgroundDrawableResource(app.common_res.R.color.theme_view_color)
     }
 
     // 필드값이 없을 때 -100 출력 됨
@@ -1386,7 +1516,7 @@ class MainActivity
     // 에러 코드에 따라 에러 메시지 설정
     private fun setErrorMessage(error: String): String {
         return when (error) {
-            ERROR_API_PROTOCOL,ERROR_SERVER_CONNECTING,ERROR_NULL_DATA-> getString(R.string.api_call_error)
+            ERROR_API_PROTOCOL, ERROR_SERVER_CONNECTING, ERROR_NULL_DATA -> getString(R.string.api_call_error)
             ERROR_NOT_SERVICED_LOCATION -> getString(R.string.not_serviced_location_error)
             ERROR_TIMEOUT -> getString(R.string.timeout_error)
             ERROR_NETWORK -> getString(R.string.network_error)
@@ -1394,7 +1524,10 @@ class MainActivity
             ERROR_GPS_CONNECTED -> getString(R.string.gps_call_error)
             ERROR_GET_DATA -> getString(R.string.data_call_error)
             else -> {
-                RDBLogcat.writeErrorANR(getString(R.string.unknown_error), "setErrorMessage is $error" )
+                RDBLogcat.writeErrorANR(
+                    getString(R.string.unknown_error),
+                    "setErrorMessage is $error"
+                )
                 getString(R.string.unknown_error)
             }
         }
@@ -1414,7 +1547,12 @@ class MainActivity
                 mVib()
                 when (error) {
                     ERROR_NOT_SERVICED_LOCATION -> {
-                        val bottomSheet = SearchDialog(this@MainActivity, 1, supportFragmentManager, BottomSheetDialogFragment().tag)
+                        val bottomSheet = SearchDialog(
+                            this@MainActivity,
+                            1,
+                            supportFragmentManager,
+                            BottomSheetDialogFragment().tag
+                        )
                         bottomSheet.show(1)
                     }
                     ERROR_GPS_CONNECTED -> GetLocation(this@MainActivity).requestSystemGPSEnable()
@@ -1447,7 +1585,9 @@ class MainActivity
     }
 
     // 통신에 성공할 경우 레이아웃 처리
-    private fun showAllViews() { setVisibilityForViews(VISIBLE, null) }
+    private fun showAllViews() {
+        setVisibilityForViews(VISIBLE, null)
+    }
 
     // 레이아웃 숨김처리에 따른 뷰 세팅
     private fun setVisibilityForViews(visibility: Int, error: String?) {
@@ -1477,17 +1617,17 @@ class MainActivity
             if (error == ERROR_NETWORK ||
                 error == ERROR_GET_DATA
             ) {
-                setDrawable(binding.mainAddAddress,null)
-                setDrawable(binding.mainSideMenuIv,null)
+                setDrawable(binding.mainAddAddress, null)
+                setDrawable(binding.mainSideMenuIv, null)
             } else {
                 tintImageDrawables()
             }
 
             clearTextViews(textViewArray)
 
-            setDrawable(binding.mainGpsFix,null)
-            setDrawable(binding.mainMotionSLideImg,null)
-            setDrawable(binding.mainGpsFix,null)
+            setDrawable(binding.mainGpsFix, null)
+            setDrawable(binding.mainMotionSLideImg, null)
+            setDrawable(binding.mainGpsFix, null)
             binding.mainShareIv.isEnabled = false
             binding.mainSwipeLayout.isEnabled = false
 
@@ -1499,7 +1639,7 @@ class MainActivity
 
             binding.mainMotionSlideGuide.apply {
                 text = getString(R.string.error_guide)
-                setTextColor(getC(R.color.theme_text_color))
+                setTextColor(getC(app.common_res.R.color.theme_text_color))
             }
             applyBackground(binding.mainWarningBox, null)
             applyBackground(binding.nestedSubAirFrame, null)
@@ -1526,9 +1666,9 @@ class MainActivity
         binding.mainShareIv.isEnabled = true
 
         setDrawable(binding.mainGpsFix, R.drawable.gps_fix)
-        setDrawable(binding.mainMotionSLideImg,R.drawable.drop_down_bottom)
-        setDrawable(binding.mainAddAddress,R.drawable.search)
-        setDrawable(binding.mainSideMenuIv,R.drawable.ico_hamb_w)
+        setDrawable(binding.mainMotionSLideImg, R.drawable.drop_down_bottom)
+        setDrawable(binding.mainAddAddress, R.drawable.search)
+        setDrawable(binding.mainSideMenuIv, R.drawable.ico_hamb_w)
 
         // 원래 상태로 복구하기 위해 제약 조건 변경
         binding.mainMotionLayout.isInteractionEnabled = true
@@ -1545,8 +1685,10 @@ class MainActivity
 
     // 이미지뷰의 이미지 틴트 적용
     private fun tintImageDrawables() {
-        binding.mainAddAddress.imageTintList = ColorStateList.valueOf(getColor(R.color.theme_text_color))
-        binding.mainSideMenuIv.imageTintList = ColorStateList.valueOf(getColor(R.color.theme_text_color))
+        binding.mainAddAddress.imageTintList =
+            ColorStateList.valueOf(getColor(app.common_res.R.color.theme_text_color))
+        binding.mainSideMenuIv.imageTintList =
+            ColorStateList.valueOf(getColor(app.common_res.R.color.theme_text_color))
     }
 
     // 텍스트뷰의 텍스트 지우기
@@ -1595,7 +1737,8 @@ class MainActivity
         value: String, grade: Int
     ) {
         val item = AdapterModel.AirQTitleItem(
-            false, position, nameKR, name, unit, value, grade)
+            false, position, nameKR, name, unit, value, grade
+        )
 
         this.airQList.add(position, item)
     }
@@ -1612,7 +1755,7 @@ class MainActivity
 
     // 현재 위치 정보로 DB 갱신
     private fun updateCurrentAddress(mLat: Double, mLng: Double, mAddr: String?) {
-        GetLocation(this@MainActivity).updateDatabaseWithLocationData(mLat, mLng,mAddr)
+        GetLocation(this@MainActivity).updateDatabaseWithLocationData(mLat, mLng, mAddr)
     }
 
     // 자외선 범주 아이템 추가
@@ -1623,7 +1766,7 @@ class MainActivity
 
     // 자외선 단계별 대응요령 아이템 추가
     private fun addUvResponseItem(text: Array<String>) {
-        val itemList = text.map {AdapterModel.UVResponseItem(it)}
+        val itemList = text.map { AdapterModel.UVResponseItem(it) }
         uvResponseList.addAll(itemList)
     }
 
@@ -1648,29 +1791,53 @@ class MainActivity
     }
 
     // 메인화면 배경에 따라 텍스트의 색상을 변경
-    @SuppressLint("UseCompatTextViewDrawableApis","NotifyDataSetChanged")
+    @SuppressLint("UseCompatTextViewDrawableApis", "NotifyDataSetChanged")
     private fun changeTextColorStyle(sky: String, isNight: Boolean) {
         val changeColorTextViews = listOf(
-            binding.mainLiveTempValue,binding.mainLiveTempUnit,binding.mainCompareTempTv,
-            binding.mainTopBarGpsTitle,binding.mainMotionSlideGuide,
-            binding.mainGpsTitleTv,binding.mainSensTitle,binding.mainSensValue,
-            binding.mainLiveTempTitleC,binding.subAirWind.getTitle(),
-            binding.subAirRainP.getTitle(),binding.subAirHumid.getTitle(),binding.subAirWind.getValue(),
-            binding.subAirRainP.getValue(),binding.subAirHumid.getValue(),
-            binding.mainLiveTempValueC,binding.mainSensTitleC,binding.mainSensValueC,
-            binding.mainMinMaxTitleC,binding.mainMinMaxValueC,binding.mainDailyWeatherTitle,
-            binding.mainWeeklyWeatherTitle,binding.nestedAirTitle,binding.mainUvTitle,
-            binding.mainSunRiseTitle,binding.mainSunSetTitle,binding.mainSunRiseTime,
-            binding.mainSunSetTime,binding.mainSunTomTitle,binding.mainUvCollapsedTitle,
-            binding.nestedAirTitleEn,binding.dailySectionTomorrow,binding.dailySectionAfterTomorrow,
-            binding.mainSunSetTom, binding.mainSunRiseTom, binding.mainTermsTitle,
-            binding.mainTermsExplain,binding.mainSkyText
+            binding.mainLiveTempValue,
+            binding.mainLiveTempUnit,
+            binding.mainCompareTempTv,
+            binding.mainTopBarGpsTitle,
+            binding.mainMotionSlideGuide,
+            binding.mainGpsTitleTv,
+            binding.mainSensTitle,
+            binding.mainSensValue,
+            binding.mainLiveTempTitleC,
+            binding.subAirWind.getTitle(),
+            binding.subAirRainP.getTitle(),
+            binding.subAirHumid.getTitle(),
+            binding.subAirWind.getValue(),
+            binding.subAirRainP.getValue(),
+            binding.subAirHumid.getValue(),
+            binding.mainLiveTempValueC,
+            binding.mainSensTitleC,
+            binding.mainSensValueC,
+            binding.mainMinMaxTitleC,
+            binding.mainMinMaxValueC,
+            binding.mainDailyWeatherTitle,
+            binding.mainWeeklyWeatherTitle,
+            binding.nestedAirTitle,
+            binding.mainUvTitle,
+            binding.mainSunRiseTitle,
+            binding.mainSunSetTitle,
+            binding.mainSunRiseTime,
+            binding.mainSunSetTime,
+            binding.mainSunTomTitle,
+            binding.mainUvCollapsedTitle,
+            binding.nestedAirTitleEn,
+            binding.dailySectionTomorrow,
+            binding.dailySectionAfterTomorrow,
+            binding.mainSunSetTom,
+            binding.mainSunRiseTom,
+            binding.mainTermsTitle,
+            binding.mainTermsExplain,
+            binding.mainSkyText
         )
         val changeColorSubTextViews = listOf(
-            binding.mainLicenseText,binding.nestedAirTitleKr,binding.nestedAirUnit,
+            binding.mainLicenseText, binding.nestedAirTitleKr, binding.nestedAirUnit,
         )
         val changeTintLineViews = listOf(
-            binding.nestedAirLine,binding.mainSunLine,binding.mainUvLine
+            binding.nestedAirLine, binding.mainSunLine, binding.mainUvLine
         )
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
@@ -1679,7 +1846,7 @@ class MainActivity
             binding.adViewCancelIv, binding.nestedAirHelp
         )
         val changeBoxViews = listOf(
-            binding.mainWarningBox,binding.nestedSubAirFrame,
+            binding.mainWarningBox, binding.nestedSubAirFrame,
             binding.nestedDailyBox, binding.nestedWeeklyBox, binding.adViewBox,
             binding.nestedAirBox, binding.mainUVBox, binding.mainSunBox,
             binding.nestedTerms24Box
@@ -1727,16 +1894,17 @@ class MainActivity
 
         // 글자색 변경: 텍스트 및 리소스 색상 사용
         fun changeTextToWhite() {
-            changeTextColor(colorWhite,colorSubWhite,true)
+            changeTextColor(colorWhite, colorSubWhite, true)
             changeBoxViews.forEach {
                 it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#10000000"))
             }
             @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility = window.decorView.systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+            window.decorView.systemUiVisibility =
+                window.decorView.systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
         }
 
         fun changeTextToBlack() {
-            changeTextColor(colorBlack,colorSubBlack,false)
+            changeTextColor(colorBlack, colorSubBlack, false)
             changeBoxViews.forEach {
                 it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40FFFFFF"))
             }
@@ -1760,7 +1928,8 @@ class MainActivity
         setSectionTextColor(
             binding.dailySectionToday,
             binding.dailySectionTomorrow,
-            binding.dailySectionAfterTomorrow)
+            binding.dailySectionAfterTomorrow
+        )
     }
 
     // 기상특보 자동 슬라이드 적용
@@ -1771,7 +1940,7 @@ class MainActivity
             vp.currentItem = if (vp.currentItem + 1 < warningList.size) vp.currentItem + 1 else 0
             handler.postDelayed({
                 warningSlideAuto()
-            },5000)
+            }, 5000)
         }
     }
 
@@ -1821,7 +1990,7 @@ class MainActivity
 
     private fun callSavedLoc() {
         try {
-            val db = GpsRepository(this).findById(CURRENT_GPS_ID)
+            val db = GpsRepository(this).findByName(CURRENT_GPS_ID)
             val lat = db.lat
             val lng = db.lng
             if (lat != null && lng != null) {
@@ -1834,7 +2003,7 @@ class MainActivity
                     processAddress(mLat, mLng, addr)
                 } else hideAllViews(ERROR_NOT_SERVICED_LOCATION)
             }
-        } catch(e: NumberFormatException) {
+        } catch (e: NumberFormatException) {
             handleLocationFailure(e.stackTraceToString())
             hideAllViews(ERROR_GET_LOCATION_FAILED)
         }
@@ -1854,7 +2023,8 @@ class MainActivity
     private fun handleLocationFailure(errorMessage: String?) {
         isCalledButFail()
         val msg = errorMessage ?: "errorMsg is NULL"
-        RDBLogcat.writeErrorANR(ERROR_LOCATION_FAILED,
+        RDBLogcat.writeErrorANR(
+            ERROR_LOCATION_FAILED,
             "handleLocationFailure cause $msg"
         )
     }
@@ -1862,9 +2032,8 @@ class MainActivity
     private fun processAddress(lat: Double, lng: Double, address: String?) {
         address?.let { addr ->
             // 주소 정보를 저장하고 업데이트
-            CoroutineScope(Dispatchers.Main).launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 setUserLastAddr(this@MainActivity, addr)
-                setCurrentLocation(this@MainActivity, addr)
                 updateCurrentAddress(lat, lng, addr)
             }
 
@@ -1885,8 +2054,13 @@ class MainActivity
         }
     }
 
-    private fun getR(id: Int): Drawable? { return ResourcesCompat.getDrawable(resources,id,null) }
-    private fun getC(id: Int): Int { return ResourcesCompat.getColor(resources,id,null) }
+    private fun getR(id: Int): Drawable? {
+        return ResourcesCompat.getDrawable(resources, id, null)
+    }
+
+    private fun getC(id: Int): Int {
+        return ResourcesCompat.getColor(resources, id, null)
+    }
 
     // 뷰 백그라운드 적용
     private fun <T> applyBackground(view: T, res: Int?) {

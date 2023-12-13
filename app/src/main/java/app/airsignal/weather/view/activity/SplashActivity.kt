@@ -4,23 +4,22 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
-import app.core_databse.db.sp.GetSystemInfo
-import app.core_databse.db.sp.GetSystemInfo.goToPlayStore
 import app.airsignal.core_network.ErrorCode.ERROR_NETWORK
 import app.airsignal.core_network.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.core_repository.BaseRepository
 import app.airsignal.core_viewmodel.GetAppVersionViewModel
-import app.location.GetLocation
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivitySplashBinding
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
-import app.airsignal.weather.view.dialog.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import com.google.firebase.FirebaseApp
+import app.core_customview.MakeSingleDialog
+import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
+import app.core_databse.db.sp.GetSystemInfo
+import app.core_databse.db.sp.GetSystemInfo.goToPlayStore
+import app.location.GetLocation
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 
@@ -40,7 +39,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         setStatusBar(this)
 
         initBinding()
-        FirebaseApp.initializeApp(this)
+//        FirebaseApp.initializeApp(this)
         applyAppVersionData()
 
         // 유저 디바이스 설정 - 앱 버전
@@ -68,9 +67,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     }
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
-    private fun enterPage() {
+    private fun enterPage(inAppMsgList: List<String>?) {
         if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted())
-            EnterPageUtil(this@SplashActivity).toMain(getUserLoginPlatform(this))
+            EnterPageUtil(this@SplashActivity).toMain(getUserLoginPlatform(this), inAppMsgList)
         else EnterPageUtil(this@SplashActivity).toPermission()
     }
 
@@ -86,7 +85,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                 binding.splashPB.visibility = View.GONE
                                 val versionName = GetSystemInfo.getApplicationVersionName(this)
                                 if ((ver.data.serviceName == versionName) || (ver.data.releaseName == versionName)) {
-                                    enterPage()
+                                    enterPage(ver.data.inAppMsg)
                                 } else {
                                     MakeSingleDialog(this)
                                         .makeDialog(getString(R.string.not_latest_go_to_store),

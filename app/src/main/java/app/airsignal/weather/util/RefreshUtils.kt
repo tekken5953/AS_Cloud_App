@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.widget.ProgressBar
 import com.airbnb.lottie.LottieAnimationView
 import kotlin.system.exitProcess
 

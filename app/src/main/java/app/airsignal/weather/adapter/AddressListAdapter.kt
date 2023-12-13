@@ -21,9 +21,10 @@ import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
+import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetAppInfo.getUserLastAddress
 import app.core_databse.db.sp.GetAppInfo.getUserLocation
-import app.core_databse.db.room.repository.GpsRepository
+import app.utils.OnAdapterItemClick
 import java.util.*
 
 /**
@@ -137,10 +138,10 @@ class AddressListAdapter(
     // 첫번째 인덱스 색상 변경
     private fun applyColorFirstIndex(isChecked: Boolean, textView: TextView, imgView: ImageView) {
         textView.setTextColor(context.getColor(
-            if(isChecked) R.color.main_blue_color else R.color.theme_text_color))
+            if(isChecked) R.color.main_blue_color else app.common_res.R.color.theme_text_color))
         imgView.imageTintList =
             ColorStateList.valueOf(context.getColor(
-                if(isChecked) R.color.main_blue_color else R.color.theme_text_color))
+                if(isChecked) R.color.main_blue_color else app.common_res.R.color.theme_text_color))
     }
 
     // 삭제버튼 보이기/숨기기

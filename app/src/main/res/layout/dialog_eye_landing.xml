@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#F6F6F6">
+
+    <FrameLayout
+        android:id="@+id/eyeLandingFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/eyeLandingLinear"
+        android:background="#F6F6F6">
+        <ImageView
+            android:id="@+id/eyeLandingBack"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/cd_icon_back"
+            android:src="@drawable/back_arrow"
+            app:tint="@color/white"/>
+
+        <WebView
+            android:id="@+id/eyeLandingWebView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:scrollbars="none"
+            android:overScrollMode="never"/>
+
+        <ImageView
+            android:id="@+id/eyeLandingFab"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:padding="7dp"
+            android:visibility="gone"
+            android:src="@drawable/scroll_to_top"
+            app:tint="@color/black"
+            android:background="@drawable/fab_bg"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="10dp"/>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/eyeLandingLinear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:animateLayoutChanges="true">
+        <RelativeLayout
+            android:id="@+id/eyeLandingRelative"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:background="@drawable/landing_btn_bg_d"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="15dp">
+
+            <TextView
+                android:id="@+id/eyeLandingBtnTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="제품 출시 알림받기\n광고 및 이벤트성 알림 발송에 동의합니다"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:fontFamily="@font/spoqa_hansansneo_bold"
+                android:lineHeight="24dp"
+                android:gravity="center"/>
+
+            <CheckBox
+                android:id="@+id/eyeLandingBtnCheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:gravity="end"
+                android:layout_marginEnd="18dp"
+                style="@style/CustomCheckBoxLanding"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>
