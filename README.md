@@ -55,18 +55,8 @@ AirKorea Open API &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 한국천문연구원 Open API
 
 
-
 <br/>
 
-
-<br/>
-<h2>Link</h2><br/>
-
-[Adobe XD Design Link] https://xd.adobe.com/view/2218d2c6-64b7-4209-8efc-4af0ce5ffb04-774b/specs/
-
-[Figma Design Link] https://www.figma.com/file/WRfo6NRGHHK9KzCreNrbOL/Untitled?type=design&node-id=0-1&t=PwQvcnRnD0Eh9Sku-0
-
-<br/>
 <h2>Screen Shot</h2><br/>
 
 ![s1](https://github.com/tekken5953/AS_Cloud_App/assets/52855326/b5b04698-f4a9-4595-a19b-780b97328885)
