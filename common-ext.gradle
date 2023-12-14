@@ -16,6 +16,7 @@ ext {
     test_junit_ext = "4.13.2"
     android_test_junit_ext = "1.1.5"
     android_test_espresso_ext = "3.5.1"
+    constraint_layout_ext = "2.1.4"
 
     // release
     app_version_code = 13

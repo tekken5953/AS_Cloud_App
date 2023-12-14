@@ -1,6 +1,7 @@
 package app.airsignal.weather.view.activity
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -85,6 +86,7 @@ import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.core_customview.MakeDoubleDialog
 import app.core_customview.MakeSingleDialog
 import app.core_customview.ShowDialogClass
+import app.core_customview.SnackBarUtils
 import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetAppInfo
 import app.core_databse.db.sp.GetAppInfo.getEntireSun
@@ -180,9 +182,12 @@ class MainActivity
         }
     }
 
+    private val inAppAdapter by lazy {InAppViewPagerAdapter(this@MainActivity, inAppList)}
+
     private val adViewClass by lazy { AdViewClass(this) }
 
     private lateinit var indicators: Array<ImageView>
+    private var isInAppMsgShow = false
 
     override fun onResume() {
         super.onResume()
@@ -341,10 +346,29 @@ class MainActivity
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private fun startInAppMsg() {
+        val inAppExtraList = intent.extras?.getStringArray(IN_APP_MSG_NAME)
+        inAppList.clear()
+        inAppExtraList?.let {
+            it.forEach { dao ->
+                inAppList.add(dao)
+                inAppAdapter.notifyDataSetChanged()
+            }
+            if (it.isNotEmpty()) {
+                if (!GetAppInfo.getInAppMsgEnabled(this)) {
+                    inAppMsgDialog()
+                }
+            }
+        }
+    }
+
     private fun inAppMsgDialog() {
-        val dialog = ShowDialogClass(this)
+        val inAppDialog = AlertDialog.Builder(this, app.core_customview.R.style.InAppDialogStyle)
         val inAppView = LayoutInflater.from(this)
             .inflate(R.layout.dialog_in_app_msg,null,false)
+        inAppDialog.setView(inAppView)
+        val inAppAlert = inAppDialog.create()
         val inAppVp = inAppView.findViewById<ViewPager2>(R.id.inAppMsgVp)
         val inAppIndicator = inAppView.findViewById<LinearLayout>(R.id.inAppMsgIndicator)
         val inAppCancel = inAppView.findViewById<ImageView>(R.id.inAppMsgCancel)
@@ -356,7 +380,7 @@ class MainActivity
         inAppNever.text = span
 
         inAppVp.apply {
-            adapter = InAppViewPagerAdapter(this@MainActivity,inAppList,this)
+            adapter = inAppAdapter
             isClickable = true
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             offscreenPageLimit = 3
@@ -370,20 +394,20 @@ class MainActivity
             })
         }
 
-        inAppCancel.setOnClickListener { dialog.dismiss() }
+        inAppCancel.setOnClickListener { inAppAlert.dismiss() }
 
         inAppNever.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 SetAppInfo.setInAppMsgDenied(this@MainActivity,true)
 
                 withContext(Dispatchers.Main) {
-                    dialog.dismiss()
+                    inAppAlert.dismiss()
                 }
             }
         }
 
         createIndicators(inAppVp,inAppIndicator)
-        dialog.show(inAppView,true)
+        inAppAlert.show()
     }
 
     // 뷰페이저 인디케이터 업데이트
@@ -398,13 +422,13 @@ class MainActivity
     // 뷰페이저 인디케이터 생성
     private fun createIndicators(viewpager: ViewPager2, indicator: LinearLayout) {
         indicator.removeAllViews()
-        indicators = Array(reportViewPagerItem.size) {
+        indicators = Array(inAppList.size) {
             val indicatorView = ImageView(this)
             val params = LayoutParams(
                 LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT
             )
-            params.setMargins(8, 0, 8, 0)
+            params.setMargins(10, 0, 10, 0)
             indicatorView.layoutParams = params
             indicatorView.setImageResource(R.drawable.indicator_empty) // 선택되지 않은 원 이미지
             indicator.addView(indicatorView)
@@ -552,8 +576,12 @@ class MainActivity
 
                     landingWebView.loadUrl(landingPageUrl)
 
-                    landingBtn.isActivated = !isLandingNoti
+                    landingBtn.isActivated = landingCheck.isChecked
                     landingCheck.visibility = if (isLandingNoti) GONE else VISIBLE
+
+                    landingCheck.setOnCheckedChangeListener { _, isChecked ->
+                        landingBtn.isActivated = isChecked
+                    }
 
                     val all = landingText.text.toString()
                     val span = SpannableStringBuilder(all)
@@ -582,7 +610,7 @@ class MainActivity
                                     val subModal = MakeSingleDialog(this@MainActivity)
                                     subModal.makeDialog(
                                         "출시가 완료되면 알림 메시지를 보낼게요 ${String(Character.toChars(0x1F514))}",
-                                        getColor(app.common_res.R.color.main_blue_color), "확인", false
+                                        app.common_res.R.color.main_blue_color, "확인", false
                                     )
                                     subModal.apply.setOnClickListener {
                                         CoroutineScope(Dispatchers.IO).launch {
@@ -592,11 +620,30 @@ class MainActivity
                                         landingText.text = "출시 알림받기 완료"
                                         landingCheck.visibility = GONE
                                         subModal.dismiss()
-                                        dialog.dismiss()
+                                        landingView.invalidate()
                                     }
                                 } else {
                                    ToastUtils(this@MainActivity).showMessage("알림 동의를 체크해주세요!")
                                 }
+                            }
+                        } else {
+                            val cancelModal = MakeDoubleDialog(this@MainActivity)
+                            val make = cancelModal.make("알림받기를 취소하시겠습니까?","네",
+                                "아니오",R.color.red)
+                            make.first.setOnClickListener {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    setLandingNotification(this@MainActivity,false)
+
+                                    withContext(Dispatchers.Main) {
+                                        SnackBarUtils(landingView,"성공적으로 취소되었습니다",
+                                            getR(R.drawable.alert_off)!!)
+                                        cancelModal.dismiss()
+                                        landingView.invalidate()
+                                    }
+                                }
+                            }
+                            make.second.setOnClickListener {
+                                cancelModal.dismiss()
                             }
                         }
                     }
@@ -1054,13 +1101,9 @@ class MainActivity
                 // 날씨에 따라 배경화면 변경
                 applyWindowBackground(currentSun, skyText)
 
-                val inAppList = intent.extras?.getStringArray(IN_APP_MSG_NAME)
-                inAppList?.let {
-                    if (it.isNotEmpty()) {
-                        if (!GetAppInfo.getInAppMsgEnabled(this)) {
-                            inAppMsgDialog()
-                        }
-                    }
+                if (!isInAppMsgShow) {
+                    startInAppMsg()
+                    isInAppMsgShow = true
                 }
             }
         } catch (e: Exception) {

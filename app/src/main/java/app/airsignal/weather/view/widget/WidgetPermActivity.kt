@@ -1,9 +1,7 @@
 package app.airsignal.weather.view.widget
 
-import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import app.airsignal.weather.R
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 
 class WidgetPermActivity : AppCompatActivity() {
@@ -17,8 +15,8 @@ class WidgetPermActivity : AppCompatActivity() {
         } else {
             val id = intent.extras?.getInt("id")
             when(intent.extras?.getString("sort")) {
-                "22" -> WidgetProvider().processUpdate(this,id!!)
-                "42" -> WidgetProvider42().processUpdate(this,id!!)
+                "22" -> WidgetProvider().processUpdate(this, id!!)
+                "42" -> WidgetProvider42().processUpdate(this, id!!)
             }
             finish()
         }

@@ -2,19 +2,21 @@ package app.airsignal.weather.adapter
 
 import android.app.Activity
 import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
+import app.utils.LoggerUtil
 import com.bumptech.glide.Glide
 
 class InAppViewPagerAdapter(
     private val context: Activity,
     list: ArrayList<String>,
-    private val viewPager2: ViewPager2
 ) :
     RecyclerView.Adapter<InAppViewPagerAdapter.ViewHolder>() {
     private val mList = list
@@ -49,7 +51,7 @@ class InAppViewPagerAdapter(
         private val imageView = view.findViewById<ImageView>(R.id.viewPagerInAppImage)
 
         fun bind(dao: String) {
-            Glide.with(context).load(dao).into(imageView)
+            Glide.with(context).load(Uri.parse(dao)).into(imageView)
 
             itemView.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {

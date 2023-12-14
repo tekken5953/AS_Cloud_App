@@ -10,13 +10,14 @@
         style="@style/basicMediumTextView"
         android:layout_width="match_parent"
         android:gravity="center"
-        android:layout_marginStart="54dp"
-        android:layout_marginEnd="54dp"
-        android:layout_marginTop="72dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="73dp"
         android:lineHeight="24dp"
         android:textSize="15sp"/>
 
     <TableRow
+        android:id="@+id/alertDoubleTr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/alertDoubleTitle"

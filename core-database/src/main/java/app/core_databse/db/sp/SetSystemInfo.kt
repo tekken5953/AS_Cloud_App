@@ -12,7 +12,7 @@ object SetSystemInfo {
     /** 폰트 크기를 작게 변경 **/
     fun setTextSizeSmall(context: Context) {
         val configuration = context.resources.configuration
-        configuration.fontScale = 0.7f
+        configuration.fontScale = 0.9f
         @Suppress("DEPRECATION")
         context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
     }
