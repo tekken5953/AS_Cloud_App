@@ -36,7 +36,7 @@
             android:padding="7dp"
             android:visibility="gone"
             android:src="@drawable/scroll_to_top"
-            app:tint="@color/black"
+            app:tint="@color/wblack"
             android:background="@drawable/fab_bg"
             android:layout_gravity="bottom|end"
             android:layout_margin="10dp"/>

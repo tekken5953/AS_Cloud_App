@@ -31,10 +31,6 @@ import kotlin.math.roundToInt
 open class WidgetProvider : BaseWidgetProvider() {
     private var isSuccess = false
 
-    override fun onEnabled(context: Context) {
-        super.onEnabled(context)
-    }
-
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -63,7 +59,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                 if (intent.action == REFRESH_BUTTON_CLICKED) {
                     if (isRefreshable(context, "22")) {
                         if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
-                            requestPermissions(context)
+                            requestPermissions(context,"22",appWidgetId)
                         } else {
                             processDozeMode(context, appWidgetId)
                         }
@@ -129,7 +125,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                     val addr = getWidgetAddress(roomDB.addrKr ?: "")
                     lat?.let { mLat ->
                         lng?.let { mLng ->
-                            val data = requestWeather(context, mLat, mLng)
+                            val data = requestWeather(context, mLat, mLng,1)
 
                             withContext(Dispatchers.Main) {
                                 RDBLogcat.writeWidgetHistory(context, "data", "${roomDB.addrKr} data22 is $data")
@@ -145,7 +141,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                     RDBLogcat.writeErrorANR("Error", "fetch error22 ${e.localizedMessage}")
                 }
             } else {
-                requestPermissions(context)
+                requestPermissions(context,"22",null)
             }
         }
     }

@@ -14,12 +14,12 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
+import android.text.style.UnderlineSpan
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.animation.*
-import android.webkit.WebSettings
 import android.webkit.WebView
 import android.widget.*
 import android.widget.LinearLayout.LayoutParams
@@ -51,6 +51,7 @@ import app.airsignal.core_viewmodel.GetWeatherViewModel
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
 import app.airsignal.weather.dao.AdapterModel
+import app.airsignal.weather.dao.IgnoredKeyFile.landingPageUrl
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
 import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
 import app.airsignal.weather.dao.RDBLogcat
@@ -102,6 +103,7 @@ import app.core_databse.db.sp.SetAppInfo.removeSingleKey
 import app.core_databse.db.sp.SetAppInfo.setLandingNotification
 import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
 import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
+import app.core_databse.db.sp.SpDao.IN_APP_MSG_NAME
 import app.location.GetLocation
 import app.utils.*
 import com.google.android.gms.ads.AdView
@@ -141,7 +143,6 @@ class MainActivity
     }
     private val vib by lazy { VibrateUtil(this) }
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
-
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
     private val uvLegendList = ArrayList<AdapterModel.UVLegendItem>()
@@ -156,6 +157,7 @@ class MainActivity
             binding.mainWarningVp
         )
     }
+    private val inAppList = ArrayList<String>()
     private val warningList = ArrayList<String>()
     private val uvLegendAdapter = UVLegendAdapter(this, uvLegendList)
     private val uvResponseAdapter = UVResponseAdapter(this, uvResponseList)
@@ -179,6 +181,8 @@ class MainActivity
     }
 
     private val adViewClass by lazy { AdViewClass(this) }
+
+    private lateinit var indicators: Array<ImageView>
 
     override fun onResume() {
         super.onResume()
@@ -207,10 +211,8 @@ class MainActivity
             initBinding()
             if (savedInstanceState == null) {
                 binding.mainLoadingView.alpha = 1f
-                CoroutineScope(Dispatchers.IO).launch {
-                    SubFCM().subTopic("patch")
-                    SubFCM().subTopic("daily")
-                }
+                SubFCM().subTopic("patch")
+                SubFCM().subTopic("daily")
                 changeBackgroundResource(null)
                 window.statusBarColor = getColor(app.common_res.R.color.theme_view_color)
                 window.navigationBarColor = getColor(app.common_res.R.color.theme_view_color)
@@ -339,6 +341,79 @@ class MainActivity
         }
     }
 
+    private fun inAppMsgDialog() {
+        val dialog = ShowDialogClass(this)
+        val inAppView = LayoutInflater.from(this)
+            .inflate(R.layout.dialog_in_app_msg,null,false)
+        val inAppVp = inAppView.findViewById<ViewPager2>(R.id.inAppMsgVp)
+        val inAppIndicator = inAppView.findViewById<LinearLayout>(R.id.inAppMsgIndicator)
+        val inAppCancel = inAppView.findViewById<ImageView>(R.id.inAppMsgCancel)
+        val inAppNever = inAppView.findViewById<TextView>(R.id.inAppMsgNever)
+
+        val span = SpannableStringBuilder("다시 보지 않기")
+        span.setSpan(UnderlineSpan(),0,span.length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        inAppNever.text = span
+
+        inAppVp.apply {
+            adapter = InAppViewPagerAdapter(this@MainActivity,inAppList,this)
+            isClickable = true
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            offscreenPageLimit = 3
+
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    updateIndicators(position)
+                    requestLayout()
+                }
+            })
+        }
+
+        inAppCancel.setOnClickListener { dialog.dismiss() }
+
+        inAppNever.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                SetAppInfo.setInAppMsgDenied(this@MainActivity,true)
+
+                withContext(Dispatchers.Main) {
+                    dialog.dismiss()
+                }
+            }
+        }
+
+        createIndicators(inAppVp,inAppIndicator)
+        dialog.show(inAppView,true)
+    }
+
+    // 뷰페이저 인디케이터 업데이트
+    private fun updateIndicators(position: Int) {
+        for (i in indicators.indices) {
+            indicators[i].setImageResource(
+                if (i == position) R.drawable.indicator_fill // 선택된 원 이미지
+                else R.drawable.indicator_empty // 선택되지 않은 원 이미지
+            )
+        }
+    }
+    // 뷰페이저 인디케이터 생성
+    private fun createIndicators(viewpager: ViewPager2, indicator: LinearLayout) {
+        indicator.removeAllViews()
+        indicators = Array(reportViewPagerItem.size) {
+            val indicatorView = ImageView(this)
+            val params = LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(8, 0, 8, 0)
+            indicatorView.layoutParams = params
+            indicatorView.setImageResource(R.drawable.indicator_empty) // 선택되지 않은 원 이미지
+            indicator.addView(indicatorView)
+            indicatorView
+        }
+        updateIndicators(viewpager.currentItem)
+    }
+
+
     // 공유하기 언어별 대응
     private fun addShareMsg(locale: String) {
         val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
@@ -455,7 +530,6 @@ class MainActivity
                     val landingFab: ImageView = landingView.findViewById(R.id.eyeLandingFab)
                     val notiPerm = RequestPermissionsUtil(this@MainActivity)
                     val isLandingNoti = isLandingNotification(this@MainActivity)
-                    val url = "http://airsignal.kr/eye_landing.html"
 
                     val dialog = ShowDialogClass(this@MainActivity).setBackPressed(landingBack)
 
@@ -476,7 +550,7 @@ class MainActivity
                         landingWebView.pageUp(true)
                     }
 
-                    landingWebView.loadUrl(url)
+                    landingWebView.loadUrl(landingPageUrl)
 
                     landingBtn.isActivated = !isLandingNoti
                     landingCheck.visibility = if (isLandingNoti) GONE else VISIBLE
@@ -979,6 +1053,15 @@ class MainActivity
                 binding.mainSkyText.text = skyText
                 // 날씨에 따라 배경화면 변경
                 applyWindowBackground(currentSun, skyText)
+
+                val inAppList = intent.extras?.getStringArray(IN_APP_MSG_NAME)
+                inAppList?.let {
+                    if (it.isNotEmpty()) {
+                        if (!GetAppInfo.getInAppMsgEnabled(this)) {
+                            inAppMsgDialog()
+                        }
+                    }
+                }
             }
         } catch (e: Exception) {
             handleApiError(e.localizedMessage ?: e.stackTraceToString())

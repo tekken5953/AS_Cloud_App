@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|top"
+        android:gravity="end|center_vertical">
+        <TextView
+            android:id="@+id/inAppMsgNever"
+            style="@style/basicMediumTextView"
+            android:layout_marginEnd="10dp"
+            android:textSize="13sp"/>
+
+        <ImageView
+            android:id="@+id/inAppMsgCancel"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/cancel"
+            android:background="@drawable/in_app_cancel_bg"
+            android:layout_marginEnd="3dp"
+            app:tint="@color/white"
+            android:padding="3dp"/>
+    </TableRow>
+
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/inAppMsgVp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="20dp"/>
+
+    <LinearLayout
+        android:id="@+id/inAppMsgIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="10dp"
+        android:clickable="false"/>
+
+</LinearLayout>

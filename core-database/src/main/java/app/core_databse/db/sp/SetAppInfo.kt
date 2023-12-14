@@ -124,7 +124,7 @@ object SetAppInfo {
         SharedPreferenceManager(context).setBoolean(LANDING_NOTIFICATION,b)
     }
 
-    fun setInAppMsgEnabled(context: Context, name: String, enabled: Boolean) {
-        SharedPreferenceManager(context).setBoolean("$IN_APP_MSG_NAME$name", enabled)
+    fun setInAppMsgDenied(context: Context, enabled: Boolean) {
+        SharedPreferenceManager(context).setBoolean(IN_APP_MSG_NAME, enabled)
     }
 }

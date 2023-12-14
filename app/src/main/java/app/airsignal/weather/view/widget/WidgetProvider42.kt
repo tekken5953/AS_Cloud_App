@@ -34,10 +34,6 @@ import kotlin.math.roundToInt
 open class WidgetProvider42 : BaseWidgetProvider() {
     private var isSuccess = false
 
-    override fun onEnabled(context: Context) {
-        super.onEnabled(context)
-    }
-
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -45,6 +41,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     ) {
         for (appWidgetId in appWidgetIds) {
             try {
+                logger.i(TAG,"update")
                 processDozeMode(context,appWidgetId)
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
@@ -63,10 +60,11 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         )
         if (context != null) {
             if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                logger.i(TAG,"receive ${intent.action}")
                 if (intent.action == REFRESH_BUTTON_CLICKED_42) {
                     if (isRefreshable(context,"42")) {
                         if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
-                            requestPermissions(context)
+                            requestPermissions(context,"42",appWidgetId)
                         } else {
                             processDozeMode(context,appWidgetId)
                         } 
@@ -128,7 +126,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     val addr = getWidgetAddress(roomDB.addrKr ?: "")
                     lat?.let { mLat ->
                         lng?.let { mLng ->
-                            val data = requestWeather(context, mLat, mLng)
+                            val data = requestWeather(context, mLat, mLng,4)
 
                             withContext(Dispatchers.Main) {
                                 RDBLogcat.writeWidgetHistory(context, "data", "${roomDB.addrKr} data42 is $data")
@@ -144,7 +142,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     RDBLogcat.writeErrorANR("Error", "fetch error42 ${e.localizedMessage}")
                 }
             } else {
-                requestPermissions(context)
+                requestPermissions(context,"42",null)
             }
         }
     }

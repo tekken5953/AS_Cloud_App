@@ -13,6 +13,7 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.core_databse.db.sp.GetAppInfo
 import app.core_databse.db.sp.SetAppInfo
+import app.utils.LoggerUtil
 import retrofit2.awaitResponse
 import java.time.LocalDateTime
 
@@ -24,10 +25,19 @@ open class BaseWidgetProvider: AppWidgetProvider() {
 
         const val REFRESH_BUTTON_CLICKED_42 = "app.airsignal.weather.view.widget.REFRESH_DATA42"
         const val ENTER_APPLICATION_42 = "app.airsignal.weather.view.widget.ENTER_APP42"
+
+        val logger = LoggerUtil()
+        const val TAG = "TAG_WIDGET"
+    }
+
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        logger.i(TAG,"enabled")
     }
 
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
+        logger.i(TAG,"disabled")
     }
 
     override fun onAppWidgetOptionsChanged(
@@ -37,20 +47,24 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         newOptions: Bundle
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        logger.i(TAG,"options changed")
     }
 
     override fun onRestored(context: Context, oldWidgetIds: IntArray, newWidgetIds: IntArray) {
         super.onRestored(context, oldWidgetIds, newWidgetIds)
+        logger.i(TAG,"restored")
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         super.onDeleted(context, appWidgetIds)
+        logger.i(TAG,"deleted")
     }
 
-    suspend fun requestWeather(context: Context,lat: Double, lng: Double): app.airsignal.core_network.retrofit.ApiModel.WidgetData? {
+
+    suspend fun requestWeather(context: Context,lat: Double, lng: Double, rCount: Int): app.airsignal.core_network.retrofit.ApiModel.WidgetData? {
         try {
             return app.airsignal.core_network.retrofit.HttpClient.getInstance(true).setClientBuilder()
-                .getWidgetForecast(lat, lng, 4)
+                .getWidgetForecast(lat, lng, rCount)
                 .awaitResponse().body()
         } catch (e: Exception) {
             RDBLogcat.writeWidgetHistory(
@@ -71,12 +85,14 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         return RequestPermissionsUtil(context).isBackgroundRequestLocation()
     }
 
-    fun requestPermissions(context: Context) {
+    fun requestPermissions(context: Context, sort: String, id: Int?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val perm = RequestPermissionsUtil(context)
             if (!perm.isBackgroundRequestLocation()) {
                 val intent = Intent(context, WidgetPermActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                intent.putExtra("sort",sort)
+                intent.putExtra("id",id)
                 context.startActivity(intent)
             }
         }

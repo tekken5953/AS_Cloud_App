@@ -23,13 +23,10 @@ public interface MyApiImpl {
     @GET("notice")  // 공지사항 호출
     Call<List<ApiModel.NoticeItem>> getNotice();
 
-    @GET("faq") // 자주 묻는 질문 호출
-    Call<List<ApiModel.FaqItem>> getFaq();
-
     @GET("version") // 앱 버전 호출
     Call<ApiModel.AppVersion> getVersion();
 
-    @GET("forecast/broadcast") // 기상특보 데이터 호출
+    @GET("forecast/broadcast") // 기상 특보 데이터 호출
     Call<ApiModel.BroadCastWeather> getBroadCast(
             @Query("code") int code);
 }

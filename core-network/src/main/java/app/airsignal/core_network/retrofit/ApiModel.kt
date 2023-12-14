@@ -422,12 +422,4 @@ class ApiModel {
         @SerializedName("content")
         val content: String
     )
-
-    // 자주 묻는 질문
-    data class FaqItem(
-        @SerializedName("title")
-        val title: String,
-        @SerializedName("content")
-        val content: String
-    )
 }

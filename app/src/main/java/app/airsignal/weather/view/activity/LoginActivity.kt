@@ -70,9 +70,7 @@ class LoginActivity
                     val task = GoogleSignIn.getSignedInAccountFromIntent(data)
 
                     if (task.result.email == notificationAdmin) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            SubFCM().subAdminTopic()
-                        }
+                        SubFCM().subAdminTopic()
                     }
                     googleLogin.handleSignInResult(task, isAuto = false)
                     EnterPageUtil(this).toMain(LOGIN_GOOGLE,null)
