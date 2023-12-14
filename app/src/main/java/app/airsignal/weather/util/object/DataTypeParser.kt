@@ -88,7 +88,7 @@ object DataTypeParser {
             "비/눈" to R.drawable.b_ico_rainy_snow,
             "소나기" to R.drawable.b_ico_rainy
         )
-        return rainMap[rain]?.let{ getDrawable(context,it)} ?: getDrawable(context,R.drawable.cancel)
+        return rainMap[rain]?.let{ getDrawable(context,it)} ?: getDrawable(context,app.common_res.R.drawable.cancel)
     }
 
     /** sky value에 따른 이미지 설정 **/
@@ -106,7 +106,7 @@ object DataTypeParser {
             "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
                 R.drawable.b_ico_cloudy_rainy
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
-            else -> R.drawable.cancel
+            else -> app.common_res.R.drawable.cancel
         }
 
         return getDrawable(context,id)
@@ -127,7 +127,7 @@ object DataTypeParser {
                 "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
                     R.drawable.b_ico_cloudy_rainy
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
-                else -> R.drawable.cancel
+                else -> app.common_res.R.drawable.cancel
             }
         } else {
             when(rainType) {
@@ -135,7 +135,7 @@ object DataTypeParser {
                 "눈" -> R.drawable.sm_snow
                 "비/눈" -> R.drawable.b_ico_rainy_snow
                 "소나기" -> R.drawable.b_ico_rainy
-                else -> R.drawable.cancel
+                else -> app.common_res.R.drawable.cancel
             }
         }
     }
@@ -176,7 +176,7 @@ object DataTypeParser {
             "소나기" to R.drawable.b_ico_rainy
         )
 
-        return rainMap[rain ?: ""]?.let { getDrawable(context,it) } ?: getDrawable(context,R.drawable.cancel)
+        return rainMap[rain ?: ""]?.let { getDrawable(context,it) } ?: getDrawable(context,app.common_res.R.drawable.cancel)
     }
 
     /** sky value에 따른 이미지 설정 **/
@@ -194,7 +194,7 @@ object DataTypeParser {
             "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
                 R.drawable.b_ico_cloudy_rainy
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
-            else -> R.drawable.cancel
+            else -> app.common_res.R.drawable.cancel
         }
 
         return getDrawable(context,id)
@@ -211,8 +211,8 @@ object DataTypeParser {
         lunar: Int
     ): Drawable? {
         return if (rain != "없음" && (thunder == null || thunder < 0.2)) {
-            if (isLarge) getRainTypeLarge(context, rain!!) ?: getDrawable(context, R.drawable.cancel)
-            else getRainTypeSmall(context, rain!!) ?: getDrawable(context, R.drawable.cancel)
+            if (isLarge) getRainTypeLarge(context, rain!!) ?: getDrawable(context, app.common_res.R.drawable.cancel)
+            else getRainTypeSmall(context, rain!!) ?: getDrawable(context, app.common_res.R.drawable.cancel)
         } else if (rain == "없음" && (thunder == null || thunder < 0.2)) {
             if (isLarge) getSkyImgLarge(context, sky!!, isNight ?: false, lunar)
             else getSkyImgSmall(context, sky!!, isNight ?: false)

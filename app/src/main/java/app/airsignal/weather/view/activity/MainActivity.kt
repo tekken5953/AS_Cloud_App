@@ -108,8 +108,6 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.FirebaseApp
-import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
@@ -210,7 +208,6 @@ class MainActivity
             if (savedInstanceState == null) {
                 binding.mainLoadingView.alpha = 1f
                 CoroutineScope(Dispatchers.IO).launch {
-                    FirebaseInAppMessaging.getInstance().triggerEvent("test_trigger")
                     SubFCM().subTopic("patch")
                     SubFCM().subTopic("daily")
                 }
@@ -301,7 +298,7 @@ class MainActivity
                             "Share with in English?",
                             "Yes",
                             "With in Korean",
-                            R.color.main_blue_color
+                            app.common_res.R.color.main_blue_color
                         ).apply {
                             this.first.setOnClickListener(object : OnSingleClickListener() {
                                 override fun onSingleClick(v: View?) {
@@ -511,7 +508,7 @@ class MainActivity
                                     val subModal = MakeSingleDialog(this@MainActivity)
                                     subModal.makeDialog(
                                         "출시가 완료되면 알림 메시지를 보낼게요 ${String(Character.toChars(0x1F514))}",
-                                        getColor(R.color.main_blue_color), "확인", false
+                                        getColor(app.common_res.R.color.main_blue_color), "확인", false
                                     )
                                     subModal.apply.setOnClickListener {
                                         CoroutineScope(Dispatchers.IO).launch {
@@ -582,7 +579,7 @@ class MainActivity
             assets,
             if (isWhite) "spoqa_hansansneo_regular.ttf" else "spoqa_hansansneo_regular.ttf"
         )
-        t1.setTextColor(getColor(if (isWhite) R.color.white else R.color.main_blue_color))
+        t1.setTextColor(getColor(if (isWhite) R.color.white else app.common_res.R.color.main_blue_color))
         t2.setTextColor(getColor(if (isWhite) R.color.sub_white else R.color.sub_black))
         t3.setTextColor(getColor(if (isWhite) R.color.sub_white else R.color.sub_black))
     }

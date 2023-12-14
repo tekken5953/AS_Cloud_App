@@ -42,7 +42,6 @@ open class WidgetProvider : BaseWidgetProvider() {
     ) {
         for (appWidgetId in appWidgetIds) {
             try {
-                RDBLogcat.writeWidgetHistory(context, "lifecycle", "onUpdate22")
                 processDozeMode(context, appWidgetId)
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
@@ -68,10 +67,6 @@ open class WidgetProvider : BaseWidgetProvider() {
                         } else {
                             processDozeMode(context, appWidgetId)
                         }
-                        RDBLogcat.writeWidgetHistory(
-                            context.applicationContext, "lifecycle",
-                            "onReceive42}"
-                        )
                     } else {
                         Toast.makeText(
                             context.applicationContext,
@@ -118,8 +113,8 @@ open class WidgetProvider : BaseWidgetProvider() {
             views.run {
                 this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
                 this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
-                fetch(context, views)
             }
+            fetch(context, views)
         }
     }
 

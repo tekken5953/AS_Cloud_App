@@ -89,7 +89,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                 } else {
                                     MakeSingleDialog(this)
                                         .makeDialog(getString(R.string.not_latest_go_to_store),
-                                            getColor(R.color.main_blue_color),getString(R.string.download), true)
+                                            getColor(app.common_res.R.color.main_blue_color),getString(R.string.download), true)
                                         .setOnClickListener {
                                             goToPlayStore(this@SplashActivity)
                                         }

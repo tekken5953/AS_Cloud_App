@@ -113,9 +113,7 @@ class RequestPermissionsUtil(private val context: Context) {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ContextCompat.checkSelfPermission(context, permissionsLocationBackground) ==
                     PackageManager.PERMISSION_GRANTED
-        } else {
-            true
-        }
+        } else { true }
     }
 
     /** 백그라운드에서 위치 접근 권한 요청 **/

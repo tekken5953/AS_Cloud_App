@@ -8,8 +8,8 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import okhttp3.internal.wait
 import java.util.*
 
 
@@ -26,19 +26,12 @@ class SubFCM: FirebaseMessagingService() {
                 NotificationBuilder().sendNotification(applicationContext,message.data)
             }
         }
-
-//            RDBLogcat.writeNotificationHistory(applicationContext,"위젯","${parsePriority(message.priority)},${message.data["layout"]},${message.data["widgetId"]}")
-//            if (message.data["layout"] == "22") {
-//                WidgetProvider().processUpdate(applicationContext, message.data["widgetId"]?.toInt() ?: -1)
-//            } else if (message.data["layout"] == "42") {
-//                WidgetProvider42().processUpdate(applicationContext, message.data["widgetId"]?.toInt() ?: -1)
-//            }
     }
 
     /** 토픽 구독 설정 **/
-    suspend fun subTopic(topic: String): SubFCM {
+    fun subTopic(topic: String): SubFCM {
         try {
-            FirebaseMessaging.getInstance().subscribeToTopic(topic).await()
+            FirebaseMessaging.getInstance().subscribeToTopic(topic)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -59,7 +52,7 @@ class SubFCM: FirebaseMessagingService() {
     }
 
     /** 현재 위치 토픽 갱신 **/
-    suspend fun renewTopic(old: String, new: String) {
+    fun renewTopic(old: String, new: String) {
         val encodedStream = encodeTopic(new)
         unSubTopic(old).subTopic(encodedStream)
     }

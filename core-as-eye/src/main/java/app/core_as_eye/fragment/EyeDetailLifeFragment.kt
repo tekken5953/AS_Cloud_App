@@ -51,7 +51,6 @@ class EyeDetailLifeFragment : Fragment() {
         lifeAdapter.notifyDataSetChanged()
     }
     fun onDataReceived(data: EyeDataModel.EyeReportAdapter?) {
-
     }
 
 

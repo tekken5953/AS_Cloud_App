@@ -45,10 +45,6 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     ) {
         for (appWidgetId in appWidgetIds) {
             try {
-                RDBLogcat.writeWidgetHistory(
-                    context, "lifecycle",
-                    "onUpdate42"
-                )
                 processDozeMode(context,appWidgetId)
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
@@ -69,10 +65,6 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                 if (intent.action == REFRESH_BUTTON_CLICKED_42) {
                     if (isRefreshable(context,"42")) {
-                        RDBLogcat.writeWidgetHistory(
-                            context.applicationContext, "lifecycle",
-                            "onReceive42 doze}"
-                        )
                         if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
                             requestPermissions(context)
                         } else {
@@ -139,7 +131,6 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                             val data = requestWeather(context, mLat, mLng)
 
                             withContext(Dispatchers.Main) {
-                                Log.d("testtest","widget $roomDB")
                                 RDBLogcat.writeWidgetHistory(context, "data", "${roomDB.addrKr} data42 is $data")
                                 delay(500)
                                 updateUI(context, views, data, addr)

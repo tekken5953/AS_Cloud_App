@@ -9,7 +9,7 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
-import app.airsignal.weather.databinding.CustomViewSubAirBinding
+import app.core_customview.databinding.CustomViewSubAirBinding
 
 /**
  * @author : Lee Jae Young
@@ -53,7 +53,7 @@ class SubAirView(context: Context, attrs: AttributeSet?)
                     "서북서" -> R.drawable.ico_wind_wnw
                     "북서" -> R.drawable.ico_wind_nw
                     "북북서" -> R.drawable.ico_wind_nnw
-                    else -> R.drawable.cancel
+                    else -> app.common_res.R.drawable.cancel
                 }),null,null,null
             )
         }

@@ -4,48 +4,30 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+apply from : '../common-android.gradle'
+apply from : '../common-dependency.gradle'
+
 android {
-    compileSdk 33
+    namespace = 'app.airsignal.weather'
 
     defaultConfig {
-        applicationId "app.airsignal.weather"
-        minSdk 26
-        targetSdk 33
-        versionCode 12
-        versionName "1.03"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        applicationId application_id
+        versionCode app_version_code
+        versionName app_version_name
     }
-
     buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
         debug {
             debuggable false
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = '11'
-    }
-    dataBinding {
-        enabled = true
-    }
-    buildFeatures {
-        viewBinding true
-    }
     lint {
         baseline = file("lint-baseline.xml")
     }
-    buildToolsVersion '34.0.0'
 
     packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
+        resources {
+            excludes += ['META-INF/DEPENDENCIES']
+        }
     }
 }
 
@@ -61,16 +43,15 @@ dependencies {
     implementation project(path: ':core-customview')
 
     apply plugin: 'com.google.android.gms.oss-licenses-plugin'
-    implementation 'androidx.test.ext:junit-ktx:1.1.5'
+
     modules {
         module("org.jetbrains.kotlin:kotlin-stdlib-jdk8") {
             replacedBy("org.jetbrains.kotlin:kotlin-stdlib", "kotlin-stdlib-jdk8 is now part of kotlin-stdlib")
         }
     }
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.material:material:1.9.0'
+
+    // Swipe Refresh Layout
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
     // Google Login
     implementation 'com.google.android.gms:play-services-auth:20.6.0' // 구글 어스
@@ -105,11 +86,14 @@ dependencies {
     def lottieVersion = "5.2.0"
     implementation "com.airbnb.android:lottie:$lottieVersion"
 
+    // Warning Detail Spinner
+    implementation "com.github.skydoves:powerspinner:1.2.7"
+
+    // Android MarkDown Library
+    implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
+
     // Firebase Main
     implementation platform('com.google.firebase:firebase-bom:32.2.0')
-
-    // Firebase Analytics
-    implementation 'com.google.firebase:firebase-analytics'
 
     // Firebase Cloud Messaging
     implementation 'com.google.firebase:firebase-messaging'
@@ -121,13 +105,4 @@ dependencies {
 
     // Firebase Admob
     implementation 'com.google.android.gms:play-services-ads:22.2.0'
-
-    // Firebase In App Messaging
-    implementation("com.google.firebase:firebase-inappmessaging-display-ktx")
-
-    // Warning Detail Spinner
-    implementation "com.github.skydoves:powerspinner:1.2.7"
-
-    // Android MarkDown Library
-    implementation 'com.github.tiagohm.MarkdownView:library:0.19.0'
 }

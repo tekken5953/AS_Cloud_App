@@ -13,7 +13,6 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import app.address.AddressFromRegex
-import app.airsignal.regex_address.R
 import app.core_databse.db.room.model.GpsEntity
 import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetSystemInfo
