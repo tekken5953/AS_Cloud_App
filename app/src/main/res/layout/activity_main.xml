@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="dataVM"
             type="app.airsignal.core_viewmodel.GetWeatherViewModel" />
@@ -108,16 +107,6 @@
                     app:tint="@android:color/transparent" />
 
             </RelativeLayout>
-
-            <!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
-            <!--            android:id="@+id/bottomNav"-->
-            <!--            android:layout_width="match_parent"-->
-            <!--            android:layout_height="55dp"-->
-            <!--            android:alpha="0"-->
-            <!--            app:itemIconTint="@color/main_blue_color"-->
-            <!--            app:itemTextColor="@color/main_blue_color"-->
-            <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-            <!--            app:menu="@menu/bottom_nav" />-->
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/mainLoadingView"
@@ -1122,14 +1111,13 @@
 
             <ImageButton
                 android:id="@+id/nested_fab"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/fab_bg"
                 android:contentDescription="@string/cd_icon_up"
-                android:src="@drawable/scroll_to_top"
-                app:tint="@color/theme_text_color"
+                android:src="@drawable/scroll_to_top_src"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.motion.widget.MotionLayout>

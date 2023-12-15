@@ -396,7 +396,14 @@ class SettingActivity
                     detailTitle.text = noticeTitle.text.toString()
                     detailHeadLine.text = item.title
                     detailContent.apply {
-                        addStyleSheet(Github())
+                        val css = Github()
+                        css.addRule("p","font-family: spoqa_hansansneo_medium.ttf")
+                        css.addRule("h1","font-family: spoqa_hansansneo_bold.ttf")
+                        css.addRule("h2","font-family: spoqa_hansansneo_bold.ttf")
+                        css.addRule("h3","font-family: spoqa_hansansneo_medium.ttf")
+                        css.addRule("h4","font-family: spoqa_hansansneo_medium.ttf")
+                        css.addRule("h6","font-family: spoqa_hansansneo_light.ttf")
+                        addStyleSheet(css)
                         if (item.content != "") loadMarkdown(item.content)
                         else loadMarkdown("내용이 없습니다")
                     }
@@ -650,7 +657,7 @@ class SettingActivity
             if (textView.text.contains(getString(R.string.always_allowed))) {
                 try {
                     span.setSpan(
-                        ForegroundColorSpan(getColor(R.color.main_blue_color)),
+                        ForegroundColorSpan(getColor(app.common_res.R.color.main_blue_color)),
                         findCharacterIndex(textView.text as String, '\n'),
                         findCharacterIndex(textView.text as String, '을'),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -661,7 +668,7 @@ class SettingActivity
             }
 
             if (textView.text == getString(R.string.allowed) || textView.text == getString(R.string.background_location_active)) {
-                textView.setTextColor(getColor(R.color.main_blue_color))
+                textView.setTextColor(getColor(app.common_res.R.color.main_blue_color))
             }
         }
 
@@ -721,7 +728,7 @@ class SettingActivity
                             } else {
                                 appInfoIsRecent.text =
                                     getString(R.string.not_latest_version)
-                                appInfoIsRecent.setTextColor(getColor(R.color.main_blue_color))
+                                appInfoIsRecent.setTextColor(getColor(app.common_res.R.color.main_blue_color))
                                 appInfoDownBtn.visibility = View.VISIBLE
                                 appInfoVersionValue.visibility = View.GONE
                             }
@@ -888,7 +895,7 @@ class SettingActivity
     @SuppressLint("UseCompatTextViewDrawableApis")
     private fun changeCheckIcon(rbOn: RadioButton, rbOff1: RadioButton, rbOff2: RadioButton) {
         rbOn.compoundDrawableTintList =
-            ColorStateList.valueOf(getColor(R.color.main_blue_color))
+            ColorStateList.valueOf(getColor(app.common_res.R.color.main_blue_color))
         rbOff1.compoundDrawableTintList =
             ColorStateList.valueOf(getColor(android.R.color.transparent))
         rbOff2.compoundDrawableTintList =

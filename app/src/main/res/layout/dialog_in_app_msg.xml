@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/inAppMsgFrame"
+        android:layout_width="320dp"
+        android:layout_height="435dp"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/inAppMsgVp"
+            android:layout_width="320dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:nestedScrollingEnabled="true"
+            android:animateLayoutChanges="true" />
+
+        <LinearLayout
+            android:id="@+id/inAppMsgIndicator"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="10dp"
+            android:clickable="false"
+            android:gravity="center"
+            android:orientation="horizontal" />
+    </FrameLayout>
+
+    <TableRow
+        android:id="@+id/inAppMsgTr"
+        android:layout_width="320dp"
+        android:layout_height="55dp"
+        android:layout_below="@+id/inAppMsgFrame"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/in_app_msg_button_bg"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/inAppMsgHide"
+            style="@style/basicTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:text="@string/dont_ask_again"
+            android:background="?android:attr/selectableItemBackground"
+            android:textColor="#2B2B2B"
+            android:textSize="15sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#602B2B2B" />
+
+        <TextView
+            android:id="@+id/inAppMsgCancel"
+            style="@style/basicTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:text="@string/cancel"
+            android:background="?android:attr/selectableItemBackground"
+            android:textColor="#2B2B2B"
+            android:textSize="15sp" />
+    </TableRow>
+
+</RelativeLayout>

@@ -26,6 +26,10 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         const val ENTER_APPLICATION_42 = "app.airsignal.weather.view.widget.ENTER_APP42"
     }
 
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+    }
+
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
     }
@@ -47,10 +51,11 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         super.onDeleted(context, appWidgetIds)
     }
 
-    suspend fun requestWeather(context: Context,lat: Double, lng: Double): app.airsignal.core_network.retrofit.ApiModel.WidgetData? {
+
+    suspend fun requestWeather(context: Context,lat: Double, lng: Double, rCount: Int): app.airsignal.core_network.retrofit.ApiModel.WidgetData? {
         try {
             return app.airsignal.core_network.retrofit.HttpClient.getInstance(true).setClientBuilder()
-                .getWidgetForecast(lat, lng, 4)
+                .getWidgetForecast(lat, lng, rCount)
                 .awaitResponse().body()
         } catch (e: Exception) {
             RDBLogcat.writeWidgetHistory(
@@ -71,12 +76,14 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         return RequestPermissionsUtil(context).isBackgroundRequestLocation()
     }
 
-    fun requestPermissions(context: Context) {
+    fun requestPermissions(context: Context, sort: String, id: Int?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val perm = RequestPermissionsUtil(context)
             if (!perm.isBackgroundRequestLocation()) {
                 val intent = Intent(context, WidgetPermActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                intent.putExtra("sort",sort)
+                intent.putExtra("id",id)
                 context.startActivity(intent)
             }
         }
@@ -86,11 +93,6 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         val timeFormed = LocalDateTime.parse(currentTime)
         val realtimeFormed = LocalDateTime.parse(realTime)
         return realtimeFormed?.let { timeFormed.isAfter(it) } ?: true
-    }
-
-    fun isDeviceInDozeMode(context: Context): Boolean {
-        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager?
-        return powerManager?.isDeviceIdleMode == true
     }
 
     fun isRefreshable(context: Context, type: String): Boolean {

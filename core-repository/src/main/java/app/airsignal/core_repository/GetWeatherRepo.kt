@@ -1,6 +1,7 @@
 package app.airsignal.core_repository
 
 import android.accounts.NetworkErrorException
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import app.airsignal.core_network.ErrorCode.ERROR_API_PROTOCOL
 import app.airsignal.core_network.ErrorCode.ERROR_GET_DATA
@@ -18,6 +19,7 @@ import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.internal.toHeaderList
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -43,6 +45,7 @@ class GetWeatherRepo : BaseRepository() {
                     ) {
                         try {
                             if (response.isSuccessful) {
+                                Log.d("TAG_R","raw : ${response.raw()}\nheader : ${response.headers().toHeaderList()}")
                                 val responseBody = processData(response.body())
                                 _getDataResult.postValue(ApiState.Success(responseBody))
                             } else {

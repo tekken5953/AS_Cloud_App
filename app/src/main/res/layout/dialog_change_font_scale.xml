@@ -51,10 +51,10 @@
             android:paddingStart="24dp"
             android:paddingTop="5dp"
             android:paddingEnd="24dp"
-            android:scaleY="0.7"
+            android:scaleY="0.9"
             android:text="@string/font_small"
             android:textColor="@drawable/radio_text_selector"
-            android:textScaleX="0.7"
+            android:textScaleX="0.9"
             android:textSize="16sp" />
 
         <RadioButton
@@ -71,6 +71,8 @@
             android:paddingStart="24dp"
             android:paddingTop="5dp"
             android:paddingEnd="24dp"
+            android:textScaleX="1.1"
+            android:scaleY="1.1"
             android:text="@string/font_normal"
             android:textColor="@drawable/radio_text_selector"
             android:textSize="16sp" />
@@ -95,6 +97,5 @@
             android:textScaleX="1.3"
             android:textSize="16sp" />
     </RadioGroup>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

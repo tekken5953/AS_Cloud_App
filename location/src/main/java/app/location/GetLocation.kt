@@ -8,12 +8,7 @@ import android.location.*
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.provider.Settings
-import android.util.Log
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
 import app.address.AddressFromRegex
-import app.airsignal.regex_address.R
 import app.core_databse.db.room.model.GpsEntity
 import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetSystemInfo
@@ -31,16 +26,16 @@ class GetLocation(private val context: Context) {
 
     /** 현재 주소를 불러옵니다 **/
     fun getAddress(lat: Double, lng: Double): String {
+        val appContext = context.applicationContext
         return try {
-            val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
-
+            val geocoder = Geocoder(appContext, GetSystemInfo.getLocale(appContext))
             @Suppress("DEPRECATION")
             val address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             val fullAddr = address[0].getAddressLine(0)
             CoroutineScope(Dispatchers.IO).launch {
                 val notiAddr = AddressFromRegex(fullAddr).getNotificationAddress()
-                setNotificationAddress(context, notiAddr)
-                setUserLastAddr(context, fullAddr)
+                setNotificationAddress(appContext, notiAddr)
+                setUserLastAddr(appContext, fullAddr)
             }
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
@@ -107,7 +102,6 @@ class GetLocation(private val context: Context) {
                 val longitude = location.longitude
                 val addr = getAddress(latitude,longitude)
                 updateDatabaseWithLocationData(latitude,longitude,addr)
-                Log.d("testtest","location changed in background : $addr")
             }
             override fun onProviderEnabled(provider: String) {
             }
@@ -149,18 +143,6 @@ class GetLocation(private val context: Context) {
     fun isNetworkProviderConnected(): Boolean {
         val lm = context.getSystemService(LOCATION_SERVICE) as LocationManager
         return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-    }
-
-    fun createWorkManager() {
-        val workManager = WorkManager.getInstance(context)
-        val workRequest =
-            PeriodicWorkRequest.Builder(GPSWorker::class.java, 30, TimeUnit.MINUTES)
-                .build()
-
-        workManager.enqueueUniquePeriodicWork(
-            CHECK_GPS_BACKGROUND,
-            ExistingPeriodicWorkPolicy.KEEP, workRequest
-        )
     }
 }
 

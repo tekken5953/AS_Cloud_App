@@ -31,10 +31,6 @@ import kotlin.math.roundToInt
 open class WidgetProvider : BaseWidgetProvider() {
     private var isSuccess = false
 
-    override fun onEnabled(context: Context) {
-        super.onEnabled(context)
-    }
-
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -42,8 +38,7 @@ open class WidgetProvider : BaseWidgetProvider() {
     ) {
         for (appWidgetId in appWidgetIds) {
             try {
-                RDBLogcat.writeWidgetHistory(context, "lifecycle", "onUpdate22")
-                processDozeMode(context, appWidgetId)
+                processUpdate(context, appWidgetId)
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
                     "Error",
@@ -64,14 +59,10 @@ open class WidgetProvider : BaseWidgetProvider() {
                 if (intent.action == REFRESH_BUTTON_CLICKED) {
                     if (isRefreshable(context, "22")) {
                         if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
-                            requestPermissions(context)
+                            requestPermissions(context,"22",appWidgetId)
                         } else {
-                            processDozeMode(context, appWidgetId)
+                            processUpdate(context, appWidgetId)
                         }
-                        RDBLogcat.writeWidgetHistory(
-                            context.applicationContext, "lifecycle",
-                            "onReceive42}"
-                        )
                     } else {
                         Toast.makeText(
                             context.applicationContext,
@@ -82,11 +73,6 @@ open class WidgetProvider : BaseWidgetProvider() {
                 }
             }
         }
-    }
-
-    private fun processDozeMode(context: Context, appWidgetId: Int) {
-        if (isDeviceInDozeMode(context)) WidgetFCM().sendFCMMessage("22", appWidgetId)
-        else processUpdate(context, appWidgetId)
     }
 
     fun processUpdate(context: Context, appWidgetId: Int) {
@@ -118,8 +104,8 @@ open class WidgetProvider : BaseWidgetProvider() {
             views.run {
                 this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
                 this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
-                fetch(context, views)
             }
+            fetch(context, views)
         }
     }
 
@@ -134,7 +120,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                     val addr = getWidgetAddress(roomDB.addrKr ?: "")
                     lat?.let { mLat ->
                         lng?.let { mLng ->
-                            val data = requestWeather(context, mLat, mLng)
+                            val data = requestWeather(context, mLat, mLng,1)
 
                             withContext(Dispatchers.Main) {
                                 RDBLogcat.writeWidgetHistory(context, "data", "${roomDB.addrKr} data22 is $data")
@@ -150,7 +136,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                     RDBLogcat.writeErrorANR("Error", "fetch error22 ${e.localizedMessage}")
                 }
             } else {
-                requestPermissions(context)
+                requestPermissions(context,"22",null)
             }
         }
     }

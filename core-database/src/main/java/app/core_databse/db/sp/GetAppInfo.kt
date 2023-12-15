@@ -5,13 +5,13 @@ import app.core_databse.db.SharedPreferenceManager
 import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
 import app.core_databse.db.sp.SpDao.INITIALIZED_LOC_PERMISSION
 import app.core_databse.db.sp.SpDao.INITIALIZED_NOTI_PERMISSION
-import app.core_databse.db.sp.SpDao.IS_INIT_BACK_LOC_PERMISSION
+import app.core_databse.db.sp.SpDao.IN_APP_MSG_TIME
 import app.core_databse.db.sp.SpDao.IS_PERMED_BACK_LOG
+import app.core_databse.db.sp.SpDao.LANDING_NOTIFICATION
 import app.core_databse.db.sp.SpDao.LAST_REFRESH22
 import app.core_databse.db.sp.SpDao.LAST_REFRESH42
 import app.core_databse.db.sp.SpDao.NOTIFICATION_ADDRESS
 import app.core_databse.db.sp.SpDao.NOTIFICATION_TOPIC_DAILY
-import app.core_databse.db.sp.SpDao.LANDING_NOTIFICATION
 import app.core_databse.db.sp.SpDao.WARNING_FIXED
 import app.core_databse.db.sp.SpDao.lastAddress
 import app.core_databse.db.sp.SpDao.lastLoginPlatform
@@ -153,7 +153,11 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getBoolean(LANDING_NOTIFICATION)
     }
 
-    fun getInAppMsgEnabled(context: Context, name: String): Boolean {
-        return SharedPreferenceManager(context).getBoolean("${SpDao.IN_APP_MSG_NAME}$name")
+    fun getInAppMsgEnabled(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(SpDao.IN_APP_MSG)
+    }
+
+    fun getInAppMsgTime(context: Context): Long {
+        return SharedPreferenceManager(context).getLong(IN_APP_MSG_TIME)
     }
 }

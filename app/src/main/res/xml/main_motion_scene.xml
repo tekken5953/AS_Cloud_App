@@ -6,21 +6,19 @@
         app:constraintSetEnd="@+id/end"
         app:constraintSetStart="@id/start"
         app:duration="500">
-
         <OnClick
             app:clickAction="transitionToEnd"
-            app:targetId="@id/mainMotionSLideImg"/>
+            app:targetId="@id/mainMotionSlideGuide"/>
     </Transition>
     <Transition
         app:constraintSetEnd="@+id/end"
         app:constraintSetStart="@id/start"
         app:duration="500">
-
         <OnSwipe
             app:dragDirection="dragUp"
             app:maxAcceleration="35"
             app:maxVelocity="35"
-            app:dragScale="1.5"
+            app:dragScale="1.8"
             app:springStopThreshold="0"
             app:touchAnchorId="@id/nested_scrollview"
             app:touchAnchorSide="top" />
@@ -28,7 +26,6 @@
         <OnClick
             app:clickAction="transitionToEnd"
             app:targetId="@id/mainMotionSlideGuide"/>
-
 
         <KeyFrameSet>
             <KeyAttribute
@@ -404,12 +401,13 @@
 
         <Constraint
             android:id="@+id/nested_fab"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="15dp"
             android:background="@drawable/fab_bg"
-            android:src="@drawable/arrow_top"
+            android:src="@drawable/scroll_to_top_src"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -554,6 +552,7 @@
             app:layout_constraintStart_toStartOf="@+id/mainSkyImg"
             app:layout_constraintEnd_toEndOf="@+id/mainSkyImg"
             android:layout_marginTop="3dp"
+            android:layout_marginBottom="10dp"
             app:layout_constraintTop_toBottomOf="@+id/mainSkyImg"/>
 
         <Constraint
@@ -615,12 +614,13 @@
 
         <Constraint
             android:id="@+id/nested_fab"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
+            android:alpha="0"
             android:layout_marginBottom="15dp"
             android:background="@drawable/fab_bg"
-            android:src="@drawable/arrow_top"
+            android:src="@drawable/scroll_to_top_src"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 

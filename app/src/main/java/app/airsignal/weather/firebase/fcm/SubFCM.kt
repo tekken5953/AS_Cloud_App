@@ -7,8 +7,9 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
@@ -26,19 +27,14 @@ class SubFCM: FirebaseMessagingService() {
                 NotificationBuilder().sendNotification(applicationContext,message.data)
             }
         }
-
-//            RDBLogcat.writeNotificationHistory(applicationContext,"위젯","${parsePriority(message.priority)},${message.data["layout"]},${message.data["widgetId"]}")
-//            if (message.data["layout"] == "22") {
-//                WidgetProvider().processUpdate(applicationContext, message.data["widgetId"]?.toInt() ?: -1)
-//            } else if (message.data["layout"] == "42") {
-//                WidgetProvider42().processUpdate(applicationContext, message.data["widgetId"]?.toInt() ?: -1)
-//            }
     }
 
     /** 토픽 구독 설정 **/
-    suspend fun subTopic(topic: String): SubFCM {
+    fun subTopic(topic: String): SubFCM {
         try {
-            FirebaseMessaging.getInstance().subscribeToTopic(topic).await()
+            CoroutineScope(Dispatchers.IO).launch {
+                FirebaseMessaging.getInstance().subscribeToTopic(topic)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -48,18 +44,20 @@ class SubFCM: FirebaseMessagingService() {
     /** 토픽 구독 해제 **/
     private fun unSubTopic(topic: String): SubFCM {
         val encodedStream = encodeTopic(topic)
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream)
+        CoroutineScope(Dispatchers.IO).launch {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream)
+        }
         return this
     }
 
     // 어드민 계정 토픽
-    suspend fun subAdminTopic() {
+    fun subAdminTopic() {
         val encodedStream = encodeTopic("admin")
         subTopic(encodedStream)
     }
 
     /** 현재 위치 토픽 갱신 **/
-    suspend fun renewTopic(old: String, new: String) {
+    fun renewTopic(old: String, new: String) {
         val encodedStream = encodeTopic(new)
         unSubTopic(old).subTopic(encodedStream)
     }

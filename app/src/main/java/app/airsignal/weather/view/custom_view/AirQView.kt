@@ -9,7 +9,7 @@ import android.view.animation.AnimationUtils
 import android.widget.RelativeLayout
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
-import app.airsignal.weather.databinding.CustomViewMainAirBinding
+import app.core_customview.databinding.CustomViewMainAirBinding
 
 /**
  * @author : Lee Jae Young
@@ -60,7 +60,7 @@ class AirQView(context: Context, attrs: AttributeSet?)
             context.getString(R.string.no2_full) -> R.drawable.graph_no2
             context.getString(R.string.so2_full) -> R.drawable.graph_so2
             context.getString(R.string.co_full)-> R.drawable.graph_co
-            else -> R.drawable.cancel },null)
+            else -> app.common_res.R.drawable.cancel },null)
     }
 
     // 데이터 적용

@@ -4,12 +4,14 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.os.PowerManager
 import android.view.View
 import androidx.core.app.NotificationCompat
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.R
 import app.airsignal.weather.view.widget.WidgetProvider
 import app.airsignal.weather.view.widget.WidgetProvider42
+import app.location.GetLocation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,23 +48,8 @@ class WidgetNotificationBuilder {
             .setSmallIcon(R.drawable.ic_stat_airsignal_default)
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            if (data["layout"] == "22") {
-                WidgetProvider().processUpdate(
-                    context,
-                    data["widgetId"]?.toInt() ?: -1
-                )
-            } else if (data["layout"] == "42") {
-                WidgetProvider42().processUpdate(
-                    context,
-                    data["widgetId"]?.toInt() ?: -1
-                )
-            }
-            RDBLogcat.writeNotificationHistory(
-                context,
-                "위젯",
-                "${data["layout"]}, ${data["widgetId"]}"
-            )
+        CoroutineScope(Dispatchers.Default).launch {
+            GetLocation(context.applicationContext).getGpsInBackground()
         }
 
         notificationManager?.let {

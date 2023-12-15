@@ -132,9 +132,9 @@ class SearchDialog(
                         if (entity.name == CURRENT_GPS_ID) {
                             currentAddress.text = entity.addrKr?.replace(getString(R.string.korea), "") ?: ""
                             if (entity.addrKr == lastAddr) {
-                                currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))
+                                currentAddress.setTextColor(activity.getColor(app.common_res.R.color.main_blue_color))
                                 currentGpsImg.imageTintList =
-                                    ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
+                                    ColorStateList.valueOf(activity.getColor(app.common_res.R.color.main_blue_color))
                             } else {
                                 currentAddress.setTextColor(activity.getColor(app.common_res.R.color.theme_text_color))
                                 currentGpsImg.imageTintList =
@@ -262,7 +262,7 @@ class SearchDialog(
                     ForegroundColorSpan(
                         ResourcesCompat.getColor(
                             activity.resources,
-                            R.color.main_blue_color, null
+                            app.common_res.R.color.main_blue_color, null
                         )
                     ), if (isKorea()) 0 else 4,
                    if (isKorea()) searchItem[position].length else 4 + searchItem[position].length,
@@ -272,7 +272,7 @@ class SearchDialog(
                 title.text = span
                 apply.text = activity.getString(R.string.add)
                 apply.backgroundTintList = ColorStateList.valueOf(
-                    activity.getColor(R.color.main_blue_color)
+                    activity.getColor(app.common_res.R.color.main_blue_color)
                 )
                 cancel.text = activity.getString(R.string.cancel)
 
@@ -400,7 +400,7 @@ class SearchDialog(
             if (startIndex != -1) {
                 val coloredText = android.text.SpannableString(getItem(position))
                 coloredText.setSpan(
-                    ForegroundColorSpan(activity.getColor(R.color.main_blue_color)),
+                    ForegroundColorSpan(activity.getColor(app.common_res.R.color.main_blue_color)),
                     startIndex,
                     startIndex + editText.text.toString().length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

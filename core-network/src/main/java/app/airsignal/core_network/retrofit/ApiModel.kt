@@ -1,5 +1,7 @@
 package app.airsignal.core_network.retrofit
 
+import android.os.Parcel
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 
 class ApiModel {
@@ -24,8 +26,62 @@ class ApiModel {
         @SerializedName("testCode")
         val releaseCode: String,
         @SerializedName("inAppMsg")
-        val inAppMsg: List<String>?
-    )
+        val inAppMsg: Array<InAppMsgItem>?
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as AppVersion
+
+            if (serviceName != other.serviceName) return false
+            if (serviceCode != other.serviceCode) return false
+            if (date != other.date) return false
+            if (releaseName != other.releaseName) return false
+            if (releaseCode != other.releaseCode) return false
+            if (!inAppMsg.contentEquals(other.inAppMsg)) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = serviceName.hashCode()
+            result = 31 * result + serviceCode.hashCode()
+            result = 31 * result + date.hashCode()
+            result = 31 * result + releaseName.hashCode()
+            result = 31 * result + releaseCode.hashCode()
+            result = 31 * result + (inAppMsg?.contentHashCode() ?: 0)
+            return result
+        }
+    }
+
+    // 인앱 메시지 모델
+    data class InAppMsgItem(val img: String, val redirect: String) : Parcelable {
+        // Parcelable 구현
+        constructor(parcel: Parcel) : this(
+            parcel.readString() ?: "",
+            parcel.readString() ?: ""
+        )
+
+        override fun writeToParcel(parcel: Parcel, flags: Int) {
+            parcel.writeString(img)
+            parcel.writeString(redirect)
+        }
+
+        override fun describeContents(): Int {
+            return 0
+        }
+
+        companion object CREATOR : Parcelable.Creator<InAppMsgItem> {
+            override fun createFromParcel(parcel: Parcel): InAppMsgItem {
+                return InAppMsgItem(parcel)
+            }
+
+            override fun newArray(size: Int): Array<InAppMsgItem?> {
+                return arrayOfNulls(size)
+            }
+        }
+    }
 
     /**
      * 메타 데이터 모델
@@ -77,8 +133,6 @@ class ApiModel {
 
     // 주간별 날씨 데이터 모델
     data class WeeklyData(
-//        @SerializedName("today")
-//        val today: LocalDateTime,
         @SerializedName("rainDate")
         val rainDate: String?,
         @SerializedName("tempDate")
@@ -370,9 +424,7 @@ class ApiModel {
         @SerializedName("rainType")
         val rainType: String?,
         @SerializedName("temperature")
-        val temp: Double?,
-
-        )
+        val temp: Double?)
 
     // 4x2 위젯 - 전체 데이터
     data class WidgetData(
@@ -417,14 +469,6 @@ class ApiModel {
         val created: String,
         @SerializedName("modified")
         val modified: String,
-        @SerializedName("title")
-        val title: String,
-        @SerializedName("content")
-        val content: String
-    )
-
-    // 자주 묻는 질문
-    data class FaqItem(
         @SerializedName("title")
         val title: String,
         @SerializedName("content")

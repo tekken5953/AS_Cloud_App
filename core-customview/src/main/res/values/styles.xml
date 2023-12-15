@@ -11,4 +11,10 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:background">@color/theme_view_color</item>
     </style>
+
+    <style name="InAppDialogStyle">
+        <item name="android:windowBackground">#85000000</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:windowFullscreen">false</item>
+    </style>
 </resources>

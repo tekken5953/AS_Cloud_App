@@ -6,7 +6,10 @@ buildscript {
         classpath 'com.google.gms:google-services:4.3.15'
         classpath("com.google.android.gms:oss-licenses-plugin:0.10.6")
     }
+
+    apply from : 'common-ext.gradle'
 }
+
 plugins {
     id 'com.android.application' version '7.3.1' apply false
     id 'com.android.library' version '7.3.1' apply false

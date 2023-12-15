@@ -236,4 +236,5 @@
     <string name="cd_add_device">장치 추가</string>
     <string name="cd_sky_img">날씨 이미지</string>
     <string name="no_result_search_report">현재 지역의 기상 특보가 없습니다.\n전국으로 검색하시겠습니까?</string>
+    <string name="dont_ask_again">일주일 간 보지 않기</string>
 </resources>

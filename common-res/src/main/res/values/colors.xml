@@ -9,5 +9,6 @@
     <color name="theme_text_color">#4F4F4F</color>
     <color name="theme_sub_color">#7C7C7C</color>
     <color name="theme_line_color">#EBEBEB</color>
-
+    <color name="main_blue_color">#00C2FF</color>
+    <color name="main_gray_color">#A7A7A7</color>
 </resources>

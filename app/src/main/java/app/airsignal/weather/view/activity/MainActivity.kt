@@ -1,6 +1,7 @@
 package app.airsignal.weather.view.activity
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -15,11 +16,11 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.animation.*
-import android.webkit.WebSettings
 import android.webkit.WebView
 import android.widget.*
 import android.widget.LinearLayout.LayoutParams
@@ -33,6 +34,9 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.viewpager2.widget.ViewPager2
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import app.address.AddressFromRegex
 import app.airsignal.core_network.ErrorCode.ERROR_API_PROTOCOL
 import app.airsignal.core_network.ErrorCode.ERROR_GET_DATA
@@ -46,11 +50,13 @@ import app.airsignal.core_network.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.core_network.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.core_network.NetworkUtils.modifyCurrentHumid
 import app.airsignal.core_network.NetworkUtils.modifyCurrentWindSpeed
+import app.airsignal.core_network.retrofit.ApiModel
 import app.airsignal.core_repository.BaseRepository
 import app.airsignal.core_viewmodel.GetWeatherViewModel
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
 import app.airsignal.weather.dao.AdapterModel
+import app.airsignal.weather.dao.IgnoredKeyFile.landingPageUrl
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
 import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
 import app.airsignal.weather.dao.RDBLogcat
@@ -84,6 +90,7 @@ import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.core_customview.MakeDoubleDialog
 import app.core_customview.MakeSingleDialog
 import app.core_customview.ShowDialogClass
+import app.core_customview.SnackBarUtils
 import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetAppInfo
 import app.core_databse.db.sp.GetAppInfo.getEntireSun
@@ -101,21 +108,22 @@ import app.core_databse.db.sp.SetAppInfo
 import app.core_databse.db.sp.SetAppInfo.removeSingleKey
 import app.core_databse.db.sp.SetAppInfo.setLandingNotification
 import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
+import app.core_databse.db.sp.SpDao
 import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
+import app.core_databse.db.sp.SpDao.IN_APP_MSG
 import app.location.GetLocation
 import app.utils.*
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.firebase.FirebaseApp
-import com.google.firebase.inappmessaging.FirebaseInAppMessaging
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -143,7 +151,6 @@ class MainActivity
     }
     private val vib by lazy { VibrateUtil(this) }
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
-
     private val dailyWeatherList = ArrayList<AdapterModel.DailyWeatherItem>()
     private val weeklyWeatherList = ArrayList<AdapterModel.WeeklyWeatherItem>()
     private val uvLegendList = ArrayList<AdapterModel.UVLegendItem>()
@@ -158,6 +165,7 @@ class MainActivity
             binding.mainWarningVp
         )
     }
+    private val inAppList = ArrayList<ApiModel.InAppMsgItem>()
     private val warningList = ArrayList<String>()
     private val uvLegendAdapter = UVLegendAdapter(this, uvLegendList)
     private val uvResponseAdapter = UVResponseAdapter(this, uvResponseList)
@@ -180,7 +188,12 @@ class MainActivity
         }
     }
 
+    private val inAppAdapter by lazy {InAppViewPagerAdapter(this@MainActivity, inAppList)}
+
     private val adViewClass by lazy { AdViewClass(this) }
+
+    private lateinit var indicators: Array<ImageView>
+    private var isInAppMsgShow = false
 
     override fun onResume() {
         super.onResume()
@@ -209,11 +222,8 @@ class MainActivity
             initBinding()
             if (savedInstanceState == null) {
                 binding.mainLoadingView.alpha = 1f
-                CoroutineScope(Dispatchers.IO).launch {
-                    FirebaseInAppMessaging.getInstance().triggerEvent("test_trigger")
-                    SubFCM().subTopic("patch")
-                    SubFCM().subTopic("daily")
-                }
+                SubFCM().subTopic("patch")
+                SubFCM().subTopic("daily")
                 changeBackgroundResource(null)
                 window.statusBarColor = getColor(app.common_res.R.color.theme_view_color)
                 window.navigationBarColor = getColor(app.common_res.R.color.theme_view_color)
@@ -222,7 +232,7 @@ class MainActivity
                     isEnabled = false
                     setTransition(R.id.start, R.id.end)
                 }
-                GetLocation(this).createWorkManager()
+                createWorkManager()
             }
 
             adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
@@ -291,6 +301,10 @@ class MainActivity
                 }
             })
 
+            binding.nestedScrollview.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+                binding.nestedFab.alpha = if (scrollY == 0) 0f else 1f
+            }
+
             // 공유하기 버튼 클릭
             binding.mainShareIv.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
@@ -301,7 +315,7 @@ class MainActivity
                             "Share with in English?",
                             "Yes",
                             "With in Korean",
-                            R.color.main_blue_color
+                            app.common_res.R.color.main_blue_color
                         ).apply {
                             this.first.setOnClickListener(object : OnSingleClickListener() {
                                 override fun onSingleClick(v: View?) {
@@ -342,6 +356,115 @@ class MainActivity
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private fun startInAppMsg() {
+        @Suppress("DEPRECATION") val inAppExtraList = intent.getParcelableArrayExtra(IN_APP_MSG)!!.map {it as ApiModel.InAppMsgItem}.toTypedArray()
+        inAppList.clear()
+        inAppExtraList.let {
+            it.forEach { dao ->
+                inAppList.add(dao)
+                inAppAdapter.notifyDataSetChanged()
+            }
+//            val oneHour = (1000 * 60 * 60).toLong()
+//            val sevenDays = (1000 * 60 * 60 * 24 * 7).toLong()
+            val oneHour = (1000).toLong()
+            val sevenDays = (1000 * 10).toLong()
+            if (it.isNotEmpty()) {
+                if (!GetAppInfo.getInAppMsgEnabled(this)) {
+                    if (isTimeToDialog(oneHour)) inAppMsgDialog()
+                } else {
+                    if (isTimeToDialog(sevenDays)) inAppMsgDialog()
+                }
+            }
+        }
+    }
+
+    private fun isTimeToDialog(long: Long): Boolean {
+        return LocalDateTime.now()
+            .isAfter(
+                DataTypeParser.parseLongToLocalDateTime(
+                    GetAppInfo.getInAppMsgTime(
+                        this@MainActivity
+                    ) + (long)
+                )
+            )
+    }
+
+    private fun inAppMsgDialog() {
+        val inAppDialog = AlertDialog.Builder(this, app.core_customview.R.style.InAppDialogStyle)
+        val inAppView = LayoutInflater.from(this)
+            .inflate(R.layout.dialog_in_app_msg,null,false)
+        inAppDialog.setView(inAppView)
+        val inAppAlert = inAppDialog.create()
+        val inAppVp = inAppView.findViewById<ViewPager2>(R.id.inAppMsgVp)
+        val inAppIndicator = inAppView.findViewById<LinearLayout>(R.id.inAppMsgIndicator)
+        val inAppCancel = inAppView.findViewById<TextView>(R.id.inAppMsgCancel)
+        val inAppHide = inAppView.findViewById<TextView>(R.id.inAppMsgHide)
+
+        inAppVp.apply {
+            adapter = inAppAdapter
+            isClickable = true
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            offscreenPageLimit = 3
+
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    if (inAppList.isNotEmpty() && inAppList.size > 1) {
+                        updateIndicators(position)
+                        requestLayout()
+                    }
+                }
+            })
+        }
+
+        inAppCancel.setOnClickListener { inAppAlert.dismiss() }
+
+        inAppHide.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                SetAppInfo.setInAppMsgDenied(this@MainActivity,true)
+
+                withContext(Dispatchers.Main) {
+                    inAppAlert.dismiss()
+                }
+            }
+        }
+
+        if (inAppList.isNotEmpty() && inAppList.size > 1) {
+            inAppIndicator.removeAllViews()
+            createIndicators(inAppVp,inAppIndicator)
+        }
+
+        inAppAlert.show()
+    }
+
+    // 뷰페이저 인디케이터 업데이트
+    private fun updateIndicators(position: Int) {
+        for (i in indicators.indices) {
+            indicators[i].setImageResource(
+                if (i == position) R.drawable.indicator_fill // 선택된 원 이미지
+                else R.drawable.indicator_empty // 선택되지 않은 원 이미지
+            )
+        }
+    }
+    // 뷰페이저 인디케이터 생성
+    private fun createIndicators(viewpager: ViewPager2, indicator: LinearLayout) {
+        indicators = Array(inAppList.size) {
+            val indicatorView = ImageView(this)
+            val params = LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(10, 0, 10, 0)
+            indicatorView.layoutParams = params
+            indicatorView.setImageResource(R.drawable.indicator_empty) // 선택되지 않은 원 이미지
+            indicator.addView(indicatorView)
+            indicatorView
+        }
+        updateIndicators(viewpager.currentItem)
+    }
+
+
     // 공유하기 언어별 대응
     private fun addShareMsg(locale: String) {
         val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
@@ -375,13 +498,11 @@ class MainActivity
                 motionLayout: MotionLayout,
                 startId: Int,
                 endId: Int
-            ) {
-            }
+            ) {}
 
             override fun onTransitionChange(
                 motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float
-            ) {
-            }
+            ) {}
 
             override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
                 binding.mainSwipeLayout.isEnabled = motionLayout.currentState == R.id.start
@@ -389,8 +510,7 @@ class MainActivity
 
             override fun onTransitionTrigger(
                 motionLayout: MotionLayout, triggerId: Int, positive: Boolean, progress: Float
-            ) {
-            }
+            ) {}
         }
         )
     }
@@ -457,10 +577,11 @@ class MainActivity
                     val landingWebView: WebView = landingView.findViewById(R.id.eyeLandingWebView)
                     val landingFab: ImageView = landingView.findViewById(R.id.eyeLandingFab)
                     val notiPerm = RequestPermissionsUtil(this@MainActivity)
-                    val isLandingNoti = isLandingNotification(this@MainActivity)
-                    val url = "http://airsignal.kr/eye_landing.html"
 
                     val dialog = ShowDialogClass(this@MainActivity).setBackPressed(landingBack)
+
+                    val requestOkText = "출시 알림받기 완료 \uD83D\uDE00"
+                    val requestNoText = "제품 출시 알림받기\n광고 및 이벤트성 알림 발송에 동의합니다"
 
                     // 웹뷰 세팅
                     landingWebView.settings.apply {
@@ -479,30 +600,36 @@ class MainActivity
                         landingWebView.pageUp(true)
                     }
 
-                    landingWebView.loadUrl(url)
+                    landingWebView.loadUrl(landingPageUrl)
 
-                    landingBtn.isActivated = !isLandingNoti
-                    landingCheck.visibility = if (isLandingNoti) GONE else VISIBLE
+                    landingBtn.isActivated = landingCheck.isChecked
 
-                    val all = landingText.text.toString()
-                    val span = SpannableStringBuilder(all)
-                    val tx = all.split('\n')[1]
+                    landingCheck.visibility = if (getLandingEnable()) GONE else VISIBLE
+
+                    landingCheck.setOnCheckedChangeListener { _, isChecked ->
+                        landingBtn.isActivated = isChecked
+                    }
+
+                    val span = SpannableStringBuilder(requestNoText)
+                    val tx = requestNoText.split('\n')[1]
                     span.setSpan(
-                        RelativeSizeSpan(0.7f), all.indexOf(tx), all.lastIndex + 1,
+                        RelativeSizeSpan(0.7f),
+                        requestNoText.indexOf(tx),
+                        requestNoText.lastIndex + 1,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
                     span.setSpan(
                         ForegroundColorSpan(Color.parseColor("#90FFFFFF")),
-                        all.indexOf(tx),
-                        all.lastIndex + 1,
+                        requestNoText.indexOf(tx),
+                        requestNoText.lastIndex + 1,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
 
                     landingBack.bringToFront()
-                    if (!isLandingNoti) landingText.text = span else landingText.text = "출시 알림받기 완료 \uD83D\uDE00"
+                    if (!getLandingEnable()) landingText.text = span else landingText.text = requestOkText
 
                     landingBtn.setOnClickListener {
-                        if (!isLandingNoti) {
+                        if (!getLandingEnable()) {
                             if (!notiPerm.isNotificationPermitted()) {
                                 ToastUtils(this@MainActivity).showMessage("알림을 허용해주세요")
                                 notiPerm.requestNotification()
@@ -511,21 +638,42 @@ class MainActivity
                                     val subModal = MakeSingleDialog(this@MainActivity)
                                     subModal.makeDialog(
                                         "출시가 완료되면 알림 메시지를 보낼게요 ${String(Character.toChars(0x1F514))}",
-                                        getColor(R.color.main_blue_color), "확인", false
+                                        app.common_res.R.color.main_blue_color, "확인", false
                                     )
                                     subModal.apply.setOnClickListener {
                                         CoroutineScope(Dispatchers.IO).launch {
                                             setLandingNotification(this@MainActivity,true)
                                         }
                                         landingBtn.isActivated = false
-                                        landingText.text = "출시 알림받기 완료"
+                                        landingText.text = requestOkText
                                         landingCheck.visibility = GONE
                                         subModal.dismiss()
-                                        dialog.dismiss()
                                     }
                                 } else {
                                    ToastUtils(this@MainActivity).showMessage("알림 동의를 체크해주세요!")
                                 }
+                            }
+                        } else {
+                            val cancelModal = MakeDoubleDialog(this@MainActivity)
+                            val make = cancelModal.make("알림받기를 취소하시겠습니까?","네",
+                                "아니오",R.color.red)
+                            make.first.setOnClickListener {
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    setLandingNotification(this@MainActivity,false)
+
+                                    withContext(Dispatchers.Main) {
+                                        SnackBarUtils(landingView,"성공적으로 취소되었습니다",
+                                            getR(R.drawable.alert_off)!!).show()
+                                        landingBtn.isActivated = false
+                                        landingText.text = span
+                                        landingCheck.isChecked = false
+                                        landingCheck.visibility = VISIBLE
+                                        cancelModal.dismiss()
+                                    }
+                                }
+                            }
+                            make.second.setOnClickListener {
+                                cancelModal.dismiss()
                             }
                         }
                     }
@@ -545,6 +693,10 @@ class MainActivity
         } catch (e: NullPointerException) {
             e.printStackTrace()
         }
+    }
+
+    private fun getLandingEnable(): Boolean {
+        return isLandingNotification(this@MainActivity)
     }
 
     // 진동 발생
@@ -582,7 +734,7 @@ class MainActivity
             assets,
             if (isWhite) "spoqa_hansansneo_regular.ttf" else "spoqa_hansansneo_regular.ttf"
         )
-        t1.setTextColor(getColor(if (isWhite) R.color.white else R.color.main_blue_color))
+        t1.setTextColor(getColor(if (isWhite) R.color.white else app.common_res.R.color.main_blue_color))
         t2.setTextColor(getColor(if (isWhite) R.color.sub_white else R.color.sub_black))
         t3.setTextColor(getColor(if (isWhite) R.color.sub_white else R.color.sub_black))
     }
@@ -982,6 +1134,11 @@ class MainActivity
                 binding.mainSkyText.text = skyText
                 // 날씨에 따라 배경화면 변경
                 applyWindowBackground(currentSun, skyText)
+
+                if (!isInAppMsgShow) {
+                    startInAppMsg()
+                    isInAppMsgShow = true
+                }
             }
         } catch (e: Exception) {
             handleApiError(e.localizedMessage ?: e.stackTraceToString())
@@ -1019,11 +1176,6 @@ class MainActivity
 
     private fun isCalledButFail() {
         hideProgressBar()
-//        Toast.makeText(
-//            this@MainActivity,
-//            getString(R.string.error_data_response),
-//            Toast.LENGTH_SHORT
-//        ).show()
     }
 
     // 결과에서 얻은 데이터로 UI 요소를 업데이트
@@ -1363,10 +1515,14 @@ class MainActivity
         currentSun: Int, realtime: app.airsignal.core_network.retrofit.ApiModel.RealTimeData,
         current: app.airsignal.core_network.retrofit.ApiModel.Current, thunder: Double
     ) {
+        val rainType =
+            if (currentIsAfterRealtime(current.currentTime,realtime.forecast)) current.rainType
+            else realtime.rainType
+
         changeTextColorStyle(
             applySkyText(
                 this,
-                current.rainType,
+                rainType,
                 realtime.sky, thunder
             ),
             getIsNight(currentSun)
@@ -1444,7 +1600,6 @@ class MainActivity
         if (isNight && (sky == "맑음" || sky == "구름많음")) {
             changeBackgroundResource(R.drawable.main_bg_night)
             binding.mainSkyStarImg.setImageDrawable(getR(R.drawable.bg_nightsky))
-            changeTextColorStyle(sky, true)
         } else {
             binding.mainSkyStarImg.setImageDrawable(null)
             val backgroundResource = when (sky) {
@@ -1912,6 +2067,7 @@ class MainActivity
             window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
 
+        LoggerUtil().d("testtest","sky is $sky")
         // 주어진 조건에 따라 텍스트 색상 변경
         if (!isNight) {
             when (sky) {
@@ -2069,5 +2225,17 @@ class MainActivity
         } ?: apply {
             (view as View).background = null
         }
+    }
+
+    private fun createWorkManager() {
+        val workManager = WorkManager.getInstance(this)
+        val workRequest =
+            PeriodicWorkRequest.Builder(app.airsignal.weather.firebase.fcm.GPSWorker::class.java, 30, TimeUnit.MINUTES)
+                .build()
+
+        workManager.enqueueUniquePeriodicWork(
+            SpDao.CHECK_GPS_BACKGROUND,
+            ExistingPeriodicWorkPolicy.KEEP, workRequest
+        )
     }
 }
