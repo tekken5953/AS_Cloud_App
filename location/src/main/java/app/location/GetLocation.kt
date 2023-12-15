@@ -8,10 +8,6 @@ import android.location.*
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.provider.Settings
-import android.util.Log
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
 import app.address.AddressFromRegex
 import app.core_databse.db.room.model.GpsEntity
 import app.core_databse.db.room.repository.GpsRepository
@@ -23,7 +19,6 @@ import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -148,18 +143,6 @@ class GetLocation(private val context: Context) {
     fun isNetworkProviderConnected(): Boolean {
         val lm = context.getSystemService(LOCATION_SERVICE) as LocationManager
         return lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-    }
-
-    fun createWorkManager() {
-        val workManager = WorkManager.getInstance(context)
-        val workRequest =
-            PeriodicWorkRequest.Builder(GPSWorker::class.java, 30, TimeUnit.MINUTES)
-                .build()
-
-        workManager.enqueueUniquePeriodicWork(
-            CHECK_GPS_BACKGROUND,
-            ExistingPeriodicWorkPolicy.KEEP, workRequest
-        )
     }
 }
 

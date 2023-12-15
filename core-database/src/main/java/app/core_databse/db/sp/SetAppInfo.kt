@@ -4,7 +4,8 @@ import android.content.Context
 import app.core_databse.db.SharedPreferenceManager
 import app.core_databse.db.sp.SpDao.INITIALIZED_LOC_PERMISSION
 import app.core_databse.db.sp.SpDao.INITIALIZED_NOTI_PERMISSION
-import app.core_databse.db.sp.SpDao.IN_APP_MSG_NAME
+import app.core_databse.db.sp.SpDao.IN_APP_MSG
+import app.core_databse.db.sp.SpDao.IN_APP_MSG_TIME
 import app.core_databse.db.sp.SpDao.IS_INIT_BACK_LOC_PERMISSION
 import app.core_databse.db.sp.SpDao.IS_PERMED_BACK_LOG
 import app.core_databse.db.sp.SpDao.LANDING_NOTIFICATION
@@ -125,6 +126,7 @@ object SetAppInfo {
     }
 
     fun setInAppMsgDenied(context: Context, enabled: Boolean) {
-        SharedPreferenceManager(context).setBoolean(IN_APP_MSG_NAME, enabled)
+        SharedPreferenceManager(context).setBoolean(IN_APP_MSG, enabled)
+        SharedPreferenceManager(context).setLong(IN_APP_MSG_TIME, System.currentTimeMillis())
     }
 }

@@ -1111,14 +1111,13 @@
 
             <ImageButton
                 android:id="@+id/nested_fab"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="15dp"
                 android:layout_marginBottom="15dp"
                 android:background="@drawable/fab_bg"
                 android:contentDescription="@string/cd_icon_up"
-                android:src="@drawable/scroll_to_top"
-                app:tint="@color/theme_text_color"
+                android:src="@drawable/scroll_to_top_src"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.motion.widget.MotionLayout>

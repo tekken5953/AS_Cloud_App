@@ -2,11 +2,12 @@ package app.airsignal.weather.util
 
 import android.app.Activity
 import android.content.Intent
+import app.airsignal.core_network.retrofit.ApiModel
 import app.airsignal.weather.view.activity.LoginActivity
 import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.activity.PermissionActivity
 import app.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
-import app.core_databse.db.sp.SpDao.IN_APP_MSG_NAME
+import app.core_databse.db.sp.SpDao.IN_APP_MSG
 import kotlin.system.exitProcess
 
 /**
@@ -24,13 +25,13 @@ class EnterPageUtil(private val activity: Activity) {
      *
      * @param sort 간편로그인의 분류 ex) "카카오"
      */
-    fun toMain(sort: String?, inAppMsg: List<String>?) {
+    fun toMain(sort: String?, inAppMsg: Array<ApiModel.InAppMsgItem>?) {
         sort?.let { setUserLoginPlatform(activity, it) }
         val intent = Intent(activity, MainActivity::class.java)
         activity.run {
             System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
-            inAppMsg?.let {
-                intent.putExtra(IN_APP_MSG_NAME, it.toTypedArray())
+            inAppMsg.let {
+                intent.putExtra(IN_APP_MSG, it)
             }
             this.startActivity(intent)
             this.overridePendingTransition(0,0)

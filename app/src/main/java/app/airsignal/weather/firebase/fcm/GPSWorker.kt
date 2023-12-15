@@ -1,8 +1,10 @@
-package app.location
+package app.airsignal.weather.firebase.fcm
 
 import android.content.Context
+import android.os.PowerManager
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import app.location.GetLocation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -17,12 +19,18 @@ class GPSWorker(private val context: Context, params: WorkerParameters)
     override suspend fun doWork(): Result {
         return try {
             withContext(Dispatchers.Default) {
-                GetLocation(context).getGpsInBackground()
+                if (isDeviceInDozeMode(context)) WidgetFCM().sendFCMMessage()
+                else GetLocation(context).getGpsInBackground()
             }
             Result.success()
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure()
         }
+    }
+
+    private fun isDeviceInDozeMode(context: Context): Boolean {
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager?
+        return powerManager?.isDeviceIdleMode == true
     }
 }

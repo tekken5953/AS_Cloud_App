@@ -2,62 +2,69 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/inAppMsgFrame"
+        android:layout_width="320dp"
+        android:layout_height="435dp"
+        android:layout_centerHorizontal="true"
+        android:background="@android:color/transparent">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/inAppMsgVp"
+            android:layout_width="320dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:nestedScrollingEnabled="true"
+            android:animateLayoutChanges="true" />
+
+        <LinearLayout
+            android:id="@+id/inAppMsgIndicator"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="10dp"
+            android:clickable="false"
+            android:gravity="center"
+            android:orientation="horizontal" />
+    </FrameLayout>
 
     <TableRow
         android:id="@+id/inAppMsgTr"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/inAppMsgVp"
-        android:layout_marginBottom="5dp"
-        android:gravity="end|center_vertical">
+        android:layout_width="320dp"
+        android:layout_height="55dp"
+        android:layout_below="@+id/inAppMsgFrame"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/in_app_msg_button_bg"
+        android:gravity="center_vertical">
+
         <TextView
-            android:id="@+id/inAppMsgNever"
-            style="@style/basicMediumTextView"
-            android:layout_marginEnd="12dp"
+            android:id="@+id/inAppMsgHide"
+            style="@style/basicTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
             android:text="@string/dont_ask_again"
-            android:textColor="@color/sub_white"
-            android:textSize="14sp"/>
+            android:background="?android:attr/selectableItemBackground"
+            android:textColor="#2B2B2B"
+            android:textSize="15sp" />
 
-        <ImageView
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#602B2B2B" />
+
+        <TextView
             android:id="@+id/inAppMsgCancel"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/cancel"
-            android:background="@drawable/in_app_cancel_bg"
-            android:layout_marginEnd="3dp"
-            app:tint="@color/white"
-            android:padding="3dp"/>
+            style="@style/basicTextView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:text="@string/cancel"
+            android:background="?android:attr/selectableItemBackground"
+            android:textColor="#2B2B2B"
+            android:textSize="15sp" />
     </TableRow>
-
-    <TextView
-        android:id="@+id/inAppMsgGuide"
-        android:layout_width="320dp"
-        android:layout_height="400dp"
-        android:visibility="gone"
-        android:gravity="center"/>
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/inAppMsgVp"
-        android:layout_width="320dp"
-        android:layout_height="400dp"
-        android:layout_centerInParent="true"
-        android:layout_below="@+id/inAppMsgTr"
-        android:animateLayoutChanges="true"
-        android:background="@drawable/in_app_vp_bg"
-        android:backgroundTint="@color/white"/>
-
-    <LinearLayout
-        android:id="@+id/inAppMsgIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/inAppMsgVp"
-        android:gravity="center"
-        android:layout_alignStart="@+id/inAppMsgVp"
-        android:layout_alignEnd="@+id/inAppMsgVp"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal"
-        android:clickable="false"/>
 
 </RelativeLayout>

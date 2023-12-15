@@ -3,9 +3,11 @@ package app.airsignal.weather.view.activity
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import app.airsignal.core_network.ErrorCode.ERROR_NETWORK
 import app.airsignal.core_network.ErrorCode.ERROR_SERVER_CONNECTING
+import app.airsignal.core_network.retrofit.ApiModel
 import app.airsignal.core_repository.BaseRepository
 import app.airsignal.core_viewmodel.GetAppVersionViewModel
 import app.airsignal.weather.R
@@ -67,7 +69,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     }
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
-    private fun enterPage(inAppMsgList: List<String>?) {
+    private fun enterPage(inAppMsgList: Array<ApiModel.InAppMsgItem>?) {
         if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted())
             EnterPageUtil(this@SplashActivity).toMain(getUserLoginPlatform(this), inAppMsgList)
         else EnterPageUtil(this@SplashActivity).toPermission()
@@ -85,7 +87,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                 binding.splashPB.visibility = View.GONE
                                 val versionName = GetSystemInfo.getApplicationVersionName(this)
                                 if ((ver.data.serviceName == versionName) || (ver.data.releaseName == versionName)) {
-                                    enterPage(ver.data.inAppMsg)
+                                    val inAppArray = ver.data.inAppMsg
+                                    enterPage(inAppArray)
                                 } else {
                                     MakeSingleDialog(this)
                                         .makeDialog(getString(R.string.not_latest_go_to_store),

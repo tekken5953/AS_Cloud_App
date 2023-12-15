@@ -69,6 +69,7 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             "as-eye" -> "AS-EYE" to "about:blank"
             "termsOfService" -> getString(R.string.term_of_services) to termsOfServiceURL
             "dataUsage" -> getString(R.string.data_usages) to privacyPolicyURI
+            "inAppLink" -> "공지사항" to intent.extras!!.getString("redirect",null)
             else -> "" to "about:blank"
         }
 

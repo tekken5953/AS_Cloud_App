@@ -9,6 +9,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.widget.Toast
+import app.airsignal.core_network.retrofit.ApiModel
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityPermissionBinding
@@ -26,7 +27,7 @@ import app.core_databse.db.sp.SetAppInfo.setUserNoti
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.perm.FirstLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.sp.SpDao.IN_APP_MSG_NAME
+import app.core_databse.db.sp.SpDao.IN_APP_MSG
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PermissionActivity :
@@ -38,7 +39,7 @@ class PermissionActivity :
     override fun onResume() {
         super.onResume()
         if (perm.isLocationPermitted()) {   // 위치 서비스 이용 가능?
-            val inAppMsgList = intent.extras?.getStringArray(IN_APP_MSG_NAME)?.toList()
+            @Suppress("DEPRECATION") val inAppExtraList = intent.getParcelableArrayExtra(IN_APP_MSG)!!.map {it as ApiModel.InAppMsgItem}.toTypedArray()
             if (!perm.isNotificationPermitted()) {  // 알림 서비스 이용 가능?
                 val initNotiPermission = getInitNotiPermission(this)
                 if (initNotiPermission == "") { // 알림 서비스 권한 호출이 처음?
@@ -49,12 +50,12 @@ class PermissionActivity :
                         this, getString(R.string.noti_always_can),
                         Toast.LENGTH_SHORT
                     ).show()
-                    enter.toMain(getUserLoginPlatform(this),inAppMsgList)
+                    enter.toMain(getUserLoginPlatform(this),inAppExtraList)
                 }
             } else {
                 setUserNoti(this, IgnoredKeyFile.notiEnable, true)
                 setUserNoti(this, IgnoredKeyFile.notiVibrate, true)
-                enter.toMain(getUserLoginPlatform(this),inAppMsgList)
+                enter.toMain(getUserLoginPlatform(this),inAppExtraList)
             }
         }
     }

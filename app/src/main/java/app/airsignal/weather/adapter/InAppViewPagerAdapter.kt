@@ -1,32 +1,25 @@
 package app.airsignal.weather.adapter
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.net.Uri
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.content.Intent
+import android.graphics.Outline
+import android.os.Build
+import android.view.*
 import android.webkit.WebView
-import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
+import app.airsignal.core_network.retrofit.ApiModel
 import app.airsignal.weather.R
-import app.utils.LoggerUtil
-import com.bumptech.glide.Glide
+import app.airsignal.weather.view.activity.WebURLActivity
 
 class InAppViewPagerAdapter(
     private val context: Activity,
-    list: ArrayList<String>,
+    list: ArrayList<ApiModel.InAppMsgItem>,
 ) :
     RecyclerView.Adapter<InAppViewPagerAdapter.ViewHolder>() {
     private val mList = list
-
-    private lateinit var onClickListener: OnItemClickListener
-
-    interface OnItemClickListener {
-        fun onItemClick(v: View, position: Int)
-    }
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -37,9 +30,6 @@ class InAppViewPagerAdapter(
         return ViewHolder(view)
     }
 
-    fun setOnItemClickListener(listener: OnItemClickListener) {
-        this.onClickListener = listener
-    }
 
     override fun getItemCount(): Int = mList.size
 
@@ -48,19 +38,37 @@ class InAppViewPagerAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val imageView = view.findViewById<ImageView>(R.id.viewPagerInAppImage)
+        private val webView = view.findViewById<WebView>(R.id.viewPagerInAppWebView)
+        private val linear = view.findViewById<LinearLayout>(R.id.viewPagerInAppLinear)
 
-        fun bind(dao: String) {
-            Glide.with(context).load(Uri.parse(dao)).into(imageView)
-
-            itemView.setOnClickListener {
-                if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
-                    try {
-                        onClickListener.onItemClick(it, bindingAdapterPosition)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+        @SuppressLint("ClickableViewAccessibility")
+        fun bind(dao: ApiModel.InAppMsgItem) {
+            if (Build.VERSION.SDK_INT < 31) {
+                linear.outlineProvider = object : ViewOutlineProvider() {
+                    override fun getOutline(view: View?, outline: Outline?) {
+                        outline?.setRect(0, 0, view?.width ?: 0, view?.height ?: 0)
                     }
                 }
+            } else {
+                linear.clipToOutline = true
+            }
+
+            webView.settings.apply {
+                useWideViewPort = true // 화면 맞추기
+            }
+
+            webView.loadUrl(dao.img)
+//            Glide.with(context).load(Uri.parse(dao)).into(imageView)
+
+            webView.setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_UP) {
+                    val intent = Intent(context, WebURLActivity::class.java)
+                    intent.putExtra("appBar",false)
+                    intent.putExtra("sort","inAppLink")
+                    intent.putExtra("redirect",dao.redirect)
+                    context.startActivity(intent)
+                    true
+                } else { false }
             }
         }
     }

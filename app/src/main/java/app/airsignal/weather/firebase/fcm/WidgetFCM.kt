@@ -1,7 +1,5 @@
 package app.airsignal.weather.firebase.fcm
 
-import android.content.Context
-import android.os.PowerManager
 import app.airsignal.weather.dao.IgnoredKeyFile.fcmServerKey
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
@@ -58,11 +56,6 @@ class WidgetFCM {
                 }
             }
         }
-    }
-
-    fun isDeviceInDozeMode(context: Context): Boolean {
-        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager?
-        return powerManager?.isDeviceIdleMode == true
     }
 
 //    private fun getOauthAccessToken(): String? {

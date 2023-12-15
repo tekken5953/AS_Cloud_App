@@ -30,5 +30,6 @@ object SpDao {
     const val TEXT_SCALE_BIG = "big"
     const val TEXT_SCALE_SMALL = "small"
     const val TEXT_SCALE_DEFAULT = "default"
-    const val IN_APP_MSG_NAME = "inAppMsg"
+    const val IN_APP_MSG = "inAppMsg"
+    const val IN_APP_MSG_TIME = "inAppMsgTime"
 }

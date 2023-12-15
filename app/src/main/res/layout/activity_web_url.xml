@@ -53,12 +53,14 @@
 
         <ImageView
             android:id="@+id/webUrlTop"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/arrow_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/scroll_to_top_src"
+            app:tint="@color/white"
             android:background="@drawable/fab_bg"
             android:padding="8dp"
             android:clickable="true"
+            android:visibility="gone"
             android:contentDescription="@string/cd_icon_up"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

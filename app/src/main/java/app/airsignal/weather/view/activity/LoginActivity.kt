@@ -17,9 +17,6 @@ import app.airsignal.weather.login.NaverLogin
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 class LoginActivity

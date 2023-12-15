@@ -15,8 +15,8 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
-import android.text.style.UnderlineSpan
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -34,6 +34,9 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.viewpager2.widget.ViewPager2
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import app.address.AddressFromRegex
 import app.airsignal.core_network.ErrorCode.ERROR_API_PROTOCOL
 import app.airsignal.core_network.ErrorCode.ERROR_GET_DATA
@@ -47,6 +50,7 @@ import app.airsignal.core_network.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.core_network.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.core_network.NetworkUtils.modifyCurrentHumid
 import app.airsignal.core_network.NetworkUtils.modifyCurrentWindSpeed
+import app.airsignal.core_network.retrofit.ApiModel
 import app.airsignal.core_repository.BaseRepository
 import app.airsignal.core_viewmodel.GetWeatherViewModel
 import app.airsignal.weather.R
@@ -104,8 +108,9 @@ import app.core_databse.db.sp.SetAppInfo
 import app.core_databse.db.sp.SetAppInfo.removeSingleKey
 import app.core_databse.db.sp.SetAppInfo.setLandingNotification
 import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
+import app.core_databse.db.sp.SpDao
 import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
-import app.core_databse.db.sp.SpDao.IN_APP_MSG_NAME
+import app.core_databse.db.sp.SpDao.IN_APP_MSG
 import app.location.GetLocation
 import app.utils.*
 import com.google.android.gms.ads.AdView
@@ -118,6 +123,7 @@ import java.io.IOException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -159,7 +165,7 @@ class MainActivity
             binding.mainWarningVp
         )
     }
-    private val inAppList = ArrayList<String>()
+    private val inAppList = ArrayList<ApiModel.InAppMsgItem>()
     private val warningList = ArrayList<String>()
     private val uvLegendAdapter = UVLegendAdapter(this, uvLegendList)
     private val uvResponseAdapter = UVResponseAdapter(this, uvResponseList)
@@ -226,7 +232,7 @@ class MainActivity
                     isEnabled = false
                     setTransition(R.id.start, R.id.end)
                 }
-                GetLocation(this).createWorkManager()
+                createWorkManager()
             }
 
             adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
@@ -295,6 +301,10 @@ class MainActivity
                 }
             })
 
+            binding.nestedScrollview.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+                binding.nestedFab.alpha = if (scrollY == 0) 0f else 1f
+            }
+
             // 공유하기 버튼 클릭
             binding.mainShareIv.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
@@ -348,19 +358,36 @@ class MainActivity
 
     @SuppressLint("NotifyDataSetChanged")
     private fun startInAppMsg() {
-        val inAppExtraList = intent.extras?.getStringArray(IN_APP_MSG_NAME)
+        @Suppress("DEPRECATION") val inAppExtraList = intent.getParcelableArrayExtra(IN_APP_MSG)!!.map {it as ApiModel.InAppMsgItem}.toTypedArray()
         inAppList.clear()
-        inAppExtraList?.let {
+        inAppExtraList.let {
             it.forEach { dao ->
                 inAppList.add(dao)
                 inAppAdapter.notifyDataSetChanged()
             }
+//            val oneHour = (1000 * 60 * 60).toLong()
+//            val sevenDays = (1000 * 60 * 60 * 24 * 7).toLong()
+            val oneHour = (1000).toLong()
+            val sevenDays = (1000 * 10).toLong()
             if (it.isNotEmpty()) {
                 if (!GetAppInfo.getInAppMsgEnabled(this)) {
-                    inAppMsgDialog()
+                    if (isTimeToDialog(oneHour)) inAppMsgDialog()
+                } else {
+                    if (isTimeToDialog(sevenDays)) inAppMsgDialog()
                 }
             }
         }
+    }
+
+    private fun isTimeToDialog(long: Long): Boolean {
+        return LocalDateTime.now()
+            .isAfter(
+                DataTypeParser.parseLongToLocalDateTime(
+                    GetAppInfo.getInAppMsgTime(
+                        this@MainActivity
+                    ) + (long)
+                )
+            )
     }
 
     private fun inAppMsgDialog() {
@@ -371,32 +398,29 @@ class MainActivity
         val inAppAlert = inAppDialog.create()
         val inAppVp = inAppView.findViewById<ViewPager2>(R.id.inAppMsgVp)
         val inAppIndicator = inAppView.findViewById<LinearLayout>(R.id.inAppMsgIndicator)
-        val inAppCancel = inAppView.findViewById<ImageView>(R.id.inAppMsgCancel)
-        val inAppNever = inAppView.findViewById<TextView>(R.id.inAppMsgNever)
-
-        val span = SpannableStringBuilder("다시 보지 않기")
-        span.setSpan(UnderlineSpan(),0,span.length,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-        inAppNever.text = span
+        val inAppCancel = inAppView.findViewById<TextView>(R.id.inAppMsgCancel)
+        val inAppHide = inAppView.findViewById<TextView>(R.id.inAppMsgHide)
 
         inAppVp.apply {
             adapter = inAppAdapter
             isClickable = true
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            offscreenPageLimit = 2
+            offscreenPageLimit = 3
 
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    updateIndicators(position)
-                    requestLayout()
+                    if (inAppList.isNotEmpty() && inAppList.size > 1) {
+                        updateIndicators(position)
+                        requestLayout()
+                    }
                 }
             })
         }
 
         inAppCancel.setOnClickListener { inAppAlert.dismiss() }
 
-        inAppNever.setOnClickListener {
+        inAppHide.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 SetAppInfo.setInAppMsgDenied(this@MainActivity,true)
 
@@ -406,7 +430,7 @@ class MainActivity
             }
         }
 
-        if (inAppList.size > 1) {
+        if (inAppList.isNotEmpty() && inAppList.size > 1) {
             inAppIndicator.removeAllViews()
             createIndicators(inAppVp,inAppIndicator)
         }
@@ -474,13 +498,11 @@ class MainActivity
                 motionLayout: MotionLayout,
                 startId: Int,
                 endId: Int
-            ) {
-            }
+            ) {}
 
             override fun onTransitionChange(
                 motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float
-            ) {
-            }
+            ) {}
 
             override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
                 binding.mainSwipeLayout.isEnabled = motionLayout.currentState == R.id.start
@@ -488,8 +510,7 @@ class MainActivity
 
             override fun onTransitionTrigger(
                 motionLayout: MotionLayout, triggerId: Int, positive: Boolean, progress: Float
-            ) {
-            }
+            ) {}
         }
         )
     }
@@ -556,7 +577,6 @@ class MainActivity
                     val landingWebView: WebView = landingView.findViewById(R.id.eyeLandingWebView)
                     val landingFab: ImageView = landingView.findViewById(R.id.eyeLandingFab)
                     val notiPerm = RequestPermissionsUtil(this@MainActivity)
-                    val isLandingNoti = isLandingNotification(this@MainActivity)
 
                     val dialog = ShowDialogClass(this@MainActivity).setBackPressed(landingBack)
 
@@ -583,7 +603,8 @@ class MainActivity
                     landingWebView.loadUrl(landingPageUrl)
 
                     landingBtn.isActivated = landingCheck.isChecked
-                    landingCheck.visibility = if (isLandingNoti) GONE else VISIBLE
+
+                    landingCheck.visibility = if (getLandingEnable()) GONE else VISIBLE
 
                     landingCheck.setOnCheckedChangeListener { _, isChecked ->
                         landingBtn.isActivated = isChecked
@@ -605,10 +626,10 @@ class MainActivity
                     )
 
                     landingBack.bringToFront()
-                    if (!isLandingNoti) landingText.text = span else landingText.text = requestOkText
+                    if (!getLandingEnable()) landingText.text = span else landingText.text = requestOkText
 
                     landingBtn.setOnClickListener {
-                        if (!isLandingNoti) {
+                        if (!getLandingEnable()) {
                             if (!notiPerm.isNotificationPermitted()) {
                                 ToastUtils(this@MainActivity).showMessage("알림을 허용해주세요")
                                 notiPerm.requestNotification()
@@ -642,9 +663,10 @@ class MainActivity
 
                                     withContext(Dispatchers.Main) {
                                         SnackBarUtils(landingView,"성공적으로 취소되었습니다",
-                                            getR(R.drawable.alert_off)!!)
+                                            getR(R.drawable.alert_off)!!).show()
                                         landingBtn.isActivated = false
                                         landingText.text = span
+                                        landingCheck.isChecked = false
                                         landingCheck.visibility = VISIBLE
                                         cancelModal.dismiss()
                                     }
@@ -671,6 +693,10 @@ class MainActivity
         } catch (e: NullPointerException) {
             e.printStackTrace()
         }
+    }
+
+    private fun getLandingEnable(): Boolean {
+        return isLandingNotification(this@MainActivity)
     }
 
     // 진동 발생
@@ -2199,5 +2225,17 @@ class MainActivity
         } ?: apply {
             (view as View).background = null
         }
+    }
+
+    private fun createWorkManager() {
+        val workManager = WorkManager.getInstance(this)
+        val workRequest =
+            PeriodicWorkRequest.Builder(app.airsignal.weather.firebase.fcm.GPSWorker::class.java, 30, TimeUnit.MINUTES)
+                .build()
+
+        workManager.enqueueUniquePeriodicWork(
+            SpDao.CHECK_GPS_BACKGROUND,
+            ExistingPeriodicWorkPolicy.KEEP, workRequest
+        )
     }
 }
