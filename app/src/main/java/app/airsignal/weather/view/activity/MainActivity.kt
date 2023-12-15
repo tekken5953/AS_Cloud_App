@@ -383,7 +383,7 @@ class MainActivity
             adapter = inAppAdapter
             isClickable = true
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            offscreenPageLimit = 3
+            offscreenPageLimit = 2
 
             registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
@@ -406,7 +406,11 @@ class MainActivity
             }
         }
 
-        createIndicators(inAppVp,inAppIndicator)
+        if (inAppList.size > 1) {
+            inAppIndicator.removeAllViews()
+            createIndicators(inAppVp,inAppIndicator)
+        }
+
         inAppAlert.show()
     }
 
@@ -421,7 +425,6 @@ class MainActivity
     }
     // 뷰페이저 인디케이터 생성
     private fun createIndicators(viewpager: ViewPager2, indicator: LinearLayout) {
-        indicator.removeAllViews()
         indicators = Array(inAppList.size) {
             val indicatorView = ImageView(this)
             val params = LayoutParams(
@@ -557,6 +560,9 @@ class MainActivity
 
                     val dialog = ShowDialogClass(this@MainActivity).setBackPressed(landingBack)
 
+                    val requestOkText = "출시 알림받기 완료 \uD83D\uDE00"
+                    val requestNoText = "제품 출시 알림받기\n광고 및 이벤트성 알림 발송에 동의합니다"
+
                     // 웹뷰 세팅
                     landingWebView.settings.apply {
                         javaScriptEnabled = false // 자바스크립트 허용
@@ -583,22 +589,23 @@ class MainActivity
                         landingBtn.isActivated = isChecked
                     }
 
-                    val all = landingText.text.toString()
-                    val span = SpannableStringBuilder(all)
-                    val tx = all.split('\n')[1]
+                    val span = SpannableStringBuilder(requestNoText)
+                    val tx = requestNoText.split('\n')[1]
                     span.setSpan(
-                        RelativeSizeSpan(0.7f), all.indexOf(tx), all.lastIndex + 1,
+                        RelativeSizeSpan(0.7f),
+                        requestNoText.indexOf(tx),
+                        requestNoText.lastIndex + 1,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
                     span.setSpan(
                         ForegroundColorSpan(Color.parseColor("#90FFFFFF")),
-                        all.indexOf(tx),
-                        all.lastIndex + 1,
+                        requestNoText.indexOf(tx),
+                        requestNoText.lastIndex + 1,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
 
                     landingBack.bringToFront()
-                    if (!isLandingNoti) landingText.text = span else landingText.text = "출시 알림받기 완료 \uD83D\uDE00"
+                    if (!isLandingNoti) landingText.text = span else landingText.text = requestOkText
 
                     landingBtn.setOnClickListener {
                         if (!isLandingNoti) {
@@ -617,10 +624,9 @@ class MainActivity
                                             setLandingNotification(this@MainActivity,true)
                                         }
                                         landingBtn.isActivated = false
-                                        landingText.text = "출시 알림받기 완료"
+                                        landingText.text = requestOkText
                                         landingCheck.visibility = GONE
                                         subModal.dismiss()
-                                        landingView.invalidate()
                                     }
                                 } else {
                                    ToastUtils(this@MainActivity).showMessage("알림 동의를 체크해주세요!")
@@ -637,8 +643,10 @@ class MainActivity
                                     withContext(Dispatchers.Main) {
                                         SnackBarUtils(landingView,"성공적으로 취소되었습니다",
                                             getR(R.drawable.alert_off)!!)
+                                        landingBtn.isActivated = false
+                                        landingText.text = span
+                                        landingCheck.visibility = VISIBLE
                                         cancelModal.dismiss()
-                                        landingView.invalidate()
                                     }
                                 }
                             }
@@ -1142,11 +1150,6 @@ class MainActivity
 
     private fun isCalledButFail() {
         hideProgressBar()
-//        Toast.makeText(
-//            this@MainActivity,
-//            getString(R.string.error_data_response),
-//            Toast.LENGTH_SHORT
-//        ).show()
     }
 
     // 결과에서 얻은 데이터로 UI 요소를 업데이트
@@ -1486,10 +1489,14 @@ class MainActivity
         currentSun: Int, realtime: app.airsignal.core_network.retrofit.ApiModel.RealTimeData,
         current: app.airsignal.core_network.retrofit.ApiModel.Current, thunder: Double
     ) {
+        val rainType =
+            if (currentIsAfterRealtime(current.currentTime,realtime.forecast)) current.rainType
+            else realtime.rainType
+
         changeTextColorStyle(
             applySkyText(
                 this,
-                current.rainType,
+                rainType,
                 realtime.sky, thunder
             ),
             getIsNight(currentSun)
@@ -1567,7 +1574,6 @@ class MainActivity
         if (isNight && (sky == "맑음" || sky == "구름많음")) {
             changeBackgroundResource(R.drawable.main_bg_night)
             binding.mainSkyStarImg.setImageDrawable(getR(R.drawable.bg_nightsky))
-            changeTextColorStyle(sky, true)
         } else {
             binding.mainSkyStarImg.setImageDrawable(null)
             val backgroundResource = when (sky) {
@@ -2035,6 +2041,7 @@ class MainActivity
             window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
 
+        LoggerUtil().d("testtest","sky is $sky")
         // 주어진 조건에 따라 텍스트 색상 변경
         if (!isNight) {
             when (sky) {

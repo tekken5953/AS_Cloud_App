@@ -23,6 +23,7 @@ import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -30,16 +31,16 @@ class GetLocation(private val context: Context) {
 
     /** 현재 주소를 불러옵니다 **/
     fun getAddress(lat: Double, lng: Double): String {
+        val appContext = context.applicationContext
         return try {
-            val geocoder = Geocoder(context, GetSystemInfo.getLocale(context))
-
+            val geocoder = Geocoder(appContext, GetSystemInfo.getLocale(appContext))
             @Suppress("DEPRECATION")
             val address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             val fullAddr = address[0].getAddressLine(0)
             CoroutineScope(Dispatchers.IO).launch {
                 val notiAddr = AddressFromRegex(fullAddr).getNotificationAddress()
-                setNotificationAddress(context, notiAddr)
-                setUserLastAddr(context, fullAddr)
+                setNotificationAddress(appContext, notiAddr)
+                setUserLastAddr(appContext, fullAddr)
             }
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
@@ -106,7 +107,6 @@ class GetLocation(private val context: Context) {
                 val longitude = location.longitude
                 val addr = getAddress(latitude,longitude)
                 updateDatabaseWithLocationData(latitude,longitude,addr)
-                Log.d("testtest","location changed in background : $addr")
             }
             override fun onProviderEnabled(provider: String) {
             }

@@ -3,6 +3,8 @@ package app.location
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * @author : Lee Jae Young
@@ -14,7 +16,9 @@ class GPSWorker(private val context: Context, params: WorkerParameters)
     /** 워크 매니저 백그라운드 반복 **/
     override suspend fun doWork(): Result {
         return try {
-            GetLocation(context).getGpsInBackground()
+            withContext(Dispatchers.Default) {
+                GetLocation(context).getGpsInBackground()
+            }
             Result.success()
         } catch (e: Exception) {
             e.printStackTrace()

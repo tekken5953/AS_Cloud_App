@@ -1,7 +1,8 @@
 package app.airsignal.weather.firebase.fcm
 
+import android.content.Context
+import android.os.PowerManager
 import app.airsignal.weather.dao.IgnoredKeyFile.fcmServerKey
-import com.google.auth.oauth2.GoogleCredentials
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +15,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
 class WidgetFCM {
-    fun sendFCMMessage(sort: String, appWidgetId: Int) {
+    fun sendFCMMessage() {
         CoroutineScope(Dispatchers.Default).launch {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                 CoroutineScope(Dispatchers.Default).launch {
@@ -34,8 +35,6 @@ class WidgetFCM {
                         // 메시지 데이터 추가 (원하는 내용으로 수정)
                         val data = JSONObject()
                         data.put("sort", "widget")
-                        data.put("widgetId", appWidgetId)
-                        data.put("layout", sort)
                         message.put("data", data)
 
                         // OkHttpClient 생성
@@ -59,6 +58,11 @@ class WidgetFCM {
                 }
             }
         }
+    }
+
+    fun isDeviceInDozeMode(context: Context): Boolean {
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager?
+        return powerManager?.isDeviceIdleMode == true
     }
 
 //    private fun getOauthAccessToken(): String? {

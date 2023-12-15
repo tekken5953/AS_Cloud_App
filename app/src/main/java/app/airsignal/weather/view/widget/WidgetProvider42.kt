@@ -6,13 +6,11 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.firebase.fcm.WidgetFCM
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
@@ -41,8 +39,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     ) {
         for (appWidgetId in appWidgetIds) {
             try {
-                logger.i(TAG,"update")
-                processDozeMode(context,appWidgetId)
+                processUpdate(context,appWidgetId)
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
                     "Error",
@@ -60,13 +57,12 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         )
         if (context != null) {
             if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                logger.i(TAG,"receive ${intent.action}")
                 if (intent.action == REFRESH_BUTTON_CLICKED_42) {
                     if (isRefreshable(context,"42")) {
                         if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
                             requestPermissions(context,"42",appWidgetId)
                         } else {
-                            processDozeMode(context,appWidgetId)
+                            processUpdate(context,appWidgetId)
                         } 
                     } else {
                         Toast.makeText(context.applicationContext, "갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
@@ -74,11 +70,6 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 }
             }
         }
-    }
-
-    private fun processDozeMode(context: Context, appWidgetId: Int) {
-        if (isDeviceInDozeMode(context)) WidgetFCM().sendFCMMessage("42", appWidgetId)
-        else processUpdate(context,appWidgetId)
     }
 
     fun processUpdate(context: Context, appWidgetId: Int) {

@@ -13,7 +13,6 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.core_databse.db.sp.GetAppInfo
 import app.core_databse.db.sp.SetAppInfo
-import app.utils.LoggerUtil
 import retrofit2.awaitResponse
 import java.time.LocalDateTime
 
@@ -25,19 +24,14 @@ open class BaseWidgetProvider: AppWidgetProvider() {
 
         const val REFRESH_BUTTON_CLICKED_42 = "app.airsignal.weather.view.widget.REFRESH_DATA42"
         const val ENTER_APPLICATION_42 = "app.airsignal.weather.view.widget.ENTER_APP42"
-
-        val logger = LoggerUtil()
-        const val TAG = "TAG_WIDGET"
     }
 
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        logger.i(TAG,"enabled")
     }
 
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        logger.i(TAG,"disabled")
     }
 
     override fun onAppWidgetOptionsChanged(
@@ -47,17 +41,14 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         newOptions: Bundle
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        logger.i(TAG,"options changed")
     }
 
     override fun onRestored(context: Context, oldWidgetIds: IntArray, newWidgetIds: IntArray) {
         super.onRestored(context, oldWidgetIds, newWidgetIds)
-        logger.i(TAG,"restored")
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
         super.onDeleted(context, appWidgetIds)
-        logger.i(TAG,"deleted")
     }
 
 
@@ -102,11 +93,6 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         val timeFormed = LocalDateTime.parse(currentTime)
         val realtimeFormed = LocalDateTime.parse(realTime)
         return realtimeFormed?.let { timeFormed.isAfter(it) } ?: true
-    }
-
-    fun isDeviceInDozeMode(context: Context): Boolean {
-        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager?
-        return powerManager?.isDeviceIdleMode == true
     }
 
     fun isRefreshable(context: Context, type: String): Boolean {

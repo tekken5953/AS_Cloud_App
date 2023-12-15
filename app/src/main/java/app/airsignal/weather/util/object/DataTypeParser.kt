@@ -11,11 +11,8 @@ import app.airsignal.weather.R
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 import java.util.*
-import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
-
 
 /**
  * @author : Lee Jae Young

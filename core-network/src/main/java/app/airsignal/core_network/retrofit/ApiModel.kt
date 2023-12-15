@@ -77,8 +77,6 @@ class ApiModel {
 
     // 주간별 날씨 데이터 모델
     data class WeeklyData(
-//        @SerializedName("today")
-//        val today: LocalDateTime,
         @SerializedName("rainDate")
         val rainDate: String?,
         @SerializedName("tempDate")
@@ -370,9 +368,7 @@ class ApiModel {
         @SerializedName("rainType")
         val rainType: String?,
         @SerializedName("temperature")
-        val temp: Double?,
-
-        )
+        val temp: Double?)
 
     // 4x2 위젯 - 전체 데이터
     data class WidgetData(

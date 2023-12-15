@@ -1,5 +1,7 @@
 package app.airsignal.core_network.retrofit;
 
+import androidx.annotation.Nullable;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -10,15 +12,15 @@ public interface MyApiImpl {
 
     @GET("forecast")    // 전체 데이터 호출
     Call<ApiModel.GetEntireData> getForecast(
-            @Query("lat") Double lat,
-            @Query("lng") Double lng,
-            @Query("addr") String addr);
+            @Nullable @Query("lat") Double lat,
+            @Nullable @Query("lng") Double lng,
+            @Nullable @Query("addr") String addr);
 
     @GET("forecast")    // 위젯 데이터 호출
     Call<ApiModel.WidgetData> getWidgetForecast(
-            @Query("lat") Double lat,
-            @Query("lng") Double lng,
-            @Query("rcount") Integer count);
+            @Nullable @Query("lat") Double lat,
+            @Nullable @Query("lng") Double lng,
+            @Nullable @Query("rcount") Integer count);
 
     @GET("notice")  // 공지사항 호출
     Call<List<ApiModel.NoticeItem>> getNotice();
