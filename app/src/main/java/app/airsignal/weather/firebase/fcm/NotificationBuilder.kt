@@ -24,6 +24,9 @@ import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.R
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgLarge
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 

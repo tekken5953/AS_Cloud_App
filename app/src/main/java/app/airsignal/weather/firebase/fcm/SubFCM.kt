@@ -5,6 +5,7 @@ import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_EVEN
 import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_PATCH
 import app.airsignal.weather.view.widget.WidgetProvider
 import app.airsignal.weather.view.widget.WidgetProvider42
+import app.core_databse.db.sp.GetAppInfo
 import app.utils.LoggerUtil
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -26,10 +27,18 @@ class SubFCM: FirebaseMessagingService() {
             "widget" -> {
                 WidgetNotificationBuilder().sendNotification(applicationContext,message.data)
             }
-            FCM_PATCH, FCM_DAILY, FCM_EVENT -> {
+            FCM_PATCH, FCM_DAILY -> {
                 NotificationBuilder().sendNotification(applicationContext,message.data)
             }
-
+            FCM_EVENT -> {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val isLandingEnable =
+                        GetAppInfo.isLandingNotification(applicationContext)
+                    if (isLandingEnable) {
+                        NotificationBuilder().sendNotification(applicationContext,message.data)
+                    }
+                }
+            }
         }
     }
 
