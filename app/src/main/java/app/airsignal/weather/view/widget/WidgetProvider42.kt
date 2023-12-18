@@ -9,19 +9,14 @@ import android.content.Intent
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
-import app.address.AddressFromRegex
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.firebase.fcm.WidgetFCM
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetAppInfo
-import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
-import app.location.GetLocation
 import app.utils.TypeParser
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
@@ -42,7 +37,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     ) {
         for (appWidgetId in appWidgetIds) {
             try {
-                processDozeMode(context,appWidgetId)
+                processUpdate(context,appWidgetId)
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
                     "Error",
@@ -65,7 +60,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                         if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
                             requestPermissions(context,"42",appWidgetId)
                         } else {
-                            processDozeMode(context,appWidgetId)
+                            processUpdate(context,appWidgetId)
                         } 
                     } else {
                         Toast.makeText(context.applicationContext, "갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
@@ -108,12 +103,6 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             fetch(context, views)
         }
     }
-
-    private fun processDozeMode(context: Context, appWidgetId: Int) {
-        if (isDeviceInDozeMode(context)) WidgetFCM().sendFCMMessage("42", appWidgetId)
-        else processUpdate(context,appWidgetId)
-    }
-
 
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context, views: RemoteViews) {

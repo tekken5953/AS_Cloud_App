@@ -8,19 +8,14 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import android.widget.Toast
-import app.address.AddressFromRegex
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.firebase.fcm.WidgetFCM
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetAppInfo
-import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
-import app.location.GetLocation
 import app.utils.TypeParser
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
@@ -40,7 +35,7 @@ open class WidgetProvider : BaseWidgetProvider() {
     ) {
         for (appWidgetId in appWidgetIds) {
             try {
-                processDozeMode(context, appWidgetId)
+                processUpdate(context, appWidgetId)
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
                     "Error",
@@ -63,7 +58,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                         if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
                             requestPermissions(context,"22",appWidgetId)
                         } else {
-                            processDozeMode(context, appWidgetId)
+                            processUpdate(context, appWidgetId)
                         }
                     } else {
                         Toast.makeText(
@@ -74,15 +69,6 @@ open class WidgetProvider : BaseWidgetProvider() {
                     }
                 }
             }
-        }
-    }
-
-    private fun processDozeMode(context: Context, appWidgetId: Int) {
-        if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
-            requestPermissions(context,"22",appWidgetId)
-        } else {
-            if (isDeviceInDozeMode(context)) WidgetFCM().sendFCMMessage("22", appWidgetId)
-            else processUpdate(context, appWidgetId)
         }
     }
 

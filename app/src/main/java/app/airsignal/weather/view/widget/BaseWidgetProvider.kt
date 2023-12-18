@@ -115,9 +115,4 @@ open class BaseWidgetProvider: AppWidgetProvider() {
             SetAppInfo.setLastRefreshTime22(context, getCurrentTime())
         }
     }
-
-    fun isDeviceInDozeMode(context: Context): Boolean {
-        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager?
-        return powerManager?.isDeviceIdleMode == true
-    }
 }

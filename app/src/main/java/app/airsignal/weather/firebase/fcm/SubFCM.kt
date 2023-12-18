@@ -24,9 +24,6 @@ class SubFCM: FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         when(message.data["sort"]) {
-            "widget" -> {
-                WidgetNotificationBuilder().sendNotification(applicationContext,message.data)
-            }
             FCM_PATCH, FCM_DAILY -> {
                 NotificationBuilder().sendNotification(applicationContext,message.data)
             }
