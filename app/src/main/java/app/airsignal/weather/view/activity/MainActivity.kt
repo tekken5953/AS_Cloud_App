@@ -16,7 +16,6 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -232,7 +231,7 @@ class MainActivity
                     isEnabled = false
                     setTransition(R.id.start, R.id.end)
                 }
-                createWorkManager()
+//                createWorkManager()
             }
 
             adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
@@ -357,30 +356,30 @@ class MainActivity
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun startInAppMsg() {
-        @Suppress("DEPRECATION") val inAppExtraList = intent.getParcelableArrayExtra(IN_APP_MSG)!!.map {it as ApiModel.InAppMsgItem}.toTypedArray()
+    private suspend fun startInAppMsg() {
+        @Suppress("DEPRECATION") val inAppExtraList = intent.getParcelableArrayExtra(IN_APP_MSG)?.map {it as ApiModel.InAppMsgItem}
         inAppList.clear()
-        inAppExtraList.let {
+        inAppExtraList?.let {
             it.forEach { dao ->
                 inAppList.add(dao)
                 inAppAdapter.notifyDataSetChanged()
             }
-//            val oneHour = (1000 * 60 * 60).toLong()
-//            val sevenDays = (1000 * 60 * 60 * 24 * 7).toLong()
-            val oneHour = (1000).toLong()
-            val sevenDays = (1000 * 10).toLong()
+            val oneHour = (1000 * 60 * 60).toLong()
+            val sevenDays = (1000 * 60 * 60 * 24 * 7).toLong()
+//            val oneHour = (1000).toLong()
+//            val sevenDays = (1000 * 10).toLong()
             if (it.isNotEmpty()) {
-                if (!GetAppInfo.getInAppMsgEnabled(this)) {
-                    if (isTimeToDialog(oneHour)) inAppMsgDialog()
+                if (!GetAppInfo.getInAppMsgEnabled(this@MainActivity)) {
+                    if (isTimeToDialog(oneHour))  runOnUiThread { inAppMsgDialog() }
                 } else {
-                    if (isTimeToDialog(sevenDays)) inAppMsgDialog()
+                    if (isTimeToDialog(sevenDays)) runOnUiThread { inAppMsgDialog() }
                 }
             }
         }
     }
 
-    private fun isTimeToDialog(long: Long): Boolean {
-        return LocalDateTime.now()
+    private suspend fun isTimeToDialog(long: Long): Boolean = withContext(Dispatchers.IO) {
+        return@withContext LocalDateTime.now()
             .isAfter(
                 DataTypeParser.parseLongToLocalDateTime(
                     GetAppInfo.getInAppMsgTime(
@@ -418,12 +417,18 @@ class MainActivity
             })
         }
 
-        inAppCancel.setOnClickListener { inAppAlert.dismiss() }
+        inAppCancel.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                SetAppInfo.setInAppMsgDenied(this@MainActivity,false)
+                withContext(Dispatchers.Main) {
+                    inAppAlert.dismiss()
+                }
+            }
+        }
 
         inAppHide.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 SetAppInfo.setInAppMsgDenied(this@MainActivity,true)
-
                 withContext(Dispatchers.Main) {
                     inAppAlert.dismiss()
                 }
@@ -1136,7 +1141,9 @@ class MainActivity
                 applyWindowBackground(currentSun, skyText)
 
                 if (!isInAppMsgShow) {
-                    startInAppMsg()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        startInAppMsg()
+                    }
                     isInAppMsgShow = true
                 }
             }
@@ -2146,18 +2153,20 @@ class MainActivity
 
     private fun callSavedLoc() {
         try {
-            val db = GpsRepository(this).findByName(CURRENT_GPS_ID)
-            val lat = db.lat
-            val lng = db.lng
-            if (lat != null && lng != null) {
-                val mLat = lat.toDouble()
-                val mLng = lat.toDouble()
-                val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
-                if (isKorea(mLat, mLng)) {
-                    ToastUtils(this)
-                        .showMessage(getString(R.string.last_location_call_msg), 1)
-                    processAddress(mLat, mLng, addr)
-                } else hideAllViews(ERROR_NOT_SERVICED_LOCATION)
+            CoroutineScope(Dispatchers.IO).launch {
+                val db = GpsRepository(this@MainActivity).findByName(CURRENT_GPS_ID)
+                val lat = db.lat
+                val lng = db.lng
+                if (lat != null && lng != null) {
+                    val mLat = lat.toDouble()
+                    val mLng = lat.toDouble()
+                    val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
+                    if (isKorea(mLat, mLng)) {
+                        ToastUtils(this@MainActivity)
+                            .showMessage(getString(R.string.last_location_call_msg), 1)
+                        processAddress(mLat, mLng, addr)
+                    } else hideAllViews(ERROR_NOT_SERVICED_LOCATION)
+                }
             }
         } catch (e: NumberFormatException) {
             handleLocationFailure(e.stackTraceToString())
@@ -2227,15 +2236,15 @@ class MainActivity
         }
     }
 
-    private fun createWorkManager() {
-        val workManager = WorkManager.getInstance(this)
-        val workRequest =
-            PeriodicWorkRequest.Builder(app.airsignal.weather.firebase.fcm.GPSWorker::class.java, 30, TimeUnit.MINUTES)
-                .build()
-
-        workManager.enqueueUniquePeriodicWork(
-            SpDao.CHECK_GPS_BACKGROUND,
-            ExistingPeriodicWorkPolicy.KEEP, workRequest
-        )
-    }
+//    private fun createWorkManager() {
+//        val workManager = WorkManager.getInstance(this)
+//        val workRequest =
+//            PeriodicWorkRequest.Builder(app.airsignal.weather.firebase.fcm.GPSWorker::class.java, 30, TimeUnit.MINUTES)
+//                .build()
+//
+//        workManager.enqueueUniquePeriodicWork(
+//            SpDao.CHECK_GPS_BACKGROUND,
+//            ExistingPeriodicWorkPolicy.KEEP, workRequest
+//        )
+//    }
 }

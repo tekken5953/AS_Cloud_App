@@ -3,7 +3,6 @@ package app.airsignal.weather.view.activity
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import app.airsignal.core_network.ErrorCode.ERROR_NETWORK
 import app.airsignal.core_network.ErrorCode.ERROR_SERVER_CONNECTING

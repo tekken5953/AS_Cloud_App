@@ -53,4 +53,8 @@
     <style name="CustomCheckBoxLanding">
         <item name="android:button">@drawable/landing_check_box</item>
     </style>
+    
+    <style name="Theme.AirSignal_App.RemoveSplash" parent="Theme.AirSignal_App">
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
 </resources>

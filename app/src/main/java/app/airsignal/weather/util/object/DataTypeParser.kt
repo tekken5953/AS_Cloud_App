@@ -287,11 +287,6 @@ object DataTypeParser {
         activity.window.apply {
             statusBarColor = activity.getColor(app.common_res.R.color.theme_view_color)
             navigationBarColor = activity.getColor(android.R.color.transparent)
-
-            this.decorView.systemUiVisibility =
-                if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
-                    this.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-                else View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
     }
     

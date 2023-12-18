@@ -61,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            android:text="@string/cancel"
+            android:text="@string/close"
             android:background="?android:attr/selectableItemBackground"
             android:textColor="#2B2B2B"
             android:textSize="15sp" />

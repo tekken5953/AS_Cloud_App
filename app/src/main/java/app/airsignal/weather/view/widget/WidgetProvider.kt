@@ -10,15 +10,12 @@ import android.widget.RemoteViews
 import android.widget.Toast
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.firebase.fcm.WidgetFCM
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetAppInfo
-import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
 import app.utils.TypeParser
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
@@ -114,23 +111,24 @@ open class WidgetProvider : BaseWidgetProvider() {
         CoroutineScope(Dispatchers.Default).launch {
             if (checkBackPerm(context)) {
                 try {
-                    val roomDB = GpsRepository(context).findByName(CURRENT_GPS_ID)
-                    val lat = roomDB.lat
-                    val lng = roomDB.lng
-                    val addr = getWidgetAddress(roomDB.addrKr ?: "")
-                    lat?.let { mLat ->
-                        lng?.let { mLng ->
-                            val data = requestWeather(context, mLat, mLng,1)
+                    val geofenceLocation = GeofenceManager(context).addGeofence()
+                    geofenceLocation?.let {
+                        val lat = geofenceLocation.latitude
+                        val lng = geofenceLocation.longitude
+                        val addr = GeofenceManager(context).getSimpleAddress(lat,lng)
 
-                            withContext(Dispatchers.Main) {
-                                RDBLogcat.writeWidgetHistory(context, "data", "${roomDB.addrKr} data22 is $data")
-                                delay(500)
-                                updateUI(context, views, data, addr)
-                            }
+                        val data = requestWeather(context, lat, lng, 1)
+
+                        withContext(Dispatchers.Main) {
+                            RDBLogcat.writeWidgetHistory(context, "data", "$addr data22 is $data")
+                            delay(500)
+                            updateUI(context, views, data, addr)
                         }
-                    }
-                    withContext(Dispatchers.IO) {
-                        BaseWidgetProvider().setRefreshTime(context,"22")
+                        withContext(Dispatchers.IO) {
+                            BaseWidgetProvider().setRefreshTime(context, "22")
+                        }
+                    } ?: run {
+                        RDBLogcat.writeErrorANR("Error", "location is null")
                     }
                 } catch (e: Exception) {
                     RDBLogcat.writeErrorANR("Error", "fetch error22 ${e.localizedMessage}")

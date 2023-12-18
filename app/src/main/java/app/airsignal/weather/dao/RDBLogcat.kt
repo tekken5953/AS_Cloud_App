@@ -257,6 +257,8 @@ object RDBLogcat {
         try {
             ref.child("admob")
                 .child("Fail to Load")
+                .child(getDate())
+                .child(getTime())
                 .child(modify(code))
                 .setValue(modify(errorMsg))
         } catch (e: DatabaseException) { e.printStackTrace() }
