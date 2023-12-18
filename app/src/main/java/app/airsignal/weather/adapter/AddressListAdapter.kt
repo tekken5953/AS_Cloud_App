@@ -70,7 +70,7 @@ class AddressListAdapter(
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val address: TextView = itemView.findViewById(R.id.listCurrentAddressText)
         val gpsImg: ImageView = itemView.findViewById(R.id.listCurrentAddressImg)
-        val delete: TextView = itemView.findViewById(R.id.listCurrentAddressDelete)
+        private val delete: TextView = itemView.findViewById(R.id.listCurrentAddressDelete)
 
         @SuppressLint("InflateParams")
         fun bind(dao: AdapterModel.AddressListItem) {
@@ -87,7 +87,6 @@ class AddressListAdapter(
                     this.requestWindowFeature(Window.FEATURE_NO_TITLE)
                     this.setContentView(view)
                     this.create()
-
 
                     val cancel = view.findViewById<AppCompatButton>(R.id.alertDoubleCancelBtn)
                     val apply = view.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)

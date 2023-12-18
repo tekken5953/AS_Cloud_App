@@ -16,7 +16,6 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import android.text.style.RelativeSizeSpan
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
@@ -232,7 +231,7 @@ class MainActivity
                     isEnabled = false
                     setTransition(R.id.start, R.id.end)
                 }
-                createWorkManager()
+//                createWorkManager()
             }
 
             adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
@@ -365,10 +364,10 @@ class MainActivity
                 inAppList.add(dao)
                 inAppAdapter.notifyDataSetChanged()
             }
-//            val oneHour = (1000 * 60 * 60).toLong()
-//            val sevenDays = (1000 * 60 * 60 * 24 * 7).toLong()
-            val oneHour = (1000).toLong()
-            val sevenDays = (1000 * 10).toLong()
+            val oneHour = (1000 * 60 * 60).toLong()
+            val sevenDays = (1000 * 60 * 60 * 24 * 7).toLong()
+//            val oneHour = (1000).toLong()
+//            val sevenDays = (1000 * 10).toLong()
             if (it.isNotEmpty()) {
                 if (!GetAppInfo.getInAppMsgEnabled(this)) {
                     if (isTimeToDialog(oneHour)) inAppMsgDialog()
@@ -2146,18 +2145,20 @@ class MainActivity
 
     private fun callSavedLoc() {
         try {
-            val db = GpsRepository(this).findByName(CURRENT_GPS_ID)
-            val lat = db.lat
-            val lng = db.lng
-            if (lat != null && lng != null) {
-                val mLat = lat.toDouble()
-                val mLng = lat.toDouble()
-                val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
-                if (isKorea(mLat, mLng)) {
-                    ToastUtils(this)
-                        .showMessage(getString(R.string.last_location_call_msg), 1)
-                    processAddress(mLat, mLng, addr)
-                } else hideAllViews(ERROR_NOT_SERVICED_LOCATION)
+            CoroutineScope(Dispatchers.IO).launch {
+                val db = GpsRepository(this@MainActivity).findByName(CURRENT_GPS_ID)
+                val lat = db.lat
+                val lng = db.lng
+                if (lat != null && lng != null) {
+                    val mLat = lat.toDouble()
+                    val mLng = lat.toDouble()
+                    val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
+                    if (isKorea(mLat, mLng)) {
+                        ToastUtils(this@MainActivity)
+                            .showMessage(getString(R.string.last_location_call_msg), 1)
+                        processAddress(mLat, mLng, addr)
+                    } else hideAllViews(ERROR_NOT_SERVICED_LOCATION)
+                }
             }
         } catch (e: NumberFormatException) {
             handleLocationFailure(e.stackTraceToString())
@@ -2227,15 +2228,15 @@ class MainActivity
         }
     }
 
-    private fun createWorkManager() {
-        val workManager = WorkManager.getInstance(this)
-        val workRequest =
-            PeriodicWorkRequest.Builder(app.airsignal.weather.firebase.fcm.GPSWorker::class.java, 30, TimeUnit.MINUTES)
-                .build()
-
-        workManager.enqueueUniquePeriodicWork(
-            SpDao.CHECK_GPS_BACKGROUND,
-            ExistingPeriodicWorkPolicy.KEEP, workRequest
-        )
-    }
+//    private fun createWorkManager() {
+//        val workManager = WorkManager.getInstance(this)
+//        val workRequest =
+//            PeriodicWorkRequest.Builder(app.airsignal.weather.firebase.fcm.GPSWorker::class.java, 30, TimeUnit.MINUTES)
+//                .build()
+//
+//        workManager.enqueueUniquePeriodicWork(
+//            SpDao.CHECK_GPS_BACKGROUND,
+//            ExistingPeriodicWorkPolicy.KEEP, workRequest
+//        )
+//    }
 }

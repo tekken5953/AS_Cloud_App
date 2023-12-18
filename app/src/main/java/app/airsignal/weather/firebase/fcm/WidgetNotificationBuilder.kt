@@ -22,7 +22,7 @@ class WidgetNotificationBuilder {
 
     companion object {
         const val WIDGET_NOTIFICATION_CHANNEL_ID = "FCM_ID"             // FCM 채널 ID
-        const val WIDGET_NOTIFICATION_CHANNEL_NAME = "WIDGET_FCM_NAME"     // FCM 채널 NAME
+        const val WIDGET_NOTIFICATION_CHANNEL_NAME = "WIDGET_FCM_BACKGROUND"     // FCM 채널 NAME
         const val WIDGET_NOTIFICATION_CHANNEL_DESCRIPTION = "Channel description"
     }
 
@@ -48,9 +48,25 @@ class WidgetNotificationBuilder {
             .setSmallIcon(R.drawable.ic_stat_airsignal_default)
         }
 
-        CoroutineScope(Dispatchers.Default).launch {
-            GetLocation(context.applicationContext).getGpsInBackground()
+        CoroutineScope(Dispatchers.IO).launch {
+            if (data["layout"] == "22") {
+                WidgetProvider().processUpdate(
+                    context,
+                    data["widgetId"]?.toInt() ?: -1
+                )
+            } else if (data["layout"] == "42") {
+                WidgetProvider42().processUpdate(
+                    context,
+                    data["widgetId"]?.toInt() ?: -1
+                )
+            }
+            RDBLogcat.writeNotificationHistory(
+                context,
+                "위젯",
+                "${data["layout"]}, ${data["widgetId"]}"
+            )
         }
+
 
         notificationManager?.let {
             it.createNotificationChannel(notificationChannel)

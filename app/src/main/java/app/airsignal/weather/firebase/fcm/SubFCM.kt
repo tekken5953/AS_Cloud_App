@@ -3,6 +3,9 @@ package app.airsignal.weather.firebase.fcm
 import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_DAILY
 import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_EVENT
 import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_PATCH
+import app.airsignal.weather.view.widget.WidgetProvider
+import app.airsignal.weather.view.widget.WidgetProvider42
+import app.utils.LoggerUtil
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -32,11 +35,13 @@ class SubFCM: FirebaseMessagingService() {
     /** 토픽 구독 설정 **/
     fun subTopic(topic: String): SubFCM {
         try {
-            CoroutineScope(Dispatchers.IO).launch {
+            CoroutineScope(Dispatchers.Default).launch {
                 FirebaseMessaging.getInstance().subscribeToTopic(topic)
+                LoggerUtil().d("TAG_FCM","subscribe $topic")
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            LoggerUtil().e("TAG_FCM","subscribe fail to $topic")
         }
         return this
     }
@@ -44,8 +49,9 @@ class SubFCM: FirebaseMessagingService() {
     /** 토픽 구독 해제 **/
     private fun unSubTopic(topic: String): SubFCM {
         val encodedStream = encodeTopic(topic)
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream)
+            LoggerUtil().d("TAG_FCM","unsubscribe $topic")
         }
         return this
     }
@@ -59,6 +65,7 @@ class SubFCM: FirebaseMessagingService() {
     /** 현재 위치 토픽 갱신 **/
     fun renewTopic(old: String, new: String) {
         val encodedStream = encodeTopic(new)
+        LoggerUtil().d("fcm_noti","old is $old new is $new")
         unSubTopic(old).subTopic(encodedStream)
     }
 

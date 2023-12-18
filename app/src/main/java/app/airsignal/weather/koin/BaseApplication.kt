@@ -26,12 +26,10 @@ import kotlin.system.exitProcess
 
 class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     companion object {
-        private lateinit var appContext: Context
+        lateinit var appContext: Context
         lateinit var timber: TimberUtil
         lateinit var logger: LoggerUtil
     }
-
-    val database by lazy { GpsDataBase.getInstance(this) }
 
     override fun onCreate() {
         super.onCreate()

@@ -19,18 +19,12 @@ class GPSWorker(private val context: Context, params: WorkerParameters)
     override suspend fun doWork(): Result {
         return try {
             withContext(Dispatchers.Default) {
-                if (isDeviceInDozeMode(context)) WidgetFCM().sendFCMMessage()
-                else GetLocation(context).getGpsInBackground()
+                GetLocation(context).getGpsInBackground()
             }
             Result.success()
         } catch (e: Exception) {
             e.printStackTrace()
             Result.failure()
         }
-    }
-
-    private fun isDeviceInDozeMode(context: Context): Boolean {
-        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager?
-        return powerManager?.isDeviceIdleMode == true
     }
 }

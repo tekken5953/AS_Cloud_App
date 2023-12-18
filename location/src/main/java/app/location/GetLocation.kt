@@ -14,13 +14,11 @@ import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetSystemInfo
 import app.core_databse.db.sp.SetAppInfo.setNotificationAddress
 import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
-import app.core_databse.db.sp.SpDao.CHECK_GPS_BACKGROUND
 import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 class GetLocation(private val context: Context) {
 
@@ -72,7 +70,7 @@ class GetLocation(private val context: Context) {
         mLng: Double,
         mAddr: String?
     ) {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val db = GpsRepository(context)
             val model = GpsEntity(
                 name = CURRENT_GPS_ID,
@@ -82,14 +80,34 @@ class GetLocation(private val context: Context) {
                 addrEn = mAddr
             )
 
-            if (gpsDbIsEmpty(db)) db.insertWithCoroutine(model)
+            if (gpsDbIsEmpty(db)) db.insert(model)
             else db.update(model)
         }
     }
 
     // DB가 비어있는지 확인
     private suspend fun gpsDbIsEmpty(db: GpsRepository): Boolean {
-        return db.findAllWithCoroutine().isEmpty()
+        return db.findAll().isEmpty()
+    }
+
+    @SuppressLint("MissingPermission")
+    fun getForegroundLocation(): Location? {
+        try {
+            val locationManager = context.applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager?
+            val locationGPS =
+                locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            val locationNetwork =
+                locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+
+            return if (locationGPS != null && locationNetwork != null) {
+                // 두 위치 중 더 정확한 위치를 반환
+                if (locationGPS.accuracy > locationNetwork.accuracy) locationGPS else locationNetwork
+            } else locationGPS
+                ?: locationNetwork
+        } catch (e: SecurityException) {
+            e.printStackTrace()
+            return null
+        }
     }
 
     @SuppressLint("MissingPermission")
