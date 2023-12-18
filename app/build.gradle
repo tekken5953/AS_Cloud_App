@@ -102,8 +102,4 @@ dependencies {
 
     // Firebase Admob
     implementation 'com.google.android.gms:play-services-ads:22.2.0'
-
-
-    // WorkManager
-    implementation 'androidx.work:work-runtime-ktx:2.8.1'
 }

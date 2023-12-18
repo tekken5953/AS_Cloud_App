@@ -112,19 +112,23 @@ open class WidgetProvider : BaseWidgetProvider() {
             if (checkBackPerm(context)) {
                 try {
                     val geofenceLocation = GeofenceManager(context).addGeofence()
-                    val lat = geofenceLocation.latitude
-                    val lng = geofenceLocation.longitude
-                    val addr = GeofenceManager(context).getSimpleAddress(lat,lng)
+                    geofenceLocation?.let {
+                        val lat = geofenceLocation.latitude
+                        val lng = geofenceLocation.longitude
+                        val addr = GeofenceManager(context).getSimpleAddress(lat,lng)
 
-                    val data = requestWeather(context, lat, lng, 1)
+                        val data = requestWeather(context, lat, lng, 1)
 
-                    withContext(Dispatchers.Main) {
-                        RDBLogcat.writeWidgetHistory(context, "data", "$addr data22 is $data")
-                        delay(500)
-                        updateUI(context, views, data, addr)
-                    }
-                    withContext(Dispatchers.IO) {
-                        BaseWidgetProvider().setRefreshTime(context, "22")
+                        withContext(Dispatchers.Main) {
+                            RDBLogcat.writeWidgetHistory(context, "data", "$addr data22 is $data")
+                            delay(500)
+                            updateUI(context, views, data, addr)
+                        }
+                        withContext(Dispatchers.IO) {
+                            BaseWidgetProvider().setRefreshTime(context, "22")
+                        }
+                    } ?: run {
+                        RDBLogcat.writeErrorANR("Error", "location is null")
                     }
                 } catch (e: Exception) {
                     RDBLogcat.writeErrorANR("Error", "fetch error22 ${e.localizedMessage}")

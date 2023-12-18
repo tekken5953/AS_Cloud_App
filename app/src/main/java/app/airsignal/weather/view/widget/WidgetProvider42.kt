@@ -110,24 +110,28 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             if (checkBackPerm(context)) {
                 try {
                     val geofenceLocation = GeofenceManager(context).addGeofence()
-                    val lat = geofenceLocation.latitude
-                    val lng = geofenceLocation.longitude
-                    val addr = GeofenceManager(context).getSimpleAddress(lat,lng)
+                    geofenceLocation?.let {
+                        val lat = geofenceLocation.latitude
+                        val lng = geofenceLocation.longitude
+                        val addr = GeofenceManager(context).getSimpleAddress(lat,lng)
 
-                    val data = requestWeather(context, lat, lng, 4)
+                        val data = requestWeather(context, lat, lng, 4)
 
-                    withContext(Dispatchers.Main) {
-                        RDBLogcat.writeWidgetHistory(
-                            context,
-                            "data",
-                            "$addr data42 is $data"
-                        )
-                        delay(500)
-                        updateUI(context, views, data, addr)
+                        withContext(Dispatchers.Main) {
+                            RDBLogcat.writeWidgetHistory(
+                                context,
+                                "data",
+                                "$addr data42 is $data"
+                            )
+                            delay(500)
+                            updateUI(context, views, data, addr)
 
-                    }
-                    withContext(Dispatchers.IO) {
-                        BaseWidgetProvider().setRefreshTime(context,"42")
+                        }
+                        withContext(Dispatchers.IO) {
+                            BaseWidgetProvider().setRefreshTime(context,"42")
+                        }
+                    } ?: run {
+                        RDBLogcat.writeErrorANR("Error", "location is null")
                     }
                 } catch (e: Exception) {
                     RDBLogcat.writeErrorANR("Error", "fetch error42 ${e.localizedMessage}")

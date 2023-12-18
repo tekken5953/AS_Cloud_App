@@ -23,44 +23,47 @@ class GeofenceManager(private val context: Context) {
     }
 
     @SuppressLint("MissingPermission")
-    fun addGeofence(): Location {
-        val location = GetLocation(context).getForegroundLocation()!!
-        val simpleAddr = getSimpleAddress(location.latitude,location.longitude)
-        val geofence = Geofence.Builder()
-            .setRequestId(requestId)
-            .setCircularRegion(
-                location.latitude,
-                location.longitude,
-                100f  // 예시로 반경을 100m로 설정
+    fun addGeofence(): Location? {
+        val location = GetLocation(context).getForegroundLocation()
+        location?.let {
+            val simpleAddr = getSimpleAddress(location.latitude,location.longitude)
+            val geofence = Geofence.Builder()
+                .setRequestId(requestId)
+                .setCircularRegion(
+                    location.latitude,
+                    location.longitude,
+                    100f  // 예시로 반경을 100m로 설정
+                )
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
+                .build()
+
+            val geofencingRequest = GeofencingRequest.Builder()
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+                .addGeofence(geofence)
+                .build()
+
+            val intent = Intent(context, BaseWidgetProvider::class.java)
+            val pendingIntent = PendingIntent.getService(
+                context, 0, intent, PendingIntent.FLAG_IMMUTABLE
             )
-            .setExpirationDuration(Geofence.NEVER_EXPIRE)
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
-            .build()
 
-        val geofencingRequest = GeofencingRequest.Builder()
-            .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
-            .addGeofence(geofence)
-            .build()
+            ContextCompat.startForegroundService(context, intent)
 
-        val intent = Intent(context, BaseWidgetProvider::class.java)
-        val pendingIntent = PendingIntent.getService(
-            context, 0, intent, PendingIntent.FLAG_IMMUTABLE
-        )
+            geofencingClient.addGeofences(geofencingRequest, pendingIntent)
+                .addOnSuccessListener {
+                    // Geofence 추가 성공
+                    Log.d(TAG,"Success to add geofence : ${location.latitude}${location.longitude},$simpleAddr")
+                }
+                .addOnFailureListener {
+                    // Geofence 추가 실패
+                    Log.w(TAG,"Failed to add geofence")
+                    removeGeofence(requestId)
+                }
 
-        ContextCompat.startForegroundService(context, intent)
-
-        geofencingClient.addGeofences(geofencingRequest, pendingIntent)
-            .addOnSuccessListener {
-                // Geofence 추가 성공
-                Log.d(TAG,"Success to add geofence : ${location.latitude}${location.longitude},$simpleAddr")
-            }
-            .addOnFailureListener {
-                // Geofence 추가 실패
-                Log.w(TAG,"Failed to add geofence")
-                removeGeofence(requestId)
-            }
-
-        return location
+            return location
+        }
+        return null
     }
 
     private fun removeGeofence(requestId: String) {

@@ -3,8 +3,6 @@ package app.airsignal.weather.firebase.fcm
 import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_DAILY
 import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_EVENT
 import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_PATCH
-import app.airsignal.weather.view.widget.WidgetProvider
-import app.airsignal.weather.view.widget.WidgetProvider42
 import app.core_databse.db.sp.GetAppInfo
 import app.utils.LoggerUtil
 import com.google.android.gms.tasks.OnCompleteListener
@@ -71,9 +69,13 @@ class SubFCM: FirebaseMessagingService() {
 
     /** 현재 위치 토픽 갱신 **/
     fun renewTopic(old: String, new: String) {
-        val encodedStream = encodeTopic(new)
-        LoggerUtil().d("fcm_noti","old is $old new is $new")
-        unSubTopic(old).subTopic(encodedStream)
+        if (old != new) {
+            val encodedStream = encodeTopic(new)
+            LoggerUtil().d("fcm_noti","old is $old new is $new")
+            unSubTopic(old).subTopic(encodedStream)
+        } else {
+            LoggerUtil().d("fcm_noti","same topic $old")
+        }
     }
 
     /**

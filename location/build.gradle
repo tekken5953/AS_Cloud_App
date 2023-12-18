@@ -16,5 +16,4 @@ dependencies {
 
     // Google Location
     implementation 'com.google.android.gms:play-services-location:21.0.1' // 위치정보 라이브러리
-    implementation 'com.google.android.gms:play-services-location:17.0.0'
 }
