@@ -31,9 +31,9 @@ class GetAppVersionRepo: BaseRepository() {
                     call: Call<ApiModel.AppVersion>,
                     response: Response<ApiModel.AppVersion>
                 ) {
-                    val responseBody = response.body()!!
-
                     try {
+                        val responseBody = response.body()!!
+
                         if (response.isSuccessful)
                             _getAppVersionResult.postValue(ApiState.Success(responseBody))
                         else

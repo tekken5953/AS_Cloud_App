@@ -78,8 +78,12 @@ open class WidgetProvider : BaseWidgetProvider() {
     }
 
     private fun processDozeMode(context: Context, appWidgetId: Int) {
-        if (isDeviceInDozeMode(context)) WidgetFCM().sendFCMMessage("22", appWidgetId)
-        else processUpdate(context, appWidgetId)
+        if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+            requestPermissions(context,"22",appWidgetId)
+        } else {
+            if (isDeviceInDozeMode(context)) WidgetFCM().sendFCMMessage("22", appWidgetId)
+            else processUpdate(context, appWidgetId)
+        }
     }
 
     fun processUpdate(context: Context, appWidgetId: Int) {

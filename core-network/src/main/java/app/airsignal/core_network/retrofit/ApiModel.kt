@@ -27,36 +27,15 @@ class ApiModel {
         val releaseCode: String,
         @SerializedName("inAppMsg")
         val inAppMsg: Array<InAppMsgItem>?
-    ) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as AppVersion
-
-            if (serviceName != other.serviceName) return false
-            if (serviceCode != other.serviceCode) return false
-            if (date != other.date) return false
-            if (releaseName != other.releaseName) return false
-            if (releaseCode != other.releaseCode) return false
-            if (!inAppMsg.contentEquals(other.inAppMsg)) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            var result = serviceName.hashCode()
-            result = 31 * result + serviceCode.hashCode()
-            result = 31 * result + date.hashCode()
-            result = 31 * result + releaseName.hashCode()
-            result = 31 * result + releaseCode.hashCode()
-            result = 31 * result + (inAppMsg?.contentHashCode() ?: 0)
-            return result
-        }
-    }
+    )
 
     // 인앱 메시지 모델
-    data class InAppMsgItem(val img: String, val redirect: String) : Parcelable {
+    data class InAppMsgItem(
+        @SerializedName("img")
+        val img: String,
+        @SerializedName("redirect")
+        val redirect: String
+        ) : Parcelable {
         // Parcelable 구현
         constructor(parcel: Parcel) : this(
             parcel.readString() ?: "",

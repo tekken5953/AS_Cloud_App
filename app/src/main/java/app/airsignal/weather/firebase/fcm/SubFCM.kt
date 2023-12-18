@@ -29,6 +29,7 @@ class SubFCM: FirebaseMessagingService() {
             FCM_PATCH, FCM_DAILY, FCM_EVENT -> {
                 NotificationBuilder().sendNotification(applicationContext,message.data)
             }
+
         }
     }
 

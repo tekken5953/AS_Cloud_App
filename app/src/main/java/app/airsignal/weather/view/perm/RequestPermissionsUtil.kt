@@ -126,6 +126,4 @@ class RequestPermissionsUtil(private val context: Context) {
             )
         }
     }
-
-
 }

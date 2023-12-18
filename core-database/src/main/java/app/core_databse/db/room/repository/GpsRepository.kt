@@ -27,7 +27,7 @@ class GpsRepository(private val context: Context) {
     }
 
     suspend fun findAll(): List<GpsEntity> = withContext(Dispatchers.IO) {
-        val result = getInstance(context).gpsRepository().findAllWithAscWithCoroutine()
+        val result = getInstance(context).gpsRepository().findAll()
         val sb = StringBuilder()
         sb.append("find all \n")
         result.forEach {

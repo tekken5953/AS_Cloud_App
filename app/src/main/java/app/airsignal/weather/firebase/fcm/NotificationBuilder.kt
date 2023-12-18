@@ -104,11 +104,11 @@ class NotificationBuilder {
                 }
                 FCM_PATCH -> {
                     val payload = data["payload"] ?: "새로운 업데이트가 준비되었어요"
-                    setNotiBuilder(title = "에어시그널 날씨", subtext = null, content = payload, null)
+                    setNotiBuilder(title = "에어시그널", subtext = null, content = payload, null)
                 }
                 FCM_EVENT -> {
                     val payload = data["payload"] ?: "눌러서 이벤트를 확인하세요"
-                    setNotiBuilder(title = "에어시그널 날씨", subtext = null, content = payload, null)
+                    setNotiBuilder(title = "에어시그널", subtext = null, content = payload, null)
                 }
             }
 

@@ -12,7 +12,7 @@ interface GpsScheme {
     suspend fun updateCurrentGPS(model: GpsEntity)
 
     @Query("SELECT * FROM gps_table")
-    fun findAll(): List<GpsEntity>
+    suspend fun findAll(): List<GpsEntity>
 
     @Query("SELECT * FROM gps_table ORDER BY name ASC")
     fun findAllWithAsc(): List<GpsEntity>

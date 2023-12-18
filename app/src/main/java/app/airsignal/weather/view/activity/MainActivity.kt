@@ -356,10 +356,10 @@ class MainActivity
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun startInAppMsg() {
-        @Suppress("DEPRECATION") val inAppExtraList = intent.getParcelableArrayExtra(IN_APP_MSG)!!.map {it as ApiModel.InAppMsgItem}.toTypedArray()
+    private suspend fun startInAppMsg() {
+        @Suppress("DEPRECATION") val inAppExtraList = intent.getParcelableArrayExtra(IN_APP_MSG)?.map {it as ApiModel.InAppMsgItem}
         inAppList.clear()
-        inAppExtraList.let {
+        inAppExtraList?.let {
             it.forEach { dao ->
                 inAppList.add(dao)
                 inAppAdapter.notifyDataSetChanged()
@@ -369,17 +369,17 @@ class MainActivity
 //            val oneHour = (1000).toLong()
 //            val sevenDays = (1000 * 10).toLong()
             if (it.isNotEmpty()) {
-                if (!GetAppInfo.getInAppMsgEnabled(this)) {
-                    if (isTimeToDialog(oneHour)) inAppMsgDialog()
+                if (!GetAppInfo.getInAppMsgEnabled(this@MainActivity)) {
+                    if (isTimeToDialog(oneHour))  runOnUiThread { inAppMsgDialog() }
                 } else {
-                    if (isTimeToDialog(sevenDays)) inAppMsgDialog()
+                    if (isTimeToDialog(sevenDays)) runOnUiThread { inAppMsgDialog() }
                 }
             }
         }
     }
 
-    private fun isTimeToDialog(long: Long): Boolean {
-        return LocalDateTime.now()
+    private suspend fun isTimeToDialog(long: Long): Boolean = withContext(Dispatchers.IO) {
+        return@withContext LocalDateTime.now()
             .isAfter(
                 DataTypeParser.parseLongToLocalDateTime(
                     GetAppInfo.getInAppMsgTime(
@@ -417,12 +417,18 @@ class MainActivity
             })
         }
 
-        inAppCancel.setOnClickListener { inAppAlert.dismiss() }
+        inAppCancel.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                SetAppInfo.setInAppMsgDenied(this@MainActivity,false)
+                withContext(Dispatchers.Main) {
+                    inAppAlert.dismiss()
+                }
+            }
+        }
 
         inAppHide.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 SetAppInfo.setInAppMsgDenied(this@MainActivity,true)
-
                 withContext(Dispatchers.Main) {
                     inAppAlert.dismiss()
                 }
@@ -1135,7 +1141,9 @@ class MainActivity
                 applyWindowBackground(currentSun, skyText)
 
                 if (!isInAppMsgShow) {
-                    startInAppMsg()
+                    CoroutineScope(Dispatchers.IO).launch {
+                        startInAppMsg()
+                    }
                     isInAppMsgShow = true
                 }
             }
