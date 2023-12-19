@@ -465,6 +465,8 @@ class ApiModel {
 
     // 공지사항 리스트
     data class NoticeItem(
+        @SerializedName("id")
+        val id: Long,
         @SerializedName("category")
         val category: String?,
         @SerializedName("created")
@@ -474,6 +476,8 @@ class ApiModel {
         @SerializedName("title")
         val title: String,
         @SerializedName("content")
-        val content: String
+        val content: String,
+        @SerializedName("href")
+        val href: String?
     )
 }

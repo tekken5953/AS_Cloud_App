@@ -563,6 +563,7 @@ class MainActivity
                 }
             })
             eye.setOnClickListener(object : OnSingleClickListener() {
+                @SuppressLint("SetJavaScriptEnabled")
                 override fun onSingleClick(v: View?) {
                     sideMenuBuilder.dismiss()
                     val landingView = LayoutInflater
@@ -576,20 +577,13 @@ class MainActivity
                     val landingWebView: WebView = landingView.findViewById(R.id.eyeLandingWebView)
                     val landingFab: ImageView = landingView.findViewById(R.id.eyeLandingFab)
                     val notiPerm = RequestPermissionsUtil(this@MainActivity)
-
                     val dialog = ShowDialogClass(this@MainActivity).setBackPressed(landingBack)
 
                     val requestOkText = "출시 알림받기 완료 \uD83D\uDE00"
                     val requestNoText = "제품 출시 알림받기\n광고 및 이벤트성 알림 발송에 동의합니다"
 
                     // 웹뷰 세팅
-                    landingWebView.settings.apply {
-                        javaScriptEnabled = false // 자바스크립트 허용
-                        builtInZoomControls = false // 줌 컨트롤러 생성
-                        setSupportZoom(false) // 핀치 줌 허용
-                        loadWithOverviewMode = true // 메타태그 허용
-                        useWideViewPort = true // 화면 맞추기
-                    }
+                    WebViewSetting().apply(landingWebView)
 
                     landingWebView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
                         landingFab.visibility = if (scrollY == 0) GONE else View.VISIBLE

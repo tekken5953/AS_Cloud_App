@@ -15,6 +15,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
+import android.webkit.WebView
 import android.widget.*
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatButton
@@ -47,9 +48,11 @@ import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.custom_view.CustomerServiceView
+import app.airsignal.weather.view.dialog.WebViewSetting
 import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.core_customview.ShowDialogClass
+import app.core_customview.SnackBarUtils
 import app.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.core_databse.db.sp.GetAppInfo.getUserFontScale
 import app.core_databse.db.sp.GetAppInfo.getUserLocation
@@ -72,9 +75,6 @@ import app.core_databse.db.sp.SetSystemInfo
 import app.core_databse.db.sp.SpDao.TEXT_SCALE_BIG
 import app.core_databse.db.sp.SpDao.TEXT_SCALE_DEFAULT
 import app.core_databse.db.sp.SpDao.TEXT_SCALE_SMALL
-import app.core_customview.SnackBarUtils
-import br.tiagohm.markdownview.MarkdownView
-import br.tiagohm.markdownview.css.styles.Github
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.CoroutineScope
@@ -318,9 +318,10 @@ class SettingActivity
             LayoutInflater.from(this).inflate(R.layout.dialog_detail, null)
         val detailDate: TextView = detailView.findViewById(R.id.detailNoticeDate)
         val detailTitle: TextView = detailView.findViewById(R.id.detailTitle)
-        val detailContent: MarkdownView = detailView.findViewById(R.id.detailContent)
+        val detailContent: WebView = detailView.findViewById(R.id.detailContent)
         val detailHeadLine: TextView = detailView.findViewById(R.id.detailHeadLine)
         val detailCategory: TextView = detailView.findViewById(R.id.detailNoticeCategory)
+        val detailNoContent: TextView = detailView.findViewById(R.id.detailNoContent)
 
         // 공지사항 클릭
         binding.settingNotice.setOnClickListener {
@@ -350,10 +351,11 @@ class SettingActivity
                                     val createdTime =  LocalDateTime.parse(item.created)
                                     val modifiedTime =  LocalDateTime.parse(item.modified)
                                     addNoticeItem(
+                                        item.id,
                                         item.category,
                                         createdTime.format(DateTimeFormatter.ofPattern("yy.MM.dd")),
                                         modifiedTime.format(DateTimeFormatter.ofPattern("yy.MM.dd")),
-                                        item.title, item.content)
+                                        item.title, item.content,item.href)
 
                                     noticeAdapter.notifyItemInserted(i)
                                 }
@@ -396,16 +398,16 @@ class SettingActivity
                     detailTitle.text = noticeTitle.text.toString()
                     detailHeadLine.text = item.title
                     detailContent.apply {
-                        val css = Github()
-                        css.addRule("p","font-family: spoqa_hansansneo_medium.ttf")
-                        css.addRule("h1","font-family: spoqa_hansansneo_bold.ttf")
-                        css.addRule("h2","font-family: spoqa_hansansneo_bold.ttf")
-                        css.addRule("h3","font-family: spoqa_hansansneo_medium.ttf")
-                        css.addRule("h4","font-family: spoqa_hansansneo_medium.ttf")
-                        css.addRule("h6","font-family: spoqa_hansansneo_light.ttf")
-                        addStyleSheet(css)
-                        if (item.content != "") loadMarkdown(item.content)
-                        else loadMarkdown("내용이 없습니다")
+                        WebViewSetting().apply(detailContent)
+                        if (item.content != "") {
+                            loadUrl("${item.href}${item.id}")
+                            detailNoContent.apply { visibility = View.GONE }
+                        } else {
+                            detailNoContent.apply {
+                                visibility = View.VISIBLE
+                                bringToFront()
+                            }
+                        }
                     }
                     ShowDialogClass(this@SettingActivity)
                         .setBackPressed(detailView.findViewById(R.id.detailBack))
@@ -968,19 +970,21 @@ class SettingActivity
 
     // 공지사항 아이템 추가하기
     private fun addNoticeItem(
+        id: Long,
         category: String?,
         created: String,
         modified: String,
         title: String,
-        content: String
+        content: String,
+        href: String?
     ) {
-        val item = ApiModel.NoticeItem(category,created, modified, title, content)
+        val item = ApiModel.NoticeItem(id,category,created, modified, title, content,href)
         noticeItem.add(item)
     }
 
     @Deprecated("Deprecated in Java")
+    @Suppress("DEPRECATION")
     override fun onBackPressed() {
-        @Suppress("DEPRECATION")
         super.onBackPressed()
         goMain()
     }
