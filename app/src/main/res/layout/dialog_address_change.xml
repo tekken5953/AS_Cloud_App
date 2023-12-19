@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="top"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/theme_view_color">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <View
         android:id="@+id/changeAddressTopView"

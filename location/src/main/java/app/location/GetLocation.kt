@@ -46,24 +46,6 @@ class GetLocation(private val context: Context) {
         }
     }
 
-    /** getAddressLine 으로 불러온 주소 포멧**/
-    private fun formattingFullAddress(fullAddr: String): String {
-        val addressParts = fullAddr.split(" ").toTypedArray() // 공백을 기준으로 주소 요소 분리
-        var formattedAddress = ""
-        for (i in 0 until addressParts.size - 1) {
-            formattedAddress += addressParts[i].trim { it <= ' ' } // 건물 주소를 제외한 나머지 요소 추출
-            if (i < addressParts.size - 2) {
-                formattedAddress += " " // 요소 사이에 공백 추가
-            }
-        }
-
-        return if (formattedAddress.contains("null")) {
-            formattedAddress.split("null")[0].replace(context.getString(R.string.korea), "")
-        } else {
-            formattedAddress.replace(context.getString(R.string.korea), "")
-        }
-    }
-
     // 비동기적으로 데이터베이스 작업을 처리하는 확장 함수
     fun updateDatabaseWithLocationData(
         mLat: Double,
@@ -108,31 +90,6 @@ class GetLocation(private val context: Context) {
             e.printStackTrace()
             return null
         }
-    }
-
-    @SuppressLint("MissingPermission")
-    fun getGpsInBackground() {
-        val locationManager = context.applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager?
-        val locationListener: LocationListener = object : LocationListener {
-            override fun onLocationChanged(location: Location) {
-                // 위치 업데이트가 발생했을 때 실행되는 코드
-                val latitude = location.latitude
-                val longitude = location.longitude
-                val addr = getAddress(latitude,longitude)
-                updateDatabaseWithLocationData(latitude,longitude,addr)
-            }
-            override fun onProviderEnabled(provider: String) {
-            }
-
-            override fun onProviderDisabled(provider: String) {
-            }
-        }
-        locationManager!!.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER,
-            1000 * 60 * 30,
-            500f,
-            locationListener
-        )
     }
 
     /** 디바이스 GPS 센서에 접근이 가능한지 확인 **/

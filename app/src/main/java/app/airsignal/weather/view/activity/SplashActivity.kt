@@ -85,16 +85,23 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             is BaseRepository.ApiState.Success -> {
                                 binding.splashPB.visibility = View.GONE
                                 val versionName = GetSystemInfo.getApplicationVersionName(this)
-                                if ((ver.data.serviceName == versionName) || (ver.data.releaseName == versionName)) {
+                                if (versionName == ver.data.serviceName) {
                                     val inAppArray = ver.data.inAppMsg
                                     enterPage(inAppArray)
                                 } else {
-                                    MakeSingleDialog(this)
-                                        .makeDialog(getString(R.string.not_latest_go_to_store),
-                                            app.common_res.R.color.main_blue_color,getString(R.string.download), true)
-                                        .setOnClickListener {
-                                            goToPlayStore(this@SplashActivity)
+                                    ver.data.test.forEach {
+                                        if (it.name.contains(versionName)) {
+                                            val inAppArray = ver.data.inAppMsg
+                                            enterPage(inAppArray)
+                                        } else {
+                                            MakeSingleDialog(this)
+                                                .makeDialog(getString(R.string.not_latest_go_to_store),
+                                                    app.common_res.R.color.main_blue_color,getString(R.string.download), true)
+                                                .setOnClickListener {
+                                                    goToPlayStore(this@SplashActivity)
+                                                }
                                         }
+                                    }
                                 }
                             }
 

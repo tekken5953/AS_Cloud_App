@@ -9,14 +9,13 @@ import android.view.animation.AnimationUtils
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import app.core_as_eye.R
 import app.core_as_eye.adapter.AddGroupAdapter
 import app.core_as_eye.adapter.EyeCategoryAdapter
 import app.core_as_eye.adapter.EyeDeviceAdapter
 import app.core_as_eye.dao.EyeDataModel
-import app.core_as_eye.R
 import app.core_as_eye.databinding.ActivityEyeListBinding
 import app.core_customview.MakeDoubleDialog
 import app.core_customview.ShowDialogClass

@@ -50,16 +50,18 @@ class LocPermCautionDialog(
         // 권한 재요청 아이콘 애니메이션 적용
         locIcon.animation =
             AnimationUtils.loadAnimation(context,R.anim.loc_perm_caution_icon_anim)
-                .apply { start() }
+                .apply {
+                    start() }
 
         // 권한 재요청 그림자 애니메이션 적용
         locShadow.animation =
             AnimationUtils.loadAnimation(context,R.anim.loc_perm_caution_shadow_anim)
-                .apply { start() }
+                .apply {
+                    start() }
 
         // 확인 버튼 클릭
         okBtn.setOnClickListener {
-            dismissNow()
+            dismiss()
             SetAppInfo.setInitLocPermission(activity, "Done")
             RequestPermissionsUtil(activity).requestLocation()
         }

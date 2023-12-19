@@ -73,10 +73,10 @@ class  FirstLocCheckDialog(
                     startActivity(intent)
                 }
             }
-            dismissNow()
+            dismiss()
         }
         cancel.setOnClickListener {
-            dismissNow()
+            dismiss()
         }
     }
 
@@ -88,7 +88,7 @@ class  FirstLocCheckDialog(
         dialog.setOnShowListener { dialogInterface ->
             val bottomSheetDialog = dialogInterface as BottomSheetDialog
             bottomSheetDialog.behavior.isDraggable = false
-            setupRatio(bottomSheetDialog, 75)
+            setupRatio(bottomSheetDialog, 65)
         }
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationBottom
 

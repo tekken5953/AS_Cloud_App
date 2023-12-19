@@ -91,8 +91,6 @@ object RDBLogcat {
             if (SharedPreferenceManager(context).getString("user_email") != "") LOGIN_ON else LOGIN_OFF
         } catch(e: java.lang.NullPointerException) { LOGIN_OFF }
     }
-    /** Email을 RealtimeDB의 child 형식에 맞게 변환**/
-    fun formatEmailToRDB(email: String): String { return email.replace(".", "_") }
 
     /** 유니크 아이디 받아오기 - 로그인(이메일) 비로그인(디바이스아이디) **/
     private fun getAndroidIdForLog(context: Context): String {
@@ -185,19 +183,6 @@ object RDBLogcat {
                 .child(getTime())
             if (responseData != null) gpsRef.setValue(modify(responseData))
             else gpsRef.setValue(modify(gpsValue))
-        } catch (e: DatabaseException) { e.printStackTrace() }
-    }
-
-    fun writeWorkManager(
-        context: Context,
-        gpsValue: String
-    ) {
-        try {
-            val gpsRef = default(context)
-                .child(WORK_MANAGER)
-                .child(getDate())
-                .child(getTime())
-            gpsRef.setValue(modify(gpsValue))
         } catch (e: DatabaseException) { e.printStackTrace() }
     }
 

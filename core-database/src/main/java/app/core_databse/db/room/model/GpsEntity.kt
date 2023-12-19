@@ -8,7 +8,6 @@ import androidx.room.PrimaryKey
 /**
  * 유저의 위치정보에 관한 데이터를 저장하는 테이블
  *
- * @property position
  * @property name
  * @property lat
  * @property lng

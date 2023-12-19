@@ -719,8 +719,7 @@ class SettingActivity
                             val versionCode = getApplicationVersionCode(this)
 
                             appInfoVersionValue.text = "${versionName}.${versionCode}"
-                            if ("${data.serviceName}.${data.serviceCode}" == "${versionName}.${versionCode}"
-                                || "${versionName}.${versionCode}" == "${data.releaseName}.${data.releaseCode}") {
+                            if ("${data.serviceName}.${data.serviceCode}" == "${versionName}.${versionCode}") {
                                 appInfoIsRecent.text = getString(R.string.last_software)
                                 appInfoIsRecent.setTextColor(getColor(R.color.sub_gray_color))
                                 appInfoDownBtn.visibility = View.GONE

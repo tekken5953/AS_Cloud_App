@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import app.airsignal.core_network.NetworkIgnored.hostingServerURL
 import com.google.gson.GsonBuilder
 import okhttp3.ConnectionPool
-import okhttp3.Headers
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

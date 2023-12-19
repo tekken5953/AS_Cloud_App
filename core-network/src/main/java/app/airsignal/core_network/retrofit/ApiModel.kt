@@ -21,12 +21,35 @@ class ApiModel {
         val serviceCode: String,
         @SerializedName("releaseDate")
         val date: String,
-        @SerializedName("testName")
-        val releaseName: String,
-        @SerializedName("testCode")
-        val releaseCode: String,
+        @SerializedName("test")
+        val test: List<Test>,
         @SerializedName("inAppMsg")
         val inAppMsg: Array<InAppMsgItem>?
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as AppVersion
+
+            if (inAppMsg != null) {
+                if (other.inAppMsg == null) return false
+                if (!inAppMsg.contentEquals(other.inAppMsg)) return false
+            } else if (other.inAppMsg != null) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return inAppMsg?.contentHashCode() ?: 0
+        }
+    }
+
+    data class Test(
+        @SerializedName("name")
+        val name: String,
+        @SerializedName("code")
+        val code: String
     )
 
     // 인앱 메시지 모델

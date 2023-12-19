@@ -3,8 +3,6 @@ package app.airsignal.weather.util.`object`
 import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.view.View
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R

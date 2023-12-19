@@ -12,7 +12,6 @@ import app.airsignal.core_viewmodel.GetWarningViewModel
 import app.airsignal.core_viewmodel.GetWeatherViewModel
 import app.airsignal.weather.dao.RDBLogcat
 import app.core_databse.db.SharedPreferenceManager
-import app.core_databse.db.database.GpsDataBase
 import app.core_databse.db.room.repository.GpsRepository
 import app.location.GetLocation
 import app.utils.LoggerUtil
