@@ -32,7 +32,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     override fun onResume() {
         super.onResume()
-        appVersionViewModel.loadDataResult()
+        run {
+            applyAppVersionData()
+            appVersionViewModel.loadDataResult()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,8 +43,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         setStatusBar(this)
 
         initBinding()
-//        FirebaseApp.initializeApp(this)
-        applyAppVersionData()
 
         // 유저 디바이스 설정 - 앱 버전
         RDBLogcat.writeUserPref(
@@ -84,22 +85,20 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             // 통신 성공
                             is BaseRepository.ApiState.Success -> {
                                 binding.splashPB.visibility = View.GONE
+                                val inAppArray = ver.data.inAppMsg
                                 val versionName = GetSystemInfo.getApplicationVersionName(this)
-                                if (versionName == ver.data.serviceName) {
-                                    val inAppArray = ver.data.inAppMsg
+                                val versionCode = GetSystemInfo.getApplicationVersionCode(this)
+                                if ( "${versionName}.${versionCode}" == "${ver.data.serviceName}.${ver.data.serviceCode}" ) {
                                     enterPage(inAppArray)
                                 } else {
                                     ver.data.test.forEach {
-                                        if (it.name.contains(versionName)) {
-                                            val inAppArray = ver.data.inAppMsg
+                                        if ("${versionName}.${versionCode}" == "${it.name}.${it.code}") {
                                             enterPage(inAppArray)
                                         } else {
                                             MakeSingleDialog(this)
                                                 .makeDialog(getString(R.string.not_latest_go_to_store),
                                                     app.common_res.R.color.main_blue_color,getString(R.string.download), true)
-                                                .setOnClickListener {
-                                                    goToPlayStore(this@SplashActivity)
-                                                }
+                                                .setOnClickListener { goToPlayStore(this@SplashActivity) }
                                         }
                                     }
                                 }
@@ -124,8 +123,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     }
                 }
             }
-        } catch(e: IOException) {
-            makeDialog("앱 버전을 불러올 수 없습니다.")
+        } catch(e: Exception) {
+            binding.splashPB.visibility = View.GONE
+            makeDialog("앱 버전을 불러올 수 없습니다.\n나중에 다시 시도해주세요.")
         }
     }
 

@@ -1,6 +1,5 @@
 package app.airsignal.core_repository
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
 import app.airsignal.core_network.ErrorCode.ERROR_API_PROTOCOL
 import app.airsignal.core_network.ErrorCode.ERROR_NETWORK
@@ -22,7 +21,6 @@ import java.io.IOException
 class GetAppVersionRepo: BaseRepository() {
     var _getAppVersionResult = MutableLiveData<ApiState<ApiModel.AppVersion>>()
 
-    @SuppressLint("MissingPermission")
     fun loadDataResult() {
         CoroutineScope(Dispatchers.Default).launch {
             _getAppVersionResult.postValue(ApiState.Loading)
@@ -32,12 +30,15 @@ class GetAppVersionRepo: BaseRepository() {
                     response: Response<ApiModel.AppVersion>
                 ) {
                     try {
-                        val responseBody = response.body()!!
-
-                        if (response.isSuccessful)
-                            _getAppVersionResult.postValue(ApiState.Success(responseBody))
-                        else
-                            _getAppVersionResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
+                        val responseBody = response.body()
+                        responseBody?.let {
+                            if (response.isSuccessful)
+                                _getAppVersionResult.postValue(ApiState.Success(responseBody))
+                            else
+                                _getAppVersionResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
+                        } ?: run {
+                            _getAppVersionResult.postValue(ApiState.Error("RESPONSE_IS_NULL"))
+                        }
                     } catch(e: IOException) {
                         _getAppVersionResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
                     }
