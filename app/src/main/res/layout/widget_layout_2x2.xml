@@ -46,6 +46,7 @@
         style="@style/basicTextView"
         android:layout_marginStart="2dp"
         android:layout_marginTop="6dp"
+        android:layout_toStartOf="@+id/widget2x2Refresh"
         android:layout_toEndOf="@+id/widget2x2LocIv"
         android:ellipsize="start"
         android:gravity="start"

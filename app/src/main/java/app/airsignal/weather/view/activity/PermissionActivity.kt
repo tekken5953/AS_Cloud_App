@@ -39,7 +39,7 @@ class PermissionActivity :
     override fun onResume() {
         super.onResume()
         if (perm.isLocationPermitted()) {   // 위치 서비스 이용 가능?
-            @Suppress("DEPRECATION") val inAppExtraList = intent.getParcelableArrayExtra(IN_APP_MSG)!!.map {it as ApiModel.InAppMsgItem}.toTypedArray()
+            @Suppress("DEPRECATION") val inAppExtraList = intent.getParcelableArrayExtra(IN_APP_MSG)?.map {it as ApiModel.InAppMsgItem}?.toTypedArray()
             if (!perm.isNotificationPermitted()) {  // 알림 서비스 이용 가능?
                 val initNotiPermission = getInitNotiPermission(this)
                 if (initNotiPermission == "") { // 알림 서비스 권한 호출이 처음?

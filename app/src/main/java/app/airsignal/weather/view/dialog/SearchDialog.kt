@@ -26,7 +26,6 @@ import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.util.`object`.DataTypeParser.convertAddress
 import app.core_databse.db.room.model.GpsEntity
 import app.core_databse.db.room.repository.GpsRepository
-import app.core_databse.db.sp.GetAppInfo.getCurrentLocation
 import app.core_databse.db.sp.GetAppInfo.getUserFontScale
 import app.core_databse.db.sp.GetAppInfo.getUserLastAddress
 import app.core_databse.db.sp.GetAppInfo.getUserLocation
@@ -112,7 +111,8 @@ class SearchDialog(
             currentAddress.setOnClickListener {
                 this@SearchDialog.dismiss()
                 CoroutineScope(Dispatchers.IO).launch {
-                    dbUpdate(db.findByName(CURRENT_GPS_ID).addrKr,db.findByName(CURRENT_GPS_ID).addrEn,CURRENT_GPS_ID)
+                    val dbFind = db.findByName(CURRENT_GPS_ID)
+                    dbUpdate(dbFind.addrKr,dbFind.addrEn,CURRENT_GPS_ID)
 
                     withContext(Dispatchers.Main) {
                         this@SearchDialog.dismiss()
@@ -127,7 +127,7 @@ class SearchDialog(
             rv.adapter = currentAdapter
             CoroutineScope(Dispatchers.IO).launch {
                 val lastAddr = getUserLastAddress(activity)
-                GpsRepository(activity).findAllWithCoroutine().forEach { entity ->
+                GpsRepository(activity).findAll().forEach { entity ->
                     withContext(Dispatchers.Main) {
                         if (entity.name == CURRENT_GPS_ID) {
                             currentAddress.text = entity.addrKr?.replace(getString(R.string.korea), "") ?: ""
@@ -151,7 +151,7 @@ class SearchDialog(
             // 등록 된 주소 클릭 시 등록 된 주소로 데이터 호출
             currentAdapter.setOnItemClickListener(object : OnAdapterItemClick.OnAdapterItemClick {
                 override fun onItemClick(v: View, position: Int) {
-                    CoroutineScope(Dispatchers.Default).launch {
+                    CoroutineScope(Dispatchers.IO).launch {
                         val currentAddr = currentList[position]
                         dbUpdate(currentAddr.kr,currentAddr.en,currentAddr.kr ?: "")
 
@@ -297,7 +297,7 @@ class SearchDialog(
                                 model.addrKr = resources.getStringArray(R.array.address_korean)[index]
                             }
                         }
-                        db.insertWithCoroutine(model)
+                        db.insert(model)
                         dbUpdate(model.addrKr,model.addrEn,model.name)
 
                         withContext(Dispatchers.Main) {
@@ -331,19 +331,17 @@ class SearchDialog(
     // 레이아웃 노출
     fun show(layoutId: Int) { SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId) }
 
-    private suspend fun dbUpdate(addrKr: String?, addrEn: String?, name: String) {
-        withContext(Dispatchers.IO) {
-            val model = GpsEntity(
-                name = name,
-                lat = null,
-                lng = null,
-                addrEn = addrEn,
-                addrKr = addrKr
-            )
+    private fun dbUpdate(addrKr: String?, addrEn: String?, name: String) {
+        val model = GpsEntity(
+            name = name,
+            lat = null,
+            lng = null,
+            addrEn = addrEn,
+            addrKr = addrKr
+        )
 
-            db.update(model)
-            setUserLastAddr(activity, addrKr!!)
-        }
+        db.update(model)
+        setUserLastAddr(activity, addrKr!!)
     }
 
     private fun isKorea(): Boolean {

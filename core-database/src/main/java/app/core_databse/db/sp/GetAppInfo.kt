@@ -129,10 +129,6 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getString(INITIALIZED_NOTI_PERMISSION)
     }
 
-    fun getCurrentLocation(context: Context): String {
-        return SharedPreferenceManager(context).getString(CURRENT_GPS_ID)
-    }
-
     fun isPermedBackLoc(context: Context): Boolean {
         return SharedPreferenceManager(context).getBoolean(IS_PERMED_BACK_LOG)
     }

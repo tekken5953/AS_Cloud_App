@@ -25,7 +25,6 @@ object SpDao {
     const val LANG_KR = "korea"
     const val LANG_EN = "english"
     const val LANG_SYS = "system"
-    const val CHECK_GPS_BACKGROUND = "BACKGROUND_GPS_OK"  // GPS WorkManager ID 값
     const val LANDING_NOTIFICATION = "rending_notification"
     const val TEXT_SCALE_BIG = "big"
     const val TEXT_SCALE_SMALL = "small"

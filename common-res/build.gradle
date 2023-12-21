@@ -4,6 +4,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\sclee\\StudioProjects\\AS_Cloud_App\\airsignal_key_store1.jks')
+            storePassword 'airsignal2023!'
+            keyPassword 'airsignal2023!'
+            keyAlias 'key0'
+        }
+    }
     namespace 'app.common_res'
 }
 

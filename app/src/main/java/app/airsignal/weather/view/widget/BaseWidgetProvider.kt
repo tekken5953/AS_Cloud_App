@@ -6,8 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
-import app.address.AddressFromRegex
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
@@ -24,6 +22,7 @@ open class BaseWidgetProvider: AppWidgetProvider() {
 
         const val REFRESH_BUTTON_CLICKED_42 = "app.airsignal.weather.view.widget.REFRESH_DATA42"
         const val ENTER_APPLICATION_42 = "app.airsignal.weather.view.widget.ENTER_APP42"
+
     }
 
     override fun onEnabled(context: Context) {
@@ -65,11 +64,6 @@ open class BaseWidgetProvider: AppWidgetProvider() {
             )
         }
         return null
-    }
-
-    fun getWidgetAddress(addr: String): String {
-        val result = AddressFromRegex(addr).getNotificationAddress()
-        return if (result == "") AddressFromRegex(addr).getSecondAddress() else result
     }
 
     fun checkBackPerm(context: Context): Boolean {

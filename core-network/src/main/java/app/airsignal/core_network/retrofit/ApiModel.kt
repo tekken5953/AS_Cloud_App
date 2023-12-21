@@ -21,10 +21,8 @@ class ApiModel {
         val serviceCode: String,
         @SerializedName("releaseDate")
         val date: String,
-        @SerializedName("testName")
-        val releaseName: String,
-        @SerializedName("testCode")
-        val releaseCode: String,
+        @SerializedName("test")
+        val test: List<Test>,
         @SerializedName("inAppMsg")
         val inAppMsg: Array<InAppMsgItem>?
     ) {
@@ -34,29 +32,33 @@ class ApiModel {
 
             other as AppVersion
 
-            if (serviceName != other.serviceName) return false
-            if (serviceCode != other.serviceCode) return false
-            if (date != other.date) return false
-            if (releaseName != other.releaseName) return false
-            if (releaseCode != other.releaseCode) return false
-            if (!inAppMsg.contentEquals(other.inAppMsg)) return false
+            if (inAppMsg != null) {
+                if (other.inAppMsg == null) return false
+                if (!inAppMsg.contentEquals(other.inAppMsg)) return false
+            } else if (other.inAppMsg != null) return false
 
             return true
         }
 
         override fun hashCode(): Int {
-            var result = serviceName.hashCode()
-            result = 31 * result + serviceCode.hashCode()
-            result = 31 * result + date.hashCode()
-            result = 31 * result + releaseName.hashCode()
-            result = 31 * result + releaseCode.hashCode()
-            result = 31 * result + (inAppMsg?.contentHashCode() ?: 0)
-            return result
+            return inAppMsg?.contentHashCode() ?: 0
         }
     }
 
+    data class Test(
+        @SerializedName("name")
+        val name: String,
+        @SerializedName("code")
+        val code: String
+    )
+
     // 인앱 메시지 모델
-    data class InAppMsgItem(val img: String, val redirect: String) : Parcelable {
+    data class InAppMsgItem(
+        @SerializedName("img")
+        val img: String,
+        @SerializedName("redirect")
+        val redirect: String
+        ) : Parcelable {
         // Parcelable 구현
         constructor(parcel: Parcel) : this(
             parcel.readString() ?: "",
@@ -463,6 +465,8 @@ class ApiModel {
 
     // 공지사항 리스트
     data class NoticeItem(
+        @SerializedName("id")
+        val id: Long,
         @SerializedName("category")
         val category: String?,
         @SerializedName("created")
@@ -472,6 +476,8 @@ class ApiModel {
         @SerializedName("title")
         val title: String,
         @SerializedName("content")
-        val content: String
+        val content: String,
+        @SerializedName("href")
+        val href: String?
     )
 }

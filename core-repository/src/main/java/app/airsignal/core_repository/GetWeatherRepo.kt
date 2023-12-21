@@ -45,7 +45,7 @@ class GetWeatherRepo : BaseRepository() {
                     ) {
                         try {
                             if (response.isSuccessful) {
-                                Log.d("TAG_R","raw : ${response.raw()}\nheader : ${response.headers().toHeaderList()}")
+//                                Log.d("TAG_R","raw : ${response.raw()}\nheader : ${response.headers().toHeaderList()}")
                                 val responseBody = processData(response.body())
                                 _getDataResult.postValue(ApiState.Success(responseBody))
                             } else {

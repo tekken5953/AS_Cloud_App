@@ -9,7 +9,6 @@ import android.view.*
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
-import app.airsignal.weather.util.RefreshUtils
 import app.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.core_databse.db.sp.GetAppInfo.getUserFontScale
 import app.core_databse.db.sp.GetAppInfo.getUserProfileImage

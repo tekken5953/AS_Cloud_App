@@ -13,5 +13,4 @@
     <string name="setting">설정</string>
     <string name="cqi">통합 대기 환경지수</string>
     <string name="virus_value">바이러스 위험 지수</string>
-    <string name="device_name">장치이름</string>
 </resources>
