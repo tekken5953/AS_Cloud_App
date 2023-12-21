@@ -15,13 +15,14 @@ import app.airsignal.weather.databinding.ActivitySplashBinding
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
-import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
 import app.core_databse.db.sp.GetSystemInfo
 import app.core_databse.db.sp.GetSystemInfo.goToPlayStore
 import app.location.GetLocation
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.IOException
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity<ActivitySplashBinding>() {
@@ -31,10 +32,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     override fun onResume() {
         super.onResume()
-        run {
-            applyAppVersionData()
-            appVersionViewModel.loadDataResult()
-        }
+        appVersionViewModel.loadDataResult()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +40,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         setStatusBar(this)
 
         initBinding()
+//        FirebaseApp.initializeApp(this)
+        applyAppVersionData()
 
         // 유저 디바이스 설정 - 앱 버전
         RDBLogcat.writeUserPref(
@@ -84,25 +84,23 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             // 통신 성공
                             is BaseRepository.ApiState.Success -> {
                                 binding.splashPB.visibility = View.GONE
-                                val inAppArray = ver.data.inAppMsg
                                 val versionName = GetSystemInfo.getApplicationVersionName(this)
-                                val versionCode = GetSystemInfo.getApplicationVersionCode(this)
-                                val fullVersion = "${versionName}.${versionCode}"
-                                if (fullVersion == "${ver.data.serviceName}.${ver.data.serviceCode}" ) {
+                                if (versionName == ver.data.serviceName) {
+                                    val inAppArray = ver.data.inAppMsg
                                     enterPage(inAppArray)
                                 } else {
-                                    val array = ArrayList<String>()
                                     ver.data.test.forEach {
-                                        array.add("${it.name}.${it.code}")
-                                    }
-
-                                    if (array.contains(fullVersion)) {
-                                        enterPage(inAppArray)
-                                    } else {
-                                        MakeSingleDialog(this)
-                                            .makeDialog(getString(R.string.not_latest_go_to_store),
-                                                R.color.main_blue_color,getString(R.string.download), true)
-                                            .setOnClickListener { goToPlayStore(this@SplashActivity) }
+                                        if (it.name.contains(versionName)) {
+                                            val inAppArray = ver.data.inAppMsg
+                                            enterPage(inAppArray)
+                                        } else {
+                                            MakeSingleDialog(this)
+                                                .makeDialog(getString(R.string.not_latest_go_to_store),
+                                                    R.color.main_blue_color,getString(R.string.download), true)
+                                                .setOnClickListener {
+                                                    goToPlayStore(this@SplashActivity)
+                                                }
+                                        }
                                     }
                                 }
                             }
@@ -126,9 +124,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     }
                 }
             }
-        } catch(e: Exception) {
-            binding.splashPB.visibility = View.GONE
-            makeDialog("앱 버전을 불러올 수 없습니다.\n나중에 다시 시도해주세요.")
+        } catch(e: IOException) {
+            makeDialog("앱 버전을 불러올 수 없습니다.")
         }
     }
 
