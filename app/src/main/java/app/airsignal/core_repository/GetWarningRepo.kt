@@ -2,11 +2,12 @@ package app.airsignal.core_repository
 
 import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
-import app.airsignal.core_network.ErrorCode.ERROR_API_PROTOCOL
-import app.airsignal.core_network.ErrorCode.ERROR_NETWORK
-import app.airsignal.core_network.ErrorCode.ERROR_SERVER_CONNECTING
-import app.airsignal.core_network.ErrorCode.ERROR_UNKNOWN
-import app.airsignal.core_network.retrofit.ApiModel
+import app.airsignal.weather.network.ErrorCode.ERROR_API_PROTOCOL
+import app.airsignal.weather.network.ErrorCode.ERROR_NETWORK
+import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
+import app.airsignal.weather.network.ErrorCode.ERROR_UNKNOWN
+import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.repository.BaseRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

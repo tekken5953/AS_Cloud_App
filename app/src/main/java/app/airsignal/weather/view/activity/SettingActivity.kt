@@ -23,9 +23,9 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
-import app.airsignal.core_network.retrofit.ApiModel
-import app.airsignal.core_repository.BaseRepository
-import app.airsignal.core_viewmodel.GetAppVersionViewModel
+import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.viewmodel.GetAppVersionViewModel
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.NoticeAdapter
 import app.airsignal.weather.dao.IgnoredKeyFile.notiEnable

@@ -2,7 +2,6 @@ package app.core_databse.db.sp
 
 import android.content.Context
 import app.core_databse.db.SharedPreferenceManager
-import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
 import app.core_databse.db.sp.SpDao.INITIALIZED_LOC_PERMISSION
 import app.core_databse.db.sp.SpDao.INITIALIZED_NOTI_PERMISSION
 import app.core_databse.db.sp.SpDao.IN_APP_MSG_TIME

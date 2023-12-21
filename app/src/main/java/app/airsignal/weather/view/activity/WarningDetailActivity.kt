@@ -2,18 +2,12 @@ package app.airsignal.weather.view.activity
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
-import android.window.OnBackInvokedCallback
-import android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
-import app.address.AddressFromRegex
-import app.airsignal.core_repository.BaseRepository
+import app.airsignal.weather.address.AddressFromRegex
+import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.core_viewmodel.GetWarningViewModel
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.WarningDetailAdapter

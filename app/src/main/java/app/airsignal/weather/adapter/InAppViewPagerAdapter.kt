@@ -10,7 +10,7 @@ import android.view.*
 import android.webkit.WebView
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
-import app.airsignal.core_network.retrofit.ApiModel
+import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.R
 import app.airsignal.weather.view.activity.WebURLActivity
 

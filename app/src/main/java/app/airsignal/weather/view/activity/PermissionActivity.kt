@@ -9,7 +9,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.widget.Toast
-import app.airsignal.core_network.retrofit.ApiModel
+import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityPermissionBinding

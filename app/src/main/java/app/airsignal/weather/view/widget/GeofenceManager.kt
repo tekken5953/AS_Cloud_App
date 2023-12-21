@@ -5,9 +5,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.util.Log
 import androidx.core.content.ContextCompat
-import app.address.AddressFromRegex
+import app.airsignal.weather.address.AddressFromRegex
 import app.airsignal.weather.koin.BaseApplication
 import app.location.GetLocation
 import com.google.android.gms.location.*

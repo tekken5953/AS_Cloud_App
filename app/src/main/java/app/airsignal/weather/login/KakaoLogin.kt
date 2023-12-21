@@ -12,11 +12,11 @@ import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO_EMAIL
 import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.dao.StaticDataObject.TAG_L
-import app.airsignal.weather.koin.BaseApplication.Companion.logger
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
 import app.core_databse.db.SharedPreferenceManager
 import app.core_databse.db.sp.GetAppInfo.getUserEmail
+import app.utils.LoggerUtil
 import com.airbnb.lottie.LottieAnimationView
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider
@@ -48,12 +48,12 @@ class KakaoLogin(private val activity: Activity) {
                     btn.alpha = 1f
                     // 사용자가 취소
                     if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled)) {
-                        logger.d(TAG_L,"카카오 로그인 취소")
+                        LoggerUtil().d(TAG_L,"카카오 로그인 취소")
                         return@loginWithKakaoTalk
                     }
                     // 다른 오류
                     else {
-                        logger.d(TAG_L,"카카오 로그인 기타 오류 : ${error.localizedMessage}")
+                        LoggerUtil().d(TAG_L,"카카오 로그인 기타 오류 : ${error.localizedMessage}")
                         UserApiClient.instance.loginWithKakaoAccount(
                             activity,
                             callback = mCallback

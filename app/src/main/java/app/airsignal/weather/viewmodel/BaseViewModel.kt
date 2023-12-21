@@ -1,4 +1,4 @@
-package app.airsignal.core_viewmodel
+package app.airsignal.weather.viewmodel
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.Job

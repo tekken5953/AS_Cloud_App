@@ -8,7 +8,7 @@ import android.location.*
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.provider.Settings
-import app.address.AddressFromRegex
+import app.airsignal.weather.address.AddressFromRegex
 import app.core_databse.db.room.model.GpsEntity
 import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetSystemInfo

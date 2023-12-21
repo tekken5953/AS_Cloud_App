@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
@@ -145,7 +146,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     private fun updateUI(
         context: Context,
         views: RemoteViews,
-        data: app.airsignal.core_network.retrofit.ApiModel.WidgetData?,
+        data: ApiModel.WidgetData?,
         addr: String?
     ) {
         try {

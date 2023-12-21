@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
-import app.airsignal.core_network.retrofit.ApiModel;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

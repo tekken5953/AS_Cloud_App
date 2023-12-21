@@ -1,4 +1,4 @@
-package app.airsignal.core_network
+package app.airsignal.weather.network
 
 object ErrorCode {
     const val ERROR_NETWORK = "Network Error"

@@ -10,6 +10,7 @@ import android.widget.RemoteViews
 import android.widget.Toast
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
@@ -141,7 +142,7 @@ open class WidgetProvider : BaseWidgetProvider() {
     private fun updateUI(
         context: Context,
         views: RemoteViews,
-        data: app.airsignal.core_network.retrofit.ApiModel.WidgetData?,
+        data: ApiModel.WidgetData?,
         addr: String?
     ) {
         try {

@@ -4,11 +4,11 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import app.airsignal.core_network.ErrorCode.ERROR_NETWORK
-import app.airsignal.core_network.ErrorCode.ERROR_SERVER_CONNECTING
-import app.airsignal.core_network.retrofit.ApiModel
-import app.airsignal.core_repository.BaseRepository
-import app.airsignal.core_viewmodel.GetAppVersionViewModel
+import app.airsignal.weather.network.ErrorCode.ERROR_NETWORK
+import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
+import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.viewmodel.GetAppVersionViewModel
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivitySplashBinding
@@ -21,6 +21,8 @@ import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
 import app.core_databse.db.sp.GetSystemInfo
 import app.core_databse.db.sp.GetSystemInfo.goToPlayStore
 import app.location.GetLocation
+import app.utils.LoggerUtil
+import app.utils.TimberUtil
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 
@@ -29,6 +31,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override val resID: Int get() = R.layout.activity_splash
 
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
+
+    init {
+        TimberUtil().getInstance()
+        LoggerUtil().getInstance()
+    }
 
     override fun onResume() {
         super.onResume()
@@ -69,9 +76,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
     private fun enterPage(inAppMsgList: Array<ApiModel.InAppMsgItem>?) {
-        if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted())
-            EnterPageUtil(this@SplashActivity).toMain(getUserLoginPlatform(this), inAppMsgList)
-        else EnterPageUtil(this@SplashActivity).toPermission()
+        if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
+            EnterPageUtil(this@SplashActivity).toMain(
+                getUserLoginPlatform(this),inAppMsgList)
+        } else {
+            EnterPageUtil(this@SplashActivity).toPermission()
+        }
     }
 
     // 앱 버전 뷰모델 데이터 호출
@@ -110,14 +120,23 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                 binding.splashPB.visibility = View.GONE
                                 when (ver.errorMessage) {
                                     ERROR_NETWORK -> {
-                                        if (GetLocation(this).isNetWorkConnected())
+                                        if (GetLocation(this).isNetWorkConnected()) {
                                             makeDialog(getString(R.string.unknown_error))
-                                        else makeDialog(getString(R.string.error_network_connect))
+                                        } else {
+                                            makeDialog(getString(R.string.error_network_connect))
+                                        }
                                     }
-                                    ERROR_SERVER_CONNECTING -> makeDialog(getString(R.string.error_server_down))
-                                    else -> makeDialog(getString(R.string.unknown_error))
+
+                                    ERROR_SERVER_CONNECTING -> {
+                                        makeDialog(getString(R.string.error_server_down))
+                                    }
+
+                                    else -> {
+                                        makeDialog(getString(R.string.unknown_error))
+                                    }
                                 }
                             }
+
                             // 통신 중
                             is BaseRepository.ApiState.Loading -> binding.splashPB.visibility = View.VISIBLE
                         }
@@ -132,7 +151,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     // 다이얼로그 생성
     private fun makeDialog(s: String) {
         MakeSingleDialog(this).makeDialog(
-            s, R.color.theme_alert_double_apply_color, getString(R.string.ok), false
+            s, getColor(R.color.theme_alert_double_apply_color), getString(R.string.ok), false
         )
     }
 }
