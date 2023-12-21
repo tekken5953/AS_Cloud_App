@@ -2,14 +2,8 @@ package app.airsignal.weather.view.activity
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
-import android.window.OnBackInvokedCallback
-import android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
 import app.address.AddressFromRegex
@@ -19,9 +13,9 @@ import app.airsignal.weather.R
 import app.airsignal.weather.adapter.WarningDetailAdapter
 import app.airsignal.weather.databinding.ActivityWarningDetailBinding
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
-import app.core_databse.db.sp.GetAppInfo.getNotificationAddress
-import app.core_databse.db.sp.GetAppInfo.getUserLastAddress
-import app.core_databse.db.sp.GetAppInfo.getWarningFixed
+import app.airsignal.weather.db.db.sp.GetAppInfo.getNotificationAddress
+import app.airsignal.weather.db.db.sp.GetAppInfo.getUserLastAddress
+import app.airsignal.weather.db.db.sp.GetAppInfo.getWarningFixed
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 

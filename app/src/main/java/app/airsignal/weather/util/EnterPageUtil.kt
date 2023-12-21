@@ -7,7 +7,7 @@ import app.airsignal.weather.view.activity.LoginActivity
 import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.activity.PermissionActivity
 import app.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
-import app.core_databse.db.sp.SpDao.IN_APP_MSG
+import app.airsignal.weather.db.db.sp.SpDao.IN_APP_MSG
 import kotlin.system.exitProcess
 
 /**

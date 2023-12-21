@@ -14,7 +14,7 @@ import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetSystemInfo
 import app.core_databse.db.sp.SetAppInfo.setNotificationAddress
 import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
-import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
+import app.airsignal.weather.db.db.sp.SpDao.CURRENT_GPS_ID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

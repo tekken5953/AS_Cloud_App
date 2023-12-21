@@ -15,7 +15,7 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.sp.GetAppInfo
+import app.airsignal.weather.db.db.sp.GetAppInfo
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 

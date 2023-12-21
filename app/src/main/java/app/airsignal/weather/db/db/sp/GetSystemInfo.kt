@@ -7,9 +7,9 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import androidx.core.content.pm.PackageInfoCompat
-import app.core_databse.db.sp.GetAppInfo.getUserLocation
-import app.core_databse.db.sp.SpDao.LANG_EN
-import app.core_databse.db.sp.SpDao.LANG_KR
+import app.airsignal.weather.db.db.sp.GetAppInfo.getUserLocation
+import app.airsignal.weather.db.db.sp.SpDao.LANG_EN
+import app.airsignal.weather.db.db.sp.SpDao.LANG_KR
 import java.util.*
 
 

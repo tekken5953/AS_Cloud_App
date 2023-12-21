@@ -16,7 +16,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import app.airsignal.weather.R
-import app.core_databse.db.sp.GetAppInfo
+import app.airsignal.weather.db.db.sp.GetAppInfo
 import app.core_databse.db.sp.SetAppInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog

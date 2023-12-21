@@ -17,7 +17,7 @@ import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
+import app.airsignal.weather.db.db.sp.GetAppInfo.getUserLoginPlatform
 import app.core_databse.db.sp.GetSystemInfo
 import app.core_databse.db.sp.GetSystemInfo.goToPlayStore
 import app.location.GetLocation

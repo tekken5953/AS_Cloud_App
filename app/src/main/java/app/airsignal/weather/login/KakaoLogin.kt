@@ -16,7 +16,7 @@ import app.airsignal.weather.koin.BaseApplication.Companion.logger
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
 import app.core_databse.db.SharedPreferenceManager
-import app.core_databse.db.sp.GetAppInfo.getUserEmail
+import app.airsignal.weather.db.db.sp.GetAppInfo.getUserEmail
 import com.airbnb.lottie.LottieAnimationView
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider

@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
-import app.core_databse.db.sp.GetAppInfo.getUserFontScale
+import app.airsignal.weather.db.db.sp.GetAppInfo.getUserFontScale
 import app.core_databse.db.sp.SetSystemInfo
 import com.bumptech.glide.Glide
 

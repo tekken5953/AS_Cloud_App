@@ -2,25 +2,25 @@ package app.core_databse.db.sp
 
 import android.content.Context
 import app.core_databse.db.SharedPreferenceManager
-import app.core_databse.db.sp.SpDao.INITIALIZED_LOC_PERMISSION
-import app.core_databse.db.sp.SpDao.INITIALIZED_NOTI_PERMISSION
-import app.core_databse.db.sp.SpDao.IN_APP_MSG
-import app.core_databse.db.sp.SpDao.IN_APP_MSG_TIME
-import app.core_databse.db.sp.SpDao.IS_INIT_BACK_LOC_PERMISSION
-import app.core_databse.db.sp.SpDao.IS_PERMED_BACK_LOG
-import app.core_databse.db.sp.SpDao.LANDING_NOTIFICATION
-import app.core_databse.db.sp.SpDao.LAST_REFRESH22
-import app.core_databse.db.sp.SpDao.LAST_REFRESH42
-import app.core_databse.db.sp.SpDao.NOTIFICATION_ADDRESS
-import app.core_databse.db.sp.SpDao.NOTIFICATION_TOPIC_DAILY
-import app.core_databse.db.sp.SpDao.lastAddress
-import app.core_databse.db.sp.SpDao.lastLoginPhone
-import app.core_databse.db.sp.SpDao.lastLoginPlatform
-import app.core_databse.db.sp.SpDao.userEmail
-import app.core_databse.db.sp.SpDao.userFontScale
-import app.core_databse.db.sp.SpDao.userId
-import app.core_databse.db.sp.SpDao.userLocation
-import app.core_databse.db.sp.SpDao.userProfile
+import app.airsignal.weather.db.db.sp.SpDao.INITIALIZED_LOC_PERMISSION
+import app.airsignal.weather.db.db.sp.SpDao.INITIALIZED_NOTI_PERMISSION
+import app.airsignal.weather.db.db.sp.SpDao.IN_APP_MSG
+import app.airsignal.weather.db.db.sp.SpDao.IN_APP_MSG_TIME
+import app.airsignal.weather.db.db.sp.SpDao.IS_INIT_BACK_LOC_PERMISSION
+import app.airsignal.weather.db.db.sp.SpDao.IS_PERMED_BACK_LOG
+import app.airsignal.weather.db.db.sp.SpDao.LANDING_NOTIFICATION
+import app.airsignal.weather.db.db.sp.SpDao.LAST_REFRESH22
+import app.airsignal.weather.db.db.sp.SpDao.LAST_REFRESH42
+import app.airsignal.weather.db.db.sp.SpDao.NOTIFICATION_ADDRESS
+import app.airsignal.weather.db.db.sp.SpDao.NOTIFICATION_TOPIC_DAILY
+import app.airsignal.weather.db.db.sp.SpDao.lastAddress
+import app.airsignal.weather.db.db.sp.SpDao.lastLoginPhone
+import app.airsignal.weather.db.db.sp.SpDao.lastLoginPlatform
+import app.airsignal.weather.db.db.sp.SpDao.userEmail
+import app.airsignal.weather.db.db.sp.SpDao.userFontScale
+import app.airsignal.weather.db.db.sp.SpDao.userId
+import app.airsignal.weather.db.db.sp.SpDao.userLocation
+import app.airsignal.weather.db.db.sp.SpDao.userProfile
 
 /**
  * @author : Lee Jae Young

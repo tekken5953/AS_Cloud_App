@@ -20,7 +20,7 @@ import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.ToastUtils
 import app.core_databse.db.SharedPreferenceManager
-import app.core_databse.db.sp.GetAppInfo.getUserEmail
+import app.airsignal.weather.db.db.sp.GetAppInfo.getUserEmail
 import com.airbnb.lottie.LottieAnimationView
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin

@@ -1,4 +1,4 @@
-package app.core_databse.db.sp
+package app.airsignal.weather.db.db.sp
 
 object SpDao {
     const val lastLoginPlatform = "last_login"

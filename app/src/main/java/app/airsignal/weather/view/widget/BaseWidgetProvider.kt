@@ -10,7 +10,7 @@ import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.sp.GetAppInfo
+import app.airsignal.weather.db.db.sp.GetAppInfo
 import app.core_databse.db.sp.SetAppInfo
 import retrofit2.awaitResponse
 import java.time.LocalDateTime

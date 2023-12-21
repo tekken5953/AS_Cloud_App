@@ -22,8 +22,8 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.core_databse.db.room.repository.GpsRepository
-import app.core_databse.db.sp.GetAppInfo.getUserLastAddress
-import app.core_databse.db.sp.GetAppInfo.getUserLocation
+import app.airsignal.weather.db.db.sp.GetAppInfo.getUserLastAddress
+import app.airsignal.weather.db.db.sp.GetAppInfo.getUserLocation
 import app.utils.OnAdapterItemClick
 import java.util.*
 
