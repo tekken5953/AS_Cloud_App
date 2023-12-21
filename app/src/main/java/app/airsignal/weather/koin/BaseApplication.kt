@@ -3,7 +3,7 @@ package app.airsignal.weather.koin
 import android.app.Application
 import android.content.Context
 import app.airsignal.core_network.retrofit.ApiModel
-import app.airsignal.core_network.retrofit.HttpClient
+import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.core_repository.GetAppVersionRepo
 import app.airsignal.core_repository.GetWarningRepo
 import app.airsignal.core_repository.GetWeatherRepo

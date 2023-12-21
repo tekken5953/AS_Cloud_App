@@ -1,11 +1,13 @@
 package app.airsignal.weather.util.`object`
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -25,6 +27,14 @@ object DataTypeParser {
     fun getHourCountToTomorrow(): Int {
         val currentHour = parseLongToLocalDateTime(getCurrentTime()).hour
         return 24 - currentHour
+    }
+
+    fun currentDateTimeString(format: String): String {
+        @SuppressLint("SimpleDateFormat") val mFormat = SimpleDateFormat(format)
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+        }
+        return mFormat.format(calendar.time)
     }
 
     /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트 **/
@@ -83,7 +93,7 @@ object DataTypeParser {
             "비/눈" to R.drawable.b_ico_rainy_snow,
             "소나기" to R.drawable.b_ico_rainy
         )
-        return rainMap[rain]?.let{ getDrawable(context,it)} ?: getDrawable(context,app.common_res.R.drawable.cancel)
+        return rainMap[rain]?.let{ getDrawable(context,it)} ?: getDrawable(context,R.drawable.cancel)
     }
 
     /** sky value에 따른 이미지 설정 **/
@@ -101,7 +111,7 @@ object DataTypeParser {
             "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
                 R.drawable.b_ico_cloudy_rainy
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
-            else -> app.common_res.R.drawable.cancel
+            else -> R.drawable.cancel
         }
 
         return getDrawable(context,id)
@@ -122,7 +132,7 @@ object DataTypeParser {
                 "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
                     R.drawable.b_ico_cloudy_rainy
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
-                else -> app.common_res.R.drawable.cancel
+                else -> R.drawable.cancel
             }
         } else {
             when(rainType) {
@@ -130,7 +140,7 @@ object DataTypeParser {
                 "눈" -> R.drawable.sm_snow
                 "비/눈" -> R.drawable.b_ico_rainy_snow
                 "소나기" -> R.drawable.b_ico_rainy
-                else -> app.common_res.R.drawable.cancel
+                else -> R.drawable.cancel
             }
         }
     }
@@ -171,7 +181,7 @@ object DataTypeParser {
             "소나기" to R.drawable.b_ico_rainy
         )
 
-        return rainMap[rain ?: ""]?.let { getDrawable(context,it) } ?: getDrawable(context,app.common_res.R.drawable.cancel)
+        return rainMap[rain ?: ""]?.let { getDrawable(context,it) } ?: getDrawable(context,R.drawable.cancel)
     }
 
     /** sky value에 따른 이미지 설정 **/
@@ -189,7 +199,7 @@ object DataTypeParser {
             "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
                 R.drawable.b_ico_cloudy_rainy
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
-            else -> app.common_res.R.drawable.cancel
+            else -> R.drawable.cancel
         }
 
         return getDrawable(context,id)
@@ -206,8 +216,8 @@ object DataTypeParser {
         lunar: Int
     ): Drawable? {
         return if (rain != "없음" && (thunder == null || thunder < 0.2)) {
-            if (isLarge) getRainTypeLarge(context, rain!!) ?: getDrawable(context, app.common_res.R.drawable.cancel)
-            else getRainTypeSmall(context, rain!!) ?: getDrawable(context, app.common_res.R.drawable.cancel)
+            if (isLarge) getRainTypeLarge(context, rain!!) ?: getDrawable(context, R.drawable.cancel)
+            else getRainTypeSmall(context, rain!!) ?: getDrawable(context, R.drawable.cancel)
         } else if (rain == "없음" && (thunder == null || thunder < 0.2)) {
             if (isLarge) getSkyImgLarge(context, sky!!, isNight ?: false, lunar)
             else getSkyImgSmall(context, sky!!, isNight ?: false)
@@ -283,7 +293,7 @@ object DataTypeParser {
     @Suppress("DEPRECATION")
     fun setStatusBar(activity: Activity) {
         activity.window.apply {
-            statusBarColor = activity.getColor(app.common_res.R.color.theme_view_color)
+            statusBarColor = activity.getColor(R.color.theme_view_color)
             navigationBarColor = activity.getColor(android.R.color.transparent)
         }
     }

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:scrollbars="none">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".view.activity.MainActivity">
+
+            <ImageView
+                android:id="@+id/aeLiveTitleIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ae_title_icon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/aeLiveTitleText"
+                style="@style/basicMediumTextView"
+                android:layout_marginStart="13dp"
+                android:text="@string/live_value"
+                android:textColor="@color/theme_text_color"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/aeLiveTitleIcon"
+                app:layout_constraintStart_toEndOf="@+id/aeLiveTitleIcon"
+                app:layout_constraintTop_toTopOf="@+id/aeLiveTitleIcon" />
+
+            <ImageView
+                android:id="@+id/aeLiveRefreshIcon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="3dp"
+                android:src="@drawable/w_btn_refresh"
+                app:layout_constraintBottom_toBottomOf="@id/aeLiveTitleIcon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/aeLiveTitleIcon"
+                app:tint="@color/ae_sub_color" />
+
+            <TextView
+                android:id="@+id/aeLiveRefreshTime"
+                style="@style/basicTextView"
+                android:layout_height="0dp"
+                android:layout_marginEnd="5dp"
+                android:textColor="@color/ae_sub_color"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/aeLiveRefreshIcon"
+                app:layout_constraintEnd_toStartOf="@+id/aeLiveRefreshIcon"
+                app:layout_constraintTop_toTopOf="@id/aeLiveRefreshIcon" />
+
+            <TableRow
+                android:id="@+id/aeLiveTr1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toBottomOf="@+id/aeLiveTitleIcon">
+
+                <app.airsignal.weather.as_eye.customview.EyeLiveSingleDataView
+                    android:id="@+id/aeLiveTemp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="0.5"
+                    app:title="온도"
+                    app:unit="℃" />
+
+                <app.airsignal.weather.as_eye.customview.EyeLiveSingleDataView
+                    android:id="@+id/aeLiveHumid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="0.5"
+                    app:title="습도"
+                    app:unit="%" />
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/aeLiveTr2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/aeLiveTr1">
+
+                <app.airsignal.weather.as_eye.customview.EyeLiveSingleDataView
+                    android:id="@+id/aeLiveLight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="0.5"
+                    app:title="조도"
+                    app:unit="㏓" />
+
+                <app.airsignal.weather.as_eye.customview.EyeLiveSingleDataView
+                    android:id="@+id/aeLiveNoise"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="0.5"
+                    app:title="소음"
+                    app:unit="㏈" />
+            </TableRow>
+
+            <app.airsignal.weather.as_eye.customview.EyeLiveDoubleDataView
+                android:id="@+id/aeLivePM25"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/aeLiveTr2"
+                app:titleEnDouble="PM2.5"
+                android:layout_marginTop="10dp"
+                app:titleKrDouble="초미세먼지"
+                app:unitDouble="㎍/㎥" />
+
+            <app.airsignal.weather.as_eye.customview.EyeLiveDoubleDataView
+                android:id="@+id/aeLivePM10"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/aeLivePM25"
+                app:titleEnDouble="PM10"
+                app:titleKrDouble="미세먼지"
+                app:unitDouble="㎍/㎥" />
+
+            <app.airsignal.weather.as_eye.customview.EyeLiveDoubleDataView
+                android:id="@+id/aeLiveCO2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/aeLivePM10"
+                app:titleEnDouble="CO2"
+                app:titleKrDouble="이산화탄소"
+                app:unitDouble="ppm" />
+
+            <app.airsignal.weather.as_eye.customview.EyeLiveDoubleDataView
+                android:id="@+id/aeLiveCO"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/aeLiveCO2"
+                app:titleEnDouble="CO"
+                app:titleKrDouble="일산화탄소"
+                app:unitDouble="ppm" />
+
+            <app.airsignal.weather.as_eye.customview.EyeLiveDoubleDataView
+                android:id="@+id/aeLiveTVOC"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/aeLiveCO"
+                app:titleEnDouble="TVOC"
+                app:titleKrDouble="총휘발성\n유기화합물"
+                app:unitDouble="㎍/㎥" />
+
+            <app.airsignal.weather.as_eye.customview.EyeLiveDoubleDataView
+                android:id="@+id/aeLiveNO2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/aeLiveTVOC"
+                app:titleEnDouble="NO2"
+                app:titleKrDouble="이산화질소"
+                app:unitDouble="ppm" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

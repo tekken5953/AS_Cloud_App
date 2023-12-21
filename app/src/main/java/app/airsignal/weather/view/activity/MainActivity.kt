@@ -83,10 +83,10 @@ import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.view.*
 import app.airsignal.weather.view.dialog.*
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_customview.MakeDoubleDialog
-import app.core_customview.MakeSingleDialog
-import app.core_customview.ShowDialogClass
-import app.core_customview.SnackBarUtils
+import app.airsignal.weather.view.custom_view.MakeDoubleDialog
+import app.airsignal.weather.view.custom_view.MakeSingleDialog
+import app.airsignal.weather.view.custom_view.ShowDialogClass
+import app.airsignal.weather.view.custom_view.SnackBarUtils
 import app.core_databse.db.room.repository.GpsRepository
 import app.core_databse.db.sp.GetAppInfo
 import app.core_databse.db.sp.GetAppInfo.getEntireSun
@@ -219,8 +219,8 @@ class MainActivity
                 SubFCM().subTopic("patch")
                 SubFCM().subTopic("daily")
                 changeBackgroundResource(null)
-                window.statusBarColor = getColor(app.common_res.R.color.theme_view_color)
-                window.navigationBarColor = getColor(app.common_res.R.color.theme_view_color)
+                window.statusBarColor = getColor(R.color.theme_view_color)
+                window.navigationBarColor = getColor(R.color.theme_view_color)
                 binding.mainMotionLayout.apply {
                     isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
                     isEnabled = false
@@ -308,7 +308,7 @@ class MainActivity
                             "Share with in English?",
                             "Yes",
                             "With in Korean",
-                            app.common_res.R.color.main_blue_color
+                            R.color.main_blue_color
                         ).apply {
                             this.first.setOnClickListener(object : OnSingleClickListener() {
                                 override fun onSingleClick(v: View?) {
@@ -384,7 +384,7 @@ class MainActivity
     }
 
     private fun inAppMsgDialog() {
-        val inAppDialog = AlertDialog.Builder(this, app.core_customview.R.style.InAppDialogStyle)
+        val inAppDialog = AlertDialog.Builder(this, R.style.InAppDialogStyle)
         val inAppView = LayoutInflater.from(this)
             .inflate(R.layout.dialog_in_app_msg,null,false)
         inAppDialog.setView(inAppView)
@@ -631,7 +631,7 @@ class MainActivity
                                     val subModal = MakeSingleDialog(this@MainActivity)
                                     subModal.makeDialog(
                                         "출시가 완료되면 알림 메시지를 보낼게요 ${String(Character.toChars(0x1F514))}",
-                                        app.common_res.R.color.main_blue_color, "확인", false
+                                        R.color.main_blue_color, "확인", false
                                     )
                                     subModal.apply.setOnClickListener {
                                         CoroutineScope(Dispatchers.IO).launch {
@@ -727,7 +727,7 @@ class MainActivity
             assets,
             if (isWhite) "spoqa_hansansneo_regular.ttf" else "spoqa_hansansneo_regular.ttf"
         )
-        t1.setTextColor(getColor(if (isWhite) R.color.white else app.common_res.R.color.main_blue_color))
+        t1.setTextColor(getColor(if (isWhite) R.color.white else R.color.main_blue_color))
         t2.setTextColor(getColor(if (isWhite) R.color.sub_white else R.color.sub_black))
         t3.setTextColor(getColor(if (isWhite) R.color.sub_white else R.color.sub_black))
     }
@@ -1606,7 +1606,7 @@ class MainActivity
     private fun changeBackgroundResource(id: Int?) {
         id?.let {
             window.setBackgroundDrawableResource(it)
-        } ?: window.setBackgroundDrawableResource(app.common_res.R.color.theme_view_color)
+        } ?: window.setBackgroundDrawableResource(R.color.theme_view_color)
     }
 
     // 필드값이 없을 때 -100 출력 됨
@@ -1783,7 +1783,7 @@ class MainActivity
 
             binding.mainMotionSlideGuide.apply {
                 text = getString(R.string.error_guide)
-                setTextColor(getC(app.common_res.R.color.theme_text_color))
+                setTextColor(getC(R.color.theme_text_color))
             }
             applyBackground(binding.mainWarningBox, null)
             applyBackground(binding.nestedSubAirFrame, null)
@@ -1830,9 +1830,9 @@ class MainActivity
     // 이미지뷰의 이미지 틴트 적용
     private fun tintImageDrawables() {
         binding.mainAddAddress.imageTintList =
-            ColorStateList.valueOf(getColor(app.common_res.R.color.theme_text_color))
+            ColorStateList.valueOf(getColor(R.color.theme_text_color))
         binding.mainSideMenuIv.imageTintList =
-            ColorStateList.valueOf(getColor(app.common_res.R.color.theme_text_color))
+            ColorStateList.valueOf(getColor(R.color.theme_text_color))
     }
 
     // 텍스트뷰의 텍스트 지우기

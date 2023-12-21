@@ -9,12 +9,17 @@ apply from : '../common-android.gradle'
 apply from : '../common-dependency.gradle'
 
 android {
+    signingConfigs {
+        release {
+        }
+    }
     namespace = 'app.airsignal.weather'
 
     defaultConfig {
         applicationId application_id
         versionCode app_version_code
         versionName app_version_name
+        signingConfig signingConfigs.debug
     }
     buildTypes {
         debug {
@@ -36,16 +41,6 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':core-database')
-    implementation project(path: ':core-network')
-    implementation project(path: ':core-viewmodel')
-    implementation project(path: ':core-repository')
-    implementation project(path: ':location')
-    implementation project(path: ':utils')
-    implementation project(path: ':common-res')
-    implementation project(path: ':core-as-eye')
-    implementation project(path: ':core-customview')
-
     apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 
     // Swipe Refresh Layout
@@ -97,4 +92,19 @@ dependencies {
     // Firebase Admob
     implementation 'com.google.android.gms:play-services-ads:22.6.0'
 
+    def room_android_version = "2.5.1"
+    implementation "androidx.room:room-runtime:$room_android_version"
+    kapt "androidx.room:room-compiler:$room_android_version"
+    implementation "androidx.room:room-ktx:$room_android_version"
+
+    //server
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
+
+    // logger
+    implementation "com.orhanobut:logger:2.2.0"
+    // Timber
+    implementation 'com.jakewharton.timber:timber:5.0.1'
 }

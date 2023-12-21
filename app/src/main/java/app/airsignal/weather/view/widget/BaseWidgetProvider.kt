@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.core_databse.db.sp.GetAppInfo
@@ -53,7 +54,7 @@ open class BaseWidgetProvider: AppWidgetProvider() {
 
     suspend fun requestWeather(context: Context,lat: Double, lng: Double, rCount: Int): app.airsignal.core_network.retrofit.ApiModel.WidgetData? {
         try {
-            return app.airsignal.core_network.retrofit.HttpClient.getInstance(true).setClientBuilder()
+            return HttpClient.getInstance(true).setClientBuilder()
                 .getWidgetForecast(lat, lng, rCount)
                 .awaitResponse().body()
         } catch (e: Exception) {

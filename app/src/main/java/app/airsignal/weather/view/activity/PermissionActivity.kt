@@ -98,7 +98,7 @@ class PermissionActivity :
                 userDataIndex + getString(R.string.data_usages).length,
                 Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
 
-        spanUserData.setSpan(ForegroundColorSpan(getColor(app.common_res.R.color.main_blue_color)),
+        spanUserData.setSpan(ForegroundColorSpan(getColor(R.color.main_blue_color)),
             userDataIndex,
             userDataIndex + getString(R.string.data_usages).length,
             Spannable.SPAN_EXCLUSIVE_INCLUSIVE)

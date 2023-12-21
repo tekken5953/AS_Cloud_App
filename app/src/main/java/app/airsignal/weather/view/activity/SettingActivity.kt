@@ -44,6 +44,7 @@ import app.airsignal.weather.databinding.ActivitySettingBinding
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
+import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
@@ -51,8 +52,8 @@ import app.airsignal.weather.view.custom_view.CustomerServiceView
 import app.airsignal.weather.view.dialog.WebViewSetting
 import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_customview.ShowDialogClass
-import app.core_customview.SnackBarUtils
+import app.airsignal.weather.view.custom_view.ShowDialogClass
+import app.airsignal.weather.view.custom_view.SnackBarUtils
 import app.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.core_databse.db.sp.GetAppInfo.getUserFontScale
 import app.core_databse.db.sp.GetAppInfo.getUserLocation
@@ -336,7 +337,7 @@ class SettingActivity
             noticeItem.clear()
 
             CoroutineScope(Dispatchers.IO).launch {
-                app.airsignal.core_network.retrofit.HttpClient
+                HttpClient
                     .getInstance(false)
                     .setClientBuilder()
                     .notice.enqueue(object : Callback<List<ApiModel.NoticeItem>> {
@@ -621,8 +622,8 @@ class SettingActivity
     private fun showSnackBar(view: View, isAllow: Boolean) {
         val alertOn = ContextCompat.getDrawable(this, R.drawable.alert_on)!!
         val alertOff = ContextCompat.getDrawable(this, R.drawable.alert_off)!!
-        alertOn.setTint(getColor(app.common_res.R.color.theme_view_color))
-        alertOff.setTint(getColor(app.common_res.R.color.theme_view_color))
+        alertOn.setTint(getColor(R.color.theme_view_color))
+        alertOff.setTint(getColor(R.color.theme_view_color))
         if (isAllow) {
             if (!isInit) {
                 SnackBarUtils.make(
@@ -646,7 +647,7 @@ class SettingActivity
         val formatText = textView.text.split(System.lineSeparator())
         formatText.forEach {
             span.setSpan(
-                ForegroundColorSpan(getColor(app.common_res.R.color.theme_sub_color)),
+                ForegroundColorSpan(getColor(R.color.theme_sub_color)),
                 it.length, span.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
@@ -659,7 +660,7 @@ class SettingActivity
             if (textView.text.contains(getString(R.string.always_allowed))) {
                 try {
                     span.setSpan(
-                        ForegroundColorSpan(getColor(app.common_res.R.color.main_blue_color)),
+                        ForegroundColorSpan(getColor(R.color.main_blue_color)),
                         findCharacterIndex(textView.text as String, '\n'),
                         findCharacterIndex(textView.text as String, '을'),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -670,7 +671,7 @@ class SettingActivity
             }
 
             if (textView.text == getString(R.string.allowed) || textView.text == getString(R.string.background_location_active)) {
-                textView.setTextColor(getColor(app.common_res.R.color.main_blue_color))
+                textView.setTextColor(getColor(R.color.main_blue_color))
             }
         }
 
@@ -729,7 +730,7 @@ class SettingActivity
                             } else {
                                 appInfoIsRecent.text =
                                     getString(R.string.not_latest_version)
-                                appInfoIsRecent.setTextColor(getColor(app.common_res.R.color.main_blue_color))
+                                appInfoIsRecent.setTextColor(getColor(R.color.main_blue_color))
                                 appInfoDownBtn.visibility = View.VISIBLE
                                 appInfoVersionValue.visibility = View.GONE
                             }
@@ -896,7 +897,7 @@ class SettingActivity
     @SuppressLint("UseCompatTextViewDrawableApis")
     private fun changeCheckIcon(rbOn: RadioButton, rbOff1: RadioButton, rbOff2: RadioButton) {
         rbOn.compoundDrawableTintList =
-            ColorStateList.valueOf(getColor(app.common_res.R.color.main_blue_color))
+            ColorStateList.valueOf(getColor(R.color.main_blue_color))
         rbOff1.compoundDrawableTintList =
             ColorStateList.valueOf(getColor(android.R.color.transparent))
         rbOff2.compoundDrawableTintList =

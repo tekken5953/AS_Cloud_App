@@ -25,7 +25,7 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
 
         val webView = binding.webUrlWebView
 
-        window.statusBarColor = getColor(app.common_res.R.color.theme_view_color)
+        window.statusBarColor = getColor(R.color.theme_view_color)
 
         @Suppress("DEPRECATION")
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)

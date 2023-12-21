@@ -129,7 +129,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             if (!isNationwide) this.bringToFront()
 
             TextViewCompat.setCompoundDrawableTintList(this,
-                ColorStateList.valueOf(getColor(app.common_res.R.color.theme_text_color)))
+                ColorStateList.valueOf(getColor(R.color.theme_text_color)))
 
             binding.warningNoResult.visibility = View.VISIBLE
             binding.warningPb.visibility = View.GONE

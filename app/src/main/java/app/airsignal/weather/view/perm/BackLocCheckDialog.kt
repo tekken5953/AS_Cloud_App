@@ -60,7 +60,7 @@ class BackLocCheckDialog(
             val startIndex = subText.indexOf(getString(R.string.nav_back_perm))
             val span = SpannableStringBuilder(subText)
             span.setSpan(
-                ForegroundColorSpan(activity.getColor(app.common_res.R.color.main_blue_color)),
+                ForegroundColorSpan(activity.getColor(R.color.main_blue_color)),
                 startIndex,
                 startIndex + getString(R.string.nav_back_perm).length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -108,7 +108,7 @@ class BackLocCheckDialog(
                     ColorStateList.valueOf(
                         activity.getColor(
                             if (isPermedBackLoc) R.color.theme_alert_double_apply_color
-                            else app.common_res.R.color.main_blue_color
+                            else R.color.main_blue_color
                         )
                     )
                 this.setOnClickListener {

@@ -4,6 +4,9 @@ import android.app.Activity
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
+import java.util.*
+import kotlin.math.acos
 
 /**
  * @author : Lee Jae Young
@@ -18,6 +21,9 @@ class AdViewClass(activity: Activity) {
     init {
         MobileAds.initialize(activity)
         adRequest = AdRequest.Builder().build()
+        val conf = RequestConfiguration.Builder()
+            .setTestDeviceIds(listOf("7be5367b-fd65-4c63-9457-64b80271f5b6")).build()
+        MobileAds.setRequestConfiguration(conf)
     }
 
     fun loadAdView(adView: AdView) {
