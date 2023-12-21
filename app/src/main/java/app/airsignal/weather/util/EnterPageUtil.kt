@@ -29,7 +29,7 @@ class EnterPageUtil(private val activity: Activity) {
         sort?.let { setUserLoginPlatform(activity, it) }
         val intent = Intent(activity, MainActivity::class.java)
         activity.run {
-            System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
+//            System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
             inAppMsg.let {
                 intent.putExtra(IN_APP_MSG, it)
             }
@@ -45,6 +45,7 @@ class EnterPageUtil(private val activity: Activity) {
         activity.run {
             this.startActivity(intent)
             this.overridePendingTransition(0,0)
+            finish()
         }
     }
 

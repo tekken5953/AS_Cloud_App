@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="15dp"
+    android:layout_gravity="bottom"
     android:layout_marginEnd="15dp"
     android:background="@drawable/loc_perm_bg">
 
@@ -153,7 +154,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/firstPermTr4"
         android:gravity="center"
-        android:layout_marginBottom="52dp"
+        android:layout_marginBottom="30dp"
         android:layout_marginTop="36dp">
 
         <androidx.appcompat.widget.AppCompatButton

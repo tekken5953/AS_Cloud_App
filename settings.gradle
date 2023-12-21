@@ -23,12 +23,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "AirSignal_App"
 include ':app'
-include ':core-database'
-include ':core-network'
-include ':core-viewmodel'
-include ':core-repository'
-include ':location'
-include ':utils'
-include ':core-as-eye'
-include ':core-customview'
-include ':common-res'

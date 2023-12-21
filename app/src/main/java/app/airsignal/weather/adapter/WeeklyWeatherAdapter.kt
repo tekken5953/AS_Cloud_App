@@ -84,8 +84,8 @@ class WeeklyWeatherAdapter(
             section.setTextColor(applyColor)
 
             if (bindingAdapterPosition == 0) {
-                day.setTextColor(context.getColor(app.common_res.R.color.main_blue_color))
-                date.setTextColor(context.getColor(app.common_res.R.color.main_blue_color))
+                day.setTextColor(context.getColor(R.color.main_blue_color))
+                date.setTextColor(context.getColor(R.color.main_blue_color))
             }
         }
     }

@@ -6,7 +6,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import app.airsignal.weather.R
-import app.core_customview.databinding.CustomViewSettingSystemBinding
+import app.airsignal.weather.databinding.CustomViewSettingSystemBinding
 
 /**
  * @author : Lee Jae Young

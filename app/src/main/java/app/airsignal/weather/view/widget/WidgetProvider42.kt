@@ -17,7 +17,6 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.core_databse.db.sp.GetAppInfo
-import app.utils.TypeParser
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
@@ -57,11 +56,8 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                 if (intent.action == REFRESH_BUTTON_CLICKED_42) {
                     if (isRefreshable(context,"42")) {
-                        if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
-                            requestPermissions(context,"42",appWidgetId)
-                        } else {
-                            processUpdate(context,appWidgetId)
-                        } 
+                        processUpdate(context,appWidgetId)
+
                     } else {
                         Toast.makeText(context.applicationContext, "갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
                     }
@@ -72,35 +68,39 @@ open class WidgetProvider42 : BaseWidgetProvider() {
 
     fun processUpdate(context: Context, appWidgetId: Int) {
         CoroutineScope(Dispatchers.Default).launch {
-            val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
-            val refreshBtnIntent = Intent(context, WidgetProvider42::class.java).run {
-                this.action = REFRESH_BUTTON_CLICKED_42
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            }
-
-            val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
-                .run {
-                    this.action = ENTER_APPLICATION_42
-                    this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    PendingIntent.getActivity(
-                        context,
-                        appWidgetId,
-                        this,
-                        PendingIntent.FLAG_IMMUTABLE
-                    )
+            if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                requestPermissions(context,"42",appWidgetId)
+            } else {
+                val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
+                val refreshBtnIntent = Intent(context, WidgetProvider42::class.java).run {
+                    this.action = REFRESH_BUTTON_CLICKED_42
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                 }
 
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                appWidgetId,
-                refreshBtnIntent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
-            views.run {
-                this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
-                this.setOnClickPendingIntent(R.id.w42Background, enterPending)
+                val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
+                    .run {
+                        this.action = ENTER_APPLICATION_42
+                        this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        PendingIntent.getActivity(
+                            context,
+                            appWidgetId,
+                            this,
+                            PendingIntent.FLAG_IMMUTABLE
+                        )
+                    }
+
+                val pendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    appWidgetId,
+                    refreshBtnIntent,
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+                views.run {
+                    this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
+                    this.setOnClickPendingIntent(R.id.w42Background, enterPending)
+                }
+                fetch(context, views)
             }
-            fetch(context, views)
         }
     }
 
@@ -150,7 +150,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     ) {
         try {
             isSuccess = true
-            val currentTime = TypeParser.currentDateTimeString("HH:mm")
+            val currentTime = DataTypeParser.currentDateTimeString("HH:mm")
             val sunrise = data?.sun?.sunrise ?: "0000"
             val sunset = data?.sun?.sunset ?: "0000"
             val isNight = GetAppInfo.getIsNight(sunrise, sunset)

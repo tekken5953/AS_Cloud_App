@@ -2,8 +2,14 @@ package app.airsignal.weather.view.activity
 
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import android.window.OnBackInvokedCallback
+import android.window.OnBackInvokedDispatcher.PRIORITY_DEFAULT
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
 import app.address.AddressFromRegex
@@ -57,7 +63,8 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
         binding.warningAddr.selectItemByIndex(parseStringToIndex(regexAddr))
         warningViewModel.loadDataResult(parseRegionToCode(regexAddr))
 
-        binding.warningAddr.setOnSpinnerItemSelectedListener<String> { _, _, _, newText ->
+        binding.warningAddr.setOnSpinnerItemSelectedListener<String> {
+                _, _, _, newText ->
             warningViewModel.loadDataResult(parseRegionToCode(newText))
         }
 
@@ -122,7 +129,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             if (!isNationwide) this.bringToFront()
 
             TextViewCompat.setCompoundDrawableTintList(this,
-                ColorStateList.valueOf(getColor(app.common_res.R.color.theme_text_color)))
+                ColorStateList.valueOf(getColor(R.color.theme_text_color)))
 
             binding.warningNoResult.visibility = View.VISIBLE
             binding.warningPb.visibility = View.GONE

@@ -8,6 +8,9 @@
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission
         android:name="android.permission.BIND_REMOTEVIEWS"
         tools:ignore="ProtectedPermissions" />
@@ -32,14 +35,14 @@
                 android:value="" />
         </activity>
         <activity
-            android:name="app.core_as_eye.activity.EyeDetailActivity"
+            android:name=".as_eye.activity.EyeDetailActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value=""/>
         </activity>
         <activity
-            android:name="app.core_as_eye.activity.EyeListActivity"
+            android:name=".as_eye.activity.EyeListActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

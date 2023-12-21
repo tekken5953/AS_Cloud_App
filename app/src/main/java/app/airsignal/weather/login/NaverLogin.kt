@@ -18,9 +18,9 @@ import app.airsignal.weather.dao.StaticDataObject.TAG_L
 import app.airsignal.weather.koin.BaseApplication.Companion.logger
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
+import app.airsignal.weather.util.ToastUtils
 import app.core_databse.db.SharedPreferenceManager
 import app.core_databse.db.sp.GetAppInfo.getUserEmail
-import app.utils.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin

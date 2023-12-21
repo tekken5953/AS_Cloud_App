@@ -13,11 +13,11 @@ import app.airsignal.weather.dao.RDBLogcat.writeLoginPref
 import app.airsignal.weather.dao.StaticDataObject.TAG_L
 import app.airsignal.weather.koin.BaseApplication.Companion.logger
 import app.airsignal.weather.util.RefreshUtils
+import app.airsignal.weather.util.ToastUtils
 import app.core_databse.db.sp.SetAppInfo.setUserEmail
 import app.core_databse.db.sp.SetAppInfo.setUserId
 import app.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
 import app.core_databse.db.sp.SetAppInfo.setUserProfile
-import app.utils.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount

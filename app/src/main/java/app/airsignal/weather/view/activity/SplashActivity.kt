@@ -15,8 +15,8 @@ import app.airsignal.weather.databinding.ActivitySplashBinding
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
+import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_customview.MakeSingleDialog
 import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
 import app.core_databse.db.sp.GetSystemInfo
 import app.core_databse.db.sp.GetSystemInfo.goToPlayStore
@@ -85,16 +85,23 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             is BaseRepository.ApiState.Success -> {
                                 binding.splashPB.visibility = View.GONE
                                 val versionName = GetSystemInfo.getApplicationVersionName(this)
-                                if ((ver.data.serviceName == versionName) || (ver.data.releaseName == versionName)) {
+                                if (versionName == ver.data.serviceName) {
                                     val inAppArray = ver.data.inAppMsg
                                     enterPage(inAppArray)
                                 } else {
-                                    MakeSingleDialog(this)
-                                        .makeDialog(getString(R.string.not_latest_go_to_store),
-                                            app.common_res.R.color.main_blue_color,getString(R.string.download), true)
-                                        .setOnClickListener {
-                                            goToPlayStore(this@SplashActivity)
+                                    ver.data.test.forEach {
+                                        if (it.name.contains(versionName)) {
+                                            val inAppArray = ver.data.inAppMsg
+                                            enterPage(inAppArray)
+                                        } else {
+                                            MakeSingleDialog(this)
+                                                .makeDialog(getString(R.string.not_latest_go_to_store),
+                                                    R.color.main_blue_color,getString(R.string.download), true)
+                                                .setOnClickListener {
+                                                    goToPlayStore(this@SplashActivity)
+                                                }
                                         }
+                                    }
                                 }
                             }
 

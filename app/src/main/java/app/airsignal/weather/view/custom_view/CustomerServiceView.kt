@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
-import app.core_customview.databinding.CustomViewCustomerItemBinding
+import app.airsignal.weather.databinding.CustomViewCustomerItemBinding
 
 class CustomerServiceView(context: Context, attrs: AttributeSet?)
     : LinearLayout(context, attrs) {

@@ -51,13 +51,7 @@ class GeofenceManager(private val context: Context) {
             ContextCompat.startForegroundService(context, intent)
 
             geofencingClient.addGeofences(geofencingRequest, pendingIntent)
-                .addOnSuccessListener {
-                    // Geofence 추가 성공
-                    Log.d(TAG,"Success to add geofence : ${location.latitude}${location.longitude},$simpleAddr")
-                }
                 .addOnFailureListener {
-                    // Geofence 추가 실패
-                    Log.w(TAG,"Failed to add geofence")
                     removeGeofence(requestId)
                 }
 
@@ -68,14 +62,6 @@ class GeofenceManager(private val context: Context) {
 
     private fun removeGeofence(requestId: String) {
         geofencingClient.removeGeofences(listOf(requestId))
-            .addOnSuccessListener {
-                // Geofence 제거 성공
-                Log.d(TAG,"Success to remove geofence")
-            }
-            .addOnFailureListener {
-                // Geofence 제거 실패
-                Log.w(TAG,"Failed to remove geofence")
-            }
     }
 
     fun getSimpleAddress(lat: Double, lng: Double): String {
@@ -83,7 +69,7 @@ class GeofenceManager(private val context: Context) {
         return getWidgetAddress(addr)
     }
 
-    fun getWidgetAddress(addr: String): String {
+    private fun getWidgetAddress(addr: String): String {
         val result = AddressFromRegex(addr).getNotificationAddress()
         return if (result == "") AddressFromRegex(addr).getSecondAddress() else result
     }

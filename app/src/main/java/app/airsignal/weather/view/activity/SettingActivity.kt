@@ -15,6 +15,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
+import android.webkit.WebView
 import android.widget.*
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatButton
@@ -43,13 +44,16 @@ import app.airsignal.weather.databinding.ActivitySettingBinding
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
+import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.custom_view.CustomerServiceView
+import app.airsignal.weather.view.dialog.WebViewSetting
 import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_customview.ShowDialogClass
+import app.airsignal.weather.view.custom_view.ShowDialogClass
+import app.airsignal.weather.view.custom_view.SnackBarUtils
 import app.core_databse.db.sp.GetAppInfo.getUserEmail
 import app.core_databse.db.sp.GetAppInfo.getUserFontScale
 import app.core_databse.db.sp.GetAppInfo.getUserLocation
@@ -72,9 +76,6 @@ import app.core_databse.db.sp.SetSystemInfo
 import app.core_databse.db.sp.SpDao.TEXT_SCALE_BIG
 import app.core_databse.db.sp.SpDao.TEXT_SCALE_DEFAULT
 import app.core_databse.db.sp.SpDao.TEXT_SCALE_SMALL
-import app.core_customview.SnackBarUtils
-import br.tiagohm.markdownview.MarkdownView
-import br.tiagohm.markdownview.css.styles.Github
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.CoroutineScope
@@ -318,9 +319,10 @@ class SettingActivity
             LayoutInflater.from(this).inflate(R.layout.dialog_detail, null)
         val detailDate: TextView = detailView.findViewById(R.id.detailNoticeDate)
         val detailTitle: TextView = detailView.findViewById(R.id.detailTitle)
-        val detailContent: MarkdownView = detailView.findViewById(R.id.detailContent)
+        val detailContent: WebView = detailView.findViewById(R.id.detailContent)
         val detailHeadLine: TextView = detailView.findViewById(R.id.detailHeadLine)
         val detailCategory: TextView = detailView.findViewById(R.id.detailNoticeCategory)
+        val detailNoContent: TextView = detailView.findViewById(R.id.detailNoContent)
 
         // 공지사항 클릭
         binding.settingNotice.setOnClickListener {
@@ -335,7 +337,7 @@ class SettingActivity
             noticeItem.clear()
 
             CoroutineScope(Dispatchers.IO).launch {
-                app.airsignal.core_network.retrofit.HttpClient
+                HttpClient
                     .getInstance(false)
                     .setClientBuilder()
                     .notice.enqueue(object : Callback<List<ApiModel.NoticeItem>> {
@@ -350,10 +352,11 @@ class SettingActivity
                                     val createdTime =  LocalDateTime.parse(item.created)
                                     val modifiedTime =  LocalDateTime.parse(item.modified)
                                     addNoticeItem(
+                                        item.id,
                                         item.category,
                                         createdTime.format(DateTimeFormatter.ofPattern("yy.MM.dd")),
                                         modifiedTime.format(DateTimeFormatter.ofPattern("yy.MM.dd")),
-                                        item.title, item.content)
+                                        item.title, item.content,item.href)
 
                                     noticeAdapter.notifyItemInserted(i)
                                 }
@@ -396,16 +399,16 @@ class SettingActivity
                     detailTitle.text = noticeTitle.text.toString()
                     detailHeadLine.text = item.title
                     detailContent.apply {
-                        val css = Github()
-                        css.addRule("p","font-family: spoqa_hansansneo_medium.ttf")
-                        css.addRule("h1","font-family: spoqa_hansansneo_bold.ttf")
-                        css.addRule("h2","font-family: spoqa_hansansneo_bold.ttf")
-                        css.addRule("h3","font-family: spoqa_hansansneo_medium.ttf")
-                        css.addRule("h4","font-family: spoqa_hansansneo_medium.ttf")
-                        css.addRule("h6","font-family: spoqa_hansansneo_light.ttf")
-                        addStyleSheet(css)
-                        if (item.content != "") loadMarkdown(item.content)
-                        else loadMarkdown("내용이 없습니다")
+                        WebViewSetting().apply(detailContent)
+                        if (item.content != "") {
+                            loadUrl("${item.href}${item.id}")
+                            detailNoContent.apply { visibility = View.GONE }
+                        } else {
+                            detailNoContent.apply {
+                                visibility = View.VISIBLE
+                                bringToFront()
+                            }
+                        }
                     }
                     ShowDialogClass(this@SettingActivity)
                         .setBackPressed(detailView.findViewById(R.id.detailBack))
@@ -619,8 +622,8 @@ class SettingActivity
     private fun showSnackBar(view: View, isAllow: Boolean) {
         val alertOn = ContextCompat.getDrawable(this, R.drawable.alert_on)!!
         val alertOff = ContextCompat.getDrawable(this, R.drawable.alert_off)!!
-        alertOn.setTint(getColor(app.common_res.R.color.theme_view_color))
-        alertOff.setTint(getColor(app.common_res.R.color.theme_view_color))
+        alertOn.setTint(getColor(R.color.theme_view_color))
+        alertOff.setTint(getColor(R.color.theme_view_color))
         if (isAllow) {
             if (!isInit) {
                 SnackBarUtils.make(
@@ -644,7 +647,7 @@ class SettingActivity
         val formatText = textView.text.split(System.lineSeparator())
         formatText.forEach {
             span.setSpan(
-                ForegroundColorSpan(getColor(app.common_res.R.color.theme_sub_color)),
+                ForegroundColorSpan(getColor(R.color.theme_sub_color)),
                 it.length, span.length,
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
@@ -657,7 +660,7 @@ class SettingActivity
             if (textView.text.contains(getString(R.string.always_allowed))) {
                 try {
                     span.setSpan(
-                        ForegroundColorSpan(getColor(app.common_res.R.color.main_blue_color)),
+                        ForegroundColorSpan(getColor(R.color.main_blue_color)),
                         findCharacterIndex(textView.text as String, '\n'),
                         findCharacterIndex(textView.text as String, '을'),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -668,7 +671,7 @@ class SettingActivity
             }
 
             if (textView.text == getString(R.string.allowed) || textView.text == getString(R.string.background_location_active)) {
-                textView.setTextColor(getColor(app.common_res.R.color.main_blue_color))
+                textView.setTextColor(getColor(R.color.main_blue_color))
             }
         }
 
@@ -719,8 +722,7 @@ class SettingActivity
                             val versionCode = getApplicationVersionCode(this)
 
                             appInfoVersionValue.text = "${versionName}.${versionCode}"
-                            if ("${data.serviceName}.${data.serviceCode}" == "${versionName}.${versionCode}"
-                                || "${versionName}.${versionCode}" == "${data.releaseName}.${data.releaseCode}") {
+                            if ("${data.serviceName}.${data.serviceCode}" == "${versionName}.${versionCode}") {
                                 appInfoIsRecent.text = getString(R.string.last_software)
                                 appInfoIsRecent.setTextColor(getColor(R.color.sub_gray_color))
                                 appInfoDownBtn.visibility = View.GONE
@@ -728,7 +730,7 @@ class SettingActivity
                             } else {
                                 appInfoIsRecent.text =
                                     getString(R.string.not_latest_version)
-                                appInfoIsRecent.setTextColor(getColor(app.common_res.R.color.main_blue_color))
+                                appInfoIsRecent.setTextColor(getColor(R.color.main_blue_color))
                                 appInfoDownBtn.visibility = View.VISIBLE
                                 appInfoVersionValue.visibility = View.GONE
                             }
@@ -895,7 +897,7 @@ class SettingActivity
     @SuppressLint("UseCompatTextViewDrawableApis")
     private fun changeCheckIcon(rbOn: RadioButton, rbOff1: RadioButton, rbOff2: RadioButton) {
         rbOn.compoundDrawableTintList =
-            ColorStateList.valueOf(getColor(app.common_res.R.color.main_blue_color))
+            ColorStateList.valueOf(getColor(R.color.main_blue_color))
         rbOff1.compoundDrawableTintList =
             ColorStateList.valueOf(getColor(android.R.color.transparent))
         rbOff2.compoundDrawableTintList =
@@ -969,19 +971,21 @@ class SettingActivity
 
     // 공지사항 아이템 추가하기
     private fun addNoticeItem(
+        id: Long,
         category: String?,
         created: String,
         modified: String,
         title: String,
-        content: String
+        content: String,
+        href: String?
     ) {
-        val item = ApiModel.NoticeItem(category,created, modified, title, content)
+        val item = ApiModel.NoticeItem(id,category,created, modified, title, content,href)
         noticeItem.add(item)
     }
 
     @Deprecated("Deprecated in Java")
+    @Suppress("DEPRECATION")
     override fun onBackPressed() {
-        @Suppress("DEPRECATION")
         super.onBackPressed()
         goMain()
     }
