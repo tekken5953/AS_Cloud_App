@@ -1,7 +1,7 @@
 package app.airsignal.weather.network.retrofit
 
 import android.annotation.SuppressLint
-import app.airsignal.core_network.NetworkIgnored.hostingServerURL
+import app.airsignal.weather.network.NetworkIgnored.hostingServerURL
 import com.google.gson.GsonBuilder
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
@@ -32,7 +32,7 @@ object HttpClient {
          *
          * 클라이언트 빌더 Interceptor 구분 **/
         val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
-            retryOnConnectionFailure(retryOnConnectionFailure = true)
+            retryOnConnectionFailure(retryOnConnectionFailure = false)
             connectionPool(ConnectionPool())
             connectTimeout(12, TimeUnit.SECONDS)
             readTimeout(8, TimeUnit.SECONDS)

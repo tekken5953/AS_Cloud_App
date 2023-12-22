@@ -9,9 +9,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
+import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.EyeDetailLiveFragmentBinding
 import app.airsignal.weather.util.`object`.DataTypeParser
-import app.core_as_eye.dao.EyeDataModel
 import java.util.*
 
 class EyeDetailLiveFragment : Fragment() {

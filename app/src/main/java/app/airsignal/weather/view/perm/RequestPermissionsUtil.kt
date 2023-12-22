@@ -15,7 +15,7 @@ import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_BACKGROUND_LOCATION
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_LOCATION
 import app.airsignal.weather.dao.StaticDataObject.REQUEST_NOTIFICATION
-import app.core_databse.db.sp.GetAppInfo.getInitLocPermission
+import app.airsignal.weather.db.sp.GetAppInfo.getInitLocPermission
 
 class RequestPermissionsUtil(private val context: Context) {
 

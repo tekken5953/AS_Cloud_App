@@ -17,7 +17,7 @@ import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.GetAppInfo
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
 import kotlin.math.roundToInt

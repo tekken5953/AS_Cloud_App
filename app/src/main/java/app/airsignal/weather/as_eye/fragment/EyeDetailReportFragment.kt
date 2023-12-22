@@ -12,8 +12,8 @@ import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
 import app.airsignal.weather.as_eye.adapter.ReportViewPagerAdapter
+import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
-import app.core_as_eye.dao.EyeDataModel
 import kotlinx.coroutines.*
 
 class EyeDetailReportFragment : Fragment() {

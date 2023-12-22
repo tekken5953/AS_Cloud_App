@@ -12,8 +12,8 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
-import app.core_as_eye.dao.EyeDataModel
-import app.utils.OnAdapterItemClick
+import app.airsignal.weather.as_eye.dao.EyeDataModel
+import app.airsignal.weather.util.OnAdapterItemClick
 import java.util.*
 
 class EyeDeviceAdapter(
@@ -91,7 +91,7 @@ class EyeDeviceAdapter(
             }
 
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try {
                         if (dao.serial.power) {

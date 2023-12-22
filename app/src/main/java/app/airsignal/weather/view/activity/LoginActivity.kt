@@ -14,8 +14,8 @@ import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
 import app.airsignal.weather.util.EnterPageUtil
+import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
-import app.utils.TimberUtil
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 

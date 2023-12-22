@@ -14,12 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.ActivityEyeListBinding
 import app.airsignal.weather.as_eye.adapter.AddGroupAdapter
-import app.core_as_eye.adapter.EyeCategoryAdapter
+import app.airsignal.weather.as_eye.adapter.EyeCategoryAdapter
 import app.airsignal.weather.as_eye.adapter.EyeDeviceAdapter
-import app.core_as_eye.dao.EyeDataModel
+import app.airsignal.weather.as_eye.dao.EyeDataModel
+import app.airsignal.weather.util.OnAdapterItemClick
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.ShowDialogClass
-import app.utils.OnAdapterItemClick
 import java.time.LocalDateTime
 
 class EyeListActivity : AppCompatActivity() {

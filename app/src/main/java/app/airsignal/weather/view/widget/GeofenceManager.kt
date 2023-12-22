@@ -8,7 +8,7 @@ import android.location.Location
 import androidx.core.content.ContextCompat
 import app.airsignal.weather.address.AddressFromRegex
 import app.airsignal.weather.koin.BaseApplication
-import app.location.GetLocation
+import app.airsignal.weather.location.GetLocation
 import com.google.android.gms.location.*
 import com.google.android.gms.location.GeofencingClient
 

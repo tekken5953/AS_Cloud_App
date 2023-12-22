@@ -12,11 +12,11 @@ import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO_EMAIL
 import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.dao.StaticDataObject.TAG_L
+import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
-import app.core_databse.db.SharedPreferenceManager
-import app.core_databse.db.sp.GetAppInfo.getUserEmail
-import app.utils.LoggerUtil
+import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
+import app.airsignal.weather.util.LoggerUtil
 import com.airbnb.lottie.LottieAnimationView
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider

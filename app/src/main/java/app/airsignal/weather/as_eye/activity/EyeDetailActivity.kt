@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.ActivityEyeDetailBinding
 import app.airsignal.weather.as_eye.customview.EyeSettingView
-import app.core_as_eye.dao.EyeDataModel
+import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.as_eye.fragment.EyeDetailLifeFragment
 import app.airsignal.weather.as_eye.fragment.EyeDetailLiveFragment
 import app.airsignal.weather.as_eye.fragment.EyeDetailReportFragment

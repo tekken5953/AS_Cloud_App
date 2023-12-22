@@ -33,7 +33,40 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.viewpager2.widget.ViewPager2
+import app.airsignal.weather.R
+import app.airsignal.weather.adapter.*
 import app.airsignal.weather.address.AddressFromRegex
+import app.airsignal.weather.dao.AdapterModel
+import app.airsignal.weather.dao.IgnoredKeyFile.landingPageUrl
+import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
+import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
+import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.dao.StaticDataObject.LANG_EN
+import app.airsignal.weather.dao.StaticDataObject.LANG_KR
+import app.airsignal.weather.databinding.ActivityMainBinding
+import app.airsignal.weather.db.room.repository.GpsRepository
+import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.GetAppInfo.getEntireSun
+import app.airsignal.weather.db.sp.GetAppInfo.getIsNight
+import app.airsignal.weather.db.sp.GetAppInfo.getTopicNotification
+import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
+import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
+import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
+import app.airsignal.weather.db.sp.GetAppInfo.isLandingNotification
+import app.airsignal.weather.db.sp.GetAppInfo.millsToString
+import app.airsignal.weather.db.sp.GetAppInfo.parseTimeToMinutes
+import app.airsignal.weather.db.sp.GetSystemInfo.getLocale
+import app.airsignal.weather.db.sp.GetSystemInfo.isThemeNight
+import app.airsignal.weather.db.sp.SetAppInfo
+import app.airsignal.weather.db.sp.SetAppInfo.removeSingleKey
+import app.airsignal.weather.db.sp.SetAppInfo.setLandingNotification
+import app.airsignal.weather.db.sp.SetAppInfo.setUserLastAddr
+import app.airsignal.weather.db.sp.SpDao.CURRENT_GPS_ID
+import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG
+import app.airsignal.weather.firebase.admob.AdViewClass
+import app.airsignal.weather.firebase.fcm.SubFCM
+import app.airsignal.weather.location.GetLocation
+import app.airsignal.weather.login.SilentLoginClass
 import app.airsignal.weather.network.ErrorCode.ERROR_API_PROTOCOL
 import app.airsignal.weather.network.ErrorCode.ERROR_GET_DATA
 import app.airsignal.weather.network.ErrorCode.ERROR_GET_LOCATION_FAILED
@@ -44,24 +77,10 @@ import app.airsignal.weather.network.ErrorCode.ERROR_NOT_SERVICED_LOCATION
 import app.airsignal.weather.network.ErrorCode.ERROR_NULL_DATA
 import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.network.ErrorCode.ERROR_TIMEOUT
-import app.airsignal.core_network.NetworkUtils.modifyCurrentHumid
-import app.airsignal.core_network.NetworkUtils.modifyCurrentWindSpeed
+import app.airsignal.weather.network.NetworkUtils.modifyCurrentHumid
+import app.airsignal.weather.network.NetworkUtils.modifyCurrentWindSpeed
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.core_viewmodel.GetWeatherViewModel
-import app.airsignal.weather.R
-import app.airsignal.weather.adapter.*
-import app.airsignal.weather.dao.AdapterModel
-import app.airsignal.weather.dao.IgnoredKeyFile.landingPageUrl
-import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
-import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
-import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.dao.StaticDataObject.LANG_EN
-import app.airsignal.weather.dao.StaticDataObject.LANG_KR
-import app.airsignal.weather.databinding.ActivityMainBinding
-import app.airsignal.weather.firebase.admob.AdViewClass
-import app.airsignal.weather.firebase.fcm.SubFCM
-import app.airsignal.weather.login.SilentLoginClass
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyImg
@@ -81,33 +100,13 @@ import app.airsignal.weather.util.`object`.DataTypeParser.translateSky
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.view.*
-import app.airsignal.weather.view.dialog.*
-import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.custom_view.ShowDialogClass
 import app.airsignal.weather.view.custom_view.SnackBarUtils
-import app.core_databse.db.room.repository.GpsRepository
-import app.core_databse.db.sp.GetAppInfo
-import app.core_databse.db.sp.GetAppInfo.getEntireSun
-import app.core_databse.db.sp.GetAppInfo.getIsNight
-import app.core_databse.db.sp.GetAppInfo.getTopicNotification
-import app.core_databse.db.sp.GetAppInfo.getUserLastAddress
-import app.core_databse.db.sp.GetAppInfo.getUserLocation
-import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
-import app.core_databse.db.sp.GetAppInfo.isLandingNotification
-import app.core_databse.db.sp.GetAppInfo.millsToString
-import app.core_databse.db.sp.GetAppInfo.parseTimeToMinutes
-import app.core_databse.db.sp.GetSystemInfo.getLocale
-import app.core_databse.db.sp.GetSystemInfo.isThemeNight
-import app.core_databse.db.sp.SetAppInfo
-import app.core_databse.db.sp.SetAppInfo.removeSingleKey
-import app.core_databse.db.sp.SetAppInfo.setLandingNotification
-import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
-import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
-import app.core_databse.db.sp.SpDao.IN_APP_MSG
-import app.location.GetLocation
-import app.utils.*
+import app.airsignal.weather.view.dialog.*
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.airsignal.weather.viewmodel.GetWeatherViewModel
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -229,8 +228,6 @@ class MainActivity
             }
 
             adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
-
-            binding.dataVM = getDataViewModel
 
             initializing()
 
@@ -463,7 +460,6 @@ class MainActivity
         updateIndicators(viewpager.currentItem)
     }
 
-
     // 공유하기 언어별 대응
     private fun addShareMsg(locale: String) {
         val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
@@ -477,7 +473,6 @@ class MainActivity
                 }\n\n${"Click the link for real-time weather information on Airsignal\n$playStoreURL"}"
             )
             startActivity(Intent.createChooser(intent, "Share weather data"))
-
         } else {
             intent.putExtra(
                 Intent.EXTRA_TEXT, "${
@@ -643,7 +638,7 @@ class MainActivity
                                         subModal.dismiss()
                                     }
                                 } else {
-                                   ToastUtils(this@MainActivity).showMessage("알림 동의를 체크해주세요!")
+                                    ToastUtils(this@MainActivity).showMessage("알림 동의를 체크해주세요!")
                                 }
                             }
                         } else {
@@ -1754,7 +1749,16 @@ class MainActivity
             binding.mainCompareTempTv
         )
 
-        binding.mainLoadingView.alpha = 0f
+        val clickableChangeArray = arrayOf(
+            binding.mainSideMenuIv,
+            binding.mainShareIv,
+            binding.mainAddAddress,
+            binding.mainGpsFix
+        )
+
+        clickableChangeArray.forEach {
+            it.isEnabled = visibility == VISIBLE
+        }
 
         // 숨김
         if (visibility == GONE) {
@@ -1833,6 +1837,8 @@ class MainActivity
             ColorStateList.valueOf(getColor(R.color.theme_text_color))
         binding.mainSideMenuIv.imageTintList =
             ColorStateList.valueOf(getColor(R.color.theme_text_color))
+        binding.mainAddAddress.isEnabled = true
+        binding.mainSideMenuIv.isEnabled = true
     }
 
     // 텍스트뷰의 텍스트 지우기
@@ -1851,6 +1857,7 @@ class MainActivity
 
     // 에러 관련 뷰의 가시성 업데이트
     private fun updateErrorViewsVisibility(visibility: Int) {
+        binding.mainLoadingView.alpha = 0f
         binding.mainWarningVp.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainErrorTitle.alpha = if (visibility == VISIBLE) 0f else 1f
         binding.mainErrorRenewBtn.alpha = if (visibility == VISIBLE) 0f else 1f
@@ -2215,16 +2222,4 @@ class MainActivity
             (view as View).background = null
         }
     }
-
-//    private fun createWorkManager() {
-//        val workManager = WorkManager.getInstance(this)
-//        val workRequest =
-//            PeriodicWorkRequest.Builder(app.airsignal.weather.firebase.fcm.GPSWorker::class.java, 30, TimeUnit.MINUTES)
-//                .build()
-//
-//        workManager.enqueueUniquePeriodicWork(
-//            SpDao.CHECK_GPS_BACKGROUND,
-//            ExistingPeriodicWorkPolicy.KEEP, workRequest
-//        )
-//    }
 }

@@ -11,8 +11,8 @@ import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
 import app.airsignal.weather.as_eye.adapter.EyeLifeAdapter
+import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.EyeDetailLifeFragmentBinding
-import app.core_as_eye.dao.EyeDataModel
 
 class EyeDetailLifeFragment : Fragment() {
     private lateinit var mActivity: EyeDetailActivity

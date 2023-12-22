@@ -3,8 +3,8 @@ package app.airsignal.weather.firebase.fcm
 import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_DAILY
 import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_EVENT
 import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_PATCH
-import app.core_databse.db.sp.GetAppInfo
-import app.utils.LoggerUtil
+import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.util.LoggerUtil
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService

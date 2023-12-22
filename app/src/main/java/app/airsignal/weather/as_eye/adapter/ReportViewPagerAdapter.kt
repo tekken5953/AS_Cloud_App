@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import app.core_as_eye.dao.EyeDataModel
 import app.airsignal.weather.R
+import app.airsignal.weather.as_eye.dao.EyeDataModel
 
 /**
  * @author : Lee Jae Young

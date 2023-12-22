@@ -18,16 +18,16 @@ import app.airsignal.weather.dao.RDBLogcat.writeUserPref
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.util.`object`.DataTypeParser.parseLongToLocalDateTime
-import app.core_databse.db.sp.GetAppInfo.getInitNotiPermission
-import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
-import app.core_databse.db.sp.GetSystemInfo.getApplicationVersionCode
-import app.core_databse.db.sp.GetSystemInfo.getApplicationVersionName
-import app.core_databse.db.sp.SetAppInfo.setInitNotiPermission
-import app.core_databse.db.sp.SetAppInfo.setUserNoti
+import app.airsignal.weather.db.sp.GetAppInfo.getInitNotiPermission
+import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
+import app.airsignal.weather.db.sp.GetSystemInfo.getApplicationVersionCode
+import app.airsignal.weather.db.sp.GetSystemInfo.getApplicationVersionName
+import app.airsignal.weather.db.sp.SetAppInfo.setInitNotiPermission
+import app.airsignal.weather.db.sp.SetAppInfo.setUserNoti
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.perm.FirstLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.sp.SpDao.IN_APP_MSG
+import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PermissionActivity :

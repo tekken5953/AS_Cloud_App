@@ -15,12 +15,12 @@ import app.airsignal.weather.dao.RDBLogcat.writeErrorNotANR
 import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.dao.RDBLogcat.writeLoginPref
 import app.airsignal.weather.dao.StaticDataObject.TAG_L
+import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.ToastUtils
-import app.core_databse.db.SharedPreferenceManager
-import app.core_databse.db.sp.GetAppInfo.getUserEmail
-import app.utils.LoggerUtil
+import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
+import app.airsignal.weather.util.LoggerUtil
 import com.airbnb.lottie.LottieAnimationView
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
