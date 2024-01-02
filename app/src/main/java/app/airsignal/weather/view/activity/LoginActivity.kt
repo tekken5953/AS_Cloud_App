@@ -51,7 +51,9 @@ class LoginActivity
 
         // 뒤로가기 버튼 클릭
         binding.loginMainBack.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 

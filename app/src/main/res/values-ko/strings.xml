@@ -150,6 +150,7 @@
     <string name="perm_back_setting">실시간 위치 사용\n앱이 동작중이 아닐 때도 위치를 갱신합니다</string>
     <string name="do_allow">허용하기</string>
     <string name="always_allowed">항상 허용</string>
+    <string name="error_not_service_locale">서비스 가능 지역이 아니라 기본 주소로 불러옵니다</string>
     <string name="error_server_down">현재 서버가 점검중입니다.</string>
     <string name="error_network_connect">인터넷 연결 상태를 확인 후 재실행 해주세요</string>
     <string name="download">다운로드</string>

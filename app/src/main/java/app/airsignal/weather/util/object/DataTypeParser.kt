@@ -56,6 +56,19 @@ object DataTypeParser {
         return id
     }
 
+    fun koreaSky(sky: String?): String {
+        val id = when(sky?.lowercase()) {
+            "sunny" -> "맑음"
+            "cloudy" -> "흐림"
+            "rainy" -> "비"
+            "snowy" -> "눈"
+            "rainy/snowy" -> "비/눈"
+            else -> sky
+        }
+
+        return id ?: "눈"
+    }
+
     /** 달 모양 반환 **/
     private fun applyLunarImg(date: Int): Int {
         return when (date) {

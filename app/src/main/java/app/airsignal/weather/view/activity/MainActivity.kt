@@ -93,6 +93,7 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
 import app.airsignal.weather.util.`object`.DataTypeParser.getHourCountToTomorrow
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgSmall
 import app.airsignal.weather.util.`object`.DataTypeParser.isRainyDay
+import app.airsignal.weather.util.`object`.DataTypeParser.koreaSky
 import app.airsignal.weather.util.`object`.DataTypeParser.parseDayOfWeekToKorean
 import app.airsignal.weather.util.`object`.DataTypeParser.parseLocalDateTimeToLong
 import app.airsignal.weather.util.`object`.DataTypeParser.setUvBackgroundColor
@@ -335,11 +336,13 @@ class MainActivity
                 Color.parseColor("#F87171")
             )
 
-            // 스와이프 리프래시 레이아웃 리스너
-            binding.mainSwipeLayout.setOnRefreshListener {
-                Handler(Looper.getMainLooper()).postDelayed({
-                    getDataSingleTime(false)
-                }, 500)
+            HandlerCompat.createAsync(Looper.getMainLooper()).post {
+                // 스와이프 리프래시 레이아웃 리스너
+                binding.mainSwipeLayout.setOnRefreshListener {
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        getDataSingleTime(false)
+                    }, 500)
+                }
             }
         } catch (e : androidx.fragment.app.Fragment.InstantiationException) {
             RefreshUtils(this).refreshApplication()
@@ -1580,13 +1583,14 @@ class MainActivity
 
     // 하늘상태에 따라 윈도우 배경 변경
     private fun applyWindowBackground(progress: Int, sky: String?) {
+        val mSky = koreaSky(sky)
         val isNight = getIsNight(progress)
-        if (isNight && (sky == "맑음" || sky == "구름많음")) {
+        if (isNight && (mSky == "맑음" || mSky == "구름많음")) {
             changeBackgroundResource(R.drawable.main_bg_night)
             binding.mainSkyStarImg.setImageDrawable(getR(R.drawable.bg_nightsky))
         } else {
             binding.mainSkyStarImg.setImageDrawable(null)
-            val backgroundResource = when (sky) {
+            val backgroundResource = when (mSky) {
                 "맑음", "구름많음" -> R.drawable.main_bg_clear
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
                 "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
@@ -1674,6 +1678,7 @@ class MainActivity
 
     // 에러 버튼에 클릭 리스너 설정
     private fun setOnClickListenerForErrorButton(error: String) {
+        TimberUtil().d("testtest","error is $error")
         val buttonTextResId = when (error) {
             ERROR_NOT_SERVICED_LOCATION -> R.string.register_new_address
             ERROR_GPS_CONNECTED -> R.string.enable_gps
@@ -2065,7 +2070,7 @@ class MainActivity
         // 주어진 조건에 따라 텍스트 색상 변경
         if (!isNight) {
             when (sky) {
-                "맑음", "구름많음", "구름많고 눈", "눈", "흐리고 눈" -> changeTextToBlack()
+                "맑음", "구름많음", "구름많고 눈", "눈", " 흐리고눈" -> changeTextToBlack()
                 else -> changeTextToWhite()
             }
         } else {
@@ -2119,7 +2124,8 @@ class MainActivity
                     val addr = GetLocation(this@MainActivity).getAddress(lat, lng)
                     processAddress(lat, lng, addr)
                 } else {
-                    hideAllViews(ERROR_NOT_SERVICED_LOCATION)
+                    ToastUtils(this).showMessage(getString(R.string.error_not_service_locale))
+                    loadSavedViewModelData("서울특별시")
                 }
             } ?: run {
                 hideProgressBar()

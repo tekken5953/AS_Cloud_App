@@ -157,6 +157,7 @@
     <string name="perm_back_setting">Set real-time location permissions</string>
     <string name="do_allow">Allow</string>
     <string name="always_allowed">Always allow</string>
+    <string name="error_not_service_locale">Your locale is not supported. so call data from default locale</string>
     <string name="error_server_down">The server is currently being checked</string>
     <string name="error_network_connect">Please check the internet and re-run it</string>
     <string name="download">Download</string>

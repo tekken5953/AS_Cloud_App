@@ -23,7 +23,6 @@ import app.airsignal.weather.R
 import app.airsignal.weather.adapter.AddressListAdapter
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
-import app.airsignal.weather.util.`object`.DataTypeParser.convertAddress
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
@@ -37,6 +36,7 @@ import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
 import app.airsignal.weather.util.KeyboardController
 import app.airsignal.weather.util.OnAdapterItemClick
+import app.airsignal.weather.util.`object`.DataTypeParser.convertAddress
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -177,7 +177,7 @@ class SearchDialog(
             val listView: ListView = view.findViewById(R.id.searchAddressListView)
 
             searchEditListener(listView, searchView, noResult)
-            KeyboardController().onKeyboardUp(requireContext(), searchView)
+            KeyboardController.onKeyboardUp(requireContext(), searchView)
         }
     }
 

@@ -558,7 +558,7 @@
                             android:overScrollMode="never"
                             android:paddingStart="13dp"
                             android:paddingEnd="15dp"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            app:layoutManager=".util.LinearLayoutManagerWrapper"
                             tools:listitem="@layout/list_item_daily_weather" />
                     </RelativeLayout>
 
@@ -634,7 +634,7 @@
                             android:clipToPadding="false"
                             android:orientation="vertical"
                             android:overScrollMode="never"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            app:layoutManager=".util.LinearLayoutManagerWrapper"
                             tools:listitem="@layout/list_item_weekly_weather" />
                     </RelativeLayout>
 
@@ -798,8 +798,9 @@
                             android:layout_marginBottom="12dp"
                             android:overScrollMode="never"
                             android:scrollbars="none"
+                            android:orientation="horizontal"
                             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                            app:spanCount="3"
+                            app:spanCount="2"
                             tools:listitem="@layout/list_item_pm_title" />
 
                     </RelativeLayout>
@@ -844,7 +845,7 @@
                             android:orientation="vertical"
                             android:overScrollMode="never"
                             android:scrollbars="none"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            app:layoutManager=".util.LinearLayoutManagerWrapper"
                             tools:itemCount="5"
                             tools:listitem="@layout/list_item_uv_legend" />
 
@@ -913,7 +914,7 @@
                                 android:nestedScrollingEnabled="false"
                                 android:overScrollMode="never"
                                 android:scrollbars="none"
-                                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                                app:layoutManager=".util.LinearLayoutManagerWrapper"
                                 tools:listitem="@layout/list_item_uv_collapsed" />
                         </RelativeLayout>
                     </RelativeLayout>

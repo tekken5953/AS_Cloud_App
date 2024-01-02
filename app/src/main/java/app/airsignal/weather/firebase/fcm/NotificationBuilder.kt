@@ -115,7 +115,6 @@ class NotificationBuilder {
             if (getUserNotiEnable(appContext)) {
                 notificationManager?.let {
                     it.createNotificationChannel(notificationChannel)
-//                applyVibrate(appContext)
                     it.notify(1, notificationBuilder.build())
                 }
                 RDBLogcat.writeNotificationHistory(appContext,data["sort"].toString(),"${getNotificationAddress(appContext)} $data")
