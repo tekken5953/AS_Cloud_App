@@ -43,7 +43,7 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
         WebViewSetting().apply(webView)
 
         binding.webUrlWebView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-            binding.webUrlTop.visibility = if(scrollY == 0) View.GONE else View.VISIBLE
+            binding.webUrlTop.visibility = if (scrollY == 0) View.GONE else View.VISIBLE
         }
 
         webView.apply {
@@ -53,7 +53,6 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
 
         if (intent.extras!!.getBoolean("appBar")) binding.webUrlLinear.visibility = View.VISIBLE
         else binding.webUrlLinear.visibility = View.GONE
-
 
         val sort = intent.extras?.getString("sort")
 

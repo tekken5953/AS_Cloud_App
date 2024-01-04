@@ -14,7 +14,6 @@ import com.google.android.gms.location.GeofencingClient
 
 class GeofenceManager(private val context: Context) {
     companion object {
-        private const val TAG = "GeofenceJobService"
         private const val requestId = "request_id_geofence"
     }
     private val geofencingClient: GeofencingClient by lazy {
@@ -25,13 +24,12 @@ class GeofenceManager(private val context: Context) {
     fun addGeofence(): Location? {
         val location = GetLocation(context).getForegroundLocation()
         location?.let {
-            val simpleAddr = getSimpleAddress(location.latitude,location.longitude)
             val geofence = Geofence.Builder()
                 .setRequestId(requestId)
                 .setCircularRegion(
                     location.latitude,
                     location.longitude,
-                    100f  // 예시로 반경을 100m로 설정
+                    100f
                 )
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)

@@ -90,6 +90,9 @@ class PermissionActivity :
             value = Build.MODEL
         )
 
+        binding.permissionUserDataNotice.linksClickable = true
+        binding.permissionUserDataNotice.movementMethod = LinkMovementMethod.getInstance()
+
         val userDataIndex = binding.permissionUserDataNotice.text.toString().indexOf(getString(R.string.data_usages).lowercase())
         val spanUserData = SpannableStringBuilder(binding.permissionUserDataNotice.text.toString())
 
@@ -107,16 +110,11 @@ class PermissionActivity :
 
         binding.permissionUserDataNotice.setOnClickListener {
             // 개인정보 처리방침 열림
-            Intent(this@PermissionActivity,
-                WebURLActivity::class.java).run {
-                putExtra("sort","dataUsage")
-                putExtra("appBar",true)
+            val intent = Intent(this@PermissionActivity, WebURLActivity::class.java)
+                intent.putExtra("sort","dataUsage")
+                intent.putExtra("appBar",true)
                 startActivity(intent)
-            }
         }
-
-        binding.permissionUserDataNotice.linksClickable = true
-        binding.permissionUserDataNotice.movementMethod = LinkMovementMethod.getInstance()
 
         binding.permissionUserDataCheckBox.setOnCheckedChangeListener { _, isChecked ->
             // 개인정보 처리방침 체크 박스
