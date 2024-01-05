@@ -14,7 +14,7 @@
         <TextView
             android:id="@+id/listItemAeLifeEn"
             style="@style/basicMediumTextView"
-            android:textColor="@color/theme_text_color"
+            android:textColor="@color/main_black"
             android:textSize="16sp" />
 
         <TextView

@@ -4,8 +4,10 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
+import app.airsignal.weather.as_eye.dao.EyeDataModel;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface MyApiImpl {
@@ -31,4 +33,8 @@ public interface MyApiImpl {
     @GET("forecast/broadcast") // 기상 특보 데이터 호출
     Call<ApiModel.BroadCastWeather> getBroadCast(
             @Query("code") int code);
+
+    @GET("airsignal/current/{sn}")
+    Call<EyeDataModel.Measured> getMeasured(
+            @Path("sn") String sn);
 }

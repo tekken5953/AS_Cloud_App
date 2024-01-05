@@ -52,7 +52,6 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         super.onDeleted(context, appWidgetIds)
     }
 
-
     suspend fun requestWeather(context: Context,lat: Double, lng: Double, rCount: Int): ApiModel.WidgetData? {
         try {
             return HttpClient.getInstance(true).setClientBuilder()

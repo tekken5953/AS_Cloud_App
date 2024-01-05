@@ -30,7 +30,7 @@
             android:layout_centerVertical="true"
             android:layout_toStartOf="@+id/customEyeSingleUnit"
             android:layout_marginEnd="3dp"
-            android:textColor="@color/theme_text_color"
+            android:textColor="@color/main_black"
             android:textSize="24sp"/>
 
     </RelativeLayout>

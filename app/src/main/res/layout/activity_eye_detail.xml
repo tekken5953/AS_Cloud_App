@@ -21,12 +21,12 @@
             android:contentDescription="@string/cd_icon_back"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:tint="@color/theme_text_color" />
+            app:tint="@color/main_black" />
 
         <TextView
             android:id="@+id/aeDetailTitle"
             style="@style/basicMediumTextView"
-            android:textColor="@color/theme_text_color"
+            android:textColor="@color/main_black"
             android:textSize="16sp"
             android:layout_marginTop="14dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -53,7 +53,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/aeDetailBack"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/aeDetailBack"
-            app:tint="@color/theme_text_color" />
+            app:tint="@color/main_black" />
 
         <LinearLayout
             android:id="@+id/asDetailTabLinear"

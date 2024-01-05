@@ -14,6 +14,7 @@ import app.airsignal.weather.as_eye.activity.EyeDetailActivity
 import app.airsignal.weather.as_eye.adapter.ReportViewPagerAdapter
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
+import app.airsignal.weather.util.TimberUtil
 import kotlinx.coroutines.*
 
 class EyeDetailReportFragment : Fragment() {
@@ -29,6 +30,9 @@ class EyeDetailReportFragment : Fragment() {
             binding.reportVp
         )
     }
+
+    private var caiValue = 0
+    private var caiLvl = 0
 
     override fun onDetach() {
         super.onDetach()
@@ -53,6 +57,9 @@ class EyeDetailReportFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.reportCaiValue.text = caiValue.toString()
+        binding.reportCaiGrade.text = parseLvlToGrade(caiLvl)
+
         binding.reportVp.apply{
             adapter = reportViewPagerAdapter
             isClickable = true
@@ -64,11 +71,28 @@ class EyeDetailReportFragment : Fragment() {
         warningSlideAuto()
     }
 
-    fun onDataReceived(data: EyeDataModel.EyeReportAdapter?) {
+    fun onDataReceived(data: EyeDataModel.ReportFragment?) {
+        TimberUtil().d("eyetest","report data received : $data")
         data?.let {
             addViewPagerItem("CO2(이산화탄소)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
             addViewPagerItem("PM2.5(초미세먼지)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
-            addViewPagerItem(it.title,it.content)
+            it.report.forEach { reportItem ->
+                addViewPagerItem(reportItem.title,reportItem.content)
+            }
+
+            caiValue = it.caiValue
+            caiLvl = it.caiLvl
+//            binding.reportCaiValue.text = it.caiValue.toString()
+        }
+    }
+
+    private fun parseLvlToGrade(lvl: Int): String {
+        return when(lvl) {
+            0 -> "좋음"
+            1 -> "보통"
+            2 -> "나쁨"
+            3 -> "매우나쁨"
+            else -> "에러"
         }
     }
 

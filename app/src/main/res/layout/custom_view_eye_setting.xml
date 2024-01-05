@@ -16,7 +16,7 @@
                 style="@style/settingMultiTextView"
                 android:textSize="16sp"
                 android:gravity="center_vertical|start"
-                android:textColor="@color/theme_text_color"/>
+                android:textColor="@color/main_black"/>
 
             <TextView
                 android:id="@+id/customEyeSettingValue"

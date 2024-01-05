@@ -21,14 +21,14 @@
             app:layout_constraintBottom_toBottomOf="@+id/aeListTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/aeListTitle"
-            app:tint="@color/theme_text_color" />
+            app:tint="@color/main_black" />
 
         <TextView
             android:id="@+id/aeListTitle"
             style="@style/basicMediumTextView"
             android:layout_marginTop="16dp"
             android:text="@string/device_list"
-            android:textColor="@color/theme_text_color"
+            android:textColor="@color/main_black"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -44,7 +44,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/aeListTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/aeListTitle"
-            app:tint="@color/theme_text_color" />
+            app:tint="@color/main_black" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/aeListCategoryRv"

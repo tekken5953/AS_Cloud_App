@@ -28,6 +28,7 @@ import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.NoticeAdapter
+import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.dao.IgnoredKeyFile.notiEnable
 import app.airsignal.weather.dao.IgnoredKeyFile.notiSound
 import app.airsignal.weather.dao.IgnoredKeyFile.notiVibrate
@@ -615,6 +616,11 @@ class SettingActivity
             ShowDialogClass(this)
                 .setBackPressed(notificationView.findViewById(R.id.notificationBack))
                 .show(notificationView, true)
+        }
+
+        binding.settingEye.setOnClickListener {
+            val intent = Intent(this, EyeListActivity::class.java)
+            startActivity(intent)
         }
     }
 

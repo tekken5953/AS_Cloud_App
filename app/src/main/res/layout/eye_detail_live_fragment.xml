@@ -27,7 +27,7 @@
                 style="@style/basicMediumTextView"
                 android:layout_marginStart="13dp"
                 android:text="@string/live_value"
-                android:textColor="@color/theme_text_color"
+                android:textColor="@color/main_black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/aeLiveTitleIcon"
                 app:layout_constraintStart_toEndOf="@+id/aeLiveTitleIcon"

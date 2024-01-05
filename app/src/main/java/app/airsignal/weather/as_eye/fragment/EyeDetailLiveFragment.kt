@@ -11,12 +11,19 @@ import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.EyeDetailLiveFragmentBinding
+import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.math.roundToInt
 
 class EyeDetailLiveFragment : Fragment() {
     private lateinit var mActivity: EyeDetailActivity
     private lateinit var binding : EyeDetailLiveFragmentBinding
+
+    private lateinit var entireData: EyeDataModel.Measured
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -31,31 +38,40 @@ class EyeDetailLiveFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_detail_live_fragment, container, false)
 
         binding.aeLiveRefreshIcon.setOnClickListener {
-            Thread.sleep(2000)
-            fetchData()
+            Thread.sleep(1000)
+            mActivity.loadAllData()
         }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fetchData()
-    }
-    fun onDataReceived(data: EyeDataModel.EyeReportAdapter?) {
+
+        refreshData()
     }
 
-    private fun fetchData() {
-        binding.aeLiveRefreshTime.text = DataTypeParser.currentDateTimeString("hh시 mm분 ss초")
-        binding.aeLiveTemp.fetchData(Random().nextInt(50).toString())
-        binding.aeLiveHumid.fetchData(Random().nextInt(50).toString())
-        binding.aeLiveLight.fetchData(Random().nextInt(50).toString())
-        binding.aeLiveNoise.fetchData(Random().nextInt(50).toString())
+    private fun refreshData() {
+        entireData.let {
+            binding.aeLiveRefreshTime.text = DataTypeParser.currentDateTimeString("hh시 mm분 ss초")
+            binding.aeLiveTemp.fetchData(entireData.tempValue.toString())
+            binding.aeLiveHumid.fetchData(entireData.humidValue.toString())
+            binding.aeLiveLight.fetchData(entireData.lightValue.toString())
+            binding.aeLiveNoise.fetchData(entireData.noiseValue.toString())
+            binding.aeLivePM25.fetchData(entireData.pm2p5Value.roundToInt().toString())
+            binding.aeLivePM10.fetchData(entireData.pm10p0Value.roundToInt().toString())
+            binding.aeLiveCO2.fetchData(entireData.co2Value.roundToInt().toString())
+            binding.aeLiveCO.fetchData(entireData.coValue.toString())
+            binding.aeLiveTVOC.fetchData(entireData.tvocValue.toString())
+            binding.aeLiveNO2.fetchData(entireData.no2Value.toString())
+        }
+    }
 
-        binding.aeLivePM25.fetchData(Random().nextInt(5000).toString())
-        binding.aeLivePM10.fetchData(Random().nextInt(5000).toString())
-        binding.aeLiveCO2.fetchData(Random().nextInt(5000).toString())
-        binding.aeLiveCO.fetchData(Random().nextInt(5000).toString())
-        binding.aeLiveTVOC.fetchData(Random().nextInt(5000).toString())
-        binding.aeLiveNO2.fetchData(Random().nextInt(5000).toString())
+    fun onDataReceived(data: EyeDataModel.Measured?) {
+        TimberUtil().d("eyetest","live data received : $data")
+        data?.let {
+            entireData = it
+            refreshData()
+        }
     }
 }

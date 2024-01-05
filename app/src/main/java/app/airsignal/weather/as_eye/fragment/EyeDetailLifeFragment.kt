@@ -50,6 +50,7 @@ class EyeDetailLifeFragment : Fragment() {
         addLifeItem("TEMP·HUM","온도·습도",40, R.color.ae_normal_main,R.color.ae_normal_sub)
         lifeAdapter.notifyDataSetChanged()
     }
+
     fun onDataReceived(data: EyeDataModel.EyeReportAdapter?) {
     }
 

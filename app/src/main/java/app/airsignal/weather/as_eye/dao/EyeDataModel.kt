@@ -26,6 +26,21 @@ class EyeDataModel {
         val report: List<String>
     )
 
+    data class ReportFragment(
+        val report: List<EyeReportAdapter>,
+        val caiValue: Int,
+        val caiLvl: Int
+    )
+
+    data class Life(
+        val nameEn: String,
+        val nameKr: String,
+        val value: Int,
+        val pbColor: Int,
+        val backColor: Int
+    )
+
+
     data class Serial(
         @SerializedName("last_modify")
         val lastModify: LocalDateTime,
@@ -44,14 +59,6 @@ class EyeDataModel {
         val content: String
     )
 
-    data class Life(
-        val nameEn: String,
-        val nameKr: String,
-        val value: Int,
-        val pbColor: Int,
-        val backColor: Int
-    )
-
     data class Measured(
         @SerializedName("pm2p5Value")
         val pm2p5Value: Float,
@@ -59,6 +66,10 @@ class EyeDataModel {
         val pm2p5Lvl: Int,
         @SerializedName("pm2p5AQI")
         val pm2p5AQI: Float,
+        @SerializedName("pm10p0Value")
+        val pm10p0Value: Float,
+        @SerializedName("pm10p0Lvl")
+        val pm10p0Lvl: Int,
         @SerializedName("tempValue")
         val tempValue: Float,
         @SerializedName("tempLvl")
@@ -93,12 +104,16 @@ class EyeDataModel {
         val gyroYValue: Float,
         @SerializedName("gyroZValue")
         val gyroZValue: Float,
-        @SerializedName("GYROLvl")
-        val GYROLvl: Int,
-        @SerializedName("CAIValue")
+        @SerializedName("gyroValid")
+        val gyroValid: Int,
+        @SerializedName("caiValue")
         val CAIValue: Int,
-        @SerializedName("CAILvl")
-        val CAILvl: Int
+        @SerializedName("caiLvl")
+        val CAILvl: Int,
+        @SerializedName("noiseValid")
+        val noiseValid: Int,
+        @SerializedName("noiseValue")
+        val noiseValue: Float
     )
 
     data class Setting(
@@ -164,7 +179,7 @@ class EyeDataModel {
         @SerializedName("gyroLifePercent")
         val gyroLifePercent: Int,
         @SerializedName("gyroInstallTime")
-        val gyroInstallTime: Int,
+        val gyroInstallTime: Int
     )
 
     data class Display(

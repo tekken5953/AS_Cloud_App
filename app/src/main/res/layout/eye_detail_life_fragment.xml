@@ -21,7 +21,7 @@
             style="@style/basicMediumTextView"
             android:layout_marginStart="13dp"
             android:text="@string/sensor_life"
-            android:textColor="@color/theme_text_color"
+            android:textColor="@color/main_black"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="@+id/aeLifeTitleIcon"
             app:layout_constraintStart_toEndOf="@+id/aeLifeTitleIcon"

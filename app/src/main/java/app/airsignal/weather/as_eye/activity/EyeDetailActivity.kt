@@ -10,13 +10,18 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
-import app.airsignal.weather.databinding.ActivityEyeDetailBinding
 import app.airsignal.weather.as_eye.customview.EyeSettingView
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.as_eye.fragment.EyeDetailLifeFragment
 import app.airsignal.weather.as_eye.fragment.EyeDetailLiveFragment
 import app.airsignal.weather.as_eye.fragment.EyeDetailReportFragment
+import app.airsignal.weather.databinding.ActivityEyeDetailBinding
+import app.airsignal.weather.network.retrofit.HttpClient
+import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.view.custom_view.ShowDialogClass
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class EyeDetailActivity : AppCompatActivity() {
     companion object {
@@ -28,12 +33,12 @@ class EyeDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEyeDetailBinding
 
+    private lateinit var entireData: EyeDataModel.Measured
+
     @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_eye_detail)
-
-        tabItemSelected(FRAGMENT_REPORT)
 
         val nameExtra = intent.getStringExtra("name")
         val serialExtra = intent.getStringExtra("serial")
@@ -42,15 +47,15 @@ class EyeDetailActivity : AppCompatActivity() {
 
         binding.asDetailTabReport.setOnClickListener {
             if (currentFragment != FRAGMENT_REPORT)
-                tabItemSelected(FRAGMENT_REPORT)
+                tabItemSelected(FRAGMENT_REPORT, entireData)
         }
         binding.asDetailTabLive.setOnClickListener {
             if (currentFragment != FRAGMENT_LIVE)
-                tabItemSelected(FRAGMENT_LIVE)
+                tabItemSelected(FRAGMENT_LIVE, entireData)
         }
         binding.asDetailTabLife.setOnClickListener {
             if (currentFragment != FRAGMENT_LIFE)
-                tabItemSelected(FRAGMENT_LIFE)
+                tabItemSelected(FRAGMENT_LIFE, entireData)
         }
 
         binding.aeDetailBack.setOnClickListener { finish() }
@@ -71,6 +76,8 @@ class EyeDetailActivity : AppCompatActivity() {
             settingName.setOnClickListener { }
             settingNoti.setOnClickListener { }
         }
+
+        loadAllData()
     }
 
     private fun transactionFragment(frag: Fragment) {
@@ -79,28 +86,28 @@ class EyeDetailActivity : AppCompatActivity() {
         if (!supportFragmentManager.isStateSaved) { transaction.commit() }
     }
 
-    private fun tabItemSelected(id: Int) {
+    private fun tabItemSelected(id: Int, data: EyeDataModel.Measured?) {
         when (id) {
             FRAGMENT_REPORT -> {
                 val reportFragment = EyeDetailReportFragment()
-                val data = EyeDataModel.EyeReportAdapter("test","test")
                 currentFragment = id
-                reportFragment.onDataReceived(data)
+                reportFragment.onDataReceived(
+                    EyeDataModel.ReportFragment(
+                        listOf(EyeDataModel.EyeReportAdapter("test","test")),
+                        data?.CAIValue ?: entireData.CAIValue,
+                        data?.CAILvl ?: entireData.CAILvl))
                 transactionFragment(reportFragment)
                 changeTabResource(id)
             }
             FRAGMENT_LIVE -> {
                 val liveFragment = EyeDetailLiveFragment()
-                val data = EyeDataModel.EyeReportAdapter("test","test")
                 currentFragment = id
-                liveFragment.onDataReceived(data)
+                liveFragment.onDataReceived(entireData)
                 transactionFragment(liveFragment)
                 changeTabResource(id)
             }
             FRAGMENT_LIFE -> {
                 val lifeFragment = EyeDetailLifeFragment()
-                val data = EyeDataModel.EyeReportAdapter("test","test")
-                lifeFragment.onDataReceived(data)
                 currentFragment = id
                 transactionFragment(lifeFragment)
                 changeTabResource(id)
@@ -129,5 +136,31 @@ class EyeDetailActivity : AppCompatActivity() {
 
     private fun getDr(id: Int): Drawable? {
         return ResourcesCompat.getDrawable(resources,id,null)
+    }
+
+    fun loadAllData(){
+        try {
+            HttpClient.getInstance(false).setClientBuilder()
+                .getMeasured("AOA0000001F539")
+                .enqueue(object : Callback<EyeDataModel.Measured> {
+                    override fun onResponse(
+                        call: Call<EyeDataModel.Measured>,
+                        response: Response<EyeDataModel.Measured>
+                    ) {
+                        if (response.isSuccessful) {
+                            TimberUtil().i("eyetest",response.body().toString())
+                            val body = response.body()
+                            entireData = body!!
+                            tabItemSelected(FRAGMENT_REPORT, body)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<EyeDataModel.Measured>, t: Throwable) {
+                        t.printStackTrace()
+                    }
+                })
+        } catch (e: Exception) {
+           e.printStackTrace()
+        }
     }
 }

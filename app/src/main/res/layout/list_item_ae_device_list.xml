@@ -23,7 +23,7 @@
         style="@style/basicMediumTextView"
         android:layout_marginStart="13dp"
         android:layout_marginTop="20dp"
-        android:textColor="@color/theme_text_color"
+        android:textColor="@color/main_black"
         android:textSize="16sp" />
 
     <TextView
