@@ -45,9 +45,7 @@
             android:layout_height="46dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/smile_test"
-            app:tint="@color/ae_bad_main" />
+            android:layout_marginEnd="10dp" />
 
         <TextView
             android:id="@+id/customEyeDoubleUnit"

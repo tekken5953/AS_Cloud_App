@@ -91,6 +91,7 @@ class EyeListActivity : AppCompatActivity() {
                         putExtra("serial", deviceListItem[position].serial.serial)
                     }
                     startActivity(intent)
+                    finish()
                 }
             }
         })

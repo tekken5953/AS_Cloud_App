@@ -1,6 +1,7 @@
 package app.airsignal.weather.as_eye.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -48,6 +49,12 @@ class EyeDetailActivity : AppCompatActivity() {
         dataViewModel.loadData("AOA0000001F539")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        lastRefreshTime = 0L
+        currentFragment = -1
+    }
+
     @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +78,9 @@ class EyeDetailActivity : AppCompatActivity() {
                 tabItemSelected(FRAGMENT_LIFE)
         }
 
-        binding.aeDetailBack.setOnClickListener { finish() }
+        binding.aeDetailBack.setOnClickListener {
+            backToList()
+        }
 
         binding.aeDetailSetting.setOnClickListener {
             val settingView =
@@ -90,7 +99,18 @@ class EyeDetailActivity : AppCompatActivity() {
             settingNoti.setOnClickListener { }
         }
 
-        applyAppVersionData()
+        applyMeasuredData()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        backToList()
+    }
+
+    private fun backToList() {
+        val intent = Intent(this, EyeListActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun transactionFragment(frag: Fragment) {
@@ -153,9 +173,7 @@ class EyeDetailActivity : AppCompatActivity() {
         }
     }
 
-
-    // 앱 버전 뷰모델 데이터 호출
-    private fun applyAppVersionData() {
+    private fun applyMeasuredData() {
         try {
             if (!dataViewModel.fetchData().hasObservers()) {
                 dataViewModel.fetchData().observe(this) { result ->
@@ -182,13 +200,11 @@ class EyeDetailActivity : AppCompatActivity() {
                                 }
                             }
 
-                            // 통신 실패
                             is BaseRepository.ApiState.Error -> {
                                 hidePb()
                                 TimberUtil().e("eyetest",measured.errorMessage)
                             }
 
-                            // 통신 중
                             is BaseRepository.ApiState.Loading -> showPb()
                         }
                     }

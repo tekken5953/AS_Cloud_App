@@ -69,12 +69,18 @@ class EyeDetailLiveFragment : Fragment() {
                 binding.aeLiveHumid.fetchData(entireData.humidValue.toString())
                 binding.aeLiveLight.fetchData(entireData.lightValue.toString())
                 binding.aeLiveNoise.fetchData(entireData.noiseValue.toString())
-                binding.aeLivePM25.fetchData(entireData.pm2p5Value.roundToInt().toString(),getDataBackground(entireData.pm2p5Lvl))
-                binding.aeLivePM10.fetchData(entireData.pm10p0Value.roundToInt().toString(),getDataBackground(entireData.pm10p0Lvl))
-                binding.aeLiveCO2.fetchData(entireData.co2Value.roundToInt().toString(),getDataBackground(entireData.co2Lvl))
-                binding.aeLiveCO.fetchData(entireData.coValue.toString(),getDataBackground(entireData.coLvl))
-                binding.aeLiveTVOC.fetchData(entireData.tvocValue.toString(),getDataBackground(entireData.tvocLvl))
-                binding.aeLiveNO2.fetchData(entireData.no2Value.toString(),getDataBackground(entireData.no2Lvl))
+                val pm25d = getDataBackground(entireData.pm2p5Lvl)
+                val pm10d = getDataBackground(entireData.pm10p0Lvl)
+                val co2d = getDataBackground(entireData.co2Lvl)
+                val cod = getDataBackground(entireData.coLvl)
+                val tvocd = getDataBackground(entireData.tvocLvl)
+                val no2d = getDataBackground(entireData.no2Lvl)
+                binding.aeLivePM25.fetchData(entireData.pm2p5Value.roundToInt().toString(),pm25d.first,pm25d.second)
+                binding.aeLivePM10.fetchData(entireData.pm10p0Value.roundToInt().toString(),pm10d.first,pm10d.second)
+                binding.aeLiveCO2.fetchData(entireData.co2Value.roundToInt().toString(),co2d.first,co2d.second)
+                binding.aeLiveCO.fetchData(entireData.coValue.toString(),cod.first,cod.second)
+                binding.aeLiveTVOC.fetchData(entireData.tvocValue.toString(),tvocd.first,tvocd.second)
+                binding.aeLiveNO2.fetchData(entireData.no2Value.toString(),no2d.first,no2d.second)
             }
         } catch (e: UninitializedPropertyAccessException) {
             e.printStackTrace()
@@ -88,13 +94,13 @@ class EyeDetailLiveFragment : Fragment() {
         }
     }
 
-    private fun getDataBackground(grade: Int): Int {
+    private fun getDataBackground(grade: Int): Pair<Int,Int> {
         return when(grade) {
-            0 -> {R.drawable.ae_live_data_bg_good}
-            1 -> {R.drawable.ae_live_data_bg_normal}
-            2 -> {R.drawable.ae_live_data_bg_bad}
-            3 -> {R.drawable.ae_live_data_bg_verybad}
-            else -> {R.drawable.ae_live_data_bg_good}
+            0 -> {Pair(R.drawable.ae_live_data_bg_good,R.drawable.live_smile_good)}
+            1 -> {Pair(R.drawable.ae_live_data_bg_normal,R.drawable.live_smile_normal)}
+            2 -> {Pair(R.drawable.ae_live_data_bg_bad,R.drawable.live_smile_bad)}
+            3 -> {Pair(R.drawable.ae_live_data_bg_verybad,R.drawable.live_smile_verybad)}
+            else -> {Pair(R.drawable.ae_live_data_bg_good,R.drawable.live_smile_good)}
         }
     }
 }
