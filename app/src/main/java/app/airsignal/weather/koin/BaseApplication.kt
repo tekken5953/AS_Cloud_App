@@ -11,6 +11,8 @@ import app.airsignal.weather.viewmodel.GetWarningViewModel
 import app.airsignal.weather.viewmodel.GetWeatherViewModel
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.location.GetLocation
+import app.airsignal.weather.repository.GetEyeDataRepo
+import app.airsignal.weather.viewmodel.GetEyeDataViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -58,8 +60,10 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
         single { GetWeatherRepo() }
         single { GetAppVersionRepo() }
         single { GetWarningRepo() }
+        single { GetEyeDataRepo() }
         viewModel { GetAppVersionViewModel(get()) }
         viewModel { GetWeatherViewModel(get()) }
         viewModel { GetWarningViewModel(get()) }
+        viewModel { GetEyeDataViewModel(get()) }
     }
 }

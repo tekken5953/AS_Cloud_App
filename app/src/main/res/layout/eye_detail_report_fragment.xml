@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:background="@drawable/report_cai_bg"
+            android:background="@drawable/report_bg_bad"
             app:layout_constraintTop_toBottomOf="@+id/reportVp">
 
             <TextView
@@ -37,7 +37,7 @@
                 android:layout_below="@+id/reportCaiTitle"
                 android:layout_alignStart="@+id/reportCaiTitle"
                 android:layout_marginTop="23dp"
-                android:text="183"
+                android:text="0"
                 android:textColor="@color/white"
                 android:textSize="32sp" />
 
@@ -61,15 +61,17 @@
                 android:layout_alignEnd="@+id/reportCaiPb"
                 android:layout_below="@+id/reportCaiPb">
                 <TextView
+                    android:id="@+id/caiModerLow"
                     style="@style/basicTextView"
-                    android:text="100"
+                    android:text="0"
                     android:gravity="start"
                     android:layout_weight="0.5"
                     android:textColor="@color/white"
                     android:textSize="14sp"/>
                 <TextView
+                    android:id="@+id/caiModerHigh"
                     style="@style/basicTextView"
-                    android:text="250"
+                    android:text="0"
                     android:gravity="end"
                     android:layout_weight="0.5"
                     android:textColor="@color/white"
@@ -90,7 +92,7 @@
                 style="@style/basicMediumTextView"
                 android:textSize="20sp"
                 android:textColor="@color/white"
-                android:text="나쁨"
+                android:text="에러"
                 android:layout_below="@+id/reportCaiSmile"
                 android:layout_alignStart="@+id/reportCaiSmile"
                 android:layout_alignEnd="@+id/reportCaiSmile"
@@ -120,7 +122,7 @@
                 android:layout_below="@+id/reportVirusTitle"
                 android:layout_alignStart="@+id/reportVirusTitle"
                 android:layout_marginTop="23dp"
-                android:text="9"
+                android:text="0"
                 android:textColor="@color/white"
                 android:textSize="32sp" />
 
@@ -144,15 +146,17 @@
                 android:layout_alignEnd="@+id/reportVirusPb"
                 android:layout_below="@+id/reportVirusPb">
                 <TextView
+                    android:id="@+id/virusModerLow"
                     style="@style/basicTextView"
-                    android:text="8"
+                    android:text="0"
                     android:gravity="start"
                     android:layout_weight="0.5"
                     android:textColor="@color/white"
                     android:textSize="14sp"/>
                 <TextView
+                    android:id="@+id/virusModerHigh"
                     style="@style/basicTextView"
-                    android:text="10"
+                    android:text="0"
                     android:gravity="end"
                     android:layout_weight="0.5"
                     android:textColor="@color/white"
@@ -173,7 +177,7 @@
                 style="@style/basicMediumTextView"
                 android:textSize="20sp"
                 android:textColor="@color/white"
-                android:text="매우나쁨"
+                android:text="에러"
                 android:layout_below="@+id/reportVirusSmile"
                 android:layout_alignStart="@+id/reportVirusSmile"
                 android:layout_alignEnd="@+id/reportVirusSmile"

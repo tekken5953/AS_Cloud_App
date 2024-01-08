@@ -43,6 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="24dp"
                 android:text="eye"
+                android:textColor="@android:color/transparent"
                 android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true"/>
         </RelativeLayout>

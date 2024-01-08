@@ -12,7 +12,7 @@
             android:layout_width="15dp"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
-            android:background="@drawable/ae_live_main_air_side" />
+            android:background="@drawable/ae_live_data_bg_bad" />
 
         <LinearLayout
             android:id="@+id/customEyeDoubleLinear"

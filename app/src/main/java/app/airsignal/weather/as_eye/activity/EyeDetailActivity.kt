@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
@@ -16,24 +17,36 @@ import app.airsignal.weather.as_eye.fragment.EyeDetailLifeFragment
 import app.airsignal.weather.as_eye.fragment.EyeDetailLiveFragment
 import app.airsignal.weather.as_eye.fragment.EyeDetailReportFragment
 import app.airsignal.weather.databinding.ActivityEyeDetailBinding
-import app.airsignal.weather.network.retrofit.HttpClient
+import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.view.custom_view.ShowDialogClass
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import app.airsignal.weather.viewmodel.GetEyeDataViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.IOException
 
 class EyeDetailActivity : AppCompatActivity() {
     companion object {
         const val FRAGMENT_REPORT = 0
         const val FRAGMENT_LIVE = 1
         const val FRAGMENT_LIFE = 2
-        var currentFragment = 0
+        var currentFragment = -1
     }
 
     private lateinit var binding: ActivityEyeDetailBinding
 
     private lateinit var entireData: EyeDataModel.Measured
+
+    val dataViewModel by viewModel<GetEyeDataViewModel>()
+
+    private val reportFragment = EyeDetailReportFragment()
+    private val liveFragment = EyeDetailLiveFragment()
+
+    private var lastRefreshTime = 0L
+
+    override fun onStart() {
+        super.onStart()
+        dataViewModel.loadData("AOA0000001F539")
+    }
 
     @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,15 +60,15 @@ class EyeDetailActivity : AppCompatActivity() {
 
         binding.asDetailTabReport.setOnClickListener {
             if (currentFragment != FRAGMENT_REPORT)
-                tabItemSelected(FRAGMENT_REPORT, entireData)
+                tabItemSelected(FRAGMENT_REPORT)
         }
         binding.asDetailTabLive.setOnClickListener {
             if (currentFragment != FRAGMENT_LIVE)
-                tabItemSelected(FRAGMENT_LIVE, entireData)
+                tabItemSelected(FRAGMENT_LIVE)
         }
         binding.asDetailTabLife.setOnClickListener {
             if (currentFragment != FRAGMENT_LIFE)
-                tabItemSelected(FRAGMENT_LIFE, entireData)
+                tabItemSelected(FRAGMENT_LIFE)
         }
 
         binding.aeDetailBack.setOnClickListener { finish() }
@@ -77,7 +90,7 @@ class EyeDetailActivity : AppCompatActivity() {
             settingNoti.setOnClickListener { }
         }
 
-        loadAllData()
+        applyAppVersionData()
     }
 
     private fun transactionFragment(frag: Fragment) {
@@ -86,23 +99,15 @@ class EyeDetailActivity : AppCompatActivity() {
         if (!supportFragmentManager.isStateSaved) { transaction.commit() }
     }
 
-    private fun tabItemSelected(id: Int, data: EyeDataModel.Measured?) {
+    private fun tabItemSelected(id: Int) {
         when (id) {
             FRAGMENT_REPORT -> {
-                val reportFragment = EyeDetailReportFragment()
                 currentFragment = id
-                reportFragment.onDataReceived(
-                    EyeDataModel.ReportFragment(
-                        listOf(EyeDataModel.EyeReportAdapter("test","test")),
-                        data?.CAIValue ?: entireData.CAIValue,
-                        data?.CAILvl ?: entireData.CAILvl))
                 transactionFragment(reportFragment)
                 changeTabResource(id)
             }
             FRAGMENT_LIVE -> {
-                val liveFragment = EyeDetailLiveFragment()
                 currentFragment = id
-                liveFragment.onDataReceived(entireData)
                 transactionFragment(liveFragment)
                 changeTabResource(id)
             }
@@ -138,29 +143,78 @@ class EyeDetailActivity : AppCompatActivity() {
         return ResourcesCompat.getDrawable(resources,id,null)
     }
 
-    fun loadAllData(){
+    fun isRefreshable(): Boolean {
+        return if (System.currentTimeMillis() - lastRefreshTime > 1000 * 30) {
+            lastRefreshTime = System.currentTimeMillis()
+            true
+        } else {
+            TimberUtil().i("eyetest","Not Refreshable")
+            false
+        }
+    }
+
+
+    // 앱 버전 뷰모델 데이터 호출
+    private fun applyAppVersionData() {
         try {
-            HttpClient.getInstance(false).setClientBuilder()
-                .getMeasured("AOA0000001F539")
-                .enqueue(object : Callback<EyeDataModel.Measured> {
-                    override fun onResponse(
-                        call: Call<EyeDataModel.Measured>,
-                        response: Response<EyeDataModel.Measured>
-                    ) {
-                        if (response.isSuccessful) {
-                            TimberUtil().i("eyetest",response.body().toString())
-                            val body = response.body()
-                            entireData = body!!
-                            tabItemSelected(FRAGMENT_REPORT, body)
+            if (!dataViewModel.fetchData().hasObservers()) {
+                dataViewModel.fetchData().observe(this) { result ->
+                    result?.let { measured ->
+                        when (measured) {
+                            // 통신 성공
+                            is BaseRepository.ApiState.Success -> {
+                                hidePb()
+                                val body = measured.data
+                                TimberUtil().i("eyetest",body.toString())
+                                entireData = body
+
+                                if (isRefreshable()) {
+                                    reportFragment.onDataReceived(
+                                        EyeDataModel.ReportFragment(
+                                            listOf(EyeDataModel.EyeReportAdapter("test","test")),
+                                            body.CAIValue,body.CAILvl,body.virusValue,body.virusLvl))
+
+                                    liveFragment.onDataReceived(entireData)
+
+                                    if (currentFragment == -1) {
+                                        tabItemSelected(FRAGMENT_REPORT)
+                                    }
+                                }
+                            }
+
+                            // 통신 실패
+                            is BaseRepository.ApiState.Error -> {
+                                hidePb()
+                                TimberUtil().e("eyetest",measured.errorMessage)
+                            }
+
+                            // 통신 중
+                            is BaseRepository.ApiState.Loading -> showPb()
                         }
                     }
-
-                    override fun onFailure(call: Call<EyeDataModel.Measured>, t: Throwable) {
-                        t.printStackTrace()
-                    }
-                })
-        } catch (e: Exception) {
-           e.printStackTrace()
+                }
+            }
         }
+        catch (e: IOException) {
+            hidePb()
+            TimberUtil().e("eyetest", "IOException $entireData ${e.stackTraceToString()}")
+        }
+        catch (e: NullPointerException) {
+            hidePb()
+            TimberUtil().e("eyetest", "NullPointerException $entireData ${e.stackTraceToString()}")
+        }
+        catch (e: IndexOutOfBoundsException) {
+            hidePb()
+            TimberUtil().e("eyetest", "IndexOutOfBoundsException $entireData ${e.stackTraceToString()}")
+        }
+    }
+
+    fun showPb() {
+        binding.aeDetailPb.bringToFront()
+        binding.aeDetailPb.visibility = View.VISIBLE
+    }
+
+    fun hidePb() {
+        binding.aeDetailPb.visibility = View.GONE
     }
 }

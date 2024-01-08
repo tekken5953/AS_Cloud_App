@@ -2,10 +2,12 @@ package app.airsignal.weather.as_eye.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
@@ -16,8 +18,14 @@ import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
 import app.airsignal.weather.util.TimberUtil
 import kotlinx.coroutines.*
+import kotlin.math.roundToInt
 
 class EyeDetailReportFragment : Fragment() {
+
+    companion object {
+        const val VIRUS_INDEX = "VIRUS"
+        const val CAI_INDEX = "CAI"
+    }
 
     private lateinit var mActivity: EyeDetailActivity
     private lateinit var binding : EyeDetailReportFragmentBinding
@@ -33,6 +41,9 @@ class EyeDetailReportFragment : Fragment() {
 
     private var caiValue = 0
     private var caiLvl = 0
+    private var virusValue = 0
+    private var virusLvl = 0
+    private val reportArray = ArrayList<Pair<String,String>>()
 
     override fun onDetach() {
         super.onDetach()
@@ -59,6 +70,20 @@ class EyeDetailReportFragment : Fragment() {
 
         binding.reportCaiValue.text = caiValue.toString()
         binding.reportCaiGrade.text = parseLvlToGrade(caiLvl)
+        binding.reportVirusValue.text = virusValue.toString()
+        binding.reportVirusGrade.text = parseLvlToGrade(virusLvl)
+        reportArray.forEach { reportItem ->
+            addViewPagerItem(reportItem.first,reportItem.second)
+        }
+
+        binding.reportCaiPb.progress = setProgress(CAI_INDEX, caiValue,caiLvl)
+        binding.reportVirusPb.progress = setProgress(VIRUS_INDEX, virusValue,virusLvl)
+        binding.caiModerLow.text = getModerate(CAI_INDEX,caiLvl).first.toString()
+        binding.caiModerHigh.text = getModerate(CAI_INDEX,caiLvl).second.toString()
+        binding.virusModerLow.text = getModerate(VIRUS_INDEX,virusLvl).first.toString()
+        binding.virusModerHigh.text = getModerate(VIRUS_INDEX,virusLvl).second.toString()
+        binding.reportCaiContainer.setBackgroundResource(getBackground(caiLvl))
+        binding.reportVirusContainer.setBackgroundResource(getBackground(virusLvl))
 
         binding.reportVp.apply{
             adapter = reportViewPagerAdapter
@@ -76,13 +101,15 @@ class EyeDetailReportFragment : Fragment() {
         data?.let {
             addViewPagerItem("CO2(이산화탄소)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
             addViewPagerItem("PM2.5(초미세먼지)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
-            it.report.forEach { reportItem ->
-                addViewPagerItem(reportItem.title,reportItem.content)
+            reportArray.clear()
+            it.report.forEach { r ->
+                reportArray.add(Pair(r.title,r.content))
             }
 
             caiValue = it.caiValue
             caiLvl = it.caiLvl
-//            binding.reportCaiValue.text = it.caiValue.toString()
+            virusValue = it.virusValue
+            virusLvl = it.virusLvl
         }
     }
 
@@ -94,6 +121,69 @@ class EyeDetailReportFragment : Fragment() {
             3 -> "매우나쁨"
             else -> "에러"
         }
+    }
+
+    private fun setProgress(sort: String, value: Int, grade: Int): Int {
+        val result = when(sort) {
+            CAI_INDEX -> {
+                when(grade) {
+                    0 -> {((value - 0).toDouble() / (50 - 0).toDouble() * 100).roundToInt()}
+                    1 -> {((value - 51).toDouble() / (100 - 51).toDouble() * 100).roundToInt()}
+                    2 -> {((value - 101).toDouble() / (250 - 101).toDouble() * 100).roundToInt()}
+                    3 -> {((value - 251).toDouble() / (500 - 251).toDouble() * 100).roundToInt()}
+                    else -> {0}
+                }
+            }
+
+            VIRUS_INDEX -> {
+                when(grade) {
+                    0 -> {((value - 0).toDouble() / (3 - 0).toDouble() * 100).roundToInt()}
+                    1 -> {((value - 4).toDouble() / (6 - 4).toDouble() * 100).roundToInt()}
+                    2 -> {((value - 7).toDouble() / (8 - 7).toDouble() * 100).roundToInt()}
+                    3 -> {((value - 9).toDouble() / (10 - 9).toDouble() * 100).roundToInt()}
+                    else -> { 0 }
+                }
+            }
+            else -> {0}
+        }
+
+        return result
+    }
+
+    private fun getModerate(sort: String, grade: Int): Pair<Int, Int> {
+        return when(sort) {
+            CAI_INDEX -> {
+                when (grade) {
+                    0 -> { Pair(0, 50) }
+                    1 -> { Pair(51, 100) }
+                    2 -> { Pair(101, 250) }
+                    3 -> { Pair(251, 500) }
+                    else -> { Pair(0, 0) }
+                }
+            }
+            VIRUS_INDEX -> {
+                when (grade) {
+                    0 -> { Pair(0, 3) }
+                    1 -> { Pair(4, 6) }
+                    2 -> { Pair(7, 8) }
+                    3 -> { Pair(9, 10) }
+                    else -> { Pair(0, 0) }
+                }
+            }
+            else -> { Pair(0, 0) }
+        }
+    }
+
+    private fun getBackground(grade: Int): Int {
+        val result = when(grade) {
+            0 -> {R.drawable.report_bg_good}
+            1 -> {R.drawable.report_bg_normal}
+            2 -> {R.drawable.report_bg_bad}
+            3 -> {R.drawable.report_bg_verybad}
+            else -> {R.drawable.report_bg_good}
+        }
+
+        return result
     }
 
     // 기상특보 자동 슬라이드 적용

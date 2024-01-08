@@ -29,7 +29,9 @@ class EyeDataModel {
     data class ReportFragment(
         val report: List<EyeReportAdapter>,
         val caiValue: Int,
-        val caiLvl: Int
+        val caiLvl: Int,
+        val virusValue: Int,
+        val virusLvl: Int
     )
 
     data class Life(
@@ -113,7 +115,11 @@ class EyeDataModel {
         @SerializedName("noiseValid")
         val noiseValid: Int,
         @SerializedName("noiseValue")
-        val noiseValue: Float
+        val noiseValue: Float,
+        @SerializedName("virusValue")
+        val virusValue: Int,
+        @SerializedName("virusLvl")
+        val virusLvl: Int
     )
 
     data class Setting(
