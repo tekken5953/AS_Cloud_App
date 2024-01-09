@@ -18,6 +18,7 @@ import app.airsignal.weather.as_eye.adapter.EyeCategoryAdapter
 import app.airsignal.weather.as_eye.adapter.EyeDeviceAdapter
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.util.OnAdapterItemClick
+import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.ShowDialogClass
 import java.time.LocalDateTime
@@ -32,6 +33,7 @@ class EyeListActivity : AppCompatActivity() {
 
     private val deviceListItem = ArrayList<EyeDataModel.Device>()
     private val deviceListAdapter by lazy { EyeDeviceAdapter(this, deviceListItem) }
+    private val allDevicesList = ArrayList<EyeDataModel.Device>()
     private val categoryItem = ArrayList<EyeDataModel.Category>()
     private val categoryAdapter by lazy { EyeCategoryAdapter(this, categoryItem) }
     private val groupList = ArrayList<EyeDataModel.Group>()
@@ -54,11 +56,7 @@ class EyeListActivity : AppCompatActivity() {
                 deviceListItem.clear()
                 categoryAdapter.changeSelected(position)
                 if (position == 0) {
-                    addListItem(true, "사무실", "AS-442421", isReport = true, isPower = true)
-                    addListItem(false, "1층", "AS-123456", isReport = true, isPower = true)
-                    addListItem(true, "2층", "AS-345678", isReport = false, isPower = false)
-                    addListItem(false, "3층", "AS-678908", isReport = false, isPower = false)
-                    addListItem(false, "", null, isReport = false, isPower = false)
+                    deviceListItem.addAll(allDevicesList)
                 } else {
                     checkedArray.forEach {
                         addListItem(
@@ -69,7 +67,7 @@ class EyeListActivity : AppCompatActivity() {
                             it.serial.power
                         )
                     }
-                    categoryAdapter.changeSelected(categoryItem.lastIndex)
+                    categoryAdapter.changeSelected(position)
                 }
                 deviceListAdapter.notifyDataSetChanged()
             }
@@ -80,6 +78,8 @@ class EyeListActivity : AppCompatActivity() {
         addListItem(true, "2층", "AS-345678", isReport = false, isPower = false)
         addListItem(false, "3층", "AS-678908", isReport = false, isPower = false)
         addListItem(false, "", null, isReport = false, isPower = false)
+
+        allDevicesList.addAll(deviceListItem)
         deviceListAdapter.notifyDataSetChanged()
 
         deviceListAdapter.setOnItemClickListener(object : OnAdapterItemClick.OnAdapterItemClick {
@@ -99,15 +99,14 @@ class EyeListActivity : AppCompatActivity() {
         binding.aeListBack.setOnClickListener { finish() }
 
         binding.aeListCategoryAdd.setOnClickListener {
-            groupList.clear()
             val groupView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_ae_add_group, null)
             val dialog = ShowDialogClass(this)
-                .setBackPressRefresh(groupView.findViewById(R.id.addGroupBack))
+                .setBackPressed(groupView.findViewById(R.id.addGroupBack))
             val aliasEt = groupView.findViewById<EditText>(R.id.addGroupEt)
             val addBtn = groupView.findViewById<AppCompatButton>(R.id.addGroupAddBtn)
 
-            val etText = "그룹${groupList.size + 1}"
+            val etText = "그룹${categoryItem.size}"
             aliasEt.setText(etText)
 
             val rv = groupView.findViewById<RecyclerView>(R.id.addGroupRv)
@@ -142,8 +141,9 @@ class EyeListActivity : AppCompatActivity() {
 
             addBtn.animation = AnimationUtils.loadAnimation(this, R.anim.trans_bottom_to_top_add_group)
             rv.animation = AnimationUtils.loadAnimation(this, R.anim.fade_in_group_add)
-            deviceListItem.forEachIndexed { i, d ->
-                if (i != deviceListItem.lastIndex) {
+            groupList.clear()
+            allDevicesList.forEachIndexed { i, d ->
+                if (i != allDevicesList.lastIndex) {
                     addGroupList(EyeDataModel.Group(false, d))
                 }
             }

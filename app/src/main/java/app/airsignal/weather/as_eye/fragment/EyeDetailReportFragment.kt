@@ -2,12 +2,10 @@ package app.airsignal.weather.as_eye.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
@@ -17,8 +15,12 @@ import app.airsignal.weather.as_eye.adapter.ReportViewPagerAdapter
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
 import app.airsignal.weather.util.TimberUtil
+import app.chart.LineGraphClass
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 class EyeDetailReportFragment : Fragment() {
 
@@ -94,6 +96,8 @@ class EyeDetailReportFragment : Fragment() {
         }
         reportViewPagerAdapter.notifyDataSetChanged()
         warningSlideAuto()
+
+        createPMChart(binding.pmAvgLineChart,true)
     }
 
     fun onDataReceived(data: EyeDataModel.ReportFragment?) {
@@ -204,5 +208,63 @@ class EyeDetailReportFragment : Fragment() {
     private fun addViewPagerItem(title: String, content: String) {
         val item = EyeDataModel.EyeReportAdapter(title,content)
         reportViewPagerItem.add(item)
+    }
+
+    private fun createPMChart(charView: LineChart, isGradient: Boolean) {
+        try {
+            val yValue1 = listOf(
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50,
+                Random.nextFloat() * 50)
+            val yValue2 = listOf(
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100,
+                Random.nextFloat() * 100)
+
+            val entry1 = ArrayList<Entry>()
+            yValue1.forEachIndexed { i, d ->
+                entry1.add(Entry(i.toFloat(), d))
+            }
+            val entry2 = ArrayList<Entry>()
+            yValue2.forEachIndexed { i, d ->
+                entry2.add(Entry(i.toFloat(), d))
+            }
+
+            LineGraphClass(requireContext(),isGradient)
+                .getInstance(charView)
+                .setChart()
+                .addDataSet("미세먼지",entry1)
+                .addDataSet("초미세먼지",entry2)
+                .createGraph()
+        } catch (e: Exception) {
+            TimberUtil().e("graph_tag","graph error ${e.stackTraceToString()}")
+            e.printStackTrace()
+        }
     }
 }
