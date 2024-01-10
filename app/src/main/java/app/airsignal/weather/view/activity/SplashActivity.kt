@@ -3,7 +3,9 @@ package app.airsignal.weather.view.activity
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.view.View
+import androidx.core.os.HandlerCompat
 import androidx.lifecycle.findViewTreeViewModelStoreOwner
 import app.airsignal.weather.network.ErrorCode.ERROR_NETWORK
 import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
@@ -24,6 +26,7 @@ import app.airsignal.weather.db.sp.GetSystemInfo.goToPlayStore
 import app.airsignal.weather.location.GetLocation
 import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.TimberUtil
+import com.bumptech.glide.Glide
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 

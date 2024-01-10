@@ -13,12 +13,13 @@ import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
 import app.airsignal.weather.as_eye.adapter.ReportViewPagerAdapter
 import app.airsignal.weather.as_eye.dao.EyeDataModel
+import app.airsignal.weather.chart.LineGraphClass
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
 import app.airsignal.weather.util.TimberUtil
-import app.chart.LineGraphClass
-import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.*
+import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -47,6 +48,8 @@ class EyeDetailReportFragment : Fragment() {
     private var virusLvl = 0
     private val reportArray = ArrayList<Pair<String,String>>()
 
+    private lateinit var pmGraphInstance: LineGraphClass
+
     override fun onDetach() {
         super.onDetach()
         autoJob.cancel()
@@ -63,13 +66,33 @@ class EyeDetailReportFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_detail_report_fragment, container, false)
+
+        pmGraphInstance = LineGraphClass(requireContext(),true)
+            .getInstance(binding.pmAvgLineChart)
         return binding.root
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.reportVp.apply {
+            adapter = reportViewPagerAdapter
+            isClickable = true
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            offscreenPageLimit = 3
+            scrollIndicators = View.SCROLL_INDICATOR_BOTTOM
+        }
+        applyData()
+        warningSlideAuto()
+
+
+
+        binding.pmChartTitle.text = "금일 미세먼지 변화량"
+
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun applyData() {
         binding.reportCaiValue.text = caiValue.toString()
         binding.reportCaiGrade.text = parseLvlToGrade(caiLvl)
         binding.reportVirusValue.text = virusValue.toString()
@@ -77,6 +100,15 @@ class EyeDetailReportFragment : Fragment() {
         reportArray.forEach { reportItem ->
             addViewPagerItem(reportItem.first,reportItem.second)
         }
+        reportViewPagerAdapter.notifyDataSetChanged()
+
+        val entry1 = ArrayList<Entry>()
+        val entry2 = ArrayList<Entry>()
+        repeat(10) {
+            entry1.add(Entry(it.toFloat(), Random.nextFloat() * 15))
+            entry2.add(Entry(it.toFloat(), Random.nextFloat() * 15))
+        }
+        createPMChart(entry1, entry2)
 
         binding.reportCaiPb.progress = setProgress(CAI_INDEX, caiValue,caiLvl)
         binding.reportVirusPb.progress = setProgress(VIRUS_INDEX, virusValue,virusLvl)
@@ -86,21 +118,11 @@ class EyeDetailReportFragment : Fragment() {
         binding.virusModerHigh.text = getModerate(VIRUS_INDEX,virusLvl).second.toString()
         binding.reportCaiContainer.setBackgroundResource(getBackground(caiLvl))
         binding.reportVirusContainer.setBackgroundResource(getBackground(virusLvl))
-
-        binding.reportVp.apply{
-            adapter = reportViewPagerAdapter
-            isClickable = true
-            orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            offscreenPageLimit = 3
-            scrollIndicators = View.SCROLL_INDICATOR_BOTTOM
-        }
-        reportViewPagerAdapter.notifyDataSetChanged()
-        warningSlideAuto()
-
-        createPMChart(binding.pmAvgLineChart,true)
+        binding.reportCaiSmile.setBackgroundResource(getSmile(caiLvl))
+        binding.reportVirusSmile.setBackgroundResource(getSmile(virusLvl))
     }
 
-    fun onDataReceived(data: EyeDataModel.ReportFragment?) {
+    fun onDataTransfer(data: EyeDataModel.ReportFragment?) {
         TimberUtil().d("eyetest","report data received : $data")
         data?.let {
             addViewPagerItem("CO2(이산화탄소)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
@@ -114,6 +136,10 @@ class EyeDetailReportFragment : Fragment() {
             caiLvl = it.caiLvl
             virusValue = it.virusValue
             virusLvl = it.virusLvl
+
+            if (this@EyeDetailReportFragment.isVisible) {
+                applyData()
+            }
         }
     }
 
@@ -190,6 +216,18 @@ class EyeDetailReportFragment : Fragment() {
         return result
     }
 
+    private fun getSmile(grade: Int): Int {
+        val result = when(grade) {
+            0 -> {R.drawable.smile_bad}
+            1 -> {R.drawable.smile_bad}
+            2 -> {R.drawable.smile_bad}
+            3 -> {R.drawable.smile_verybad}
+            else -> {R.drawable.smile_bad}
+        }
+
+        return result
+    }
+
     // 기상특보 자동 슬라이드 적용
     private fun warningSlideAuto() {
         if (reportViewPagerItem.size > 1) {
@@ -210,60 +248,15 @@ class EyeDetailReportFragment : Fragment() {
         reportViewPagerItem.add(item)
     }
 
-    private fun createPMChart(charView: LineChart, isGradient: Boolean) {
+    private fun createPMChart(pm2p5Entry: ArrayList<Entry>, pm10Entry: ArrayList<Entry>) {
         try {
-            val yValue1 = listOf(
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50,
-                Random.nextFloat() * 50)
-            val yValue2 = listOf(
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100,
-                Random.nextFloat() * 100)
-
-            val entry1 = ArrayList<Entry>()
-            yValue1.forEachIndexed { i, d ->
-                entry1.add(Entry(i.toFloat(), d))
-            }
-            val entry2 = ArrayList<Entry>()
-            yValue2.forEachIndexed { i, d ->
-                entry2.add(Entry(i.toFloat(), d))
-            }
-
-            LineGraphClass(requireContext(),isGradient)
-                .getInstance(charView)
+            pmGraphInstance
+                .clear()
                 .setChart()
-                .addDataSet("미세먼지",entry1)
-                .addDataSet("초미세먼지",entry2)
+                .addDataSet("미세먼지",pm10Entry)
                 .createGraph()
+
         } catch (e: Exception) {
-            TimberUtil().e("graph_tag","graph error ${e.stackTraceToString()}")
             e.printStackTrace()
         }
     }

@@ -16,10 +16,6 @@ import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.EyeDetailLiveFragmentBinding
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.util.*
 import kotlin.math.roundToInt
 
 class EyeDetailLiveFragment : Fragment() {
@@ -39,18 +35,6 @@ class EyeDetailLiveFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_detail_live_fragment, container, false)
-
-        binding.aeLiveRefreshIcon.setOnClickListener {
-            mActivity.showPb()
-            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                if (mActivity.isRefreshable()) {
-                    mActivity.dataViewModel.loadData("AOA0000001F539")
-                } else {
-                    mActivity.hidePb()
-                    Toast.makeText(requireContext(), "갱신은 30초 주기로 가능합니다", Toast.LENGTH_SHORT).show()
-                }
-            },1000)
-        }
 
         return binding.root
     }
@@ -87,10 +71,13 @@ class EyeDetailLiveFragment : Fragment() {
         }
     }
 
-    fun onDataReceived(data: EyeDataModel.Measured?) {
+    fun onDataTransfer(data: EyeDataModel.Measured?) {
         TimberUtil().d("eyetest","live data received : $data")
         data?.let {
             entireData = it
+            if (this@EyeDetailLiveFragment.isVisible) {
+                refreshData()
+            }
         }
     }
 

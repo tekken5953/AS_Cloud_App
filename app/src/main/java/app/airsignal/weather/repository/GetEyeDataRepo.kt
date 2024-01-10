@@ -1,6 +1,8 @@
 package app.airsignal.weather.repository
 
 import android.accounts.NetworkErrorException
+import android.os.Looper
+import androidx.core.os.HandlerCompat
 import androidx.lifecycle.MutableLiveData
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.network.ErrorCode.ERROR_API_PROTOCOL
@@ -13,6 +15,7 @@ import app.airsignal.weather.network.ErrorCode.ERROR_UNKNOWN
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -35,8 +38,10 @@ class GetEyeDataRepo : BaseRepository() {
                     ) {
                         try {
                             if (response.isSuccessful) {
-                                val responseBody = processData(response.body())
-                                _getEyeResult.postValue(ApiState.Success(responseBody))
+                                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                                    val responseBody = processData(response.body())
+                                    _getEyeResult.postValue(ApiState.Success(responseBody))
+                                },1500)
                             } else {
                                 _getEyeResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
                                 call.cancel()

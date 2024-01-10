@@ -44,7 +44,6 @@
                     android:layout_below="@+id/reportCaiTitle"
                     android:layout_alignStart="@+id/reportCaiTitle"
                     android:layout_marginTop="23dp"
-                    android:text="0"
                     android:textColor="@color/white"
                     android:textSize="32sp" />
 
@@ -55,7 +54,6 @@
                     style="@style/ProgressBarHorizontal"
                     android:progressTint="@color/white"
                     android:progressBackgroundTint="#50FFFFFF"
-                    android:progress="70"
                     android:layout_below="@+id/reportCaiValue"
                     android:layout_marginTop="4dp"
                     android:layout_marginStart="24dp"/>
@@ -69,7 +67,6 @@
                     <TextView
                         android:id="@+id/caiModerLow"
                         style="@style/basicTextView"
-                        android:text="0"
                         android:gravity="start"
                         android:layout_weight="0.5"
                         android:textColor="@color/white"
@@ -77,7 +74,6 @@
                     <TextView
                         android:id="@+id/caiModerHigh"
                         style="@style/basicTextView"
-                        android:text="0"
                         android:gravity="end"
                         android:layout_weight="0.5"
                         android:textColor="@color/white"
@@ -88,7 +84,6 @@
                     android:id="@+id/reportCaiSmile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/smile_test"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="19dp"
                     android:layout_marginEnd="21dp"/>
@@ -128,7 +123,6 @@
                     android:layout_below="@+id/reportVirusTitle"
                     android:layout_alignStart="@+id/reportVirusTitle"
                     android:layout_marginTop="23dp"
-                    android:text="0"
                     android:textColor="@color/white"
                     android:textSize="32sp" />
 
@@ -138,7 +132,6 @@
                     android:layout_height="8dp"
                     style="@style/ProgressBarHorizontal"
                     android:progressTint="@color/white"
-                    android:progress="50"
                     android:progressBackgroundTint="#50FFFFFF"
                     android:layout_below="@+id/reportVirusValue"
                     android:layout_marginTop="4dp"
@@ -153,7 +146,6 @@
                     <TextView
                         android:id="@+id/virusModerLow"
                         style="@style/basicTextView"
-                        android:text="0"
                         android:gravity="start"
                         android:layout_weight="0.5"
                         android:textColor="@color/white"
@@ -161,7 +153,6 @@
                     <TextView
                         android:id="@+id/virusModerHigh"
                         style="@style/basicTextView"
-                        android:text="0"
                         android:gravity="end"
                         android:layout_weight="0.5"
                         android:textColor="@color/white"
@@ -172,7 +163,6 @@
                     android:id="@+id/reportVirusSmile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/smile_test"
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="19dp"
                     android:layout_marginEnd="21dp"/>
@@ -189,17 +179,31 @@
                     android:layout_marginTop="8dp"/>
             </RelativeLayout>
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/pmAvgLineChart"
+            <RelativeLayout
+                android:id="@+id/pmChartContainer"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:nestedScrollingEnabled="true"
-                android:scrollbars="horizontal"
-                android:orientation="horizontal"
-                android:layout_marginBottom="30dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/pm_graph_bg"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/reportVirusContainer"
-                android:layout_marginTop="30dp"/>
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="30dp">
+                <TextView
+                    android:id="@+id/pmChartTitle"
+                    style="@style/basicTextView"
+                    android:textSize="16sp"
+                    android:layout_marginStart="21dp"
+                    android:layout_marginTop="21dp"
+                    android:textColor="@color/white"/>
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/pmAvgLineChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_below="@+id/pmChartTitle"
+                    android:layout_marginTop="5dp"
+                    android:nestedScrollingEnabled="true"
+                    android:orientation="horizontal" />
+            </RelativeLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
