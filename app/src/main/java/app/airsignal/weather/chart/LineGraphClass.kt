@@ -13,7 +13,9 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.interfaces.dataprovider.BarLineScatterCandleBubbleDataProvider
 import java.text.SimpleDateFormat
+import kotlin.math.roundToInt
 
 class LineGraphClass(private val context: Context, private val isGradient: Boolean) {
     private lateinit var mChart: LineChart
@@ -48,7 +50,7 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
                 minOffset = 35f
                 setScaleEnabled(false)
                 setPinchZoom(false) // pinch zoom
-//                mChart.setVisibleXRangeMaximum(5f)
+                setVisibleXRangeMaximum(5f)
                 isDoubleTapToZoomEnabled = false
                 isLongClickable = true
                 isAutoScaleMinMaxEnabled = false
@@ -68,10 +70,9 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
             axisLineColor = Color.WHITE // 축 색
             setDrawAxisLine(false) // 그래프 뒷 배경의 그리드 표시
             setDrawGridLines(false) // 그래프 뒷 배경의 그리드 표시
-            spaceMax = 1f // 레이블 간격
+            labelCount = 5
             isGranularityEnabled = true // 축 레이블 표시 간격
             granularity = 1f // 축 레이블 표시 간격
-            axisMaximum = 5f
             setDrawLabels(true)
             setAvoidFirstLastClipping(false)
             valueFormatter = XAxisValueFormat()
@@ -98,9 +99,6 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
 
     fun addDataSet(sort: String, entry: ArrayList<Entry>): LineGraphClass {
         try {
-            val applyColor = if (sort == "미세먼지") getBlue()
-            else Color.parseColor("#cc0004ff")
-
             val dataSet = LineDataSet(null, sort) // DataSet 생성
             dataSet.apply {
                 label = sort
@@ -116,22 +114,19 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
                 setCircleColor(Color.WHITE)
                 if (isGradient) {
                     this.setDrawFilled(true)
-                    this.fillDrawable = if (sort == "미세먼지") ContextCompat.getDrawable(
+                    this.fillDrawable = ContextCompat.getDrawable(
                         context,
                         R.drawable.graph_fill_red
                     )
-                    else ContextCompat.getDrawable(context, R.drawable.graph_fill_red)
                 }
             }
             lineData.addDataSet(dataSet)
             entry.forEach {
-                lineData.addEntry(it, if (sort == "미세먼지") 0 else 1)
-                lineData.notifyDataChanged()
-                mChart.notifyDataSetChanged()
+                lineData.addEntry(it, 0)
             }
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
+            lineData.notifyDataChanged()
+            mChart.notifyDataSetChanged()
+        } catch (e: Exception) { e.stackTraceToString() }
 
         return this
     }
@@ -150,7 +145,7 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
 
     class DataSetValueFormat : IndexAxisValueFormatter() {
         override fun getFormattedValue(value: Float): String {
-            return value.toInt().toString()
+            return value.roundToInt().toString()
         }
     }
 

@@ -38,6 +38,7 @@ class EyeDetailActivity : AppCompatActivity() {
 
     private val reportFragment = EyeDetailReportFragment()
     private val liveFragment = EyeDetailLiveFragment()
+    private val settingFragment = EyeSettingFragment()
 
     private var lastRefreshTime = 0L
 
@@ -70,7 +71,7 @@ class EyeDetailActivity : AppCompatActivity() {
             if (currentFragment != FRAGMENT_LIVE)
                 tabItemSelected(FRAGMENT_LIVE)
         }
-        binding.asDetailTabLife.setOnClickListener {
+        binding.asDetailTabSetting.setOnClickListener {
             if (currentFragment != FRAGMENT_SETTING)
                 tabItemSelected(FRAGMENT_SETTING)
         }
@@ -106,24 +107,15 @@ class EyeDetailActivity : AppCompatActivity() {
     }
 
     private fun tabItemSelected(id: Int) {
-        when (id) {
-            FRAGMENT_REPORT -> {
-                currentFragment = id
-                transactionFragment(reportFragment)
-                changeTabResource(id)
-            }
-            FRAGMENT_LIVE -> {
-                currentFragment = id
-                transactionFragment(liveFragment)
-                changeTabResource(id)
-            }
-            FRAGMENT_SETTING -> {
-                val settingFragment = EyeSettingFragment()
-                currentFragment = id
-                transactionFragment(settingFragment)
-                changeTabResource(id)
-            }
-            else -> throw IllegalArgumentException("Invalid fragment id : $id")
+        run {
+            currentFragment = id
+            transactionFragment(when (id) {
+                FRAGMENT_REPORT -> { reportFragment }
+                FRAGMENT_LIVE -> { liveFragment }
+                FRAGMENT_SETTING -> { settingFragment }
+                else -> throw IllegalArgumentException("Invalid fragment id : $id")
+            })
+            changeTabResource(id)
         }
     }
 
@@ -131,7 +123,7 @@ class EyeDetailActivity : AppCompatActivity() {
         val tabMap = mapOf(
             FRAGMENT_REPORT to binding.asDetailTabReport,
             FRAGMENT_LIVE to binding.asDetailTabLive,
-            FRAGMENT_SETTING to binding.asDetailTabLife
+            FRAGMENT_SETTING to binding.asDetailTabSetting
         )
 
         val selectedTab = tabMap[id] ?: throw IllegalArgumentException("Invalid fragment id: $id")
@@ -183,11 +175,12 @@ class EyeDetailActivity : AppCompatActivity() {
 //                                if (isRefreshable()) {
                                     reportFragment.onDataTransfer(
                                         EyeDataModel.ReportFragment(
-                                            listOf(EyeDataModel.EyeReportAdapter("test", "test")),
+                                            body.flags,
                                             body.CAIValue,
                                             body.CAILvl,
                                             body.virusValue,
-                                            body.virusLvl
+                                            body.virusLvl,
+                                            body.pm10p0Value
                                         )
                                     )
 
@@ -205,32 +198,33 @@ class EyeDetailActivity : AppCompatActivity() {
                             }
 
                             is BaseRepository.ApiState.Loading -> showPb()
-                            else -> {}
                         }
                     }
                 }
             }
         } catch (e: IOException) {
-            hidePb()
             TimberUtil().e("eyetest", "IOException $entireData ${e.stackTraceToString()}")
+            hidePb()
         } catch (e: NullPointerException) {
-            hidePb()
             TimberUtil().e("eyetest", "NullPointerException $entireData ${e.stackTraceToString()}")
-        } catch (e: IndexOutOfBoundsException) {
             hidePb()
+        } catch (e: IndexOutOfBoundsException) {
             TimberUtil().e(
-                "eyetest",
-                "IndexOutOfBoundsException $entireData ${e.stackTraceToString()}"
-            )
+                "eyetest", "IndexOutOfBoundsException $entireData ${e.stackTraceToString()}")
+            hidePb()
         }
     }
 
-    fun showPb() {
+    private fun showPb() {
         binding.aeDetailPb.bringToFront()
         binding.aeDetailPb.visibility = View.VISIBLE
+        binding.eyeDetailContainer.isEnabled = false
+        binding.aeDetailFrame.isEnabled = false
     }
 
-    fun hidePb() {
+    private fun hidePb() {
         binding.aeDetailPb.visibility = View.GONE
+        binding.eyeDetailContainer.isEnabled = true
+        binding.aeDetailFrame.isEnabled = true
     }
 }

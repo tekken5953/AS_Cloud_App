@@ -75,9 +75,7 @@ class EyeDetailLiveFragment : Fragment() {
         TimberUtil().d("eyetest","live data received : $data")
         data?.let {
             entireData = it
-            if (this@EyeDetailLiveFragment.isVisible) {
-                refreshData()
-            }
+            if (this@EyeDetailLiveFragment.isVisible) { refreshData() }
         }
     }
 

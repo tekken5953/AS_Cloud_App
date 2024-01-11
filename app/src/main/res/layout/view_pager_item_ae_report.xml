@@ -2,38 +2,43 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ae_device_bg_e"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    android:background="@drawable/ae_device_bg_e">
 
     <TextView
         android:id="@+id/vpAeTitle"
         style="@style/basicMediumTextView"
+        android:layout_width="match_parent"
+        android:layout_toStartOf="@+id/vpAeAlert"
+        android:layout_marginEnd="10dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
+        android:gravity="start"
         android:textColor="@color/main_black"
         android:textSize="16sp" />
 
     <TextView
         android:id="@+id/vpAeContent"
         style="@style/basicTextView"
+        android:layout_width="match_parent"
+        android:layout_marginStart="16dp"
         android:layout_below="@+id/vpAeTitle"
-        android:layout_alignStart="@+id/vpAeTitle"
         android:layout_marginTop="6dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginBottom="20dp"
         android:layout_toStartOf="@+id/vpAeAlert"
-        android:layout_marginEnd="10dp"
         android:gravity="start"
         android:textColor="@color/ae_sub_color"
         android:textSize="14sp" />
 
     <ImageView
         android:id="@+id/vpAeAlert"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_alignTop="@+id/vpAeTitle"
-        android:contentDescription="@string/cd_caution_img"
         android:layout_alignBottom="@+id/vpAeContent"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="16dp"
+        android:contentDescription="@string/cd_caution_img"
         android:src="@drawable/caution_test" />
 </RelativeLayout>

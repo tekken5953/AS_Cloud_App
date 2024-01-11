@@ -2,6 +2,8 @@ package app.airsignal.weather.network.retrofit;
 
 import androidx.annotation.Nullable;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 import app.airsignal.weather.as_eye.dao.EyeDataModel;
@@ -34,7 +36,7 @@ public interface MyApiImpl {
     Call<ApiModel.BroadCastWeather> getBroadCast(
             @Query("code") int code);
 
-    @GET("airsignal/current/{sn}")
+    @GET("airsignal/current/{sn}") // Eye 측정 데이터 호출
     Call<EyeDataModel.Measured> getMeasured(
-            @Path("sn") String sn);
+            @NotNull @Path("sn") String sn);
 }

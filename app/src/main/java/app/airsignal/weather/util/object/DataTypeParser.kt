@@ -401,4 +401,16 @@ object DataTypeParser {
     private fun getDrawable(context: Context, resId: Int): Drawable? {
         return ResourcesCompat.getDrawable(context.resources, resId, null)
     }
+
+    fun parseReportTitle(data: String): String {
+        return when(data) {
+            "co2" -> {"CO2(이산화탄소)"}
+            "co" -> {"CO(일산화탄소)"}
+            "pm2p5" -> {"PM2.5(초미세먼지)"}
+            "pm10p0" -> {"PM10(미세먼지)"}
+            "tvoc" -> {"TVOC(총휘발성유기화합물)"}
+            "no2" -> {"NO2(이산화질소)"}
+            else -> {""}
+        }
+    }
 }

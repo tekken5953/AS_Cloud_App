@@ -7,7 +7,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/ae_bg_color"
-        tools:context=".view.aseye.activity.EyeDetailActivity">
+        tools:context=".view.aseye.activity.EyeDetailActivity"
+        android:id="@+id/eyeDetailContainer">
 
         <ImageView
             android:id="@+id/aeDetailBack"
@@ -67,7 +68,7 @@
                 android:id="@+id/asDetailTabReport"
                 style="@style/basicMediumTextView"
                 android:layout_height="32dp"
-                android:layout_weight="0.33"
+                android:layout_weight="0.35"
                 android:background="@drawable/ae_detail_tap_enable"
                 android:text="@string/report"
                 android:textColor="@color/white"
@@ -78,17 +79,17 @@
                 style="@style/basicMediumTextView"
                 android:layout_height="32dp"
                 android:layout_marginStart="10dp"
-                android:layout_weight="0.33"
+                android:layout_weight="0.25"
                 android:text="@string/live_value"
                 android:textColor="@color/ae_sub_color"
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/asDetailTabLife"
+                android:id="@+id/asDetailTabSetting"
                 style="@style/basicMediumTextView"
                 android:layout_height="32dp"
                 android:layout_marginStart="10dp"
-                android:layout_weight="0.33"
+                android:layout_weight="0.4"
                 android:text="@string/setting"
                 android:textColor="@color/ae_sub_color"
                 android:textSize="16sp" />

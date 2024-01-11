@@ -16,10 +16,10 @@ import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.chart.LineGraphClass
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
 import app.airsignal.weather.util.TimberUtil
+import app.airsignal.weather.util.`object`.DataTypeParser
 import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.*
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -46,6 +46,7 @@ class EyeDetailReportFragment : Fragment() {
     private var caiLvl = 0
     private var virusValue = 0
     private var virusLvl = 0
+    private var pm10Value = 0f
     private val reportArray = ArrayList<Pair<String,String>>()
 
     private lateinit var pmGraphInstance: LineGraphClass
@@ -85,10 +86,8 @@ class EyeDetailReportFragment : Fragment() {
         applyData()
         warningSlideAuto()
 
-
-
-        binding.pmChartTitle.text = "금일 미세먼지 변화량"
-
+        binding.pmChartTitle.text = "오늘 미세먼지 변화량"
+        binding.pmChartUnit.text = "(단위: ㎍/㎥)"
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -97,18 +96,26 @@ class EyeDetailReportFragment : Fragment() {
         binding.reportCaiGrade.text = parseLvlToGrade(caiLvl)
         binding.reportVirusValue.text = virusValue.toString()
         binding.reportVirusGrade.text = parseLvlToGrade(virusLvl)
-        reportArray.forEach { reportItem ->
-            addViewPagerItem(reportItem.first,reportItem.second)
-        }
-        reportViewPagerAdapter.notifyDataSetChanged()
 
-        val entry1 = ArrayList<Entry>()
+        reportViewPagerItem.clear()
+        if (reportArray.isEmpty()) {
+            addViewPagerItem("모든 데이터가 정상입니다","쾌적한 환경에서 생활 중입니다", false)
+            reportViewPagerAdapter.notifyDataSetChanged()
+        } else {
+            reportArray.forEach { reportItem ->
+                addViewPagerItem(reportItem.first,reportItem.second, true)
+            }
+            reportViewPagerAdapter.notifyDataSetChanged()
+        }
+
+//        val entry1 = ArrayList<Entry>()
         val entry2 = ArrayList<Entry>()
         repeat(10) {
-            entry1.add(Entry(it.toFloat(), Random.nextFloat() * 15))
-            entry2.add(Entry(it.toFloat(), Random.nextFloat() * 15))
+//            entry1.add(Entry(it.toFloat(), Random.nextFloat() * 15))
+            entry2.add(Entry(entry2.size.toFloat(), Random.nextFloat() * 70))
         }
-        createPMChart(entry1, entry2)
+        entry2.add(Entry(entry2.size.toFloat(), pm10Value))
+        createPMChart(entry2)
 
         binding.reportCaiPb.progress = setProgress(CAI_INDEX, caiValue,caiLvl)
         binding.reportVirusPb.progress = setProgress(VIRUS_INDEX, virusValue,virusLvl)
@@ -123,23 +130,22 @@ class EyeDetailReportFragment : Fragment() {
     }
 
     fun onDataTransfer(data: EyeDataModel.ReportFragment?) {
-        TimberUtil().d("eyetest","report data received : $data")
         data?.let {
-            addViewPagerItem("CO2(이산화탄소)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
-            addViewPagerItem("PM2.5(초미세먼지)","수치가 높습니다. 창문을 열어 환기를 시켜주세요")
+            TimberUtil().d("eyetest","report data received : $data")
             reportArray.clear()
-            it.report.forEach { r ->
-                reportArray.add(Pair(r.title,r.content))
+            it.report?.let { list ->
+                list.forEach { r ->
+                    reportArray.add(Pair(DataTypeParser.parseReportTitle(r),"위험단계입니다. 환기를 시켜주세요"))
+                }
             }
 
             caiValue = it.caiValue
             caiLvl = it.caiLvl
             virusValue = it.virusValue
             virusLvl = it.virusLvl
+            pm10Value = it.pm10Value
 
-            if (this@EyeDetailReportFragment.isVisible) {
-                applyData()
-            }
+            if (this@EyeDetailReportFragment.isVisible) { applyData() }
         }
     }
 
@@ -243,19 +249,18 @@ class EyeDetailReportFragment : Fragment() {
         }
     }
 
-    private fun addViewPagerItem(title: String, content: String) {
-        val item = EyeDataModel.EyeReportAdapter(title,content)
+    private fun addViewPagerItem(title: String, content: String, isCaution: Boolean) {
+        val item = EyeDataModel.EyeReportAdapter(title,content,isCaution)
         reportViewPagerItem.add(item)
     }
 
-    private fun createPMChart(pm2p5Entry: ArrayList<Entry>, pm10Entry: ArrayList<Entry>) {
+    private fun createPMChart(pm10Entry: ArrayList<Entry>) {
         try {
             pmGraphInstance
                 .clear()
                 .setChart()
                 .addDataSet("미세먼지",pm10Entry)
                 .createGraph()
-
         } catch (e: Exception) {
             e.printStackTrace()
         }
