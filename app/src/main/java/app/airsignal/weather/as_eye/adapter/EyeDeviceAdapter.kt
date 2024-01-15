@@ -53,7 +53,6 @@ class EyeDeviceAdapter(
         private val container: RelativeLayout = itemView.findViewById(R.id.listItemAeDeviceContainer)
         private val master: TextView = itemView.findViewById(R.id.listItemAeDeviceMaster)
 
-        @SuppressLint("InflateParams")
         fun bind(dao: EyeDataModel.Device) {
             deviceName.text = dao.alias
             serial.text = dao.serial.serial

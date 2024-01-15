@@ -13,9 +13,11 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.interfaces.dataprovider.BarLineScatterCandleBubbleDataProvider
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
+
 
 class LineGraphClass(private val context: Context, private val isGradient: Boolean) {
     private lateinit var mChart: LineChart
@@ -46,14 +48,25 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
                 axisLeft.isEnabled = true
                 isDragEnabled = true
                 zoom(1.3f, 0f, 1.3f, 0f)
-                isHighlightPerTapEnabled = false
+                isHighlightPerTapEnabled = true
                 minOffset = 35f
                 setScaleEnabled(false)
                 setPinchZoom(false) // pinch zoom
                 setVisibleXRangeMaximum(5f)
                 isDoubleTapToZoomEnabled = false
-                isLongClickable = true
+                isLongClickable = false
                 isAutoScaleMinMaxEnabled = false
+                setDrawMarkers(true)
+                val mMarker = CustomMarkerView(context,R.layout.custom_maker)
+                marker = mMarker
+                setOnChartValueSelectedListener(object : OnChartValueSelectedListener{
+                    override fun onValueSelected(e: Entry?, h: Highlight?) {
+                        mMarker.refreshContent(e!!,h)
+                    }
+
+                    override fun onNothingSelected() {
+                    }
+                })
             }
         } catch (e: Exception) {
             e.stackTraceToString()
@@ -104,11 +117,12 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
                 label = sort
                 mode = LineDataSet.Mode.LINEAR // 선 그리는 방식
                 color = Color.TRANSPARENT // 선 색
-                valueTextColor = Color.WHITE // 데이터 수치 텍스트 색
+                valueTextColor = Color.TRANSPARENT // 데이터 수치 텍스트 색
                 valueTextSize = 14f // 데이터 수치 텍스트 사이즈
                 lineWidth = 2f // 선 굵기
                 setDrawCircleHole(false)
                 setDrawCircles(true)
+                highLightColor = Color.TRANSPARENT
                 valueFormatter = DataSetValueFormat()
                 circleRadius = 6F
                 setCircleColor(Color.WHITE)
@@ -116,7 +130,7 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
                     this.setDrawFilled(true)
                     this.fillDrawable = ContextCompat.getDrawable(
                         context,
-                        R.drawable.graph_fill_red
+                        R.drawable.graph_fill_gradient
                     )
                 }
             }
@@ -177,5 +191,4 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
         lineData.clearValues()
         return this
     }
-
 }

@@ -42,6 +42,7 @@ import app.airsignal.weather.dao.StaticDataObject.LANG_SYS
 import app.airsignal.weather.dao.StaticDataObject.THEME_DARK
 import app.airsignal.weather.dao.StaticDataObject.THEME_LIGHT
 import app.airsignal.weather.databinding.ActivitySettingBinding
+import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
@@ -77,6 +78,7 @@ import app.airsignal.weather.db.sp.SetSystemInfo
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_DEFAULT
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
+import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.CoroutineScope
@@ -153,11 +155,11 @@ class SettingActivity
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
                             LOGIN_KAKAO -> {
 //                                KakaoLogin(this@SettingActivity).logout(email)
-                                KakaoLogin(this@SettingActivity).disconnectFromKakao(binding.settingPb)
+                                KakaoLogin(this@SettingActivity).logout(binding.settingPb)
                             }
                             LOGIN_NAVER -> {
 //                                NaverLogin(this@SettingActivity).logout()
-                                NaverLogin(this@SettingActivity).disconnectFromNaver(binding.settingPb)
+                                NaverLogin(this@SettingActivity).logout()
                             }
                             LOGIN_GOOGLE -> {
                                 GoogleLogin(this@SettingActivity).logout(binding.settingPb)
@@ -619,8 +621,22 @@ class SettingActivity
         }
 
         binding.settingEye.setOnClickListener {
-            val intent = Intent(this, EyeListActivity::class.java)
-            startActivity(intent)
+            if (SharedPreferenceManager(this).getString("user_email") != "") {
+                val intent = Intent(this, EyeListActivity::class.java)
+                startActivity(intent)
+            } else {
+                val builder = MakeDoubleDialog(this)
+                val dialog = builder.make("로그인이 필요한 서비스입니다.",
+                    "로그인","취소",R.color.main_blue_color)
+                dialog.first.setOnClickListener {
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                dialog.second.setOnClickListener {
+                    builder.dismiss()
+                }
+            }
         }
     }
 

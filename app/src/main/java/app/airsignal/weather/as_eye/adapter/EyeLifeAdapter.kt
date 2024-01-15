@@ -42,7 +42,6 @@ class EyeLifeAdapter(
         private val lifeValue: TextView = itemView.findViewById(R.id.listItemAeLifeValue)
         private val pb: ProgressBar = itemView.findViewById(R.id.listItemAeLifePb)
 
-        @SuppressLint("InflateParams")
         fun bind(dao: EyeDataModel.Life) {
             nameEn.text = dao.nameEn
             nameKr.text = dao.nameKr

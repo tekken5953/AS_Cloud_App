@@ -244,7 +244,6 @@
     <string name="no_result_search_report">현재 지역의 기상 특보가 없습니다.\n전국으로 검색하시겠습니까?</string>
     <string name="dont_ask_again">Don\'t show 7days</string>
     <string name="close">Close</string>
-
     <string name="cd_icon_back">Back</string>
     <string name="cd_caution_img">위험</string>
     <string name="report">리포트</string>

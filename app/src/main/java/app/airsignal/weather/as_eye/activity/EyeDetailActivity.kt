@@ -14,10 +14,14 @@ import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.as_eye.fragment.EyeDetailLiveFragment
 import app.airsignal.weather.as_eye.fragment.EyeDetailReportFragment
 import app.airsignal.weather.as_eye.fragment.EyeSettingFragment
+import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivityEyeDetailBinding
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.viewmodel.GetEyeDataViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 
@@ -34,7 +38,7 @@ class EyeDetailActivity : AppCompatActivity() {
 
     private lateinit var entireData: EyeDataModel.Measured
 
-    val dataViewModel by viewModel<GetEyeDataViewModel>()
+    private val dataViewModel by viewModel<GetEyeDataViewModel>()
 
     private val reportFragment = EyeDetailReportFragment()
     private val liveFragment = EyeDetailLiveFragment()
@@ -189,6 +193,10 @@ class EyeDetailActivity : AppCompatActivity() {
                                     if (currentFragment == -1) {
                                         tabItemSelected(FRAGMENT_REPORT)
                                     }
+
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    RDBLogcat.writeEyeMeasured(this@EyeDetailActivity,body.toString())
+                                }
 //                                }
                             }
 

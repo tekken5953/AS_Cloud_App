@@ -111,7 +111,6 @@ class EyeDetailReportFragment : Fragment() {
 //        val entry1 = ArrayList<Entry>()
         val entry2 = ArrayList<Entry>()
         repeat(10) {
-//            entry1.add(Entry(it.toFloat(), Random.nextFloat() * 15))
             entry2.add(Entry(entry2.size.toFloat(), Random.nextFloat() * 70))
         }
         entry2.add(Entry(entry2.size.toFloat(), pm10Value))
@@ -259,7 +258,7 @@ class EyeDetailReportFragment : Fragment() {
             pmGraphInstance
                 .clear()
                 .setChart()
-                .addDataSet("미세먼지",pm10Entry)
+                .addDataSet("미세먼지", pm10Entry)
                 .createGraph()
         } catch (e: Exception) {
             e.printStackTrace()

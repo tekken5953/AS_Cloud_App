@@ -128,7 +128,7 @@ class MainActivity
     override val resID: Int get() = R.layout.activity_main
 
     companion object {
-        const val SHOWING_LOADING_FLOAT = 0.5f
+        const val SHOWING_LOADING_FLOAT = 0f
         const val NOT_SHOWING_LOADING_FLOAT = 1f
         const val PM2p5_INDEX = 0
         const val PM10_INDEX = 1
@@ -215,7 +215,7 @@ class MainActivity
             super.onCreate(savedInstanceState)
             initBinding()
             if (savedInstanceState == null) {
-                binding.mainLoadingView.alpha = 1f
+                showProgressBar()
                 SubFCM().subTopic("patch")
                 SubFCM().subTopic("daily")
                 changeBackgroundResource(null)
@@ -786,6 +786,7 @@ class MainActivity
             if (isProgressed) {
                 if (binding.mainLoadingView.alpha == NOT_SHOWING_LOADING_FLOAT) {
                     isProgressed = true
+                    binding.mainLoadingView.cancelAnimation()
                     binding.mainLoadingView.alpha = SHOWING_LOADING_FLOAT
                     binding.mainMotionLayout.isInteractionEnabled = false
                     binding.mainMotionLayout.isEnabled = false
@@ -793,6 +794,7 @@ class MainActivity
             }
         } else {
             if (binding.mainLoadingView.alpha == SHOWING_LOADING_FLOAT) {
+                binding.mainLoadingView.playAnimation()
                 binding.mainLoadingView.alpha = NOT_SHOWING_LOADING_FLOAT
                 binding.mainMotionLayout.isInteractionEnabled = true
                 binding.mainMotionLayout.isEnabled = true
@@ -1678,7 +1680,6 @@ class MainActivity
 
     // 에러 버튼에 클릭 리스너 설정
     private fun setOnClickListenerForErrorButton(error: String) {
-        TimberUtil().d("testtest","error is $error")
         val buttonTextResId = when (error) {
             ERROR_NOT_SERVICED_LOCATION -> R.string.register_new_address
             ERROR_GPS_CONNECTED -> R.string.enable_gps

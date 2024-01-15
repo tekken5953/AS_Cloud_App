@@ -17,6 +17,7 @@ import app.airsignal.weather.db.sp.SetAppInfo.setUserEmail
 import app.airsignal.weather.db.sp.SetAppInfo.setUserId
 import app.airsignal.weather.db.sp.SetAppInfo.setUserLoginPlatform
 import app.airsignal.weather.db.sp.SetAppInfo.setUserProfile
+import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.LoggerUtil
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -74,6 +75,8 @@ class GoogleLogin(private val activity: Activity) {
                 pb?.let {
                     RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = it)
                 }
+
+
             }
             .addOnCanceledListener {
                 ToastUtils(activity)
@@ -145,6 +148,8 @@ class GoogleLogin(private val activity: Activity) {
             setUserEmail(activity, email)
 
             saveLoginStatus(email, displayName, photo, isAuto)
+            setUserLoginPlatform(activity, LOGIN_GOOGLE)
+            activity.finish()
         } catch (e: ApiException) {
             LoggerUtil().e(TAG_L,e.stackTraceToString())
             e.printStackTrace()

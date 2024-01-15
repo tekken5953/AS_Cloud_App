@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Resources.NotFoundException
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.Window
 import android.widget.TextView
@@ -31,14 +33,12 @@ class MakeDoubleDialog(private val context: Context) {
 
             title.text = titleString
             apply.text = applyString
-            apply.backgroundTintList = ColorStateList.valueOf(context.getColor(applyColor))
+            apply.backgroundTintList = try {  ColorStateList.valueOf(context.getColor(applyColor))
+            } catch (e: NotFoundException) { ColorStateList.valueOf(context.getColor(R.color.main_blue_color)) }
             cancel.text = cancelString
-            cancel.setOnClickListener {
-                this.dismiss()
-            }
+            cancel.setOnClickListener { this.dismiss() }
 
             this.show()
-
             return Pair(apply, cancel)
         }
     }

@@ -40,7 +40,7 @@ class EyeListActivity : AppCompatActivity() {
     private val groupAdapter by lazy { AddGroupAdapter(this, groupList) }
     private val checkedArray = ArrayList<EyeDataModel.Device>()
 
-    @SuppressLint("NotifyDataSetChanged", "InflateParams")
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_eye_list)

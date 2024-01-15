@@ -16,11 +16,12 @@ import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.dao.RDBLogcat.writeLoginPref
 import app.airsignal.weather.dao.StaticDataObject.TAG_L
 import app.airsignal.weather.db.SharedPreferenceManager
+import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
+import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.util.EnterPageUtil
+import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.ToastUtils
-import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
-import app.airsignal.weather.util.LoggerUtil
 import com.airbnb.lottie.LottieAnimationView
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
@@ -106,7 +107,8 @@ class NaverLogin(private val activity: Activity) {
                     profile = it.profileImage.toString()
                 )
 
-                EnterPageUtil(activity).toMain(LOGIN_NAVER,null)
+                SetAppInfo.setUserLoginPlatform(activity, LOGIN_NAVER)
+                activity.finish()
             }
         }
 

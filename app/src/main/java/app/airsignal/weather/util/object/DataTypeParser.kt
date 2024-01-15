@@ -39,8 +39,8 @@ object DataTypeParser {
 
     /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트 **/
     fun applySkyText(context: Context, rain: String?, sky: String?, thunder: Double?): String {
-        return if (rain != "없음") if ((thunder == null) || (thunder < 0.2))  rain!! else  context.getString(R.string.thunder_sunny)
-         else if ((thunder == null) || (thunder < 0.2)) sky!! else  context.getString(R.string.thunder_rainy)
+        return if (rain != "없음") if ((thunder == null) || (thunder < 0.2))  rain ?: "없음" else  context.getString(R.string.thunder_sunny)
+         else if ((thunder == null) || (thunder < 0.2)) sky ?: "맑음" else  context.getString(R.string.thunder_rainy)
     }
 
     fun translateSkyText(sky: String): String {
@@ -229,11 +229,11 @@ object DataTypeParser {
         lunar: Int
     ): Drawable? {
         return if (rain != "없음" && (thunder == null || thunder < 0.2)) {
-            if (isLarge) getRainTypeLarge(context, rain!!) ?: getDrawable(context, R.drawable.cancel)
-            else getRainTypeSmall(context, rain!!) ?: getDrawable(context, R.drawable.cancel)
+            if (isLarge) getRainTypeLarge(context, rain) ?: getDrawable(context, R.drawable.cancel)
+            else getRainTypeSmall(context, rain) ?: getDrawable(context, R.drawable.cancel)
         } else if (rain == "없음" && (thunder == null || thunder < 0.2)) {
-            if (isLarge) getSkyImgLarge(context, sky!!, isNight ?: false, lunar)
-            else getSkyImgSmall(context, sky!!, isNight ?: false)
+            if (isLarge) getSkyImgLarge(context, sky, isNight ?: false, lunar)
+            else getSkyImgSmall(context, sky, isNight ?: false)
         } else {
             getDrawable(context, R.drawable.b_ico_cloudy_th)
         }
@@ -299,7 +299,7 @@ object DataTypeParser {
             "위험" to R.color.uv_caution
         )
 
-        flagMap[flag]?.let { cardView.setCardBackgroundColor(context.getColor(it))}!!
+        flagMap[flag]?.let { cardView.setCardBackgroundColor(context.getColor(it))}
     }
 
     /** 상태 바 설정 **/
