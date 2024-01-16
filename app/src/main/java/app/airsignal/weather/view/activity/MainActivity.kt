@@ -128,8 +128,8 @@ class MainActivity
     override val resID: Int get() = R.layout.activity_main
 
     companion object {
-        const val SHOWING_LOADING_FLOAT = 0f
-        const val NOT_SHOWING_LOADING_FLOAT = 1f
+        const val SHOWING_LOADING_FLOAT = 1f
+        const val NOT_SHOWING_LOADING_FLOAT = 0f
         const val PM2p5_INDEX = 0
         const val PM10_INDEX = 1
         const val CO_INDEX = 2
@@ -166,7 +166,6 @@ class MainActivity
     private val airQList = ArrayList<AdapterModel.AirQTitleItem>()
     private val airQAdapter = AirQTitleAdapter(this, airQList)
     private var currentSun = 0
-    private var isProgressed = false
     private var isWarned = false
     private var isDataResponse = false
     private val sunPb by lazy { SunProgress(binding.seekArc) }
@@ -199,7 +198,6 @@ class MainActivity
 
     override fun onDestroy() {
         super.onDestroy()
-        isProgressed = false
         isWarned = false
         binding.nestedAdView.destroy()
     }
@@ -756,9 +754,7 @@ class MainActivity
 
             // TimeOut
             HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                if (isProgressed()) {
-                    hideProgressBar()
-                }
+                hideProgressBar()
             }, 1000 * 8)
         }
     }
@@ -783,23 +779,18 @@ class MainActivity
 
     private fun setProgressVisibility(show: Boolean) {
         if (show) {
-            if (isProgressed) {
-                if (binding.mainLoadingView.alpha == NOT_SHOWING_LOADING_FLOAT) {
-                    isProgressed = true
-                    binding.mainLoadingView.cancelAnimation()
-                    binding.mainLoadingView.alpha = SHOWING_LOADING_FLOAT
-                    binding.mainMotionLayout.isInteractionEnabled = false
-                    binding.mainMotionLayout.isEnabled = false
-                }
-            }
+            binding.mainLoadingView.playAnimation()
+            binding.mainLoadingView.alpha = SHOWING_LOADING_FLOAT
+            binding.mainMotionLayout.isInteractionEnabled = false
+            binding.mainMotionLayout.isEnabled = false
         } else {
             if (binding.mainLoadingView.alpha == SHOWING_LOADING_FLOAT) {
-                binding.mainLoadingView.playAnimation()
+                binding.mainLoadingView.cancelAnimation()
                 binding.mainLoadingView.alpha = NOT_SHOWING_LOADING_FLOAT
                 binding.mainMotionLayout.isInteractionEnabled = true
                 binding.mainMotionLayout.isEnabled = true
+                binding.mainGpsFix.clearAnimation()
             }
-            binding.mainGpsFix.clearAnimation()
         }
     }
 
@@ -811,11 +802,6 @@ class MainActivity
     // 프로그래스 숨기기
     private fun hideProgressBar() {
         setProgressVisibility(false)
-    }
-
-    // 프로그래스 진행 여부
-    private fun isProgressed(): Boolean {
-        return binding.mainLoadingView.alpha == SHOWING_LOADING_FLOAT
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -1064,9 +1050,8 @@ class MainActivity
                         }
                     }
                 } ?: run {
-                    if (isDataResponse) {
-                        hideProgressBar()
-                    } else {
+                    hideProgressBar()
+                    if (!isDataResponse) {
                         hideAllViews(error = ERROR_NULL_DATA)
                     }
                 }
@@ -1074,6 +1059,7 @@ class MainActivity
         } catch (e: IOException) {
             binding.mainSwipeLayout.isRefreshing = false
             handleApiError(ERROR_API_PROTOCOL)
+            hideProgressBar()
         }
     }
 

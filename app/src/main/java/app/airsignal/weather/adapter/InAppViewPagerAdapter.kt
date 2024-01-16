@@ -65,7 +65,7 @@ class InAppViewPagerAdapter(
                     val intent = Intent(context, WebURLActivity::class.java)
                     intent.putExtra("appBar",false)
                     intent.putExtra("sort","inAppLink")
-                    intent.putExtra("redirect",dao.redirect)
+                    intent.putExtra("redirect", dao.redirect)
                     context.startActivity(intent)
                     true
                 } else { false }

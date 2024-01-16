@@ -32,7 +32,6 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
         else window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
-
         binding.webUrlBackIv.setOnClickListener {
             if (!webView.canGoBack()) finish() else webView.goBack()
         }

@@ -245,16 +245,16 @@
     <string name="dont_ask_again">Don\'t show 7days</string>
     <string name="close">Close</string>
     <string name="cd_icon_back">Back</string>
-    <string name="cd_caution_img">위험</string>
-    <string name="report">리포트</string>
-    <string name="live_value">실시간 지수</string>
-    <string name="sensor_life">센서 수명</string>
-    <string name="device_list">제품 목록</string>
-    <string name="temp">온도</string>
-    <string name="add_group">그룹 추가</string>
-    <string name="group_name">그룹 이름</string>
-    <string name="group_add_btn">그룹 추가하기</string>
-    <string name="setting">설정</string>
+    <string name="cd_caution_img">Caution</string>
+    <string name="report">Summary</string>
+    <string name="live_value">Real-time</string>
+    <string name="sensor_life">Sensor Life</string>
+    <string name="device_list">Product List</string>
+    <string name="temp">Temperature</string>
+    <string name="add_group">Add Group</string>
+    <string name="group_name">Group Name</string>
+    <string name="group_add_btn">Add Group</string>
+    <string name="setting">Setting</string>
     <string name="cqi">통합 대기 환경지수</string>
     <string name="virus_value">바이러스 위험 지수</string>
 

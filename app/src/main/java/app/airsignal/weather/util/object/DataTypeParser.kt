@@ -263,7 +263,7 @@ object DataTypeParser {
         }
     }
 
-    /** Double을 지정 자릿수에서 반올림 **/
+    /** 지정 자릿수에서 반올림 **/
     fun parseDoubleToDecimal(double: Double, digit: Int): String {
         return String.format("%.${digit}f", double)
     }

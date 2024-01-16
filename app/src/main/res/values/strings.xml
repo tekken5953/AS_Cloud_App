@@ -241,7 +241,7 @@
 
     <string name="cd_icon_back">뒤로가기</string>
     <string name="cd_caution_img">위험</string>
-    <string name="report">리포트</string>
+    <string name="report">요약</string>
     <string name="live_value">실시간 지수</string>
     <string name="sensor_life">센서 수명</string>
     <string name="device_list">제품 목록</string>
