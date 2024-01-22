@@ -13,8 +13,6 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.highlight.Highlight
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 
@@ -47,7 +45,7 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
                 axisRight.isEnabled = false
                 axisLeft.isEnabled = true
                 isDragEnabled = true
-                zoom(1.3f, 0f, 1.3f, 0f)
+                zoom(4.5f, 0f, 4.5f, 0f)
                 isHighlightPerTapEnabled = true
                 minOffset = 35f
                 setScaleEnabled(false)
@@ -56,17 +54,17 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
                 isDoubleTapToZoomEnabled = false
                 isLongClickable = false
                 isAutoScaleMinMaxEnabled = false
-                setDrawMarkers(true)
-                val mMarker = CustomMarkerView(context,R.layout.custom_maker)
-                marker = mMarker
-                setOnChartValueSelectedListener(object : OnChartValueSelectedListener{
-                    override fun onValueSelected(e: Entry?, h: Highlight?) {
-                        mMarker.refreshContent(e!!,h)
-                    }
-
-                    override fun onNothingSelected() {
-                    }
-                })
+//                setDrawMarkers(true)
+//                val mMarker = CustomMarkerView(context,R.layout.custom_maker)
+//                marker = mMarker
+//                setOnChartValueSelectedListener(object : OnChartValueSelectedListener{
+//                    override fun onValueSelected(e: Entry?, h: Highlight?) {
+//                        mMarker.refreshContent(e!!,h)
+//                    }
+//
+//                    override fun onNothingSelected() {
+//                    }
+//                })
             }
         } catch (e: Exception) {
             e.stackTraceToString()
@@ -83,8 +81,8 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
             axisLineColor = Color.WHITE // 축 색
             setDrawAxisLine(false) // 그래프 뒷 배경의 그리드 표시
             setDrawGridLines(false) // 그래프 뒷 배경의 그리드 표시
-            labelCount = 5
-            isGranularityEnabled = true // 축 레이블 표시 간격
+            setLabelCount(24,false)
+            isGranularityEnabled = false // 축 레이블 표시 간격
             granularity = 1f // 축 레이블 표시 간격
             setDrawLabels(true)
             setAvoidFirstLastClipping(false)
@@ -107,7 +105,7 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
     }
 
     private fun getBlue(): Int {
-        return ResourcesCompat.getColor(context.resources,R.color.graph_blue,null)
+        return ResourcesCompat.getColor(context.resources, R.color.graph_blue,null)
     }
 
     fun addDataSet(sort: String, entry: ArrayList<Entry>): LineGraphClass {
@@ -117,7 +115,7 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
                 label = sort
                 mode = LineDataSet.Mode.LINEAR // 선 그리는 방식
                 color = Color.TRANSPARENT // 선 색
-                valueTextColor = Color.TRANSPARENT // 데이터 수치 텍스트 색
+                valueTextColor = Color.WHITE // 데이터 수치 텍스트 색
                 valueTextSize = 14f // 데이터 수치 텍스트 사이즈
                 lineWidth = 2f // 선 굵기
                 setDrawCircleHole(false)
@@ -166,7 +164,8 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
     //X축 엔트리 포멧
     inner class XAxisValueFormat : IndexAxisValueFormatter() {
         override fun getFormattedValue(value: Float): String {
-            return chartTimeDivider(value)
+//            return chartTimeDivider(value)
+            return "${if (value.toInt() + 1 == 24) 0 else value.toInt() + 1}시"
         }
     }
 

@@ -139,6 +139,7 @@ class MainActivity
     }
 
     private var isBackPressed = false
+    private var isProgressed = false
     private val sideMenuBuilder by lazy { SideMenuBuilder(this) }
     private val sideMenuView: View by lazy {
         LayoutInflater.from(this@MainActivity).inflate(R.layout.side_menu, null)
@@ -779,10 +780,13 @@ class MainActivity
 
     private fun setProgressVisibility(show: Boolean) {
         if (show) {
-            binding.mainLoadingView.playAnimation()
-            binding.mainLoadingView.alpha = SHOWING_LOADING_FLOAT
-            binding.mainMotionLayout.isInteractionEnabled = false
-            binding.mainMotionLayout.isEnabled = false
+            if (!isProgressed) {
+                isProgressed = true
+                binding.mainLoadingView.playAnimation()
+                binding.mainLoadingView.alpha = SHOWING_LOADING_FLOAT
+                binding.mainMotionLayout.isInteractionEnabled = false
+                binding.mainMotionLayout.isEnabled = false
+            }
         } else {
             if (binding.mainLoadingView.alpha == SHOWING_LOADING_FLOAT) {
                 binding.mainLoadingView.cancelAnimation()
@@ -1074,6 +1078,7 @@ class MainActivity
                 binding.mainDailyWeatherRv.scrollToPosition(0)
                 binding.mainWarningVp.currentItem = 0
                 hideProgressBar()
+                showAllViews()
                 updateUIWithData(result)
                 RDBLogcat.writeGpsHistory(
                     this,
@@ -1154,7 +1159,7 @@ class MainActivity
     // 결과에서 얻은 데이터로 UI 요소를 업데이트
     private fun updateUIWithData(result: ApiModel.GetEntireData) {
         currentSun =
-            GetAppInfo.getCurrentSun(result.sun.sunrise ?: "0600", result.sun.sunset ?: "1900")
+            GetAppInfo.getCurrentSun(result.sun?.sunrise ?: "0600", result.sun?.sunset ?: "1900")
         val lunar = result.lunar?.date ?: -1
         val realtimeFirst = result.realtime[0]
         val isAfterRealtime =
@@ -1167,12 +1172,6 @@ class MainActivity
         updateCurrentTemperature(result.yesterday, result.current, result.realtime)
         updateWeatherWarnings(result.summary)
         updateTerm24(result.term24)
-        updateBackgroundBasedOnWeather(
-            currentSun,
-            realtimeFirst,
-            result.current,
-            result.thunder ?: 0.0
-        )
 
         // 메인 날씨 아이콘 세팅
         binding.mainSkyImg.setImageDrawable(
@@ -1184,8 +1183,6 @@ class MainActivity
                 lunar
             )
         )
-
-        showAllViews()
     }
 
     @SuppressLint("SetTextI18n")
@@ -1236,8 +1233,8 @@ class MainActivity
         result.realtime.forEachIndexed { realtimeIndex, dailyIndex ->
             val forecastToday = LocalDateTime.parse(dailyIndex.forecast)
             val dailyTime = millsToString(parseLocalDateTimeToLong(forecastToday), "HHmm")
-            val sunset = sun.sunset ?: "0600"
-            val sunrise = sun.sunrise ?: "1900"
+            val sunset = sun?.sunset ?: "0600"
+            val sunrise = sun?.sunrise ?: "1900"
             val entireSun =
                 if (getEntireSun(sunrise, sunset) == 0) 1 else getEntireSun(sunrise, sunset)
             val dailySunProgress =
@@ -1403,15 +1400,15 @@ class MainActivity
     }
 
     private fun updateSunTimes(
-        sun: ApiModel.SunData,
+        sun: ApiModel.SunData?,
         sunTomorrow: ApiModel.SunTomorrow?
     ) {
         // 일출 및 일몰 시간 업데이트
         sunPb.animate(currentSun)
 
         // 일출/일몰 세팅
-        val sbRise = StringBuffer().append(sun.sunrise).insert(2, ":")
-        val sbSet = StringBuffer().append(sun.sunset).insert(2, ":")
+        val sbRise = StringBuffer().append(sun?.sunrise).insert(2, ":")
+        val sbSet = StringBuffer().append(sun?.sunset).insert(2, ":")
         sunTomorrow?.let { tom ->
             val sbRiseTom =
                 StringBuffer().append(tom.sunrise).insert(2, ":")
@@ -1483,25 +1480,6 @@ class MainActivity
 
         binding.mainSensValue.text = "$sensibleTemp˚"
         binding.mainSensValueC.text = "$sensibleTemp˚"
-    }
-
-    // 날씨 조건에 따라 배경 업데이트
-    private fun updateBackgroundBasedOnWeather(
-        currentSun: Int, realtime: ApiModel.RealTimeData,
-        current: ApiModel.Current, thunder: Double
-    ) {
-        val rainType =
-            if (currentIsAfterRealtime(current.currentTime,realtime.forecast)) current.rainType
-            else realtime.rainType
-
-        changeTextColorStyle(
-            applySkyText(
-                this,
-                rainType,
-                realtime.sky, thunder
-            ),
-            getIsNight(currentSun)
-        )
     }
 
     // 주소 업데이트 후 적용
@@ -1594,6 +1572,8 @@ class MainActivity
         id?.let {
             window.setBackgroundDrawableResource(it)
         } ?: window.setBackgroundDrawableResource(R.color.theme_view_color)
+
+        changeTextColorStyle(id ?:  R.color.theme_view_color)
     }
 
     // 필드값이 없을 때 -100 출력 됨
@@ -1935,7 +1915,7 @@ class MainActivity
 
     // 메인화면 배경에 따라 텍스트의 색상을 변경
     @SuppressLint("UseCompatTextViewDrawableApis", "NotifyDataSetChanged")
-    private fun changeTextColorStyle(sky: String, isNight: Boolean) {
+    private fun changeTextColorStyle(bg: Int) {
         val changeColorTextViews = listOf(
             binding.mainLiveTempValue,
             binding.mainLiveTempUnit,
@@ -2055,13 +2035,13 @@ class MainActivity
             window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
         // 주어진 조건에 따라 텍스트 색상 변경
-        if (!isNight) {
-            when (sky) {
-                "맑음", "구름많음", "구름많고 눈", "눈", " 흐리고눈" -> changeTextToBlack()
-                else -> changeTextToWhite()
+        when (bg) {
+            R.drawable.main_bg_clear, R.drawable.main_bg_snow -> {
+                changeTextToBlack()
             }
-        } else {
-            changeTextToWhite()
+            R.drawable.main_bg_night, R.drawable.main_bg_cloudy -> {
+                changeTextToWhite()
+            }
         }
 
         window.navigationBarColor = getColor(android.R.color.transparent)

@@ -3,11 +3,9 @@ package app.airsignal.weather.chart
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.view.animation.AnimationUtils
 import android.widget.TextView
 import app.airsignal.weather.R
 import com.github.mikephil.charting.components.MarkerView
-import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.highlight.Highlight
 import kotlin.math.roundToInt
@@ -31,7 +29,11 @@ class CustomMarkerView(context: Context?, layoutResource: Int) :
         var mPosX = posX
         var mPosY = posY
         mPosX -= (width / 2).toFloat()
-        mPosY -= (height * 1.5).toFloat()
+        if (posY < canvas.height * 0.8) {
+            mPosY += (height / 2).toFloat()
+        } else {
+            mPosY -= (height * 1.5).toFloat()
+        }
         super.draw(canvas, mPosX, mPosY)
     }
 }

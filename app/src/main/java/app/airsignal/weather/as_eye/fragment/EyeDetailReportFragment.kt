@@ -108,12 +108,10 @@ class EyeDetailReportFragment : Fragment() {
             reportViewPagerAdapter.notifyDataSetChanged()
         }
 
-//        val entry1 = ArrayList<Entry>()
-        val entry2 = ArrayList<Entry>()
-        repeat(10) {
-            entry2.add(Entry(entry2.size.toFloat(), Random.nextFloat() * 70))
+        val entry2 = java.util.ArrayList<Entry>()
+        repeat(24) {
+            entry2.add(Entry(it.toFloat(), Random.nextFloat() * 70))
         }
-        entry2.add(Entry(entry2.size.toFloat(), pm10Value))
         createPMChart(entry2)
 
         binding.reportCaiPb.progress = setProgress(CAI_INDEX, caiValue,caiLvl)

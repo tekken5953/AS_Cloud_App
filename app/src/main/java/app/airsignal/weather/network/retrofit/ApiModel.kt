@@ -366,7 +366,7 @@ class ApiModel {
         @SerializedName("quality")
         val quality: AirQualityData,
         @SerializedName("sun")
-        val sun: SunData,
+        val sun: SunData?,
         @SerializedName("sun2")
         val sun_tomorrow: SunTomorrow?,
         @SerializedName("today")
