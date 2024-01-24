@@ -48,20 +48,25 @@
         app:tint="@color/theme_text_color"
         android:contentDescription="@string/cd_icon_location_shadow"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/permCautionBtn"
+        android:layout_above="@+id/bottomMarginLinear"
         android:layout_marginBottom="22dp"/>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/permCautionBtn"
+    <LinearLayout
+        android:id="@+id/bottomMarginLinear"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/permission_ok_btn_bg"
-        android:text="@string/ok"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:fontFamily="@font/spoqa_hansansneo_medium"
+        android:layout_height="108dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="52dp"/>
+        android:gravity="top">
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/permCautionBtn"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/permission_ok_btn_bg"
+            android:text="@string/ok"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:fontFamily="@font/spoqa_hansansneo_medium" />
+    </LinearLayout>
 </RelativeLayout>

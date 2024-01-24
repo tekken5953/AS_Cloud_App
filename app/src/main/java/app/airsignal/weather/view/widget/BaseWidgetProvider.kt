@@ -27,10 +27,6 @@ open class BaseWidgetProvider: AppWidgetProvider() {
 
     }
 
-    override fun onEnabled(context: Context) {
-        super.onEnabled(context)
-    }
-
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
     }

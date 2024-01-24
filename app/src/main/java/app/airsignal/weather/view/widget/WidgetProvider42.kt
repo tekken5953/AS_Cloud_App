@@ -30,6 +30,11 @@ import kotlin.math.roundToInt
 open class WidgetProvider42 : BaseWidgetProvider() {
     private var isSuccess = false
 
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        processUpdate(context, AppWidgetManager.INVALID_APPWIDGET_ID)
+    }
+
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -58,10 +63,13 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 if (intent.action == REFRESH_BUTTON_CLICKED_42) {
                     if (isRefreshable(context,"42")) {
                         processUpdate(context,appWidgetId)
-
                     } else {
                         Toast.makeText(context.applicationContext, "갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
                     }
+                }
+            } else {
+                appWidgetId?.let {
+                    processUpdate(context,it)
                 }
             }
         }
@@ -100,7 +108,9 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
                     this.setOnClickPendingIntent(R.id.w42Background, enterPending)
                 }
-                fetch(context, views)
+                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                    fetch(context, views)
+                }
             }
         }
     }

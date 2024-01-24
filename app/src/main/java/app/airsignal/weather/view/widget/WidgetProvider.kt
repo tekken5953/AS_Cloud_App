@@ -28,6 +28,11 @@ import kotlin.math.roundToInt
 open class WidgetProvider : BaseWidgetProvider() {
     private var isSuccess = false
 
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        processUpdate(context, AppWidgetManager.INVALID_APPWIDGET_ID)
+    }
+
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -68,41 +73,51 @@ open class WidgetProvider : BaseWidgetProvider() {
                         ).show()
                     }
                 }
+            } else {
+                appWidgetId?.let {
+                    processUpdate(context,it)
+                }
             }
         }
     }
 
     fun processUpdate(context: Context, appWidgetId: Int) {
         CoroutineScope(Dispatchers.Default).launch {
-            val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
-            val refreshBtnIntent = Intent(context, WidgetProvider::class.java).run {
-                this.action = REFRESH_BUTTON_CLICKED
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            }
-
-            val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
-                .run {
-                    this.action = ENTER_APPLICATION
-                    this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    PendingIntent.getActivity(
-                        context,
-                        appWidgetId,
-                        this,
-                        PendingIntent.FLAG_IMMUTABLE
-                    )
+            if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                requestPermissions(context,"42",appWidgetId)
+            } else {
+                val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
+                val refreshBtnIntent = Intent(context, WidgetProvider::class.java).run {
+                    this.action = REFRESH_BUTTON_CLICKED
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                 }
 
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                appWidgetId,
-                refreshBtnIntent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
-            views.run {
-                this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
-                this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
+                val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
+                    .run {
+                        this.action = ENTER_APPLICATION
+                        this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        PendingIntent.getActivity(
+                            context,
+                            appWidgetId,
+                            this,
+                            PendingIntent.FLAG_IMMUTABLE
+                        )
+                    }
+
+                val pendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    appWidgetId,
+                    refreshBtnIntent,
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+                views.run {
+                    this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
+                    this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
+                }
+                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                    fetch(context, views)
+                }
             }
-            fetch(context, views)
         }
     }
 

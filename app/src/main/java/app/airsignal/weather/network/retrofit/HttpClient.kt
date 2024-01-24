@@ -19,7 +19,7 @@ object HttpClient {
     fun getInstance(isWidget: Boolean): HttpClient {
         if (!isWidget) {
             instance ?: synchronized(HttpClient::class.java) {   // 멀티스레드에서 동시생성하는 것을 막음
-                instance ?: HttpClient.also { client -> instance = client }
+                instance ?: HttpClient. also { client -> instance = client }
             }
         } else {
             try { instance = HttpClient } catch (e: Exception) { e.printStackTrace() }
