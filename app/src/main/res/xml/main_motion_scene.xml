@@ -232,7 +232,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_editor_absoluteX="0dp" />
         <Constraint
             android:id="@+id/mainGpsTitleTv"
             style="@style/basicTextView"

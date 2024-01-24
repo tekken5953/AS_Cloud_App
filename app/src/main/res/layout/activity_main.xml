@@ -208,7 +208,7 @@
                 android:id="@+id/mainLiveTempValue"
                 style="@style/basicMediumTextView"
                 android:layout_marginTop="12dp"
-                android:textSize="72sp"
+                android:textSize="64sp"
                 app:layout_constraintStart_toStartOf="@+id/mainGpsTitleTv"
                 app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv" />
 

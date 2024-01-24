@@ -1508,7 +1508,6 @@ class MainActivity
 
                 if (warningList.isNotEmpty()) {
                     if (!isWarned) {
-                        binding.mainWarningBox.setBackgroundColor(getColor(android.R.color.transparent))
                         warningSlideAuto()
                         isWarned = true
                     }

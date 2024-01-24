@@ -8,8 +8,7 @@
     android:paddingStart="15dp"
     android:paddingEnd="15dp"
     android:paddingTop="11dp"
-    android:paddingBottom="11dp"
-    android:background="?android:attr/selectableItemBackground">
+    android:paddingBottom="11dp">
 
     <TextView
         android:id="@+id/vpWarningText"
