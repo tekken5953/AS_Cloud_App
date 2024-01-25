@@ -11,13 +11,14 @@ import app.airsignal.weather.dao.RDBLogcat.LOGIN_GOOGLE
 import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.dao.RDBLogcat.writeLoginPref
 import app.airsignal.weather.dao.StaticDataObject.TAG_L
-import app.airsignal.weather.koin.BaseApplication.Companion.logger
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.ToastUtils
-import app.core_databse.db.sp.SetAppInfo.setUserEmail
-import app.core_databse.db.sp.SetAppInfo.setUserId
-import app.core_databse.db.sp.SetAppInfo.setUserLoginPlatform
-import app.core_databse.db.sp.SetAppInfo.setUserProfile
+import app.airsignal.weather.db.sp.SetAppInfo.setUserEmail
+import app.airsignal.weather.db.sp.SetAppInfo.setUserId
+import app.airsignal.weather.db.sp.SetAppInfo.setUserLoginPlatform
+import app.airsignal.weather.db.sp.SetAppInfo.setUserProfile
+import app.airsignal.weather.util.EnterPageUtil
+import app.airsignal.weather.util.LoggerUtil
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -56,7 +57,7 @@ class GoogleLogin(private val activity: Activity) {
             result.launch(signInIntent)
             mBtn.alpha = 0.7f
         } catch (e: Exception) {
-            logger.e(TAG_L,e.stackTraceToString())
+            LoggerUtil().e(TAG_L,e.stackTraceToString())
             RDBLogcat.writeErrorNotANR(activity, LOGIN_FAILED, e.localizedMessage!!)
         }
     }
@@ -74,6 +75,8 @@ class GoogleLogin(private val activity: Activity) {
                 pb?.let {
                     RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = it)
                 }
+
+
             }
             .addOnCanceledListener {
                 ToastUtils(activity)
@@ -128,7 +131,7 @@ class GoogleLogin(private val activity: Activity) {
             val id = account.id!!.lowercase()
             val photo: String = account?.photoUrl.toString()
             val token = account.idToken
-            logger.d(
+            LoggerUtil().d(
                 TAG_L,
                 """
                 gLogin
@@ -145,8 +148,10 @@ class GoogleLogin(private val activity: Activity) {
             setUserEmail(activity, email)
 
             saveLoginStatus(email, displayName, photo, isAuto)
+            setUserLoginPlatform(activity, LOGIN_GOOGLE)
+            activity.finish()
         } catch (e: ApiException) {
-            logger.e(TAG_L,e.stackTraceToString())
+            LoggerUtil().e(TAG_L,e.stackTraceToString())
             e.printStackTrace()
         }
     }

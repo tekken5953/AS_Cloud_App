@@ -10,12 +10,13 @@ import android.widget.RemoteViews
 import android.widget.Toast
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.GetAppInfo
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
@@ -26,6 +27,11 @@ import kotlin.math.roundToInt
  **/
 open class WidgetProvider : BaseWidgetProvider() {
     private var isSuccess = false
+
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        processUpdate(context, AppWidgetManager.INVALID_APPWIDGET_ID)
+    }
 
     override fun onUpdate(
         context: Context,
@@ -67,41 +73,51 @@ open class WidgetProvider : BaseWidgetProvider() {
                         ).show()
                     }
                 }
+            } else {
+                appWidgetId?.let {
+                    processUpdate(context,it)
+                }
             }
         }
     }
 
     fun processUpdate(context: Context, appWidgetId: Int) {
         CoroutineScope(Dispatchers.Default).launch {
-            val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
-            val refreshBtnIntent = Intent(context, WidgetProvider::class.java).run {
-                this.action = REFRESH_BUTTON_CLICKED
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            }
-
-            val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
-                .run {
-                    this.action = ENTER_APPLICATION
-                    this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    PendingIntent.getActivity(
-                        context,
-                        appWidgetId,
-                        this,
-                        PendingIntent.FLAG_IMMUTABLE
-                    )
+            if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                requestPermissions(context,"42",appWidgetId)
+            } else {
+                val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
+                val refreshBtnIntent = Intent(context, WidgetProvider::class.java).run {
+                    this.action = REFRESH_BUTTON_CLICKED
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                 }
 
-            val pendingIntent = PendingIntent.getBroadcast(
-                context,
-                appWidgetId,
-                refreshBtnIntent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
-            views.run {
-                this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
-                this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
+                val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
+                    .run {
+                        this.action = ENTER_APPLICATION
+                        this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        PendingIntent.getActivity(
+                            context,
+                            appWidgetId,
+                            this,
+                            PendingIntent.FLAG_IMMUTABLE
+                        )
+                    }
+
+                val pendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    appWidgetId,
+                    refreshBtnIntent,
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+                views.run {
+                    this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
+                    this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
+                }
+                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                    fetch(context, views)
+                }
             }
-            fetch(context, views)
         }
     }
 
@@ -141,7 +157,7 @@ open class WidgetProvider : BaseWidgetProvider() {
     private fun updateUI(
         context: Context,
         views: RemoteViews,
-        data: app.airsignal.core_network.retrofit.ApiModel.WidgetData?,
+        data: ApiModel.WidgetData?,
         addr: String?
     ) {
         try {

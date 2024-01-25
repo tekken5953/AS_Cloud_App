@@ -1,4 +1,4 @@
-package app.core_as_eye.dao
+package app.airsignal.weather.as_eye.dao
 
 interface DataTransferImp {
     fun sendLifeData(data: EyeDataModel.Life)

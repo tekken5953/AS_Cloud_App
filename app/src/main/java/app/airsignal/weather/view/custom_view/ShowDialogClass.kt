@@ -5,10 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import app.airsignal.weather.R
-import app.core_databse.db.sp.GetAppInfo.getUserFontScale
-import app.core_databse.db.sp.SetSystemInfo
-import app.core_databse.db.sp.SpDao.TEXT_SCALE_BIG
-import app.core_databse.db.sp.SpDao.TEXT_SCALE_SMALL
+import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
+import app.airsignal.weather.db.sp.SetSystemInfo
+import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
+import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
 import java.util.concurrent.CompletableFuture
 
 /**

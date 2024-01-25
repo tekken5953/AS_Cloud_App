@@ -3,12 +3,15 @@ package app.airsignal.weather.view.activity
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.view.View
-import app.airsignal.core_network.ErrorCode.ERROR_NETWORK
-import app.airsignal.core_network.ErrorCode.ERROR_SERVER_CONNECTING
-import app.airsignal.core_network.retrofit.ApiModel
-import app.airsignal.core_repository.BaseRepository
-import app.airsignal.core_viewmodel.GetAppVersionViewModel
+import androidx.core.os.HandlerCompat
+import androidx.lifecycle.findViewTreeViewModelStoreOwner
+import app.airsignal.weather.network.ErrorCode.ERROR_NETWORK
+import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
+import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.viewmodel.GetAppVersionViewModel
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivitySplashBinding
@@ -17,10 +20,13 @@ import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
-import app.core_databse.db.sp.GetSystemInfo
-import app.core_databse.db.sp.GetSystemInfo.goToPlayStore
-import app.location.GetLocation
+import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
+import app.airsignal.weather.db.sp.GetSystemInfo
+import app.airsignal.weather.db.sp.GetSystemInfo.goToPlayStore
+import app.airsignal.weather.location.GetLocation
+import app.airsignal.weather.util.LoggerUtil
+import app.airsignal.weather.util.TimberUtil
+import com.bumptech.glide.Glide
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 
@@ -29,6 +35,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override val resID: Int get() = R.layout.activity_splash
 
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
+
+    init {
+        TimberUtil().getInstance()
+        LoggerUtil().getInstance()
+    }
 
     override fun onResume() {
         super.onResume()
@@ -69,9 +80,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
     private fun enterPage(inAppMsgList: Array<ApiModel.InAppMsgItem>?) {
-        if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted())
-            EnterPageUtil(this@SplashActivity).toMain(getUserLoginPlatform(this), inAppMsgList)
-        else EnterPageUtil(this@SplashActivity).toPermission()
+        if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
+            EnterPageUtil(this@SplashActivity).toMain(
+                getUserLoginPlatform(this),inAppMsgList)
+        } else {
+            EnterPageUtil(this@SplashActivity).toPermission()
+        }
     }
 
     // 앱 버전 뷰모델 데이터 호출
@@ -84,23 +98,25 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             // 통신 성공
                             is BaseRepository.ApiState.Success -> {
                                 binding.splashPB.visibility = View.GONE
+                                val inAppArray = ver.data.inAppMsg
                                 val versionName = GetSystemInfo.getApplicationVersionName(this)
-                                if (versionName == ver.data.serviceName) {
-                                    val inAppArray = ver.data.inAppMsg
+                                val versionCode = GetSystemInfo.getApplicationVersionCode(this)
+                                val fullVersion = "${versionName}.${versionCode}"
+                                if (fullVersion == "${ver.data.serviceName}.${ver.data.serviceCode}" ) {
                                     enterPage(inAppArray)
                                 } else {
+                                    val array = ArrayList<String>()
                                     ver.data.test.forEach {
-                                        if (it.name.contains(versionName)) {
-                                            val inAppArray = ver.data.inAppMsg
-                                            enterPage(inAppArray)
-                                        } else {
-                                            MakeSingleDialog(this)
-                                                .makeDialog(getString(R.string.not_latest_go_to_store),
-                                                    R.color.main_blue_color,getString(R.string.download), true)
-                                                .setOnClickListener {
-                                                    goToPlayStore(this@SplashActivity)
-                                                }
-                                        }
+                                        array.add("${it.name}.${it.code}")
+                                    }
+
+                                    if (array.contains(fullVersion)) {
+                                        enterPage(inAppArray)
+                                    } else {
+                                        MakeSingleDialog(this)
+                                            .makeDialog(getString(R.string.not_latest_go_to_store),
+                                                R.color.main_blue_color,getString(R.string.download), true)
+                                            .setOnClickListener { goToPlayStore(this@SplashActivity) }
                                     }
                                 }
                             }
@@ -110,14 +126,23 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                 binding.splashPB.visibility = View.GONE
                                 when (ver.errorMessage) {
                                     ERROR_NETWORK -> {
-                                        if (GetLocation(this).isNetWorkConnected())
+                                        if (GetLocation(this).isNetWorkConnected()) {
                                             makeDialog(getString(R.string.unknown_error))
-                                        else makeDialog(getString(R.string.error_network_connect))
+                                        } else {
+                                            makeDialog(getString(R.string.error_network_connect))
+                                        }
                                     }
-                                    ERROR_SERVER_CONNECTING -> makeDialog(getString(R.string.error_server_down))
-                                    else -> makeDialog(getString(R.string.unknown_error))
+
+                                    ERROR_SERVER_CONNECTING -> {
+                                        makeDialog(getString(R.string.error_server_down))
+                                    }
+
+                                    else -> {
+                                        makeDialog(getString(R.string.unknown_error))
+                                    }
                                 }
                             }
+
                             // 통신 중
                             is BaseRepository.ApiState.Loading -> binding.splashPB.visibility = View.VISIBLE
                         }

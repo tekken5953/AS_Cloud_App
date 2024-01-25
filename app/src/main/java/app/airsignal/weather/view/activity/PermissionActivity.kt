@@ -9,7 +9,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.widget.Toast
-import app.airsignal.core_network.retrofit.ApiModel
+import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityPermissionBinding
@@ -18,16 +18,16 @@ import app.airsignal.weather.dao.RDBLogcat.writeUserPref
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.util.`object`.DataTypeParser.parseLongToLocalDateTime
-import app.core_databse.db.sp.GetAppInfo.getInitNotiPermission
-import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
-import app.core_databse.db.sp.GetSystemInfo.getApplicationVersionCode
-import app.core_databse.db.sp.GetSystemInfo.getApplicationVersionName
-import app.core_databse.db.sp.SetAppInfo.setInitNotiPermission
-import app.core_databse.db.sp.SetAppInfo.setUserNoti
+import app.airsignal.weather.db.sp.GetAppInfo.getInitNotiPermission
+import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
+import app.airsignal.weather.db.sp.GetSystemInfo.getApplicationVersionCode
+import app.airsignal.weather.db.sp.GetSystemInfo.getApplicationVersionName
+import app.airsignal.weather.db.sp.SetAppInfo.setInitNotiPermission
+import app.airsignal.weather.db.sp.SetAppInfo.setUserNoti
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.perm.FirstLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.sp.SpDao.IN_APP_MSG
+import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PermissionActivity :
@@ -90,6 +90,9 @@ class PermissionActivity :
             value = Build.MODEL
         )
 
+        binding.permissionUserDataNotice.linksClickable = true
+        binding.permissionUserDataNotice.movementMethod = LinkMovementMethod.getInstance()
+
         val userDataIndex = binding.permissionUserDataNotice.text.toString().indexOf(getString(R.string.data_usages).lowercase())
         val spanUserData = SpannableStringBuilder(binding.permissionUserDataNotice.text.toString())
 
@@ -107,16 +110,11 @@ class PermissionActivity :
 
         binding.permissionUserDataNotice.setOnClickListener {
             // 개인정보 처리방침 열림
-            Intent(this@PermissionActivity,
-                WebURLActivity::class.java).run {
-                putExtra("sort","dataUsage")
-                putExtra("appBar",true)
+            val intent = Intent(this@PermissionActivity, WebURLActivity::class.java)
+                intent.putExtra("sort","dataUsage")
+                intent.putExtra("appBar",true)
                 startActivity(intent)
-            }
         }
-
-        binding.permissionUserDataNotice.linksClickable = true
-        binding.permissionUserDataNotice.movementMethod = LinkMovementMethod.getInstance()
 
         binding.permissionUserDataCheckBox.setOnCheckedChangeListener { _, isChecked ->
             // 개인정보 처리방침 체크 박스

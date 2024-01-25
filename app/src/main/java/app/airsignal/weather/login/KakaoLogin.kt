@@ -12,11 +12,13 @@ import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO_EMAIL
 import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.dao.StaticDataObject.TAG_L
-import app.airsignal.weather.koin.BaseApplication.Companion.logger
+import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.RefreshUtils
-import app.core_databse.db.SharedPreferenceManager
-import app.core_databse.db.sp.GetAppInfo.getUserEmail
+import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
+import app.airsignal.weather.db.sp.SetAppInfo
+import app.airsignal.weather.util.LoggerUtil
+import app.airsignal.weather.util.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider
@@ -25,6 +27,10 @@ import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * @author : Lee Jae Young
@@ -48,12 +54,12 @@ class KakaoLogin(private val activity: Activity) {
                     btn.alpha = 1f
                     // 사용자가 취소
                     if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled)) {
-                        logger.d(TAG_L,"카카오 로그인 취소")
+                        LoggerUtil().d(TAG_L,"카카오 로그인 취소")
                         return@loginWithKakaoTalk
                     }
                     // 다른 오류
                     else {
-                        logger.d(TAG_L,"카카오 로그인 기타 오류 : ${error.localizedMessage}")
+                        LoggerUtil().d(TAG_L,"카카오 로그인 기타 오류 : ${error.localizedMessage}")
                         UserApiClient.instance.loginWithKakaoAccount(
                             activity,
                             callback = mCallback
@@ -171,9 +177,14 @@ class KakaoLogin(private val activity: Activity) {
     }
 
     private fun enterMainPage() {
-        saveUserSettings()
-        Thread.sleep(1000)
-        EnterPageUtil(activity).toMain(LOGIN_KAKAO,null)
+        CoroutineScope(Dispatchers.IO).launch {
+            saveUserSettings()
+
+            withContext(Dispatchers.Main) {
+                SetAppInfo.setUserLoginPlatform(activity, LOGIN_KAKAO)
+                activity.finish()
+            }
+        }
     }
 
     private fun saveUserSettings() {
@@ -191,32 +202,21 @@ class KakaoLogin(private val activity: Activity) {
 //        //토큰 갱신하기 https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#refresh-token
 //    }
 
-//    /** 카카오 로그아웃 + 기록 **/
-//    fun logout(email: String) {
-//        try {
-//            UserApiClient.instance.logout { error ->
-//                if (error != null) {
-//                    ToastUtils(activity)
-//                        .showMessage("로그아웃에 실패했습니다",1)
-//                    writeLoginHistory(
-//                        isLogin = false, platform = LOGIN_KAKAO, email = getUserEmail(activity),
-//                        isAuto = null, isSuccess = false
-//                    )
-//                } else {
-//                    writeLoginHistory(
-//                        isLogin = false,
-//                        platform = LOGIN_KAKAO,
-//                        email = email,
-//                        isAuto = null,
-//                        isSuccess = true
-//                    )
-//                    RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = null)
-//                }
-//            }
-//        } catch (e: UninitializedPropertyAccessException) {
-//            e.printStackTrace()
-//        }
-//    }
+    /** 카카오 로그아웃 + 기록 **/
+    fun logout(pb: LottieAnimationView?) {
+        try {
+            UserApiClient.instance.logout { error ->
+                if (error != null) {
+                    ToastUtils(activity)
+                        .showMessage("로그아웃에 실패했습니다",1)
+                } else {
+                    RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = pb)
+                }
+            }
+        } catch (e: UninitializedPropertyAccessException) {
+            e.printStackTrace()
+        }
+    }
 
     /** 클라이언트와 완전히 연결 끊기 **/
     fun disconnectFromKakao(pb: LottieAnimationView?) {

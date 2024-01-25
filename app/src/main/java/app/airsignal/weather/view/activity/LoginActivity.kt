@@ -10,11 +10,12 @@ import app.airsignal.weather.dao.RDBLogcat.LOGIN_GOOGLE
 import app.airsignal.weather.dao.StaticDataObject.TAG_L
 import app.airsignal.weather.databinding.ActivityLoginBinding
 import app.airsignal.weather.firebase.fcm.SubFCM
-import app.airsignal.weather.koin.BaseApplication.Companion.timber
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
 import app.airsignal.weather.util.EnterPageUtil
+import app.airsignal.weather.util.RefreshUtils
+import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 
@@ -51,7 +52,7 @@ class LoginActivity
 
         // 뒤로가기 버튼 클릭
         binding.loginMainBack.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+           finish()
         }
     }
 
@@ -70,12 +71,10 @@ class LoginActivity
                         SubFCM().subAdminTopic()
                     }
                     googleLogin.handleSignInResult(task, isAuto = false)
-
-                    EnterPageUtil(this@LoginActivity).toMain(LOGIN_GOOGLE,null)
                 }
                 // 로그인 취소 됨
                 RESULT_CANCELED -> {
-                    timber.w(TAG_L, "Cancel Google Login")
+                    TimberUtil().w(TAG_L, "Cancel Google Login")
                     binding.googleLoginButton.alpha = 1f
                 }
                 else -> {

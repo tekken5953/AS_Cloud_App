@@ -19,11 +19,11 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgLarge
-import app.core_databse.db.sp.GetAppInfo
-import app.core_databse.db.sp.GetAppInfo.getNotificationAddress
-import app.core_databse.db.sp.GetAppInfo.getUserNotiEnable
-import app.core_databse.db.sp.GetAppInfo.getUserNotiVibrate
-import app.core_databse.db.sp.GetSystemInfo
+import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.GetAppInfo.getNotificationAddress
+import app.airsignal.weather.db.sp.GetAppInfo.getUserNotiEnable
+import app.airsignal.weather.db.sp.GetAppInfo.getUserNotiVibrate
+import app.airsignal.weather.db.sp.GetSystemInfo
 import kotlin.math.roundToInt
 
 
@@ -115,7 +115,6 @@ class NotificationBuilder {
             if (getUserNotiEnable(appContext)) {
                 notificationManager?.let {
                     it.createNotificationChannel(notificationChannel)
-//                applyVibrate(appContext)
                     it.notify(1, notificationBuilder.build())
                 }
                 RDBLogcat.writeNotificationHistory(appContext,data["sort"].toString(),"${getNotificationAddress(appContext)} $data")

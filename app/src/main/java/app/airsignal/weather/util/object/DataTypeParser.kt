@@ -39,8 +39,8 @@ object DataTypeParser {
 
     /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트 **/
     fun applySkyText(context: Context, rain: String?, sky: String?, thunder: Double?): String {
-        return if (rain != "없음") if ((thunder == null) || (thunder < 0.2))  rain!! else  context.getString(R.string.thunder_sunny)
-         else if ((thunder == null) || (thunder < 0.2)) sky!! else  context.getString(R.string.thunder_rainy)
+        return if (rain != "없음") if ((thunder == null) || (thunder < 0.2))  rain ?: "없음" else  context.getString(R.string.thunder_sunny)
+         else if ((thunder == null) || (thunder < 0.2)) sky ?: "맑음" else  context.getString(R.string.thunder_rainy)
     }
 
     fun translateSkyText(sky: String): String {
@@ -54,6 +54,19 @@ object DataTypeParser {
         }
 
         return id
+    }
+
+    fun koreaSky(sky: String?): String {
+        val id = when(sky?.lowercase()) {
+            "sunny" -> "맑음"
+            "cloudy" -> "흐림"
+            "rainy" -> "비"
+            "snowy" -> "눈"
+            "rainy/snowy" -> "비/눈"
+            else -> sky
+        }
+
+        return id ?: "눈"
     }
 
     /** 달 모양 반환 **/
@@ -216,11 +229,11 @@ object DataTypeParser {
         lunar: Int
     ): Drawable? {
         return if (rain != "없음" && (thunder == null || thunder < 0.2)) {
-            if (isLarge) getRainTypeLarge(context, rain!!) ?: getDrawable(context, R.drawable.cancel)
-            else getRainTypeSmall(context, rain!!) ?: getDrawable(context, R.drawable.cancel)
+            if (isLarge) getRainTypeLarge(context, rain) ?: getDrawable(context, R.drawable.cancel)
+            else getRainTypeSmall(context, rain) ?: getDrawable(context, R.drawable.cancel)
         } else if (rain == "없음" && (thunder == null || thunder < 0.2)) {
-            if (isLarge) getSkyImgLarge(context, sky!!, isNight ?: false, lunar)
-            else getSkyImgSmall(context, sky!!, isNight ?: false)
+            if (isLarge) getSkyImgLarge(context, sky, isNight ?: false, lunar)
+            else getSkyImgSmall(context, sky, isNight ?: false)
         } else {
             getDrawable(context, R.drawable.b_ico_cloudy_th)
         }
@@ -250,7 +263,7 @@ object DataTypeParser {
         }
     }
 
-    /** Double을 지정 자릿수에서 반올림 **/
+    /** 지정 자릿수에서 반올림 **/
     fun parseDoubleToDecimal(double: Double, digit: Int): String {
         return String.format("%.${digit}f", double)
     }
@@ -286,7 +299,7 @@ object DataTypeParser {
             "위험" to R.color.uv_caution
         )
 
-        flagMap[flag]?.let { cardView.setCardBackgroundColor(context.getColor(it))}!!
+        flagMap[flag]?.let { cardView.setCardBackgroundColor(context.getColor(it))}
     }
 
     /** 상태 바 설정 **/
@@ -387,5 +400,17 @@ object DataTypeParser {
 
     private fun getDrawable(context: Context, resId: Int): Drawable? {
         return ResourcesCompat.getDrawable(context.resources, resId, null)
+    }
+
+    fun parseReportTitle(data: String): String {
+        return when(data) {
+            "co2" -> {"CO2(이산화탄소)"}
+            "co" -> {"CO(일산화탄소)"}
+            "pm2p5" -> {"PM2.5(초미세먼지)"}
+            "pm10p0" -> {"PM10(미세먼지)"}
+            "tvoc" -> {"TVOC(총휘발성유기화합물)"}
+            "no2" -> {"NO2(이산화질소)"}
+            else -> {""}
+        }
     }
 }

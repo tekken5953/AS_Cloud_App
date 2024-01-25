@@ -1,7 +1,6 @@
 package app.airsignal.weather.firebase.admob
 
 import app.airsignal.weather.dao.RDBLogcat.writeAdError
-import app.utils.LoggerUtil
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.LoadAdError
 

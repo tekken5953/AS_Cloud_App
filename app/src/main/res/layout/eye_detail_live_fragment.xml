@@ -27,35 +27,22 @@
                 style="@style/basicMediumTextView"
                 android:layout_marginStart="13dp"
                 android:text="@string/live_value"
-                android:textColor="@color/theme_text_color"
+                android:textColor="@color/main_black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@+id/aeLiveTitleIcon"
                 app:layout_constraintStart_toEndOf="@+id/aeLiveTitleIcon"
                 app:layout_constraintTop_toTopOf="@+id/aeLiveTitleIcon" />
 
-            <ImageView
-                android:id="@+id/aeLiveRefreshIcon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="16dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="3dp"
-                android:src="@drawable/w_btn_refresh"
-                app:layout_constraintBottom_toBottomOf="@id/aeLiveTitleIcon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/aeLiveTitleIcon"
-                app:tint="@color/ae_sub_color" />
-
             <TextView
                 android:id="@+id/aeLiveRefreshTime"
                 style="@style/basicTextView"
                 android:layout_height="0dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginEnd="16dp"
                 android:textColor="@color/ae_sub_color"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@id/aeLiveRefreshIcon"
-                app:layout_constraintEnd_toStartOf="@+id/aeLiveRefreshIcon"
-                app:layout_constraintTop_toTopOf="@id/aeLiveRefreshIcon" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/aeLiveTitleIcon"
+                app:layout_constraintBottom_toBottomOf="@+id/aeLiveTitleIcon"/>
 
             <TableRow
                 android:id="@+id/aeLiveTr1"

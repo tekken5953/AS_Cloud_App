@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="75dp"
+        android:layout_height="80dp"
         android:background="@drawable/ae_device_bg_e"
         android:layout_marginTop="16dp">
 
@@ -12,7 +11,7 @@
             android:layout_width="15dp"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
-            android:background="@drawable/ae_live_main_air_side" />
+            android:background="@drawable/ae_live_data_bg_bad" />
 
         <LinearLayout
             android:id="@+id/customEyeDoubleLinear"
@@ -26,12 +25,14 @@
             <TextView
                 android:id="@+id/customEyeDoubleEnTitle"
                 style="@style/basicMediumTextView"
-                android:textColor="@color/theme_text_color"
+                android:gravity="start"
+                android:textColor="@color/main_black"
                 android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/customEyeDoubleKrTitle"
                 style="@style/basicTextView"
+                android:gravity="start"
                 android:layout_marginTop="2dp"
                 android:textColor="@color/ae_sub_color"
                 android:textSize="14sp" />
@@ -43,9 +44,7 @@
             android:layout_height="46dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/smile_test"
-            app:tint="@color/ae_bad_main" />
+            android:layout_marginEnd="10dp" />
 
         <TextView
             android:id="@+id/customEyeDoubleUnit"
@@ -63,7 +62,7 @@
             android:layout_centerVertical="true"
             android:layout_toStartOf="@+id/customEyeDoubleUnit"
             android:layout_marginEnd="3dp"
-            android:textColor="@color/theme_text_color"
+            android:textColor="@color/main_black"
             android:textSize="28sp"/>
 
     </RelativeLayout>

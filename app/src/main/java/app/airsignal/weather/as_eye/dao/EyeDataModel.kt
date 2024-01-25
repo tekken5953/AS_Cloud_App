@@ -1,4 +1,4 @@
-package app.core_as_eye.dao
+package app.airsignal.weather.as_eye.dao
 
 import com.google.gson.annotations.SerializedName
 import java.time.LocalDateTime
@@ -26,6 +26,24 @@ class EyeDataModel {
         val report: List<String>
     )
 
+    data class ReportFragment(
+        val report: List<String>?,
+        val caiValue: Int,
+        val caiLvl: Int,
+        val virusValue: Int,
+        val virusLvl: Int,
+        val pm10Value: Float
+    )
+
+    data class Life(
+        val nameEn: String,
+        val nameKr: String,
+        val value: Int,
+        val pbColor: Int,
+        val backColor: Int
+    )
+
+
     data class Serial(
         @SerializedName("last_modify")
         val lastModify: LocalDateTime,
@@ -38,18 +56,9 @@ class EyeDataModel {
     )
 
     data class EyeReportAdapter(
-        @SerializedName("title")
         val title: String,
-        @SerializedName("content")
-        val content: String
-    )
-
-    data class Life(
-        val nameEn: String,
-        val nameKr: String,
-        val value: Int,
-        val pbColor: Int,
-        val backColor: Int
+        val content: String,
+        val isCaution: Boolean
     )
 
     data class Measured(
@@ -59,6 +68,10 @@ class EyeDataModel {
         val pm2p5Lvl: Int,
         @SerializedName("pm2p5AQI")
         val pm2p5AQI: Float,
+        @SerializedName("pm10p0Value")
+        val pm10p0Value: Float,
+        @SerializedName("pm10p0Lvl")
+        val pm10p0Lvl: Int,
         @SerializedName("tempValue")
         val tempValue: Float,
         @SerializedName("tempLvl")
@@ -93,12 +106,22 @@ class EyeDataModel {
         val gyroYValue: Float,
         @SerializedName("gyroZValue")
         val gyroZValue: Float,
-        @SerializedName("GYROLvl")
-        val GYROLvl: Int,
-        @SerializedName("CAIValue")
+        @SerializedName("gyroValid")
+        val gyroValid: Int,
+        @SerializedName("caiValue")
         val CAIValue: Int,
-        @SerializedName("CAILvl")
-        val CAILvl: Int
+        @SerializedName("caiLvl")
+        val CAILvl: Int,
+        @SerializedName("noiseValid")
+        val noiseValid: Int,
+        @SerializedName("noiseValue")
+        val noiseValue: Float,
+        @SerializedName("virusValue")
+        val virusValue: Int,
+        @SerializedName("virusLvl")
+        val virusLvl: Int,
+        @SerializedName("anomalies")
+        val flags: List<String>?
     )
 
     data class Setting(
@@ -164,7 +187,7 @@ class EyeDataModel {
         @SerializedName("gyroLifePercent")
         val gyroLifePercent: Int,
         @SerializedName("gyroInstallTime")
-        val gyroInstallTime: Int,
+        val gyroInstallTime: Int
     )
 
     data class Display(

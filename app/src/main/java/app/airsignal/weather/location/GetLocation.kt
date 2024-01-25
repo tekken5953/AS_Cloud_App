@@ -1,4 +1,4 @@
-package app.location
+package app.airsignal.weather.location
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,13 +8,13 @@ import android.location.*
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.provider.Settings
-import app.address.AddressFromRegex
-import app.core_databse.db.room.model.GpsEntity
-import app.core_databse.db.room.repository.GpsRepository
-import app.core_databse.db.sp.GetSystemInfo
-import app.core_databse.db.sp.SetAppInfo.setNotificationAddress
-import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
-import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
+import app.airsignal.weather.address.AddressFromRegex
+import app.airsignal.weather.db.room.model.GpsEntity
+import app.airsignal.weather.db.room.repository.GpsRepository
+import app.airsignal.weather.db.sp.GetSystemInfo
+import app.airsignal.weather.db.sp.SetAppInfo.setNotificationAddress
+import app.airsignal.weather.db.sp.SetAppInfo.setUserLastAddr
+import app.airsignal.weather.db.sp.SpDao.CURRENT_GPS_ID
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

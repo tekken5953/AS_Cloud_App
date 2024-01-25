@@ -10,26 +10,26 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission
         android:name="android.permission.BIND_REMOTEVIEWS"
         tools:ignore="ProtectedPermissions" />
 
     <application
         android:name="app.airsignal.weather.koin.BaseApplication"
+        android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app__name"
-        android:allowBackup="true"
+        android:networkSecurityConfig="@xml/network_security_work"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:networkSecurityConfig="@xml/network_security_work"
         android:theme="@style/Theme.AirSignal_App.RemoveSplash"
         android:windowSoftInputMode="adjustNothing"
         tools:replace="android:icon,android:label">
         <activity
             android:name=".view.widget.WidgetPermActivity"
-            android:exported="true">
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -39,7 +39,7 @@
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
-                android:value=""/>
+                android:value="" />
         </activity>
         <activity
             android:name=".as_eye.activity.EyeListActivity"
@@ -75,7 +75,7 @@
         <activity
             android:name="app.airsignal.weather.view.activity.SplashActivity"
             android:exported="true"
-            android:hardwareAccelerated="false">
+            android:hardwareAccelerated="true">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -187,4 +187,5 @@
                 android:resource="@xml/widget_provider42" />
         </receiver>
     </application>
+
 </manifest>

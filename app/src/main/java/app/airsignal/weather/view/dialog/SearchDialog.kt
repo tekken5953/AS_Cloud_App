@@ -23,20 +23,20 @@ import app.airsignal.weather.R
 import app.airsignal.weather.adapter.AddressListAdapter
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
+import app.airsignal.weather.db.room.model.GpsEntity
+import app.airsignal.weather.db.room.repository.GpsRepository
+import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
+import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
+import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
+import app.airsignal.weather.db.sp.GetSystemInfo.getLocale
+import app.airsignal.weather.db.sp.SetAppInfo.setUserLastAddr
+import app.airsignal.weather.db.sp.SetSystemInfo
+import app.airsignal.weather.db.sp.SpDao.CURRENT_GPS_ID
+import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
+import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
+import app.airsignal.weather.util.KeyboardController
+import app.airsignal.weather.util.OnAdapterItemClick
 import app.airsignal.weather.util.`object`.DataTypeParser.convertAddress
-import app.core_databse.db.room.model.GpsEntity
-import app.core_databse.db.room.repository.GpsRepository
-import app.core_databse.db.sp.GetAppInfo.getUserFontScale
-import app.core_databse.db.sp.GetAppInfo.getUserLastAddress
-import app.core_databse.db.sp.GetAppInfo.getUserLocation
-import app.core_databse.db.sp.GetSystemInfo.getLocale
-import app.core_databse.db.sp.SetAppInfo.setUserLastAddr
-import app.core_databse.db.sp.SetSystemInfo
-import app.core_databse.db.sp.SpDao.CURRENT_GPS_ID
-import app.core_databse.db.sp.SpDao.TEXT_SCALE_BIG
-import app.core_databse.db.sp.SpDao.TEXT_SCALE_SMALL
-import app.utils.KeyboardController
-import app.utils.OnAdapterItemClick
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -177,7 +177,7 @@ class SearchDialog(
             val listView: ListView = view.findViewById(R.id.searchAddressListView)
 
             searchEditListener(listView, searchView, noResult)
-            KeyboardController().onKeyboardUp(requireContext(), searchView)
+            KeyboardController.onKeyboardUp(requireContext(), searchView)
         }
     }
 

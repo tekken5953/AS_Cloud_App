@@ -5,8 +5,8 @@ import app.airsignal.weather.dao.RDBLogcat.LOGIN_GOOGLE
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_NAVER
 import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
-import app.core_databse.db.sp.GetAppInfo.getUserEmail
-import app.core_databse.db.sp.GetAppInfo.getUserLoginPlatform
+import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
+import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
 
 /**
  * @author : Lee Jae Young

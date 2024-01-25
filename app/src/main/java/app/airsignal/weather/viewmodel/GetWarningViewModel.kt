@@ -1,9 +1,9 @@
-package app.airsignal.core_viewmodel
+package app.airsignal.weather.viewmodel
 
 import androidx.lifecycle.LiveData
-import app.airsignal.core_network.retrofit.ApiModel
-import app.airsignal.core_repository.BaseRepository
-import app.airsignal.core_repository.GetWarningRepo
+import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.repository.GetWarningRepo
 import java.io.IOException
 
 /**

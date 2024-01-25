@@ -59,4 +59,6 @@
     <color name="theme_line_color">#EBEBEB</color>
     <color name="main_blue_color">#00C2FF</color>
     <color name="main_gray_color">#A7A7A7</color>
+
+    <color name="graph_blue">#2997FD</color>
 </resources>

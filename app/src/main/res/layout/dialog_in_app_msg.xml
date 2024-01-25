@@ -30,6 +30,14 @@
             android:orientation="horizontal" />
     </FrameLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@+id/inAppMsgTr"
+        android:background="#302B2B2B"
+        android:layout_alignStart="@+id/inAppMsgTr"
+        android:layout_alignEnd="@+id/inAppMsgTr"/>
+
     <TableRow
         android:id="@+id/inAppMsgTr"
         android:layout_width="320dp"
@@ -53,7 +61,7 @@
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="#602B2B2B" />
+            android:background="#302B2B2B" />
 
         <TextView
             android:id="@+id/inAppMsgCancel"
@@ -61,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
-            android:text="@string/close"
+            android:text="@string/ok"
             android:background="?android:attr/selectableItemBackground"
             android:textColor="#2B2B2B"
             android:textSize="15sp" />

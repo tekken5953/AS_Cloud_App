@@ -35,8 +35,10 @@ class EyeLiveDoubleDataView(context: Context, attrs: AttributeSet?)
         }
     }
 
-    fun fetchData(value: String): EyeLiveDoubleDataView {
+    fun fetchData(value: String, bg: Int, smile: Int): EyeLiveDoubleDataView {
         systemBinding.customEyeDoubleValue.text = value
+        systemBinding.customEyeDoubleSideView.setBackgroundResource(bg)
+        systemBinding.customEyeDoubleSmile.setBackgroundResource(smile)
         return this
     }
 }

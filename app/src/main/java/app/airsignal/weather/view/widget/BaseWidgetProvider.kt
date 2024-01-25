@@ -7,11 +7,12 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.sp.GetAppInfo
-import app.core_databse.db.sp.SetAppInfo
+import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.SetAppInfo
 import retrofit2.awaitResponse
 import java.time.LocalDateTime
 
@@ -24,10 +25,6 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         const val REFRESH_BUTTON_CLICKED_42 = "app.airsignal.weather.view.widget.REFRESH_DATA42"
         const val ENTER_APPLICATION_42 = "app.airsignal.weather.view.widget.ENTER_APP42"
 
-    }
-
-    override fun onEnabled(context: Context) {
-        super.onEnabled(context)
     }
 
     override fun onDisabled(context: Context) {
@@ -51,8 +48,7 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         super.onDeleted(context, appWidgetIds)
     }
 
-
-    suspend fun requestWeather(context: Context,lat: Double, lng: Double, rCount: Int): app.airsignal.core_network.retrofit.ApiModel.WidgetData? {
+    suspend fun requestWeather(context: Context,lat: Double, lng: Double, rCount: Int): ApiModel.WidgetData? {
         try {
             return HttpClient.getInstance(true).setClientBuilder()
                 .getWidgetForecast(lat, lng, rCount)

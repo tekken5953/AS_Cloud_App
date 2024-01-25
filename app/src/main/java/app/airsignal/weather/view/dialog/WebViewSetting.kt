@@ -1,9 +1,11 @@
 package app.airsignal.weather.view.dialog
 
+import android.annotation.SuppressLint
 import android.webkit.WebSettings
 import android.webkit.WebView
 
 class WebViewSetting {
+    @SuppressLint("SetJavaScriptEnabled")
     fun apply(webView: WebView) {
         webView.settings.apply {
             javaScriptEnabled = true // 자바스크립트 허용

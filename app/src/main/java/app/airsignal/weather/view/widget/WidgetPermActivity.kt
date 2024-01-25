@@ -11,7 +11,7 @@ class WidgetPermActivity : AppCompatActivity() {
         super.onResume()
         if (!perm.isBackgroundRequestLocation()) {
             perm.requestBackgroundLocation()
-            Toast.makeText(this, "권한을 항상허용으로 변경 뒤 재설치 해주세요", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "권한을 항상 허용으로 변경 뒤 재설치 해주세요", Toast.LENGTH_SHORT).show()
         } else {
             val id = intent.extras?.getInt("id")
             when(intent.extras?.getString("sort")) {

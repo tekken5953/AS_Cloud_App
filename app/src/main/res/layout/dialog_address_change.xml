@@ -134,6 +134,6 @@
         android:overScrollMode="never"
         android:clipToPadding="false"
         tools:listitem="@layout/list_item_address_list"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        app:layoutManager=".util.LinearLayoutManagerWrapper"/>
 
 </RelativeLayout>

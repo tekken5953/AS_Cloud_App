@@ -1,4 +1,4 @@
-package app.airsignal.core_network
+package app.airsignal.weather.network
 
 object NetworkUtils {
     /** Current의 rainType의 에러 방지 **/

@@ -23,7 +23,6 @@
             style="@style/settingMultiTextView"
             android:gravity="center_vertical|end"
             android:textColor="@color/main_blue_color" />
-
     </LinearLayout>
 </layout>
 

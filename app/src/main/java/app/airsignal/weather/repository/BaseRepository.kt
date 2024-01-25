@@ -1,4 +1,4 @@
-package app.airsignal.core_repository
+package app.airsignal.weather.repository
 
 import app.airsignal.weather.network.retrofit.HttpClient
 

@@ -9,12 +9,12 @@ import android.view.*
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
-import app.core_databse.db.sp.GetAppInfo.getUserEmail
-import app.core_databse.db.sp.GetAppInfo.getUserFontScale
-import app.core_databse.db.sp.GetAppInfo.getUserProfileImage
-import app.core_databse.db.sp.SetSystemInfo
-import app.core_databse.db.sp.SpDao.TEXT_SCALE_BIG
-import app.core_databse.db.sp.SpDao.TEXT_SCALE_SMALL
+import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
+import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
+import app.airsignal.weather.db.sp.GetAppInfo.getUserProfileImage
+import app.airsignal.weather.db.sp.SetSystemInfo
+import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
+import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
 import com.bumptech.glide.Glide
 
 /**

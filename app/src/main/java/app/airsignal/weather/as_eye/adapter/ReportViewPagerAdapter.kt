@@ -5,11 +5,13 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import app.core_as_eye.dao.EyeDataModel
 import app.airsignal.weather.R
+import app.airsignal.weather.as_eye.dao.EyeDataModel
 
 /**
  * @author : Lee Jae Young
@@ -42,12 +44,16 @@ class ReportViewPagerAdapter(
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val title = view.findViewById<TextView>(R.id.vpAeTitle)
         private val content = view.findViewById<TextView>(R.id.vpAeContent)
+        private val cautionImg = view.findViewById<ImageView>(R.id.vpAeAlert)
 
         fun bind(dao: EyeDataModel.EyeReportAdapter) {
             title.text = dao.title
             content.text = dao.content
 
-            viewPager2.visibility = if(mList.size == 0) View.GONE else View.VISIBLE
+            cautionImg.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
+                if (dao.isCaution) R.drawable.caution_test else R.drawable.caution_good,null))
+
+//            viewPager2.visibility = if(mList.size == 0) View.GONE else View.VISIBLE
         }
     }
 }

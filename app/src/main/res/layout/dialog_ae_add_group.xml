@@ -50,7 +50,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"
         tools:listitem="@layout/list_item_add_group"
-        app:layoutManager="app.utils.LinearLayoutManagerWrapper"/>
+        app:layoutManager=".util.LinearLayoutManagerWrapper"/>
 
     <LinearLayout
         android:id="@+id/addGroupLinear"

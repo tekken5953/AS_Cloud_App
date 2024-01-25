@@ -1,4 +1,4 @@
-package app.utils
+package app.airsignal.weather.util
 
 import timber.log.Timber
 

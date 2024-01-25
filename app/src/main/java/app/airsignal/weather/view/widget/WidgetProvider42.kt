@@ -11,12 +11,13 @@ import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.core_databse.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.GetAppInfo
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
@@ -28,6 +29,11 @@ import kotlin.math.roundToInt
  **/
 open class WidgetProvider42 : BaseWidgetProvider() {
     private var isSuccess = false
+
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        processUpdate(context, AppWidgetManager.INVALID_APPWIDGET_ID)
+    }
 
     override fun onUpdate(
         context: Context,
@@ -57,10 +63,13 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 if (intent.action == REFRESH_BUTTON_CLICKED_42) {
                     if (isRefreshable(context,"42")) {
                         processUpdate(context,appWidgetId)
-
                     } else {
                         Toast.makeText(context.applicationContext, "갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
                     }
+                }
+            } else {
+                appWidgetId?.let {
+                    processUpdate(context,it)
                 }
             }
         }
@@ -99,7 +108,9 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
                     this.setOnClickPendingIntent(R.id.w42Background, enterPending)
                 }
-                fetch(context, views)
+                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                    fetch(context, views)
+                }
             }
         }
     }
@@ -145,7 +156,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     private fun updateUI(
         context: Context,
         views: RemoteViews,
-        data: app.airsignal.core_network.retrofit.ApiModel.WidgetData?,
+        data: ApiModel.WidgetData?,
         addr: String?
     ) {
         try {

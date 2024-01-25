@@ -9,8 +9,8 @@ import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
-import app.core_as_eye.dao.EyeDataModel
-import app.utils.OnAdapterItemClick
+import app.airsignal.weather.as_eye.dao.EyeDataModel
+import app.airsignal.weather.util.OnAdapterItemClick
 import java.util.*
 
 class AddGroupAdapter(
@@ -51,7 +51,6 @@ class AddGroupAdapter(
         val checkBox: CheckBox = itemView.findViewById(R.id.listItemAeAddGroupCheck)
         private val master: TextView = itemView.findViewById(R.id.listItemAeAddGroupMaster)
 
-        @SuppressLint("InflateParams")
         fun bind(dao: EyeDataModel.Group) {
             alias.text = dao.device.alias
             serial.text = dao.device.serial.serial
@@ -63,7 +62,7 @@ class AddGroupAdapter(
             }
 
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try { onClickListener.onItemClick(it, position) }
                     catch (e: UninitializedPropertyAccessException) { e.printStackTrace() }

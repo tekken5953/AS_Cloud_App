@@ -1,4 +1,4 @@
-package app.core_as_eye.adapter
+package app.airsignal.weather.as_eye.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
-import app.core_as_eye.dao.EyeDataModel
-import app.utils.OnAdapterItemClick
+import app.airsignal.weather.as_eye.dao.EyeDataModel
+import app.airsignal.weather.util.OnAdapterItemClick
 import java.util.*
 
 class EyeCategoryAdapter(
@@ -44,16 +44,15 @@ class EyeCategoryAdapter(
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private var categoryName: TextView = itemView.findViewById(R.id.listItemAeCategoryText)
 
-        @SuppressLint("InflateParams")
         fun bind(dao: EyeDataModel.Category) {
             categoryName.text = dao.name
 
-            if (adapterPosition == selectedPosition)
+            if (bindingAdapterPosition == selectedPosition)
                 categoryName.setTextColor(context.getColor(R.color.theme_ae_category_color))
             else categoryName.setTextColor(context.getColor(R.color.ae_sub_color))
 
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try { onClickListener.onItemClick(it, position) }
                     catch (e: UninitializedPropertyAccessException) { e.printStackTrace() }

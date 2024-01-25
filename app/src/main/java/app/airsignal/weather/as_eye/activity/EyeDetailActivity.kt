@@ -1,39 +1,66 @@
 package app.airsignal.weather.as_eye.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.widget.ImageView
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
-import app.airsignal.weather.databinding.ActivityEyeDetailBinding
-import app.airsignal.weather.as_eye.customview.EyeSettingView
-import app.core_as_eye.dao.EyeDataModel
-import app.airsignal.weather.as_eye.fragment.EyeDetailLifeFragment
+import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.as_eye.fragment.EyeDetailLiveFragment
 import app.airsignal.weather.as_eye.fragment.EyeDetailReportFragment
-import app.airsignal.weather.view.custom_view.ShowDialogClass
+import app.airsignal.weather.as_eye.fragment.EyeSettingFragment
+import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.databinding.ActivityEyeDetailBinding
+import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.util.TimberUtil
+import app.airsignal.weather.viewmodel.GetEyeDataViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.IOException
 
 class EyeDetailActivity : AppCompatActivity() {
     companion object {
         const val FRAGMENT_REPORT = 0
         const val FRAGMENT_LIVE = 1
-        const val FRAGMENT_LIFE = 2
-        var currentFragment = 0
+        const val FRAGMENT_SETTING = 2
+        var currentFragment = -1
+        const val TEST_SERIAL = "AOA0000001F539"
     }
 
     private lateinit var binding: ActivityEyeDetailBinding
+
+    private lateinit var entireData: EyeDataModel.Measured
+
+    private val dataViewModel by viewModel<GetEyeDataViewModel>()
+
+    private val reportFragment = EyeDetailReportFragment()
+    private val liveFragment = EyeDetailLiveFragment()
+    private val settingFragment = EyeSettingFragment()
+
+    private var lastRefreshTime = 0L
+
+    override fun onStart() {
+        super.onStart()
+        dataViewModel.loadData(TEST_SERIAL)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        lastRefreshTime = 0L
+        currentFragment = -1
+    }
 
     @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_eye_detail)
-
-        tabItemSelected(FRAGMENT_REPORT)
 
         val nameExtra = intent.getStringExtra("name")
         val serialExtra = intent.getStringExtra("serial")
@@ -48,86 +75,165 @@ class EyeDetailActivity : AppCompatActivity() {
             if (currentFragment != FRAGMENT_LIVE)
                 tabItemSelected(FRAGMENT_LIVE)
         }
-        binding.asDetailTabLife.setOnClickListener {
-            if (currentFragment != FRAGMENT_LIFE)
-                tabItemSelected(FRAGMENT_LIFE)
+        binding.asDetailTabSetting.setOnClickListener {
+            if (currentFragment != FRAGMENT_SETTING)
+                tabItemSelected(FRAGMENT_SETTING)
         }
 
-        binding.aeDetailBack.setOnClickListener { finish() }
-
-        binding.aeDetailSetting.setOnClickListener {
-            val settingView =
-                LayoutInflater.from(this).inflate(R.layout.dialog_ae_setting, null, false)
-            val settingBack = settingView.findViewById<ImageView>(R.id.aeSettingBack)
-            ShowDialogClass(this).setBackPressed(settingBack).show(settingView, true)
-            val settingName = settingView.findViewById<EyeSettingView>(R.id.aeSettingName)
-            val settingNoti = settingView.findViewById<EyeSettingView>(R.id.aeSettingNotification)
-            val settingSerial = settingView.findViewById<EyeSettingView>(R.id.aeSettingSerial)
-            val settingWifi = settingView.findViewById<EyeSettingView>(R.id.aeSettingWifi)
-            settingName.fetchData("사무실")
-            settingSerial.fetchData("AS-442421")
-            settingWifi.fetchData("A8:81:7C:5A:3D:57")
-
-            settingName.setOnClickListener { }
-            settingNoti.setOnClickListener { }
+        binding.aeDetailBack.setOnClickListener {
+            backToList()
         }
+
+        binding.asDetailRefresh.setOnClickListener {
+            dataViewModel.loadData(TEST_SERIAL)
+        }
+
+        applyMeasuredData()
+    }
+
+    override fun onBackPressed() {
+        @Suppress("DEPRECATION")
+        super.onBackPressed()
+        backToList()
+    }
+
+    private fun backToList() {
+        val intent = Intent(this, EyeListActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun transactionFragment(frag: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.aeDetailFrame, frag)
-        if (!supportFragmentManager.isStateSaved) { transaction.commit() }
+        if (!supportFragmentManager.isStateSaved) {
+            transaction.commit()
+        }
     }
 
     private fun tabItemSelected(id: Int) {
-        when (id) {
-            FRAGMENT_REPORT -> {
-                val reportFragment = EyeDetailReportFragment()
-                val data = EyeDataModel.EyeReportAdapter("test","test")
-                currentFragment = id
-                reportFragment.onDataReceived(data)
-                transactionFragment(reportFragment)
-                changeTabResource(id)
-            }
-            FRAGMENT_LIVE -> {
-                val liveFragment = EyeDetailLiveFragment()
-                val data = EyeDataModel.EyeReportAdapter("test","test")
-                currentFragment = id
-                liveFragment.onDataReceived(data)
-                transactionFragment(liveFragment)
-                changeTabResource(id)
-            }
-            FRAGMENT_LIFE -> {
-                val lifeFragment = EyeDetailLifeFragment()
-                val data = EyeDataModel.EyeReportAdapter("test","test")
-                lifeFragment.onDataReceived(data)
-                currentFragment = id
-                transactionFragment(lifeFragment)
-                changeTabResource(id)
-            }
-            else -> throw IllegalArgumentException("Invalid fragment id : $id")
+        run {
+            currentFragment = id
+            transactionFragment(when (id) {
+                FRAGMENT_REPORT -> { reportFragment }
+                FRAGMENT_LIVE -> { liveFragment }
+                FRAGMENT_SETTING -> { settingFragment }
+                else -> throw IllegalArgumentException("Invalid fragment id : $id")
+            })
+            changeTabResource(id)
         }
     }
 
     private fun changeTabResource(id: Int) {
-        val tabMap = mapOf (
+        val tabMap = mapOf(
             FRAGMENT_REPORT to binding.asDetailTabReport,
             FRAGMENT_LIVE to binding.asDetailTabLive,
-            FRAGMENT_LIFE to binding.asDetailTabLife
+            FRAGMENT_SETTING to binding.asDetailTabSetting
         )
 
         val selectedTab = tabMap[id] ?: throw IllegalArgumentException("Invalid fragment id: $id")
 
         tabMap.values.forEach { tab ->
-            tab.background = if (tab == selectedTab) {getDr(R.drawable.ae_detail_tap_enable)}
-            else { null }
+            tab.background = if (tab == selectedTab) {
+                getDr(R.drawable.ae_detail_tap_enable)
+            } else {
+                null
+            }
 
-            tab.setTextColor(if (tab == selectedTab) {getColor(R.color.white)}
-            else { getColor(R.color.ae_sub_color) })
+            tab.setTextColor(
+                if (tab == selectedTab) {
+                    getColor(R.color.white)
+                } else {
+                    getColor(R.color.ae_sub_color)
+                }
+            )
         }
     }
 
     private fun getDr(id: Int): Drawable? {
-        return ResourcesCompat.getDrawable(resources,id,null)
+        return ResourcesCompat.getDrawable(resources, id, null)
+    }
+
+    fun isRefreshable(): Boolean {
+        return if (System.currentTimeMillis() - lastRefreshTime > 1000 * 30) {
+            lastRefreshTime = System.currentTimeMillis()
+            true
+        } else {
+            TimberUtil().i("eyetest", "Not Refreshable")
+            false
+        }
+    }
+
+    private fun applyMeasuredData() {
+        try {
+            if (!dataViewModel.fetchData().hasObservers()) {
+                dataViewModel.fetchData().observe(this) { result ->
+                    result?.let { measured ->
+                        when (measured) {
+                            // 통신 성공
+                            is BaseRepository.ApiState.Success -> {
+                                hidePb()
+                                val body = measured.data
+                                TimberUtil().i("eyetest", body.toString())
+                                entireData = body
+
+//                                if (isRefreshable()) {
+                                    reportFragment.onDataTransfer(
+                                        EyeDataModel.ReportFragment(
+                                            body.flags,
+                                            body.CAIValue,
+                                            body.CAILvl,
+                                            body.virusValue,
+                                            body.virusLvl,
+                                            body.pm10p0Value
+                                        )
+                                    )
+
+                                    liveFragment.onDataTransfer(entireData)
+
+                                    if (currentFragment == -1) {
+                                        tabItemSelected(FRAGMENT_REPORT)
+                                    }
+
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    RDBLogcat.writeEyeMeasured(this@EyeDetailActivity,body.toString())
+                                }
+//                                }
+                            }
+
+                            is BaseRepository.ApiState.Error -> {
+                                hidePb()
+                                TimberUtil().e("eyetest", measured.errorMessage)
+                            }
+
+                            is BaseRepository.ApiState.Loading -> showPb()
+                        }
+                    }
+                }
+            }
+        } catch (e: IOException) {
+            TimberUtil().e("eyetest", "IOException $entireData ${e.stackTraceToString()}")
+            hidePb()
+        } catch (e: NullPointerException) {
+            TimberUtil().e("eyetest", "NullPointerException $entireData ${e.stackTraceToString()}")
+            hidePb()
+        } catch (e: IndexOutOfBoundsException) {
+            TimberUtil().e(
+                "eyetest", "IndexOutOfBoundsException $entireData ${e.stackTraceToString()}")
+            hidePb()
+        }
+    }
+
+    private fun showPb() {
+        binding.aeDetailPb.bringToFront()
+        binding.aeDetailPb.visibility = View.VISIBLE
+        binding.eyeDetailContainer.isEnabled = false
+        binding.aeDetailFrame.isEnabled = false
+    }
+
+    private fun hidePb() {
+        binding.aeDetailPb.visibility = View.GONE
+        binding.eyeDetailContainer.isEnabled = true
+        binding.aeDetailFrame.isEnabled = true
     }
 }

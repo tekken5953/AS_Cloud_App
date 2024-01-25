@@ -1,4 +1,4 @@
-package app.utils
+package app.airsignal.weather.util
 
 import android.os.SystemClock
 import android.view.View

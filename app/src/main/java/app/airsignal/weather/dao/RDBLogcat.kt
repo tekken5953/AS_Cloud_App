@@ -4,7 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
-import app.core_databse.db.SharedPreferenceManager
+import app.airsignal.weather.as_eye.dao.EyeDataModel
+import app.airsignal.weather.db.SharedPreferenceManager
 import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -234,6 +235,16 @@ object RDBLogcat {
                 .child(modify(sort))
                 .child(getTime())
                 .setValue(modify(msg))
+        } catch (e: DatabaseException) { e.printStackTrace() }
+    }
+
+    fun writeEyeMeasured(context: Context, data: String) {
+        try {
+            default(context)
+                .child("as-eye")
+                .child(getDate())
+                .child(getTime())
+                .setValue(data)
         } catch (e: DatabaseException) { e.printStackTrace() }
     }
 
