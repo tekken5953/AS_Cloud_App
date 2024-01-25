@@ -10,7 +10,6 @@
             style="@style/basicMediumTextView"
             android:layout_centerVertical="true"
             android:layout_marginStart="20dp"
-            android:text="@string/temp"
             android:textColor="@color/ae_sub_color"
             android:textSize="16sp" />
 
@@ -20,7 +19,6 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="18dp"
-            android:text="℃"
             android:textColor="@color/ae_sub_color"
             android:textSize="14sp" />
 

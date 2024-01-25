@@ -184,10 +184,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/pm_graph_bg"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/reportVirusContainer"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="30dp">
+                >
                 <TextView
                     android:id="@+id/pmChartTitle"
                     style="@style/basicTextView"
@@ -215,6 +214,16 @@
                     android:orientation="horizontal" />
             </RelativeLayout>
 
+            <RelativeLayout
+                android:id="@+id/reportLogContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toBottomOf="@+id/pmChartContainer"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="30dp">
+
+            </RelativeLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

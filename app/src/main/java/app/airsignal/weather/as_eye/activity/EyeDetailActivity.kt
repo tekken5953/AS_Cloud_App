@@ -92,6 +92,7 @@ class EyeDetailActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        @Suppress("DEPRECATION")
         super.onBackPressed()
         backToList()
     }
