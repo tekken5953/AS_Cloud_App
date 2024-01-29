@@ -3,10 +3,12 @@ package app.airsignal.weather.as_eye.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.databinding.DataBindingUtil
@@ -77,7 +79,7 @@ class EyeListActivity : AppCompatActivity() {
         addListItem(false, "1층", "AS-123456", isReport = true, isPower = true)
         addListItem(true, "2층", "AS-345678", isReport = false, isPower = false)
         addListItem(false, "3층", "AS-678908", isReport = false, isPower = false)
-        addListItem(false, "", null, isReport = false, isPower = false)
+        addListItem(false, "", null, isReport = false, isPower = true)
 
         allDevicesList.addAll(deviceListItem)
         deviceListAdapter.notifyDataSetChanged()
@@ -92,6 +94,9 @@ class EyeListActivity : AppCompatActivity() {
                     }
                     startActivity(intent)
                     finish()
+                } else {
+                    val intent = Intent(this@EyeListActivity, AddEyeDeviceActivity::class.java)
+                    startActivity(intent)
                 }
             }
         })

@@ -202,13 +202,6 @@ class EyeDataModel {
         val earthquakeEnabled: Int  // 0 or 1
     )
 
-    data class Wifi(
-        @SerializedName("ssid")
-        val ssid: String,
-        @SerializedName("password")
-        val password: String
-    )
-
     data class Ble(
         @SerializedName("bleEnabled")
         val bleEnabled: Int,    // 0 or 1
@@ -256,5 +249,11 @@ class EyeDataModel {
     data class Group(
         var isChecked: Boolean,
         val device: Device
+    )
+
+    data class Wifi(
+        val ssid: String,
+        val level: Int,
+        val capability: String
     )
 }

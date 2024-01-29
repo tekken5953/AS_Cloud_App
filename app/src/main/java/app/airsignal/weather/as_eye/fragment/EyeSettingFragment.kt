@@ -10,7 +10,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
-import app.airsignal.weather.databinding.EyeDetailLifeFragmentBinding
 import app.airsignal.weather.databinding.EyeSettingFragmentBinding
 
 class EyeSettingFragment : Fragment() {

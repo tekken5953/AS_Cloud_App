@@ -57,36 +57,40 @@ class EyeDeviceAdapter(
             deviceName.text = dao.alias
             serial.text = dao.serial.serial
 
-            dao.serial.power.let {
-                if (it) {
-                    power.visibility = View.VISIBLE
-                    container.background = getRs(R.drawable.ae_device_bg_e)
-                } else {
-                    power.visibility = View.GONE
-                    container.background = getRs(R.drawable.ae_device_bg_d)
-                }
-            }
+
 
             if (dao.alias == "") {
                 deviceName.visibility = View.GONE
                 serial.visibility = View.GONE
                 addDevice.visibility = View.VISIBLE
+                report.visibility = View.GONE
+                master.visibility = View.GONE
             } else {
                 deviceName.visibility = View.VISIBLE
                 serial.visibility = View.VISIBLE
                 addDevice.visibility = View.GONE
-            }
 
-            if (dao.serial.report) {
-                report.visibility = View.VISIBLE
-            } else {
-                report.visibility = View.GONE
-            }
+                if (dao.serial.report) {
+                    report.visibility = View.VISIBLE
+                } else {
+                    report.visibility = View.GONE
+                }
 
-            if (dao.isMaster) {
-                master.visibility = View.VISIBLE
-            } else {
-                master.visibility = View.GONE
+                if (dao.isMaster) {
+                    master.visibility = View.VISIBLE
+                } else {
+                    master.visibility = View.GONE
+                }
+
+                dao.serial.power.let {
+                    if (it) {
+                        power.visibility = View.VISIBLE
+                        container.background = getRs(R.drawable.ae_device_bg_e)
+                    } else {
+                        power.visibility = View.GONE
+                        container.background = getRs(R.drawable.ae_device_bg_d)
+                    }
+                }
             }
 
             itemView.setOnClickListener {
