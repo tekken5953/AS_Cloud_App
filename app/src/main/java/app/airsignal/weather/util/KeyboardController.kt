@@ -21,6 +21,7 @@ object KeyboardController {
     // 키보드 내리기
     fun onKeyboardDown(context: Context, et: EditText) {
         val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        et.clearFocus()
         inputMethodManager.hideSoftInputFromWindow(et.windowToken, 0)
     }
 }

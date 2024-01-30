@@ -1,22 +1,17 @@
 package app.airsignal.weather.as_eye.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.util.OnAdapterItemClick
-import java.util.*
 
 class AddDeviceWifiAdapter(
     private val context: Context,
@@ -56,10 +51,17 @@ class AddDeviceWifiAdapter(
 
         fun bind(dao: EyeDataModel.Wifi) {
             ssid.text = dao.ssid
-            level.setImageDrawable(parseLevel(dao.level))
-            capability.visibility = if (isCapability(dao.capability)) View.VISIBLE else View.GONE
-
-            isCapability = isCapability(dao.capability)
+            dao.level?.let {
+                level.setImageDrawable(parseLevel(it))
+            } ?: run {
+                level.visibility = View.GONE
+            }
+            dao.capability?.let {
+                capability.visibility = if (isCapability(it)) View.VISIBLE else View.GONE
+                isCapability = isCapability(it)
+            } ?: run {
+                capability.visibility = View.GONE
+            }
 
             connect.setOnClickListener {
                 val position = bindingAdapterPosition
@@ -75,7 +77,7 @@ class AddDeviceWifiAdapter(
     }
 
     // 비밀번호 유무
-    private fun isCapability(capabilities: String): Boolean {
+    fun isCapability(capabilities: String): Boolean {
         return capabilities.contains("WPA") || capabilities.contains("WPA2") || capabilities.contains(
             "WEP"
         )

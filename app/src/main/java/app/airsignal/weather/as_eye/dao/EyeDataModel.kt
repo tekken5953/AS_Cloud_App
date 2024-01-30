@@ -253,7 +253,7 @@ class EyeDataModel {
 
     data class Wifi(
         val ssid: String,
-        val level: Int,
-        val capability: String
+        val level: Int?,
+        val capability: String?
     )
 }

@@ -61,4 +61,5 @@
     <color name="main_gray_color">#A7A7A7</color>
 
     <color name="graph_blue">#2997FD</color>
+    <color name="eye_btn_disable_color">#9C9C9C</color>
 </resources>

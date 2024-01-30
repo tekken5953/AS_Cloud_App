@@ -967,6 +967,7 @@ class MainActivity
             override fun onSingleClick(v: View?) {
                 if (binding.nestedAirHelpPopup.alpha == 0f) {
                     val fadeIn = AnimationUtils.loadAnimation(this@MainActivity, R.anim.fade_in)
+                    fadeIn.duration = 400
                     // 팝업 다이얼로그 생성
                     binding.nestedAirHelpPopup.apply {
                         bringToFront()
