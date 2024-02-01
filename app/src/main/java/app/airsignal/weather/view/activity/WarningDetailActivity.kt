@@ -6,16 +6,18 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
-import app.airsignal.weather.address.AddressFromRegex
-import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.viewmodel.GetWarningViewModel
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.WarningDetailAdapter
+import app.airsignal.weather.address.AddressFromRegex
 import app.airsignal.weather.databinding.ActivityWarningDetailBinding
-import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.db.sp.GetAppInfo.getNotificationAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getWarningFixed
+import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
+import app.airsignal.weather.viewmodel.GetWarningViewModel
+import org.angmarch.views.NiceSpinner
+import org.angmarch.views.OnSpinnerItemSelectedListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 
@@ -39,12 +41,6 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
 
         binding.warningBack.setOnClickListener { finish() }
 
-        binding.warningMainLayout.setOnClickListener {
-            if (binding.warningAddr.isShowing) {
-                binding.warningAddr.dismiss()
-            }
-        }
-
         val regexAddress = if (intent.extras?.getBoolean("isMain") == true) {
             AddressFromRegex(getUserLastAddress(this)).getWarningAddress()
         } else { getWarningFixed(this) }
@@ -54,17 +50,23 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             if (regexAddress != "Error") regexAddress
             else getNotificationAddress(this)
 
-        binding.warningAddr.selectItemByIndex(parseStringToIndex(regexAddr))
         warningViewModel.loadDataResult(parseRegionToCode(regexAddr))
 
-        binding.warningAddr.setOnSpinnerItemSelectedListener<String> {
-                _, _, _, newText ->
-            warningViewModel.loadDataResult(parseRegionToCode(newText))
-        }
 
         binding.warningNoResult.setOnClickListener {
-            binding.warningAddr.selectItemByIndex(0)
+            binding.warningAddr.selectedIndex = 0
             warningViewModel.loadDataResult(109)
+        }
+
+        binding.warningAddr.onSpinnerItemSelectedListener = object : OnSpinnerItemSelectedListener {
+            override fun onItemSelected(
+                parent: NiceSpinner?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                warningViewModel.loadDataResult(parseStringToIndex(warningList[position]))
+            }
         }
     }
 

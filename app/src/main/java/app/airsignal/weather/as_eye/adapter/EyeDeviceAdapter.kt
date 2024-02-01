@@ -94,7 +94,7 @@ class EyeDeviceAdapter(
             }
 
             itemView.setOnClickListener {
-                val position = bindingAdapterPosition
+                val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try {
                         if (dao.serial.power) {

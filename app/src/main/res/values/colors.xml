@@ -62,4 +62,6 @@
 
     <color name="graph_blue">#2997FD</color>
     <color name="eye_btn_disable_color">#9C9C9C</color>
+    <color name="eye_et_enable_color">#802997FD</color>
+    <color name="eye_view_default">#EBEBEB</color>
 </resources>

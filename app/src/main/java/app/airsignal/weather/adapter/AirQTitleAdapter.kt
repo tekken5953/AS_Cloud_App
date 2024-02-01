@@ -67,7 +67,7 @@ class AirQTitleAdapter(private val context: Context, list: ArrayList<AdapterMode
             }
 
             itemView.setOnClickListener {
-                val position = bindingAdapterPosition
+                val position = adapterPosition
 
                 if (position != RecyclerView.NO_POSITION) {
                     try {

@@ -16,11 +16,19 @@ import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.databinding.FragmentAddDeviceSerialBinding
 import app.airsignal.weather.util.KeyboardController
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.*
 
 
 class AddDeviceSerialFragment : Fragment() {
     private lateinit var parentActivity: AddEyeDeviceActivity
     private lateinit var binding : FragmentAddDeviceSerialBinding
+
+    private val ble by lazy { parentActivity.ble }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -44,8 +52,17 @@ class AddDeviceSerialFragment : Fragment() {
         val nextBtn = binding.addSerialBtn
         nextBtn.setOnClickListener {
             if (nextBtn.isEnabled) {
-                parentActivity.transactionFragment(AddDeviceBleFragment())
-                KeyboardController.onKeyboardDown(requireContext(), binding.addSerialEt)
+                val perm = RequestPermissionsUtil(parentActivity)
+                if (perm.isGrantBle()) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        ble.serial = binding.addSerialEt.text.toString()
+                        delay(1000)
+                        parentActivity.transactionFragment(AddDeviceBleFragment())
+                        KeyboardController.onKeyboardDown(requireContext(), binding.addSerialEt)
+                    }
+                } else {
+                    perm.requestBlePermissions()
+                }
             }
         }
 
@@ -54,7 +71,7 @@ class AddDeviceSerialFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 s?.let {
-                    if (s.length == 11) {
+                    if (s.length > 1) {
                         binding.addSerialBtn.isEnabled = true
                         binding.addSerialBtn.setTextColor(requireContext().getColor(R.color.white))
                     } else {
@@ -67,7 +84,12 @@ class AddDeviceSerialFragment : Fragment() {
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+//                if (s != null && s.isNotEmpty()) {
+//                    val containsLowerCase = s.contains(Regex("[a-z]"))
+//                    if (containsLowerCase) s.replace(0, s.length, s.toString().uppercase())
+//                }
+            }
         })
 
         binding.addSerialEt.setOnTouchListener { _, motionEvent ->
@@ -77,6 +99,8 @@ class AddDeviceSerialFragment : Fragment() {
                     - binding.addSerialEt.compoundDrawablesRelative[2].bounds.width()
                 ) {
                     binding.addSerialEt.text.clear()
+                    binding.addSerialEt.clearFocus()
+                    KeyboardController.onKeyboardDown(requireContext(),binding.addSerialEt)
                     return@setOnTouchListener true
                 }
             } catch (e: Exception) {

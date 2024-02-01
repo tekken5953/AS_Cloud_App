@@ -4,15 +4,14 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import app.airsignal.weather.R
+import app.airsignal.weather.as_eye.bluetooth.BleClient
 import app.airsignal.weather.as_eye.fragment.AddDeviceSerialFragment
-import app.airsignal.weather.as_eye.fragment.AddDeviceWifiFragment
 import app.airsignal.weather.databinding.ActivityAddEyeDeviceBinding
 import app.airsignal.weather.databinding.IncludeEyeAddItemBinding
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +23,8 @@ class AddEyeDeviceActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAddEyeDeviceBinding
     private lateinit var includedBinding: IncludeEyeAddItemBinding
     private lateinit var fragmentManager: FragmentManager
+
+    lateinit var ble: BleClient
 
     override fun onStart() {
         super.onStart()
@@ -41,6 +42,8 @@ class AddEyeDeviceActivity : AppCompatActivity() {
                 supportFragmentManager.popBackStack()
             } else { finish() }
         }
+
+        ble = BleClient(this).getInstance()
     }
 
     fun transactionFragment(frag: Fragment) {
@@ -85,5 +88,15 @@ class AddEyeDeviceActivity : AppCompatActivity() {
 
     fun hidePb() {
         binding.addEyeDeviceLoading.visibility = View.GONE
+    }
+
+    fun hideTopBar() {
+        binding.addEyeTopContainer.visibility = View.GONE
+        binding.addEyeTopContainer.animation = AnimationUtils.loadAnimation(this,R.anim.hide_bottom_to_top)
+    }
+
+    fun showTopBar() {
+        binding.addEyeTopContainer.visibility = View.VISIBLE
+        binding.addEyeTopContainer.animation = AnimationUtils.loadAnimation(this,R.anim.hide_bottom_to_top)
     }
 }

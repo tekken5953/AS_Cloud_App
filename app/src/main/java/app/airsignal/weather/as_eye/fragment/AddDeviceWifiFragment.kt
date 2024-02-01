@@ -2,7 +2,6 @@ package app.airsignal.weather.as_eye.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,6 +25,7 @@ class AddDeviceWifiFragment : Fragment() {
     private val wifiAdapter by lazy { AddDeviceWifiAdapter(requireContext(),wifiList) }
 
     private val wifiManager by lazy {parentActivity.application.getSystemService(Context.WIFI_SERVICE) as WifiManager}
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is AddEyeDeviceActivity) parentActivity = context
@@ -54,11 +54,7 @@ class AddDeviceWifiFragment : Fragment() {
         wifiAdapter.setOnItemClickListener(object : OnAdapterItemClick.OnAdapterItemClick{
             override fun onItemClick(v: View, position: Int) {
                 wifiList[position].capability?.let { cap ->
-                    if (wifiAdapter.isCapability(cap)) {
-                        parentActivity.transactionFragment(AddDeviceWifiPasswordFragment())
-                    } else {
-                        parentActivity.transactionFragment(AddDeviceCompleteFragment())
-                    }
+                    parentActivity.transactionFragment(AddDeviceWifiPasswordFragment())
                 }
             }
         })
@@ -72,9 +68,9 @@ class AddDeviceWifiFragment : Fragment() {
 
     @SuppressLint("MissingPermission", "NotifyDataSetChanged")
     private fun changeScanResult() {
+        binding.addWifiConnectRv.visibility = View.VISIBLE
         wifiList.clear()
         wifiAdapter.notifyDataSetChanged()
-        binding.addWifiConnectRv.visibility = View.VISIBLE
         wifiManager.scanResults.forEachIndexed { index, data ->
             if (data.SSID != "") {
                 addWifi(data.SSID, data.level, data.capabilities)

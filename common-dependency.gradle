@@ -1,9 +1,0 @@
-dependencies {
-    implementation "androidx.core:core-ktx:$core_ktx_ext"
-    implementation "androidx.appcompat:appcompat:$appcompat_ext"
-    implementation "com.google.android.material:material:$material_ext"
-    implementation "androidx.constraintlayout:constraintlayout:$constraint_layout_ext"
-    testImplementation "junit:junit:$test_junit_ext"
-    androidTestImplementation "androidx.test.ext:junit:$android_test_junit_ext"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$android_test_espresso_ext"
-}

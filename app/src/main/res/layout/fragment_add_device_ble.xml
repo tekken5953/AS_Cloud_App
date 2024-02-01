@@ -52,7 +52,6 @@
                 android:id="@+id/addBleEyeSerial"
                 style="@style/basicTextView"
                 android:layout_marginTop="20dp"
-                android:text="AOA12345567"
                 android:textColor="#9C9C9C"
                 android:textSize="16sp" />
         </LinearLayout>

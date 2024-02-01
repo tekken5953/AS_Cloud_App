@@ -9,30 +9,36 @@
         android:background="@color/white"
         tools:context=".as_eye.activity.AddEyeDeviceActivity">
 
-        <include
-            android:id="@+id/addEyeDeviceTop"
-            layout="@layout/include_eye_add_item"
+        <LinearLayout
+            android:id="@+id/addEyeTopContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:orientation="vertical">
+            <include
+                android:id="@+id/addEyeDeviceTop"
+                layout="@layout/include_eye_add_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-        <ProgressBar
-            android:id="@+id/addEyeDevicePb"
-            android:layout_width="200dp"
-            android:layout_height="6dp"
-            style="@style/ProgressBarHorizontal"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/addEyeDeviceTop"
-            android:layout_marginTop="28dp"
-            android:progress="0"
-            android:background="@drawable/add_eye_device_progress_bg"
-            android:progressTint="@color/graph_blue"/>
+            <ProgressBar
+                android:id="@+id/addEyeDevicePb"
+                android:layout_width="200dp"
+                android:layout_height="6dp"
+                style="@style/ProgressBarHorizontal"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="28dp"
+                android:progress="0"
+                android:background="@drawable/add_eye_device_progress_bg"
+                android:progressTint="@color/graph_blue"/>
+        </LinearLayout>
+
 
         <FrameLayout
             android:id="@+id/addEyeDeviceFrame"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/addEyeDevicePb"
+            app:layout_constraintTop_toBottomOf="@+id/addEyeTopContainer"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginTop="30dp"/>
 

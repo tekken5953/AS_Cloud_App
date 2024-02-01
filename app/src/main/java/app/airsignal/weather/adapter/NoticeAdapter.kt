@@ -53,12 +53,12 @@ class NoticeAdapter(private val context: Context, list: ArrayList<ApiModel.Notic
             title.text = dao.title
             category.text = dao.category
 
-            if (bindingAdapterPosition == 0) {
+            if (adapterPosition == 0) {
                 date.setTextColor(context.getColor(R.color.main_blue_color))
             }
 
             itemView.setOnClickListener {
-                val position = bindingAdapterPosition
+                val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onClickListener.onItemClick(it, position)
                 }

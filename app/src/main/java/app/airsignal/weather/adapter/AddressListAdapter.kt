@@ -114,8 +114,8 @@ class AddressListAdapter(
 
                     apply.setOnClickListener {
                         db.deleteFromAddress(address.text.toString())
-                        mList.removeAt(bindingAdapterPosition)
-                        notifyItemRemoved(bindingAdapterPosition)
+                        mList.removeAt(adapterPosition)
+                        notifyItemRemoved(adapterPosition)
                         updateCheckBoxVisible(false)
                         this.dismiss()
                     }
@@ -125,7 +125,7 @@ class AddressListAdapter(
             }
 
             itemView.setOnClickListener {
-                val position = bindingAdapterPosition
+                val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try { onClickListener.onItemClick(it, position) }
                     catch (e: UninitializedPropertyAccessException) { e.printStackTrace() }

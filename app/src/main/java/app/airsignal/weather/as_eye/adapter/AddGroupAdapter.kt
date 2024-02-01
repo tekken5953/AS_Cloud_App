@@ -62,7 +62,7 @@ class AddGroupAdapter(
             }
 
             itemView.setOnClickListener {
-                val position = bindingAdapterPosition
+                val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try { onClickListener.onItemClick(it, position) }
                     catch (e: UninitializedPropertyAccessException) { e.printStackTrace() }
