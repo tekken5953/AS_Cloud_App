@@ -26,6 +26,17 @@ class BleClient(private val activity: Activity) {
     var serial = "Unknown"
     var scanning = false
 
+    companion object {
+        const val UUID_SSID = "37BE4E09-776F-4265-A6EE-6F3396E26639"
+        const val UUID_PWD = "557E202B-A185-4098-B5FB-BA1B61F699EA"
+        const val UUID_CONNECTING = "FC245120-55EC-4508-8BA8-A7B1C448C5ED"
+    }
+
+    private enum class BleProtocolType {
+        NOTIFY, READ, WRITE, WRITE_NO_RESPONSE, BROADCAST, INDICATE,
+        EXTENDED_PROPS, SIGNED_WRITE, READ_AND_WRITE, UNKNOWN
+    }
+
     fun getInstance(): BleClient {
         instance.run {
             init(activity.application)
@@ -107,12 +118,12 @@ class BleClient(private val activity: Activity) {
             gatt.services.forEach { service ->
                 service.characteristics.forEach { char ->
                     val parse = parseProperty(char.properties)
-                    if (parse == "WRITE" ||
-                        parse == "WRITE NO RESPONSE" ||
-                        parse == "READ & WRITE"
+                    if (parse == BleProtocolType.WRITE ||
+                        parse == BleProtocolType.WRITE_NO_RESPONSE ||
+                        parse == BleProtocolType.READ_AND_WRITE
                     ) {
                         when (val uuid = char.uuid.toString()) {
-                            "37BE4E09-776F-4265-A6EE-6F3396E26639".lowercase(
+                            UUID_SSID.lowercase(
                                 Locale.getDefault()
                             ) -> {
                                 TimberUtil().d("testtest", "find write ssid service - $serial")
@@ -161,11 +172,11 @@ class BleClient(private val activity: Activity) {
             gatt.services.forEach { service ->
                 service.characteristics.forEach { char ->
                     val parse = parseProperty(char.properties)
-                    if (parse == "WRITE" || parse == "WRITE NO RESPONSE" ||
-                        parse == "READ & WRITE"
+                    if (parse == BleProtocolType.WRITE || parse == BleProtocolType.WRITE_NO_RESPONSE ||
+                        parse == BleProtocolType.READ_AND_WRITE
                     ) {
                         when (val uuid = char.uuid.toString()) {
-                            "557E202B-A185-4098-B5FB-BA1B61F699EA".lowercase(
+                            UUID_PWD.lowercase(
                                 Locale.getDefault()
                             ) -> {
                                 TimberUtil().d("testtest", "find write pwd service - $pwd")
@@ -191,11 +202,11 @@ class BleClient(private val activity: Activity) {
         gatt?.let {
             it.services.forEach { service ->
                 service.characteristics.forEach { char ->
-                    if (parseProperty(char.properties) == "READ" ||
-                        parseProperty(char.properties) == "READ & WRITE"
+                    if (parseProperty(char.properties) == BleProtocolType.READ ||
+                        parseProperty(char.properties) == BleProtocolType.READ_AND_WRITE
                     ) {
                         val uuid = char.uuid.toString()
-                        if (uuid == "FC245120-55EC-4508-8BA8-A7B1C448C5ED".lowercase(Locale.getDefault())
+                        if (uuid == UUID_CONNECTING.lowercase(Locale.getDefault())
                         ) {
                             instance.read(
                                 device,
@@ -214,37 +225,37 @@ class BleClient(private val activity: Activity) {
         ToastUtils(context).showMessage(s)
     }
 
-    private fun parseProperty(i: Int): String {
+    private fun parseProperty(i: Int): BleProtocolType {
         return when (i) {
             BluetoothGattCharacteristic.PROPERTY_NOTIFY -> {
-                "NOTIFY"
+                BleProtocolType.NOTIFY
             }
             BluetoothGattCharacteristic.PROPERTY_READ -> {
-                "READ"
+                BleProtocolType.READ
             }
             BluetoothGattCharacteristic.PROPERTY_WRITE -> {
-                "WRITE"
+                BleProtocolType.WRITE
             }
             BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE -> {
-                "WRITE NO RESPONSE"
+                BleProtocolType.WRITE_NO_RESPONSE
             }
             BluetoothGattCharacteristic.PROPERTY_BROADCAST -> {
-                "BROADCAST"
+                BleProtocolType.BROADCAST
             }
             BluetoothGattCharacteristic.PROPERTY_INDICATE -> {
-                "INDICATE"
+                BleProtocolType.INDICATE
             }
             BluetoothGattCharacteristic.PROPERTY_EXTENDED_PROPS -> {
-                "EXTENDED_PROPS"
+                BleProtocolType.EXTENDED_PROPS
             }
             BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE -> {
-                "SIGNED WRITE"
+                BleProtocolType.SIGNED_WRITE
             }
             10 -> {
-                "READ & WRITE"
+                BleProtocolType.READ_AND_WRITE
             }
             else -> {
-                "UNKNOWN $i"
+                BleProtocolType.UNKNOWN
             }
         }
     }

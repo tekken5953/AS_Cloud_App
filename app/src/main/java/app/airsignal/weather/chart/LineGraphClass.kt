@@ -3,6 +3,7 @@ package app.airsignal.weather.chart
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Typeface
 import android.view.animation.AlphaAnimation
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -17,7 +18,7 @@ import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 
 
-class LineGraphClass(private val context: Context, private val isGradient: Boolean) {
+class LineGraphClass(private val context: Context) {
     private lateinit var mChart: LineChart
     private lateinit var lineData: LineData
 
@@ -29,7 +30,7 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
         setYAxis()
         setXAxis()
         chartView.setNoDataText("데이터를 불러오는 중입니다")
-        chartView.setNoDataTextColor(Color.WHITE)
+        chartView.setNoDataTextColor(context.getColor(R.color.eye_graph_gray))
         return this
     }
 
@@ -37,7 +38,7 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
         try {
             mChart.apply {
 //                setBackgroundResource(R.drawable.pm_graph_bg)
-                setBackgroundColor(Color.TRANSPARENT) // 배경 색
+                setBackgroundColor(Color.WHITE) // 배경 색
                 legend.isEnabled = false
                 description.isEnabled = false // description 표시
                 setTouchEnabled(true) // 그래프 터치
@@ -77,14 +78,14 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
         mChart.xAxis.apply {
             position = XAxis.XAxisPosition.BOTTOM // X축을 그래프 아래로 위치하기
             textSize = 12f // 레이블 텍스트 사이즈
-            textColor = Color.WHITE // 레이블 텍스트 색
-            axisLineColor = Color.WHITE // 축 색
+            textColor = context.getColor(R.color.eye_graph_gray) // 레이블 텍스트 색
             setDrawAxisLine(false) // 그래프 뒷 배경의 그리드 표시
             setDrawGridLines(false) // 그래프 뒷 배경의 그리드 표시
-            setLabelCount(24,false)
+            setLabelCount(24, false)
             isGranularityEnabled = false // 축 레이블 표시 간격
             granularity = 1f // 축 레이블 표시 간격
             setDrawLabels(true)
+            typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_medium.ttf")
             setAvoidFirstLastClipping(false)
             valueFormatter = XAxisValueFormat()
         }
@@ -93,19 +94,19 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
     private fun setYAxis() {
         mChart.axisLeft.apply {
             textSize = 12f
-            textColor = Color.WHITE
-            axisLineColor = Color.WHITE
+            textColor = context.getColor(R.color.eye_graph_gray)
             setDrawAxisLine(false)
             setDrawGridLines(true)
             spaceMax = 5f
             labelCount = 5
-            enableGridDashedLine(25f,15f,0f)
-            gridColor = Color.parseColor("#80FFFFFF")
+            typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_medium.ttf")
+            enableGridDashedLine(25f, 15f, 0f)
+            gridColor = context.getColor(R.color.eye_view_default)
         }
     }
 
     private fun getBlue(): Int {
-        return ResourcesCompat.getColor(context.resources, R.color.graph_blue,null)
+        return ResourcesCompat.getColor(context.resources, R.color.graph_blue, null)
     }
 
     fun addDataSet(sort: String, entry: ArrayList<Entry>): LineGraphClass {
@@ -114,31 +115,35 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
             dataSet.apply {
                 label = sort
                 mode = LineDataSet.Mode.LINEAR // 선 그리는 방식
-                color = Color.TRANSPARENT // 선 색
-                valueTextColor = Color.WHITE // 데이터 수치 텍스트 색
+                color = getBlue() // 선 색
+                valueTextColor = getBlue() // 데이터 수치 텍스트 색
                 valueTextSize = 14f // 데이터 수치 텍스트 사이즈
-                lineWidth = 2f // 선 굵기
-                setDrawCircleHole(false)
+                lineWidth = 1.5f // 선 굵기
+                setDrawCircleHole(true)
                 setDrawCircles(true)
                 highLightColor = Color.TRANSPARENT
                 valueFormatter = DataSetValueFormat()
                 circleRadius = 6F
-                setCircleColor(Color.WHITE)
-                if (isGradient) {
-                    this.setDrawFilled(true)
-                    this.fillDrawable = ContextCompat.getDrawable(
-                        context,
-                        R.drawable.graph_fill_gradient
-                    )
-                }
+                setCircleColor(getBlue())
+                circleHoleColor = Color.WHITE
+                circleHoleRadius = 4.5F
+                valueTypeface =
+                    Typeface.createFromAsset(context.assets, "spoqa_hansansneo_medium.ttf")
+
+                this.setDrawFilled(true)
+                this.fillDrawable = ContextCompat.getDrawable(
+                    context,
+                    R.drawable.graph_fill_gradient
+                )
+
             }
             lineData.addDataSet(dataSet)
-            entry.forEach {
-                lineData.addEntry(it, 0)
-            }
+            entry.forEach { lineData.addEntry(it, 0) }
             lineData.notifyDataChanged()
             mChart.notifyDataSetChanged()
-        } catch (e: Exception) { e.stackTraceToString() }
+        } catch (e: Exception) {
+            e.stackTraceToString()
+        }
 
         return this
     }
@@ -164,7 +169,6 @@ class LineGraphClass(private val context: Context, private val isGradient: Boole
     //X축 엔트리 포멧
     inner class XAxisValueFormat : IndexAxisValueFormatter() {
         override fun getFormattedValue(value: Float): String {
-//            return chartTimeDivider(value)
             return "${if (value.toInt() + 1 == 24) 0 else value.toInt() + 1}시"
         }
     }

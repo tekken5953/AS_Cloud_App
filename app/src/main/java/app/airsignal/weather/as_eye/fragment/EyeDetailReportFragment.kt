@@ -68,8 +68,9 @@ class EyeDetailReportFragment : Fragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_detail_report_fragment, container, false)
 
-        pmGraphInstance = LineGraphClass(requireContext(),true)
+        pmGraphInstance = LineGraphClass(requireContext())
             .getInstance(binding.pmAvgLineChart)
+
         return binding.root
     }
 

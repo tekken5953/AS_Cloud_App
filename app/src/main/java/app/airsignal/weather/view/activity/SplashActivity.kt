@@ -83,9 +83,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
             EnterPageUtil(this@SplashActivity).toMain(
                 getUserLoginPlatform(this),inAppMsgList)
-        } else {
-            EnterPageUtil(this@SplashActivity).toPermission()
-        }
+        } else { EnterPageUtil(this@SplashActivity).toPermission() }
     }
 
     // 앱 버전 뷰모델 데이터 호출

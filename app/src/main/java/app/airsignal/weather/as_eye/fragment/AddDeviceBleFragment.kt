@@ -94,15 +94,16 @@ class AddDeviceBleFragment : Fragment() {
             TimberUtil().d("testtest", "onStartConnect Ble to ${ble.serial}")
             mainDispatcher.launch {
                 binding.addBleTitle.text = "블루투스를 연결중입니다"
-                delay(4000)
             }
         }
 
         override fun onConnectFail(bleDevice: BleDevice?, exception: BleException?) {
             TimberUtil().e("testtest", "onConnectFail Ble to ${bleDevice?.device?.name}")
-            binding.addBleTitle.text = "AS-Eye와 연결에\n실패했습니다"
-            requestReconnect(false)
-            ble.scanning = false
+            binding.addBleTitle.postDelayed({
+                binding.addBleTitle.text = "AS-Eye와 연결에\n실패했습니다"
+                requestReconnect(false)
+                ble.scanning = false
+            },4000)
         }
 
         override fun onConnectSuccess(bleDevice: BleDevice?, gatt: BluetoothGatt?, status: Int) {

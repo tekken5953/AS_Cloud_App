@@ -3,6 +3,7 @@ package app.airsignal.weather.view.activity
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
@@ -16,10 +17,11 @@ import app.airsignal.weather.db.sp.GetAppInfo.getWarningFixed
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.viewmodel.GetWarningViewModel
-import org.angmarch.views.NiceSpinner
 import org.angmarch.views.OnSpinnerItemSelectedListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
+import java.util.*
+
 
 class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     override val resID: Int get() = R.layout.activity_warning_detail
@@ -52,22 +54,17 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
 
         warningViewModel.loadDataResult(parseRegionToCode(regexAddr))
 
-
         binding.warningNoResult.setOnClickListener {
             binding.warningAddr.selectedIndex = 0
             warningViewModel.loadDataResult(109)
         }
 
-        binding.warningAddr.onSpinnerItemSelectedListener = object : OnSpinnerItemSelectedListener {
-            override fun onItemSelected(
-                parent: NiceSpinner?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                warningViewModel.loadDataResult(parseStringToIndex(warningList[position]))
-            }
-        }
+        val dataset: List<String> = resources.getStringArray(R.array.warning_address_list).asList()
+        binding.warningAddr.attachDataSource(dataset)
+
+        binding.warningAddr.onSpinnerItemSelectedListener =
+            OnSpinnerItemSelectedListener { _, _, position, _ ->
+                warningViewModel.loadDataResult(parseRegionToCode(dataset[position])) }
     }
 
     // 앱 버전 뷰모델 데이터 호출
