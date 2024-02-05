@@ -37,6 +37,6 @@ public interface MyApiImpl {
             @Query("code") int code);
 
     @GET("airsignal/current/{sn}") // Eye 측정 데이터 호출
-    Call<EyeDataModel.Measured> getMeasured(
+    Call<EyeDataModel.Measured> getEntire(
             @NotNull @Path("sn") String sn);
 }

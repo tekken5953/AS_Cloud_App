@@ -176,7 +176,7 @@
                     android:layout_alignStart="@+id/reportVirusSmile"
                     android:layout_alignEnd="@+id/reportVirusSmile"
                     android:layout_marginTop="8dp"
-                    android:text="에러"
+                    android:text="@string/error"
                     android:textColor="@color/white"
                     android:textSize="20sp" />
             </RelativeLayout>
@@ -232,7 +232,7 @@
                     style="@style/basicMediumTextView"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="19dp"
-                    android:text="소음 감지"
+                    android:text="@string/nose_detection"
                     android:textColor="@color/main_black"
                     android:textSize="16sp" />
 
@@ -260,7 +260,7 @@
                         style="@style/basicTextView"
                         android:layout_weight="0.35"
                         android:gravity="start"
-                        android:text="2024-02-04 12:31"
+                        android:text="24.02.04 12:31"
                         android:textColor="@color/eye_graph_gray"
                         android:textSize="14sp" />
 
@@ -292,7 +292,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
-                    android:text="전체 기록 보기"
+                    android:text="@string/view_full_history"
                     android:textColor="@color/eye_graph_gray"
                     android:textSize="14sp" />
             </RelativeLayout>

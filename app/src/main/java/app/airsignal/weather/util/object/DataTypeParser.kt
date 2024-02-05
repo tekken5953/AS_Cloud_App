@@ -37,6 +37,14 @@ object DataTypeParser {
         return mFormat.format(calendar.time)
     }
 
+    fun dateTimeString(format: String, date: LocalDateTime?): String {
+        @SuppressLint("SimpleDateFormat") val mFormat = SimpleDateFormat(format)
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = parseLocalDateTimeToLong(date ?: LocalDateTime.now())
+        }
+        return mFormat.format(calendar.time)
+    }
+
     /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트 **/
     fun applySkyText(context: Context, rain: String?, sky: String?, thunder: Double?): String {
         return if (rain != "없음") if ((thunder == null) || (thunder < 0.2))  rain ?: "없음" else  context.getString(R.string.thunder_sunny)
@@ -58,8 +66,8 @@ object DataTypeParser {
 
     fun koreaSky(sky: String?): String {
         val id = when(sky?.lowercase()) {
-            "sunny" -> "맑음"
-            "cloudy" -> "흐림"
+            "sunny","Sunny&Cloudy" -> "맑음"
+            "cloudy", -> "흐림"
             "rainy" -> "비"
             "snowy" -> "눈"
             "rainy/snowy" -> "비/눈"

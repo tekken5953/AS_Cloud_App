@@ -15,6 +15,7 @@ import app.airsignal.weather.db.sp.GetAppInfo.getUserTheme
 import app.airsignal.weather.db.sp.SetSystemInfo
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
+import kotlinx.coroutines.*
 
 /**
  * @author : Lee Jae Young
@@ -26,14 +27,13 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
     abstract val resID: Int
 
     protected fun initBinding() {
-        binding = DataBindingUtil.setContentView(this, resID)
-        binding.lifecycleOwner = this
+        binding = DataBindingUtil.setContentView(this@BaseActivity, resID)
+        binding.lifecycleOwner = this@BaseActivity
     }
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
-        val context = newBase ?: this
-
+        val context = newBase ?: applicationContext
         applyUserLanguage(context)
         applyUserFontScale(context)
         applyUserTheme(context)

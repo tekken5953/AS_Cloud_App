@@ -3,12 +3,14 @@ package app.airsignal.weather.view.custom_view
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import app.airsignal.weather.R
 import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
 import app.airsignal.weather.db.sp.SetSystemInfo
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
+import app.airsignal.weather.util.TimberUtil
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -20,6 +22,10 @@ class ShowDialogClass(private val activity: Activity) {
     private var builder: androidx.appcompat.app.AlertDialog.Builder =
         androidx.appcompat.app.AlertDialog.Builder(activity, R.style.AlertDialog)
     private lateinit var alertDialog: androidx.appcompat.app.AlertDialog
+
+    enum class DialogTransition {
+        END_TO_START, START_TO_END, BOTTOM_TO_TOP, TOP_TO_BOTTOM
+    }
 
     init {
         // 폰트 크기 설정
@@ -60,11 +66,20 @@ class ShowDialogClass(private val activity: Activity) {
     }
 
     /** 다이얼로그 뷰 갱신 **/
-    fun show(v: View, cancelable: Boolean) {
+    fun show(v: View, cancelable: Boolean, transition: DialogTransition?) {
         v.let {
             if(v.parent != null) (v.parent as ViewGroup).removeView(v)
             builder.setView(v).setCancelable(cancelable)
             alertDialog = builder.create()
+            transition?.let {
+                alertDialog.window?.attributes?.windowAnimations = when(it) {
+                    DialogTransition.END_TO_START -> { R.style.AlertDialogEndToStartAnimation }
+                    DialogTransition.START_TO_END -> { R.style.AlertDialogStartToEndAnimation }
+                    DialogTransition.TOP_TO_BOTTOM -> { R.style.AlertDialogTopToBottomAnimation }
+                    DialogTransition.BOTTOM_TO_TOP -> { R.style.AlertDialogBottomToTopAnimation }
+                }
+            }
+
             alertDialog.show()
         }
     }

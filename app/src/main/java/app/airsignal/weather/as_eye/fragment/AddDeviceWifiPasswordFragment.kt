@@ -94,10 +94,11 @@ class AddDeviceWifiPasswordFragment : Fragment() {
                         override fun onReadSuccess(data: ByteArray?) {
                             if (data?.toString(Charsets.UTF_8) == "1") {
                                 // 연결 됨
-                                confirmWifiConnect()
+                                inputDeviceAlias()
                             } else {
                                 // 연결 안됨
                                 mainDispatcher.launch {
+                                    parentActivity.hidePb()
                                     binding.addWifiPwdTitle.text = "입력하신 Wifi 정보가 올바르지 않습니다\n다시 시도해주세요"
                                     ble.disconnect()
                                     delay(2000)
@@ -109,6 +110,7 @@ class AddDeviceWifiPasswordFragment : Fragment() {
                         override fun onReadFailure(exception: BleException?) {
                             // 읽기 실패
                             mainDispatcher.launch {
+                                parentActivity.hidePb()
                                 binding.addWifiPwdTitle.text = "AS-Eye와 연결이 끊어졌습니다\n다시 시도해주세요"
                                 ble.disconnect()
                                 delay(2000)
@@ -129,6 +131,38 @@ class AddDeviceWifiPasswordFragment : Fragment() {
             status: Int
         ) {
             TimberUtil().e("testtest", "onDisConnected Ble from ${device?.device?.name}")
+        }
+    }
+
+    private fun inputDeviceAlias() {
+        parentActivity.hidePb()
+        parentActivity.changeTitleWithAnimation(
+            binding.addWifiPwdTitle,
+            "사용하실 기기명을\n입력해주세요",
+            true
+        )
+        binding.addWifiPwdEt.apply {
+            visibility = View.VISIBLE
+            inputType = InputType.TYPE_CLASS_TEXT
+            hint = "예) 거실,내 기기,1층 복도 등"
+            addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    s?.let { binding.addWifiPwdBtn.isEnabled = it.isNotEmpty() }
+                }
+                override fun afterTextChanged(s: Editable?) {}
+            })
+        }
+
+        binding.addWifiPwdBtn.visibility = View.VISIBLE
+        binding.addWifiPwdBtn.setOnClickListener {
+            // 서버에 기기 추가 요청
+            confirmWifiConnect()
         }
     }
 
@@ -272,8 +306,6 @@ class AddDeviceWifiPasswordFragment : Fragment() {
         binding.addWifiPwdBtn.animation = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_out)
 
         parentActivity.changeTitleWithAnimation(binding.addWifiPwdTitle, "기기로 등록 정보를\n전송중입니다",true)
-        binding.addCompleteContent.visibility = View.VISIBLE
-        parentActivity.changeTitleWithAnimation(binding.addCompleteContent,"전송완료 후 기기가 재부팅됩니다",true)
         parentActivity.changeProgressWithAnimation(90)
         parentActivity.showPb()
 
@@ -285,13 +317,10 @@ class AddDeviceWifiPasswordFragment : Fragment() {
     private fun confirmWifiConnect() {
         mainDispatcher.launch {
             parentActivity.changeProgressWithAnimation(100)
-            parentActivity.hidePb()
             delay(500)
             parentActivity.hideTopBar()
             binding.addWifiPwdTitle.visibility = View.GONE
             binding.addWifiPwdTitle.animation = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_out)
-            binding.addCompleteContent.visibility = View.GONE
-            binding.addCompleteContent.animation = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_out)
 
             withContext(Dispatchers.Main) {
                 delay(2000)

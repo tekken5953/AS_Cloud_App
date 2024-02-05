@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.as_eye.fragment.EyeDetailLiveFragment
@@ -91,6 +92,46 @@ class EyeDetailActivity : AppCompatActivity() {
         applyMeasuredData()
     }
 
+    private fun setAnimation(transaction: FragmentTransaction, from: Int, to: Int) {
+        var enterAnimation: Int? = null
+        var exitAnimation: Int? = null
+        when(to) {
+            FRAGMENT_REPORT -> {
+                if (from == FRAGMENT_LIVE) {
+                    enterAnimation = R.anim.enter_from_start
+                    exitAnimation = R.anim.exit_to_end
+                } else if (from == FRAGMENT_SETTING) {
+                    enterAnimation = R.anim.enter_from_start
+                    exitAnimation = R.anim.exit_to_end
+                }
+            }
+            FRAGMENT_LIVE -> {
+                if (from == FRAGMENT_REPORT) {
+                    enterAnimation = R.anim.enter_from_end
+                    exitAnimation = R.anim.exit_to_start
+                } else if (from == FRAGMENT_SETTING) {
+                    enterAnimation = R.anim.enter_from_start
+                    exitAnimation = R.anim.exit_to_end
+                }
+            }
+            FRAGMENT_SETTING -> {
+                if (from == FRAGMENT_LIVE) {
+                    enterAnimation = R.anim.enter_from_end
+                    exitAnimation = R.anim.exit_to_start
+                } else if (from == FRAGMENT_REPORT) {
+                    enterAnimation = R.anim.enter_from_end
+                    exitAnimation = R.anim.exit_to_start
+                }
+            }
+        }
+
+        enterAnimation?.let { enter ->
+            exitAnimation?.let { exit ->
+                transaction.setCustomAnimations(enter, exit)
+            }
+        }
+    }
+
     override fun onBackPressed() {
         @Suppress("DEPRECATION")
         super.onBackPressed()
@@ -103,23 +144,26 @@ class EyeDetailActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun transactionFragment(frag: Fragment) {
-        val transaction = supportFragmentManager.beginTransaction()
+    private fun transactionFragment(transaction: FragmentTransaction,frag: Fragment) {
         transaction.replace(R.id.aeDetailFrame, frag)
-        if (!supportFragmentManager.isStateSaved) {
-            transaction.commit()
-        }
+        transaction.commit()
     }
 
     private fun tabItemSelected(id: Int) {
         run {
+            val transaction = supportFragmentManager.beginTransaction()
+            val fromFragment = currentFragment
             currentFragment = id
-            transactionFragment(when (id) {
+
+            setAnimation(transaction,fromFragment, currentFragment)
+
+            transactionFragment(transaction, when (id) {
                 FRAGMENT_REPORT -> { reportFragment }
                 FRAGMENT_LIVE -> { liveFragment }
                 FRAGMENT_SETTING -> { settingFragment }
                 else -> throw IllegalArgumentException("Invalid fragment id : $id")
             })
+
             changeTabResource(id)
         }
     }

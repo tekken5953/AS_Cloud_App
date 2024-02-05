@@ -38,9 +38,7 @@ class AddEyeDeviceActivity : AppCompatActivity() {
         fragmentManager = supportFragmentManager
 
         includedBinding.includedEyeListBack.setOnClickListener {
-            if (supportFragmentManager.backStackEntryCount != 0) {
-                supportFragmentManager.popBackStack()
-            } else { finish() }
+
         }
 
         ble = BleClient(this).getInstance()
@@ -49,7 +47,6 @@ class AddEyeDeviceActivity : AppCompatActivity() {
     fun transactionFragment(frag: Fragment) {
         val transaction = fragmentManager.beginTransaction()
         transaction.add(R.id.addEyeDeviceFrame, frag)
-        transaction.addToBackStack(frag.javaClass.name)
         transaction.commit()
     }
 

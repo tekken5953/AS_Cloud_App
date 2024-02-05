@@ -51,6 +51,7 @@
     <string name="uv_very_high">Extra High</string>
     <string name="uv_caution">Dangerous</string>
     <string name="slide_more">More View</string>
+
     <string name="sky_sunny">Sunny</string>
     <string name="sky_sunny_cloudy">Sunny&amp;Cloudy</string>
     <string name="sky_cloudy">Cloudy</string>
@@ -66,6 +67,7 @@
     <string name="sky_sunny_cloudy_rainy_snowy">Sunny&amp;Cloudy&amp;Rainy/Snowy</string>
     <string name="sky_cloudy_rainy_snowy">Cloudy&amp;Rainy/Snowy</string>
     <string name="sky_rainy_snowy">Rainy/Snowy</string>
+
     <string name="date">.</string>
     <string name="today">Today</string>
     <string name="min_max">Min/Max</string>
@@ -170,8 +172,8 @@
     <string name="loc_caution_title">Location permissions are necessary</string>
     <string name="loc_caution_explain">Measure the location of the current device and place it at that location Used to retrieve real-time weather information based on</string>
     <string name="update">Update</string>
-    <string name="max">Min</string>
-    <string name="min">Max</string>
+    <string name="max">Max</string>
+    <string name="min">Min</string>
     <string name="warning_title">Weather report</string>
     <string name="renew_data">Re call data</string>
     <string name="enable_gps">Activate GPS</string>
@@ -241,7 +243,7 @@
     <string name="cd_grade">등급</string>
     <string name="cd_add_device">장치 추가</string>
     <string name="cd_sky_img">날씨 이미지</string>
-    <string name="no_result_search_report">현재 지역의 기상 특보가 없습니다.\n전국으로 검색하시겠습니까?</string>
+    <string name="no_result_search_report">No result.Do search all over the country?</string>
     <string name="dont_ask_again">Don\'t show 7days</string>
     <string name="close">Close</string>
     <string name="cd_icon_back">Back</string>
@@ -255,8 +257,24 @@
     <string name="group_name">Group Name</string>
     <string name="group_add_btn">Add Group</string>
     <string name="setting">Setting</string>
-    <string name="cqi">통합 대기 환경지수</string>
-    <string name="virus_value">바이러스 위험 지수</string>
+    <string name="cqi">IAQI-S</string>
+    <string name="virus_value">Virus Index</string>
 
     <string name="korea">South Korea</string>
+    <string name="nose_detection">Noise detection</string>
+    <string name="view_full_history">View full history</string>
+    <string name="temp_short">Temp</string>
+    <string name="humid_short">Humid</string>
+    <string name="light">Light</string>
+    <string name="noise">Noise</string>
+    <string name="pm10_short">Coarse particles</string>
+    <string name="pm2p5_short">Fine particles</string>
+    <string name="carbon_dioxide">Carbon dioxide</string>
+    <string name="carbon_monoxide">Carbon monoxide</string>
+    <string name="tvoc_short">Total volatile\norganic compounds</string>
+    <string name="nitrogen_dioxide">Nitrogen dioxide</string>
+    <string name="device_alias">Device alias</string>
+    <string name="noti_option">Notification Options</string>
+    <string name="device_serial_number">Serial Number</string>
+    <string name="wifi">Wi-Fi</string>
 </resources>

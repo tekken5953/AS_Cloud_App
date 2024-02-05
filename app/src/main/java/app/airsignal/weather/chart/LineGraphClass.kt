@@ -46,7 +46,7 @@ class LineGraphClass(private val context: Context) {
                 axisRight.isEnabled = false
                 axisLeft.isEnabled = true
                 isDragEnabled = true
-                zoom(4.5f, 0f, 4.5f, 0f)
+                zoom(4f, 0f, 4f, 0f)
                 isHighlightPerTapEnabled = true
                 minOffset = 35f
                 setScaleEnabled(false)

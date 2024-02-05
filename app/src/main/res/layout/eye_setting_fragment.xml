@@ -15,7 +15,7 @@
             android:background="?android:attr/selectableItemBackground"
             app:isArrow="true"
             app:layout_constraintTop_toTopOf="parent"
-            app:settingLeft="제품명" />
+            app:settingLeft="@string/device_alias" />
 
         <app.airsignal.weather.as_eye.customview.EyeSettingView
             android:id="@+id/aeSettingNotification"
@@ -24,7 +24,7 @@
             android:background="?android:attr/selectableItemBackground"
             app:isArrow="true"
             app:layout_constraintTop_toBottomOf="@+id/aeSettingName"
-            app:settingLeft="알림 설정" />
+            app:settingLeft="@string/noti_option" />
 
         <app.airsignal.weather.as_eye.customview.EyeSettingView
             android:id="@+id/aeSettingSerial"
@@ -33,7 +33,7 @@
             android:background="?android:attr/selectableItemBackground"
             app:isArrow="false"
             app:layout_constraintTop_toBottomOf="@+id/aeSettingNotification"
-            app:settingLeft="제품 시리얼 번호" />
+            app:settingLeft="@string/device_serial_number" />
 
         <app.airsignal.weather.as_eye.customview.EyeSettingView
             android:id="@+id/aeSettingWifi"
@@ -42,7 +42,7 @@
             app:isArrow="false"
             android:background="?android:attr/selectableItemBackground"
             app:layout_constraintTop_toBottomOf="@id/aeSettingSerial"
-            app:settingLeft="Wi-Fi 주소" />
+            app:settingLeft="@string/wifi" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

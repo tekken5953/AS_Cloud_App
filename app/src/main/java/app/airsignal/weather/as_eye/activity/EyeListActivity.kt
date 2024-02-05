@@ -75,10 +75,10 @@ class EyeListActivity : AppCompatActivity() {
             }
         })
 
-        addListItem(true, "사무실", "AS-442421", isReport = true, isPower = true)
-        addListItem(false, "1층", "AS-123456", isReport = true, isPower = true)
-        addListItem(true, "2층", "AS-345678", isReport = false, isPower = false)
-        addListItem(false, "3층", "AS-678908", isReport = false, isPower = false)
+        addListItem(true, "사무실", "AOA0000001F539", isReport = true, isPower = true)
+        addListItem(false, "1층", "AOA0000001F538", isReport = true, isPower = true)
+        addListItem(true, "2층", "AOA0000001F537", isReport = false, isPower = false)
+        addListItem(false, "3층", "AOA0000001F536", isReport = false, isPower = false)
         addListItem(false, "", null, isReport = false, isPower = true)
 
         allDevicesList.addAll(deviceListItem)
@@ -153,7 +153,7 @@ class EyeListActivity : AppCompatActivity() {
                 }
             }
 
-            dialog.show(groupView, true)
+            dialog.show(groupView, true, null)
         }
     }
 

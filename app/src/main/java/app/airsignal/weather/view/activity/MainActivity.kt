@@ -667,7 +667,7 @@ class MainActivity
                             }
                         }
                     }
-                    dialog.show(landingView, true)
+                    dialog.show(landingView, true, null)
                 }
             })
             setting.setOnClickListener(object : OnSingleClickListener() {
@@ -1549,19 +1549,24 @@ class MainActivity
 
     // 하늘상태에 따라 윈도우 배경 변경
     private fun applyWindowBackground(progress: Int, sky: String?) {
-        val mSky = koreaSky(sky)
         val isNight = getIsNight(progress)
-        if (isNight && (mSky == "맑음" || mSky == "구름많음")) {
+        if (isNight && (sky == getString(R.string.sky_sunny) || sky == getString(R.string.sky_sunny_cloudy))) {
             changeBackgroundResource(R.drawable.main_bg_night)
             binding.mainSkyStarImg.setImageDrawable(getR(R.drawable.bg_nightsky))
         } else {
             binding.mainSkyStarImg.setImageDrawable(null)
-            val backgroundResource = when (mSky) {
-                "맑음", "구름많음" -> R.drawable.main_bg_clear
-                "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
-                "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
-                "번개,뇌우", "비/번개" -> R.drawable.main_bg_cloudy
-                "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.main_bg_snow
+            val backgroundResource = when (sky) {
+                getString(R.string.sky_sunny), getString(R.string.sky_sunny_cloudy) ->
+                    R.drawable.main_bg_clear
+                getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
+                getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
+                getString(R.string.sky_cloudy_rainy), getString(R.string.sky_sunny_cloudy_rainy),
+                getString(R.string.sky_cloudy_shower), getString(R.string.sky_shower), getString(R.string.sky_rainy),
+                getString(R.string.sky_cloudy) -> R.drawable.main_bg_cloudy
+                getString(R.string.sky_sunny_cloudy_snowy), getString(R.string.sky_snowy), getString(
+                    R.string.sky_cloudy_snowy
+                )
+                -> R.drawable.main_bg_snow
                 else -> R.drawable.main_bg_snow
             }
             changeBackgroundResource(backgroundResource)

@@ -74,13 +74,31 @@
     <style name="AlertDialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowTitleStyle">@null</item>
-        <item name="android:windowFrame">@null</item>
         <item name="android:statusBarColor">@color/theme_view_color</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:background">@color/theme_view_color</item>
+    </style>
+
+    <style name="AlertDialogEndToStartAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_end_to_start</item>
+        <item name="android:windowExitAnimation">@anim/slide_start_to_end</item>
+    </style>
+
+    <style name="AlertDialogStartToEndAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_start_to_end</item>
+        <item name="android:windowExitAnimation">@anim/slide_end_to_start</item>
+    </style>
+
+    <style name="AlertDialogBottomToTopAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_bottom_to_top</item>
+        <item name="android:windowExitAnimation">@anim/slide_top_to_bottom</item>
+    </style>
+
+    <style name="AlertDialogTopToBottomAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_top_to_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_bottom_to_top</item>
     </style>
 
     <style name="InAppDialogStyle">

@@ -48,34 +48,35 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStatusBar(this)
+        initBinding().run {
+            setStatusBar(this@SplashActivity)
 
-        initBinding()
 //        FirebaseApp.initializeApp(this)
-        applyAppVersionData()
+            applyAppVersionData()
 
-        // 유저 디바이스 설정 - 앱 버전
-        RDBLogcat.writeUserPref(
-            this,
-            sort = RDBLogcat.USER_PREF_DEVICE,
-            title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
-            value = "name is ${GetSystemInfo.getApplicationVersionName(this)} code is ${GetSystemInfo.getApplicationVersionCode(this)}"
-        )
+            // 유저 디바이스 설정 - 앱 버전
+            RDBLogcat.writeUserPref(
+                this@SplashActivity,
+                sort = RDBLogcat.USER_PREF_DEVICE,
+                title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
+                value = "name is ${GetSystemInfo.getApplicationVersionName(this@SplashActivity)} code is ${GetSystemInfo.getApplicationVersionCode(this@SplashActivity)}"
+            )
 
-        // 유저 디바이스 설정 - SDK 버전
-        RDBLogcat.writeUserPref(
-            this,
-            sort = RDBLogcat.USER_PREF_DEVICE,
-            title = RDBLogcat.USER_PREF_DEVICE_SDK_VERSION,
-            value = Build.VERSION.SDK_INT
-        )
+            // 유저 디바이스 설정 - SDK 버전
+            RDBLogcat.writeUserPref(
+                this@SplashActivity,
+                sort = RDBLogcat.USER_PREF_DEVICE,
+                title = RDBLogcat.USER_PREF_DEVICE_SDK_VERSION,
+                value = Build.VERSION.SDK_INT
+            )
 
-        // 초기설정 로그 저장 - 마지막 접속 시간
-        RDBLogcat.writeUserPref(
-            this, sort = RDBLogcat.USER_PREF_SETUP,
-            title = RDBLogcat.USER_PREF_SETUP_LAST_LOGIN,
-            value = "${DataTypeParser.parseLongToLocalDateTime(DataTypeParser.getCurrentTime())}"
-        )
+            // 초기설정 로그 저장 - 마지막 접속 시간
+            RDBLogcat.writeUserPref(
+                this@SplashActivity, sort = RDBLogcat.USER_PREF_SETUP,
+                title = RDBLogcat.USER_PREF_SETUP_LAST_LOGIN,
+                value = "${DataTypeParser.parseLongToLocalDateTime(DataTypeParser.getCurrentTime())}"
+            )
+        }
     }
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동

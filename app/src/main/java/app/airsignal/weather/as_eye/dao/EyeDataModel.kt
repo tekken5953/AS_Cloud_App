@@ -62,6 +62,8 @@ class EyeDataModel {
     )
 
     data class Measured(
+        @SerializedName("date")
+        val date: String?,
         @SerializedName("pm2p5Value")
         val pm2p5Value: Float,
         @SerializedName("pm2p5Lvl")

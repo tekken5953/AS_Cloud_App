@@ -222,11 +222,11 @@ class EyeDetailReportFragment : Fragment() {
 
     private fun getSmile(grade: Int): Int {
         val result = when(grade) {
-            0 -> {R.drawable.smile_bad}
-            1 -> {R.drawable.smile_bad}
+            0 -> {R.drawable.smile_good}
+            1 -> {R.drawable.smile_normal}
             2 -> {R.drawable.smile_bad}
             3 -> {R.drawable.smile_verybad}
-            else -> {R.drawable.smile_bad}
+            else -> {R.drawable.smile_normal}
         }
 
         return result

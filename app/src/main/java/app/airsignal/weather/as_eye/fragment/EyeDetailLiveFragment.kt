@@ -16,6 +16,8 @@ import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.EyeDetailLiveFragmentBinding
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
+import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
+import java.time.LocalDateTime
 import kotlin.math.roundToInt
 
 class EyeDetailLiveFragment : Fragment() {
@@ -48,7 +50,7 @@ class EyeDetailLiveFragment : Fragment() {
     private fun refreshData() {
         try {
             entireData.let {
-                binding.aeLiveRefreshTime.text = DataTypeParser.currentDateTimeString("hh시 mm분 ss초")
+                binding.aeLiveRefreshTime.text = DataTypeParser.dateTimeString("yy.MM.dd H:mm:ss", LocalDateTime.parse(entireData.date))
                 binding.aeLiveTemp.fetchData(entireData.tempValue.toString())
                 binding.aeLiveHumid.fetchData(entireData.humidValue.toString())
                 binding.aeLiveLight.fetchData(entireData.lightValue.toString())

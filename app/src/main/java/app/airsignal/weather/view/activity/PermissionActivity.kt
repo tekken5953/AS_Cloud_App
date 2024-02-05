@@ -62,8 +62,6 @@ class PermissionActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_permission)
-
         initBinding()
 
         setStatusBar(this)

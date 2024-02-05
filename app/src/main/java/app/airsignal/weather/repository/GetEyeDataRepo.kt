@@ -15,7 +15,6 @@ import app.airsignal.weather.network.ErrorCode.ERROR_UNKNOWN
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -30,7 +29,7 @@ class GetEyeDataRepo : BaseRepository() {
     fun loadDataResult(sn: String) {
         CoroutineScope(Dispatchers.Default).launch {
             _getEyeResult.postValue(ApiState.Loading)
-            impl.getMeasured(sn)
+            impl.getEntire(sn)
                 .enqueue(object : Callback<EyeDataModel.Measured> {
                     override fun onResponse(
                         call: Call<EyeDataModel.Measured>,

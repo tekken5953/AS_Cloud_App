@@ -45,9 +45,9 @@ class AddDeviceSerialFragment : Fragment() {
         parentActivity.changeTitleWithAnimation(binding.addSerialTitle,"기기 뒷면의 시리얼 번호를\n입력해주세요",false)
         parentActivity.changeProgressWithAnimation(25)
         binding.addSerialEt.visibility = View.VISIBLE
-        binding.addSerialEt.animation = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in)
+        binding.addSerialEt.animation = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in_group_add)
         binding.addSerialBtn.visibility = View.VISIBLE
-        binding.addSerialBtn.animation = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in)
+        binding.addSerialBtn.animation = AnimationUtils.loadAnimation(requireContext(),R.anim.trans_bottom_to_top_add_group)
 
         val nextBtn = binding.addSerialBtn
         nextBtn.setOnClickListener {

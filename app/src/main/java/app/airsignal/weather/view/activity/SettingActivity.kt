@@ -81,10 +81,7 @@ import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -195,7 +192,7 @@ class SettingActivity
 
             ShowDialogClass(this)
                 .setBackPressed(themeView.findViewById(R.id.changeThemeBack))
-                .show(themeView, true)
+                .show(themeView, true, ShowDialogClass.DialogTransition.END_TO_START)
 
             // 현재 저장된 테마에 따라서 라디오버튼 체크
             when (getUserTheme(this)) {
@@ -267,7 +264,7 @@ class SettingActivity
 
             ShowDialogClass(this)
                 .setBackPressed(cancelBtn)
-                .show(langView, true)
+                .show(langView, true,ShowDialogClass.DialogTransition.END_TO_START)
 
             // 기존에 저장 된 언어로 라디오 버튼 체크
             when (getUserLocation(this)) {
@@ -390,7 +387,7 @@ class SettingActivity
 
             ShowDialogClass(this)
                 .setBackPressed(noticeMainView.findViewById(R.id.noticeBack))
-                .show(noticeMainView, true)
+                .show(noticeMainView, true,ShowDialogClass.DialogTransition.END_TO_START)
 
             noticeAdapter.setOnItemClickListener(object : NoticeAdapter.OnItemClickListener {
                 override fun onItemClick(v: View, position: Int) {
@@ -415,7 +412,7 @@ class SettingActivity
                     }
                     ShowDialogClass(this@SettingActivity)
                         .setBackPressed(detailView.findViewById(R.id.detailBack))
-                        .show(detailView, true)
+                        .show(detailView, true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
                     noticeAdapter.notifyItemChanged(0)
                 }
             })
@@ -434,7 +431,9 @@ class SettingActivity
 
             val fontDialog = ShowDialogClass(this)
 
-            fontDialog.setBackPressed(back).show(scaleView, true)
+            fontDialog
+                .setBackPressed(back)
+                .show(scaleView, true,ShowDialogClass.DialogTransition.END_TO_START)
 
             // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크
             when (getUserFontScale(this)) {
@@ -617,7 +616,7 @@ class SettingActivity
 
             ShowDialogClass(this)
                 .setBackPressed(notificationView.findViewById(R.id.notificationBack))
-                .show(notificationView, true)
+                .show(notificationView, true,ShowDialogClass.DialogTransition.END_TO_START)
         }
 
         binding.settingEye.setOnClickListener {
@@ -820,7 +819,7 @@ class SettingActivity
 
             ShowDialogClass(this@SettingActivity)
                 .setBackPressed(customerView.findViewById(R.id.customerBack))
-                .show(customerView, true)
+                .show(customerView, true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
         }
 
         appInfoPB.visibility = View.GONE
@@ -828,7 +827,7 @@ class SettingActivity
 
         ShowDialogClass(this)
             .setBackPressed(viewAppInfo.findViewById(R.id.appInfoBack))
-            .show(viewAppInfo, true)
+            .show(viewAppInfo, true,ShowDialogClass.DialogTransition.END_TO_START)
     }
 
     // 유저 이메일에 따른 로그인 여부 적용
@@ -935,10 +934,14 @@ class SettingActivity
     ) {
         if (getUserLocation(this) != lang) { // 현재 설정된 언어인지 필터링
             cancel.isEnabled = false
-            setUserLocation(this, lang)  // 다른 언어라면 db 값 변경
-            radioGroup.check(radioButton.id) // 라디오 버튼 체크
-            Thread.sleep(100)
-            saveConfigChangeRestart() // 언어 설정 변경 후 어플리케이션 재시작
+            CoroutineScope(Dispatchers.IO).launch {
+                setUserLocation(this@SettingActivity, lang)  // 다른 언어라면 db 값 변경
+                withContext(Dispatchers.Main) {
+                    radioGroup.check(radioButton.id) // 라디오 버튼 체크
+                    delay(100)
+                    saveConfigChangeRestart() // 언어 설정 변경 후 어플리케이션 재시작
+                }
+            }
         }
     }
 
@@ -955,18 +958,19 @@ class SettingActivity
             AppCompatDelegate.setDefaultNightMode(mode)
             cancel.isEnabled = false
             // DB에 바뀐 정보 저장
-            setUserTheme(this@SettingActivity, dbData)
-            // 라디오 버튼 체크
-            radioGroup.check(radioButton.id)
-            delay(300)
-            val intent = Intent(this@SettingActivity, SplashActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(0, 0)
-            finish()
+            CoroutineScope(Dispatchers.IO).launch {
+                setUserTheme(this@SettingActivity, dbData)
+
+                withContext(Dispatchers.Main) {
+                    // 라디오 버튼 체크
+                    radioGroup.check(radioButton.id)
+                    cancel.isEnabled = true
+                }
+            }
         }
     }
 
-    // 언어 설정 변경 후 어플리케이션 재시작
+    // 설정 변경 후 어플리케이션 재시작
     @SuppressLint("InflateParams")
     private fun saveConfigChangeRestart() {
         val builder = Dialog(this)
