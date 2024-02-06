@@ -156,8 +156,11 @@ class SearchDialog(
                         dbUpdate(currentAddr.kr,currentAddr.en,currentAddr.kr ?: "")
 
                         withContext(Dispatchers.Main) {
-                            this@SearchDialog.dismiss()
-                            activity.recreate()
+                            withContext(Dispatchers.Main) {
+                                this@SearchDialog.dismiss()
+                                delay(100)
+                                activity.recreate()
+                            }
                         }
                     }
                 }

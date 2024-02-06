@@ -51,14 +51,15 @@ class EyeDetailReportFragment : Fragment() {
 
     private lateinit var pmGraphInstance: LineGraphClass
 
-    override fun onDetach() {
-        super.onDetach()
-        autoJob.cancel()
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is EyeDetailActivity) mActivity = context
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        reportViewPagerItem.clear()
+        autoJob.cancel()
     }
 
     override fun onCreateView(
@@ -85,10 +86,11 @@ class EyeDetailReportFragment : Fragment() {
             scrollIndicators = View.SCROLL_INDICATOR_BOTTOM
         }
         applyData()
-        warningSlideAuto()
 
         binding.pmChartTitle.text = "오늘 미세먼지 변화량"
         binding.pmChartUnit.text = "(단위: ㎍/㎥)"
+
+        warningSlideAuto()
     }
 
     @SuppressLint("NotifyDataSetChanged")

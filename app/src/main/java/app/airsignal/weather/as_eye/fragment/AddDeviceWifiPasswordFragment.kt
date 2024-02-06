@@ -88,7 +88,8 @@ class AddDeviceWifiPasswordFragment : Fragment() {
                     binding.addWifiPwdBtn.visibility = View.VISIBLE
                     binding.addWifiPwdBtn.animation =
                         AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
-                } else {
+                }
+                else {
                     // 와이파이 연결상태 불러오기
                     val readCallback = object : BleReadCallback() {
                         override fun onReadSuccess(data: ByteArray?) {
@@ -135,6 +136,26 @@ class AddDeviceWifiPasswordFragment : Fragment() {
     }
 
     private fun inputDeviceAlias() {
+        binding.addWifiPwdEt.text.clear()
+        binding.addWifiPwdEt.setCompoundDrawablesRelativeWithIntrinsicBounds(
+            null,null,null,null)
+
+        binding.addWifiPwdEt.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                s?.let {
+                    if (it.isNotEmpty()) {
+                        binding.addWifiPwdBtn.isEnabled = true
+                        binding.addWifiPwdBtn.setTextColor(requireContext().getColor(R.color.white))
+                    } else {
+                        binding.addWifiPwdBtn.isEnabled = false
+                        binding.addWifiPwdBtn.setTextColor(requireContext().getColor(R.color.eye_btn_disable_color))
+                    }
+                }
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
         parentActivity.hidePb()
         parentActivity.changeTitleWithAnimation(
             binding.addWifiPwdTitle,
@@ -161,7 +182,9 @@ class AddDeviceWifiPasswordFragment : Fragment() {
 
         binding.addWifiPwdBtn.visibility = View.VISIBLE
         binding.addWifiPwdBtn.setOnClickListener {
-            // 서버에 기기 추가 요청
+            // TODO 서버에 기기 추가 요청
+            binding.addWifiPwdBtn.visibility = View.GONE
+            binding.addWifiPwdEt.visibility = View.GONE
             confirmWifiConnect()
         }
     }
@@ -310,6 +333,7 @@ class AddDeviceWifiPasswordFragment : Fragment() {
         parentActivity.showPb()
 
         CoroutineScope(Dispatchers.Main).launch {
+            delay(2000)
             reconnect()
         }
     }

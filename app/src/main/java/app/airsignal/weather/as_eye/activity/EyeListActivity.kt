@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Layout
 import android.view.LayoutInflater
+import android.view.MenuInflater
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.EditText
@@ -50,7 +51,7 @@ class EyeListActivity : AppCompatActivity() {
         binding.aeListDeviceRv.adapter = deviceListAdapter
         binding.aeListCategoryRv.adapter = categoryAdapter
 
-        addCategoryItem("전체", deviceListItem)
+        addCategoryItem(ENTIRE_GROUP, deviceListItem)
         categoryAdapter.notifyDataSetChanged()
 
         categoryAdapter.setOnItemClickListener(object : OnAdapterItemClick.OnAdapterItemClick {

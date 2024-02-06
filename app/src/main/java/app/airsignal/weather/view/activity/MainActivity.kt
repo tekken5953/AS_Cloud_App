@@ -1076,6 +1076,7 @@ class MainActivity
                 reNewTopicInMain(metaAddr)
             }
             runOnUiThread {
+                binding.mainGpsFix.clearAnimation()
                 binding.mainDailyWeatherRv.scrollToPosition(0)
                 binding.mainWarningVp.currentItem = 0
                 hideProgressBar()
