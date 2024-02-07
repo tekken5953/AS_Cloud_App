@@ -232,7 +232,7 @@
                     style="@style/basicMediumTextView"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="19dp"
-                    android:text="@string/nose_detection"
+                    android:text="@string/recent_noise_detection"
                     android:textColor="@color/main_black"
                     android:textSize="16sp" />
 

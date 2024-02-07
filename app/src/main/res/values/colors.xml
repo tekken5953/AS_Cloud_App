@@ -64,6 +64,7 @@
     <color name="eye_btn_disable_color">#9C9C9C</color>
     <color name="eye_et_enable_color">#802997FD</color>
     <color name="eye_view_default">#EBEBEB</color>
+    <color name="eye_noise_header">#CCCCCC</color>
 
     <color name="eye_graph_gray">#959595</color>
 </resources>

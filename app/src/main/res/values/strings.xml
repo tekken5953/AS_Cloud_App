@@ -256,7 +256,7 @@
     <string name="virus_value">바이러스 위험 지수</string>
 
     <string name="korea">대한민국</string>
-    <string name="nose_detection">최근 소음 발생 기록</string>
+    <string name="recent_noise_detection">최근 소음 발생 기록</string>
     <string name="view_full_history">전체 기록 보기</string>
     <string name="temp_short">온도</string>
     <string name="humid_short">습도</string>
@@ -272,5 +272,6 @@
     <string name="noti_option">알림 설정</string>
     <string name="device_serial_number">제품 시리얼 번호</string>
     <string name="wifi">Wi-Fi</string>
+    <string name="entire_noise_detection">소음 발생 기록</string>
 
 </resources>

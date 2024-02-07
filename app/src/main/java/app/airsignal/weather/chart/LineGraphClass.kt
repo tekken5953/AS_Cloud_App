@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.view.animation.AlphaAnimation
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
@@ -46,12 +47,12 @@ class LineGraphClass(private val context: Context) {
                 axisRight.isEnabled = false
                 axisLeft.isEnabled = true
                 isDragEnabled = true
-                zoom(4f, 0f, 4f, 0f)
                 isHighlightPerTapEnabled = true
                 minOffset = 35f
                 setScaleEnabled(false)
                 setPinchZoom(false) // pinch zoom
                 setVisibleXRangeMaximum(5f)
+                if (mChart.scaleX == 1f) mChart.zoom(4f, 0f, 4f, 0f)
                 isDoubleTapToZoomEnabled = false
                 isLongClickable = false
                 isAutoScaleMinMaxEnabled = false

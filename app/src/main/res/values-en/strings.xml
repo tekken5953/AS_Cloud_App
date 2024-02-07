@@ -261,7 +261,7 @@
     <string name="virus_value">Virus Index</string>
 
     <string name="korea">South Korea</string>
-    <string name="nose_detection">Noise detection</string>
+    <string name="recent_noise_detection">Noise detection</string>
     <string name="view_full_history">View full history</string>
     <string name="temp_short">Temp</string>
     <string name="humid_short">Humid</string>
@@ -277,4 +277,5 @@
     <string name="noti_option">Notification Options</string>
     <string name="device_serial_number">Serial Number</string>
     <string name="wifi">Wi-Fi</string>
+    <string name="entire_noise_detection">소음 발생 기록</string>
 </resources>

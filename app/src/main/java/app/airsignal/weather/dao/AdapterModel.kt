@@ -1,6 +1,8 @@
 package app.airsignal.weather.dao
 
 import android.graphics.drawable.Drawable
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 object AdapterModel {
 
@@ -54,4 +56,8 @@ object AdapterModel {
     )
 
 
+    data class NoiseDetailItem(
+        val date: LocalDateTime?,
+        val value: Int?
+    )
 }

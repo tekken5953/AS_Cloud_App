@@ -2,6 +2,7 @@ package app.airsignal.weather.as_eye.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
+import app.airsignal.weather.as_eye.activity.EyeNoiseDetailActivity
 import app.airsignal.weather.as_eye.adapter.ReportViewPagerAdapter
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.chart.LineGraphClass
@@ -49,7 +51,6 @@ class EyeDetailReportFragment : Fragment() {
     private var pm10Value = 0f
     private val reportArray = ArrayList<Pair<String,String>>()
 
-    private lateinit var pmGraphInstance: LineGraphClass
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -68,9 +69,11 @@ class EyeDetailReportFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_detail_report_fragment, container, false)
-
-        pmGraphInstance = LineGraphClass(requireContext())
-            .getInstance(binding.pmAvgLineChart)
+        binding.reportLogViewEntire.setOnClickListener {
+            val intent = Intent(mActivity, EyeNoiseDetailActivity::class.java)
+            mActivity.startActivity(intent)
+            mActivity.overridePendingTransition(R.anim.slide_bottom_to_top, R.anim.slide_top_to_bottom)
+        }
 
         return binding.root
     }
@@ -111,10 +114,11 @@ class EyeDetailReportFragment : Fragment() {
             reportViewPagerAdapter.notifyDataSetChanged()
         }
 
-        val entry2 = java.util.ArrayList<Entry>()
+        val entry2 = ArrayList<Entry>()
         repeat(24) {
             entry2.add(Entry(it.toFloat(), Random.nextFloat() * 70))
         }
+
         createPMChart(entry2)
 
         binding.reportCaiPb.progress = setProgress(CAI_INDEX, caiValue,caiLvl)
@@ -256,6 +260,7 @@ class EyeDetailReportFragment : Fragment() {
 
     private fun createPMChart(pm10Entry: ArrayList<Entry>) {
         try {
+            val pmGraphInstance: LineGraphClass = LineGraphClass(requireContext()).getInstance(binding.pmAvgLineChart)
             pmGraphInstance
                 .clear()
                 .setChart()
