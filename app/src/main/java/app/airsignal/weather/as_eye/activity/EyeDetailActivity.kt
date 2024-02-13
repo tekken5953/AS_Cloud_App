@@ -203,7 +203,6 @@ class EyeDetailActivity : AppCompatActivity() {
             lastRefreshTime = System.currentTimeMillis()
             true
         } else {
-            TimberUtil().i("eyetest", "Not Refreshable")
             false
         }
     }
@@ -218,7 +217,6 @@ class EyeDetailActivity : AppCompatActivity() {
                             is BaseRepository.ApiState.Success -> {
                                 hidePb()
                                 val body = measured.data
-                                TimberUtil().i("eyetest", body.toString())
                                 entireData = body
 
 //                                if (isRefreshable()) {
@@ -247,7 +245,6 @@ class EyeDetailActivity : AppCompatActivity() {
 
                             is BaseRepository.ApiState.Error -> {
                                 hidePb()
-                                TimberUtil().e("eyetest", measured.errorMessage)
                             }
 
                             is BaseRepository.ApiState.Loading -> showPb()

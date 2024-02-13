@@ -17,7 +17,6 @@ import app.airsignal.weather.as_eye.adapter.ReportViewPagerAdapter
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.chart.LineGraphClass
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
 import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.*
@@ -27,9 +26,8 @@ import kotlin.random.Random
 
 class EyeDetailReportFragment : Fragment() {
 
-    companion object {
-        const val VIRUS_INDEX = "VIRUS"
-        const val CAI_INDEX = "CAI"
+    enum class ReportIndex {
+        VIRUS_INDEX, CAI_INDEX
     }
 
     private lateinit var mActivity: EyeDetailActivity
@@ -90,8 +88,8 @@ class EyeDetailReportFragment : Fragment() {
         }
         applyData()
 
-        binding.pmChartTitle.text = "오늘 미세먼지 변화량"
-        binding.pmChartUnit.text = "(단위: ㎍/㎥)"
+        binding.pmChartTitle.text = getString(R.string.today_pm_chart)
+        binding.pmChartUnit.text = getString(R.string.pm_unit)
 
         warningSlideAuto()
     }
@@ -105,11 +103,11 @@ class EyeDetailReportFragment : Fragment() {
 
         reportViewPagerItem.clear()
         if (reportArray.isEmpty()) {
-            addViewPagerItem("모든 데이터가 정상입니다","쾌적한 환경에서 생활 중입니다", false)
+            addViewPagerItem(getString(R.string.all_data_good),getString(R.string.all_data_good_content), false)
             reportViewPagerAdapter.notifyDataSetChanged()
         } else {
-            reportArray.forEach { reportItem ->
-                addViewPagerItem(reportItem.first,reportItem.second, true)
+            reportArray.forEachIndexed { index , reportItem ->
+                addViewPagerItem("${reportItem.first} (${index+1}/${reportArray.size})",reportItem.second, true)
             }
             reportViewPagerAdapter.notifyDataSetChanged()
         }
@@ -121,12 +119,12 @@ class EyeDetailReportFragment : Fragment() {
 
         createPMChart(entry2)
 
-        binding.reportCaiPb.progress = setProgress(CAI_INDEX, caiValue,caiLvl)
-        binding.reportVirusPb.progress = setProgress(VIRUS_INDEX, virusValue,virusLvl)
-        binding.caiModerLow.text = getModerate(CAI_INDEX,caiLvl).first.toString()
-        binding.caiModerHigh.text = getModerate(CAI_INDEX,caiLvl).second.toString()
-        binding.virusModerLow.text = getModerate(VIRUS_INDEX,virusLvl).first.toString()
-        binding.virusModerHigh.text = getModerate(VIRUS_INDEX,virusLvl).second.toString()
+        binding.reportCaiPb.progress = setProgress(ReportIndex.CAI_INDEX, caiValue,caiLvl)
+        binding.reportVirusPb.progress = setProgress(ReportIndex.VIRUS_INDEX, virusValue,virusLvl)
+        binding.caiModerLow.text = getModerate(ReportIndex.CAI_INDEX,caiLvl).first.toString()
+        binding.caiModerHigh.text = getModerate(ReportIndex.CAI_INDEX,caiLvl).second.toString()
+        binding.virusModerLow.text = getModerate(ReportIndex.VIRUS_INDEX,virusLvl).first.toString()
+        binding.virusModerHigh.text = getModerate(ReportIndex.VIRUS_INDEX,virusLvl).second.toString()
         binding.reportCaiContainer.setBackgroundResource(getBackground(caiLvl))
         binding.reportVirusContainer.setBackgroundResource(getBackground(virusLvl))
         binding.reportCaiSmile.setBackgroundResource(getSmile(caiLvl))
@@ -135,11 +133,10 @@ class EyeDetailReportFragment : Fragment() {
 
     fun onDataTransfer(data: EyeDataModel.ReportFragment?) {
         data?.let {
-            TimberUtil().d("eyetest","report data received : $data")
             reportArray.clear()
             it.report?.let { list ->
                 list.forEach { r ->
-                    reportArray.add(Pair(DataTypeParser.parseReportTitle(r),"위험단계입니다. 환기를 시켜주세요"))
+                    reportArray.add(Pair(DataTypeParser.parseReportTitle(r), "위험단계입니다. 환기를 시켜주세요"))
                 }
             }
 
@@ -155,17 +152,17 @@ class EyeDetailReportFragment : Fragment() {
 
     private fun parseLvlToGrade(lvl: Int): String {
         return when(lvl) {
-            0 -> "좋음"
-            1 -> "보통"
-            2 -> "나쁨"
-            3 -> "매우나쁨"
-            else -> "에러"
+            0 -> getString(R.string.good)
+            1 -> getString(R.string.normal)
+            2 -> getString(R.string.bad)
+            3 -> getString(R.string.caution)
+            else -> getString(R.string.error)
         }
     }
 
-    private fun setProgress(sort: String, value: Int, grade: Int): Int {
+    private fun setProgress(sort: ReportIndex, value: Int, grade: Int): Int {
         val result = when(sort) {
-            CAI_INDEX -> {
+            ReportIndex.CAI_INDEX -> {
                 when(grade) {
                     0 -> {((value - 0).toDouble() / (50 - 0).toDouble() * 100).roundToInt()}
                     1 -> {((value - 51).toDouble() / (100 - 51).toDouble() * 100).roundToInt()}
@@ -175,7 +172,7 @@ class EyeDetailReportFragment : Fragment() {
                 }
             }
 
-            VIRUS_INDEX -> {
+            ReportIndex.VIRUS_INDEX -> {
                 when(grade) {
                     0 -> {((value - 0).toDouble() / (3 - 0).toDouble() * 100).roundToInt()}
                     1 -> {((value - 4).toDouble() / (6 - 4).toDouble() * 100).roundToInt()}
@@ -190,9 +187,9 @@ class EyeDetailReportFragment : Fragment() {
         return result
     }
 
-    private fun getModerate(sort: String, grade: Int): Pair<Int, Int> {
+    private fun getModerate(sort: ReportIndex, grade: Int): Pair<Int, Int> {
         return when(sort) {
-            CAI_INDEX -> {
+            ReportIndex.CAI_INDEX -> {
                 when (grade) {
                     0 -> { Pair(0, 50) }
                     1 -> { Pair(51, 100) }
@@ -201,7 +198,7 @@ class EyeDetailReportFragment : Fragment() {
                     else -> { Pair(0, 0) }
                 }
             }
-            VIRUS_INDEX -> {
+            ReportIndex.VIRUS_INDEX -> {
                 when (grade) {
                     0 -> { Pair(0, 3) }
                     1 -> { Pair(4, 6) }

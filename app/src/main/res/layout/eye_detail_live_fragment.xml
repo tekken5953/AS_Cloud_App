@@ -140,7 +140,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/aeLiveCO"
                 app:titleEnDouble="TVOC"
                 app:titleKrDouble="@string/tvoc_short"
-                app:unitDouble="㎍/㎥" />
+                app:unitDouble="ppm" />
 
             <app.airsignal.weather.as_eye.customview.EyeLiveDoubleDataView
                 android:id="@+id/aeLiveNO2"

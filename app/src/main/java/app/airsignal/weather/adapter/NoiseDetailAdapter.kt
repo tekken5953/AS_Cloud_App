@@ -1,6 +1,7 @@
 package app.airsignal.weather.adapter
 
 import android.content.Context
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import java.util.Date
 class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterModel.NoiseDetailItem>) :
     RecyclerView.Adapter<NoiseDetailAdapter.ViewHolder>() {
     private val mList = list
+    private var isLast = mutableMapOf<Int,Boolean>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -31,13 +33,19 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(mList[position])
+
+        if (isLast[position] == true) {
+            holder.headerValue.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
+            holder.dataDate.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
+            holder.dataValue.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
+        }
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val headerContainer: LinearLayout = itemView.findViewById(R.id.noiseDetailHeaderContainer)
-        private val headerValue: TextView = itemView.findViewById(R.id.noiseDetailHeaderTitle)
-        private val dataDate: TextView = itemView.findViewById(R.id.noiseDetailTime)
-        private val dataValue: TextView = itemView.findViewById(R.id.noiseDetailValue)
+        val headerValue: TextView = itemView.findViewById(R.id.noiseDetailHeaderTitle)
+        val dataDate: TextView = itemView.findViewById(R.id.noiseDetailTime)
+        val dataValue: TextView = itemView.findViewById(R.id.noiseDetailValue)
 
         fun bind(dao: AdapterModel.NoiseDetailItem) {
             dao.date?.let { date ->
@@ -54,7 +62,7 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
                         prev?.let { p ->
                             current?.let { c ->
                                 c.format(dateFormatter) != p.format(dateFormatter)
-                            } ?: null
+                            } ?: false
                         } ?: true
                     isHeader?.let {
                         if (it) {
@@ -75,5 +83,10 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
                 headerContainer.visibility = View.GONE
             }
         }
+    }
+
+    fun applyBold(i: Int) {
+        isLast[i] = true
+        notifyItemChanged(i)
     }
 }

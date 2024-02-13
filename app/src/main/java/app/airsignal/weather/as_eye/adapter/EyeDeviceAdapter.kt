@@ -57,8 +57,6 @@ class EyeDeviceAdapter(
             deviceName.text = dao.alias
             serial.text = dao.serial.serial
 
-
-
             if (dao.alias == "") {
                 deviceName.visibility = View.GONE
                 serial.visibility = View.GONE

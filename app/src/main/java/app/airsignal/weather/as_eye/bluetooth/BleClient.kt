@@ -126,7 +126,6 @@ class BleClient(private val activity: Activity) {
                             UUID_SSID.lowercase(
                                 Locale.getDefault()
                             ) -> {
-                                TimberUtil().d("testtest", "find write ssid service - $serial")
                                 instance.write(
                                     device,
                                     service.uuid.toString(),
@@ -179,7 +178,6 @@ class BleClient(private val activity: Activity) {
                             UUID_PWD.lowercase(
                                 Locale.getDefault()
                             ) -> {
-                                TimberUtil().d("testtest", "find write pwd service - $pwd")
                                 instance.write(
                                     device,
                                     service.uuid.toString(),

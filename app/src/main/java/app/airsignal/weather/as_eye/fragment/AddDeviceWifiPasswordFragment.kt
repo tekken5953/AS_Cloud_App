@@ -19,7 +19,6 @@ import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.databinding.FragmentAddDeviceWifiPasswordBinding
 import app.airsignal.weather.util.KeyboardController
-import app.airsignal.weather.util.TimberUtil
 import com.clj.fastble.callback.BleGattCallback
 import com.clj.fastble.callback.BleReadCallback
 import com.clj.fastble.callback.BleWriteCallback
@@ -54,15 +53,12 @@ class AddDeviceWifiPasswordFragment : Fragment() {
     }
 
     private val connectCallback = object : BleGattCallback() {
-        override fun onStartConnect() {
-            TimberUtil().d("testtest", "onStartConnect Ble to ${ble.serial}")
-        }
+        override fun onStartConnect() {}
 
         override fun onConnectFail(bleDevice: BleDevice?, exception: BleException?) {
-            TimberUtil().e("testtest", "onConnectFail Ble to ${bleDevice?.device?.name}")
             mainDispatcher.launch {
                 if (isInit) {
-                    binding.addWifiPwdTitle.text = "AS-Eye와 연결이 끊어졌습니다\n다시 시도해주세요"
+                    binding.addWifiPwdTitle.text = getString(R.string.eye_disconnect_retry)
                     ble.destroyBle()
                     delay(1500)
                     parentActivity.finish()
@@ -74,12 +70,11 @@ class AddDeviceWifiPasswordFragment : Fragment() {
         }
 
         override fun onConnectSuccess(bleDevice: BleDevice?, gatt: BluetoothGatt?, status: Int) {
-            TimberUtil().d("testtest", "onConnectSuccess Ble to ${bleDevice?.device?.name}")
             mainDispatcher.launch {
                 if (isInit) {
                     parentActivity.changeTitleWithAnimation(
                         binding.addWifiPwdTitle,
-                        "Wi-Fi 비밀번호를\n입력해주세요",
+                        getString(R.string.eye_input_wifi_password),
                         true
                     )
                     binding.addWifiPwdEt.visibility = View.VISIBLE
@@ -100,7 +95,7 @@ class AddDeviceWifiPasswordFragment : Fragment() {
                                 // 연결 안됨
                                 mainDispatcher.launch {
                                     parentActivity.hidePb()
-                                    binding.addWifiPwdTitle.text = "입력하신 Wifi 정보가 올바르지 않습니다\n다시 시도해주세요"
+                                    binding.addWifiPwdTitle.text = getString(R.string.eye_wifi_connect_fail)
                                     ble.disconnect()
                                     delay(2000)
                                     parentActivity.transactionFragment(AddDeviceWifiFragment())
@@ -112,7 +107,7 @@ class AddDeviceWifiPasswordFragment : Fragment() {
                             // 읽기 실패
                             mainDispatcher.launch {
                                 parentActivity.hidePb()
-                                binding.addWifiPwdTitle.text = "AS-Eye와 연결이 끊어졌습니다\n다시 시도해주세요"
+                                binding.addWifiPwdTitle.text = getString(R.string.eye_disconnect_retry)
                                 ble.disconnect()
                                 delay(2000)
                                 parentActivity.transactionFragment(AddDeviceWifiFragment())
@@ -130,9 +125,7 @@ class AddDeviceWifiPasswordFragment : Fragment() {
             device: BleDevice?,
             gatt: BluetoothGatt?,
             status: Int
-        ) {
-            TimberUtil().e("testtest", "onDisConnected Ble from ${device?.device?.name}")
-        }
+        ) {}
     }
 
     private fun inputDeviceAlias() {
@@ -159,13 +152,13 @@ class AddDeviceWifiPasswordFragment : Fragment() {
         parentActivity.hidePb()
         parentActivity.changeTitleWithAnimation(
             binding.addWifiPwdTitle,
-            "사용하실 기기명을\n입력해주세요",
+            getString(R.string.eye_input_alias),
             true
         )
         binding.addWifiPwdEt.apply {
             visibility = View.VISIBLE
             inputType = InputType.TYPE_CLASS_TEXT
-            hint = "예) 거실,내 기기,1층 복도 등"
+            hint = context.getString(R.string.eye_example)
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,

@@ -16,7 +16,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
-import app.airsignal.weather.as_eye.bluetooth.BleClient
 import app.airsignal.weather.databinding.FragmentAddDeviceBleBinding
 import app.airsignal.weather.util.TimberUtil
 import com.clj.fastble.callback.BleGattCallback
@@ -27,7 +26,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @SuppressLint("MissingPermission")
 class AddDeviceBleFragment : Fragment() {
@@ -44,13 +42,11 @@ class AddDeviceBleFragment : Fragment() {
     private val scanCallback = object : BleScanCallback() {
         override fun onScanStarted(success: Boolean) {
             if (success) {
-                TimberUtil().d("testtest", "onScanStarted success to ${ble.serial}")
                 mainDispatcher.launch {
                     binding.addBleTitle.text = "AS-Eye를\n검색하고 있습니다"
                     startTextAnimation()
                 }
             } else {
-                TimberUtil().e("testtest", "onScanStarted fail to ${ble.serial}")
                 stopTextAnimation()
             }
         }
@@ -60,7 +56,6 @@ class AddDeviceBleFragment : Fragment() {
                 if (bleDevice.name != null) {
                     TimberUtil().d("testtest", "onScanning ${bleDevice.name}")
                     if (serial != "Unknown" && bleDevice.device?.name == serial) {
-                        TimberUtil().d("testtest", "onScanning find a ${bleDevice.name}")
                         ble.device = bleDevice
                         mainDispatcher.launch {
                             delay(4000)
@@ -79,7 +74,6 @@ class AddDeviceBleFragment : Fragment() {
 
         override fun onScanFinished(scanResultList: MutableList<BleDevice>?) {
             scanResultList?.let {
-                TimberUtil().d("testtest", "onScanFinished result size is ${scanResultList.size} serial is $serial")
                 if (ble.device == null) {
                     binding.addBleTitle.text = "${serial}을\n찾지 못했습니다"
                     requestReconnect(false)
@@ -91,14 +85,12 @@ class AddDeviceBleFragment : Fragment() {
 
     private val connectCallback = object : BleGattCallback() {
         override fun onStartConnect() {
-            TimberUtil().d("testtest", "onStartConnect Ble to ${ble.serial}")
             mainDispatcher.launch {
                 binding.addBleTitle.text = "블루투스를 연결중입니다"
             }
         }
 
         override fun onConnectFail(bleDevice: BleDevice?, exception: BleException?) {
-            TimberUtil().e("testtest", "onConnectFail Ble to ${bleDevice?.device?.name}")
             binding.addBleTitle.postDelayed({
                 binding.addBleTitle.text = "AS-Eye와 연결에\n실패했습니다"
                 requestReconnect(false)
@@ -107,7 +99,6 @@ class AddDeviceBleFragment : Fragment() {
         }
 
         override fun onConnectSuccess(bleDevice: BleDevice?, gatt: BluetoothGatt?, status: Int) {
-            TimberUtil().d("testtest", "onConnectSuccess Ble to ${bleDevice?.device?.name}")
             mainDispatcher.launch {
                 delay(4000)
                 stopTextAnimation()
@@ -124,7 +115,6 @@ class AddDeviceBleFragment : Fragment() {
             gatt: BluetoothGatt?,
             status: Int
         ) {
-            TimberUtil().e("testtest", "onDisConnected Ble from ${device?.device?.name}")
             stopTextAnimation()
         }
     }

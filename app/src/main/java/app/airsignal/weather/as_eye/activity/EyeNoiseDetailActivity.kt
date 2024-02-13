@@ -24,23 +24,23 @@ class EyeNoiseDetailActivity : AppCompatActivity() {
             noiseDetailRv.adapter = noiseAdapter
             noiseDetailBack.setOnClickListener {
                 finish()
-                overridePendingTransition(R.anim.slide_top_to_bottom, R.anim.slide_bottom_to_top)
+                overridePendingTransition(R.anim.slide_bottom_to_top, R.anim.slide_top_to_bottom)
             }
         }
 
         val testItemArray = listOf<Pair<LocalDateTime,Int>>(
             Pair(LocalDateTime.now(), Random.nextInt(60,120)),
-            Pair(LocalDateTime.now().minusHours(1), Random.nextInt(60,120)),
-            Pair(LocalDateTime.now().minusHours(2), Random.nextInt(60,120)),
-            Pair(LocalDateTime.now().minusHours(3), Random.nextInt(60,120)),
-            Pair(LocalDateTime.now().minusDays(1).minusHours(5), Random.nextInt(60,120)),
-            Pair(LocalDateTime.now().minusDays(1).minusHours(6), Random.nextInt(60,120)),
-            Pair(LocalDateTime.now().minusDays(2).minusHours(1), Random.nextInt(60,120)),
-            Pair(LocalDateTime.now().minusDays(2).minusHours(3), Random.nextInt(60,120)),
-            Pair(LocalDateTime.now().minusDays(2).minusHours(4), Random.nextInt(60,120)),
-            Pair(LocalDateTime.now().minusDays(3).minusHours(5), Random.nextInt(60,120)),
-            Pair(LocalDateTime.now().minusDays(4).minusHours(7), Random.nextInt(60,120)),
-            Pair(LocalDateTime.now().minusDays(4).minusHours(9), Random.nextInt(60,120))
+            Pair(LocalDateTime.now().minusHours(1), Random.nextInt(80,120)),
+            Pair(LocalDateTime.now().minusHours(2), Random.nextInt(80,120)),
+            Pair(LocalDateTime.now().minusHours(3), Random.nextInt(80,120)),
+            Pair(LocalDateTime.now().minusDays(1).minusHours(5), Random.nextInt(80,120)),
+            Pair(LocalDateTime.now().minusDays(1).minusHours(6), Random.nextInt(80,120)),
+            Pair(LocalDateTime.now().minusDays(2).minusHours(1), Random.nextInt(80,120)),
+            Pair(LocalDateTime.now().minusDays(2).minusHours(3), Random.nextInt(80,120)),
+            Pair(LocalDateTime.now().minusDays(2).minusHours(4), Random.nextInt(80,120)),
+            Pair(LocalDateTime.now().minusDays(3).minusHours(5), Random.nextInt(80,120)),
+            Pair(LocalDateTime.now().minusDays(4).minusHours(7), Random.nextInt(80,120)),
+            Pair(LocalDateTime.now().minusDays(4).minusHours(9), Random.nextInt(80,120))
         ).reversed()
 
         repeat(testItemArray.size) {
@@ -49,6 +49,7 @@ class EyeNoiseDetailActivity : AppCompatActivity() {
             noiseAdapter.notifyItemInserted(it)
 
             if (it == testItemArray.lastIndex) {
+                noiseAdapter.applyBold(it)
                 binding.noiseDetailRv.scrollToPosition(it)
             }
         }

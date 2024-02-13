@@ -17,7 +17,6 @@ import app.airsignal.weather.db.sp.SetAppInfo.setUserEmail
 import app.airsignal.weather.db.sp.SetAppInfo.setUserId
 import app.airsignal.weather.db.sp.SetAppInfo.setUserLoginPlatform
 import app.airsignal.weather.db.sp.SetAppInfo.setUserProfile
-import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.LoggerUtil
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.auth.api.signin.GoogleSignIn

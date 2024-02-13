@@ -6,16 +6,11 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile.notificationAdmin
-import app.airsignal.weather.dao.RDBLogcat.LOGIN_GOOGLE
-import app.airsignal.weather.dao.StaticDataObject.TAG_L
 import app.airsignal.weather.databinding.ActivityLoginBinding
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
-import app.airsignal.weather.util.EnterPageUtil
-import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 
@@ -74,7 +69,6 @@ class LoginActivity
                 }
                 // 로그인 취소 됨
                 RESULT_CANCELED -> {
-                    TimberUtil().w(TAG_L, "Cancel Google Login")
                     binding.googleLoginButton.alpha = 1f
                 }
                 else -> {

@@ -271,4 +271,14 @@
     <string name="device_serial_number">제품 시리얼 번호</string>
     <string name="wifi">Wi-Fi</string>
     <string name="entire_noise_detection">소음 발생 기록</string>
+    <string name="today_pm_chart">오늘 미세먼지 변화량</string>
+    <string name="pm_unit">(단위: ㎍/㎥)</string>
+    <string name="all_data_good">모든 데이터가 정상입니다</string>
+    <string name="all_data_good_content">쾌적한 환경에서 생활 중입니다</string>
+    <string name="caution">위험</string>
+    <string name="eye_disconnect_retry">AS-Eye와 연결이 끊어졌습니다 다시 시도해주세요</string>
+    <string name="eye_input_wifi_password">Wi-Fi 비밀번호를 입력해주세요</string>
+    <string name="eye_wifi_connect_fail">입력하신 Wifi 정보가 올바르지 않습니다 다시 시도해주세요</string>
+    <string name="eye_input_alias">사용하실 기기명을 입력해주세요</string>
+    <string name="eye_example">예) 거실,내 기기,1층 복도 등</string>
 </resources>

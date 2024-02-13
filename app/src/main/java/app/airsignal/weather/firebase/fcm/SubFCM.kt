@@ -42,7 +42,6 @@ class SubFCM: FirebaseMessagingService() {
         try {
             CoroutineScope(Dispatchers.Default).launch {
                 FirebaseMessaging.getInstance().subscribeToTopic(topic)
-                LoggerUtil().d("TAG_FCM","subscribe $topic")
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -56,7 +55,6 @@ class SubFCM: FirebaseMessagingService() {
         val encodedStream = encodeTopic(topic)
         CoroutineScope(Dispatchers.Default).launch {
             FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream)
-            LoggerUtil().d("TAG_FCM","unsubscribe $topic")
         }
         return this
     }
@@ -71,10 +69,7 @@ class SubFCM: FirebaseMessagingService() {
     fun renewTopic(old: String, new: String) {
         if (old != new) {
             val encodedStream = encodeTopic(new)
-            LoggerUtil().d("fcm_noti","old is $old new is $new")
             unSubTopic(old).subTopic(encodedStream)
-        } else {
-            LoggerUtil().d("fcm_noti","same topic $old")
         }
     }
 

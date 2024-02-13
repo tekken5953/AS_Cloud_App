@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.view.animation.AlphaAnimation
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
@@ -15,6 +14,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import java.text.SimpleDateFormat
 import kotlin.math.roundToInt
 
@@ -56,23 +57,26 @@ class LineGraphClass(private val context: Context) {
                 isDoubleTapToZoomEnabled = false
                 isLongClickable = false
                 isAutoScaleMinMaxEnabled = false
-//                setDrawMarkers(true)
-//                val mMarker = CustomMarkerView(context,R.layout.custom_maker)
-//                marker = mMarker
-//                setOnChartValueSelectedListener(object : OnChartValueSelectedListener{
-//                    override fun onValueSelected(e: Entry?, h: Highlight?) {
-//                        mMarker.refreshContent(e!!,h)
-//                    }
-//
-//                    override fun onNothingSelected() {
-//                    }
-//                })
+//                setMarker()
             }
         } catch (e: Exception) {
             e.stackTraceToString()
         }
 
         return this
+    }
+
+    private fun setMarker() {
+        mChart.setDrawMarkers(true)
+        val mMarker = CustomMarkerView(context, R.layout.custom_maker)
+        mChart.marker = mMarker
+        mChart.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+            override fun onValueSelected(e: Entry?, h: Highlight?) {
+                mMarker.refreshContent(e!!, h)
+            }
+            override fun onNothingSelected() {
+            }
+        })
     }
 
     private fun setXAxis() {

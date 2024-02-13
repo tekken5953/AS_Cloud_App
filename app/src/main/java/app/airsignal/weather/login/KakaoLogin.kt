@@ -54,12 +54,11 @@ class KakaoLogin(private val activity: Activity) {
                     btn.alpha = 1f
                     // 사용자가 취소
                     if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled)) {
-                        LoggerUtil().d(TAG_L,"카카오 로그인 취소")
                         return@loginWithKakaoTalk
                     }
                     // 다른 오류
                     else {
-                        LoggerUtil().d(TAG_L,"카카오 로그인 기타 오류 : ${error.localizedMessage}")
+                        LoggerUtil().e(TAG_L,"카카오 로그인 기타 오류 : ${error.localizedMessage}")
                         UserApiClient.instance.loginWithKakaoAccount(
                             activity,
                             callback = mCallback
