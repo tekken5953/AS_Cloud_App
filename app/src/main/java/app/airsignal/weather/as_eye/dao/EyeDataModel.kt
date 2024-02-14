@@ -43,7 +43,6 @@ class EyeDataModel {
         val backColor: Int
     )
 
-
     data class Serial(
         @SerializedName("last_modify")
         val lastModify: LocalDateTime,
@@ -245,7 +244,7 @@ class EyeDataModel {
 
     data class Category(
         val name: String,
-        val device: List<Device>?
+        val device: MutableList<Device>
     )
 
     data class Group(
