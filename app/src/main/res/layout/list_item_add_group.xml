@@ -9,7 +9,7 @@
         android:id="@+id/listItemAeAddGroupName"
         style="@style/basicTextView"
         android:layout_marginTop="15dp"
-        android:textColor="@color/theme_text_color"
+        android:textColor="@color/main_black"
         android:textSize="16sp" />
 
     <TextView
@@ -32,7 +32,7 @@
         style="@style/basicTextView"
         android:layout_below="@+id/listItemAeAddGroupName"
         android:layout_marginTop="2dp"
-        android:textColor="@color/ae_sub_color"
+        android:textColor="@color/eye_btn_disable_color"
         android:textSize="16sp" />
 
     <CheckBox

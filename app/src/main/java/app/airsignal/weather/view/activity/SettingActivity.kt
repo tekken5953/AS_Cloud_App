@@ -23,12 +23,8 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
-import app.airsignal.weather.network.retrofit.ApiModel
-import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.viewmodel.GetAppVersionViewModel
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.NoticeAdapter
-import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.dao.IgnoredKeyFile.notiEnable
 import app.airsignal.weather.dao.IgnoredKeyFile.notiSound
 import app.airsignal.weather.dao.IgnoredKeyFile.notiVibrate
@@ -42,20 +38,6 @@ import app.airsignal.weather.dao.StaticDataObject.LANG_SYS
 import app.airsignal.weather.dao.StaticDataObject.THEME_DARK
 import app.airsignal.weather.dao.StaticDataObject.THEME_LIGHT
 import app.airsignal.weather.databinding.ActivitySettingBinding
-import app.airsignal.weather.db.SharedPreferenceManager
-import app.airsignal.weather.login.GoogleLogin
-import app.airsignal.weather.login.KakaoLogin
-import app.airsignal.weather.login.NaverLogin
-import app.airsignal.weather.network.retrofit.HttpClient
-import app.airsignal.weather.util.*
-import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
-import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
-import app.airsignal.weather.view.custom_view.CustomerServiceView
-import app.airsignal.weather.view.dialog.WebViewSetting
-import app.airsignal.weather.view.perm.BackLocCheckDialog
-import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.airsignal.weather.view.custom_view.ShowDialogClass
-import app.airsignal.weather.view.custom_view.SnackBarUtils
 import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
@@ -78,7 +60,22 @@ import app.airsignal.weather.db.sp.SetSystemInfo
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_DEFAULT
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
-import app.airsignal.weather.view.custom_view.MakeDoubleDialog
+import app.airsignal.weather.login.GoogleLogin
+import app.airsignal.weather.login.KakaoLogin
+import app.airsignal.weather.login.NaverLogin
+import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.network.retrofit.HttpClient
+import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.util.*
+import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
+import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
+import app.airsignal.weather.view.custom_view.CustomerServiceView
+import app.airsignal.weather.view.custom_view.ShowDialogClass
+import app.airsignal.weather.view.custom_view.SnackBarUtils
+import app.airsignal.weather.view.dialog.WebViewSetting
+import app.airsignal.weather.view.perm.BackLocCheckDialog
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.airsignal.weather.viewmodel.GetAppVersionViewModel
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
@@ -617,25 +614,6 @@ class SettingActivity
             ShowDialogClass(this)
                 .setBackPressed(notificationView.findViewById(R.id.notificationBack))
                 .show(notificationView, true,ShowDialogClass.DialogTransition.END_TO_START)
-        }
-
-        binding.settingEye.setOnClickListener {
-            if (SharedPreferenceManager(this).getString("user_email") != "") {
-                val intent = Intent(this, EyeListActivity::class.java)
-                startActivity(intent)
-            } else {
-                val builder = MakeDoubleDialog(this)
-                val dialog = builder.make("로그인이 필요한 서비스입니다.",
-                    "로그인","취소",R.color.main_blue_color)
-                dialog.first.setOnClickListener {
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                }
-                dialog.second.setOnClickListener {
-                    builder.dismiss()
-                }
-            }
         }
     }
 

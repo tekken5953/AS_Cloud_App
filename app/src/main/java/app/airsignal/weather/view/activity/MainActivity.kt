@@ -27,7 +27,6 @@ import android.widget.LinearLayout.VISIBLE
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
-import androidx.core.view.setMargins
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +35,7 @@ import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
 import app.airsignal.weather.address.AddressFromRegex
+import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.IgnoredKeyFile.landingPageUrl
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
@@ -44,6 +44,7 @@ import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.databinding.ActivityMainBinding
+import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetAppInfo.getEntireSun
@@ -191,7 +192,7 @@ class MainActivity
     override fun onResume() {
         super.onResume()
         addSideMenu()
-        binding.nestedAdView.resume()
+//        binding.nestedAdView.resume()
         applyRefreshScroll()
         getDataSingleTime(isCurrent = false)
     }
@@ -199,12 +200,12 @@ class MainActivity
     override fun onDestroy() {
         super.onDestroy()
         isWarned = false
-        binding.nestedAdView.destroy()
+//        binding.nestedAdView.destroy()
     }
 
     override fun onPause() {
         super.onPause()
-        binding.nestedAdView.pause()
+//        binding.nestedAdView.pause()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -226,7 +227,7 @@ class MainActivity
                 }
             }
 
-            adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
+//            adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
 
             initializing()
 
@@ -326,6 +327,24 @@ class MainActivity
                 }
             })
 
+            binding.mainTopEye.setOnClickListener {
+                if (SharedPreferenceManager(this).getString("user_email") != "") {
+                    val intent = Intent(this, EyeListActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    val builder = MakeDoubleDialog(this)
+                    val dialog = builder.make("로그인이 필요한 서비스입니다.",
+                        "로그인","취소",R.color.main_blue_color)
+                    dialog.first.setOnClickListener {
+                        val intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                    dialog.second.setOnClickListener {
+                        builder.dismiss()
+                    }
+                }
+            }
 
             binding.mainSwipeLayout.setColorSchemeColors(
                 Color.parseColor("#22D3EE"),
@@ -781,6 +800,7 @@ class MainActivity
         if (show) {
             if (!isProgressed) {
                 isProgressed = true
+                binding.mainLoadingView.visibility = View.VISIBLE
                 binding.mainLoadingView.playAnimation()
                 binding.mainLoadingView.alpha = SHOWING_LOADING_FLOAT
                 binding.mainMotionLayout.isInteractionEnabled = false
@@ -788,6 +808,7 @@ class MainActivity
             }
         } else {
             if (binding.mainLoadingView.alpha == SHOWING_LOADING_FLOAT) {
+                binding.mainLoadingView.visibility = View.GONE
                 binding.mainLoadingView.cancelAnimation()
                 binding.mainLoadingView.alpha = NOT_SHOWING_LOADING_FLOAT
                 binding.mainMotionLayout.isInteractionEnabled = true
@@ -833,16 +854,16 @@ class MainActivity
         binding.mainUvCollapseRv.isClickable = false
         binding.nestedSubAirFrame.isClickable = false
 
-        // adView 닫기 클릭
-        binding.adViewCancelIv.setOnClickListener {
-            it.visibility = GONE
-            val layoutParams =
-                RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-            layoutParams.addRule(RelativeLayout.BELOW, R.id.nested_daily_box)
-            layoutParams.setMargins(0)
-            binding.adViewBox.layoutParams = layoutParams
-            binding.nestedAdView.visibility = GONE
-        }
+//        // adView 닫기 클릭
+//        binding.adViewCancelIv.setOnClickListener {
+//            it.visibility = GONE
+//            val layoutParams =
+//                RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+//            layoutParams.addRule(RelativeLayout.BELOW, R.id.nested_daily_box)
+//            layoutParams.setMargins(0)
+//            binding.adViewBox.layoutParams = layoutParams
+//            binding.nestedAdView.visibility = GONE
+//        }
 
         // 특정 포지션을 감지하고 처리
         val todaySection = binding.dailySectionToday
@@ -1788,12 +1809,14 @@ class MainActivity
         binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
         binding.mainMinTitle.text = getString(R.string.min)
         binding.mainMaxTitle.text = getString(R.string.max)
+        binding.mainTopEye.text = "AS-EYE"
         binding.mainShareIv.isEnabled = true
 
         setDrawable(binding.mainGpsFix, R.drawable.gps_fix)
         setDrawable(binding.mainMotionSLideImg, R.drawable.drop_down_bottom)
         setDrawable(binding.mainAddAddress, R.drawable.search)
         setDrawable(binding.mainSideMenuIv, R.drawable.ico_hamb_w)
+        binding.mainTopEye.setBackgroundResource(R.drawable.main_eye_bg)
 
         // 원래 상태로 복구하기 위해 제약 조건 변경
         binding.mainMotionLayout.isInteractionEnabled = true
@@ -1971,11 +1994,11 @@ class MainActivity
             binding.mainSideMenuIv, binding.mainAddAddress,
             binding.mainGpsFix, binding.mainMotionSLideImg,
             binding.mainShareIv,
-            binding.adViewCancelIv, binding.nestedAirHelp
+             binding.nestedAirHelp
         )
         val changeBoxViews = listOf(
             binding.mainWarningBox, binding.nestedSubAirFrame,
-            binding.nestedDailyBox, binding.nestedWeeklyBox, binding.adViewBox,
+            binding.nestedDailyBox, binding.nestedWeeklyBox,
             binding.nestedAirBox, binding.mainUVBox, binding.mainSunBox,
             binding.nestedTerms24Box
         )

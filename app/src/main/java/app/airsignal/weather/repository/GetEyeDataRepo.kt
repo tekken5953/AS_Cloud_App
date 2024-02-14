@@ -24,16 +24,16 @@ import java.net.SocketTimeoutException
 class GetEyeDataRepo : BaseRepository() {
     // 날씨 호출 Response Body : Map
     var _getEyeResult =
-        MutableLiveData<ApiState<EyeDataModel.Measured>?>()
+        MutableLiveData<ApiState<EyeDataModel.Entire>?>()
 
-    fun loadDataResult(sn: String) {
+    fun loadDataResult(sn: String, flag: String?, start: Int?, end: Int?) {
         CoroutineScope(Dispatchers.Default).launch {
             _getEyeResult.postValue(ApiState.Loading)
-            impl.getEntire(sn)
-                .enqueue(object : Callback<EyeDataModel.Measured> {
+            impl.getEntire(sn, flag, start, end)
+                .enqueue(object : Callback<EyeDataModel.Entire> {
                     override fun onResponse(
-                        call: Call<EyeDataModel.Measured>,
-                        response: Response<EyeDataModel.Measured>
+                        call: Call<EyeDataModel.Entire>,
+                        response: Response<EyeDataModel.Entire>
                     ) {
                         try {
                             if (response.isSuccessful) {
@@ -53,7 +53,7 @@ class GetEyeDataRepo : BaseRepository() {
                     }
 
                     override fun onFailure(
-                        call: Call<EyeDataModel.Measured>,
+                        call: Call<EyeDataModel.Entire>,
                         t: Throwable
                     ) {
                         try {
@@ -77,7 +77,7 @@ class GetEyeDataRepo : BaseRepository() {
         }
     }
 
-    private fun processData(rawData: EyeDataModel.Measured?): EyeDataModel.Measured {
+    private fun processData(rawData: EyeDataModel.Entire?): EyeDataModel.Entire {
         try {
             rawData?.let { d ->
 

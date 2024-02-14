@@ -55,6 +55,16 @@
                     app:drawableStartCompat="@drawable/location_fill" />
             </ScrollView>
 
+            <TextView
+                android:id="@+id/mainTopEye"
+                style="@style/basicMediumTextView"
+                app:layout_constraintBottom_toBottomOf="@+id/topBarLinear"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/topBarLinear"
+                android:textColor="@color/main_blue_color"
+                android:textSize="16sp" />
+
             <RelativeLayout
                 android:id="@+id/topBarLinear"
                 android:layout_width="match_parent"
@@ -563,49 +573,49 @@
                             tools:listitem="@layout/list_item_daily_weather" />
                     </RelativeLayout>
 
-                    <RelativeLayout
-                        android:id="@+id/adViewBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/nested_daily_box"
-                        android:layout_marginStart="12dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginEnd="12dp"
-                        android:animateLayoutChanges="true"
-                        android:background="@drawable/scrolled_box_bg"
-                        android:visibility="visible">
+<!--                    <RelativeLayout-->
+<!--                        android:id="@+id/adViewBox"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_below="@+id/nested_daily_box"-->
+<!--                        android:layout_marginStart="12dp"-->
+<!--                        android:layout_marginTop="16dp"-->
+<!--                        android:layout_marginEnd="12dp"-->
+<!--                        android:animateLayoutChanges="true"-->
+<!--                        android:background="@drawable/scrolled_box_bg"-->
+<!--                        android:visibility="visible">-->
 
-                        <ImageView
-                            android:id="@+id/adViewCancelIv"
-                            android:layout_width="21dp"
-                            android:layout_height="21dp"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentEnd="true"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginEnd="5dp"
-                            android:contentDescription="@string/cd_ad_cancel"
-                            android:src="@drawable/cancel"
-                            android:visibility="visible"
-                            app:tint="@color/theme_text_color" />
+<!--                        <ImageView-->
+<!--                            android:id="@+id/adViewCancelIv"-->
+<!--                            android:layout_width="21dp"-->
+<!--                            android:layout_height="21dp"-->
+<!--                            android:layout_alignParentTop="true"-->
+<!--                            android:layout_alignParentEnd="true"-->
+<!--                            android:layout_marginTop="5dp"-->
+<!--                            android:layout_marginEnd="5dp"-->
+<!--                            android:contentDescription="@string/cd_ad_cancel"-->
+<!--                            android:src="@drawable/cancel"-->
+<!--                            android:visibility="visible"-->
+<!--                            app:tint="@color/theme_text_color" />-->
 
-                        <com.google.android.gms.ads.AdView
-                            android:id="@+id/nested_adView"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_centerVertical="true"
-                            android:layout_toStartOf="@+id/adViewCancelIv"
-                            android:contentDescription="@string/cd_ad_view"
-                            android:visibility="visible"
-                            app:adSize="BANNER"
-                            app:adUnitId="@string/adUnit_main_Id" />
+<!--                        <com.google.android.gms.ads.AdView-->
+<!--                            android:id="@+id/nested_adView"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_centerVertical="true"-->
+<!--                            android:layout_toStartOf="@+id/adViewCancelIv"-->
+<!--                            android:contentDescription="@string/cd_ad_view"-->
+<!--                            android:visibility="visible"-->
+<!--                            app:adSize="BANNER"-->
+<!--                            app:adUnitId="@string/adUnit_main_Id" />-->
 
-                    </RelativeLayout>
+<!--                    </RelativeLayout>-->
 
                     <RelativeLayout
                         android:id="@+id/nested_weekly_box"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/adViewBox"
+                        android:layout_below="@+id/nested_daily_box"
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="12dp"

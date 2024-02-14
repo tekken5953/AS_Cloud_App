@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -22,6 +23,12 @@ object DataTypeParser {
     /** 현재시간 불러오기 **/
     fun getCurrentTime(): Long {
         return System.currentTimeMillis()
+    }
+
+    fun getAverageTime(time: Long): Int {
+        val currentTime = parseLongToLocalDateTime(time)
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+        return currentTime.format(dateFormatter).toInt()
     }
 
     fun getHourCountToTomorrow(): Int {

@@ -17,13 +17,10 @@ class EyeDataModel {
         val serial: Serial
     )
 
-    data class EntireData(
-        @SerializedName("last_modify")
-        val lastModify: LocalDateTime,
-        @SerializedName("measured")
-        val measured: Measured,
-        @SerializedName("report")
-        val report: List<String>
+    data class Entire(
+        @SerializedName("current")
+        val current: Measured?,
+        val average: List<Average>?
     )
 
     data class ReportFragment(
@@ -32,7 +29,8 @@ class EyeDataModel {
         val caiLvl: Int,
         val virusValue: Int,
         val virusLvl: Int,
-        val pm10Value: Float
+        val pm10Value: Float,
+        val pm10p0List: List<Average>?
     )
 
     data class Life(
@@ -125,116 +123,9 @@ class EyeDataModel {
         val flags: List<String>?
     )
 
-    data class Setting(
-        @SerializedName("fwVer")
-        val fwVer: String,  // x.x.x.x
-        @SerializedName("installTime")
-        val installTime: Int,   // yyyyMMdd
-        @SerializedName("MeasureChk")
-        val measureChk: Long    // 0 or 1 or 2 or 4 or 8 or 16 or 32 or 64 or 128 or 256
-    )
-
-    data class Lifecycle(
-        @SerializedName("pm2p5LifeRemain")
-        val pm2p5LifeRemain: Int,
-        @SerializedName("pm2p5LifePercent")
-        val pm2p5LifePercent: Int,
-        @SerializedName("pm2p5InstallTime")
-        val pm2p5InstallTime: Int,
-        @SerializedName("thLifeRemain")
-        val thLifeRemain: Int,
-        @SerializedName("thLifePercent")
-        val thLifePercent: Int,
-        @SerializedName("thInstallTime")
-        val thInstallTime: Int,
-        @SerializedName("co2LifeRemain")
-        val co2LifeRemain: Int,
-        @SerializedName("co2LifePercent")
-        val co2LifePercent: Int,
-        @SerializedName("co2InstallTime")
-        val co2InstallTime: Int,
-        @SerializedName("coLifeRemain")
-        val coLifeRemain: Int,
-        @SerializedName("coLifePercent")
-        val coLifePercent: Int,
-        @SerializedName("coInstallTime")
-        val coInstallTime: Int,
-        @SerializedName("tvocLifeRemain")
-        val tvocLifeRemain: Int,
-        @SerializedName("tvocLifePercent")
-        val tvocLifePercent: Int,
-        @SerializedName("tvocInstallTime")
-        val tvocInstallTime: Int,
-        @SerializedName("no2LifeRemain")
-        val no2LifeRemain: Int,
-        @SerializedName("no2LifePercent")
-        val no2LifePercent: Int,
-        @SerializedName("no2InstallTime")
-        val no2InstallTime: Int,
-        @SerializedName("lightLifeRemain")
-        val lightLifeRemain: Int,
-        @SerializedName("lightLifePercent")
-        val lightLifePercent: Int,
-        @SerializedName("lightInstallTime")
-        val lightInstallTime: Int,
-        @SerializedName("noiseLifeRemain")
-        val noiseLifeRemain: Int,
-        @SerializedName("noiseLifePercent")
-        val noiseLifePercent: Int,
-        @SerializedName("noiseInstallTime")
-        val noiseInstallTime: Int,
-        @SerializedName("gyroLifeRemain")
-        val gyroLifeRemain: Int,
-        @SerializedName("gyroLifePercent")
-        val gyroLifePercent: Int,
-        @SerializedName("gyroInstallTime")
-        val gyroInstallTime: Int
-    )
-
-    data class Display(
-        @SerializedName("displayMode")
-        val displayMode: Int,   // 0 or 1
-        @SerializedName("displayBrightness")
-        val displayBrightness: Int  // percent
-    )
-
-    data class Earthquake(
-        @SerializedName("earthquakeEnabled")
-        val earthquakeEnabled: Int  // 0 or 1
-    )
-
-    data class Ble(
-        @SerializedName("bleEnabled")
-        val bleEnabled: Int,    // 0 or 1
-        @SerializedName("bleDataReport")
-        val bleDataReport: Int  // 10 ~ 3,600(sec)
-    )
-
-    data class Location(
-        @SerializedName("latitude")
-        val latitude: Double,
-        @SerializedName("longitude")
-        val longitude: Double
-    )
-
-    data class Alarm(
-        @SerializedName("alarmState")
-        val alarmState: Int // 0 or 1
-    )
-
     data class Interval(
         @SerializedName("reportTime")
         val interval: Int // 10 ~ 3,600(sec)
-    )
-
-    data class Power(
-        @SerializedName("power")
-        val power: Int // 0 - off
-    )
-
-    data class Reboot(
-        @SerializedName("complete")
-        val complete: Int // 0 or 1
     )
 
     data class Status(
@@ -256,5 +147,14 @@ class EyeDataModel {
         val ssid: String,
         val level: Int?,
         val capability: String?
+    )
+
+    data class Average (
+        @SerializedName("device")
+        val deviceSerial: String?,
+        @SerializedName("date")
+        val date: LocalDateTime?,
+        @SerializedName("pm10p0Value")
+        val pm10p0Value: Double?
     )
 }

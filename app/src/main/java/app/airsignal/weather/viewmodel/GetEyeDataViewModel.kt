@@ -7,14 +7,14 @@ import app.airsignal.weather.repository.GetEyeDataRepo
 import java.io.IOException
 
 class GetEyeDataViewModel(private val repo: GetEyeDataRepo) : BaseViewModel() {
-    private var getEyeDataResult: LiveData<BaseRepository.ApiState<EyeDataModel.Measured>?>? = null
+    private var getEyeDataResult: LiveData<BaseRepository.ApiState<EyeDataModel.Entire>?>? = null
 
-    fun loadData(sn: String): GetEyeDataViewModel {
-        repo.loadDataResult(sn)
+    fun loadData(sn: String, flag: String?, start: Int?, end: Int?): GetEyeDataViewModel {
+        repo.loadDataResult(sn, flag, start, end)
         return this
     }
 
-    fun fetchData(): LiveData<BaseRepository.ApiState<EyeDataModel.Measured>?> {
+    fun fetchData(): LiveData<BaseRepository.ApiState<EyeDataModel.Entire>?> {
         getEyeDataResult = repo._getEyeResult
         return getEyeDataResult ?: throw IOException()
     }

@@ -1,6 +1,8 @@
 package app.airsignal.weather.as_eye.activity
 
 import android.animation.ObjectAnimator
+import android.app.StatusBarManager
+import android.hardware.lights.LightState
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
@@ -14,13 +16,15 @@ import app.airsignal.weather.as_eye.bluetooth.BleClient
 import app.airsignal.weather.as_eye.fragment.AddDeviceSerialFragment
 import app.airsignal.weather.databinding.ActivityAddEyeDeviceBinding
 import app.airsignal.weather.databinding.IncludeEyeAddItemBinding
+import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class AddEyeDeviceActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityAddEyeDeviceBinding
+class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
+    override val resID: Int get() = R.layout.activity_add_eye_device
+
     private lateinit var includedBinding: IncludeEyeAddItemBinding
     private lateinit var fragmentManager: FragmentManager
 
@@ -33,15 +37,28 @@ class AddEyeDeviceActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_add_eye_device)
+        initBinding()
+        window.statusBarColor = getColor(R.color.white)
         includedBinding = binding.addEyeDeviceTop
         fragmentManager = supportFragmentManager
 
-        includedBinding.includedEyeListBack.setOnClickListener {
-
+        includedBinding.includedEyeListCancel.setOnClickListener {
+            createCancelDialog()
         }
 
         ble = BleClient(this).getInstance()
+    }
+
+    private fun createCancelDialog() {
+        val dialog = MakeDoubleDialog(this)
+        val show = dialog.make("등록을 취소하시겠습니까?","예","아니오",R.color.red)
+        show.first.setOnClickListener {
+            finish()
+            overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
+        }
+        show.second.setOnClickListener {
+            dialog.dismiss()
+        }
     }
 
     fun transactionFragment(frag: Fragment) {
@@ -95,5 +112,9 @@ class AddEyeDeviceActivity : AppCompatActivity() {
     fun showTopBar() {
         binding.addEyeTopContainer.visibility = View.VISIBLE
         binding.addEyeTopContainer.animation = AnimationUtils.loadAnimation(this,R.anim.hide_bottom_to_top)
+    }
+
+    override fun onBackPressed() {
+        createCancelDialog()
     }
 }

@@ -19,6 +19,8 @@ import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivityEyeDetailBinding
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.TimberUtil
+import app.airsignal.weather.util.`object`.DataTypeParser.getAverageTime
+import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.viewmodel.GetEyeDataViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +28,9 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 
-class EyeDetailActivity : AppCompatActivity() {
+class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
+    override val resID: Int get() = R.layout.activity_eye_detail
+
     companion object {
         const val FRAGMENT_REPORT = 0
         const val FRAGMENT_LIVE = 1
@@ -35,9 +39,7 @@ class EyeDetailActivity : AppCompatActivity() {
         const val TEST_SERIAL = "AOA0000001F539"
     }
 
-    private lateinit var binding: ActivityEyeDetailBinding
-
-    private lateinit var entireData: EyeDataModel.Measured
+    private lateinit var entireData: EyeDataModel.Entire
 
     private val dataViewModel by viewModel<GetEyeDataViewModel>()
 
@@ -49,7 +51,7 @@ class EyeDetailActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        dataViewModel.loadData(TEST_SERIAL)
+        sendApiData()
     }
 
     override fun onDestroy() {
@@ -61,7 +63,7 @@ class EyeDetailActivity : AppCompatActivity() {
     @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_eye_detail)
+        initBinding()
 
         val nameExtra = intent.getStringExtra("name")
         val serialExtra = intent.getStringExtra("serial")
@@ -86,16 +88,22 @@ class EyeDetailActivity : AppCompatActivity() {
         }
 
         binding.asDetailRefresh.setOnClickListener {
-            dataViewModel.loadData(TEST_SERIAL)
+            sendApiData()
         }
 
+        binding.aeDetailPb.speed = 1.2f
+
         applyMeasuredData()
+    }
+
+    private fun sendApiData() {
+        dataViewModel.loadData(TEST_SERIAL,"daily",getAverageTime(getCurrentTime()),getAverageTime(getCurrentTime()))
     }
 
     private fun setAnimation(transaction: FragmentTransaction, from: Int, to: Int) {
         var enterAnimation: Int? = null
         var exitAnimation: Int? = null
-        when(to) {
+        when (to) {
             FRAGMENT_REPORT -> {
                 if (from == FRAGMENT_LIVE) {
                     enterAnimation = R.anim.enter_from_start
@@ -144,7 +152,7 @@ class EyeDetailActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun transactionFragment(transaction: FragmentTransaction,frag: Fragment) {
+    private fun transactionFragment(transaction: FragmentTransaction, frag: Fragment) {
         transaction.replace(R.id.aeDetailFrame, frag)
         transaction.commit()
     }
@@ -155,14 +163,22 @@ class EyeDetailActivity : AppCompatActivity() {
             val fromFragment = currentFragment
             currentFragment = id
 
-            setAnimation(transaction,fromFragment, currentFragment)
+            setAnimation(transaction, fromFragment, currentFragment)
 
-            transactionFragment(transaction, when (id) {
-                FRAGMENT_REPORT -> { reportFragment }
-                FRAGMENT_LIVE -> { liveFragment }
-                FRAGMENT_SETTING -> { settingFragment }
-                else -> throw IllegalArgumentException("Invalid fragment id : $id")
-            })
+            transactionFragment(
+                transaction, when (id) {
+                    FRAGMENT_REPORT -> {
+                        reportFragment
+                    }
+                    FRAGMENT_LIVE -> {
+                        liveFragment
+                    }
+                    FRAGMENT_SETTING -> {
+                        settingFragment
+                    }
+                    else -> throw IllegalArgumentException("Invalid fragment id : $id")
+                }
+            )
 
             changeTabResource(id)
         }
@@ -219,26 +235,33 @@ class EyeDetailActivity : AppCompatActivity() {
                                 val body = measured.data
                                 entireData = body
 
+                                val current = body.current
+
 //                                if (isRefreshable()) {
+                                current?.let { currentData ->
                                     reportFragment.onDataTransfer(
                                         EyeDataModel.ReportFragment(
-                                            body.flags,
-                                            body.CAIValue,
-                                            body.CAILvl,
-                                            body.virusValue,
-                                            body.virusLvl,
-                                            body.pm10p0Value
+                                            currentData.flags,
+                                            currentData.CAIValue,
+                                            currentData.CAILvl,
+                                            currentData.virusValue,
+                                            currentData.virusLvl,
+                                            currentData.pm10p0Value,
+                                            body.average
                                         )
                                     )
 
-                                    liveFragment.onDataTransfer(entireData)
-
-                                    if (currentFragment == -1) {
-                                        tabItemSelected(FRAGMENT_REPORT)
-                                    }
+                                    liveFragment.onDataTransfer(currentData)
+                                }
+                                if (currentFragment == -1) {
+                                    tabItemSelected(FRAGMENT_REPORT)
+                                }
 
                                 CoroutineScope(Dispatchers.IO).launch {
-                                    RDBLogcat.writeEyeMeasured(this@EyeDetailActivity,body.toString())
+                                    RDBLogcat.writeEyeMeasured(
+                                        this@EyeDetailActivity,
+                                        body.toString()
+                                    )
                                 }
 //                                }
                             }
@@ -260,7 +283,8 @@ class EyeDetailActivity : AppCompatActivity() {
             hidePb()
         } catch (e: IndexOutOfBoundsException) {
             TimberUtil().e(
-                "eyetest", "IndexOutOfBoundsException $entireData ${e.stackTraceToString()}")
+                "eyetest", "IndexOutOfBoundsException $entireData ${e.stackTraceToString()}"
+            )
             hidePb()
         }
     }
@@ -270,11 +294,13 @@ class EyeDetailActivity : AppCompatActivity() {
         binding.aeDetailPb.visibility = View.VISIBLE
         binding.eyeDetailContainer.isEnabled = false
         binding.aeDetailFrame.isEnabled = false
+        binding.aeDetailPb.playAnimation()
     }
 
     private fun hidePb() {
         binding.aeDetailPb.visibility = View.GONE
         binding.eyeDetailContainer.isEnabled = true
         binding.aeDetailFrame.isEnabled = true
+        binding.aeDetailPb.cancelAnimation()
     }
 }

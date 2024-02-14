@@ -28,13 +28,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
-class EyeListActivity : AppCompatActivity() {
+class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
+    override val resID: Int get() = R.layout.activity_eye_list
 
     companion object {
         const val ENTIRE_GROUP = "전체"
     }
-
-    private lateinit var binding: ActivityEyeListBinding
 
     private val deviceListItem = ArrayList<EyeDataModel.Device>()
     private val deviceListAdapter by lazy { EyeDeviceAdapter(this, deviceListItem) }
@@ -50,7 +49,7 @@ class EyeListActivity : AppCompatActivity() {
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_eye_list)
+        initBinding()
 
         binding.aeListDeviceRv.adapter = deviceListAdapter
         binding.aeListCategoryRv.adapter = categoryAdapter

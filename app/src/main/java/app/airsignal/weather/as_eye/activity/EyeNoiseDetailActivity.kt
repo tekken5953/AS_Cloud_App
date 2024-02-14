@@ -1,8 +1,6 @@
 package app.airsignal.weather.as_eye.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.databinding.DataBindingUtil
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.NoiseDetailAdapter
 import app.airsignal.weather.dao.AdapterModel
@@ -10,15 +8,15 @@ import app.airsignal.weather.databinding.ActivityEyeNoiseDetailBinding
 import java.time.LocalDateTime
 import kotlin.random.Random
 
-class EyeNoiseDetailActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityEyeNoiseDetailBinding
+class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() {
+    override val resID: Int get() = R.layout.activity_eye_detail
 
     private val noiseList = ArrayList<AdapterModel.NoiseDetailItem>()
     private val noiseAdapter by lazy { NoiseDetailAdapter(this, noiseList) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_eye_noise_detail)
+        initBinding()
 
         binding.apply {
             noiseDetailRv.adapter = noiseAdapter

@@ -48,6 +48,7 @@ class EyeDetailReportFragment : Fragment() {
     private var virusLvl = 0
     private var pm10Value = 0f
     private val reportArray = ArrayList<Pair<String,String>>()
+    private val pm10p0Array = ArrayList<EyeDataModel.Average>()
 
 
     override fun onAttach(context: Context) {
@@ -86,6 +87,7 @@ class EyeDetailReportFragment : Fragment() {
             offscreenPageLimit = 3
             scrollIndicators = View.SCROLL_INDICATOR_BOTTOM
         }
+
         applyData()
 
         binding.pmChartTitle.text = getString(R.string.today_pm_chart)
@@ -113,11 +115,19 @@ class EyeDetailReportFragment : Fragment() {
         }
 
         val entry2 = ArrayList<Entry>()
-        repeat(24) {
-            entry2.add(Entry(it.toFloat(), Random.nextFloat() * 70))
+        if (pm10p0Array.isNotEmpty()) {
+            binding.pmAvgLineChart.visibility = View.VISIBLE
+            binding.pmAvgLineChartNoData.visibility = View.GONE
+            repeat(pm10p0Array.size) {
+                pm10p0Array[it].pm10p0Value?.let { pmValue ->
+                    entry2.add(Entry(it.toFloat(), pmValue.toFloat()))
+                }
+            }
+            createPMChart(entry2)
+        } else {
+            binding.pmAvgLineChart.visibility = View.GONE
+            binding.pmAvgLineChartNoData.visibility = View.VISIBLE
         }
-
-        createPMChart(entry2)
 
         binding.reportCaiPb.progress = setProgress(ReportIndex.CAI_INDEX, caiValue,caiLvl)
         binding.reportVirusPb.progress = setProgress(ReportIndex.VIRUS_INDEX, virusValue,virusLvl)
@@ -134,6 +144,7 @@ class EyeDetailReportFragment : Fragment() {
     fun onDataTransfer(data: EyeDataModel.ReportFragment?) {
         data?.let {
             reportArray.clear()
+            pm10p0Array.clear()
             it.report?.let { list ->
                 list.forEach { r ->
                     reportArray.add(Pair(DataTypeParser.parseReportTitle(r), "위험단계입니다. 환기를 시켜주세요"))
@@ -145,6 +156,9 @@ class EyeDetailReportFragment : Fragment() {
             virusValue = it.virusValue
             virusLvl = it.virusLvl
             pm10Value = it.pm10Value
+            it.pm10p0List?.let { pm10List ->
+                pm10p0Array.addAll(pm10List)
+            }
 
             if (this@EyeDetailReportFragment.isVisible) { applyData() }
         }
@@ -168,7 +182,7 @@ class EyeDetailReportFragment : Fragment() {
                     1 -> {((value - 51).toDouble() / (100 - 51).toDouble() * 100).roundToInt()}
                     2 -> {((value - 101).toDouble() / (250 - 101).toDouble() * 100).roundToInt()}
                     3 -> {((value - 251).toDouble() / (500 - 251).toDouble() * 100).roundToInt()}
-                    else -> {0}
+                    else -> { 0 }
                 }
             }
 
@@ -255,14 +269,16 @@ class EyeDetailReportFragment : Fragment() {
         reportViewPagerItem.add(item)
     }
 
-    private fun createPMChart(pm10Entry: ArrayList<Entry>) {
+    private fun createPMChart(pm10Entry: ArrayList<Entry>?) {
         try {
             val pmGraphInstance: LineGraphClass = LineGraphClass(requireContext()).getInstance(binding.pmAvgLineChart)
-            pmGraphInstance
-                .clear()
-                .setChart()
-                .addDataSet("미세먼지", pm10Entry)
-                .createGraph()
+            pm10Entry?.let {
+                pmGraphInstance
+                    .clear()
+                    .setChart()
+                    .addDataSet("미세먼지", pm10Entry)
+                    .createGraph()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
