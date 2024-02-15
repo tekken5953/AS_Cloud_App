@@ -287,5 +287,17 @@
     <string name="create_empty_category">빈 그룹을 생성하시겠습니까?</string>
     <string name="yes">예</string>
     <string name="no">아니오</string>
+    <string name="confuse_bt_retry">블루투스 연결이 불안정합니다\n다시 시도해주세요</string>
+    <string name="fail_to_send_retry">전송에 실패했습니다\n다시 시도해주세요</string>
+    <string name="sending_wifi_info">Wifi 정보를 전송중입니다</string>
+    <string name="fail_to_connect_bt_retry">블루투스 연결에 실패했습니다\n다시 시도해주세요</string>
+    <string name="select_wifi_to_connect">연결할 Wi-Fi를\n선택해주세요</string>
+    <string name="input_serial_on_back">기기 뒷면의\n시리얼 번호를 입력해주세요</string>
+    <string name="searching_eye">AS-Eye를\n검색하고 있습니다</string>
+    <string name="find_eye">AS-Eye를 찾았습니다</string>
+    <string name="connecting_bt">블루투스를 연결중입니다</string>
+    <string name="fail_to_connect_eye">AS-Eye와 연결에\n실패했습니다</string>
+    <string name="success_to_connect_eye">AS-Eye와 연결이\n완료되었습니다</string>
+    <string name="ready_for_connect_bt">블루투스 연결을 준비중입니다</string>
 
 </resources>

@@ -2,6 +2,8 @@ package app.airsignal.weather.as_eye.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.ColorFilter
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
@@ -37,6 +39,12 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
         const val FRAGMENT_SETTING = 2
         var currentFragment = -1
         const val TEST_SERIAL = "AOA0000001F539"
+    }
+
+    enum class AverageFlag(val flag: String) {
+        DAILY("daily"),
+        WEEKLY("weekly"),
+        MONTHLY("monthly")
     }
 
     private lateinit var entireData: EyeDataModel.Entire
@@ -91,13 +99,11 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
             sendApiData()
         }
 
-        binding.aeDetailPb.speed = 1.2f
-
         applyMeasuredData()
     }
 
     private fun sendApiData() {
-        dataViewModel.loadData(TEST_SERIAL,"daily",getAverageTime(getCurrentTime()),getAverageTime(getCurrentTime()))
+        dataViewModel.loadData(TEST_SERIAL,AverageFlag.DAILY.flag,getAverageTime(getCurrentTime()),getAverageTime(getCurrentTime()))
     }
 
     private fun setAnimation(transaction: FragmentTransaction, from: Int, to: Int) {
@@ -290,6 +296,8 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
     }
 
     private fun showPb() {
+        binding.aeDetailPb.setColorFilter(getColor(R.color.graph_blue))
+        binding.aeDetailPb.speed = 1.2f
         binding.aeDetailPb.bringToFront()
         binding.aeDetailPb.visibility = View.VISIBLE
         binding.eyeDetailContainer.isEnabled = false
@@ -301,6 +309,7 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
         binding.aeDetailPb.visibility = View.GONE
         binding.eyeDetailContainer.isEnabled = true
         binding.aeDetailFrame.isEnabled = true
-        binding.aeDetailPb.cancelAnimation()
+        binding.aeDetailPb.pauseAnimation()
+        binding.aeDetailPb.clearColorFilter()
     }
 }

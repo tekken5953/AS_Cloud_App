@@ -1,8 +1,5 @@
 package app.airsignal.weather.firebase.fcm
 
-import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_DAILY
-import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_EVENT
-import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_PATCH
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.util.LoggerUtil
 import com.google.android.gms.tasks.OnCompleteListener
@@ -18,14 +15,26 @@ import java.util.*
 
 class SubFCM: FirebaseMessagingService() {
 
+    enum class Sort(val key: String) {
+        FCM_EYE_NOISE("noise"), FCM_EYE_BRIGHT("bright"), FCM_EYE_GYRO("gyro"),
+        FCM_DAILY("daily"), FCM_PATCH("patch"), FCM_EVENT("event")
+    }
+
+    enum class Channel(val value: String) {
+        NOTIFICATION_CHANNEL_ID("500"),             // FCM 채널 ID
+        NOTIFICATION_CHANNEL_NAME("AIRSIGNAL"),     // FCM 채널 NAME
+        NOTIFICATION_CHANNEL_DESCRIPTION("Channel description")
+    }
+
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         when(message.data["sort"]) {
-            FCM_PATCH, FCM_DAILY -> {
+            Sort.FCM_PATCH.key,
+            Sort.FCM_DAILY.key-> {
                 NotificationBuilder().sendNotification(applicationContext,message.data)
             }
-            FCM_EVENT -> {
+            Sort.FCM_EVENT.key -> {
                 CoroutineScope(Dispatchers.IO).launch {
                     val isLandingEnable =
                         GetAppInfo.isLandingNotification(applicationContext)
@@ -33,6 +42,11 @@ class SubFCM: FirebaseMessagingService() {
                         NotificationBuilder().sendNotification(applicationContext,message.data)
                     }
                 }
+            }
+            Sort.FCM_EYE_NOISE.key,
+            Sort.FCM_EYE_BRIGHT.key,
+            Sort.FCM_EYE_GYRO.key -> {
+                EyeNotiBuilder(applicationContext).sendNotification(message.data)
             }
         }
     }

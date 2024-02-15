@@ -42,7 +42,7 @@ class AddDeviceSerialFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_device_serial, container, false)
-        parentActivity.changeTitleWithAnimation(binding.addSerialTitle,"기기 뒷면의 시리얼 번호를\n입력해주세요",false)
+        parentActivity.changeTitleWithAnimation(binding.addSerialTitle,getString(R.string.input_serial_on_back),false)
         parentActivity.changeProgressWithAnimation(25)
         binding.addSerialEt.visibility = View.VISIBLE
         binding.addSerialEt.animation = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in_group_add)

@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 import kotlin.random.Random
 
 class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() {
-    override val resID: Int get() = R.layout.activity_eye_detail
+    override val resID: Int get() = R.layout.activity_eye_noise_detail
 
     private val noiseList = ArrayList<AdapterModel.NoiseDetailItem>()
     private val noiseAdapter by lazy { NoiseDetailAdapter(this, noiseList) }

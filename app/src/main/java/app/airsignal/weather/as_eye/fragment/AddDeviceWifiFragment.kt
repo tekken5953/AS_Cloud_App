@@ -41,7 +41,7 @@ class AddDeviceWifiFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_device_wifi, container,false)
-        parentActivity.changeTitleWithAnimation(binding.addWifiTitle,"연결할 Wi-Fi를 선택해주세요",true)
+        parentActivity.changeTitleWithAnimation(binding.addWifiTitle,getString(R.string.select_wifi_to_connect),true)
         parentActivity.changeProgressWithAnimation(70)
         binding.addWifiConnectRv.adapter = wifiAdapter
 
@@ -53,7 +53,7 @@ class AddDeviceWifiFragment : Fragment() {
 
         wifiAdapter.setOnItemClickListener(object : OnAdapterItemClick.OnAdapterItemClick{
             override fun onItemClick(v: View, position: Int) {
-                wifiList[position].capability?.let { cap ->
+                wifiList[position].capability?.let {
                     parentActivity.transactionFragment(AddDeviceWifiPasswordFragment())
                 }
             }

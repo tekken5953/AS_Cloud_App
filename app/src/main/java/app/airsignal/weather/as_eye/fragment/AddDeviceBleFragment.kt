@@ -43,7 +43,7 @@ class AddDeviceBleFragment : Fragment() {
         override fun onScanStarted(success: Boolean) {
             if (success) {
                 mainDispatcher.launch {
-                    binding.addBleTitle.text = "AS-Eye를\n검색하고 있습니다"
+                    binding.addBleTitle.text = getString(R.string.searching_eye)
                     startTextAnimation()
                 }
             } else {
@@ -59,7 +59,7 @@ class AddDeviceBleFragment : Fragment() {
                         ble.device = bleDevice
                         mainDispatcher.launch {
                             delay(4000)
-                            binding.addBleTitle.text = "AS-Eye를 찾았습니다"
+                            binding.addBleTitle.text = getString(R.string.find_eye)
                             binding.addBleEyeSerial.text = serial
                             ble.cancelScan()
                             delay(1000)
@@ -86,13 +86,13 @@ class AddDeviceBleFragment : Fragment() {
     private val connectCallback = object : BleGattCallback() {
         override fun onStartConnect() {
             mainDispatcher.launch {
-                binding.addBleTitle.text = "블루투스를 연결중입니다"
+                binding.addBleTitle.text = getString(R.string.connecting_bt)
             }
         }
 
         override fun onConnectFail(bleDevice: BleDevice?, exception: BleException?) {
             binding.addBleTitle.postDelayed({
-                binding.addBleTitle.text = "AS-Eye와 연결에\n실패했습니다"
+                binding.addBleTitle.text = getString(R.string.fail_to_connect_eye)
                 requestReconnect(false)
                 ble.scanning = false
             },4000)
@@ -102,7 +102,7 @@ class AddDeviceBleFragment : Fragment() {
             mainDispatcher.launch {
                 delay(4000)
                 stopTextAnimation()
-                binding.addBleTitle.text = "AS-Eye와 연결이\n완료되었습니다"
+                binding.addBleTitle.text = getString(R.string.success_to_connect_eye)
                 ble.disconnect()
                 delay(3000)
                 parentActivity.transactionFragment(AddDeviceWifiFragment())
@@ -145,7 +145,7 @@ class AddDeviceBleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mainDispatcher.launch {
-            binding.addBleTitle.text = "블루투스 연결을 준비중입니다"
+            binding.addBleTitle.text = getString(R.string.ready_for_connect_bt)
             startTextAnimation()
             delay(5000)
             ble.startScan(scanCallback)

@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.databinding.FragmentAddDeviceWifiPasswordBinding
+import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.util.KeyboardController
 import com.clj.fastble.callback.BleGattCallback
 import com.clj.fastble.callback.BleReadCallback
@@ -178,6 +179,9 @@ class AddDeviceWifiPasswordFragment : Fragment() {
             // TODO 서버에 기기 추가 요청
             binding.addWifiPwdBtn.visibility = View.GONE
             binding.addWifiPwdEt.visibility = View.GONE
+            CoroutineScope(Dispatchers.IO).launch {
+                SubFCM().subTopic(ble.serial)
+            }
             confirmWifiConnect()
         }
     }
@@ -194,13 +198,13 @@ class AddDeviceWifiPasswordFragment : Fragment() {
             if (ble.isConnected()) {
                 parentActivity.changeTitleWithAnimation(
                     binding.addWifiPwdTitle,
-                    "전송에 실패했습니다\n다시 시도해주세요",
+                    getString(R.string.fail_to_send_retry),
                     true
                 )
             } else {
                 parentActivity.changeTitleWithAnimation(
                     binding.addWifiPwdTitle,
-                    "블루투스 연결이 불안정합니다\n다시 시도해주세요",
+                    getString(R.string.confuse_bt_retry),
                     true
                 )
             }
@@ -280,7 +284,7 @@ class AddDeviceWifiPasswordFragment : Fragment() {
             if (binding.addWifiPwdBtn.isEnabled) {
                 parentActivity.changeTitleWithAnimation(
                     binding.addWifiPwdTitle,
-                    "Wifi 정보를 전송중입니다", true
+                    getString(R.string.sending_wifi_info), true
                 )
                 KeyboardController.onKeyboardDown(requireContext(),binding.addWifiPwdEt)
                 ble.postSsid(binding.addWifiPwdEt.text.toString(), writePwdCallback)
@@ -298,7 +302,7 @@ class AddDeviceWifiPasswordFragment : Fragment() {
             ble.connectDevice(it, connectCallback)
         } ?: run {
             mainDispatcher.launch {
-                binding.addWifiPwdTitle.text = "블루투스 연결에 실패했습니다\n다시 시도해주세요"
+                binding.addWifiPwdTitle.text = getString(R.string.fail_to_connect_bt_retry)
                 ble.destroyBle()
                 delay(1500)
                 parentActivity.finish()
