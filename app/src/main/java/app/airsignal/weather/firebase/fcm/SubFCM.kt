@@ -29,6 +29,7 @@ class SubFCM: FirebaseMessagingService() {
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+        LoggerUtil().d("testtest","onMessageReceived ${message.data["sort"]}")
         when(message.data["sort"]) {
             Sort.FCM_PATCH.key,
             Sort.FCM_DAILY.key-> {

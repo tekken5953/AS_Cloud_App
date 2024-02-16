@@ -13,6 +13,8 @@ import android.view.View
 import androidx.core.app.NotificationCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.db.SharedPreferenceManager
+import app.airsignal.weather.db.sp.SpDao
 
 class EyeNotiBuilder(private val context: Context) {
     private val notificationManager: NotificationManager? =
@@ -61,14 +63,20 @@ class EyeNotiBuilder(private val context: Context) {
 
             val sort = data["sort"]
 
-            sort?.let {
-                val payload = "${data["payload"]}의 ${parseSortToTitle(sort)} 감지되었습니다"
-                setNotificationContent(
-                    notificationBuilderInstance,
-                    title = "에어시그널",
-                    subtext = "${data["device"]}",
-                    content = payload
-                )
+            val alias = data[SharedPreferenceManager(context).getString(SpDao.userEmail)]
+
+            alias?.let { pAlias  ->
+                sort?.let { pSort ->
+                    val payload = "${data["payload"]}${parseSortToTitle(pSort)} 감지되었습니다"
+                    setNotificationContent(
+                        notificationBuilderInstance,
+                        title = "에어시그널",
+                        subtext = pAlias,
+                        content = payload
+                    )
+                }
+            } ?: run {
+                //TODO 토픽은 구독했지만 기기 등록이 안된 것으로 판명 or 로그인이 풀린 것으로 판명 에 대한 처리
             }
 
             notificationBuilderInstance.setContentIntent(pendingIntent)
@@ -96,9 +104,9 @@ class EyeNotiBuilder(private val context: Context) {
 
     private fun parseSortToTitle(sort: String?): String? {
         return when (sort) {
-            SubFCM.Sort.FCM_EYE_NOISE.key -> "소음이"
-            SubFCM.Sort.FCM_EYE_GYRO.key -> "진동이"
-            SubFCM.Sort.FCM_EYE_BRIGHT.key -> "조도 변화가"
+            SubFCM.Sort.FCM_EYE_NOISE.key -> "db의 소음이"
+            SubFCM.Sort.FCM_EYE_GYRO.key -> " 진동이"
+            SubFCM.Sort.FCM_EYE_BRIGHT.key -> "lux의 조도 변화가"
             else -> null
         }
     }

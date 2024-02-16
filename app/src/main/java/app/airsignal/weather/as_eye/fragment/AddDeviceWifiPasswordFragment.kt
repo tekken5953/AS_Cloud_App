@@ -179,9 +179,10 @@ class AddDeviceWifiPasswordFragment : Fragment() {
             // TODO 서버에 기기 추가 요청
             binding.addWifiPwdBtn.visibility = View.GONE
             binding.addWifiPwdEt.visibility = View.GONE
-            CoroutineScope(Dispatchers.IO).launch {
-                SubFCM().subTopic(ble.serial)
-            }
+
+            // FCM 토픽 Subscribe
+            SubFCM().subTopic(ble.serial)
+
             confirmWifiConnect()
         }
     }

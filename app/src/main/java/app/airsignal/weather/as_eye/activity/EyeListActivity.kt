@@ -19,6 +19,7 @@ import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.ActivityEyeListBinding
 import app.airsignal.weather.db.room.database.GroupDataBase
 import app.airsignal.weather.db.room.model.EyeGroupEntity
+import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.util.OnAdapterItemClick
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
@@ -87,6 +88,8 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         addListItem(true, "2층", "AOA0000001F537", isReport = false, isPower = false)
         addListItem(false, "3층", "AOA0000001F536", isReport = false, isPower = false)
         addListItem(false, "", null, isReport = false, isPower = true)
+
+        SubFCM().subTopic("AOA0000001F539")
 
         allDevicesList.addAll(deviceListItem)
         deviceListAdapter.notifyDataSetChanged()
