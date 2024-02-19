@@ -45,7 +45,7 @@ class EyeDetailLiveFragment : Fragment() {
     private fun refreshData() {
         try {
             entireData.let {
-                binding.aeLiveRefreshTime.text = DataTypeParser.dateTimeString("yy.MM.dd H:mm:ss", LocalDateTime.parse(entireData.date))
+                binding.aeLiveRefreshTime.text = DataTypeParser.dateTimeString("yy.MM.dd hh:mm:ss", LocalDateTime.parse(entireData.date))
                 binding.aeLiveTemp.fetchData(entireData.tempValue.toString())
                 binding.aeLiveHumid.fetchData(entireData.humidValue.toString())
                 binding.aeLiveLight.fetchData(entireData.lightValue.toString())

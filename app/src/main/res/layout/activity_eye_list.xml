@@ -61,12 +61,12 @@
             tools:listitem="@layout/list_item_ae_category" />
 
         <ImageView
-            android:id="@+id/aeListCategoryAdd"
+            android:id="@+id/aeListCategorySelector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/add"
+            android:src="@drawable/test_symbol"
             app:layout_constraintBottom_toBottomOf="@+id/aeListCategoryRv"
             app:layout_constraintStart_toEndOf="@+id/aeListCategoryRv"
             app:layout_constraintTop_toTopOf="@+id/aeListCategoryRv"

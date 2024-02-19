@@ -20,12 +20,12 @@ class EyeNotiBuilder(private val context: Context) {
     private val notificationManager: NotificationManager? =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
 
-    private fun createNotificationChannel(importance: Int) {
+    private fun createNotificationChannel() {
         val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationChannel = NotificationChannel(
             SubFCM.Channel.NOTIFICATION_CHANNEL_ID.value,
             SubFCM.Channel.NOTIFICATION_CHANNEL_NAME.value,
-            importance
+            NotificationManager.IMPORTANCE_HIGH
         ).apply {
             description = SubFCM.Channel.NOTIFICATION_CHANNEL_DESCRIPTION.value
             lockscreenVisibility = View.VISIBLE
@@ -39,7 +39,7 @@ class EyeNotiBuilder(private val context: Context) {
         return NotificationCompat.Builder(context, SubFCM.Channel.NOTIFICATION_CHANNEL_ID.value)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
-            .setColor(Color.parseColor("#00C2FF"))
+            .setColor(context.getColor(R.color.red))
             .setWhen(System.currentTimeMillis())
             .setSmallIcon(R.drawable.ic_stat_airsignal_default)
     }
@@ -60,29 +60,31 @@ class EyeNotiBuilder(private val context: Context) {
                 PendingIntent.getActivity(appContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
             val notificationBuilderInstance = buildNotificationBuilder()
-
             val sort = data["sort"]
+            val email = SharedPreferenceManager(context).getString(SpDao.userEmail)
+            val alias = data[email]
+            val content = alias ?: data["device"]
 
-            val alias = data[SharedPreferenceManager(context).getString(SpDao.userEmail)]
-
-            alias?.let { pAlias  ->
+//            alias?.let { pAlias  ->
                 sort?.let { pSort ->
-                    val payload = "${data["payload"]}${parseSortToTitle(pSort)} 감지되었습니다"
+                    val payload =
+                         "${data["payload"]}${parseSortToTitle(pSort)} 감지되었습니다"
+
                     setNotificationContent(
                         notificationBuilderInstance,
                         title = "에어시그널",
-                        subtext = pAlias,
+                        subtext = content,
                         content = payload
                     )
                 }
-            } ?: run {
-                //TODO 토픽은 구독했지만 기기 등록이 안된 것으로 판명 or 로그인이 풀린 것으로 판명 에 대한 처리
-            }
+//            } ?: run {
+//                //TODO 토픽은 구독했지만 기기 등록이 안된 것으로 판명 or 로그인이 풀린 것으로 판명 에 대한 처리
+//            }
 
             notificationBuilderInstance.setContentIntent(pendingIntent)
 
             notificationManager?.let {
-                createNotificationChannel(NotificationManager.IMPORTANCE_HIGH)
+                createNotificationChannel()
                 it.notify(2, notificationBuilderInstance.build())
             }
 

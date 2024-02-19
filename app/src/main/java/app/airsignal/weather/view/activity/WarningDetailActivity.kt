@@ -3,7 +3,6 @@ package app.airsignal.weather.view.activity
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
@@ -17,7 +16,6 @@ import app.airsignal.weather.db.sp.GetAppInfo.getWarningFixed
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.viewmodel.GetWarningViewModel
-import org.angmarch.views.OnSpinnerItemSelectedListener
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.util.*
@@ -43,6 +41,12 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
 
         binding.warningBack.setOnClickListener { finish() }
 
+        binding.warningMainLayout.setOnClickListener {
+            if (binding.warningAddr.isShowing) {
+                binding.warningAddr.dismiss()
+            }
+        }
+
         val regexAddress = if (intent.extras?.getBoolean("isMain") == true) {
             AddressFromRegex(getUserLastAddress(this)).getWarningAddress()
         } else { getWarningFixed(this) }
@@ -52,19 +56,18 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             if (regexAddress != "Error") regexAddress
             else getNotificationAddress(this)
 
+        binding.warningAddr.selectItemByIndex(parseStringToIndex(regexAddr))
         warningViewModel.loadDataResult(parseRegionToCode(regexAddr))
 
-        binding.warningNoResult.setOnClickListener {
-            binding.warningAddr.selectedIndex = 0
-            warningViewModel.loadDataResult(109)
+        binding.warningAddr.setOnSpinnerItemSelectedListener<String> {
+                _, _, _, newText ->
+            warningViewModel.loadDataResult(parseRegionToCode(newText))
         }
 
-        val dataset: List<String> = resources.getStringArray(R.array.warning_address_list).asList()
-        binding.warningAddr.attachDataSource(dataset)
-
-        binding.warningAddr.onSpinnerItemSelectedListener =
-            OnSpinnerItemSelectedListener { _, _, position, _ ->
-                warningViewModel.loadDataResult(parseRegionToCode(dataset[position])) }
+        binding.warningNoResult.setOnClickListener {
+            binding.warningAddr.selectItemByIndex(0)
+            warningViewModel.loadDataResult(109)
+        }
     }
 
     // 앱 버전 뷰모델 데이터 호출

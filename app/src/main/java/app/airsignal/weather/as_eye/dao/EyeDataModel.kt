@@ -45,7 +45,7 @@ class EyeDataModel {
         @SerializedName("last_modify")
         val lastModify: LocalDateTime,
         @SerializedName("serial")
-        val serial: String,
+        val serial: String?,
         @SerializedName("report")
         val report: Boolean,
         @SerializedName("power")
@@ -157,4 +157,13 @@ class EyeDataModel {
         @SerializedName("pm10p0Value")
         val pm10p0Value: Double?
     )
+
+    data class Setting (
+        @SerializedName("device_name")
+        val deviceName: String?,
+        @SerializedName("device_serial")
+        val deviceSerial: String?,
+        @SerializedName("wifi_ssid")
+        val wifiSSID: String?
+        )
 }

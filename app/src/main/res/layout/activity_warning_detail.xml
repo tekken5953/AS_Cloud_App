@@ -46,7 +46,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/warningAddr" />
 
-        <org.angmarch.views.NiceSpinner
+        <com.skydoves.powerspinner.PowerSpinnerView
             android:id="@+id/warningAddr"
             style="@style/basicMediumTextView"
             android:layout_width="0dp"
@@ -64,10 +64,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/warningAddrIcon"
             app:layout_constraintTop_toBottomOf="@+id/warningTopBar"
-            app:arrowTint="@color/theme_text_color"
-            app:hideArrow="false"
-            app:popupTextAlignment="start"
-            app:textTint="@color/theme_text_color" />
+            app:spinner_arrow_animate="true"
+            app:spinner_arrow_gravity="end"
+            app:spinner_arrow_show="true"
+            app:spinner_arrow_tint="@color/theme_text_color"
+            app:spinner_divider_color="@color/theme_sub_color"
+            app:spinner_divider_show="true"
+            app:spinner_divider_size="0.4dp"
+            app:spinner_item_array="@array/warning_address_list"
+            app:spinner_item_height="52dp"
+            app:spinner_popup_animation="dropdown"
+            app:spinner_popup_background="@color/theme_view_color"
+            app:spinner_popup_elevation="14dp"
+            app:spinner_popup_start_padding="5dp" />
 
         <View
             android:id="@+id/warningLine"

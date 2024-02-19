@@ -66,7 +66,8 @@
         </activity>
         <activity
             android:name=".as_eye.activity.EyeDetailActivity"
-            android:exported="false">
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

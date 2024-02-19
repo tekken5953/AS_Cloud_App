@@ -801,7 +801,6 @@ class MainActivity
             if (!isProgressed) {
                 isProgressed = true
                 binding.mainLoadingView.visibility = View.VISIBLE
-                binding.mainLoadingView.playAnimation()
                 binding.mainLoadingView.alpha = SHOWING_LOADING_FLOAT
                 binding.mainMotionLayout.isInteractionEnabled = false
                 binding.mainMotionLayout.isEnabled = false
@@ -809,7 +808,6 @@ class MainActivity
         } else {
             if (binding.mainLoadingView.alpha == SHOWING_LOADING_FLOAT) {
                 binding.mainLoadingView.visibility = View.GONE
-                binding.mainLoadingView.cancelAnimation()
                 binding.mainLoadingView.alpha = NOT_SHOWING_LOADING_FLOAT
                 binding.mainMotionLayout.isInteractionEnabled = true
                 binding.mainMotionLayout.isEnabled = true

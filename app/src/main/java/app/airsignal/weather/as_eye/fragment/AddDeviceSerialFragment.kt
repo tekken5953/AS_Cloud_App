@@ -99,8 +99,8 @@ class AddDeviceSerialFragment : Fragment() {
                     - binding.addSerialEt.compoundDrawablesRelative[2].bounds.width()
                 ) {
                     binding.addSerialEt.text.clear()
-                    binding.addSerialEt.clearFocus()
-                    KeyboardController.onKeyboardDown(requireContext(),binding.addSerialEt)
+                    binding.addSerialEt.requestFocus()
+                    KeyboardController.onKeyboardUp(requireContext(),binding.addSerialEt)
                     return@setOnTouchListener true
                 }
             } catch (e: Exception) {

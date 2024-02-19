@@ -5,7 +5,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".as_eye.fragment.EyeSettingFragment">
+        tools:context=".as_eye.fragment.EyeSettingFragment"
+        android:id="@+id/aeSettingViewParent">
 
         <app.airsignal.weather.as_eye.customview.EyeSettingView
             android:id="@+id/aeSettingName"
@@ -30,7 +31,6 @@
             android:id="@+id/aeSettingSerial"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
             app:isArrow="false"
             app:layout_constraintTop_toBottomOf="@+id/aeSettingNotification"
             app:settingLeft="@string/device_serial_number" />
@@ -40,7 +40,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:isArrow="false"
-            android:background="?android:attr/selectableItemBackground"
             app:layout_constraintTop_toBottomOf="@id/aeSettingSerial"
             app:settingLeft="@string/wifi" />
 

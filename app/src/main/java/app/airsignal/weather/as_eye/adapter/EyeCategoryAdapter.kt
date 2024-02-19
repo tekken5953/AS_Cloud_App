@@ -18,7 +18,7 @@ class EyeCategoryAdapter(
 ) :
     RecyclerView.Adapter<EyeCategoryAdapter.ViewHolder>() {
     private val mList = list
-    private var selectedPosition = 0
+    var selectedPosition = 0
 
     private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
 
@@ -47,12 +47,12 @@ class EyeCategoryAdapter(
         fun bind(dao: EyeDataModel.Category) {
             categoryName.text = dao.name
 
-            if (adapterPosition == selectedPosition)
+            if (bindingAdapterPosition == selectedPosition)
                 categoryName.setTextColor(context.getColor(R.color.theme_ae_category_color))
             else categoryName.setTextColor(context.getColor(R.color.ae_sub_color))
 
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try { onClickListener.onItemClick(it, position) }
                     catch (e: UninitializedPropertyAccessException) { e.printStackTrace() }

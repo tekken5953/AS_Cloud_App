@@ -11,7 +11,7 @@ object KeyboardController {
     // 키보드 올리기
     fun onKeyboardUp(context: Context, et: EditText) {
         val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        if (!inputMethodManager.isAcceptingText) {
+        if (!inputMethodManager.isActive) {
             HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
                 inputMethodManager.showSoftInput(et, 1)
             },300)

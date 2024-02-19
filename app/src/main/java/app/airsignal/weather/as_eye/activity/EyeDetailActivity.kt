@@ -75,6 +75,10 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
 
         val nameExtra = intent.getStringExtra("name")
         val serialExtra = intent.getStringExtra("serial")
+        val ssidExtra = intent.getStringExtra("ssid")
+
+        EyeSettingFragment().onDataTransfer(EyeDataModel.Setting(nameExtra,serialExtra, ssidExtra ?: "EBT_2G"))
+
         binding.aeDetailTitle.text = nameExtra
         binding.asDetailSerial.text = serialExtra
 
@@ -242,7 +246,6 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
                                 entireData = body
 
                                 val current = body.current
-
 //                                if (isRefreshable()) {
                                 current?.let { currentData ->
                                     reportFragment.onDataTransfer(
@@ -296,20 +299,18 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
     }
 
     private fun showPb() {
-        binding.aeDetailPb.setColorFilter(getColor(R.color.graph_blue))
+        binding.aeDetailPb.setColorFilter(getColor(R.color.lottie_loading_color))
         binding.aeDetailPb.speed = 1.2f
         binding.aeDetailPb.bringToFront()
         binding.aeDetailPb.visibility = View.VISIBLE
         binding.eyeDetailContainer.isEnabled = false
         binding.aeDetailFrame.isEnabled = false
-        binding.aeDetailPb.playAnimation()
     }
 
     private fun hidePb() {
         binding.aeDetailPb.visibility = View.GONE
         binding.eyeDetailContainer.isEnabled = true
         binding.aeDetailFrame.isEnabled = true
-        binding.aeDetailPb.pauseAnimation()
         binding.aeDetailPb.clearColorFilter()
     }
 }

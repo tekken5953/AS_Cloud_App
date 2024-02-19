@@ -12,9 +12,9 @@ import kotlinx.coroutines.withContext
 
 class EyeGroupRepository(private val context: Context) {
 
-    fun update(model: EyeGroupEntity) {
+    fun update(oldValue: String, newValue: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            getGroupInstance(context).groupRepository().updateCurrentGroup(model)
+            getGroupInstance(context).groupRepository().updateCurrentGroup(oldValue,newValue)
         }
     }
 
