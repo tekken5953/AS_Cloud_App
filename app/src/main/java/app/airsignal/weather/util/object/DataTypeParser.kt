@@ -421,10 +421,12 @@ object DataTypeParser {
         return when(data) {
             "co2" -> {"CO2(이산화탄소)"}
             "co" -> {"CO(일산화탄소)"}
+            "pm1p0" -> {"PM1.0(극초미세먼지)"}
             "pm2p5" -> {"PM2.5(초미세먼지)"}
             "pm10p0" -> {"PM10(미세먼지)"}
             "tvoc" -> {"TVOC(총휘발성유기화합물)"}
             "no2" -> {"NO2(이산화질소)"}
+            "cai" -> {"CAI(통합 대기 환경지수)"}
             else -> {""}
         }
     }

@@ -64,14 +64,13 @@
             android:id="@+id/aeListCategorySelector"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="8dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/test_symbol"
+            android:src="@drawable/more_horize"
             app:layout_constraintBottom_toBottomOf="@+id/aeListCategoryRv"
             app:layout_constraintStart_toEndOf="@+id/aeListCategoryRv"
             app:layout_constraintTop_toTopOf="@+id/aeListCategoryRv"
             app:tint="@color/theme_ae_category_color" />
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/aeListDeviceRv"
@@ -85,6 +84,21 @@
             app:layout_constraintTop_toBottomOf="@+id/aeListCategoryRv"
             tools:listitem="@layout/list_item_ae_device_list" />
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/asListPb"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            app:lottie_autoPlay="true"
+            app:lottie_cacheComposition="true"
+            app:lottie_clipToCompositionBounds="true"
+            app:lottie_colorFilter="@color/graph_blue"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/lottie_loading"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

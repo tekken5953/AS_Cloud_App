@@ -12,7 +12,7 @@ import com.google.android.datatransport.runtime.dagger.Module
 import com.google.android.datatransport.runtime.dagger.Provides
 
 @Module
-@Database(entities = [EyeGroupEntity::class], version = 1, exportSchema = false)
+@Database(entities = [EyeGroupEntity::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class GroupDataBase : RoomDatabase() {
     abstract fun groupRepository(): EyeGroupScheme

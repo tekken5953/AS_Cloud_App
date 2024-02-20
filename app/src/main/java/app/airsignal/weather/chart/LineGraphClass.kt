@@ -50,10 +50,10 @@ class LineGraphClass(private val context: Context) {
                 isDragEnabled = true
                 isHighlightPerTapEnabled = true
                 minOffset = 35f
+                xAxis.setAvoidFirstLastClipping(true)
                 setScaleEnabled(false)
                 setPinchZoom(false) // pinch zoom
                 setVisibleXRangeMaximum(5f)
-                if (mChart.scaleX == 1f) mChart.zoom(4f, 0f, 4f, 0f)
                 isDoubleTapToZoomEnabled = false
                 isLongClickable = false
                 isAutoScaleMinMaxEnabled = false
@@ -84,6 +84,7 @@ class LineGraphClass(private val context: Context) {
             position = XAxis.XAxisPosition.BOTTOM // X축을 그래프 아래로 위치하기
             textSize = 12f // 레이블 텍스트 사이즈
             textColor = context.getColor(R.color.eye_graph_gray) // 레이블 텍스트 색
+            this.setAvoidFirstLastClipping(false)
             setDrawAxisLine(false) // 그래프 뒷 배경의 그리드 표시
             setDrawGridLines(false) // 그래프 뒷 배경의 그리드 표시
             setLabelCount(24, false)
@@ -91,7 +92,6 @@ class LineGraphClass(private val context: Context) {
             granularity = 1f // 축 레이블 표시 간격
             setDrawLabels(true)
             typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_medium.ttf")
-            setAvoidFirstLastClipping(false)
             valueFormatter = XAxisValueFormat()
         }
     }
@@ -161,6 +161,7 @@ class LineGraphClass(private val context: Context) {
         }
         mChart.startAnimation(fadeIn)
         mChart.animateX(400)
+        if (mChart.scaleX == 1f && mChart.data.entryCount >= 6) mChart.zoom(4f, 0f, 4f, 0f)
         mChart.invalidate()
         mChart.moveViewToX(mChart.lineData.entryCount.toFloat()) // 가장 최근에 추가한 데이터의 위치로 이동처리
     }
@@ -174,7 +175,7 @@ class LineGraphClass(private val context: Context) {
     //X축 엔트리 포멧
     inner class XAxisValueFormat : IndexAxisValueFormatter() {
         override fun getFormattedValue(value: Float): String {
-            return "${if (value.toInt() + 1 == 24) 0 else value.toInt() + 1}시"
+            return "${value.toInt()}시"
         }
     }
 

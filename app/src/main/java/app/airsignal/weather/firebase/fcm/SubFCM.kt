@@ -66,7 +66,7 @@ class SubFCM: FirebaseMessagingService() {
     }
 
     /** 토픽 구독 해제 **/
-    private fun unSubTopic(topic: String): SubFCM {
+    fun unSubTopic(topic: String): SubFCM {
         val encodedStream = encodeTopic(topic)
         CoroutineScope(Dispatchers.Default).launch {
             FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream)

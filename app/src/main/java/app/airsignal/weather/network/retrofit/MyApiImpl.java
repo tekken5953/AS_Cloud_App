@@ -8,7 +8,10 @@ import java.util.List;
 
 import app.airsignal.weather.as_eye.dao.EyeDataModel;
 import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -39,8 +42,29 @@ public interface MyApiImpl {
     @GET("airsignal/current/{sn}") // Eye 측정 데이터 호출
     Call<EyeDataModel.Entire> getEntire(
             @NotNull @Path("sn") String sn,
-            @Query("flag") String flag,
-            @Query("start") Integer start,
-            @Query("end") Integer end
+            @Nullable @Query("flag") String flag,
+            @Nullable @Query("start") Integer start,
+            @Nullable @Query("end") Integer end
+    );
+
+    @POST("device/{sn}") // Eye Alias 변경
+    Call<String> updateAlias(
+            @Body String alias,
+            @NotNull @Path("sn") String sn
+    );
+
+    @GET("device")
+    Call<List<EyeDataModel.Device>> getDeviceList();
+
+    @POST("device")
+    Call<String> postDevice(
+            @Query("id") String id,
+            @Body EyeDataModel.PostDevice item
+    );
+
+    @DELETE("device/{sn}")
+    Call<String> deleteDevice(
+            @Path("sn") String sn,
+            @Query("id") String id
     );
 }

@@ -2,17 +2,11 @@ package app.airsignal.weather.koin
 
 import android.app.Application
 import android.content.Context
-import app.airsignal.weather.network.retrofit.HttpClient
-import app.airsignal.weather.repository.GetAppVersionRepo
-import app.airsignal.weather.repository.GetWarningRepo
-import app.airsignal.weather.repository.GetWeatherRepo
-import app.airsignal.weather.viewmodel.GetAppVersionViewModel
-import app.airsignal.weather.viewmodel.GetWarningViewModel
-import app.airsignal.weather.viewmodel.GetWeatherViewModel
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.location.GetLocation
-import app.airsignal.weather.repository.GetEyeDataRepo
-import app.airsignal.weather.viewmodel.GetEyeDataViewModel
+import app.airsignal.weather.network.retrofit.HttpClient
+import app.airsignal.weather.repository.*
+import app.airsignal.weather.viewmodel.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -61,9 +55,13 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
         single { GetAppVersionRepo() }
         single { GetWarningRepo() }
         single { GetEyeDataRepo() }
+        single { GetEyeDeviceListRepo() }
+        single { SetEyeDeviceAliasRepo() }
         viewModel { GetAppVersionViewModel(get()) }
         viewModel { GetWeatherViewModel(get()) }
         viewModel { GetWarningViewModel(get()) }
         viewModel { GetEyeDataViewModel(get()) }
+        viewModel { GetEyeDeviceListViewModel(get()) }
+        viewModel { SetEyeDeviceAliasViewModel(get())}
     }
 }

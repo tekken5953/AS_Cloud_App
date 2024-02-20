@@ -38,8 +38,8 @@ class EyeGroupSelectorView(context: Context, attrs: AttributeSet?)
     private fun getImage(title: String): Drawable? {
         return when(title) {
             "그룹 추가" -> ResourcesCompat.getDrawable(resources, R.drawable.add, null)
-            "그룹 삭제" -> ResourcesCompat.getDrawable(resources, R.drawable.delete, null)
-            "그룹명 변경" -> ResourcesCompat.getDrawable(resources, R.drawable.edit, null)
+            "그룹 삭제" -> ResourcesCompat.getDrawable(resources, R.drawable.eye_device_remove, null)
+            "그룹명 변경" -> ResourcesCompat.getDrawable(resources, R.drawable.eye_device_edit, null)
             else -> null
         }
     }

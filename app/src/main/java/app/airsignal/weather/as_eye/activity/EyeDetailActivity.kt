@@ -2,14 +2,10 @@ package app.airsignal.weather.as_eye.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.ColorFilter
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import app.airsignal.weather.R
@@ -38,10 +34,14 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
         const val FRAGMENT_LIVE = 1
         const val FRAGMENT_SETTING = 2
         var currentFragment = -1
-        const val TEST_SERIAL = "AOA0000001F539"
     }
 
+    val aliasExtra by lazy {intent.getStringExtra("alias")}
+    val serialExtra by lazy {intent.getStringExtra("serial")}
+    val ssidExtra by lazy {intent.getStringExtra("ssid")}
+
     enum class AverageFlag(val flag: String) {
+        HOURLY("hour"),
         DAILY("daily"),
         WEEKLY("weekly"),
         MONTHLY("monthly")
@@ -59,7 +59,9 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
 
     override fun onStart() {
         super.onStart()
-        sendApiData()
+        serialExtra?.let {
+            sendApiData(it)
+        }
     }
 
     override fun onDestroy() {
@@ -73,13 +75,7 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
         super.onCreate(savedInstanceState)
         initBinding()
 
-        val nameExtra = intent.getStringExtra("name")
-        val serialExtra = intent.getStringExtra("serial")
-        val ssidExtra = intent.getStringExtra("ssid")
-
-        EyeSettingFragment().onDataTransfer(EyeDataModel.Setting(nameExtra,serialExtra, ssidExtra ?: "EBT_2G"))
-
-        binding.aeDetailTitle.text = nameExtra
+        binding.aeDetailTitle.text = aliasExtra
         binding.asDetailSerial.text = serialExtra
 
         binding.asDetailTabReport.setOnClickListener {
@@ -100,14 +96,16 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
         }
 
         binding.asDetailRefresh.setOnClickListener {
-            sendApiData()
+            serialExtra?.let {
+                sendApiData(it)
+            }
         }
 
         applyMeasuredData()
     }
 
-    private fun sendApiData() {
-        dataViewModel.loadData(TEST_SERIAL,AverageFlag.DAILY.flag,getAverageTime(getCurrentTime()),getAverageTime(getCurrentTime()))
+    fun sendApiData(serial: String) {
+        dataViewModel.loadData(serial,AverageFlag.HOURLY.flag,getAverageTime(getCurrentTime()),getAverageTime(getCurrentTime()))
     }
 
     private fun setAnimation(transaction: FragmentTransaction, from: Int, to: Int) {
@@ -228,15 +226,15 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
         return if (System.currentTimeMillis() - lastRefreshTime > 1000 * 30) {
             lastRefreshTime = System.currentTimeMillis()
             true
-        } else {
-            false
-        }
+        } else { false }
     }
 
     private fun applyMeasuredData() {
         try {
             if (!dataViewModel.fetchData().hasObservers()) {
                 dataViewModel.fetchData().observe(this) { result ->
+                    TimberUtil().d("eyetest",result?.toString())
+
                     result?.let { measured ->
                         when (measured) {
                             // 통신 성공
@@ -262,6 +260,7 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
 
                                     liveFragment.onDataTransfer(currentData)
                                 }
+
                                 if (currentFragment == -1) {
                                     tabItemSelected(FRAGMENT_REPORT)
                                 }
@@ -298,7 +297,7 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
         }
     }
 
-    private fun showPb() {
+    fun showPb() {
         binding.aeDetailPb.setColorFilter(getColor(R.color.lottie_loading_color))
         binding.aeDetailPb.speed = 1.2f
         binding.aeDetailPb.bringToFront()
@@ -307,7 +306,7 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
         binding.aeDetailFrame.isEnabled = false
     }
 
-    private fun hidePb() {
+    fun hidePb() {
         binding.aeDetailPb.visibility = View.GONE
         binding.eyeDetailContainer.isEnabled = true
         binding.aeDetailFrame.isEnabled = true

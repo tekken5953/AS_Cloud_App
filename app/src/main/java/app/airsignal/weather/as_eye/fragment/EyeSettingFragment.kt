@@ -16,17 +16,24 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
-import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.EyeSettingFragmentBinding
-import app.airsignal.weather.util.KeyboardController
+import app.airsignal.weather.db.room.repository.EyeGroupRepository
+import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.util.RefreshUtils
+import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.custom_view.ShowDialogClass
+import app.airsignal.weather.viewmodel.SetEyeDeviceAliasViewModel
+import kotlinx.coroutines.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EyeSettingFragment : Fragment() {
     private lateinit var mActivity: EyeDetailActivity
     private lateinit var binding: EyeSettingFragmentBinding
 
-    private lateinit var entireData: EyeDataModel.Setting
+    private var isCanApi = false
+
+    private val deviceAliasViewModel by viewModel<SetEyeDeviceAliasViewModel>()
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -49,8 +56,7 @@ class EyeSettingFragment : Fragment() {
             val changeDeviceEt = changeDeviceNameView.findViewById<EditText>(R.id.dialogChangeEyeNameEt)
             val changeDeviceBtn = changeDeviceNameView.findViewById<AppCompatButton>(R.id.dialogChangeEyeNameBtn)
 
-            //TODO 현재 기기명으로 넣기
-            changeDeviceEt.setText("현재 기기명")
+            changeDeviceEt.setText(mActivity.aliasExtra)
 
             changeDeviceEt.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
@@ -62,10 +68,14 @@ class EyeSettingFragment : Fragment() {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     s?.let {
-                        // TODO 현재 기기명과 다른지 검사
                         if (it.isNotBlank()) {
-                            changeDeviceBtn.isEnabled = true
-                            changeDeviceBtn.setTextColor(requireContext().getColor(R.color.white))
+                            if (changeDeviceEt.text.toString() != mActivity.aliasExtra) {
+                                changeDeviceBtn.isEnabled = true
+                                changeDeviceBtn.setTextColor(requireContext().getColor(R.color.white))
+                            } else {
+                                changeDeviceBtn.isEnabled = false
+                                changeDeviceBtn.setTextColor(requireContext().getColor(R.color.eye_btn_disable_color))
+                            }
                         } else {
                             changeDeviceBtn.isEnabled = false
                             changeDeviceBtn.setTextColor(requireContext().getColor(R.color.eye_btn_disable_color))
@@ -96,11 +106,11 @@ class EyeSettingFragment : Fragment() {
 
             changeDeviceBtn.setOnClickListener {
                 if (changeDeviceBtn.isEnabled) {
-                    //TODO 기기 Alias 변경 요청
-                    val alert = MakeSingleDialog(requireContext())
-                    val maker = alert.makeDialog("변경에 성공했습니다", R.color.main_blue_color,"확인",false)
-                    maker.setOnClickListener {
-                        changeDeviceNameDialog.dismiss()
+                    mActivity.serialExtra?.let { serial ->
+                        if (!isCanApi) {
+                            isCanApi = true
+                            callApi(changeDeviceNameDialog,serial,changeDeviceEt.text.toString())
+                        }
                     }
                 }
             }
@@ -109,9 +119,11 @@ class EyeSettingFragment : Fragment() {
                 .show(changeDeviceNameView,true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
 
         }
+
         binding.aeSettingSerial.setOnClickListener { }
         binding.aeSettingWifi.setOnClickListener { }
         binding.aeSettingNotification.setOnClickListener { }
+
         return binding.root
     }
 
@@ -122,20 +134,61 @@ class EyeSettingFragment : Fragment() {
         applyData()
     }
 
-    private fun applyData() {
-        try {
-            entireData.let {
-                binding.aeSettingSerial.fetchData(it.deviceSerial ?: "")
-                binding.aeSettingName.fetchData(it.deviceName ?: "")
-                binding.aeSettingWifi.fetchData(it.wifiSSID ?: "")
+    private fun callApi(dialog: ShowDialogClass, serial: String, alias: String) {
+        applyPostAlias(dialog,serial,alias)
+        deviceAliasViewModel.loadDataResult(serial,alias)
+    }
+
+    private fun applyPostAlias(dialog: ShowDialogClass, serial: String, alias: String) {
+        if (!deviceAliasViewModel.fetchData().hasObservers()) {
+            deviceAliasViewModel.fetchData().observe(mActivity) { result ->
+                result?.let { res ->
+                    when (res) {
+                        is BaseRepository.ApiState.Success -> {
+                            mActivity.hidePb()
+                            val alert = MakeSingleDialog(requireContext())
+                            val maker = alert.makeDialog(
+                                "변경에 성공했습니다",
+                                R.color.main_blue_color, "확인", true
+                            )
+
+                            maker.setOnClickListener {
+                                dialog.dismiss()
+                                alert.dismiss()
+                            }
+                            CoroutineScope(Dispatchers.IO).launch {
+                                EyeGroupRepository(requireContext()).update(serial, alias)
+
+                                withContext(Dispatchers.Main) {
+                                    delay(500)
+                                    isCanApi = false
+                                    mActivity.sendApiData(serial)
+                                }
+                            }
+                        }
+
+                        is BaseRepository.ApiState.Error -> {
+                            mActivity.hidePb()
+                            dialog.dismiss()
+                            ToastUtils(requireContext()).showMessage("변경에 실패했습니다")
+                            RefreshUtils(requireContext()).refreshActivity()
+                        }
+
+                        is BaseRepository.ApiState.Loading -> mActivity.showPb()
+                    }
+                }
             }
-        } catch (e: UninitializedPropertyAccessException) {
-            e.printStackTrace()
         }
     }
-    fun onDataTransfer(data: EyeDataModel.Setting?) {
-        data?.let {
-            entireData = it
+
+    private fun applyData() {
+        try {
+            val extras = mActivity.intent.extras
+            binding.aeSettingSerial.fetchData(extras?.getString("serial") ?: "")
+            binding.aeSettingName.fetchData(extras?.getString("alias") ?: "")
+            binding.aeSettingWifi.fetchData(extras?.getString("ssid") ?: "")
+        } catch (e: UninitializedPropertyAccessException) {
+            e.printStackTrace()
         }
     }
 }

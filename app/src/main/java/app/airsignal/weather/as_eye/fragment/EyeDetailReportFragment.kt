@@ -17,9 +17,11 @@ import app.airsignal.weather.as_eye.adapter.ReportViewPagerAdapter
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.chart.LineGraphClass
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
+import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
 import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.*
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -49,7 +51,6 @@ class EyeDetailReportFragment : Fragment() {
     private var pm10Value = 0f
     private val reportArray = ArrayList<Pair<String,String>>()
     private val pm10p0Array = ArrayList<EyeDataModel.Average>()
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -120,7 +121,12 @@ class EyeDetailReportFragment : Fragment() {
             binding.pmAvgLineChartNoData.visibility = View.GONE
             repeat(pm10p0Array.size) {
                 pm10p0Array[it].pm10p0Value?.let { pmValue ->
-                    entry2.add(Entry(it.toFloat(), pmValue.toFloat()))
+                    try {
+                        entry2.add(Entry(DataTypeParser.dateTimeString("H",
+                            LocalDateTime.parse(pm10p0Array[it].date)).toFloat(), pmValue.toFloat()))
+                    } catch (e: Exception) {
+                        e.stackTraceToString()
+                    }
                 }
             }
             createPMChart(entry2)
@@ -142,25 +148,37 @@ class EyeDetailReportFragment : Fragment() {
     }
 
     fun onDataTransfer(data: EyeDataModel.ReportFragment?) {
-        data?.let {
-            reportArray.clear()
-            pm10p0Array.clear()
-            it.report?.let { list ->
-                list.forEach { r ->
-                    reportArray.add(Pair(DataTypeParser.parseReportTitle(r), "위험단계입니다. 환기를 시켜주세요"))
+        try {
+            data?.let {
+                reportArray.clear()
+                pm10p0Array.clear()
+
+                it.report?.let { list ->
+                    if (list.isNotEmpty()) {
+                        list.forEach { r ->
+                            reportArray.add(Pair(DataTypeParser.parseReportTitle(r), "위험단계입니다. 환기를 시켜주세요"))
+                        }
+                    }
                 }
-            }
 
-            caiValue = it.caiValue
-            caiLvl = it.caiLvl
-            virusValue = it.virusValue
-            virusLvl = it.virusLvl
-            pm10Value = it.pm10Value
-            it.pm10p0List?.let { pm10List ->
-                pm10p0Array.addAll(pm10List)
-            }
+                caiValue = it.caiValue
+                caiLvl = it.caiLvl
+                virusValue = it.virusValue
+                virusLvl = it.virusLvl
+                pm10Value = it.pm10Value
 
-            if (this@EyeDetailReportFragment.isVisible) { applyData() }
+                it.pm10p0List?.let { pm10List ->
+                    if (pm10List.isNotEmpty()) {
+                        pm10List.forEach { avg ->
+                            avg?.let { pm10p0Array.add(avg) }
+                        }
+                    }
+                }
+
+                if (this@EyeDetailReportFragment.isVisible) { applyData() }
+            }
+        } catch (e: IndexOutOfBoundsException) {
+            e.stackTraceToString()
         }
     }
 

@@ -17,15 +17,24 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
+import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.FragmentAddDeviceWifiPasswordBinding
+import app.airsignal.weather.db.SharedPreferenceManager
+import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.firebase.fcm.SubFCM
+import app.airsignal.weather.network.retrofit.HttpClient
+import app.airsignal.weather.network.retrofit.MyApiImpl
 import app.airsignal.weather.util.KeyboardController
+import app.airsignal.weather.util.TimberUtil
 import com.clj.fastble.callback.BleGattCallback
 import com.clj.fastble.callback.BleReadCallback
 import com.clj.fastble.callback.BleWriteCallback
 import com.clj.fastble.data.BleDevice
 import com.clj.fastble.exception.BleException
 import kotlinx.coroutines.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
 @SuppressLint("MissingPermission")
@@ -176,14 +185,14 @@ class AddDeviceWifiPasswordFragment : Fragment() {
 
         binding.addWifiPwdBtn.visibility = View.VISIBLE
         binding.addWifiPwdBtn.setOnClickListener {
-            // TODO 서버에 기기 추가 요청
             binding.addWifiPwdBtn.visibility = View.GONE
             binding.addWifiPwdEt.visibility = View.GONE
 
             // FCM 토픽 Subscribe
             SubFCM().subTopic(ble.serial)
 
-            confirmWifiConnect()
+            postDevice(EyeDataModel.PostDevice(serial = parentActivity.ble.serial,
+            alias = binding.addWifiPwdEt.text.toString(), isMaster = "T"))
         }
     }
 
@@ -355,5 +364,27 @@ class AddDeviceWifiPasswordFragment : Fragment() {
                 parentActivity.finish()
             }
         }
+    }
+
+    private fun postDevice(item: EyeDataModel.PostDevice) {
+        HttpClient.getInstance(false).setClientBuilder().postDevice(
+            SharedPreferenceManager(requireContext()).getString(SpDao.userEmail), item
+        ).enqueue(
+            object : Callback<String> {
+                override fun onResponse(call: Call<String>, response: Response<String>) {
+                    try {
+                        if (response.isSuccessful) {
+                            confirmWifiConnect()
+                        }
+                    } catch (e: Exception) {
+                        TimberUtil().e("eyetest",e.stackTraceToString())
+                    }
+                }
+
+                override fun onFailure(call: Call<String>, t: Throwable) {
+                    TimberUtil().e("eyetest",t.stackTraceToString())
+                }
+            }
+        )
     }
 }

@@ -5,21 +5,26 @@ import java.time.LocalDateTime
 
 class EyeDataModel {
     data class Device(
-        @SerializedName("created_at")
-        val created_at: LocalDateTime,
-        @SerializedName("is_master")
+//        @SerializedName("created_at")
+//        val created_at: LocalDateTime,
+        @SerializedName("master")
         val isMaster: Boolean,
-        @SerializedName("email")
+        @SerializedName("sort")
+        val sort: String?,
+        @SerializedName("userId")
         var email: String,
         @SerializedName("alias")
-        val alias: String,
+        val alias: String?,
         @SerializedName("serial")
-        val serial: Serial
+        val serial: String?,
+        @SerializedName("detail")
+        val detail: DeviceDetail?
     )
 
     data class Entire(
         @SerializedName("current")
-        val current: Measured?,
+        val current: Measured,
+        @SerializedName("average")
         val average: List<Average>?
     )
 
@@ -41,11 +46,11 @@ class EyeDataModel {
         val backColor: Int
     )
 
-    data class Serial(
-        @SerializedName("last_modify")
-        val lastModify: LocalDateTime,
-        @SerializedName("serial")
-        val serial: String?,
+    data class DeviceDetail(
+//        @SerializedName("lastModify")
+//        val lastModify: LocalDateTime?,
+        @SerializedName("ssid")
+        val ssid: String?,
         @SerializedName("report")
         val report: Boolean,
         @SerializedName("power")
@@ -153,7 +158,7 @@ class EyeDataModel {
         @SerializedName("device")
         val deviceSerial: String?,
         @SerializedName("date")
-        val date: LocalDateTime?,
+        val date: String?,
         @SerializedName("pm10p0Value")
         val pm10p0Value: Double?
     )
@@ -166,4 +171,13 @@ class EyeDataModel {
         @SerializedName("wifi_ssid")
         val wifiSSID: String?
         )
+
+    data class PostDevice(
+        @SerializedName("serial")
+        val serial: String,
+        @SerializedName("alias")
+        val alias: String,
+        @SerializedName("is_master")
+        val isMaster: String
+    )
 }

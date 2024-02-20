@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="320dp"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
@@ -13,17 +13,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:selectorTitle="그룹 추가"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="10dp"
-        android:layout_weight="0.3"/>
-
-    <app.airsignal.weather.as_eye.customview.EyeGroupSelectorView
-        android:id="@+id/dialogAddGroupDelete"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:selectorTitle="그룹 삭제"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="27dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginStart="34dp"
+        android:layout_marginEnd="17dp"
         android:layout_weight="0.3"/>
 
     <app.airsignal.weather.as_eye.customview.EyeGroupSelectorView
@@ -31,8 +24,22 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:selectorTitle="그룹명 변경"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="20dp"
+        android:gravity="center"
+        android:layout_marginBottom="27dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="34dp"
+        android:layout_weight="0.3"/>
+
+    <app.airsignal.weather.as_eye.customview.EyeGroupSelectorView
+        android:id="@+id/dialogAddGroupDelete"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:selectorTitle="그룹 삭제"
+        android:layout_marginBottom="27dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="17dp"
         android:layout_weight="0.3"/>
 
 </LinearLayout>

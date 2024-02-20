@@ -53,7 +53,7 @@ class AddGroupAdapter(
 
         fun bind(dao: EyeDataModel.Group) {
             alias.text = dao.device.alias
-            serial.text = dao.device.serial.serial
+            serial.text = dao.device.serial
 
             if (dao.device.isMaster) {
                 master.visibility = View.VISIBLE
