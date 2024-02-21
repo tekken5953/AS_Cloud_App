@@ -296,4 +296,7 @@
     <string name="fail_to_connect_eye">AS-Eye와연결에\n실패했습니다</string>
     <string name="success_to_connect_eye">AS-Eye와 연결이\n완료되었습니다</string>
     <string name="ready_for_connect_bt">블루투스 연결을 준비중입니다</string>
+    <string name="eye_add_cancel">등록을 취소하시겠습니까?</string>
+    <string name="eye_success_change">변경에 성공했습니다</string>
+    <string name="eye_fail_change">변경에 실패했습니다</string>
 </resources>

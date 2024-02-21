@@ -17,10 +17,7 @@ import app.airsignal.weather.as_eye.fragment.AddDeviceSerialFragment
 import app.airsignal.weather.databinding.ActivityAddEyeDeviceBinding
 import app.airsignal.weather.databinding.IncludeEyeAddItemBinding
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
     override val resID: Int get() = R.layout.activity_add_eye_device
@@ -51,10 +48,17 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
 
     private fun createCancelDialog() {
         val dialog = MakeDoubleDialog(this)
-        val show = dialog.make("등록을 취소하시겠습니까?","예","아니오",R.color.red)
+        val show = dialog.make(getString(R.string.eye_add_cancel),getString(R.string.yes),getString(R.string.no),R.color.red)
         show.first.setOnClickListener {
-            finish()
-            overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
+            CoroutineScope(Dispatchers.IO).launch {
+                ble.disconnect()
+                ble.destroyBle()
+
+                withContext(Dispatchers.Main) {
+                    finish()
+                    overridePendingTransition(R.anim.fade_in,R.anim.fade_out)
+                }
+            }
         }
         show.second.setOnClickListener {
             dialog.dismiss()

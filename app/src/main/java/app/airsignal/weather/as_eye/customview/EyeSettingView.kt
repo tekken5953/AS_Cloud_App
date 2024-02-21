@@ -26,11 +26,13 @@ class EyeSettingView(context: Context, attrs: AttributeSet?)
             val typedArray = context.obtainStyledAttributes(set, R.styleable.EyeSettingView)
             val leftText = typedArray.getString(R.styleable.EyeSettingView_settingLeft)
             val isArrow = typedArray.getBoolean(R.styleable.EyeSettingView_isArrow,false)
+            val isToggle = typedArray.getBoolean(R.styleable.EyeSettingView_isToggle, true)
             typedArray.recycle()
 
             systemBinding.customEyeSettingTitle.text = leftText
 
             if (isArrow) systemBinding.customEyeSettingArrow.visibility = View.VISIBLE else View.GONE
+            if (isToggle) systemBinding.customEyeSettingSwitch.visibility = View.VISIBLE else View.GONE
         }
     }
 

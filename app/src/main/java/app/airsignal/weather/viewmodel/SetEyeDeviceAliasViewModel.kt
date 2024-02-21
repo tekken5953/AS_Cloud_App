@@ -8,7 +8,7 @@ import java.io.IOException
 class SetEyeDeviceAliasViewModel(private val repo: SetEyeDeviceAliasRepo): BaseViewModel() {
     private var getResultData: LiveData<BaseRepository.ApiState<String?>>? = null
 
-    fun loadDataResult(alias: String, sn: String) : SetEyeDeviceAliasViewModel {
+    fun loadDataResult(sn: String, alias: String) : SetEyeDeviceAliasViewModel {
         repo.loadDataResult(alias, sn)
         return this
     }

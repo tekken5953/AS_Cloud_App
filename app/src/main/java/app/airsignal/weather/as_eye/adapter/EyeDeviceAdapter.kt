@@ -104,10 +104,8 @@ class EyeDeviceAdapter(
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     try {
-                        dao.detail?.let { pDetail ->
-                            if (pDetail.power) {
-                                onClickListener.onItemClick(it, position)
-                            }
+                        if (dao.detail?.power == true) {
+                            onClickListener.onItemClick(it, position)
                         }
                     } catch (e: UninitializedPropertyAccessException) {
                         e.printStackTrace()

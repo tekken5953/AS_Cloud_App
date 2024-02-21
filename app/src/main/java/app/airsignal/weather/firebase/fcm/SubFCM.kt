@@ -1,5 +1,6 @@
 package app.airsignal.weather.firebase.fcm
 
+import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.util.LoggerUtil
 import com.google.android.gms.tasks.OnCompleteListener
@@ -47,7 +48,11 @@ class SubFCM: FirebaseMessagingService() {
             Sort.FCM_EYE_NOISE.key,
             Sort.FCM_EYE_BRIGHT.key,
             Sort.FCM_EYE_GYRO.key -> {
-                EyeNotiBuilder(applicationContext).sendNotification(message.data)
+                message.data["device"]?.let {
+                    if (SharedPreferenceManager(applicationContext).getBoolean(it, false)) {
+                        EyeNotiBuilder(applicationContext).sendNotification(message.data)
+                    }
+                }
             }
         }
     }

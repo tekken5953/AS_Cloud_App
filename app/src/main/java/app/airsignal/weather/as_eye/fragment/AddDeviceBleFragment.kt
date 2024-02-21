@@ -22,10 +22,7 @@ import com.clj.fastble.callback.BleGattCallback
 import com.clj.fastble.callback.BleScanCallback
 import com.clj.fastble.data.BleDevice
 import com.clj.fastble.exception.BleException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 @SuppressLint("MissingPermission")
 class AddDeviceBleFragment : Fragment() {
@@ -117,6 +114,12 @@ class AddDeviceBleFragment : Fragment() {
         ) {
             stopTextAnimation()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        stopTextAnimation()
+        mainDispatcher.cancel()
     }
 
     override fun onAttach(context: Context) {

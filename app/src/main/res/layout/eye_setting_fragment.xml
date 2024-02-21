@@ -15,6 +15,7 @@
             android:layout_marginTop="10dp"
             android:background="?android:attr/selectableItemBackground"
             app:isArrow="true"
+            app:isToggle="false"
             app:layout_constraintTop_toTopOf="parent"
             app:settingLeft="@string/device_alias" />
 
@@ -23,7 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
-            app:isArrow="true"
+            app:isArrow="false"
+            app:isToggle="true"
             app:layout_constraintTop_toBottomOf="@+id/aeSettingName"
             app:settingLeft="@string/noti_option" />
 
@@ -32,6 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:isArrow="false"
+            app:isToggle="false"
             app:layout_constraintTop_toBottomOf="@+id/aeSettingNotification"
             app:settingLeft="@string/device_serial_number" />
 
@@ -40,6 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:isArrow="false"
+            app:isToggle="false"
             app:layout_constraintTop_toBottomOf="@id/aeSettingSerial"
             app:settingLeft="@string/wifi" />
 

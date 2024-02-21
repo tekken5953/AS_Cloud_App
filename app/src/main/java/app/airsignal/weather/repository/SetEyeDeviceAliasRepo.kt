@@ -27,7 +27,7 @@ class SetEyeDeviceAliasRepo : BaseRepository() {
     fun loadDataResult(alias: String, sn: String) {
         CoroutineScope(Dispatchers.Default).launch {
             _setAliasResult.postValue(ApiState.Loading)
-            impl.updateAlias(alias, sn).enqueue(object : Callback<String>{
+            impl.updateAlias(sn,alias).enqueue(object : Callback<String>{
                 override fun onResponse(call: Call<String>, response: Response<String>) {
                     TimberUtil().d("eyetest",response.body().toString())
                     try {

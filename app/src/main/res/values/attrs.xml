@@ -34,6 +34,7 @@
     <declare-styleable name="EyeSettingView">
         <attr name="settingLeft" format="string"/>
         <attr name="isArrow" format="boolean"/>
+        <attr name="isToggle" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="EyeGroupSelectorView">

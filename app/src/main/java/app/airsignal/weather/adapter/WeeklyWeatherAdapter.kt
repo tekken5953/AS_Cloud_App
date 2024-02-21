@@ -83,7 +83,7 @@ class WeeklyWeatherAdapter(
             maxText.setTextColor(applyColor)
             section.setTextColor(applyColor)
 
-            if (adapterPosition == 0) {
+            if (bindingAdapterPosition == 0) {
                 day.setTextColor(context.getColor(R.color.main_blue_color))
                 date.setTextColor(context.getColor(R.color.main_blue_color))
             }

@@ -245,7 +245,7 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
 
                                 val current = body.current
 //                                if (isRefreshable()) {
-                                current?.let { currentData ->
+                                current.let { currentData ->
                                     reportFragment.onDataTransfer(
                                         EyeDataModel.ReportFragment(
                                             currentData.flags,

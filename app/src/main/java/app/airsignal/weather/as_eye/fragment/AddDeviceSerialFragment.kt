@@ -17,10 +17,7 @@ import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.databinding.FragmentAddDeviceSerialBinding
 import app.airsignal.weather.util.KeyboardController
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.*
 
 
@@ -29,6 +26,8 @@ class AddDeviceSerialFragment : Fragment() {
     private lateinit var binding : FragmentAddDeviceSerialBinding
 
     private val ble by lazy { parentActivity.ble }
+
+    private val maxSerialLength = 11
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -71,7 +70,7 @@ class AddDeviceSerialFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 s?.let {
-                    if (s.length > 1) {
+                    if (s.length == maxSerialLength) {
                         binding.addSerialBtn.isEnabled = true
                         binding.addSerialBtn.setTextColor(requireContext().getColor(R.color.white))
                     } else {

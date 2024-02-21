@@ -56,8 +56,8 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
                     dataDate.text = date.format(timeFormatter)
                     dataValue.text = "${value}dB의 소음을 감지하였습니다"
 
-                    val current = mList[adapterPosition].date
-                    val prev = if (adapterPosition > 0) mList[adapterPosition-1].date else null
+                    val current = mList[bindingAdapterPosition].date
+                    val prev = if (bindingAdapterPosition > 0) mList[bindingAdapterPosition-1].date else null
                     val isHeader: Boolean? =
                         prev?.let { p ->
                             current?.let { c ->

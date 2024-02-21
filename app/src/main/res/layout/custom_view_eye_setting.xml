@@ -35,6 +35,17 @@
                 android:src="@drawable/right_arrow"
                 android:visibility="gone"
                 app:tint="@color/ae_sub_color" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/customEyeSettingSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|end"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:visibility="gone"
+                android:thumb="@drawable/switch_thumb"
+                app:track="@drawable/switch_selector" />
         </LinearLayout>
 
         <View

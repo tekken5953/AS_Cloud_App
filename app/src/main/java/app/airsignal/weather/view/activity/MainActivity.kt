@@ -1709,13 +1709,15 @@ class MainActivity
         val isNight = isThemeNight(this@MainActivity)
         val backgroundResourceId = if (isNight) R.color.black else R.color.white
 
-        error?.let { e ->
-            setOnClickListenerForErrorButton(e)
-            updateViewsForError(e)
-        }
-        binding.mainSkyImg.apply {
-            changeBackgroundResource(backgroundResourceId)
-            setImageDrawable(getR(if (isNight) R.drawable.ico_error_b else R.drawable.ico_error_w))
+        runOnUiThread {
+            error?.let { e ->
+                setOnClickListenerForErrorButton(e)
+                updateViewsForError(e)
+            }
+            binding.mainSkyImg.apply {
+                changeBackgroundResource(backgroundResourceId)
+                setImageDrawable(getR(if (isNight) R.drawable.ico_error_b else R.drawable.ico_error_w))
+            }
         }
     }
 

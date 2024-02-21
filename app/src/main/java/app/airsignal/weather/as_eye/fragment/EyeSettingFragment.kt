@@ -2,6 +2,7 @@ package app.airsignal.weather.as_eye.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,14 +13,17 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.SwitchCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
+import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.databinding.EyeSettingFragmentBinding
+import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.room.repository.EyeGroupRepository
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.RefreshUtils
+import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.custom_view.ShowDialogClass
@@ -122,7 +126,13 @@ class EyeSettingFragment : Fragment() {
 
         binding.aeSettingSerial.setOnClickListener { }
         binding.aeSettingWifi.setOnClickListener { }
-        binding.aeSettingNotification.setOnClickListener { }
+        val settingSwitch = binding.aeSettingNotification.findViewById<SwitchCompat>(R.id.customEyeSettingSwitch)
+        mActivity.serialExtra?.let {
+            settingSwitch.isChecked = SharedPreferenceManager(requireContext()).getBoolean(it, true)
+            settingSwitch.setOnCheckedChangeListener { _, isChecked ->
+                SharedPreferenceManager(requireContext()).setBoolean(it, isChecked)
+            }
+        }
 
         return binding.root
     }
@@ -136,6 +146,7 @@ class EyeSettingFragment : Fragment() {
 
     private fun callApi(dialog: ShowDialogClass, serial: String, alias: String) {
         applyPostAlias(dialog,serial,alias)
+        TimberUtil().d("eyetest","serial is $serial alias is $alias")
         deviceAliasViewModel.loadDataResult(serial,alias)
     }
 
@@ -148,30 +159,27 @@ class EyeSettingFragment : Fragment() {
                             mActivity.hidePb()
                             val alert = MakeSingleDialog(requireContext())
                             val maker = alert.makeDialog(
-                                "변경에 성공했습니다",
-                                R.color.main_blue_color, "확인", true
+                                getString(R.string.eye_success_change),
+                                R.color.main_blue_color, getString(R.string.ok), true
                             )
+
+                            EyeGroupRepository(requireContext()).update(serial, alias)
+
+                            isCanApi = false
 
                             maker.setOnClickListener {
                                 dialog.dismiss()
                                 alert.dismiss()
-                            }
-                            CoroutineScope(Dispatchers.IO).launch {
-                                EyeGroupRepository(requireContext()).update(serial, alias)
-
-                                withContext(Dispatchers.Main) {
-                                    delay(500)
-                                    isCanApi = false
-                                    mActivity.sendApiData(serial)
-                                }
+                                val intent = Intent(mActivity, EyeListActivity::class.java)
+                                startActivity(intent)
+                                mActivity.finish()
                             }
                         }
 
                         is BaseRepository.ApiState.Error -> {
                             mActivity.hidePb()
                             dialog.dismiss()
-                            ToastUtils(requireContext()).showMessage("변경에 실패했습니다")
-                            RefreshUtils(requireContext()).refreshActivity()
+                            ToastUtils(requireContext()).showMessage(getString(R.string.eye_fail_change))
                         }
 
                         is BaseRepository.ApiState.Loading -> mActivity.showPb()

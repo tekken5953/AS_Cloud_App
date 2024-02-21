@@ -170,7 +170,7 @@ class EyeDetailReportFragment : Fragment() {
                 it.pm10p0List?.let { pm10List ->
                     if (pm10List.isNotEmpty()) {
                         pm10List.forEach { avg ->
-                            avg?.let { pm10p0Array.add(avg) }
+                            avg.let { pm10p0Array.add(avg) }
                         }
                     }
                 }
@@ -213,7 +213,6 @@ class EyeDetailReportFragment : Fragment() {
                     else -> { 0 }
                 }
             }
-            else -> {0}
         }
 
         return result
@@ -239,7 +238,6 @@ class EyeDetailReportFragment : Fragment() {
                     else -> { Pair(0, 0) }
                 }
             }
-            else -> { Pair(0, 0) }
         }
     }
 

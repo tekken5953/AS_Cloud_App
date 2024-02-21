@@ -58,6 +58,7 @@ class AddDeviceWifiPasswordFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         ble.disconnect()
+        mainDispatcher.cancel()
         parentActivity.hidePb()
         parentActivity.showTopBar()
     }
