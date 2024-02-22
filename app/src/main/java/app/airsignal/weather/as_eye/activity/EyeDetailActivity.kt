@@ -298,8 +298,6 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
     }
 
     fun showPb() {
-        binding.aeDetailPb.setColorFilter(getColor(R.color.lottie_loading_color))
-        binding.aeDetailPb.speed = 1.2f
         binding.aeDetailPb.bringToFront()
         binding.aeDetailPb.visibility = View.VISIBLE
         binding.eyeDetailContainer.isEnabled = false
@@ -310,6 +308,5 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
         binding.aeDetailPb.visibility = View.GONE
         binding.eyeDetailContainer.isEnabled = true
         binding.aeDetailFrame.isEnabled = true
-        binding.aeDetailPb.clearColorFilter()
     }
 }

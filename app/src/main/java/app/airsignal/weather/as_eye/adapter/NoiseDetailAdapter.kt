@@ -1,32 +1,45 @@
-package app.airsignal.weather.adapter
+package app.airsignal.weather.as_eye.adapter
 
 import android.content.Context
 import android.graphics.Typeface
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.os.HandlerCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
+import app.airsignal.weather.adapter.ItemDiffCallback
 import app.airsignal.weather.dao.AdapterModel
 import java.time.format.DateTimeFormatter
-import java.util.Date
 
 
 class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterModel.NoiseDetailItem>) :
     RecyclerView.Adapter<NoiseDetailAdapter.ViewHolder>() {
-    private val mList = list
-    private var isLast = mutableMapOf<Int,Boolean>()
+    private var mList = list
+    var isLast: Int = -1
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): NoiseDetailAdapter.ViewHolder {
+    ): ViewHolder {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val view: View = inflater.inflate(R.layout.list_item_noise_detail, parent, false)
 
         return ViewHolder(view)
+    }
+
+    fun submitList(newItems: ArrayList<AdapterModel.NoiseDetailItem>) {
+        val diffCallback = ItemDiffCallback(mList, newItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback, true)
+
+        mList = newItems
+        HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+            diffResult.dispatchUpdatesTo(this)
+        },200)
     }
 
     override fun getItemCount(): Int = mList.size
@@ -34,7 +47,7 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(mList[position])
 
-        if (isLast[position] == true) {
+        if (position == isLast) {
             holder.headerValue.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
             holder.dataDate.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
             holder.dataValue.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
@@ -85,8 +98,8 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
         }
     }
 
-    fun applyBold(i: Int) {
-        isLast[i] = true
-        notifyItemChanged(i)
+    fun applyBold(list: ArrayList<AdapterModel.NoiseDetailItem>) {
+        isLast = list.lastIndex
+        notifyItemRangeChanged(0, list.lastIndex)
     }
 }

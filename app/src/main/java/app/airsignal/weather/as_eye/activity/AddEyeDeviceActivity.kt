@@ -8,6 +8,7 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -51,7 +52,6 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
         val show = dialog.make(getString(R.string.eye_add_cancel),getString(R.string.yes),getString(R.string.no),R.color.red)
         show.first.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
-                ble.disconnect()
                 ble.destroyBle()
 
                 withContext(Dispatchers.Main) {
@@ -68,6 +68,13 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
     fun transactionFragment(frag: Fragment) {
         val transaction = fragmentManager.beginTransaction()
         transaction.add(R.id.addEyeDeviceFrame, frag)
+        transaction.commit()
+    }
+
+    fun transactionFragment(oldFrag: Fragment, newFrag: Fragment, bundle: Bundle) {
+        val transaction = fragmentManager.beginTransaction()
+        oldFrag.arguments = bundle
+        transaction.replace(R.id.addEyeDeviceFrame, newFrag)
         transaction.commit()
     }
 

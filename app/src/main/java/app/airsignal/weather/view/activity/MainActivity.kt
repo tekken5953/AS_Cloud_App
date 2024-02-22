@@ -802,6 +802,7 @@ class MainActivity
                 isProgressed = true
                 binding.mainLoadingView.visibility = View.VISIBLE
                 binding.mainLoadingView.alpha = SHOWING_LOADING_FLOAT
+                binding.mainLoadingView.bringToFront()
                 binding.mainMotionLayout.isInteractionEnabled = false
                 binding.mainMotionLayout.isEnabled = false
             }
@@ -817,14 +818,10 @@ class MainActivity
     }
 
     // 프로그래스 보이기
-    private fun showProgressBar() {
-        setProgressVisibility(true)
-    }
+    private fun showProgressBar() { setProgressVisibility(true) }
 
     // 프로그래스 숨기기
-    private fun hideProgressBar() {
-        setProgressVisibility(false)
-    }
+    private fun hideProgressBar() { setProgressVisibility(false) }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
@@ -1097,7 +1094,6 @@ class MainActivity
                 binding.mainGpsFix.clearAnimation()
                 binding.mainDailyWeatherRv.scrollToPosition(0)
                 binding.mainWarningVp.currentItem = 0
-                hideProgressBar()
                 showAllViews()
                 updateUIWithData(result)
                 RDBLogcat.writeGpsHistory(
@@ -1134,7 +1130,7 @@ class MainActivity
                 binding.mainSkyText.text = skyText
                 // 날씨에 따라 배경화면 변경
                 applyWindowBackground(currentSun, skyText)
-
+                hideProgressBar()
                 if (!isInAppMsgShow) {
                     CoroutineScope(Dispatchers.IO).launch {
                         startInAppMsg()
@@ -1150,9 +1146,7 @@ class MainActivity
     private fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean {
         val timeFormed = LocalDateTime.parse(currentTime)
         val realtimeFormed = LocalDateTime.parse(realTime)
-        return realtimeFormed?.let {
-            timeFormed.isAfter(it)
-        } ?: true
+        return realtimeFormed?.let { timeFormed.isAfter(it) } ?: true
     }
 
     // API 통신이 에러일 때 처리
@@ -1161,18 +1155,10 @@ class MainActivity
             hideProgressBar()
             try {
                 RDBLogcat.writeErrorANR("handleApiError", "handleApiError cause $errorMessage")
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            } catch (e: Exception) { e.printStackTrace() }
             if (GetLocation(this).isNetWorkConnected()) {
                 hideAllViews(error = errorMessage)
-            } else {
-                if (errorMessage == "text") {
-                    hideProgressBar()
-                } else {
-                    hideAllViews(error = ERROR_NETWORK)
-                }
-            }
+            } else { if (errorMessage != "text") { hideAllViews(error = ERROR_NETWORK) } }
         }
     }
 
@@ -2114,7 +2100,6 @@ class MainActivity
             location?.let { loc ->
                 val lat = loc.latitude
                 val lng = loc.longitude
-                hideProgressBar()
                 if (isKorea(lat, lng)) {
                     val addr = GetLocation(this@MainActivity).getAddress(lat, lng)
                     processAddress(lat, lng, addr)

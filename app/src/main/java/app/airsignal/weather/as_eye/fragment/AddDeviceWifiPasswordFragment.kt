@@ -50,9 +50,12 @@ class AddDeviceWifiPasswordFragment : Fragment() {
 
     private var isInit = true
 
+    private var isCapability = true
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is AddEyeDeviceActivity) parentActivity = context
+        isCapability = arguments?.getBoolean("capability") ?: true
     }
 
     override fun onDestroyView() {
@@ -83,49 +86,28 @@ class AddDeviceWifiPasswordFragment : Fragment() {
         override fun onConnectSuccess(bleDevice: BleDevice?, gatt: BluetoothGatt?, status: Int) {
             mainDispatcher.launch {
                 if (isInit) {
-                    parentActivity.changeTitleWithAnimation(
-                        binding.addWifiPwdTitle,
-                        getString(R.string.eye_input_wifi_password),
-                        true
-                    )
-                    binding.addWifiPwdEt.visibility = View.VISIBLE
-                    binding.addWifiPwdEt.animation =
-                        AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
-                    binding.addWifiPwdBtn.visibility = View.VISIBLE
-                    binding.addWifiPwdBtn.animation =
-                        AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
-                }
-                else {
-                    // 와이파이 연결상태 불러오기
-                    val readCallback = object : BleReadCallback() {
-                        override fun onReadSuccess(data: ByteArray?) {
-                            if (data?.toString(Charsets.UTF_8) == "1") {
-                                // 연결 됨
-                                inputDeviceAlias()
-                            } else {
-                                // 연결 안됨
-                                mainDispatcher.launch {
-                                    parentActivity.hidePb()
-                                    binding.addWifiPwdTitle.text = getString(R.string.eye_wifi_connect_fail)
-                                    ble.disconnect()
-                                    delay(2000)
-                                    parentActivity.transactionFragment(AddDeviceWifiFragment())
-                                }
-                            }
-                        }
-
-                        override fun onReadFailure(exception: BleException?) {
-                            // 읽기 실패
-                            mainDispatcher.launch {
-                                parentActivity.hidePb()
-                                binding.addWifiPwdTitle.text = getString(R.string.eye_disconnect_retry)
-                                ble.disconnect()
-                                delay(2000)
-                                parentActivity.transactionFragment(AddDeviceWifiFragment())
-                            }
-                        }
+                    if (isCapability) {
+                        parentActivity.changeTitleWithAnimation(
+                            binding.addWifiPwdTitle,
+                            getString(R.string.eye_input_wifi_password),
+                            true
+                        )
+                        binding.addWifiPwdEt.visibility = View.VISIBLE
+                        binding.addWifiPwdEt.animation =
+                            AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+                        binding.addWifiPwdBtn.visibility = View.VISIBLE
+                        binding.addWifiPwdBtn.animation =
+                            AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+                    } else {
+                        parentActivity.changeTitleWithAnimation(
+                            binding.addWifiPwdTitle,
+                            getString(R.string.sending_wifi_info), true
+                        )
+                        KeyboardController.onKeyboardDown(requireContext(),binding.addWifiPwdEt)
+                        ble.postSsid(writePwdCallback)
                     }
-
+                } else {
+                    // 와이파이 연결상태 불러오기
                     ble.readConnected(readCallback)
                 }
             }
@@ -194,6 +176,60 @@ class AddDeviceWifiPasswordFragment : Fragment() {
 
             postDevice(EyeDataModel.PostDevice(serial = parentActivity.ble.serial,
             alias = binding.addWifiPwdEt.text.toString(), isMaster = "T"))
+        }
+    }
+
+    private val readCallback = object : BleReadCallback() {
+        override fun onReadSuccess(data: ByteArray?) {
+            if (data?.toString(Charsets.UTF_8) == "1") {
+                // 연결 됨
+                inputDeviceAlias()
+            } else {
+                // 연결 안됨
+                mainDispatcher.launch {
+                    parentActivity.hidePb()
+                    binding.addWifiPwdTitle.text = getString(R.string.eye_wifi_connect_fail)
+                    ble.disconnect()
+                    delay(2000)
+                    parentActivity.transactionFragment(AddDeviceWifiFragment())
+                }
+            }
+        }
+
+        override fun onReadFailure(exception: BleException?) {
+            // 읽기 실패
+            mainDispatcher.launch {
+                parentActivity.hidePb()
+                binding.addWifiPwdTitle.text = getString(R.string.eye_disconnect_retry)
+                ble.disconnect()
+                delay(2000)
+                parentActivity.transactionFragment(AddDeviceWifiFragment())
+            }
+        }
+    }
+
+    private val writeSsidCallback = object : BleWriteCallback() {
+        override fun onWriteSuccess(
+            current: Int,
+            total: Int,
+            justWrite: ByteArray?
+        ) {
+            CoroutineScope(Dispatchers.Main).launch {
+                ble.instance.removeConnectGattCallback(ble.device)
+                delay(2000)
+                if (isCapability) ble.postPwd(binding.addWifiPwdEt.text.toString(), writePwdCallback)
+                else ble.readConnected(readCallback = readCallback)
+            }
+        }
+
+        override fun onWriteFailure(exception: BleException?) {
+            ble.device?.let {
+                ble.instance.disconnect(it)
+            }
+            TimberUtil().e(
+                "testtest",
+                "onWriteFailure is ${exception?.description}"
+            )
         }
     }
 
@@ -298,7 +334,7 @@ class AddDeviceWifiPasswordFragment : Fragment() {
                     getString(R.string.sending_wifi_info), true
                 )
                 KeyboardController.onKeyboardDown(requireContext(),binding.addWifiPwdEt)
-                ble.postSsid(binding.addWifiPwdEt.text.toString(), writePwdCallback)
+                ble.postSsid(writeSsidCallback)
             }
         }
 

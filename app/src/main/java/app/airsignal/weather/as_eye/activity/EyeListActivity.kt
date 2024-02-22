@@ -31,7 +31,6 @@ import app.airsignal.weather.db.room.repository.EyeGroupRepository
 import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.OnAdapterItemClick
-import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
@@ -58,6 +57,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     private val db by lazy { GroupDataBase.getGroupInstance(this).groupRepository() }
 
     private val deviceListViewModel by viewModel<GetEyeDeviceListViewModel>()
+    private val listLiveData by lazy {deviceListViewModel.fetchData()}
 
     override fun onStart() {
         super.onStart()
@@ -363,7 +363,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     }
 
     private fun loadDeviceList() {
-        if (deviceListViewModel.fetchData().hasActiveObservers()) {
+        if (listLiveData.hasActiveObservers()) {
             deviceListViewModel.loadDataResult()
         }
         else {
@@ -375,44 +375,39 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     @SuppressLint("NotifyDataSetChanged")
     private fun applyDeviceList() {
         try {
-            if (!deviceListViewModel.fetchData().hasObservers()) {
-                deviceListViewModel.fetchData().observe(this) { result ->
+            if (!listLiveData.hasObservers()) {
+                listLiveData.observe(this) { result ->
                     result?.let { list ->
                         when (list) {
                             // 통신 성공
                             is BaseRepository.ApiState.Success -> {
                                 deviceListItem.clear()
                                 allDevicesList.clear()
-                                hidePb()
+
                                 list.data?.let { pList ->
                                     pList.forEachIndexed { index, device ->
                                         TimberUtil().d("eyetest", "device list is $device")
                                         val detail = device.detail?.let { pDetail ->
                                             EyeDataModel.DeviceDetail(pDetail.ssid, pDetail.report, pDetail.power)
-                                        } ?:  EyeDataModel.DeviceDetail("",false,false)
+                                        } ?:  EyeDataModel.DeviceDetail("", report = false, power = false)
 
                                         addListItem(device.isMaster, device.sort, device.alias, device.serial, detail)
                                         allDevicesList.add(device)
-
-                                        deviceListAdapter.notifyDataSetChanged()
-
-                                        if (index == pList.lastIndex) {
-                                            addLastAddItem()
-                                            TimberUtil().d("eyetest","inser last index $index")
-                                            deviceListAdapter.notifyDataSetChanged()
-                                        }
                                     }
                                 }
+
+                                addLastAddItem()
+                                deviceListAdapter.notifyDataSetChanged()
                             }
 
                             // 통신 실패
                             is BaseRepository.ApiState.Error -> {
-                                hidePb()
                                 TimberUtil().e("eyetest", result.toString())
+                                ToastUtils(this).showMessage("장치를 불러오는데 실패했습니다")
                             }
 
                             // 통신 중
-                            is BaseRepository.ApiState.Loading -> showPb()
+                            is BaseRepository.ApiState.Loading -> {}
                         }
                     }
                 }
@@ -420,15 +415,5 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         } catch(e: IOException) {
             TimberUtil().e("eyetest", "장치를 불러오는데 실패했습니다")
         }
-    }
-
-    private fun showPb() {
-        binding.asListPb.speed = 1.2f
-        binding.asListPb.bringToFront()
-        binding.asListPb.visibility = View.VISIBLE
-    }
-
-    private fun hidePb() {
-        binding.asListPb.visibility = View.GONE
     }
 }

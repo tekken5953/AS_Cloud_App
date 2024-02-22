@@ -4,6 +4,7 @@ import android.app.Activity
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
+import android.content.pm.Capability
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
@@ -21,7 +22,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 class BleClient(private val activity: Activity) {
-    private val instance: BleManager by lazy { BleManager.getInstance() }
+    val instance: BleManager by lazy { BleManager.getInstance() }
     var device: BleDevice? = null
     var serial = "Unknown"
     var scanning = false
@@ -89,7 +90,7 @@ class BleClient(private val activity: Activity) {
 
     fun destroyBle() {
         instance.run {
-            disconnectAllDevice()
+            disconnect()
             disableBluetooth()
             destroy()
         }
@@ -112,7 +113,7 @@ class BleClient(private val activity: Activity) {
         }
     }
 
-    fun postSsid(pwd: String, writePwdCallback: BleWriteCallback) {
+    fun postSsid(writeSsidCallback: BleWriteCallback) {
         val gatt = getGatt()
         gatt?.let {
             gatt.services.forEach { service ->
@@ -131,29 +132,7 @@ class BleClient(private val activity: Activity) {
                                     service.uuid.toString(),
                                     uuid,
                                     serial.toByteArray(),
-                                    object : BleWriteCallback() {
-                                        override fun onWriteSuccess(
-                                            current: Int,
-                                            total: Int,
-                                            justWrite: ByteArray?
-                                        ) {
-                                            CoroutineScope(Dispatchers.Main).launch {
-                                                instance.removeConnectGattCallback(device)
-                                                delay(2000)
-                                                postPwd(pwd, writePwdCallback)
-                                            }
-                                        }
-
-                                        override fun onWriteFailure(exception: BleException?) {
-                                            device?.let {
-                                                instance.disconnect(it)
-                                            }
-                                            TimberUtil().e(
-                                                "testtest",
-                                                "onWriteFailure is ${exception?.description}"
-                                            )
-                                        }
-                                    }
+                                    writeSsidCallback
                                 )
                             }
 

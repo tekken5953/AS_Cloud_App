@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
+        android:id="@+id/noiseDetailRoot"
         tools:context=".as_eye.activity.EyeNoiseDetailActivity">
 
         <ImageView
@@ -30,18 +31,67 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/noiseDetailBack" />
 
+        <TableRow
+            android:id="@+id/noiseFilterTr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/noiseDetailTitle">
+            <TextView
+                android:id="@+id/noiseFilterByDateTitle"
+                style="@style/basicMediumTextView"
+                android:text="날짜로 필터링"
+                android:gravity="start"
+                android:textColor="@color/eye_graph_gray"
+                android:textSize="14sp"
+                android:layout_weight="0.25"/>
+            <TextView
+                android:id="@+id/noiseFilterByDateValue"
+                style="@style/basicMediumTextView"
+                android:text="이번주"
+                android:gravity="start"
+                android:textColor="@color/main_black"
+                android:layout_weight="0.25"/>
+            <TextView
+                android:id="@+id/noiseFilterByDbTitle"
+                style="@style/basicMediumTextView"
+                android:text="값으로 필터링"
+                android:gravity="start"
+                android:textColor="@color/eye_graph_gray"
+                android:textSize="14sp"
+                android:layout_weight="0.25"/>
+            <TextView
+                android:id="@+id/noiseFilterByDbValue"
+                style="@style/basicMediumTextView"
+                android:text="없음"
+                android:gravity="start"
+                android:textColor="@color/main_black"
+                android:layout_weight="0.25"/>
+
+            <ImageView
+                android:id="@+id/noiseFilterClear"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/test_remove_filter"
+                app:tint="@color/main_black"
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+        </TableRow>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/noiseDetailRv"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="20dp"
             android:clipToPadding="false"
             app:layoutManager=".util.LinearLayoutManagerWrapper"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/noiseDetailTitle"
+            app:layout_constraintTop_toBottomOf="@+id/noiseFilterTr"
             tools:listitem="@layout/list_item_noise_detail" />
 
         <TextView

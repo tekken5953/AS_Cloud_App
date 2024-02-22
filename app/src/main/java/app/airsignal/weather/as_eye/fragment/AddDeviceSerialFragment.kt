@@ -29,9 +29,12 @@ class AddDeviceSerialFragment : Fragment() {
 
     private val maxSerialLength = 11
 
+    private val perm by lazy {RequestPermissionsUtil(parentActivity)}
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is AddEyeDeviceActivity) parentActivity = context
+        if (!perm.isGrantBle()) perm.requestBlePermissions()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -51,7 +54,6 @@ class AddDeviceSerialFragment : Fragment() {
         val nextBtn = binding.addSerialBtn
         nextBtn.setOnClickListener {
             if (nextBtn.isEnabled) {
-                val perm = RequestPermissionsUtil(parentActivity)
                 if (perm.isGrantBle()) {
                     CoroutineScope(Dispatchers.Main).launch {
                         ble.serial = binding.addSerialEt.text.toString()

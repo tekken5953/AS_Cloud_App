@@ -1,18 +1,29 @@
 package app.airsignal.weather.as_eye.activity
 
+import android.app.AlertDialog
 import android.os.Bundle
+import android.os.Looper
+import android.view.LayoutInflater
+import android.widget.EditText
+import androidx.appcompat.widget.AppCompatButton
+import androidx.core.os.HandlerCompat
 import app.airsignal.weather.R
-import app.airsignal.weather.adapter.NoiseDetailAdapter
+import app.airsignal.weather.as_eye.adapter.NoiseDetailAdapter
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.databinding.ActivityEyeNoiseDetailBinding
+import app.airsignal.weather.util.TimberUtil
 import java.time.LocalDateTime
 import kotlin.random.Random
 
 class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() {
     override val resID: Int get() = R.layout.activity_eye_noise_detail
 
+    private enum class NoiseValueSort{ TODAY}
+
     private val noiseList = ArrayList<AdapterModel.NoiseDetailItem>()
     private val noiseAdapter by lazy { NoiseDetailAdapter(this, noiseList) }
+
+    private val dateFilteredArray = ArrayList<AdapterModel.NoiseDetailItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +34,37 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             noiseDetailBack.setOnClickListener {
                 finish()
                 overridePendingTransition(R.anim.slide_bottom_to_top, R.anim.slide_top_to_bottom)
+            }
+
+            noiseFilterByDbValue.setOnClickListener {
+                val noiseDbFilterBuilder = AlertDialog.Builder(this@EyeNoiseDetailActivity)
+                val noiseDbFilterView = LayoutInflater.from(this@EyeNoiseDetailActivity)
+                    .inflate(R.layout.dialog_noise_filter_db,binding.noiseDetailRoot,false)
+                noiseDbFilterBuilder.setView(noiseDbFilterView)
+                val dialog = noiseDbFilterBuilder.create()
+
+                val filterEt = noiseDbFilterView.findViewById<EditText>(R.id.dialogNoiseDbEt)
+                val filterBtn = noiseDbFilterView.findViewById<AppCompatButton>(R.id.dialogNoiseDbBtn)
+
+                filterBtn.setOnClickListener {
+                    dialog.dismiss()
+                    HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                        noiseFilterByDbValue.text = "${filterEt.text}dB"
+                        applyFilterByDb(filterEt.text.toString().toInt())
+                    },500)
+                }
+
+                dialog.show()
+            }
+
+            noiseFilterClear.setOnClickListener {
+                binding.noiseFilterByDateValue.text = "이번주"
+                binding.noiseFilterByDbValue.text = "없음"
+                clearFilter()
+            }
+
+            noiseFilterByDateValue.setOnClickListener {
+                applyFilterByDate(NoiseValueSort.TODAY.ordinal)
             }
         }
 
@@ -43,11 +85,12 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
 
         repeat(testItemArray.size) {
             val item = testItemArray[it]
+            dateFilteredArray.add(AdapterModel.NoiseDetailItem(item.first,item.second))
             addNoiseItem(date = item.first, value = item.second)
             noiseAdapter.notifyItemInserted(it)
 
             if (it == testItemArray.lastIndex) {
-                noiseAdapter.applyBold(it)
+                noiseAdapter.applyBold(noiseList)
                 binding.noiseDetailRv.scrollToPosition(it)
             }
         }
@@ -56,5 +99,69 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
     private fun addNoiseItem(date: LocalDateTime, value: Int) {
         val item = AdapterModel.NoiseDetailItem(date,value)
         noiseList.add(item)
+    }
+
+    private fun clearFilter() {
+        dateFilteredArray.clear()
+        dateFilteredArray.addAll(noiseList)
+        noiseAdapter.submitList(dateFilteredArray)
+    }
+
+    private fun applyFilterByDb(bound: Int) {
+        val newArray = filterByNoiseValue(bound)
+        noiseAdapter.submitList(newArray)
+    }
+
+    private fun applyFilterByDate(sort: Int) {
+        val newArray = filterByDate(sort)
+        changeFilteredArray(newArray)
+        noiseAdapter.submitList(newArray)
+    }
+
+    private fun filterByNoiseValue(bound: Int): ArrayList<AdapterModel.NoiseDetailItem> {
+        val newList = ArrayList<AdapterModel.NoiseDetailItem>()
+        dateFilteredArray.forEach { oldItem ->
+            oldItem.value?.let { noise ->
+                if (noise >= bound) {
+                    newList.add(oldItem)
+                }
+            }
+        }
+
+        return newList
+    }
+
+    private fun changeFilteredArray(newArray: ArrayList<AdapterModel.NoiseDetailItem>) {
+        dateFilteredArray.clear()
+        dateFilteredArray.addAll(newArray)
+    }
+
+    private fun filterByDate(sort: Int): ArrayList<AdapterModel.NoiseDetailItem> {
+        val newList = ArrayList<AdapterModel.NoiseDetailItem>()
+        noiseList.forEach { oldItem ->
+            oldItem.date?.let { oldItemDate ->
+                when(sort) {
+                    NoiseValueSort.TODAY.ordinal -> {
+                        if (oldItemDate.year == LocalDateTime.now().year
+                            && oldItemDate.dayOfMonth == LocalDateTime.now().dayOfMonth
+                            && oldItemDate.monthValue == LocalDateTime.now().monthValue) {
+                            oldItem.value?.let { oldItemValue ->
+                                val valueFilter =
+                                    try {binding.noiseFilterByDbValue.text.toString().replace("dB","").toInt()}
+                                    catch (e: java.lang.NumberFormatException) { 0 }
+                                valueFilter.let { filterValue ->
+                                    if (oldItemValue >= filterValue) {
+                                        newList.add(AdapterModel.NoiseDetailItem(oldItemDate,oldItemValue))
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        return newList
     }
 }
