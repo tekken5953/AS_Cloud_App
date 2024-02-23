@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Looper
 import android.text.Editable
@@ -60,6 +61,11 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
     private val deviceListViewModel by viewModel<GetEyeDeviceListViewModel>()
     private val listLiveData by lazy {deviceListViewModel.fetchData()}
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        TimberUtil().d("appLinkTest", "onNewIntent ${intent?.data}")
+    }
 
     override fun onStart() {
         super.onStart()

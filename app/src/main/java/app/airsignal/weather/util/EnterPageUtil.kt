@@ -40,6 +40,20 @@ class EnterPageUtil(private val activity: Activity) {
         }
     }
 
+    fun toMain(sort: String?, inAppMsg: Array<ApiModel.InAppMsgItem>?, startAnimation: Int, endAnimation: Int) {
+        sort?.let { setUserLoginPlatform(activity, it) }
+        val intent = Intent(activity, MainActivity::class.java)
+        activity.run {
+//            System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
+            inAppMsg?.let {
+                intent.putExtra(IN_APP_MSG, it)
+            }
+            this.startActivity(intent)
+            this.overridePendingTransition(startAnimation,endAnimation)
+            this.finish()
+        }
+    }
+
     /**로그인 페이지로 이동한다*/
     fun toLogin() {
         val intent = Intent(activity, LoginActivity::class.java)

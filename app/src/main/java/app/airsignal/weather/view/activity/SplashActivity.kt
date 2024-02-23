@@ -1,9 +1,12 @@
 package app.airsignal.weather.view.activity
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.view.View
+import android.os.Looper
+import androidx.core.os.HandlerCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivitySplashBinding
@@ -19,7 +22,6 @@ import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
-import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
@@ -32,30 +34,43 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
 
+    private var isReady = false
+
     init {
         TimberUtil().getInstance()
         LoggerUtil().getInstance()
     }
 
-    override fun onResume() {
-        super.onResume()
-        appVersionViewModel.loadDataResult()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initBinding().run {
-            setStatusBar(this@SplashActivity)
 
-//        FirebaseApp.initializeApp(this)
+        window.setBackgroundDrawableResource(R.drawable.splash_lottie_bg)
+
+        initBinding().run {
             applyAppVersionData()
+
+            binding.splashPB.addAnimatorListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationStart(animation: Animator) {
+                    super.onAnimationStart(animation)
+                    appVersionViewModel.loadDataResult()
+                }
+
+                override fun onAnimationEnd(animation: Animator) {
+                    super.onAnimationEnd(animation)
+                    isReady = true
+                }
+            })
 
             // 유저 디바이스 설정 - 앱 버전
             RDBLogcat.writeUserPref(
                 this@SplashActivity,
                 sort = RDBLogcat.USER_PREF_DEVICE,
                 title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
-                value = "name is ${GetSystemInfo.getApplicationVersionName(this@SplashActivity)} code is ${GetSystemInfo.getApplicationVersionCode(this@SplashActivity)}"
+                value = "name is ${GetSystemInfo.getApplicationVersionName(this@SplashActivity)} code is ${
+                    GetSystemInfo.getApplicationVersionCode(
+                        this@SplashActivity
+                    )
+                }"
             )
 
             // 유저 디바이스 설정 - SDK 버전
@@ -77,10 +92,21 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
     private fun enterPage(inAppMsgList: Array<ApiModel.InAppMsgItem>?) {
-        if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
-            EnterPageUtil(this@SplashActivity).toMain(
-                getUserLoginPlatform(this),inAppMsgList)
-        } else { EnterPageUtil(this@SplashActivity).toPermission() }
+        if (isReady) {
+            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
+                    EnterPageUtil(this@SplashActivity).toMain(
+                        getUserLoginPlatform(this), inAppMsgList, R.anim.fade_in, R.anim.fade_out
+                    )
+                } else {
+                    EnterPageUtil(this@SplashActivity).toPermission()
+                }
+            }, 500)
+        } else {
+            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                enterPage(inAppMsgList)
+            }, 300)
+        }
     }
 
     // 앱 버전 뷰모델 데이터 호출
@@ -92,12 +118,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                         when (ver) {
                             // 통신 성공
                             is BaseRepository.ApiState.Success -> {
-                                binding.splashPB.visibility = View.GONE
                                 val inAppArray = ver.data.inAppMsg
                                 val versionName = GetSystemInfo.getApplicationVersionName(this)
                                 val versionCode = GetSystemInfo.getApplicationVersionCode(this)
                                 val fullVersion = "${versionName}.${versionCode}"
-                                if (fullVersion == "${ver.data.serviceName}.${ver.data.serviceCode}" ) {
+                                if (fullVersion == "${ver.data.serviceName}.${ver.data.serviceCode}") {
                                     enterPage(inAppArray)
                                 } else {
                                     val array = ArrayList<String>()
@@ -109,8 +134,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                         enterPage(inAppArray)
                                     } else {
                                         MakeSingleDialog(this)
-                                            .makeDialog(getString(R.string.not_latest_go_to_store),
-                                                R.color.main_blue_color,getString(R.string.download), true)
+                                            .makeDialog(
+                                                getString(R.string.not_latest_go_to_store),
+                                                R.color.main_blue_color,
+                                                getString(R.string.download),
+                                                true
+                                            )
                                             .setOnClickListener { goToPlayStore(this@SplashActivity) }
                                     }
                                 }
@@ -118,7 +147,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
                             // 통신 실패
                             is BaseRepository.ApiState.Error -> {
-                                binding.splashPB.visibility = View.GONE
                                 when (ver.errorMessage) {
                                     ERROR_NETWORK -> {
                                         if (GetLocation(this).isNetWorkConnected()) {
@@ -139,12 +167,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             }
 
                             // 통신 중
-                            is BaseRepository.ApiState.Loading -> binding.splashPB.visibility = View.VISIBLE
+                            is BaseRepository.ApiState.Loading -> {}
                         }
                     }
                 }
             }
-        } catch(e: IOException) {
+        } catch (e: IOException) {
             makeDialog("앱 버전을 불러올 수 없습니다.")
         }
     }
