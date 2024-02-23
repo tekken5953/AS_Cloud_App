@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 import java.net.SocketTimeoutException
 
 class GetEyeDeviceListRepo : BaseRepository() {
@@ -38,11 +39,10 @@ class GetEyeDeviceListRepo : BaseRepository() {
                     call: Call<List<EyeDataModel.Device>>,
                     response: Response<List<EyeDataModel.Device>>
                 ) {
-                    TimberUtil().d("eyetest", response.body().toString())
                     try {
                         if (response.isSuccessful) {
                             val responseBody = response.body()
-                            _getListResult.postValue(ApiState.Success(responseBody))
+                            _getListResult.postValue(ApiState.Success(sortData(responseBody)))
                         } else {
                             _getListResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
                             call.cancel()
@@ -72,4 +72,16 @@ class GetEyeDeviceListRepo : BaseRepository() {
         }
     }
 
+    private fun sortData(rawData: List<EyeDataModel.Device>?): List<EyeDataModel.Device>?  {
+        return try {
+            rawData?.let { list ->
+                val running = list.sortedByDescending { it.detail?.power == true }
+                val runningAndMaster = running.sortedByDescending { it.isMaster }
+                runningAndMaster
+            } ?: throw IOException()
+        } catch (e: Exception) {
+            e.stackTraceToString()
+            rawData
+        }
+    }
 }

@@ -11,14 +11,23 @@ import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.adapter.NoiseDetailAdapter
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.databinding.ActivityEyeNoiseDetailBinding
-import app.airsignal.weather.util.TimberUtil
 import java.time.LocalDateTime
 import kotlin.random.Random
 
 class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() {
     override val resID: Int get() = R.layout.activity_eye_noise_detail
 
-    private enum class NoiseValueSort{ TODAY}
+    private enum class NoiseValueSort(val title: String)
+    {
+        NO_DECIBEL("없음"),
+        TODAY("오늘"),
+        LAST_24("24시간"),
+        THIS_WEEK("이번주"),
+        THIS_MOTH("이번달"),
+        THIS_YEAR("올해"),
+        ENTIRE("전체"),
+        CUSTOM("선택")
+    }
 
     private val noiseList = ArrayList<AdapterModel.NoiseDetailItem>()
     private val noiseAdapter by lazy { NoiseDetailAdapter(this, noiseList) }
@@ -58,13 +67,13 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             }
 
             noiseFilterClear.setOnClickListener {
-                binding.noiseFilterByDateValue.text = "이번주"
-                binding.noiseFilterByDbValue.text = "없음"
+                binding.noiseFilterByDateValue.text = NoiseValueSort.THIS_WEEK.title
+                binding.noiseFilterByDbValue.text = NoiseValueSort.NO_DECIBEL.title
                 clearFilter()
             }
 
             noiseFilterByDateValue.setOnClickListener {
-                applyFilterByDate(NoiseValueSort.TODAY.ordinal)
+                applyFilterByDate(NoiseValueSort.TODAY.title)
             }
         }
 
@@ -112,7 +121,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
         noiseAdapter.submitList(newArray)
     }
 
-    private fun applyFilterByDate(sort: Int) {
+    private fun applyFilterByDate(sort: String) {
         val newArray = filterByDate(sort)
         changeFilteredArray(newArray)
         noiseAdapter.submitList(newArray)
@@ -136,12 +145,12 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
         dateFilteredArray.addAll(newArray)
     }
 
-    private fun filterByDate(sort: Int): ArrayList<AdapterModel.NoiseDetailItem> {
+    private fun filterByDate(sort: String): ArrayList<AdapterModel.NoiseDetailItem> {
         val newList = ArrayList<AdapterModel.NoiseDetailItem>()
         noiseList.forEach { oldItem ->
             oldItem.date?.let { oldItemDate ->
                 when(sort) {
-                    NoiseValueSort.TODAY.ordinal -> {
+                    NoiseValueSort.TODAY.title -> {
                         if (oldItemDate.year == LocalDateTime.now().year
                             && oldItemDate.dayOfMonth == LocalDateTime.now().dayOfMonth
                             && oldItemDate.monthValue == LocalDateTime.now().monthValue) {

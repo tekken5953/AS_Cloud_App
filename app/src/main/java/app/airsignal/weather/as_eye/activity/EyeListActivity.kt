@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Looper
 import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -16,6 +17,7 @@ import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.os.HandlerCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.adapter.AddGroupAdapter
@@ -385,8 +387,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                                 allDevicesList.clear()
 
                                 list.data?.let { pList ->
-                                    pList.forEachIndexed { index, device ->
-                                        TimberUtil().d("eyetest", "device list is $device")
+                                    pList.forEach{ device ->
                                         val detail = device.detail?.let { pDetail ->
                                             EyeDataModel.DeviceDetail(pDetail.ssid, pDetail.report, pDetail.power)
                                         } ?:  EyeDataModel.DeviceDetail("", report = false, power = false)
@@ -397,7 +398,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                                 }
 
                                 addLastAddItem()
-                                deviceListAdapter.notifyDataSetChanged()
+                                deviceListAdapter.notifyItemRangeChanged(0, deviceListItem.size)
                             }
 
                             // 통신 실패
@@ -413,6 +414,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                 }
             }
         } catch(e: IOException) {
+            TimberUtil().e("eyetest", e.stackTraceToString())
             TimberUtil().e("eyetest", "장치를 불러오는데 실패했습니다")
         }
     }
