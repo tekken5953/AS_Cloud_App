@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.os.Looper
 import android.view.animation.AlphaAnimation
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.HandlerCompat
 import app.airsignal.weather.R
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
@@ -161,8 +163,9 @@ class LineGraphClass(private val context: Context) {
         }
         mChart.startAnimation(fadeIn)
         mChart.animateX(400)
-        if (mChart.scaleX == 1f && mChart.data.entryCount >= 6) mChart.zoom(4f, 0f, 4f, 0f)
+        if (mChart.scaleX == 1f && mChart.data.entryCount >= 6) mChart.zoom(3f, 0f, 3f, 0f)
         mChart.invalidate()
+        mChart.data.notifyDataChanged()
         mChart.moveViewToX(mChart.lineData.entryCount.toFloat()) // 가장 최근에 추가한 데이터의 위치로 이동처리
     }
 

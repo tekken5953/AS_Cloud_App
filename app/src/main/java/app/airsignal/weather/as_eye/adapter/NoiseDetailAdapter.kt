@@ -47,11 +47,6 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(mList[position])
 
-        if (position == isLast) {
-            holder.headerValue.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
-            holder.dataDate.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
-            holder.dataValue.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
-        }
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -68,6 +63,16 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
 
                     dataDate.text = date.format(timeFormatter)
                     dataValue.text = "${value}dB의 소음을 감지하였습니다"
+
+                    if (bindingAdapterPosition == itemCount - 1) {
+                        headerValue.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
+                        dataDate.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
+                        dataValue.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
+                    } else {
+                        headerValue.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_medium.ttf")
+                        dataDate.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_medium.ttf")
+                        dataValue.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_medium.ttf")
+                    }
 
                     val current = mList[bindingAdapterPosition].date
                     val prev = if (bindingAdapterPosition > 0) mList[bindingAdapterPosition-1].date else null
@@ -96,10 +101,5 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
                 headerContainer.visibility = View.GONE
             }
         }
-    }
-
-    fun applyBold(list: ArrayList<AdapterModel.NoiseDetailItem>) {
-        isLast = list.lastIndex
-        notifyItemRangeChanged(0, list.lastIndex)
     }
 }

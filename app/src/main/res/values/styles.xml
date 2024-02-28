@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="settingSingleTextView">
         <item name="android:layout_height">55dp</item>
         <item name="android:letterSpacing">-0.04</item>
@@ -53,7 +54,7 @@
     <style name="CustomCheckBoxLanding">
         <item name="android:button">@drawable/landing_check_box</item>
     </style>
-    
+
     <style name="Theme.AirSignal_App.RemoveSplash" parent="Theme.AirSignal_App">
         <item name="android:windowIsTranslucent">true</item>
     </style>
@@ -144,4 +145,54 @@
         <item name="android:textSize">16sp</item>
         <item name="android:layout_weight">0.5</item>
     </style>
+
+    <style name="eyeRadioButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/ae_radio_bg</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:textColor">@drawable/checked_radio_text_color</item>
+    </style>
+
+<!--    <style name="DatePickerTheme" parent="Theme.AppCompat.NoActionBar">-->
+<!--        &lt;!&ndash; 상단 Title 배경색 &ndash;&gt;-->
+<!--        <item name="colorAccent">@color/main_blue_color</item>-->
+
+<!--        &lt;!&ndash; 선택한 날짜 배경 색 &ndash;&gt;-->
+<!--        <item name="colorControlActivated">@color/main_blue_color</item>-->
+
+<!--        &lt;!&ndash; Highlight item color&ndash;&gt;-->
+<!--        <item name="colorControlHighlight">@color/main_blue_color</item>-->
+
+<!--        &lt;!&ndash;Calender Background color &ndash;&gt;-->
+<!--        <item name="android:colorBackground">@color/calendar_bg</item>-->
+
+<!--        &lt;!&ndash; Week TextColor&ndash;&gt;-->
+<!--        <item name="android:textColorSecondary">@color/calendar_day_normal_font</item>-->
+
+<!--        &lt;!&ndash; Calender Number color arrow color (< >) &ndash;&gt;-->
+<!--        <item name="android:textColorPrimary">@color/main_blue_color</item>-->
+
+<!--        &lt;!&ndash;day , month TextColor&ndash;&gt;-->
+<!--        <item name="android:textColorPrimaryInverse">@color/main_blue_color</item>-->
+
+<!--        &lt;!&ndash; year&ndash;&gt;-->
+<!--        <item name="android:textColorSecondaryInverse">@color/calendar_month_font</item>-->
+
+<!--        &lt;!&ndash; 취소/확인버튼 색상 &ndash;&gt;-->
+<!--        <item name="android:textColor">@color/calendar_day_normal_font</item>-->
+
+<!--        <item name="android:textSize">20sp</item>-->
+
+<!--        <item name="cornerSize">16dp</item>-->
+
+<!--        <item name="windowActionBar">false</item>-->
+
+<!--        <item name="windowNoTitle">true</item>-->
+
+<!--        <item name="fontFamily">@font/font_style</item>-->
+
+<!--    </style>-->
 </resources>

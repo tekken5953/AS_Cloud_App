@@ -98,9 +98,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     EnterPageUtil(this@SplashActivity).toMain(
                         getUserLoginPlatform(this), inAppMsgList, R.anim.fade_in, R.anim.fade_out
                     )
-                } else {
-                    EnterPageUtil(this@SplashActivity).toPermission()
-                }
+                } else { EnterPageUtil(this@SplashActivity).toPermission() }
             }, 500)
         } else {
             HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({

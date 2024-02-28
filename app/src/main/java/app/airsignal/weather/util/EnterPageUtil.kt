@@ -49,7 +49,7 @@ class EnterPageUtil(private val activity: Activity) {
                 intent.putExtra(IN_APP_MSG, it)
             }
             this.startActivity(intent)
-            this.overridePendingTransition(startAnimation,endAnimation)
+            this.overridePendingTransition(startAnimation,0)
             this.finish()
         }
     }
