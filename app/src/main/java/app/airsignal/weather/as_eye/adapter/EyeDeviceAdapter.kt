@@ -84,8 +84,13 @@ class EyeDeviceAdapter(
 
                     pDetail.power.let {
                         if (it) {
-                            power.visibility = View.VISIBLE
-                            container.background = getRs(R.drawable.ae_device_bg_e)
+                            if (dao.serial != "") {
+                                power.visibility = View.VISIBLE
+                                container.background = getRs(R.drawable.ae_device_bg_e)
+                            } else {
+                                power.visibility = View.GONE
+                                container.background = getRs(R.drawable.ae_device_bg_e)
+                            }
                         } else {
                             power.visibility = View.GONE
                             container.background = getRs(R.drawable.ae_device_bg_d)

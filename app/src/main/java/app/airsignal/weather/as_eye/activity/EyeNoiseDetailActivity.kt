@@ -6,22 +6,16 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.DatePicker
-import android.widget.EditText
-import android.widget.RadioGroup
-import android.widget.SeekBar
-import android.widget.TableRow
-import android.widget.TextView
-import androidx.appcompat.widget.AppCompatButton
+import android.widget.*
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.core.os.HandlerCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.adapter.NoiseDetailAdapter
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.databinding.ActivityEyeNoiseDetailBinding
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.TemporalAdjusters
 import kotlin.random.Random
@@ -34,14 +28,14 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
         TODAY(1, "오늘", R.id.radioToday),
         LAST_24(2, "24시간", R.id.radio24Hours),
         THIS_WEEK(3, "이번 주", R.id.radioTWeek),
-        THIS_MOTH(4, "이번 달", R.id.radioTMonth),
+        THIS_MONTH(4, "이번 달", R.id.radioTMonth),
         THIS_YEAR(5, "올해", R.id.radioTYear),
         ENTIRE(6, "전체", R.id.radioEntire),
         CUSTOM(7, "직접 입력", R.id.radioSelect)
     }
 
-    private var startCalendar: LocalDateTime = LocalDateTime.now()
-    private var endCalendar: LocalDateTime = LocalDateTime.now()
+    private var startCalendar: LocalDate = LocalDate.now()
+    private var endCalendar: LocalDate = LocalDate.now()
 
     private val noiseList = ArrayList<AdapterModel.NoiseDetailItem>()
     private val noiseAdapter by lazy { NoiseDetailAdapter(this, noiseList) }
@@ -59,137 +53,13 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
                 overridePendingTransition(R.anim.slide_bottom_to_top, R.anim.slide_top_to_bottom)
             }
 
-            noiseFilterByDbValue.setOnClickListener {
-                val noiseDbFilterBuilder = AlertDialog.Builder(this@EyeNoiseDetailActivity)
-                val noiseDbFilterView = LayoutInflater.from(this@EyeNoiseDetailActivity)
-                    .inflate(R.layout.dialog_noise_filter_db, binding.noiseDetailRoot, false)
-                noiseDbFilterBuilder.setView(noiseDbFilterView)
-                val dialog = noiseDbFilterBuilder.create()
-
-                val filterBtn =
-                    noiseDbFilterView.findViewById<TextView>(R.id.dialogNoiseDbBtn)
-                val rgTop = noiseDbFilterView.findViewById<RadioGroup>(R.id.dialogNoiseDbRgTop)
-                val rgBottom = noiseDbFilterView.findViewById<RadioGroup>(R.id.dialogNoiseDbRgBottom)
-                val datePickerTr = noiseDbFilterView.findViewById<TableRow>(R.id.dialogNoiseDbDatePickerTr)
-                val datePickerStart = noiseDbFilterView.findViewById<TextView>(R.id.dialogNoiseDbDatePickerStart)
-                val datePickerEnd = noiseDbFilterView.findViewById<TextView>(R.id.dialogNoiseDbDatePickerEnd)
-                val datePicker = noiseDbFilterView.findViewById<DatePicker>(R.id.dialogNoiseDbDatePicker)
-                val seekBar = noiseDbFilterView.findViewById<AppCompatSeekBar>(R.id.dialogNoiseDbSeek)
-                val seekBarValue = noiseDbFilterView.findViewById<TextView>(R.id.dialogNoiseDbValue)
-
-                val currentTime = LocalDateTime.now()
-                datePickerStart.text = "${currentTime.year}-${insertDateZero(currentTime.monthValue)}-${insertDateZero(currentTime.dayOfMonth)}"
-                datePickerEnd.text = "${currentTime.year}-${insertDateZero(currentTime.monthValue)}-${insertDateZero(currentTime.dayOfMonth)}"
-
-                val dateSort = parseDateValueToResId(binding.noiseFilterByDateValue.text.toString())
-                dateSort?.let {
-                    checkRb(it, rgTop, rgBottom)
-                } ?: checkRb(NoiseValueSort.THIS_WEEK.resId, rgTop, rgBottom)
-
-                rgTop.setOnCheckedChangeListener { _, checkedId ->
-                    if (checkedId != -1) {
-                        rgBottom.clearCheck()
-                        rgTop.check(checkedId)
-                    }
-                }
-                rgBottom.setOnCheckedChangeListener { _, checkedId ->
-                    if (checkedId != -1) {
-                        rgTop.clearCheck()
-                        rgBottom.check(checkedId)
-                    }
-
-                    if (checkedId == R.id.radioSelect) {
-                        datePickerTr.visibility = View.VISIBLE
-                        datePickerTr.startAnimation(AnimationUtils.loadAnimation(this@EyeNoiseDetailActivity, R.anim.fade_in))
-                        datePicker.visibility = View.VISIBLE
-                        datePicker.startAnimation(AnimationUtils.loadAnimation(this@EyeNoiseDetailActivity, R.anim.fade_in))
-                    } else {
-                        datePickerTr.visibility = View.GONE
-                        datePicker.visibility = View.GONE
-                    }
-                }
-
-                datePickerStart.setOnClickListener {
-                    if (!datePickerStart.isActivated) {
-                        datePickerEnd.isActivated = false
-                        datePickerStart.isActivated = true
-                    } else {
-                        datePickerStart.isActivated = false
-                    }
-                }
-
-                datePickerEnd.setOnClickListener {
-                    if (!datePickerEnd.isActivated) {
-                        datePickerStart.isActivated = false
-                        datePickerEnd.isActivated = true
-                    } else {
-                        datePickerEnd.isActivated = false
-                    }
-                }
-
-                filterBtn.setOnClickListener {
-                    dialog.dismiss()
-                    val checkedTopId = rgTop.checkedRadioButtonId
-                    val checkedBottomId = rgBottom.checkedRadioButtonId
-                    val sort = if (checkedTopId == -1 && checkedBottomId != -1) {
-                        paredSort(checkedBottomId)
-                    } else if (checkedTopId != -1 && checkedBottomId == -1) {
-                        paredSort(checkedTopId)
-                    } else {
-                        NoiseValueSort.THIS_WEEK.index
-                    }
-
-                    HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                        try {
-                            noiseFilterByDbValue.text =
-                                if (seekBarValue.text.toString() != "") "${seekBarValue.text}dB" else "없음"
-                            noiseFilterByDateValue.text =
-                                if (sort != -1) NoiseValueSort.values()[sort].title else ""
-                            val db = seekBarValue.text.toString()
-                            applyFilterByDb(
-                                if (db != "") db.toInt() else 0,
-                                if (checkedTopId != -1) checkedTopId else checkedBottomId
-                            )
-                        } catch (e: NumberFormatException) {
-                            e.stackTraceToString()
-                            clearFilter()
-                        }
-                    }, 500)
-                }
-
-                datePicker.setOnDateChangedListener { view, year, monthOfYear, dayOfMonth ->
-                    if (datePickerStart.isActivated && !datePickerEnd.isActivated) {
-                        datePickerStart.text = "${year}-${insertDateZero(monthOfYear)}-${insertDateZero(dayOfMonth)}"
-                    } else if (datePickerEnd.isActivated && !datePickerStart.isActivated) {
-                        datePickerEnd.text = "${year}-${insertDateZero(monthOfYear)}-${insertDateZero(dayOfMonth)}"
-                    }
-                }
-
-                seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                    override fun onProgressChanged(
-                        seekBar: SeekBar?,
-                        progress: Int,
-                        fromUser: Boolean
-                    ) {
-                        seekBarValue.text = progress.toString()
-                    }
-
-                    override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
-                    override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-                })
-
-                dialog.show()
-            }
+            noiseFilterDbContainer.setOnClickListener { createFilterDialog() }
+            noiseFilterDateContainer.setOnClickListener { createFilterDialog() }
 
             noiseFilterClear.setOnClickListener {
                 binding.noiseFilterByDateValue.text = NoiseValueSort.THIS_WEEK.title
                 binding.noiseFilterByDbValue.text = NoiseValueSort.NO_DECIBEL.title
                 clearFilter()
-            }
-
-            noiseFilterByDateValue.setOnClickListener {
-                applyFilterByDate(NoiseValueSort.TODAY.index)
             }
         }
 
@@ -221,6 +91,145 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
         }
     }
 
+    private fun createFilterDialog() {
+        val noiseDbFilterBuilder = AlertDialog.Builder(this@EyeNoiseDetailActivity)
+        val noiseDbFilterView = LayoutInflater.from(this@EyeNoiseDetailActivity)
+            .inflate(R.layout.dialog_noise_filter_db, binding.noiseDetailRoot, false)
+        noiseDbFilterBuilder.setView(noiseDbFilterView)
+        val dialog = noiseDbFilterBuilder.create()
+
+        val filterBtn =
+            noiseDbFilterView.findViewById<TextView>(R.id.dialogNoiseDbBtn)
+        val rgTop = noiseDbFilterView.findViewById<RadioGroup>(R.id.dialogNoiseDbRgTop)
+        val rgBottom = noiseDbFilterView.findViewById<RadioGroup>(R.id.dialogNoiseDbRgBottom)
+        val datePickerStart = noiseDbFilterView.findViewById<TextView>(R.id.dialogNoiseDbDatePickerStart)
+        val datePickerEnd = noiseDbFilterView.findViewById<TextView>(R.id.dialogNoiseDbDatePickerEnd)
+        val datePicker = noiseDbFilterView.findViewById<DatePicker>(R.id.dialogNoiseDbDatePicker)
+        val seekBar = noiseDbFilterView.findViewById<AppCompatSeekBar>(R.id.dialogNoiseDbSeek)
+        val seekBarValue = noiseDbFilterView.findViewById<TextView>(R.id.dialogNoiseDbValue)
+        val datePickerContainer= noiseDbFilterView.findViewById<LinearLayout>(R.id.datePickerContainer)
+        val filterBack = noiseDbFilterView.findViewById<ImageView>(R.id.dialogNoiseBack)
+
+        filterBack.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        val oldDb = binding.noiseFilterByDbValue.text.toString().replace("dB","")
+        seekBar.progress = if (oldDb != "없음") oldDb.toInt() else 0
+        seekBarValue.text = if (oldDb != "없음") oldDb else "0"
+
+        val currentTime = LocalDateTime.now()
+        datePickerStart.text = "${currentTime.year}-${insertDateZero(currentTime.monthValue)}-${insertDateZero(currentTime.dayOfMonth)}"
+        datePickerEnd.text = "${currentTime.year}-${insertDateZero(currentTime.monthValue)}-${insertDateZero(currentTime.dayOfMonth)}"
+
+        val dateSort = parseDateValueToResId(binding.noiseFilterByDateValue.text.toString())
+        dateSort?.let {
+            checkRb(it, rgTop, rgBottom)
+
+            datePickerContainer.visibility = if (it == R.id.radioSelect) View.VISIBLE else View.GONE
+        } ?: checkRb(NoiseValueSort.THIS_WEEK.resId, rgTop, rgBottom)
+
+        rgTop.setOnCheckedChangeListener { _, checkedId ->
+            if (checkedId != -1) {
+                rgBottom.clearCheck()
+                rgTop.check(checkedId)
+            }
+        }
+        rgBottom.setOnCheckedChangeListener { _, checkedId ->
+            if (checkedId != -1) {
+                rgTop.clearCheck()
+                rgBottom.check(checkedId)
+            }
+
+            if (checkedId == R.id.radioSelect) {
+                datePickerContainer.visibility = View.VISIBLE
+                datePickerContainer.startAnimation(AnimationUtils.loadAnimation(this@EyeNoiseDetailActivity, R.anim.fade_in))
+            } else {
+                datePickerContainer.visibility = View.GONE
+            }
+        }
+
+        datePickerStart.setOnClickListener {
+            if (!datePickerStart.isActivated) {
+                datePickerStart.setTextColor(getColor(R.color.progress_color))
+                datePickerEnd.setTextColor(getColor(R.color.eye_graph_gray))
+                datePickerEnd.isActivated = false
+                datePickerStart.isActivated = true
+            } else {
+                datePickerStart.setTextColor(getColor(R.color.eye_graph_gray))
+                datePickerStart.isActivated = false
+            }
+        }
+
+        datePickerEnd.setOnClickListener {
+            if (!datePickerEnd.isActivated) {
+                datePickerEnd.setTextColor(getColor(R.color.progress_color))
+                datePickerStart.setTextColor(getColor(R.color.eye_graph_gray))
+                datePickerStart.isActivated = false
+                datePickerEnd.isActivated = true
+            } else {
+                datePickerEnd.setTextColor(getColor(R.color.eye_graph_gray))
+                datePickerEnd.isActivated = false
+            }
+        }
+
+        filterBtn.setOnClickListener {
+            dialog.dismiss()
+            val checkedTopId = rgTop.checkedRadioButtonId
+            val checkedBottomId = rgBottom.checkedRadioButtonId
+            val sort = if (checkedTopId == -1 && checkedBottomId != -1) {
+                paredSort(checkedBottomId)
+            } else if (checkedTopId != -1 && checkedBottomId == -1) {
+                paredSort(checkedTopId)
+            } else {
+                NoiseValueSort.THIS_WEEK.index
+            }
+
+            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                try {
+                    binding.noiseFilterByDbValue.text =
+                        if (seekBarValue.text.toString() != "") "${seekBarValue.text}dB" else "없음"
+                    binding.noiseFilterByDateValue.text =
+                        if (sort != -1) NoiseValueSort.values()[sort].title else ""
+                    val db = seekBarValue.text.toString()
+                    applyFilterByDb(
+                        if (db != "") db.toInt() else 0,
+                        if (checkedTopId != -1) checkedTopId else checkedBottomId
+                    )
+                } catch (e: NumberFormatException) {
+                    e.stackTraceToString()
+                    clearFilter()
+                }
+            }, 500)
+        }
+
+        datePicker.setOnDateChangedListener { view, year, monthOfYear, dayOfMonth ->
+            if (datePickerStart.isActivated && !datePickerEnd.isActivated) {
+                startCalendar = LocalDate.of(year,monthOfYear + 1,dayOfMonth)
+                datePickerStart.text = "${year}-${insertDateZero(monthOfYear)}-${insertDateZero(dayOfMonth)}"
+            } else if (datePickerEnd.isActivated && !datePickerStart.isActivated) {
+                endCalendar = LocalDate.of(year,monthOfYear + 1,dayOfMonth)
+                datePickerEnd.text = "${year}-${insertDateZero(monthOfYear)}-${insertDateZero(dayOfMonth)}"
+            }
+        }
+
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                seekBar: SeekBar?,
+                progress: Int,
+                fromUser: Boolean
+            ) {
+                seekBarValue.text = progress.toString()
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+
+        dialog.show()
+    }
+
     private fun insertDateZero(i: Int): String {
         return if (i < 10) "0$i" else i.toString()
     }
@@ -230,7 +239,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             NoiseValueSort.TODAY.title -> NoiseValueSort.TODAY.resId
             NoiseValueSort.THIS_WEEK.title -> NoiseValueSort.THIS_WEEK.resId
             NoiseValueSort.THIS_YEAR.title -> NoiseValueSort.THIS_YEAR.resId
-            NoiseValueSort.THIS_MOTH.title -> NoiseValueSort.THIS_MOTH.resId
+            NoiseValueSort.THIS_MONTH.title -> NoiseValueSort.THIS_MONTH.resId
             NoiseValueSort.CUSTOM.title -> NoiseValueSort.CUSTOM.resId
             NoiseValueSort.ENTIRE.title -> NoiseValueSort.ENTIRE.resId
             NoiseValueSort.LAST_24.title -> NoiseValueSort.LAST_24.resId
@@ -241,7 +250,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
     private fun isTop(resId: Int?): Boolean {
         return when (resId) {
             NoiseValueSort.TODAY.resId, NoiseValueSort.THIS_WEEK.resId,
-            NoiseValueSort.THIS_MOTH.resId, NoiseValueSort.LAST_24.resId -> true
+            NoiseValueSort.THIS_MONTH.resId, NoiseValueSort.LAST_24.resId -> true
             else -> false
         }
     }
@@ -268,6 +277,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
         dateFilteredArray.clear()
         dateFilteredArray.addAll(noiseList)
         noiseAdapter.submitList(dateFilteredArray)
+        visibleNoResult(noiseList.isEmpty())
     }
 
     private fun paredSort(resId: Int): Int {
@@ -276,7 +286,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             R.id.radio24Hours -> NoiseValueSort.LAST_24.index
             R.id.radioTWeek -> NoiseValueSort.THIS_WEEK.index
             R.id.radioEntire -> NoiseValueSort.ENTIRE.index
-            R.id.radioTMonth -> NoiseValueSort.THIS_MOTH.index
+            R.id.radioTMonth -> NoiseValueSort.THIS_MONTH.index
             R.id.radioTYear -> NoiseValueSort.THIS_YEAR.index
             R.id.radioSelect -> NoiseValueSort.CUSTOM.index
             else -> -1
@@ -285,16 +295,17 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
 
     private fun applyFilterByDb(bound: Int, sort: Int) {
         val parsedSort = paredSort(sort)
-        TimberUtil().d("eyetest", "parsedSort : $parsedSort filter : ${filterByDate(parsedSort)}")
         val sortArray = if (parsedSort != -1) filterByDate(parsedSort) else noiseList
         val valueArray = filterByNoiseValue(sortArray, bound)
         noiseAdapter.submitList(valueArray)
+        visibleNoResult(valueArray.isEmpty())
     }
 
     private fun applyFilterByDate(sort: Int) {
         val newArray = filterByDate(sort)
         changeFilteredArray(newArray)
         noiseAdapter.submitList(newArray)
+        visibleNoResult(newArray.isEmpty())
     }
 
     private fun filterByNoiseValue(bound: Int): ArrayList<AdapterModel.NoiseDetailItem> {
@@ -308,6 +319,10 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
         }
 
         return newList
+    }
+
+    private fun visibleNoResult(b: Boolean) {
+        binding.noiseDetailNoData.visibility = if (b) View.VISIBLE else View.GONE
     }
 
     private fun filterByNoiseValue(list: ArrayList<AdapterModel.NoiseDetailItem>, bound: Int)
@@ -367,7 +382,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
                         }
                     }
 
-                    NoiseValueSort.THIS_MOTH.index -> {
+                    NoiseValueSort.THIS_MONTH.index -> {
                         val startMonth =
                             LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth())
                         if (oldItemDate.isAfter(startMonth)) {
@@ -393,7 +408,8 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
                     }
 
                     NoiseValueSort.CUSTOM.index -> {
-                        if (oldItemDate.isAfter(startCalendar) && oldItemDate.isBefore(endCalendar)) {
+                        if (oldItemDate.isAfter(startCalendar.atStartOfDay())
+                            && oldItemDate.isBefore(endCalendar.atTime(23,59,59))) {
                             oldItem.value?.let { oldItemValue ->
                                 addFilteredList(newList, oldItemValue, oldItemDate)
                             }

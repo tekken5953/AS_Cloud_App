@@ -64,8 +64,13 @@
     <color name="eye_btn_disable_color">#9C9C9C</color>
     <color name="eye_et_enable_color">#802997FD</color>
     <color name="eye_view_default">#EBEBEB</color>
-    <color name="eye_noise_header">#CCCCCC</color>
+    <color name="eye_noise_header">#D9D9D9</color>
 
     <color name="eye_graph_gray">#959595</color>
+    <color name="progress_color">#5CC4FF</color>
+    <color name="secondary_progress_color">#C0E5F9</color>
+
+    <color name="tutorial_background">#80000000</color>
+
 
 </resources>

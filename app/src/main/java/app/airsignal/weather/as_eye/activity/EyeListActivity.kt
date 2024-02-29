@@ -4,9 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.os.Looper
 import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -18,7 +16,6 @@ import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.os.HandlerCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.adapter.AddGroupAdapter

@@ -4,10 +4,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/noiseDetailRoot"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:id="@+id/noiseDetailRoot"
         tools:context=".as_eye.activity.EyeNoiseDetailActivity">
 
         <ImageView
@@ -35,49 +35,74 @@
             android:id="@+id/noiseFilterTr"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="28dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/noiseDetailTitle">
-            <TextView
-                android:id="@+id/noiseFilterByDateTitle"
-                style="@style/basicMediumTextView"
-                android:text="날짜로 필터링"
-                android:gravity="start"
-                android:textColor="@color/eye_graph_gray"
-                android:textSize="14sp"
-                android:layout_weight="0.25"/>
-            <TextView
-                android:id="@+id/noiseFilterByDateValue"
-                style="@style/basicMediumTextView"
-                android:text="이번주"
-                android:gravity="start"
-                android:textColor="@color/main_black"
-                android:layout_weight="0.25"/>
-            <TextView
-                android:id="@+id/noiseFilterByDbTitle"
-                style="@style/basicMediumTextView"
-                android:text="값으로 필터링"
-                android:gravity="start"
-                android:textColor="@color/eye_graph_gray"
-                android:textSize="14sp"
-                android:layout_weight="0.25"/>
-            <TextView
-                android:id="@+id/noiseFilterByDbValue"
-                style="@style/basicMediumTextView"
-                android:text="없음"
-                android:gravity="start"
-                android:textColor="@color/main_black"
-                android:layout_weight="0.25"/>
+
+            <LinearLayout
+                android:id="@+id/noiseFilterDbContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/ae_radio_bg"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/noiseFilterByDbTitle"
+                    style="@style/basicTextView"
+                    android:layout_weight="0.5"
+                    android:text="데시벨"
+                    android:textColor="@color/eye_graph_gray"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/noiseFilterByDbValue"
+                    style="@style/basicMediumTextView"
+                    android:layout_weight="0.5"
+                    android:layout_marginStart="8dp"
+                    android:text="없음"
+                    android:textColor="@color/main_black" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/noiseFilterDateContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/ae_radio_bg"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/noiseFilterByDateTitle"
+                    style="@style/basicTextView"
+                    android:layout_weight="0.5"
+                    android:text="날짜"
+                    android:textColor="@color/eye_graph_gray"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/noiseFilterByDateValue"
+                    style="@style/basicMediumTextView"
+                    android:layout_weight="0.5"
+                    android:text="이번주"
+                    android:textColor="@color/main_black" />
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/noiseFilterClear"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
                 android:src="@drawable/test_remove_filter"
-                app:tint="@color/main_black"
-                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+                app:tint="@color/main_black" />
         </TableRow>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -85,7 +110,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="25dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="20dp"
             android:clipToPadding="false"
@@ -98,6 +123,7 @@
             android:id="@+id/noiseDetailNoData"
             style="@style/basicMediumTextView"
             android:text="데이터가 없습니다"
+            android:textColor="@color/main_black"
             android:textSize="16sp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"

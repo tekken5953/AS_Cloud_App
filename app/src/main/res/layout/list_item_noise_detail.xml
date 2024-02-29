@@ -8,50 +8,52 @@
         android:id="@+id/noiseDetailHeaderContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:visibility="gone"
-        android:gravity="center_vertical">
+        android:visibility="gone">
 
         <View
             android:id="@+id/noiseDetailHeaderLine1"
             android:layout_width="0dp"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:layout_weight="0.4"
-            android:background="@color/eye_noise_header"/>
+            android:background="@drawable/noise_detail_line_bg"
+            android:layerType="software" />
 
         <TextView
             android:id="@+id/noiseDetailHeaderTitle"
             style="@style/basicMediumTextView"
-            android:textSize="14sp"
+            android:layout_weight="0.2"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
-            android:layout_weight="0.2"
-            android:textColor="@color/eye_noise_header"/>
+            android:textColor="@color/eye_graph_gray"
+            android:textSize="14sp" />
 
         <View
             android:id="@+id/noiseDetailHeaderLine2"
             android:layout_width="0dp"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:layout_weight="0.4"
-            android:background="@color/eye_noise_header"/>
+            android:background="@drawable/noise_detail_line_bg"
+            android:layerType="software" />
 
     </LinearLayout>
-    
+
     <LinearLayout
         android:id="@+id/noiseDetailDataContainer"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:gravity="center_vertical"
         android:layout_below="@+id/noiseDetailHeaderContainer"
         android:layout_marginTop="6dp"
-        android:orientation="horizontal"
-        android:layout_marginBottom="6dp">
+        android:layout_marginBottom="6dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/noiseDetailTime"
             style="@style/basicTextView"
-            android:gravity="start"
             android:layout_weight="0.4"
+            android:gravity="start"
             android:textColor="@color/eye_graph_gray"
             android:textSize="14sp" />
 
@@ -63,5 +65,5 @@
             android:textColor="@color/main_black"
             android:textSize="14sp" />
     </LinearLayout>
-    
+
 </RelativeLayout>

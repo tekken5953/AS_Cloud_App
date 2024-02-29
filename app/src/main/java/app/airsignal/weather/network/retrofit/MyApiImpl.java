@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import app.airsignal.weather.as_eye.dao.EyeDataModel;
+import app.airsignal.weather.dao.AdapterModel;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -76,5 +77,12 @@ public interface MyApiImpl {
     Call<String> deleteDevice(
             @Path("sn") String sn,
             @Query("id") String id
+    );
+
+    @GET("noise")
+    Call<List<AdapterModel.NoiseDetailItem>> getNoise(
+            @Nullable @Query("flag") String flag,
+            @Nullable @Query("start") Integer start,
+            @Nullable @Query("end") Integer end
     );
 }
