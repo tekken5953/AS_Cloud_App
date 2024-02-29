@@ -329,4 +329,6 @@
     <string name="t_day">tod</string>
     <string name="t_week">t week</string>
     <string name="connect">Connect</string>
+    <string name="transferring_data_to_device">Transferring data to device</string>
+    <string name="change_device_name">Change device name</string>
 </resources>

@@ -57,8 +57,8 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             noiseFilterDateContainer.setOnClickListener { createFilterDialog() }
 
             noiseFilterClear.setOnClickListener {
-                binding.noiseFilterByDateValue.text = NoiseValueSort.THIS_WEEK.title
-                binding.noiseFilterByDbValue.text = NoiseValueSort.NO_DECIBEL.title
+                binding.noiseFilterByDateValue.text = parsingLanguage(NoiseValueSort.THIS_WEEK.title)
+                binding.noiseFilterByDbValue.text = parsingLanguage(NoiseValueSort.NO_DECIBEL.title)
                 clearFilter()
             }
         }
@@ -190,7 +190,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
                     binding.noiseFilterByDbValue.text =
                         if (seekBarValue.text.toString() != "") "${seekBarValue.text}dB" else "없음"
                     binding.noiseFilterByDateValue.text =
-                        if (sort != -1) NoiseValueSort.values()[sort].title else ""
+                        if (sort != -1) parsingLanguage(NoiseValueSort.values()[sort].title) else ""
                     val db = seekBarValue.text.toString()
                     applyFilterByDb(
                         if (db != "") db.toInt() else 0,
@@ -235,14 +235,14 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
     }
 
     private fun parseDateValueToResId(value: String): Int? {
-        return when (value) {
-            NoiseValueSort.TODAY.title -> NoiseValueSort.TODAY.resId
-            NoiseValueSort.THIS_WEEK.title -> NoiseValueSort.THIS_WEEK.resId
-            NoiseValueSort.THIS_YEAR.title -> NoiseValueSort.THIS_YEAR.resId
-            NoiseValueSort.THIS_MONTH.title -> NoiseValueSort.THIS_MONTH.resId
-            NoiseValueSort.CUSTOM.title -> NoiseValueSort.CUSTOM.resId
-            NoiseValueSort.ENTIRE.title -> NoiseValueSort.ENTIRE.resId
-            NoiseValueSort.LAST_24.title -> NoiseValueSort.LAST_24.resId
+        return when (parsingLanguage(value)) {
+            getString(R.string.today) -> NoiseValueSort.TODAY.resId
+            getString(R.string.t_week) -> NoiseValueSort.THIS_WEEK.resId
+            getString(R.string.this_year) -> NoiseValueSort.THIS_YEAR.resId
+            getString(R.string.this_month) -> NoiseValueSort.THIS_MONTH.resId
+            getString(R.string.direct_input) -> NoiseValueSort.CUSTOM.resId
+            getString(R.string.entire) -> NoiseValueSort.ENTIRE.resId
+            getString(R.string.hour_24) -> NoiseValueSort.LAST_24.resId
             else -> null
         }
     }
@@ -437,6 +437,33 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             if (oldItemValue >= filterValue) {
                 newList.add(AdapterModel.NoiseDetailItem(oldDateValue, oldItemValue))
             }
+        }
+    }
+
+    private fun parsingLanguage(s: String): String {
+        return when(s) {
+            NoiseValueSort.TODAY.title -> {
+                getString(R.string.today)
+            }
+            NoiseValueSort.LAST_24.title -> {
+                getString(R.string.hour_24)
+            }
+            NoiseValueSort.ENTIRE.title -> {
+                getString(R.string.entire)
+            }
+            NoiseValueSort.THIS_WEEK.title -> {
+                getString(R.string.t_week)
+            }
+            NoiseValueSort.THIS_MONTH.title -> {
+                getString(R.string.this_month)
+            }
+            NoiseValueSort.THIS_YEAR.title -> {
+                getString(R.string.this_year)
+            }
+            NoiseValueSort.CUSTOM.title -> {
+                getString(R.string.direct_input)
+            }
+            else -> ""
         }
     }
 }

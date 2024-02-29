@@ -66,18 +66,4 @@ class NoiseDataRepo : BaseRepository() {
             })
         }
     }
-
-    private fun processData(flag: String?, rawData: List<AdapterModel.NoiseDetailItem>?)
-    : List<AdapterModel.NoiseDetailItem> {
-        try {
-            rawData?.let { data ->
-                data.forEachIndexed { index, item ->
-                }
-            }
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
-
-        return rawData ?: throw NullPointerException()
-    }
 }

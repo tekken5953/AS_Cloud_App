@@ -13,37 +13,49 @@ class AddressFromRegex(private val address: String) {
 
         generatePatternFirst().forEach { first ->
             if (!first.findAll(address).none()) {
-                val value = first.find(address)!!.value
-                if (!sbArray[0].contains(value))
-                    sbArray[0].append("$value ")
+                val value = first.find(address)?.value
+                value?.let {
+                    if (!sbArray[0].contains(it))
+                        sbArray[0].append("$it ")
+                }
             }
         }
         generatePatternSecond().forEach { second ->
             if (!second.findAll(address).none()) {
-                val value = second.find(address)!!.value
-                if (!sbArray[0].contains(value))
-                    sbArray[1].append("$value ")
+                val value = second.find(address)?.value
+                value?.let {
+                    if (!sbArray[0].contains(it))
+                        sbArray[1].append("$it ")
+                }
             }
         }
         generatePatternThird().forEach { third ->
             if (!third.findAll(address).none()) {
-                val value = third.find(address)!!.value
-                if (!sbArray[0].contains(value) && !sbArray[1].contains(value))
-                    sbArray[2].append("$value ")
+                val value = third.find(address)?.value
+                value?.let {
+                    if (!sbArray[0].contains(it) && !sbArray[1].contains(it))
+                        sbArray[2].append("$it ")
+                }
             }
         }
         generatePatternFourth().forEach { fourth ->
             if (!fourth.findAll(address).none()) {
-                val value = fourth.find(address)!!.value
-                if (!sbArray[0].contains(value) && !sbArray[1].contains(value) && !sbArray[2].contains(value))
-                    sbArray[3].append(value)
+                val value = fourth.find(address)?.value
+                value?.let {
+                    if (!sbArray[0].contains(it) && !sbArray[1].contains(it)
+                        && !sbArray[2].contains(it))
+                        sbArray[3].append(it)
+                }
+
             }
         }
         generatePatternRoad().forEach { road ->
             if (!road.findAll(address).none()) {
-                val value = road.find(address)!!.value
-                if (!sbArray[0].contains(value) && !sbArray[1].contains(value))
-                    sbArray[4].append(value)
+                val value = road.find(address)?.value
+                value?.let {
+                    if (!sbArray[0].contains(it) && !sbArray[1].contains(it))
+                        sbArray[4].append(it)
+                }
             }
         }
 
@@ -76,7 +88,7 @@ class AddressFromRegex(private val address: String) {
         return try {
             generatePatternSecond().forEach { second ->
                 if (!second.findAll(address).none()) {
-                    sb.append(second.find(address)!!.value)
+                    sb.append(second.find(address)?.value)
                 }
             }
             if (sb.isEmpty()) { getAddress().split(" ").last() } else { sb.toString() }
@@ -92,7 +104,7 @@ class AddressFromRegex(private val address: String) {
         return try {
             generatePatternThird().forEach { third ->
                 if (!third.findAll(address).none()) {
-                    sb.append(third.find(address)!!.value)
+                    sb.append(third.find(address)?.value)
                 }
             }
             if (sb.isEmpty()) { getAddress().split(" ").last() } else { sb.toString() }

@@ -18,4 +18,18 @@ class NoiseDataViewModel(private val repo: NoiseDataRepo): BaseViewModel() {
         getResultData = repo._getNoiseResult
         return getResultData ?: throw IOException()
     }
+
+    private fun processData(flag: String?, rawData: List<AdapterModel.NoiseDetailItem>?)
+            : List<AdapterModel.NoiseDetailItem> {
+        try {
+            rawData?.let { data ->
+                data.forEachIndexed { index, item ->
+                }
+            }
+        } catch (e: Exception) {
+            e.stackTraceToString()
+        }
+
+        return rawData ?: throw NullPointerException()
+    }
 }

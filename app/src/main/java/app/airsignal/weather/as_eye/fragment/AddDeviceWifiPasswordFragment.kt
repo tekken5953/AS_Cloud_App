@@ -372,7 +372,7 @@ class AddDeviceWifiPasswordFragment : Fragment() {
         binding.addWifiPwdEt.visibility = View.GONE
         binding.addWifiPwdBtn.animation = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_out)
 
-        parentActivity.changeTitleWithAnimation(binding.addWifiPwdTitle, "기기로 등록 정보를\n전송중입니다",true)
+        parentActivity.changeTitleWithAnimation(binding.addWifiPwdTitle, getString(R.string.transferring_data_to_device),true)
         parentActivity.changeProgressWithAnimation(90)
         parentActivity.showPb()
 
