@@ -36,7 +36,7 @@
     <TextView
         android:id="@+id/listItemAddEyeWifiConnect"
         style="@style/basicMediumTextView"
-        android:text="연결"
+        android:text="@string/connect"
         android:textColor="@color/main_blue_color"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"

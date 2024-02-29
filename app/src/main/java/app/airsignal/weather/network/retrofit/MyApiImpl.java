@@ -79,8 +79,9 @@ public interface MyApiImpl {
             @Query("id") String id
     );
 
-    @GET("noise")
+    @GET("noise/{sn}")
     Call<List<AdapterModel.NoiseDetailItem>> getNoise(
+            @NotNull @Path("sn") String sn,
             @Nullable @Query("flag") String flag,
             @Nullable @Query("start") Integer start,
             @Nullable @Query("end") Integer end

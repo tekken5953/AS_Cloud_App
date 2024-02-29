@@ -302,5 +302,28 @@
     <string name="eye_add_cancel">등록을 취소하시겠습니까?</string>
     <string name="eye_success_change">변경에 성공했습니다</string>
     <string name="eye_fail_change">변경에 실패했습니다</string>
+    <string name="eye_add_device">제품 추가</string>
+    <string name="eye_decibel">데시벨</string>
+    <string name="nothing">없음</string>
+    <string name="calendar">날짜</string>
+    <string name="this_week">이번주</string>
+    <string name="eye_noise_no_data">데이터가 없습니다</string>
+    <string name="eye_add_group">그룹 추가</string>
+    <string name="change_group_name">그룹명 변경</string>
+    <string name="remove_group">그룹 삭제</string>
+    <string name="eye_input_group_name">변경할 그룹명을 입력해주세요</string>
+    <string name="apply">변경하기</string>
+    <string name="device_name">기기명</string>
+    <string name="landing_btn_title">제품 출시 알림받기\n광고 및 이벤트성 알림 발송에 동의합니다</string>
+    <string name="decibel_or_higher">데시벨 이상</string>
+    <string name="setting_period">기간 설정</string>
+    <string name="hour_24">24시간</string>
+    <string name="this_month">이번 달</string>
+    <string name="this_year">올해</string>
+    <string name="entire">전체</string>
+    <string name="direct_input">직접 입력</string>
+    <string name="t_day">오늘</string>
+    <string name="t_week">이번 주</string>
+    <string name="connect">연결</string>
 
 </resources>

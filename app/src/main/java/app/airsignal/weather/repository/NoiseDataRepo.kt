@@ -19,10 +19,10 @@ class NoiseDataRepo : BaseRepository() {
     var _getNoiseResult =
         MutableLiveData<ApiState<List<AdapterModel.NoiseDetailItem>?>>()
 
-    fun loadDataResult(flag: String?, start: Int?, end: Int?) {
+    fun loadDataResult(sn: String, flag: String?, start: Int?, end: Int?) {
         CoroutineScope(Dispatchers.Default).launch {
             _getNoiseResult.postValue(ApiState.Loading)
-            impl.getNoise(flag, start, end).enqueue(object : Callback<List<AdapterModel.NoiseDetailItem>>{
+            impl.getNoise(sn, flag, start, end).enqueue(object : Callback<List<AdapterModel.NoiseDetailItem>>{
                 override fun onResponse(
                     call: Call<List<AdapterModel.NoiseDetailItem>>,
                     response: Response<List<AdapterModel.NoiseDetailItem>>

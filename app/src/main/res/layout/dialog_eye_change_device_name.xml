@@ -21,7 +21,7 @@
         style="@style/basicMediumTextView"
         android:textColor="@color/main_black"
         android:textSize="16sp"
-        android:text="기기명"
+        android:text="@string/device_name"
         android:layout_centerHorizontal="true"
         android:layout_alignTop="@+id/dialogChangeEyeNameBack"
         android:layout_alignBottom="@+id/dialogChangeEyeNameBack"/>

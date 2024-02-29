@@ -8,7 +8,7 @@
         android:id="@+id/includedEyeListTitle"
         style="@style/basicMediumTextView"
         android:textSize="16dp"
-        android:text="제품추가"
+        android:text="@string/eye_add_device"
         android:textColor="@color/main_black"
         app:layout_constraintTop_toTopOf="@+id/includedEyeListCancel"
         app:layout_constraintBottom_toBottomOf="@+id/includedEyeListCancel"

@@ -223,7 +223,7 @@
                     android:layout_height="250dp"
                     android:layout_centerInParent="true"
                     android:paddingTop="20dp"
-                    android:text="표시할 데이터가 없습니다"
+                    android:text="@string/eye_noise_no_data"
                     android:textColor="@color/eye_btn_disable_color"
                     android:textSize="16sp" />
 

@@ -344,12 +344,8 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         serial?.let {
             val item =
                 EyeDataModel.Device(
-                    isMaster,
-                    sort,
-                    SharedPreferenceManager(this@EyeListActivity).getString(SpDao.userEmail),
-                    alias,
-                    serial,
-                    detail)
+                    isMaster, sort, SharedPreferenceManager(this@EyeListActivity)
+                        .getString(SpDao.userEmail), alias, serial, detail)
 
             deviceListItem.add(item)
         }
@@ -412,13 +408,16 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
                             // 통신 중
                             is BaseRepository.ApiState.Loading -> {}
+
+
+                            else -> {}
                         }
                     }
                 }
             }
         } catch(e: IOException) {
             TimberUtil().e("eyetest", e.stackTraceToString())
-            TimberUtil().e("eyetest", "장치를 불러오는데 실패했습니다")
+            ToastUtils(this).showMessage("장치를 불러오는데 실패했습니다")
         }
     }
 }

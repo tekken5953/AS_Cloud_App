@@ -18,7 +18,7 @@
     <TextView
         android:id="@+id/dialogEditGroupNameTitle"
         style="@style/basicTextView"
-        android:text="변경할 그룹명을 입력해주세요"
+        android:text="@string/eye_input_group_name"
         android:textColor="@color/main_black"
         android:layout_below="@+id/dialogEditGroupNameCancel"
         android:textSize="16sp"
@@ -54,13 +54,14 @@
         android:gravity="top|center_horizontal">
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/dialogEditGroupNameBtn"
-            android:layout_width="144dp"
+            android:layout_width="160dp"
             android:layout_height="56dp"
             android:background="@drawable/btn_blue_selector"
             android:enabled="false"
             android:fontFamily="@font/spoqa_hansansneo_bold"
-            android:text="변경하기"
+            android:text="@string/apply"
             android:visibility="visible"
+            android:textAllCaps="false"
             android:textColor="@color/eye_btn_disable_color"
             android:textSize="16sp" />
     </LinearLayout>

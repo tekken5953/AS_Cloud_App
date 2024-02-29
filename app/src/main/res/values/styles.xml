@@ -151,7 +151,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/ae_radio_bg</item>
         <item name="fontFamily">@font/spoqa_hansansneo_medium</item>
-        <item name="android:textSize">14sp</item>
+        <item name="autoSizeMaxTextSize">14sp</item>
         <item name="android:layout_marginStart">6dp</item>
         <item name="android:textColor">@drawable/checked_radio_text_color</item>
     </style>
