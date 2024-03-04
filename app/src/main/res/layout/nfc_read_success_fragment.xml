@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".as_eye.nfc.NfcReadSuccessFragment">
+
+        <TextView
+            android:id="@+id/nfcReadSTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/basicMediumTextView"
+            android:text="NFC 읽기 성공 화면"
+            android:textColor="@color/main_black"/>
+
+        <TextView
+            android:id="@+id/nfcReadSData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/basicMediumTextView"
+            android:textColor="@color/main_black"
+            android:layout_marginTop="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/nfcReadSTitle"/>
+
+        <Button
+            android:id="@+id/nfcReadSBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/permission_ok_btn_bg"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:text="등록"
+            android:enabled="false"
+            android:textSize="18sp"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:textColor="@color/white"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

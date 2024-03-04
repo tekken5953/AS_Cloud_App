@@ -2,6 +2,7 @@ package app.airsignal.weather.as_eye.adapter
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,9 +10,13 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.HandlerCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
+import app.airsignal.weather.adapter.ItemDiffCallback
 import app.airsignal.weather.as_eye.dao.EyeDataModel
+import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.OnAdapterItemClick
 import app.airsignal.weather.util.RefreshUtils
@@ -27,7 +32,9 @@ class EyeDeviceAdapter(
     list: ArrayList<EyeDataModel.Device>
 ) :
     RecyclerView.Adapter<EyeDeviceAdapter.ViewHolder>() {
-    private val mList = list
+    private var mList = list
+
+    private val toast by lazy { ToastUtils(context) }
 
     private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
 
@@ -128,7 +135,7 @@ class EyeDeviceAdapter(
                 show.first.setOnClickListener {
                     dialog.dismiss()
                     dao.serial?.let {
-                        deleteDevice(it)
+                        deleteDevice(it, dao.email)
                     }
                 }
                 show.second.setOnClickListener {
@@ -144,17 +151,17 @@ class EyeDeviceAdapter(
         return ResourcesCompat.getDrawable(context.resources, id, null)
     }
 
-    private fun deleteDevice(sn: String) {
+    private fun deleteDevice(sn: String, email: String) {
         HttpClient.getInstance(false).setClientBuilder().deleteDevice(
-            sn, "airsignal@airsignal.kr"
+            sn, email
         ).enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
-                ToastUtils(context).showMessage("삭제에 성공했습니다")
+                toast.showMessage(context.getString(R.string.success_to_delete))
                 RefreshUtils(context).refreshActivity()
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {
-                ToastUtils(context).showMessage("삭제에 실패했습니다")
+                toast.showMessage(context.getString(R.string.fail_to_delete))
             }
         })
     }

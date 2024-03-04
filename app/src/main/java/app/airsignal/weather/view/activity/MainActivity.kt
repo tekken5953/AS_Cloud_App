@@ -1714,74 +1714,76 @@ class MainActivity
 
     // 레이아웃 숨김처리에 따른 뷰 세팅
     private fun setVisibilityForViews(visibility: Int, error: String?) {
-        val textViewArray = arrayListOf(
-            binding.mainGpsTitleTv,
-            binding.mainLiveTempValue,
-            binding.mainLiveTempUnit,
-            binding.mainTopBarGpsTitle,
-            binding.mainSensTitle,
-            binding.mainSensValue,
-            binding.mainMaxValue,
-            binding.mainMaxTitle,
-            binding.mainMinValue,
-            binding.mainMinTitle,
-            binding.subAirPM25,
-            binding.subAirPM10,
-            binding.subAirHumid.getTitle(),
-            binding.subAirWind.getTitle(),
-            binding.subAirRainP.getTitle(),
-            binding.mainCompareTempTv
-        )
+        runOnUiThread {
+            val textViewArray = arrayListOf(
+                binding.mainGpsTitleTv,
+                binding.mainLiveTempValue,
+                binding.mainLiveTempUnit,
+                binding.mainTopBarGpsTitle,
+                binding.mainSensTitle,
+                binding.mainSensValue,
+                binding.mainMaxValue,
+                binding.mainMaxTitle,
+                binding.mainMinValue,
+                binding.mainMinTitle,
+                binding.subAirPM25,
+                binding.subAirPM10,
+                binding.subAirHumid.getTitle(),
+                binding.subAirWind.getTitle(),
+                binding.subAirRainP.getTitle(),
+                binding.mainCompareTempTv
+            )
 
-        val clickableChangeArray = arrayOf(
-            binding.mainSideMenuIv,
-            binding.mainShareIv,
-            binding.mainAddAddress,
-            binding.mainGpsFix
-        )
+            val clickableChangeArray = arrayOf(
+                binding.mainSideMenuIv,
+                binding.mainShareIv,
+                binding.mainAddAddress,
+                binding.mainGpsFix
+            )
 
-        clickableChangeArray.forEach {
-            it.isEnabled = visibility == VISIBLE
-        }
+            clickableChangeArray.forEach {
+                it.isEnabled = visibility == VISIBLE
+            }
 
-        // 숨김
-        if (visibility == GONE) {
-            if (error == ERROR_NETWORK ||
-                error == ERROR_GET_DATA
-            ) {
-                setDrawable(binding.mainAddAddress, null)
-                setDrawable(binding.mainSideMenuIv, null)
+            // 숨김
+            if (visibility == GONE) {
+                if (error == ERROR_NETWORK ||
+                    error == ERROR_GET_DATA
+                ) {
+                    setDrawable(binding.mainAddAddress, null)
+                    setDrawable(binding.mainSideMenuIv, null)
+                } else {
+                    tintImageDrawables()
+                }
+
+                clearTextViews(textViewArray)
+
+                setDrawable(binding.mainGpsFix, null)
+                setDrawable(binding.mainMotionSLideImg, null)
+                setDrawable(binding.mainGpsFix, null)
+                binding.mainShareIv.isEnabled = false
+                binding.mainSwipeLayout.isEnabled = false
+
+                binding.mainMotionLayout.apply {
+                    transitionToStart()
+                    Thread.sleep(100)
+                    isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
+                }
+
+                binding.mainMotionSlideGuide.apply {
+                    text = getString(R.string.error_guide)
+                    setTextColor(getC(R.color.theme_text_color))
+                }
+                applyBackground(binding.mainWarningBox, null)
+                applyBackground(binding.nestedSubAirFrame, null)
+
+                changeStrokeColor(binding.subAirPM10, getColor(android.R.color.transparent))
+                changeStrokeColor(binding.subAirPM25, getColor(android.R.color.transparent))
+
+                updateErrorViewsVisibility(GONE)
             } else {
-                tintImageDrawables()
+                updateViewsForVisibleState()
             }
-
-            clearTextViews(textViewArray)
-
-            setDrawable(binding.mainGpsFix, null)
-            setDrawable(binding.mainMotionSLideImg, null)
-            setDrawable(binding.mainGpsFix, null)
-            binding.mainShareIv.isEnabled = false
-            binding.mainSwipeLayout.isEnabled = false
-
-            binding.mainMotionLayout.apply {
-                transitionToStart()
-                Thread.sleep(100)
-                isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
-            }
-
-            binding.mainMotionSlideGuide.apply {
-                text = getString(R.string.error_guide)
-                setTextColor(getC(R.color.theme_text_color))
-            }
-            applyBackground(binding.mainWarningBox, null)
-            applyBackground(binding.nestedSubAirFrame, null)
-
-            changeStrokeColor(binding.subAirPM10, getColor(android.R.color.transparent))
-            changeStrokeColor(binding.subAirPM25, getColor(android.R.color.transparent))
-
-            updateErrorViewsVisibility(GONE)
-        } else {
-            updateViewsForVisibleState()
         }
     }
 

@@ -332,4 +332,6 @@
     <string name="transferring_data_to_device">Transferring data to device</string>
     <string name="change_device_name">Change device name</string>
     <string name="apply_changes">Apply</string>
+    <string name="success_to_delete">Success to remove</string>
+    <string name="fail_to_delete">Fail to remove</string>
 </resources>

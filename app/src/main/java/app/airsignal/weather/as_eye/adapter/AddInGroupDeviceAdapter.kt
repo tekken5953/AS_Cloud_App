@@ -13,11 +13,11 @@ import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.util.OnAdapterItemClick
 import java.util.*
 
-class AddGroupAdapter(
+class AddInGroupDeviceAdapter(
     private val context: Context,
     list: ArrayList<EyeDataModel.Group>
 ) :
-    RecyclerView.Adapter<AddGroupAdapter.ViewHolder>() {
+    RecyclerView.Adapter<AddInGroupDeviceAdapter.ViewHolder>() {
     private val mList = list
 
     private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick

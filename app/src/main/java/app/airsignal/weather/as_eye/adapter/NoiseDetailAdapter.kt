@@ -20,7 +20,6 @@ import java.time.format.DateTimeFormatter
 class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterModel.NoiseDetailItem>) :
     RecyclerView.Adapter<NoiseDetailAdapter.ViewHolder>() {
     private var mList = list
-    var isLast: Int = -1
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -46,14 +45,13 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(mList[position])
-
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val headerContainer: LinearLayout = itemView.findViewById(R.id.noiseDetailHeaderContainer)
-        val headerValue: TextView = itemView.findViewById(R.id.noiseDetailHeaderTitle)
+        private val headerValue: TextView = itemView.findViewById(R.id.noiseDetailHeaderTitle)
         val dataDate: TextView = itemView.findViewById(R.id.noiseDetailTime)
-        val dataValue: TextView = itemView.findViewById(R.id.noiseDetailValue)
+        private val dataValue: TextView = itemView.findViewById(R.id.noiseDetailValue)
 
         fun bind(dao: AdapterModel.NoiseDetailItem) {
             dao.date?.let { date ->

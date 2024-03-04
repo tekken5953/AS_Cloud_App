@@ -174,7 +174,9 @@ class AddDeviceWifiPasswordFragment : Fragment() {
             // FCM 토픽 Subscribe
             SubFCM().subTopic(ble.serial)
 
-            postDevice(EyeDataModel.PostDevice(serial = parentActivity.ble.serial,
+            postDevice(
+                SharedPreferenceManager(requireContext()).getString(SpDao.userEmail),
+                EyeDataModel.PostDevice(serial = parentActivity.ble.serial,
             alias = binding.addWifiPwdEt.text.toString(), isMaster = "T"))
         }
     }
@@ -272,6 +274,7 @@ class AddDeviceWifiPasswordFragment : Fragment() {
             container,
             false
         )
+
         binding.addWifiPwdEt.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -345,14 +348,30 @@ class AddDeviceWifiPasswordFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        ble.device?.let {
-            ble.connectDevice(it, connectCallback)
+        arguments?.let {
+            val serial = it.getString("serial")
+            val deviceId = it.getString("deviceId")
+            val alias = it.getString("alias")
+            val isMaster = it.getString("isMaster")
+            serial?.let { s ->
+                deviceId?.let { d ->
+                    alias?.let { a ->
+                        isMaster?.let { m ->
+                            postDevice(d, EyeDataModel.PostDevice(s, a, m))
+                        }
+                    }
+                }
+            }
         } ?: run {
-            mainDispatcher.launch {
-                binding.addWifiPwdTitle.text = getString(R.string.fail_to_connect_bt_retry)
-                ble.destroyBle()
-                delay(1500)
-                parentActivity.finish()
+            ble.device?.let {
+                ble.connectDevice(it, connectCallback)
+            } ?: run {
+                mainDispatcher.launch {
+                    binding.addWifiPwdTitle.text = getString(R.string.fail_to_connect_bt_retry)
+                    ble.destroyBle()
+                    delay(1500)
+                    parentActivity.finish()
+                }
             }
         }
     }
@@ -403,9 +422,9 @@ class AddDeviceWifiPasswordFragment : Fragment() {
         }
     }
 
-    private fun postDevice(item: EyeDataModel.PostDevice) {
+    private fun postDevice(email: String, item: EyeDataModel.PostDevice) {
         HttpClient.getInstance(false).setClientBuilder().postDevice(
-            SharedPreferenceManager(requireContext()).getString(SpDao.userEmail), item
+            email, item
         ).enqueue(
             object : Callback<String> {
                 override fun onResponse(call: Call<String>, response: Response<String>) {

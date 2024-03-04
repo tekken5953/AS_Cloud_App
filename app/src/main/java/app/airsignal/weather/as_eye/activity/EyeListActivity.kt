@@ -15,12 +15,15 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatButton
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
-import app.airsignal.weather.as_eye.adapter.AddGroupAdapter
+import app.airsignal.weather.as_eye.adapter.AddInGroupDeviceAdapter
 import app.airsignal.weather.as_eye.adapter.EyeCategoryAdapter
 import app.airsignal.weather.as_eye.adapter.EyeDeviceAdapter
+import app.airsignal.weather.as_eye.adapter.TutorialViewPagerAdapter
 import app.airsignal.weather.as_eye.customview.EyeGroupSelectorView
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.ActivityEyeListBinding
@@ -52,12 +55,14 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     private val categoryItem = ArrayList<EyeDataModel.Category>()
     private val categoryAdapter by lazy { EyeCategoryAdapter(this, categoryItem) }
     private val groupList = ArrayList<EyeDataModel.Group>()
-    private val groupAdapter by lazy { AddGroupAdapter(this, groupList) }
+    private val groupAdapter by lazy { AddInGroupDeviceAdapter(this, groupList) }
     private val checkedArray = ArrayList<EyeDataModel.Device>()
     private val db by lazy { GroupDataBase.getGroupInstance(this).groupRepository() }
 
     private val deviceListViewModel by viewModel<GetEyeDeviceListViewModel>()
     private val listLiveData by lazy {deviceListViewModel.fetchData()}
+
+    private lateinit var indicators: Array<ImageView>
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
@@ -73,6 +78,10 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
+
+        if (!SharedPreferenceManager(this).getBoolean("eye_tutorial_skip", false)) {
+            createTutorial()
+        }
 
         applyDeviceList()
 
@@ -330,9 +339,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         }
     }
 
-    private suspend fun getAllGroup(): List<EyeGroupEntity> {
-        return db.findAll()
-    }
+    private suspend fun getAllGroup(): List<EyeGroupEntity> { return db.findAll() }
 
     private fun addListItem(
         isMaster: Boolean,
@@ -418,6 +425,79 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         } catch(e: IOException) {
             TimberUtil().e("eyetest", e.stackTraceToString())
             ToastUtils(this).showMessage("장치를 불러오는데 실패했습니다")
+        }
+    }
+
+    private fun createTutorial() {
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_eye_tutorial, binding.aeListRoot)
+        val dialog = ShowDialogClass(this)
+        val cancel = view.findViewById<ImageView>(R.id.eyeTutorialCancel)
+        val viewPager = view.findViewById<ViewPager2>(R.id.eyeTutorialViewPager)
+        val indicatorContainer = view.findViewById<LinearLayout>(R.id.eyeTutorialIndicator)
+
+        dialog.setBackPressed(cancel)
+        dialog.show(view,false, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
+
+        val viewPagerList = ArrayList<Int>()
+        viewPagerList.run {
+            add(R.drawable.test_vp_img)
+            add(R.drawable.test_vp_img2)
+            add(R.drawable.test_vp_img3)
+            add(R.drawable.test_vp_img4)
+        }
+
+        createViewPager(viewPager, indicatorContainer, viewPagerList)
+
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                if (viewPagerList.isNotEmpty() && viewPagerList.size > 1) {
+                    updateIndicators(position)
+                    viewPager.requestLayout()
+                }
+            }
+        })
+    }
+
+    private fun createIndicator(size: Int, container: LinearLayout, viewPager: ViewPager2) {
+            indicators = Array(size) {
+            val indicatorView = ImageView(this)
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(10, 0, 10, 0)
+            indicatorView.layoutParams = params
+            indicatorView.setImageResource(R.drawable.indicator_empty) // 선택되지 않은 원 이미지
+            container.addView(indicatorView)
+            indicatorView
+        }
+        updateIndicators(viewPager.currentItem)
+    }
+
+    private fun updateIndicators(position: Int) {
+        for (i in indicators.indices) {
+            indicators[i].setImageResource(
+                if (i == position) R.drawable.indicator_fill // 선택된 원 이미지
+                else R.drawable.indicator_empty // 선택되지 않은 원 이미지
+            )
+        }
+    }
+
+    private fun createViewPager(vp: ViewPager2,
+                                indicatorContainer: LinearLayout,
+                                vpList: ArrayList<Int>) {
+        val vpAdapter = TutorialViewPagerAdapter(this, vpList, vp)
+        vp.apply {
+            adapter = vpAdapter
+            isClickable = false
+            orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            offscreenPageLimit = 4
+        }
+
+        if (vpList.isNotEmpty() && vpList.size > 1) {
+            indicatorContainer.removeAllViews()
+            createIndicator(vpList.size,indicatorContainer,vp)
         }
     }
 }
