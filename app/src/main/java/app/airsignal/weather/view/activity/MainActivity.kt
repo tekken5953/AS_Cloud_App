@@ -2208,4 +2208,10 @@ class MainActivity
             (view as View).background = null
         }
     }
+
+    fun recreateMainActivity(addrKr: String?, addrEn: String?) {
+        addrKr?.let {
+            loadSavedAddr(addrKr,addrEn)
+        }
+    }
 }

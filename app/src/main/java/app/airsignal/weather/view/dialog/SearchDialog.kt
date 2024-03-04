@@ -17,6 +17,7 @@ import android.view.*
 import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.HandlerCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
@@ -37,6 +38,7 @@ import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
 import app.airsignal.weather.util.KeyboardController
 import app.airsignal.weather.util.OnAdapterItemClick
 import app.airsignal.weather.util.`object`.DataTypeParser.convertAddress
+import app.airsignal.weather.view.activity.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -116,8 +118,8 @@ class SearchDialog(
 
                     withContext(Dispatchers.Main) {
                         this@SearchDialog.dismiss()
-                        delay(100)
-                        activity.recreate()
+                        delay(300)
+                        if (activity is MainActivity) activity.recreateMainActivity(dbFind.addrKr,dbFind.addrEn)
                     }
                 }
             }
@@ -158,8 +160,8 @@ class SearchDialog(
                         withContext(Dispatchers.Main) {
                             withContext(Dispatchers.Main) {
                                 this@SearchDialog.dismiss()
-                                delay(100)
-                                activity.recreate()
+                                delay(300)
+                                if (activity is MainActivity) activity.recreateMainActivity(currentAddr.kr,currentAddr.en)
                             }
                         }
                     }
@@ -180,7 +182,10 @@ class SearchDialog(
             val listView: ListView = view.findViewById(R.id.searchAddressListView)
 
             searchEditListener(listView, searchView, noResult)
-            KeyboardController.onKeyboardUp(requireContext(), searchView)
+
+            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                KeyboardController.onKeyboardUp(requireContext(), searchView)
+            },500)
         }
     }
 
@@ -304,9 +309,9 @@ class SearchDialog(
                         dbUpdate(model.addrKr,model.addrEn,model.name)
 
                         withContext(Dispatchers.Main) {
-                            builder.dismiss()
-                            delay(100)
-                            activity.recreate()
+                            this@SearchDialog.dismiss()
+                            delay(300)
+                            if (activity is MainActivity) activity.recreateMainActivity(model.addrKr,model.addrEn)
                         }
                     }
                 }

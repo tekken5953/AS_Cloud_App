@@ -324,4 +324,5 @@
     <string name="connect">연결</string>
     <string name="transferring_data_to_device">기기로 등록 정보를 전송중입니다</string>
     <string name="change_device_name">기기명 수정하기</string>
+    <string name="apply_changes">적용</string>
 </resources>

@@ -3,6 +3,8 @@ package app.airsignal.weather.as_eye.fragment
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -10,6 +12,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.core.os.HandlerCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
@@ -101,7 +104,9 @@ class AddDeviceSerialFragment : Fragment() {
                 ) {
                     binding.addSerialEt.text.clear()
                     binding.addSerialEt.requestFocus()
-                    KeyboardController.onKeyboardUp(requireContext(),binding.addSerialEt)
+                    HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                        KeyboardController.onKeyboardUp(requireContext(),binding.addSerialEt)
+                    },500)
                     return@setOnTouchListener true
                 }
             } catch (e: Exception) {

@@ -206,10 +206,10 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
         datePicker.setOnDateChangedListener { view, year, monthOfYear, dayOfMonth ->
             if (datePickerStart.isActivated && !datePickerEnd.isActivated) {
                 startCalendar = LocalDate.of(year,monthOfYear + 1,dayOfMonth)
-                datePickerStart.text = "${year}-${insertDateZero(monthOfYear)}-${insertDateZero(dayOfMonth)}"
+                datePickerStart.text = "${year}-${insertDateZero(monthOfYear + 1)}-${insertDateZero(dayOfMonth)}"
             } else if (datePickerEnd.isActivated && !datePickerStart.isActivated) {
                 endCalendar = LocalDate.of(year,monthOfYear + 1,dayOfMonth)
-                datePickerEnd.text = "${year}-${insertDateZero(monthOfYear)}-${insertDateZero(dayOfMonth)}"
+                datePickerEnd.text = "${year}-${insertDateZero(monthOfYear + 1)}-${insertDateZero(dayOfMonth)}"
             }
         }
 
@@ -374,7 +374,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
 
                     NoiseValueSort.THIS_WEEK.index -> {
                         val startWeek = LocalDateTime.now()
-                            .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                            .with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
                         if (oldItemDate.isAfter(startWeek)) {
                             oldItem.value?.let { oldItemValue ->
                                 addFilteredList(newList, oldItemValue, oldItemDate)
