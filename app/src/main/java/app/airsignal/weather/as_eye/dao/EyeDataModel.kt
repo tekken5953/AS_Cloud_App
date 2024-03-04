@@ -140,7 +140,7 @@ class EyeDataModel {
 
     data class Category(
         val name: String,
-        val device: MutableList<Device>
+        val device: MutableList<String?>
     )
 
     data class Group(

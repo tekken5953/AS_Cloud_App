@@ -147,7 +147,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/aeLiveTVOC"
-                app:titleEnDouble="NO2"
+                app:titleEnDouble="NOx"
                 app:titleKrDouble="@string/nitrogen_dioxide"
                 app:unitDouble="ppm" />
         </androidx.constraintlayout.widget.ConstraintLayout>

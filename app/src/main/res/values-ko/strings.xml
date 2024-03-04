@@ -265,7 +265,7 @@
     <string name="carbon_dioxide">이산화탄소</string>
     <string name="carbon_monoxide">일산화탄소</string>
     <string name="tvoc_short">총휘발성\n유기화합물</string>
-    <string name="nitrogen_dioxide">이산화질소</string>
+    <string name="nitrogen_dioxide">질소산화물</string>
     <string name="device_alias">기기명</string>
     <string name="noti_option">알림 설정</string>
     <string name="device_serial_number">제품 시리얼 번호</string>

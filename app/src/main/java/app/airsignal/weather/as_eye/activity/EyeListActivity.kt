@@ -16,6 +16,7 @@ import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -72,6 +73,9 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     override fun onStart() {
         super.onStart()
         loadDeviceList()
+        if (!SharedPreferenceManager(this).getBoolean("eye_tutorial_skip", false)) {
+            createTutorial()
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -79,16 +83,12 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         super.onCreate(savedInstanceState)
         initBinding()
 
-        if (!SharedPreferenceManager(this).getBoolean("eye_tutorial_skip", false)) {
-            createTutorial()
-        }
-
         applyDeviceList()
 
         binding.aeListDeviceRv.adapter = deviceListAdapter
         binding.aeListCategoryRv.adapter = categoryAdapter
 
-        addCategoryItem(ENTIRE_GROUP, deviceListItem)
+        addCategoryItem(ENTIRE_GROUP, deviceListItem.map {it.serial}.toMutableList())
         categoryAdapter.notifyDataSetChanged()
 
         categoryAdapter.setOnItemClickListener(object : OnAdapterItemClick.OnAdapterItemClick {
@@ -100,19 +100,10 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                 } else {
                     CoroutineScope(Dispatchers.IO).launch {
                         val group = db.findByCategoryName(categoryItem[position].name)
-                        group.device.forEach { pDevice ->
-                            pDevice.detail?.let { pDetail ->
-                                addListItem(
-                                    pDevice.isMaster,
-                                    pDevice.sort,
-                                    pDevice.alias,
-                                    pDevice.serial,
-                                    EyeDataModel.DeviceDetail(
-                                        pDetail.ssid,
-                                        pDetail.report,
-                                        pDetail.power
-                                    )
-                                )
+                        allDevicesList.forEachIndexed { index, device ->
+                            if (group.device.contains(device.serial)) {
+                                deviceListItem.add(device)
+                                deviceListAdapter.notifyItemInserted(index)
                             }
                         }
                     }
@@ -189,7 +180,6 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
             selectorBuilder.show()
         }
-
     }
 
     private fun showEditGroupDialog() {
@@ -310,8 +300,8 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                         checkedArray.add(data.device)
                     }
                 }
-                addGroupIntoDB(EyeDataModel.Category(aliasEt.text.toString(), checkedArray))
-                addCategoryItem(aliasEt.text.toString(), checkedArray)
+                addGroupIntoDB(EyeDataModel.Category(aliasEt.text.toString(), checkedArray.map {it.serial}.toMutableList()))
+                addCategoryItem(aliasEt.text.toString(), checkedArray.map {it.serial}.toMutableList())
                 categoryAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             }
@@ -358,7 +348,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         }
     }
 
-    private fun addCategoryItem(name: String, device: MutableList<EyeDataModel.Device>?) {
+    private fun addCategoryItem(name: String, device: MutableList<String?>?) {
         device?.let { devices ->
             val item = EyeDataModel.Category(name, devices)
             categoryItem.add(item)
@@ -431,11 +421,23 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     private fun createTutorial() {
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_eye_tutorial, binding.aeListRoot)
         val dialog = ShowDialogClass(this)
-        val cancel = view.findViewById<ImageView>(R.id.eyeTutorialCancel)
+        val cancel = view.findViewById<TextView>(R.id.eyeTutorialCancel)
         val viewPager = view.findViewById<ViewPager2>(R.id.eyeTutorialViewPager)
         val indicatorContainer = view.findViewById<LinearLayout>(R.id.eyeTutorialIndicator)
 
-        dialog.setBackPressed(cancel)
+        cancel.bringToFront()
+
+        cancel.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                SharedPreferenceManager(this@EyeListActivity).setBoolean("eye_tutorial_skip",true)
+
+                withContext(Dispatchers.Main) {
+                    dialog.dismiss()
+                    recreate()
+                }
+            }
+        }
+
         dialog.show(view,false, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
 
         val viewPagerList = ArrayList<Int>()
@@ -455,6 +457,9 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                     updateIndicators(position)
                     viewPager.requestLayout()
                 }
+
+                if (position == viewPagerList.lastIndex)
+                    cancel.text = "닫기" else cancel.text = "SKIP"
             }
         })
     }

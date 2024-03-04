@@ -6,7 +6,7 @@ import app.airsignal.weather.as_eye.dao.EyeDataModel
 @Entity(tableName = "eye_group_table")
 data class EyeGroupEntity(
     @ColumnInfo(name = "name") var name: String,
-    @ColumnInfo(name = "device") var device: MutableList<EyeDataModel.Device>
+    @ColumnInfo(name = "device") var device: MutableList<String?>
 ) {
     @PrimaryKey(autoGenerate = true) var id: Long = 0
 }
