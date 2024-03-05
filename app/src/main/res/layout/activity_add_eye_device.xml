@@ -42,15 +42,19 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginTop="30dp"/>
 
-        <ProgressBar
+        <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/addEyeDeviceLoading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:lottie_autoPlay="true"
+            app:lottie_cacheComposition="true"
+            app:lottie_clipToCompositionBounds="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/as_loading_circle"
             android:visibility="gone"
-            android:indeterminateTint="@color/main_blue_color"
             app:layout_constraintTop_toTopOf="@+id/addEyeDeviceFrame"
             app:layout_constraintBottom_toBottomOf="@+id/addEyeDeviceFrame"
             app:layout_constraintStart_toStartOf="@+id/addEyeDeviceFrame"
-            app:layout_constraintEnd_toEndOf="@+id/addEyeDeviceFrame"/>
+            app:layout_constraintEnd_toEndOf="@+id/addEyeDeviceFrame" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

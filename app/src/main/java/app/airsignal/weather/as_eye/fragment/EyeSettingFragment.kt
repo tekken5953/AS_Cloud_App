@@ -98,7 +98,6 @@ class EyeSettingFragment : Fragment() {
                     ) {
                         changeDeviceEt.text.clear()
                         changeDeviceEt.requestFocus()
-//                        KeyboardController.onKeyboardUp(requireContext(),changeDeviceEt)
                         return@setOnTouchListener true
                     }
                 } catch (e: Exception) {
@@ -111,9 +110,13 @@ class EyeSettingFragment : Fragment() {
             changeDeviceBtn.setOnClickListener {
                 if (changeDeviceBtn.isEnabled) {
                     mActivity.serialExtra?.let { serial ->
-                        if (!isCanApi) {
-                            isCanApi = true
-                            callApi(changeDeviceNameDialog,serial,changeDeviceEt.text.toString())
+                        if (serial == "AOA00000053638" || serial == "AOA0000002F479") {
+                            ToastUtils(requireContext()).showMessage("베타 테스트 기기는 수정이 불가능합니다!")
+                        } else {
+                            if (!isCanApi) {
+                                isCanApi = true
+                                callApi(changeDeviceNameDialog,serial,changeDeviceEt.text.toString())
+                            }
                         }
                     }
                 }

@@ -81,7 +81,7 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
     fun changeProgressWithAnimation(p: Int) {
         val progressAnimator: ObjectAnimator =
             ObjectAnimator.ofInt(binding.addEyeDevicePb, "progress", binding.addEyeDevicePb.progress, p)
-        progressAnimator.duration = 1000
+        progressAnimator.duration = 700
         progressAnimator.start()
     }
 

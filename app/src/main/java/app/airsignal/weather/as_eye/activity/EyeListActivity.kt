@@ -1,5 +1,6 @@
 package app.airsignal.weather.as_eye.activity
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
@@ -482,7 +483,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     }
 
     private fun createIndicator(size: Int, container: LinearLayout, viewPager: ViewPager2) {
-            indicators = Array(size) {
+        indicators = Array(size) {
             val indicatorView = ImageView(this)
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -491,6 +492,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
             params.setMargins(10, 0, 10, 0)
             indicatorView.layoutParams = params
             indicatorView.setImageResource(R.drawable.indicator_empty) // 선택되지 않은 원 이미지
+            indicatorView.scaleType = ImageView.ScaleType.FIT_XY
             container.addView(indicatorView)
             indicatorView
         }
@@ -499,10 +501,22 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
     private fun updateIndicators(position: Int) {
         for (i in indicators.indices) {
-            indicators[i].setImageResource(
-                if (i == position) R.drawable.indicator_fill // 선택된 원 이미지
-                else R.drawable.indicator_empty // 선택되지 않은 원 이미지
+            val animator = ValueAnimator.ofInt(
+                indicators[i].layoutParams.width,
+                if (i == position) 120 else 35
             )
+            animator.addUpdateListener { valueAnimator ->
+                val value = valueAnimator.animatedValue as Int
+                val params = indicators[i].layoutParams
+                params.width = value
+                indicators[i].layoutParams = params
+            }
+
+            // 애니메이션 기간을 설정합니다. (밀리초 단위)
+            animator.duration = 300
+
+            // 애니메이션을 시작합니다.
+            animator.start()
         }
     }
 

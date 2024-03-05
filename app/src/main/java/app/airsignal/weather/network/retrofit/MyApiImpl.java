@@ -88,7 +88,7 @@ public interface MyApiImpl {
     );
 
     @GET("owners/{sn}")
-    Call<List<String>> getOwner(
+    Call<List<ApiModel.Owner>> getOwner(
             @NotNull @Path("sn") String sn
     );
 }

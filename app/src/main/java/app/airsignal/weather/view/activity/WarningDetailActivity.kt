@@ -14,6 +14,7 @@ import app.airsignal.weather.db.sp.GetAppInfo.getNotificationAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getWarningFixed
 import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.viewmodel.GetWarningViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -142,7 +143,9 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     private fun parseRegionToCode(region: String): Int {
         val fullName = parseRegionFullName(region)
         val regionMap = mapOf(
-            setOf("서울시", "경기도", "인천 광역시") to 108,
+            "서울시" to 108,
+            "경기도" to 108,
+            "인천 광역시" to 108,
             "강원도" to 105,
             "충청남도" to 133,
             "충청북도" to 131,

@@ -442,27 +442,14 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
 
     private fun parsingLanguage(s: String): String {
         return when(s) {
-            NoiseValueSort.TODAY.title -> {
-                getString(R.string.today)
-            }
-            NoiseValueSort.LAST_24.title -> {
-                getString(R.string.hour_24)
-            }
-            NoiseValueSort.ENTIRE.title -> {
-                getString(R.string.entire)
-            }
-            NoiseValueSort.THIS_WEEK.title -> {
-                getString(R.string.t_week)
-            }
-            NoiseValueSort.THIS_MONTH.title -> {
-                getString(R.string.this_month)
-            }
-            NoiseValueSort.THIS_YEAR.title -> {
-                getString(R.string.this_year)
-            }
-            NoiseValueSort.CUSTOM.title -> {
-                getString(R.string.direct_input)
-            }
+            NoiseValueSort.TODAY.title -> { getString(R.string.today) }
+            NoiseValueSort.LAST_24.title -> { getString(R.string.hour_24) }
+            NoiseValueSort.ENTIRE.title -> { getString(R.string.entire) }
+            NoiseValueSort.THIS_WEEK.title -> { getString(R.string.t_week) }
+            NoiseValueSort.THIS_MONTH.title -> { getString(R.string.this_month) }
+            NoiseValueSort.THIS_YEAR.title -> { getString(R.string.this_year) }
+            NoiseValueSort.CUSTOM.title -> { getString(R.string.direct_input) }
+            NoiseValueSort.NO_DECIBEL.title -> { getString(R.string.nothing) }
             else -> ""
         }
     }

@@ -132,20 +132,23 @@ class EyeDeviceAdapter(
             }
 
             itemView.setOnLongClickListener {
-                val dialog = MakeDoubleDialog(context)
-                val show = dialog.make(
-                    "${dao.alias}(${dao.serial})를\n삭제하시겠습니까?",
-                    "예", "아니오", android.R.color.holo_red_light
-                )
+                if (dao.serial != "") {
+                    val dialog = MakeDoubleDialog(context)
+                    val show = dialog.make(
+                        "${dao.alias}(${dao.serial})를\n삭제하시겠습니까?",
+                        "예", "아니오", android.R.color.holo_red_light)
 
-                show.first.setOnClickListener {
-                    dialog.dismiss()
-                    dao.serial?.let {
-                        deleteDevice(it, dao.email)
+                    show.first.setOnClickListener {
+                        dialog.dismiss()
+                        dao.serial?.let {
+                            if (dao.serial == "AOA00000053638" || dao.serial == "AOA0000002F479") {
+                                toast.showMessage("베타 테스트 기기는 삭제가 불가능합니다!")
+                            } else { deleteDevice(it, dao.email) }
+                        }
                     }
-                }
-                show.second.setOnClickListener {
-                    dialog.dismiss()
+                    show.second.setOnClickListener {
+                        dialog.dismiss()
+                    }
                 }
 
                 true

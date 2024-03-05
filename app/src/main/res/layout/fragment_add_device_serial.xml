@@ -58,18 +58,25 @@
                 android:layout_marginEnd="17dp"/>
 
             <TextView
+                android:id="@+id/addSerialResultError"
+                style="@style/basicMediumTextView"
+                android:layout_width="match_parent"
+                android:textColor="@color/red"
+                android:layout_marginTop="15dp"
+                android:textSize="16sp"
+                android:layout_marginStart="17dp"
+                android:layout_marginEnd="17dp"/>
+
+            <TextView
                 android:id="@+id/addSerialResultCaution"
                 style="@style/basicMediumTextView"
                 android:layout_width="match_parent"
-                android:textColor="@color/eye_btn_disable_color"
+                android:textColor="@color/main_blue_color"
                 android:layout_marginTop="15dp"
                 android:textSize="14sp"
                 android:layout_marginStart="17dp"
                 android:layout_marginEnd="17dp"/>
         </LinearLayout>
-
-
-
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/addSerialBtn"

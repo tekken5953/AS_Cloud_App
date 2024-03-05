@@ -19,6 +19,7 @@ import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.as_eye.nfc.NfcInfoFragment
 import app.airsignal.weather.databinding.FragmentAddDeviceSerialBinding
+import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.network.retrofit.MyApiImpl
 import app.airsignal.weather.util.KeyboardController
@@ -29,7 +30,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
-
 
 class AddDeviceSerialFragment : Fragment() {
     private lateinit var parentActivity: AddEyeDeviceActivity
@@ -136,11 +136,10 @@ class AddDeviceSerialFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-
     private fun getOwners(sn: String) {
         parentActivity.showPb()
-        HttpClient.setClientBuilder().getOwner(sn).enqueue(object : Callback<List<String>>{
-            override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
+        HttpClient.setClientBuilder().getOwner(sn).enqueue(object : Callback<List<ApiModel.Owner>>{
+            override fun onResponse(call: Call<List<ApiModel.Owner>>, response: Response<List<ApiModel.Owner>>) {
                 CoroutineScope(Dispatchers.IO).launch {
                     if (response.isSuccessful) {
                         delay(2000)
@@ -149,36 +148,65 @@ class AddDeviceSerialFragment : Fragment() {
                         ble.serial = sn
                         withContext(Dispatchers.Main) {
                             parentActivity.hidePb()
-                            body?.let {
+                            body?.let { responseBody ->
                                 if (body.isNotEmpty()) {
-                                    // 등록한 사용자가 있음
-                                    stateInspection = 1
-                                    binding.addSerialResultTitle.text = "'${it[0]}'님이 소유하신 기기입니다\n게스트로 등록하시겠습니까?"
-                                    binding.addSerialResultCaution.text = ""
-                                    binding.addSerialResultContainer.visibility = View.VISIBLE
-                                    binding.addSerialResultContainer.startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in))
+                                    val master = responseBody.find { it.master }
+                                    if (master != null) {
+                                        // 등록한 사용자가 있음
+                                        successApi(1,
+                                            "'${master.id}'\n이 소유하신 기기입니다",
+                                            "게스트로 등록하시겠습니까?"
+                                        )
+                                    } else {
+                                        // 게스트는 있지만 소유자가 없음
+                                        successApi(2,
+                                            "소유자가 없는 기기입니다\n새로 등록하시겠습니까?",
+                                            "올바른 시리얼 번호인지 확인해주세요"
+                                        )
+                                    }
                                 } else {
                                     // 등록한 사용자가 없음
-                                    stateInspection = 2
-                                    binding.addSerialResultTitle.text = "등록되지 않은 기기입니다\n새로 등록하시겠습니까?"
-                                    binding.addSerialResultCaution.text = "올바른 시리얼 번호인지 확인해주세요"
-                                    binding.addSerialResultContainer.visibility = View.VISIBLE
-                                    binding.addSerialResultContainer.startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in))
+                                    successApi(2,
+                                        "등록되지 않은 기기입니다\n새로 등록하시겠습니까?",
+                                        "올바른 시리얼 번호인지 확인해주세요"
+                                    )
                                 }
                             } ?: run {
-                                TimberUtil().e("eyetest","fail : ${response.errorBody()}")
-                                parentActivity.changeTitleWithAnimation(binding.addSerialTitle,getString(R.string.input_serial_on_back),true)
+                                failApi(response.errorBody().toString(), "데이터 호출에 실패했습니다\n올바른 시리얼 번호인지 확인해주세요","")
                             }
                         }
                     }
                 }
             }
 
-            override fun onFailure(call: Call<List<String>>, t: Throwable) {
+            override fun onFailure(call: Call<List<ApiModel.Owner>>, t: Throwable) {
                 // 통신 실패
-                TimberUtil().e("eyetest","fail : ${t.stackTraceToString()}")
-                parentActivity.changeTitleWithAnimation(binding.addSerialTitle,getString(R.string.input_serial_on_back),true)
+                failApi(t.stackTraceToString(), "서버와 통신에 실패했습니다\n잠시후에 다시 시도해주세요", "")
             }
         })
+    }
+
+    private fun successApi(inspectionCode: Int, title: String, caution: String) {
+        stateInspection = inspectionCode
+        binding.addSerialResultTitle.text = title
+        binding.addSerialResultCaution.text = caution
+        binding.addSerialResultError.visibility = View.GONE
+        binding.addSerialResultTitle.visibility = View.VISIBLE
+        binding.addSerialResultCaution.visibility = if (caution != "") View.VISIBLE else View.GONE
+        binding.addSerialResultContainer.visibility = View.VISIBLE
+        binding.addSerialResultContainer.startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in))
+    }
+
+    private fun failApi(errorMsg: String, title: String, caution: String) {
+        stateInspection = 0
+        TimberUtil().e("eyetest",errorMsg)
+        binding.addSerialResultError.visibility = View.VISIBLE
+        binding.addSerialResultTitle.visibility = View.VISIBLE
+        binding.addSerialResultCaution.visibility = View.GONE
+        binding.addSerialResultError.text = title
+        binding.addSerialResultCaution.visibility = if (caution != "") View.VISIBLE else View.GONE
+        binding.addSerialResultContainer.visibility = View.VISIBLE
+        binding.addSerialResultContainer.startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in))
+
     }
 }

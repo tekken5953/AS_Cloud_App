@@ -472,4 +472,11 @@ class ApiModel {
         @SerializedName("href")
         val href: String?
     )
+
+    data class Owner(
+        @SerializedName("userId")
+        val id: String,
+        @SerializedName("master")
+        val master: Boolean
+    )
 }
