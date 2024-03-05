@@ -6,15 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.databinding.NfcInfoFragmentBinding
 
 class NfcInfoFragment : Fragment() {
-    private lateinit var mActivity: NfcMainActivity
+    private lateinit var mActivity: AddEyeDeviceActivity
     private lateinit var binding : NfcInfoFragmentBinding
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is NfcMainActivity) mActivity = context
+        if (context is AddEyeDeviceActivity) mActivity = context
     }
 
     override fun onCreateView(
@@ -25,11 +26,11 @@ class NfcInfoFragment : Fragment() {
         binding = NfcInfoFragmentBinding.inflate(inflater, null, false)
 
         binding.nfcInfoTitle.setOnClickListener {
-            mActivity.setFragmentTransaction(NfcMainActivity.FRAGMENT_READ_SUCCESS)
+            mActivity.transactionFragment(NfcReadSuccessFragment())
         }
 
         binding.nfcInfoTitle.setOnLongClickListener {
-            mActivity.setFragmentTransaction(NfcMainActivity.FRAGMENT_READ_FAIL)
+            mActivity.transactionFragment(NfcReadFailFragment())
             true
         }
 

@@ -86,4 +86,9 @@ public interface MyApiImpl {
             @Nullable @Query("start") Integer start,
             @Nullable @Query("end") Integer end
     );
+
+    @GET("owners/{sn}")
+    Call<List<String>> getOwner(
+            @NotNull @Path("sn") String sn
+    );
 }

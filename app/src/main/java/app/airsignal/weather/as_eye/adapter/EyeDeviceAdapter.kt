@@ -108,8 +108,14 @@ class EyeDeviceAdapter(
 
             if (dao.isMaster) {
                 master.visibility = View.VISIBLE
+                master.text = "소유자"
             } else {
-                master.visibility = View.GONE
+                if (dao.serial != "") {
+                    master.visibility = View.VISIBLE
+                    master.text = "게스트"
+                } else {
+                    master.visibility = View.GONE
+                }
             }
 
             itemView.setOnClickListener {

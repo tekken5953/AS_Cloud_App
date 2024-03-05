@@ -28,7 +28,7 @@
             android:background="@drawable/eye_et_enable_bg"
             android:drawableEnd="@drawable/close_fill"
             android:fontFamily="@font/spoqa_hansansneo_medium"
-            android:hint="AOA12345567"
+            android:hint="AOA12345678901"
             android:inputType="text"
             android:visibility="invisible"
             android:paddingStart="15dp"
@@ -39,6 +39,37 @@
             android:textColorHint="@color/eye_btn_disable_color"
             android:textSize="15sp"
             app:layout_constraintTop_toBottomOf="@+id/addSerialTitle" />
+
+        <LinearLayout
+            android:id="@+id/addSerialResultContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="30dp"
+            app:layout_constraintTop_toBottomOf="@+id/addSerialEt">
+            <TextView
+                android:id="@+id/addSerialResultTitle"
+                style="@style/basicMediumTextView"
+                android:layout_width="match_parent"
+                android:textColor="@color/main_black"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:layout_marginStart="17dp"
+                android:layout_marginEnd="17dp"/>
+
+            <TextView
+                android:id="@+id/addSerialResultCaution"
+                style="@style/basicMediumTextView"
+                android:layout_width="match_parent"
+                android:textColor="@color/eye_btn_disable_color"
+                android:layout_marginTop="15dp"
+                android:textSize="14sp"
+                android:layout_marginStart="17dp"
+                android:layout_marginEnd="17dp"/>
+        </LinearLayout>
+
+
+
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/addSerialBtn"

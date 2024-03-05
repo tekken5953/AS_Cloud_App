@@ -78,7 +78,6 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
@@ -88,8 +87,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         binding.aeListDeviceRv.adapter = deviceListAdapter
         binding.aeListCategoryRv.adapter = categoryAdapter
 
-        addCategoryItem(ENTIRE_GROUP, deviceListItem.map {it.serial}.toMutableList())
-        categoryAdapter.notifyDataSetChanged()
+        addCategoryFirstItem()
 
         categoryAdapter.setOnItemClickListener(object : OnAdapterItemClick.OnAdapterItemClick {
             override fun onItemClick(v: View, position: Int) {
@@ -99,7 +97,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                     loadDeviceList()
                 } else {
                     CoroutineScope(Dispatchers.IO).launch {
-                        val group = db.findByCategoryName(categoryItem[position].name)
+                    val group = db.findByCategoryName(categoryItem[position].name)
                         allDevicesList.forEachIndexed { index, device ->
                             if (group.device.contains(device.serial)) {
                                 deviceListItem.add(device)
@@ -108,18 +106,10 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                         }
                     }
                 }
-                deviceListAdapter.notifyDataSetChanged()
             }
         })
 
-        deviceListAdapter.notifyDataSetChanged()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val allGroups = getAllGroup()
-            allGroups.forEach {
-                addCategoryItem(it.name, it.device)
-            }
-        }
+        readCategoryItems()
 
         deviceListAdapter.setOnItemClickListener(object : OnAdapterItemClick.OnAdapterItemClick {
             override fun onItemClick(v: View, position: Int) {
@@ -182,6 +172,24 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         }
     }
 
+    private fun addCategoryFirstItem() {
+        addCategoryItem(ENTIRE_GROUP, deviceListItem.map {it.serial}.toMutableList())
+    }
+
+    private fun readCategoryItems() {
+        categoryItem.clear()
+        addCategoryFirstItem()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val allGroups = getAllGroup()
+            withContext(Dispatchers.Main) {
+                allGroups.forEach {
+                    addCategoryItem(it.name, it.device)
+                }
+            }
+        }
+    }
+
     private fun showEditGroupDialog() {
         val item = categoryItem[categoryAdapter.selectedPosition]
         val editBuilder = AlertDialog.Builder(this@EyeListActivity)
@@ -220,15 +228,15 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
         editBtn.setOnClickListener {
             if (editBtn.isEnabled) {
+                showCategoryPb()
                 CoroutineScope(Dispatchers.IO).launch {
                     EyeGroupRepository(this@EyeListActivity)
                         .update(categoryItem[categoryAdapter.selectedPosition].name, aliasEt.text.toString())
-                    delay(1000)
-
                     withContext(Dispatchers.Main) {
                         dialog.dismiss()
-                        ToastUtils(this@EyeListActivity).showMessage("그룹명 변경에 성공했습니다")
-                        returnEntire()
+                        delay(1000)
+                        readCategoryItems()
+                        hideCategoryPb()
                     }
                 }
             }
@@ -246,21 +254,32 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         val make = dialog.make(span, "삭제","취소", android.R.color.holo_red_light)
 
         make.first.setOnClickListener {
+            showCategoryPb()
             CoroutineScope(Dispatchers.IO).launch {
                 db.deleteFromSerialWithCoroutine(itemName)
-                delay(1000)
-
                 withContext(Dispatchers.Main) {
                     dialog.dismiss()
-                    ToastUtils(this@EyeListActivity).showMessage("그룹 삭제에 성공했습니다")
-                    returnEntire()
+                    delay(1500)
+                    returnPrevCategory()
+                    hideCategoryPb()
                 }
             }
         }
     }
 
-    private fun returnEntire() {
-        categoryAdapter.changeSelected(0)
+    private fun showCategoryPb() {
+        binding.aeListLoading.bringToFront()
+        binding.aeListLoading.visibility = View.VISIBLE
+        binding.aeListLoading.playAnimation()
+    }
+
+    private fun hideCategoryPb() {
+        binding.aeListLoading.visibility = View.GONE
+    }
+
+    private fun returnPrevCategory() {
+        categoryAdapter.changeSelected(categoryAdapter.selectedPosition - 1)
+        readCategoryItems()
         loadDeviceList()
     }
 
@@ -286,7 +305,6 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                     .apply {
                         first.setOnClickListener {
                             addCategoryItem(aliasEt.text.toString(), null)
-                            categoryAdapter.notifyDataSetChanged()
                             emptyCategoryDialog.builder.dismiss()
                         }
                         second.setOnClickListener {
@@ -302,7 +320,6 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                 }
                 addGroupIntoDB(EyeDataModel.Category(aliasEt.text.toString(), checkedArray.map {it.serial}.toMutableList()))
                 addCategoryItem(aliasEt.text.toString(), checkedArray.map {it.serial}.toMutableList())
-                categoryAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             }
         }
@@ -311,8 +328,9 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
             AnimationUtils.loadAnimation(this, R.anim.trans_bottom_to_top_add_group)
         rv.animation = AnimationUtils.loadAnimation(this, R.anim.fade_in_group_add)
         groupList.clear()
-        allDevicesList.forEachIndexed { _, d ->
+        allDevicesList.forEachIndexed { index, d ->
             addGroupList(EyeDataModel.Group(false, d))
+            groupAdapter.notifyItemInserted(index)
         }
 
         dialog.show(groupView, true, null)
@@ -320,7 +338,6 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
     private fun addGroupList(item: EyeDataModel.Group) {
         groupList.add(item)
-        groupAdapter.notifyDataSetChanged()
     }
 
     private fun addGroupIntoDB(item: EyeDataModel.Category) {
@@ -352,6 +369,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         device?.let { devices ->
             val item = EyeDataModel.Category(name, devices)
             categoryItem.add(item)
+            categoryAdapter.notifyDataSetChanged()
         }
     }
 
@@ -370,7 +388,6 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private fun applyDeviceList() {
         try {
             if (!listLiveData.hasObservers()) {

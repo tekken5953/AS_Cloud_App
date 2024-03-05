@@ -17,10 +17,17 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
+import app.airsignal.weather.as_eye.nfc.NfcInfoFragment
 import app.airsignal.weather.databinding.FragmentAddDeviceSerialBinding
+import app.airsignal.weather.network.retrofit.HttpClient
+import app.airsignal.weather.network.retrofit.MyApiImpl
 import app.airsignal.weather.util.KeyboardController
+import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import kotlinx.coroutines.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
 
@@ -28,9 +35,11 @@ class AddDeviceSerialFragment : Fragment() {
     private lateinit var parentActivity: AddEyeDeviceActivity
     private lateinit var binding : FragmentAddDeviceSerialBinding
 
+    private var stateInspection = 0
+
     private val ble by lazy { parentActivity.ble }
 
-    private val maxSerialLength = 11
+    private val maxSerialLength = 14
 
     private val perm by lazy {RequestPermissionsUtil(parentActivity)}
 
@@ -57,15 +66,17 @@ class AddDeviceSerialFragment : Fragment() {
         val nextBtn = binding.addSerialBtn
         nextBtn.setOnClickListener {
             if (nextBtn.isEnabled) {
-                if (perm.isGrantBle()) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        ble.serial = binding.addSerialEt.text.toString()
-                        delay(1000)
-                        parentActivity.transactionFragment(AddDeviceBleFragment())
-                        KeyboardController.onKeyboardDown(requireContext(), binding.addSerialEt)
+                KeyboardController.onKeyboardDown(requireContext(), binding.addSerialEt)
+                when (stateInspection) {
+                    0 -> {
+                        getOwners(binding.addSerialEt.text.toString())
                     }
-                } else {
-                    perm.requestBlePermissions()
+                    1 -> {
+                        parentActivity.transactionFragment(NfcInfoFragment())
+                    }
+                    2 -> {
+                        parentActivity.transactionFragment(AddDeviceBleFragment())
+                    }
                 }
             }
         }
@@ -89,10 +100,11 @@ class AddDeviceSerialFragment : Fragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-//                if (s != null && s.isNotEmpty()) {
-//                    val containsLowerCase = s.contains(Regex("[a-z]"))
-//                    if (containsLowerCase) s.replace(0, s.length, s.toString().uppercase())
-//                }
+                if (s != null && s.isNotEmpty()) {
+                    stateInspection = 0
+                    val containsLowerCase = s.contains(Regex("[a-z]"))
+                    if (containsLowerCase) s.replace(0, s.length, s.toString().uppercase())
+                }
             }
         })
 
@@ -122,5 +134,51 @@ class AddDeviceSerialFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+    }
+
+
+    private fun getOwners(sn: String) {
+        parentActivity.showPb()
+        HttpClient.setClientBuilder().getOwner(sn).enqueue(object : Callback<List<String>>{
+            override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    if (response.isSuccessful) {
+                        delay(2000)
+                        val body = response.body()
+                        TimberUtil().d("eyetest","serial : $sn body : $body")
+                        ble.serial = sn
+                        withContext(Dispatchers.Main) {
+                            parentActivity.hidePb()
+                            body?.let {
+                                if (body.isNotEmpty()) {
+                                    // 등록한 사용자가 있음
+                                    stateInspection = 1
+                                    binding.addSerialResultTitle.text = "'${it[0]}'님이 소유하신 기기입니다\n게스트로 등록하시겠습니까?"
+                                    binding.addSerialResultCaution.text = ""
+                                    binding.addSerialResultContainer.visibility = View.VISIBLE
+                                    binding.addSerialResultContainer.startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in))
+                                } else {
+                                    // 등록한 사용자가 없음
+                                    stateInspection = 2
+                                    binding.addSerialResultTitle.text = "등록되지 않은 기기입니다\n새로 등록하시겠습니까?"
+                                    binding.addSerialResultCaution.text = "올바른 시리얼 번호인지 확인해주세요"
+                                    binding.addSerialResultContainer.visibility = View.VISIBLE
+                                    binding.addSerialResultContainer.startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in))
+                                }
+                            } ?: run {
+                                TimberUtil().e("eyetest","fail : ${response.errorBody()}")
+                                parentActivity.changeTitleWithAnimation(binding.addSerialTitle,getString(R.string.input_serial_on_back),true)
+                            }
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<List<String>>, t: Throwable) {
+                // 통신 실패
+                TimberUtil().e("eyetest","fail : ${t.stackTraceToString()}")
+                parentActivity.changeTitleWithAnimation(binding.addSerialTitle,getString(R.string.input_serial_on_back),true)
+            }
+        })
     }
 }

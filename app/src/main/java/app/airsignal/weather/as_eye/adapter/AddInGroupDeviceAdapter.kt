@@ -2,13 +2,17 @@ package app.airsignal.weather.as_eye.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.core.os.HandlerCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
+import app.airsignal.weather.adapter.ItemDiffCallback
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.util.OnAdapterItemClick
 import java.util.*
@@ -18,7 +22,7 @@ class AddInGroupDeviceAdapter(
     list: ArrayList<EyeDataModel.Group>
 ) :
     RecyclerView.Adapter<AddInGroupDeviceAdapter.ViewHolder>() {
-    private val mList = list
+    private var mList = list
 
     private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
 
@@ -34,7 +38,6 @@ class AddInGroupDeviceAdapter(
     fun setOnItemClickListener(listener: OnAdapterItemClick.OnAdapterItemClick) {
         this.onClickListener = listener
     }
-
     override fun getItemCount(): Int = mList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

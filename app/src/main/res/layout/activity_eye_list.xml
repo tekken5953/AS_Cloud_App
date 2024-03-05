@@ -34,6 +34,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/aeListLoading"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintBottom_toBottomOf="@+id/aeListCategorySelector"
+            app:layout_constraintStart_toEndOf="@+id/aeListCategorySelector"
+            android:layout_marginStart="6dp"
+            app:lottie_rawRes="@raw/as_loading_circle"
+            app:lottie_cacheComposition="true"
+            app:lottie_clipToCompositionBounds="true"
+            app:lottie_autoPlay="false"
+            android:visibility="gone"
+            app:lottie_loop="true"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/aeListCategoryRv"
             android:layout_width="wrap_content"

@@ -2,13 +2,18 @@ package app.airsignal.weather.as_eye.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.HandlerCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
+import app.airsignal.weather.adapter.ItemDiffCallback
 import app.airsignal.weather.as_eye.dao.EyeDataModel
+import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.util.OnAdapterItemClick
 import java.util.*
 
@@ -17,7 +22,7 @@ class EyeCategoryAdapter(
     list: ArrayList<EyeDataModel.Category>
 ) :
     RecyclerView.Adapter<EyeCategoryAdapter.ViewHolder>() {
-    private val mList = list
+    private var mList = list
     var selectedPosition = 0
 
     private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick

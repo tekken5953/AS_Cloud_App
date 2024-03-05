@@ -10,6 +10,7 @@
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:textColor="@color/white"
         android:textSize="18sp"
+        android:textStyle="italic"
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp"/>
 

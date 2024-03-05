@@ -46,7 +46,6 @@
         <TextView
             android:id="@+id/listItemAeDeviceMaster"
             style="@style/basicMediumTextView"
-            android:text="소유자"
             android:layout_marginEnd="6dp"
             android:textColor="@color/white"
             android:textSize="14sp"
