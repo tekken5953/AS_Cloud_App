@@ -19,6 +19,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
 
+    <uses-permission android:name="android.permission.NFC"/>
+    <uses-feature android:name="android.hardware.nfc" android:required="false" />
+
     <uses-feature
         android:name="android.hardware.bluetooth"
         android:required="true" />
@@ -43,25 +46,6 @@
         android:windowSoftInputMode="adjustNothing"
         tools:replace="android:icon,android:label">
         <activity
-            android:name=".as_eye.activity.ReceiveAppLinkActivity"
-            android:exported="true">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="ascloud.kr"
-                    android:pathPrefix="/appLink"
-                    android:scheme="https" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".as_eye.activity.EyeNoiseDetailActivity"
             android:exported="false">
             <meta-data
@@ -75,6 +59,12 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
+
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".view.widget.WidgetPermActivity"
@@ -134,6 +124,7 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
         </activity>
         <activity

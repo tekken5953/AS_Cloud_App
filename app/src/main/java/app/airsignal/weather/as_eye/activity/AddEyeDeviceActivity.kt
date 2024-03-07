@@ -1,24 +1,26 @@
 package app.airsignal.weather.as_eye.activity
 
 import android.animation.ObjectAnimator
-import android.app.StatusBarManager
-import android.hardware.lights.LightState
+import android.app.PendingIntent
+import android.content.Intent
+import android.nfc.NfcAdapter
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
-import androidx.databinding.DataBindingUtil
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.bluetooth.BleClient
 import app.airsignal.weather.as_eye.fragment.AddDeviceSerialFragment
+import app.airsignal.weather.as_eye.nfc.NfcInfoFragment
 import app.airsignal.weather.databinding.ActivityAddEyeDeviceBinding
 import app.airsignal.weather.databinding.IncludeEyeAddItemBinding
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import kotlinx.coroutines.*
+
 
 class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
     override val resID: Int get() = R.layout.activity_add_eye_device
@@ -28,9 +30,31 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
 
     lateinit var ble: BleClient
 
+    lateinit var nfcAdapter: NfcAdapter
+
     override fun onStart() {
         super.onStart()
         transactionFragment(AddDeviceSerialFragment())
+    }
+
+    override fun onResume() {
+        super.onResume()
+        enableNfc()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (!this.isFinishing) nfcAdapter.disableForegroundDispatch(this)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.action == NfcAdapter.ACTION_NDEF_DISCOVERED) {
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.addEyeDeviceFrame)
+            if (currentFragment is NfcInfoFragment) {
+                currentFragment.handleNfcIntent(intent)
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +63,8 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
         window.statusBarColor = getColor(R.color.white)
         includedBinding = binding.addEyeDeviceTop
         fragmentManager = supportFragmentManager
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
         includedBinding.includedEyeListCancel.setOnClickListener {
             createCancelDialog()
@@ -71,10 +97,10 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
         transaction.commit()
     }
 
-    fun transactionFragment(oldFrag: Fragment, newFrag: Fragment, bundle: Bundle) {
+    fun transactionFragment(frag: Fragment, bundle: Bundle) {
         val transaction = fragmentManager.beginTransaction()
-        oldFrag.arguments = bundle
-        transaction.replace(R.id.addEyeDeviceFrame, newFrag)
+        frag.arguments = bundle
+        transaction.replace(R.id.addEyeDeviceFrame, frag)
         transaction.commit()
     }
 
@@ -127,5 +153,23 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
 
     override fun onBackPressed() {
         createCancelDialog()
+    }
+
+    private fun enableNfc() {
+        if (!nfcAdapter.isEnabled) {
+            Toast.makeText(this, "NFC가 비활성화되었습니다. NFC를 활성화하세요", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
+        } else {
+            nfcAdapter.enableForegroundDispatch(
+                this,
+                PendingIntent.getActivity(
+                    this, 0,
+                    Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                ),
+                null,
+                null
+            )
+        }
     }
 }

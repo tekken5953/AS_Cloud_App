@@ -3,6 +3,13 @@ package app.airsignal.weather.view.activity
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
+import android.app.PendingIntent
+import android.content.Intent
+import android.nfc.NdefMessage
+import android.nfc.NdefRecord
+import android.nfc.NfcAdapter
+import android.nfc.Tag
+import android.nfc.tech.Ndef
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
@@ -27,6 +34,7 @@ import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
+import java.util.*
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity<ActivitySplashBinding>() {
@@ -36,13 +44,98 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     private var isReady = false
 
+    private val nfcAdapter by lazy {NfcAdapter.getDefaultAdapter(this)}
+    private val nfcPendingIntent by lazy {
+        PendingIntent.getActivity(
+        this, 0,
+        Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            PendingIntent.FLAG_IMMUTABLE
+    )}
+
     init {
         TimberUtil().getInstance()
         LoggerUtil().getInstance()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+    }
+
+    private fun createTagMessage(msg: String): NdefMessage {
+        return NdefMessage(NdefRecord.createTextRecord(Locale.KOREA.language, msg))
+    }
+
+    private fun writeTag(message: NdefMessage, tag: Tag) {
+        val size = message.toByteArray().size
+        try {
+            val ndef = Ndef.get(tag)
+            if (ndef != null) {
+                ndef.connect()
+                if (!ndef.isWritable) {
+                    TimberUtil().e("eyetest","can not write NFC tag")
+                }
+                if (ndef.maxSize < size) {
+                    TimberUtil().w("eyetest","NFC tag size too large")
+                }
+                ndef.writeNdefMessage(message)
+                TimberUtil().i("eyetest","NFC tag is writted $message")
+            }
+        } catch (e: Exception) {
+            TimberUtil().e("eyetest",e.stackTraceToString())
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        nfcAdapter?.enableForegroundDispatch(this, nfcPendingIntent, null, null)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        nfcAdapter.disableForegroundDispatch(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        TimberUtil().d("nfctest","intent is $intent")
+//        intent?.let {
+//            if (intent.action == NfcAdapter.ACTION_NDEF_DISCOVERED) {
+//                val messages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
+//                    ?: return
+//
+//                for (i in messages.indices) showMsg(messages[i] as NdefMessage)
+//            }
+//        }
+
+        intent?.let {
+            TimberUtil().d("nfctest","action is ${it.action}")
+            if (it.action == Intent.ACTION_VIEW) {
+                it.extras?.let { extra ->
+                    TimberUtil().d("nfctest","extra is $extra")
+                }
+            }
+        }
+
+        if (intent != null) {
+            // 처리할 코드 추가
+            val data = intent.data
+            TimberUtil().d("nfctest", "Received intent with data: $data")
+
+            val extraTag = intent.getParcelableExtra<Tag>(NfcAdapter.EXTRA_TAG)
+            extraTag?.let { tag ->
+                val detectedTag : Tag = tag
+//                val writeValue : String = "nfc_test_ndef_data"
+//                val message: NdefMessage = createTagMessage(writeValue)
+//
+//                writeTag(message, detectedTag)
+                val writeValue = "http://www.naver.com";
+                val message: NdefMessage = createTagMessage(writeValue);
+
+                writeTag(message, detectedTag)
+            }
+        }
 
         window.setBackgroundDrawableResource(R.drawable.splash_lottie_bg)
 
