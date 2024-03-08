@@ -58,6 +58,17 @@
             android:background="@drawable/ae_device_power"
             android:visibility="gone"
             android:text="동작중"
+            android:layout_marginEnd="6dp"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/listItemAeDeviceBeta"
+            style="@style/basicMediumTextView"
+            android:layout_width="wrap_content"
+            android:background="@drawable/ae_device_beta"
+            android:visibility="gone"
+            android:text="BETA"
             android:textColor="@color/white"
             android:textSize="14sp" />
     </TableRow>

@@ -79,6 +79,11 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         }
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        loadDeviceList()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
@@ -98,7 +103,8 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                     loadDeviceList()
                 } else {
                     CoroutineScope(Dispatchers.IO).launch {
-                    val group = db.findByCategoryName(categoryItem[position].name)
+                        @SuppressLint("SuspiciousIndentation")
+                        val group = db.findByCategoryName(categoryItem[position].name)
                         allDevicesList.forEachIndexed { index, device ->
                             if (group.device.contains(device.serial)) {
                                 deviceListItem.add(device)

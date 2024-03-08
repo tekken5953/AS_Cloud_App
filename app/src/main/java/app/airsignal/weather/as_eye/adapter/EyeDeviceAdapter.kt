@@ -66,6 +66,7 @@ class EyeDeviceAdapter(
         private val container: RelativeLayout =
             itemView.findViewById(R.id.listItemAeDeviceContainer)
         private val master: TextView = itemView.findViewById(R.id.listItemAeDeviceMaster)
+        private val beta: TextView = itemView.findViewById(R.id.listItemAeDeviceBeta)
 
         fun bind(dao: EyeDataModel.Device) {
             deviceName.text = dao.alias
@@ -118,6 +119,8 @@ class EyeDeviceAdapter(
                 }
             }
 
+            beta.visibility = if (dao.serial != null && isBeta(dao.serial)) View.VISIBLE else View.GONE
+
             itemView.setOnClickListener {
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
@@ -141,7 +144,7 @@ class EyeDeviceAdapter(
                     show.first.setOnClickListener {
                         dialog.dismiss()
                         dao.serial?.let {
-                            if (dao.serial == "AOA00000053638" || dao.serial == "AOA0000002F479") {
+                            if (isBeta(dao.serial)) {
                                 toast.showMessage("베타 테스트 기기는 삭제가 불가능합니다!")
                             } else { deleteDevice(it, dao.email) }
                         }
@@ -173,5 +176,9 @@ class EyeDeviceAdapter(
                 toast.showMessage(context.getString(R.string.fail_to_delete))
             }
         })
+    }
+
+    private fun isBeta(serial: String) : Boolean {
+        return serial == "AOA00000053638" || serial == "AOA0000002F479"
     }
 }

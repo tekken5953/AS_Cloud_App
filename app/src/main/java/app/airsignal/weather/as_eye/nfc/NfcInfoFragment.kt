@@ -75,7 +75,7 @@ class NfcInfoFragment : Fragment() {
     }
 
     private fun processIntent(intent: Intent) {
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action) {
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action || NfcAdapter.ACTION_TAG_DISCOVERED == intent.action) {
             @Suppress("DEPRECATION") val rawMessages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
             if (rawMessages != null) {
                 binding.nfcInfoProgress.text = "Success to Scan"
@@ -104,8 +104,9 @@ class NfcInfoFragment : Fragment() {
     private fun processNfcPayload(payload: String?) {
         payload?.let {
             TimberUtil().d("nfctest","NFC에서 읽은 데이터: $it")
+            val space = it.replace("\u0002"," ").replace("ko"," ")
             val bundle = Bundle()
-            bundle.putString("payload",it)
+            bundle.putString("payload",space)
             mActivity.transactionFragment(NfcReadSuccessFragment(),bundle)
         } ?: run {
             mActivity.transactionFragment(NfcReadFailFragment())

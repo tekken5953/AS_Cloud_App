@@ -19,6 +19,8 @@ import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.as_eye.nfc.NfcInfoFragment
 import app.airsignal.weather.databinding.FragmentAddDeviceSerialBinding
+import app.airsignal.weather.db.SharedPreferenceManager
+import app.airsignal.weather.db.sp.SpDao.userEmail
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.network.retrofit.MyApiImpl
@@ -68,15 +70,9 @@ class AddDeviceSerialFragment : Fragment() {
             if (nextBtn.isEnabled) {
                 KeyboardController.onKeyboardDown(requireContext(), binding.addSerialEt)
                 when (stateInspection) {
-                    0 -> {
-                        getOwners(binding.addSerialEt.text.toString())
-                    }
-                    1 -> {
-                        parentActivity.transactionFragment(NfcInfoFragment())
-                    }
-                    2 -> {
-                        parentActivity.transactionFragment(AddDeviceBleFragment())
-                    }
+                    0 -> { getOwners(binding.addSerialEt.text.toString()) }
+                    1 -> { parentActivity.transactionFragment(NfcInfoFragment()) }
+                    2 -> { parentActivity.transactionFragment(AddDeviceBleFragment()) }
                 }
             }
         }
@@ -149,27 +145,31 @@ class AddDeviceSerialFragment : Fragment() {
                         withContext(Dispatchers.Main) {
                             parentActivity.hidePb()
                             body?.let { responseBody ->
-                                if (body.isNotEmpty()) {
-                                    val master = responseBody.find { it.master }
-                                    if (master != null) {
-                                        // 등록한 사용자가 있음
-                                        successApi(1,
-                                            "'${master.id}'\n이 소유하신 기기입니다",
-                                            "게스트로 등록하시겠습니까?"
-                                        )
+                                if (responseBody.find { it.id == SharedPreferenceManager(requireContext()).getString(userEmail)} != null) {
+                                    failApi("중복 등록 에러","이미 등록하신 기기입니다", "중복 등록은 불가능합니다")
+                                } else {
+                                    if (body.isNotEmpty()) {
+                                        val master = responseBody.find { it.master }
+                                        if (master != null) {
+                                            // 등록한 사용자가 있음
+                                            successApi(1,
+                                                "'${master.id}'\n이 소유하신 기기입니다",
+                                                "게스트로 등록하시겠습니까?"
+                                            )
+                                        } else {
+                                            // 게스트는 있지만 소유자가 없음
+                                            successApi(2,
+                                                "소유자가 없는 기기입니다\n새로 등록하시겠습니까?",
+                                                "올바른 시리얼 번호인지 확인해주세요"
+                                            )
+                                        }
                                     } else {
-                                        // 게스트는 있지만 소유자가 없음
+                                        // 등록한 사용자가 없음
                                         successApi(2,
-                                            "소유자가 없는 기기입니다\n새로 등록하시겠습니까?",
+                                            "등록되지 않은 기기입니다\n새로 등록하시겠습니까?",
                                             "올바른 시리얼 번호인지 확인해주세요"
                                         )
                                     }
-                                } else {
-                                    // 등록한 사용자가 없음
-                                    successApi(2,
-                                        "등록되지 않은 기기입니다\n새로 등록하시겠습니까?",
-                                        "올바른 시리얼 번호인지 확인해주세요"
-                                    )
                                 }
                             } ?: run {
                                 failApi(response.errorBody().toString(), "데이터 호출에 실패했습니다\n올바른 시리얼 번호인지 확인해주세요","")
