@@ -172,7 +172,7 @@ class SettingActivity
 
                 builder.show()
             } else if (binding.settingLogOut.text == getString(R.string.login_title)) {
-                EnterPageUtil(this).toLogin()
+                EnterPageUtil(this).toLogin("login")
             }
         }
 

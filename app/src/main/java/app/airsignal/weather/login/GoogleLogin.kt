@@ -74,8 +74,6 @@ class GoogleLogin(private val activity: Activity) {
                 pb?.let {
                     RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = it)
                 }
-
-
             }
             .addOnCanceledListener {
                 ToastUtils(activity)

@@ -336,9 +336,7 @@ class MainActivity
                     val dialog = builder.make("로그인이 필요한 서비스입니다.",
                         "로그인","취소",R.color.main_blue_color)
                     dialog.first.setOnClickListener {
-                        val intent = Intent(this, LoginActivity::class.java)
-                        startActivity(intent)
-                        finish()
+                       EnterPageUtil(this).toLogin("main")
                     }
                     dialog.second.setOnClickListener {
                         builder.dismiss()
@@ -567,7 +565,7 @@ class MainActivity
                         CompletableFuture.supplyAsync {
                             sideMenuBuilder.dismiss()
                         }.thenAccept {
-                            EnterPageUtil(this@MainActivity).toLogin()
+                            EnterPageUtil(this@MainActivity).toLogin("main")
                         }
                     }
                 }

@@ -17,14 +17,12 @@ import app.airsignal.weather.as_eye.adapter.ReportViewPagerAdapter
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.chart.LineGraphClass
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
 import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 class EyeDetailReportFragment : Fragment() {
 
@@ -39,8 +37,7 @@ class EyeDetailReportFragment : Fragment() {
     private val reportViewPagerAdapter by lazy {
         ReportViewPagerAdapter(
             requireActivity(),
-            reportViewPagerItem,
-            binding.reportVp
+            reportViewPagerItem
         )
     }
 

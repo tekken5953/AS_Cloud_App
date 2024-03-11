@@ -1,5 +1,6 @@
 package app.airsignal.weather.firebase.fcm
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -44,6 +45,7 @@ class EyeNotiBuilder(private val context: Context) {
             .setSmallIcon(R.drawable.ic_stat_airsignal_default)
     }
 
+    @SuppressLint("SuspiciousIndentation")
     fun sendNotification(data: Map<String, String>) {
         try {
             val appContext = context.applicationContext

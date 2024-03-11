@@ -20,7 +20,6 @@ import app.airsignal.weather.as_eye.dao.EyeDataModel
 class ReportViewPagerAdapter(
     private val context: Activity,
     list: ArrayList<EyeDataModel.EyeReportAdapter>,
-    private val viewPager2: ViewPager2
 ) :
     RecyclerView.Adapter<ReportViewPagerAdapter.ViewHolder>() {
     private val mList = list
@@ -52,8 +51,6 @@ class ReportViewPagerAdapter(
 
             cautionImg.setImageDrawable(ResourcesCompat.getDrawable(context.resources,
                 if (dao.isCaution) R.drawable.caution_test else R.drawable.caution_good,null))
-
-//            viewPager2.visibility = if(mList.size == 0) View.GONE else View.VISIBLE
         }
     }
 }

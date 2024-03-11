@@ -55,8 +55,9 @@ class EnterPageUtil(private val activity: Activity) {
     }
 
     /**로그인 페이지로 이동한다*/
-    fun toLogin() {
+    fun toLogin(prev: String?) {
         val intent = Intent(activity, LoginActivity::class.java)
+        intent.putExtra("prev", prev)
         activity.run {
             this.startActivity(intent)
             this.overridePendingTransition(0,0)

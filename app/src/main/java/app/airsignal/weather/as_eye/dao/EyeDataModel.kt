@@ -38,14 +38,6 @@ class EyeDataModel {
         val pm10p0List: List<Average>?
     )
 
-    data class Life(
-        val nameEn: String,
-        val nameKr: String,
-        val value: Int,
-        val pbColor: Int,
-        val backColor: Int
-    )
-
     data class DeviceDetail(
 //        @SerializedName("lastModify")
 //        val lastModify: LocalDateTime?,

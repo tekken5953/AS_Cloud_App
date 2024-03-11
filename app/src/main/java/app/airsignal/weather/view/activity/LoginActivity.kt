@@ -29,6 +29,9 @@ class LoginActivity
 
         setStatusBar(this)
 
+        // 어디서 로그인 페이지로 넘어왔나?
+        val prevActivity = intent?.extras?.getString("prev")
+
         // 구글 로그인 버튼 클릭
         binding.googleLoginButton.setOnClickListener {
             googleLogin.login(binding.googleLoginButton, startActivityResult)

@@ -34,6 +34,7 @@ import app.airsignal.weather.db.room.database.GroupDataBase
 import app.airsignal.weather.db.room.model.EyeGroupEntity
 import app.airsignal.weather.db.room.repository.EyeGroupRepository
 import app.airsignal.weather.db.sp.SpDao
+import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.OnAdapterItemClick
 import app.airsignal.weather.util.TimberUtil
@@ -454,6 +455,9 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         cancel.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 SharedPreferenceManager(this@EyeListActivity).setBoolean("eye_tutorial_skip",true)
+
+                //TODO 베타 테스트 끝나면 삭제
+                SubFCM().subTopic("AOA00000053638").subTopic("AOA0000002F479")
 
                 withContext(Dispatchers.Main) {
                     dialog.dismiss()

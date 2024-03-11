@@ -80,6 +80,7 @@ public interface MyApiImpl {
     );
 
     @GET("noise/{sn}")
+        // Eye 기간 별 소음 발생 목록
     Call<List<AdapterModel.NoiseDetailItem>> getNoise(
             @NotNull @Path("sn") String sn,
             @Nullable @Query("flag") String flag,
@@ -88,7 +89,24 @@ public interface MyApiImpl {
     );
 
     @GET("owners/{sn}")
+        // Eye 기기 등록자 목록
     Call<List<ApiModel.Owner>> getOwner(
             @NotNull @Path("sn") String sn
+    );
+
+    @GET("airsignal/average/{sn}")
+    Call<List<ApiModel.Average>> getAverage(
+            @NotNull @Path("sn") String sn,
+            @Nullable @Query("flag") String flag,
+            @Nullable @Query("start") Integer start,
+            @Nullable @Query("end") Integer end
+    );
+
+    @GET("airsignal/average/{sn}")
+    Call<List<ApiModel.NoiseAvg>> getNoiseAvg(
+            @NotNull @Path("sn") String sn,
+            @Nullable @Query("flag") String flag,
+            @Nullable @Query("start") Integer start,
+            @Nullable @Query("end") Integer end
     );
 }

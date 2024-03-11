@@ -30,7 +30,7 @@ class SubFCM: FirebaseMessagingService() {
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        LoggerUtil().d("testtest","onMessageReceived ${message.data["sort"]}")
+        LoggerUtil().d("TAG_FCM","onMessageReceived ${message.data}")
         when(message.data["sort"]) {
             Sort.FCM_PATCH.key,
             Sort.FCM_DAILY.key-> {
@@ -62,6 +62,7 @@ class SubFCM: FirebaseMessagingService() {
         try {
             CoroutineScope(Dispatchers.Default).launch {
                 FirebaseMessaging.getInstance().subscribeToTopic(topic)
+                LoggerUtil().d("TAG_FCM","subscribe success to $topic")
             }
         } catch (e: Exception) {
             e.printStackTrace()
