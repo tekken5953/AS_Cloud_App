@@ -83,10 +83,10 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             val item = testItemArray[it]
             dateFilteredArray.add(AdapterModel.NoiseDetailItem(item.first, item.second))
             addNoiseItem(date = item.first, value = item.second)
-            noiseAdapter.notifyItemInserted(it)
 
             if (it == testItemArray.lastIndex) {
-                binding.noiseDetailRv.scrollToPosition(it)
+                val newArray = filterByDate(NoiseValueSort.THIS_WEEK.index)
+                binding.noiseDetailRv.smoothScrollToPosition(newArray.lastIndex)
             }
         }
     }
@@ -430,9 +430,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
         val valueFilter =
             try {
                 binding.noiseFilterByDbValue.text.toString().replace("dB", "").toInt()
-            } catch (e: java.lang.NumberFormatException) {
-                0
-            }
+            } catch (e: java.lang.NumberFormatException) { 0 }
         valueFilter.let { filterValue ->
             if (oldItemValue >= filterValue) {
                 newList.add(AdapterModel.NoiseDetailItem(oldDateValue, oldItemValue))

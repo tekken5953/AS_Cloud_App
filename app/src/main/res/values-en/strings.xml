@@ -334,4 +334,5 @@
     <string name="apply_changes">Apply</string>
     <string name="success_to_delete">Success to remove</string>
     <string name="fail_to_delete">Fail to remove</string>
+    <string name="nfc_disabled_msg">NFC가 비활성화되었습니다. NFC를 활성화하세요</string>
 </resources>

@@ -157,7 +157,7 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
 
     private fun enableNfc() {
         if (!nfcAdapter.isEnabled) {
-            Toast.makeText(this, "NFC가 비활성화되었습니다. NFC를 활성화하세요", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.nfc_disabled_msg), Toast.LENGTH_SHORT).show()
             startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
         } else {
             nfcAdapter.enableForegroundDispatch(

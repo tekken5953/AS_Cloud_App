@@ -50,7 +50,7 @@
             app:lottie_cacheComposition="true"
             app:lottie_clipToCompositionBounds="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/as_loading_circle"
+            app:lottie_rawRes="@raw/ani_loading_circle"
             android:visibility="gone"
             app:layout_constraintTop_toTopOf="@+id/addEyeDeviceFrame"
             app:layout_constraintBottom_toBottomOf="@+id/addEyeDeviceFrame"

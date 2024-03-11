@@ -38,6 +38,7 @@ class AddInGroupDeviceAdapter(
     fun setOnItemClickListener(listener: OnAdapterItemClick.OnAdapterItemClick) {
         this.onClickListener = listener
     }
+
     override fun getItemCount(): Int = mList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

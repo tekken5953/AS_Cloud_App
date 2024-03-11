@@ -115,7 +115,7 @@ class EyeSettingFragment : Fragment() {
                         } else {
                             if (!isCanApi) {
                                 isCanApi = true
-                                callApi(changeDeviceNameDialog,serial,changeDeviceEt.text.toString())
+                                callChangeAliasApi(changeDeviceNameDialog,serial,changeDeviceEt.text.toString())
                             }
                         }
                     }
@@ -124,14 +124,13 @@ class EyeSettingFragment : Fragment() {
 
             changeDeviceNameDialog.setBackPressed(backPress)
                 .show(changeDeviceNameView,true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
-
         }
 
         binding.aeSettingSerial.setOnClickListener { }
         binding.aeSettingWifi.setOnClickListener { }
         val settingSwitch = binding.aeSettingNotification.findViewById<SwitchCompat>(R.id.customEyeSettingSwitch)
         mActivity.serialExtra?.let {
-            settingSwitch.isChecked = SharedPreferenceManager(requireContext()).getBoolean(it, true)
+            settingSwitch.isChecked = SharedPreferenceManager(requireContext()).getBoolean(it, false)
             settingSwitch.setOnCheckedChangeListener { _, isChecked ->
                 SharedPreferenceManager(requireContext()).setBoolean(it, isChecked)
             }
@@ -147,7 +146,7 @@ class EyeSettingFragment : Fragment() {
         applyData()
     }
 
-    private fun callApi(dialog: ShowDialogClass, serial: String, alias: String) {
+    private fun callChangeAliasApi(dialog: ShowDialogClass, serial: String, alias: String) {
         applyPostAlias(dialog,serial,alias)
         TimberUtil().d("eyetest","serial is $serial alias is $alias")
         deviceAliasViewModel.loadDataResult(serial,alias)
@@ -194,10 +193,9 @@ class EyeSettingFragment : Fragment() {
 
     private fun applyData() {
         try {
-            val extras = mActivity.intent.extras
-            binding.aeSettingSerial.fetchData(extras?.getString("serial") ?: "")
-            binding.aeSettingName.fetchData(extras?.getString("alias") ?: "")
-            binding.aeSettingWifi.fetchData(extras?.getString("ssid") ?: "")
+            binding.aeSettingSerial.fetchData(mActivity.serialExtra ?: "")
+            binding.aeSettingName.fetchData(mActivity.aliasExtra ?: "")
+            binding.aeSettingWifi.fetchData(mActivity.ssidExtra ?: "")
         } catch (e: UninitializedPropertyAccessException) {
             e.printStackTrace()
         }

@@ -41,7 +41,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/aeListCategorySelector"
             app:layout_constraintStart_toEndOf="@+id/aeListCategorySelector"
             android:layout_marginStart="6dp"
-            app:lottie_rawRes="@raw/as_loading_circle"
+            app:lottie_rawRes="@raw/ani_loading_circle"
             app:lottie_cacheComposition="true"
             app:lottie_clipToCompositionBounds="true"
             app:lottie_autoPlay="false"

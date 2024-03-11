@@ -34,6 +34,7 @@ import app.airsignal.weather.db.room.database.GroupDataBase
 import app.airsignal.weather.db.room.model.EyeGroupEntity
 import app.airsignal.weather.db.room.repository.EyeGroupRepository
 import app.airsignal.weather.db.sp.SpDao
+import app.airsignal.weather.db.sp.SpDao.TUTORIAL_SKIP
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.OnAdapterItemClick
@@ -67,6 +68,11 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
     private lateinit var indicators: Array<ImageView>
 
+    private val viewPagerList = ArrayList<Int>()
+    private val vpAdapter by lazy {TutorialViewPagerAdapter(this, viewPagerList)}
+
+    private val sp by lazy {SharedPreferenceManager(this)}
+
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         TimberUtil().d("appLinkTest", "onNewIntent ${intent?.data}")
@@ -75,9 +81,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     override fun onStart() {
         super.onStart()
         loadDeviceList()
-        if (!SharedPreferenceManager(this).getBoolean("eye_tutorial_skip", false)) {
-            createTutorial()
-        }
+        if (!sp.getBoolean(TUTORIAL_SKIP, false)) createTutorial()
     }
 
     override fun onRestart() {
@@ -366,8 +370,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         serial?.let {
             val item =
                 EyeDataModel.Device(
-                    isMaster, sort, SharedPreferenceManager(this@EyeListActivity)
-                        .getString(SpDao.userEmail), alias, serial, detail)
+                    isMaster, sort, sp.getString(SpDao.userEmail), alias, serial, detail)
 
             deviceListItem.add(item)
         }
@@ -431,7 +434,6 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                             // 통신 중
                             is BaseRepository.ApiState.Loading -> {}
 
-
                             else -> {}
                         }
                     }
@@ -444,7 +446,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     }
 
     private fun createTutorial() {
-        val view = LayoutInflater.from(this).inflate(R.layout.dialog_eye_tutorial, binding.aeListRoot)
+        val view = LayoutInflater.from(this).inflate(R.layout.tutorial_dialog_eye, binding.aeListRoot)
         val dialog = ShowDialogClass(this)
         val cancel = view.findViewById<TextView>(R.id.eyeTutorialCancel)
         val viewPager = view.findViewById<ViewPager2>(R.id.eyeTutorialViewPager)
@@ -454,7 +456,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
         cancel.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
-                SharedPreferenceManager(this@EyeListActivity).setBoolean("eye_tutorial_skip",true)
+                sp.setBoolean(TUTORIAL_SKIP,true)
 
                 //TODO 베타 테스트 끝나면 삭제
                 SubFCM().subTopic("AOA00000053638").subTopic("AOA0000002F479")
@@ -466,34 +468,32 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
             }
         }
 
-        dialog.show(view,false, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
+        dialog.show(view,true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
 
-        val viewPagerList = ArrayList<Int>()
         viewPagerList.run {
-            add(R.drawable.test_vp_img)
-            add(R.drawable.test_vp_img2)
-            add(R.drawable.test_vp_img3)
-            add(R.drawable.test_vp_img4)
+            addAll(arrayListOf(R.raw.ani_tuto_submit,R.raw.ani_tuto_group,R.raw.ani_tuto_danger))
         }
 
-        createViewPager(viewPager, indicatorContainer, viewPagerList)
+        createViewPager(viewPager, indicatorContainer)
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 if (viewPagerList.isNotEmpty() && viewPagerList.size > 1) {
                     updateIndicators(position)
+                    vpAdapter.pausePreviousLottie(position)
+                    vpAdapter.playCurrentLottie(position)
                     viewPager.requestLayout()
                 }
 
                 if (position == viewPagerList.lastIndex)
-                    cancel.text = "닫기" else cancel.text = "SKIP"
+                    cancel.text = getString(R.string.close) else cancel.text = "SKIP"
             }
         })
     }
 
-    private fun createIndicator(size: Int, container: LinearLayout, viewPager: ViewPager2) {
-        indicators = Array(size) {
+    private fun createIndicator(container: LinearLayout, viewPager: ViewPager2) {
+        indicators = Array(viewPagerList.size) {
             val indicatorView = ImageView(this)
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -522,28 +522,24 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                 indicators[i].layoutParams = params
             }
 
-            // 애니메이션 기간을 설정합니다. (밀리초 단위)
             animator.duration = 300
 
-            // 애니메이션을 시작합니다.
             animator.start()
         }
     }
 
     private fun createViewPager(vp: ViewPager2,
-                                indicatorContainer: LinearLayout,
-                                vpList: ArrayList<Int>) {
-        val vpAdapter = TutorialViewPagerAdapter(this, vpList, vp)
+                                indicatorContainer: LinearLayout) {
         vp.apply {
             adapter = vpAdapter
             isClickable = false
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            offscreenPageLimit = 4
+            offscreenPageLimit = 1
         }
 
-        if (vpList.isNotEmpty() && vpList.size > 1) {
+        if (viewPagerList.isNotEmpty() && viewPagerList.size > 1) {
             indicatorContainer.removeAllViews()
-            createIndicator(vpList.size,indicatorContainer,vp)
+            createIndicator(indicatorContainer,vp)
         }
     }
 }

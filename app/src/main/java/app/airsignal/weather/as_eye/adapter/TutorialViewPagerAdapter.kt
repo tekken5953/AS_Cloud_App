@@ -10,15 +10,16 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 
 class TutorialViewPagerAdapter(
     private val context: Activity,
-    list: ArrayList<Int>,
-    private val viewPager: ViewPager2
+    list: ArrayList<Int>
 ) :
     RecyclerView.Adapter<TutorialViewPagerAdapter.ViewHolder>() {
     private val mList = list
+    private val lottieViews = mutableListOf<LottieAnimationView>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -26,7 +27,7 @@ class TutorialViewPagerAdapter(
     ): ViewHolder {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
-        val view: View = inflater.inflate(R.layout.view_pager_item_eye_tutorial, parent, false)
+        val view: View = inflater.inflate(R.layout.tutorial_view_pager_item_eye, parent, false)
         return ViewHolder(view)
     }
 
@@ -37,10 +38,24 @@ class TutorialViewPagerAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val img = itemView.findViewById<ImageView>(R.id.listItemTutorial)
+        private val lottie = itemView.findViewById<LottieAnimationView>(R.id.listItemTutorial)
 
         fun bind(dao: Int) {
-            Glide.with(context).load(ResourcesCompat.getDrawable(context.resources, dao, null)).into(img)
+            lottieViews.add(lottie)
+//            Glide.with(context).load(ResourcesCompat.getDrawable(context.resources, dao, null)).into(img)
+            lottie.setAnimation(dao)
         }
+    }
+
+    fun pausePreviousLottie(position: Int) {
+        for ((index, lottieView) in lottieViews.withIndex()) {
+            if (index != position) {
+                lottieView.pauseAnimation()
+            }
+        }
+    }
+
+    fun playCurrentLottie(position: Int) {
+        lottieViews.getOrNull(position)?.playAnimation()
     }
 }

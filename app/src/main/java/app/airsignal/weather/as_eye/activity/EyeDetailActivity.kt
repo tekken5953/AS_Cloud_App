@@ -59,9 +59,7 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
 
     override fun onStart() {
         super.onStart()
-        serialExtra?.let {
-            sendApiData(it)
-        }
+        serialExtra?.let { sendApiData(it) }
     }
 
     override fun onDestroy() {
@@ -91,20 +89,16 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
                 tabItemSelected(FRAGMENT_SETTING)
         }
 
-        binding.aeDetailBack.setOnClickListener {
-            backToList()
-        }
+        binding.aeDetailBack.setOnClickListener { backToList() }
 
         binding.asDetailRefresh.setOnClickListener {
-            serialExtra?.let {
-                sendApiData(it)
-            }
+            serialExtra?.let { sendApiData(it) }
         }
 
         applyMeasuredData()
     }
 
-    fun sendApiData(serial: String) {
+    private fun sendApiData(serial: String) {
         dataViewModel.loadData(serial,AverageFlag.HOURLY.flag,getAverageTime(getCurrentTime()),getAverageTime(getCurrentTime()))
     }
 
@@ -175,15 +169,9 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
 
             transactionFragment(
                 transaction, when (id) {
-                    FRAGMENT_REPORT -> {
-                        reportFragment
-                    }
-                    FRAGMENT_LIVE -> {
-                        liveFragment
-                    }
-                    FRAGMENT_SETTING -> {
-                        settingFragment
-                    }
+                    FRAGMENT_REPORT -> { reportFragment }
+                    FRAGMENT_LIVE -> { liveFragment }
+                    FRAGMENT_SETTING -> { settingFragment }
                     else -> throw IllegalArgumentException("Invalid fragment id : $id")
                 }
             )
@@ -202,18 +190,11 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
         val selectedTab = tabMap[id] ?: throw IllegalArgumentException("Invalid fragment id: $id")
 
         tabMap.values.forEach { tab ->
-            tab.background = if (tab == selectedTab) {
-                getDr(R.drawable.ae_detail_tap_enable)
-            } else {
-                null
-            }
+            tab.background = if (tab == selectedTab) getDr(R.drawable.ae_detail_tap_enable) else null
 
             tab.setTextColor(
-                if (tab == selectedTab) {
-                    getColor(R.color.white)
-                } else {
-                    getColor(R.color.ae_sub_color)
-                }
+                if (tab == selectedTab) getColor(R.color.white)
+                else getColor(R.color.ae_sub_color)
             )
         }
     }
@@ -233,8 +214,6 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
         try {
             if (!dataViewModel.fetchData().hasObservers()) {
                 dataViewModel.fetchData().observe(this) { result ->
-                    TimberUtil().d("eyetest",result?.toString())
-
                     result?.let { measured ->
                         when (measured) {
                             // 통신 성공
@@ -261,23 +240,17 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
                                     liveFragment.onDataTransfer(currentData)
                                 }
 
-                                if (currentFragment == -1) {
-                                    tabItemSelected(FRAGMENT_REPORT)
-                                }
+                                if (currentFragment == -1) tabItemSelected(FRAGMENT_REPORT)
 
                                 CoroutineScope(Dispatchers.IO).launch {
                                     RDBLogcat.writeEyeMeasured(
-                                        this@EyeDetailActivity,
-                                        body.toString()
+                                        this@EyeDetailActivity, body.toString()
                                     )
                                 }
 //                                }
                             }
 
-                            is BaseRepository.ApiState.Error -> {
-                                hidePb()
-                            }
-
+                            is BaseRepository.ApiState.Error ->  hidePb()
                             is BaseRepository.ApiState.Loading -> showPb()
                         }
                     }

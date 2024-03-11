@@ -25,7 +25,16 @@ class EyeDataModel {
         @SerializedName("current")
         val current: Measured,
         @SerializedName("average")
-        val average: List<Average>?
+        val average: List<Average>?,
+        @SerializedName("noise")
+        val noiseRecent: NoiseRecent?
+    )
+
+    data class NoiseRecent(
+        @SerializedName("date")
+        val date: LocalDateTime?,
+        @SerializedName("value")
+        val value: Int?
     )
 
     data class ReportFragment(

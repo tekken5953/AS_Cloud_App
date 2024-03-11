@@ -78,27 +78,18 @@ class AddDeviceWifiAdapter(
 
     // 비밀번호 유무
     fun isCapability(capabilities: String): Boolean {
-        return capabilities.contains("WPA") || capabilities.contains("WPA2") || capabilities.contains(
-            "WEP"
-        )
+        return capabilities.contains("WPA") || capabilities.contains("WPA2")
+                || capabilities.contains("WEP")
     }
 
     private fun parseLevel(level: Int): Drawable? {
         return ResourcesCompat.getDrawable(
             context.resources,
             when {
-                level >= -30 -> {
-                    R.drawable.test_wifi_4
-                }
-                level in -30 downTo -60 -> {
-                    R.drawable.test_wifi_4
-                }
-                level in -60 downTo -70 -> {
-                    R.drawable.test_wifi_3
-                }
-                else -> {
-                    R.drawable.test_wifi_1
-                }
+                level >= -30 -> { R.drawable.test_wifi_4 }
+                level in -30 downTo -60 -> { R.drawable.test_wifi_4 }
+                level in -60 downTo -70 -> { R.drawable.test_wifi_3 }
+                else -> { R.drawable.test_wifi_1 }
             }, null
         )
     }

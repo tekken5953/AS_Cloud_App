@@ -138,6 +138,8 @@ class MainActivity
         const val O3_INDEX = 5
     }
 
+    private val fcm by lazy {SubFCM()}
+
     private var isBackPressed = false
     private var isProgressed = false
     private val sideMenuBuilder by lazy { SideMenuBuilder(this) }
@@ -215,8 +217,8 @@ class MainActivity
             initBinding()
             if (savedInstanceState == null) {
                 showProgressBar()
-                SubFCM().subTopic("patch")
-                SubFCM().subTopic("daily")
+                fcm.subTopic(SubFCM.Sort.FCM_PATCH.key)
+                fcm.subTopic(SubFCM.Sort.FCM_DAILY.key)
                 changeBackgroundResource(null)
                 window.statusBarColor = getColor(R.color.theme_view_color)
                 window.navigationBarColor = getColor(R.color.theme_view_color)
@@ -336,6 +338,7 @@ class MainActivity
                     val dialog = builder.make("로그인이 필요한 서비스입니다.",
                         "로그인","취소",R.color.main_blue_color)
                     dialog.first.setOnClickListener {
+                        builder.dismiss()
                        EnterPageUtil(this).toLogin("main")
                     }
                     dialog.second.setOnClickListener {
@@ -1036,7 +1039,7 @@ class MainActivity
     // 토픽을 갱신하는 작업
     private fun reNewTopicInMain(newAddr: String) {
         val old = getTopicNotification(this)
-        SubFCM().renewTopic(old, newAddr)
+        fcm.renewTopic(old, newAddr)
         SetAppInfo.setTopicNotification(this, newAddr)
     }
 
