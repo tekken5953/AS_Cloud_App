@@ -16,6 +16,7 @@ import app.airsignal.weather.network.NetworkUtils.modifyCurrentTempType
 import app.airsignal.weather.network.NetworkUtils.modifyCurrentWindSpeed
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.util.TimberUtil
+import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -60,11 +61,11 @@ class GetEyeDeviceListRepo : BaseRepository() {
                     call: Call<List<EyeDataModel.Device>>,
                     t: Throwable
                 ) {
+                    TimberUtil().e("eyetest",t.stackTraceToString())
                     try {
                         _getListResult.postValue(ApiState.Error(ERROR_GET_DATA))
                         call.cancel()
                     } catch (e: Exception) {
-                        TimberUtil().e("eyetest",t.stackTraceToString())
                         _getListResult.postValue(ApiState.Error(t.stackTraceToString()))
                     }
                 }
@@ -74,7 +75,7 @@ class GetEyeDeviceListRepo : BaseRepository() {
 
     private fun sortData(rawData: List<EyeDataModel.Device>?): List<EyeDataModel.Device>?  {
         return try {
-            rawData?.let { list ->
+            rawData ?. let { list ->
                 val running = list.sortedByDescending { it.detail?.power == true }
                 val runningAndMaster = running.sortedByDescending { it.isMaster }
                 runningAndMaster

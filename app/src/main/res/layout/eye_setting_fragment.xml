@@ -6,6 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".as_eye.fragment.EyeSettingFragment"
+        android:background="@color/ae_bg_color"
         android:id="@+id/aeSettingViewParent">
 
         <app.airsignal.weather.as_eye.customview.EyeSettingView
@@ -24,8 +25,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackground"
-            app:isArrow="false"
-            app:isToggle="true"
+            app:isArrow="true"
+            app:isToggle="false"
             app:layout_constraintTop_toBottomOf="@+id/aeSettingName"
             app:settingLeft="@string/noti_option" />
 

@@ -1,11 +1,13 @@
 package app.airsignal.weather.view.custom_view
 
 import android.app.Activity
+import android.app.Dialog
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.StyleRes
 import app.airsignal.weather.R
 import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
 import app.airsignal.weather.db.sp.SetSystemInfo
@@ -19,9 +21,9 @@ import java.util.concurrent.CompletableFuture
  * @since : 2023-03-28 오전 11:15
  **/
 
-class ShowDialogClass(private val activity: Activity) {
+class ShowDialogClass(private val activity: Activity, private val isEye: Boolean) {
     private var builder: androidx.appcompat.app.AlertDialog.Builder =
-        androidx.appcompat.app.AlertDialog.Builder(activity, R.style.AlertDialog)
+        androidx.appcompat.app.AlertDialog.Builder(activity, if (!isEye) R.style.AlertDialog else R.style.FullDialog)
     private lateinit var alertDialog: androidx.appcompat.app.AlertDialog
 
     enum class DialogTransition {

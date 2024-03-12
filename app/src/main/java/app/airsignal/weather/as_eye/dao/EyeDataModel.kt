@@ -4,9 +4,10 @@ import com.google.gson.annotations.SerializedName
 import java.time.LocalDateTime
 
 class EyeDataModel {
+
     data class Device(
-//        @SerializedName("created_at")
-//        val created_at: LocalDateTime,
+        @SerializedName("createdAt")
+        val created_at: LocalDateTime?,
         @SerializedName("master")
         val isMaster: Boolean,
         @SerializedName("sort")
@@ -33,7 +34,7 @@ class EyeDataModel {
     data class NoiseRecent(
         @SerializedName("date")
         val date: LocalDateTime?,
-        @SerializedName("value")
+        @SerializedName("noise")
         val value: Int?
     )
 
@@ -44,7 +45,8 @@ class EyeDataModel {
         val virusValue: Int,
         val virusLvl: Int,
         val pm10Value: Float,
-        val pm10p0List: List<Average>?
+        val pm10p0List: List<Average>?,
+        val recentNoise: NoiseRecent?
     )
 
     data class DeviceDetail(

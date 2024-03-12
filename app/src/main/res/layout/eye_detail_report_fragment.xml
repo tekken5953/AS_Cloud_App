@@ -272,7 +272,6 @@
                         style="@style/basicTextView"
                         android:layout_weight="0.35"
                         android:gravity="start"
-                        android:text="24.02.04 12:31"
                         android:textColor="@color/eye_graph_gray"
                         android:textSize="14sp" />
 
@@ -282,7 +281,6 @@
                         android:layout_marginStart="14dp"
                         android:layout_weight="0.65"
                         android:gravity="start"
-                        android:text="100dB의 소음을 감지하였습니다"
                         android:textColor="@color/main_black"
                         android:textSize="14sp" />
                 </TableRow>

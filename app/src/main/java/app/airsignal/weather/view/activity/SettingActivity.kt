@@ -187,7 +187,7 @@ class SettingActivity
             val radioGroup: RadioGroup = themeView.findViewById(R.id.changeThemeRadioGroup)
             val cancel: ImageView = themeView.findViewById(R.id.changeThemeBack)
 
-            ShowDialogClass(this)
+            ShowDialogClass(this, false)
                 .setBackPressed(themeView.findViewById(R.id.changeThemeBack))
                 .show(themeView, true, ShowDialogClass.DialogTransition.END_TO_START)
 
@@ -259,7 +259,7 @@ class SettingActivity
             val radioGroup: RadioGroup = langView.findViewById(R.id.changeLangRadioGroup)
             val cancelBtn: ImageView = langView.findViewById(R.id.changeLangBack)
 
-            ShowDialogClass(this)
+            ShowDialogClass(this, false)
                 .setBackPressed(cancelBtn)
                 .show(langView, true,ShowDialogClass.DialogTransition.END_TO_START)
 
@@ -382,7 +382,7 @@ class SettingActivity
                     })
             }
 
-            ShowDialogClass(this)
+            ShowDialogClass(this, false)
                 .setBackPressed(noticeMainView.findViewById(R.id.noticeBack))
                 .show(noticeMainView, true,ShowDialogClass.DialogTransition.END_TO_START)
 
@@ -407,7 +407,7 @@ class SettingActivity
                             }
                         }
                     }
-                    ShowDialogClass(this@SettingActivity)
+                    ShowDialogClass(this@SettingActivity, false)
                         .setBackPressed(detailView.findViewById(R.id.detailBack))
                         .show(detailView, true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
                     noticeAdapter.notifyItemChanged(0)
@@ -426,7 +426,7 @@ class SettingActivity
             val back = scaleView.findViewById<ImageView>(R.id.changeScaleBack)
             val rg = scaleView.findViewById<RadioGroup>(R.id.changeScaleRadioGroup)
 
-            val fontDialog = ShowDialogClass(this)
+            val fontDialog = ShowDialogClass(this, false)
 
             fontDialog
                 .setBackPressed(back)
@@ -611,7 +611,7 @@ class SettingActivity
                 showSnackBar(notificationView, isChecked)
             }
 
-            ShowDialogClass(this)
+            ShowDialogClass(this, false)
                 .setBackPressed(notificationView.findViewById(R.id.notificationBack))
                 .show(notificationView, true,ShowDialogClass.DialogTransition.END_TO_START)
         }
@@ -795,7 +795,7 @@ class SettingActivity
             customerEmail.fetchData(R.drawable.ico_cs_mail)
             customerHomePage.fetchData(R.drawable.ico_cs_web)
 
-            ShowDialogClass(this@SettingActivity)
+            ShowDialogClass(this@SettingActivity, false)
                 .setBackPressed(customerView.findViewById(R.id.customerBack))
                 .show(customerView, true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
         }
@@ -803,7 +803,7 @@ class SettingActivity
         appInfoPB.visibility = View.GONE
         appInfoVersionValue.visibility = View.VISIBLE
 
-        ShowDialogClass(this)
+        ShowDialogClass(this, false)
             .setBackPressed(viewAppInfo.findViewById(R.id.appInfoBack))
             .show(viewAppInfo, true,ShowDialogClass.DialogTransition.END_TO_START)
     }

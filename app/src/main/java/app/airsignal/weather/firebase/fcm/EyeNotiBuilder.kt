@@ -12,18 +12,23 @@ import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.view.View
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.SpDao
+import kotlin.random.Random
 
 class EyeNotiBuilder(private val context: Context) {
     private val notificationManager: NotificationManager? =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
+    lateinit var notificationChannel: NotificationChannel
+    
+    private val groupName = "에어시그널"
 
     private fun createNotificationChannel() {
         val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationChannel = NotificationChannel(
+        notificationChannel = NotificationChannel(
             SubFCM.Channel.NOTIFICATION_CHANNEL_ID.value,
             SubFCM.Channel.NOTIFICATION_CHANNEL_NAME.value,
             NotificationManager.IMPORTANCE_HIGH
@@ -87,7 +92,7 @@ class EyeNotiBuilder(private val context: Context) {
 
             notificationManager?.let {
                 createNotificationChannel()
-                it.notify(2, notificationBuilderInstance.build())
+                it.notify(Random.nextInt(), notificationBuilderInstance.build())
             }
 
         } catch (e: Exception) {
@@ -114,4 +119,17 @@ class EyeNotiBuilder(private val context: Context) {
             else -> null
         }
     }
+
+//    fun showGroupedNotification() {
+//        val summaryNotification = NotificationCompat.Builder(context, notificationChannel.id)
+//            .setSmallIcon(R.drawable.ic_stat_airsignal_default)
+//            .setGroup("에어시그널")
+//            .setGroupSummary(true)
+//            .build()
+//
+//        with(NotificationManagerCompat.from(context)) {
+//            // 0을 사용하여 그룹 알림을 식별
+//            notify(0, summaryNotification)
+//        }
+//    }
 }

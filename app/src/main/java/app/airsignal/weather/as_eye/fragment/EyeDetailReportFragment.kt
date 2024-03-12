@@ -18,9 +18,12 @@ import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.chart.LineGraphClass
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
 import app.airsignal.weather.util.`object`.DataTypeParser
+import app.airsignal.weather.util.`object`.DataTypeParser.parseReportTitle
+import app.airsignal.weather.util.`object`.DataTypeParser.reportCationMsg
 import com.github.mikephil.charting.data.Entry
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -48,6 +51,9 @@ class EyeDetailReportFragment : Fragment() {
     private var pm10Value = 0f
     private val reportArray = ArrayList<Pair<String,String>>()
     private val pm10p0Array = ArrayList<EyeDataModel.Average>()
+
+    private var reportLogDate = LocalDateTime.now()
+    private var reportLogValue = 0
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -132,6 +138,9 @@ class EyeDetailReportFragment : Fragment() {
             binding.pmAvgLineChartNoData.visibility = View.VISIBLE
         }
 
+        binding.reportLogTime.text = reportLogDate.format(DateTimeFormatter.ofPattern("yy.MM.dd hh:mm"))
+        binding.reportLogValue.text = "$reportLogValue" + "dB의 소음이 발생했습니다"
+
         binding.reportCaiPb.progress = setProgress(ReportIndex.CAI_INDEX, caiValue,caiLvl)
         binding.reportVirusPb.progress = setProgress(ReportIndex.VIRUS_INDEX, virusValue,virusLvl)
         binding.caiModerLow.text = getModerate(ReportIndex.CAI_INDEX,caiLvl).first.toString()
@@ -153,7 +162,7 @@ class EyeDetailReportFragment : Fragment() {
                 it.report?.let { list ->
                     if (list.isNotEmpty()) {
                         list.forEach { r ->
-                            reportArray.add(Pair(DataTypeParser.parseReportTitle(r), "위험단계입니다. 환기를 시켜주세요"))
+                            reportArray.add(Pair(parseReportTitle(r), reportCationMsg(r)))
                         }
                     }
                 }
@@ -163,6 +172,8 @@ class EyeDetailReportFragment : Fragment() {
                 virusValue = it.virusValue
                 virusLvl = it.virusLvl
                 pm10Value = it.pm10Value
+                reportLogDate = it.recentNoise?.date
+                reportLogValue = it.recentNoise?.value ?: -1
 
                 it.pm10p0List?.let { pm10List ->
                     if (pm10List.isNotEmpty()) {

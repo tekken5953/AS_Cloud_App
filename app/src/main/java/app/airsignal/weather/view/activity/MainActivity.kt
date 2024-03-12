@@ -593,7 +593,7 @@ class MainActivity
                     val landingWebView: WebView = landingView.findViewById(R.id.eyeLandingWebView)
                     val landingFab: ImageView = landingView.findViewById(R.id.eyeLandingFab)
                     val notiPerm = RequestPermissionsUtil(this@MainActivity)
-                    val dialog = ShowDialogClass(this@MainActivity).setBackPressed(landingBack)
+                    val dialog = ShowDialogClass(this@MainActivity, false).setBackPressed(landingBack)
 
                     val requestOkText = "출시 알림받기 완료 \uD83D\uDE00"
                     val requestNoText = "제품 출시 알림받기\n광고 및 이벤트성 알림 발송에 동의합니다"

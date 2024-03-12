@@ -55,7 +55,6 @@ object AdapterModel {
         val en: String?
     )
 
-
     data class NoiseDetailItem(
         val date: LocalDateTime?,
         val value: Int?

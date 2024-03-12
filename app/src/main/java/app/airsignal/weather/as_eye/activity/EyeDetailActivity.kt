@@ -233,7 +233,8 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
                                             currentData.virusValue,
                                             currentData.virusLvl,
                                             currentData.pm10p0Value,
-                                            body.average
+                                            body.average,
+                                            body.noiseRecent
                                         )
                                     )
 

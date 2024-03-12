@@ -37,6 +37,7 @@ import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.db.sp.SpDao.TUTORIAL_SKIP
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.OnAdapterItemClick
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
@@ -46,6 +47,7 @@ import app.airsignal.weather.viewmodel.GetEyeDeviceListViewModel
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
+import java.time.LocalDateTime
 
 @SuppressLint("NotifyDataSetChanged")
 class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
@@ -73,27 +75,16 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
     private val sp by lazy {SharedPreferenceManager(this)}
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        TimberUtil().d("appLinkTest", "onNewIntent ${intent?.data}")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        loadDeviceList()
-        if (!sp.getBoolean(TUTORIAL_SKIP, false)) createTutorial()
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        loadDeviceList()
+    override fun onPause() {
+        super.onPause()
+        viewPagerList.clear()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
 
-        applyDeviceList()
+        loadDeviceList()
 
         binding.aeListDeviceRv.adapter = deviceListAdapter
         binding.aeListCategoryRv.adapter = categoryAdapter
@@ -298,7 +289,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     private fun showAddGroupDialog() {
         val groupView: View =
             LayoutInflater.from(this).inflate(R.layout.dialog_ae_add_group, null)
-        val dialog = ShowDialogClass(this)
+        val dialog = ShowDialogClass(this, true)
             .setBackPressed(groupView.findViewById(R.id.addGroupBack))
         val aliasEt = groupView.findViewById<EditText>(R.id.addGroupEt)
         val addBtn = groupView.findViewById<AppCompatButton>(R.id.addGroupAddBtn)
@@ -361,6 +352,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     private suspend fun getAllGroup(): List<EyeGroupEntity> { return db.findAll() }
 
     private fun addListItem(
+        createdAt: LocalDateTime?,
         isMaster: Boolean,
         sort: String?,
         alias: String?,
@@ -370,7 +362,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         serial?.let {
             val item =
                 EyeDataModel.Device(
-                    isMaster, sort, sp.getString(SpDao.userEmail), alias, serial, detail)
+                    createdAt, isMaster, sort, sp.getString(SpDao.userEmail), alias, serial, detail)
 
             deviceListItem.add(item)
         }
@@ -385,15 +377,14 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     }
 
     private fun addLastAddItem() {
-        addListItem(false, "", "", "",
+        addListItem(null,false, "", "", "",
             EyeDataModel.DeviceDetail(null, report = false, power = true))
     }
 
     private fun loadDeviceList() {
         if (listLiveData.hasActiveObservers()) {
             deviceListViewModel.loadDataResult()
-        }
-        else {
+        } else {
             applyDeviceList()
             deviceListViewModel.loadDataResult()
         }
@@ -401,41 +392,59 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
     private fun applyDeviceList() {
         try {
-            if (!listLiveData.hasObservers()) {
-                listLiveData.observe(this) { result ->
-                    result?.let { list ->
-                        when (list) {
-                            // 통신 성공
-                            is BaseRepository.ApiState.Success -> {
-                                deviceListItem.clear()
-                                allDevicesList.clear()
+            listLiveData.observe(this@EyeListActivity) { result ->
+                result?.let { list ->
+                    when (list) {
+                        // 통신 성공
+                        is BaseRepository.ApiState.Success -> {
+                            deviceListItem.clear()
+                            allDevicesList.clear()
 
-                                list.data?.let { pList ->
-                                    pList.forEach{ device ->
-                                        val detail = device.detail?.let { pDetail ->
-                                            EyeDataModel.DeviceDetail(pDetail.ssid, pDetail.report, pDetail.power)
-                                        } ?:  EyeDataModel.DeviceDetail("", report = false, power = false)
+                            LoggerUtil().d("eyetest","device list : $list")
 
-                                        addListItem(device.isMaster, device.sort, device.alias, device.serial, detail)
-                                        allDevicesList.add(device)
-                                    }
+                            list.data?.let { pList ->
+                                pList.forEach { device ->
+                                    val detail = device.detail?.let { pDetail ->
+                                        EyeDataModel.DeviceDetail(
+                                            pDetail.ssid,
+                                            pDetail.report,
+                                            pDetail.power
+                                        )
+                                    } ?: EyeDataModel.DeviceDetail(
+                                        "",
+                                        report = false,
+                                        power = false
+                                    )
+
+                                    addListItem(
+                                        device.created_at,
+                                        device.isMaster,
+                                        device.sort,
+                                        device.alias,
+                                        device.serial,
+                                        detail
+                                    )
+                                    allDevicesList.add(device)
                                 }
-
-                                addLastAddItem()
-                                deviceListAdapter.notifyItemRangeChanged(0, deviceListItem.size)
                             }
 
-                            // 통신 실패
-                            is BaseRepository.ApiState.Error -> {
-                                TimberUtil().e("eyetest", result.toString())
-                                ToastUtils(this).showMessage("장치를 불러오는데 실패했습니다")
-                            }
+                            addLastAddItem()
 
-                            // 통신 중
-                            is BaseRepository.ApiState.Loading -> {}
+                            deviceListAdapter.notifyItemRangeChanged(0, allDevicesList.size)
 
-                            else -> {}
+                            if (!sp.getBoolean(TUTORIAL_SKIP, false)) createTutorial()
                         }
+
+                        // 통신 실패
+                        is BaseRepository.ApiState.Error -> {
+                            TimberUtil().e("eyetest", result.toString())
+                            ToastUtils(this@EyeListActivity).showMessage("장치를 불러오는데 실패했습니다")
+                        }
+
+                        // 통신 중
+                        is BaseRepository.ApiState.Loading -> {}
+
+                        else -> {}
                     }
                 }
             }
@@ -447,7 +456,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
     private fun createTutorial() {
         val view = LayoutInflater.from(this).inflate(R.layout.tutorial_dialog_eye, binding.aeListRoot)
-        val dialog = ShowDialogClass(this)
+        val dialog = ShowDialogClass(this,true)
         val cancel = view.findViewById<TextView>(R.id.eyeTutorialCancel)
         val viewPager = view.findViewById<ViewPager2>(R.id.eyeTutorialViewPager)
         val indicatorContainer = view.findViewById<LinearLayout>(R.id.eyeTutorialIndicator)
@@ -455,23 +464,28 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         cancel.bringToFront()
 
         cancel.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-                sp.setBoolean(TUTORIAL_SKIP,true)
+            if (viewPager.currentItem == viewPagerList.lastIndex) {
 
-                //TODO 베타 테스트 끝나면 삭제
-                SubFCM().subTopic("AOA00000053638").subTopic("AOA0000002F479")
+                CoroutineScope(Dispatchers.IO).launch {
+                    sp.setBoolean(TUTORIAL_SKIP, true)
 
-                withContext(Dispatchers.Main) {
-                    dialog.dismiss()
-                    recreate()
+                    //TODO 베타 테스트 끝나면 삭제
+                    SubFCM().subTopic("AOA00000053638").subTopic("AOA0000002F479")
+
+                    withContext(Dispatchers.Main) {
+                        dialog.dismiss()
+                        recreate()
+                    }
                 }
+            } else {
+                viewPager.currentItem = viewPagerList.lastIndex
             }
         }
 
-        dialog.show(view,true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
+        dialog.show(view,false, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
 
         viewPagerList.run {
-            addAll(arrayListOf(R.raw.ani_tuto_submit,R.raw.ani_tuto_group,R.raw.ani_tuto_danger))
+            addAll(arrayListOf(R.raw.ani_tuto_plus,R.raw.ani_tuto_group,R.raw.ani_tuto_danger))
         }
 
         createViewPager(viewPager, indicatorContainer)
@@ -534,7 +548,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
             adapter = vpAdapter
             isClickable = false
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            offscreenPageLimit = 1
+            offscreenPageLimit = 4
         }
 
         if (viewPagerList.isNotEmpty() && viewPagerList.size > 1) {

@@ -12,24 +12,36 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
 import app.airsignal.weather.as_eye.activity.EyeListActivity
+import app.airsignal.weather.as_eye.customview.EyeSettingView
 import app.airsignal.weather.databinding.EyeSettingFragmentBinding
 import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.room.repository.EyeGroupRepository
+import app.airsignal.weather.firebase.fcm.EyeNotiBuilder
+import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.custom_view.ShowDialogClass
+import app.airsignal.weather.view.custom_view.SnackBarUtils
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.SetEyeDeviceAliasViewModel
+import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.random.Random
 
 class EyeSettingFragment : Fragment() {
     private lateinit var mActivity: EyeDetailActivity
@@ -53,7 +65,7 @@ class EyeSettingFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_setting_fragment, container, false)
 
         binding.aeSettingName.setOnClickListener {
-            val changeDeviceNameDialog = ShowDialogClass(mActivity)
+            val changeDeviceNameDialog = ShowDialogClass(mActivity,true)
             val changeDeviceNameView = LayoutInflater.from(requireContext())
                 .inflate(R.layout.dialog_eye_change_device_name,binding.aeSettingViewParent,false)
             val backPress = changeDeviceNameView.findViewById<ImageView>(R.id.dialogChangeEyeNameBack)
@@ -110,7 +122,7 @@ class EyeSettingFragment : Fragment() {
             changeDeviceBtn.setOnClickListener {
                 if (changeDeviceBtn.isEnabled) {
                     mActivity.serialExtra?.let { serial ->
-                        if (serial == "AOA00000053638" || serial == "AOA0000002F479") {
+                        if (isBeta(serial)) {
                             ToastUtils(requireContext()).showMessage("베타 테스트 기기는 수정이 불가능합니다!")
                         } else {
                             if (!isCanApi) {
@@ -128,11 +140,74 @@ class EyeSettingFragment : Fragment() {
 
         binding.aeSettingSerial.setOnClickListener { }
         binding.aeSettingWifi.setOnClickListener { }
-        val settingSwitch = binding.aeSettingNotification.findViewById<SwitchCompat>(R.id.customEyeSettingSwitch)
-        mActivity.serialExtra?.let {
-            settingSwitch.isChecked = SharedPreferenceManager(requireContext()).getBoolean(it, false)
-            settingSwitch.setOnCheckedChangeListener { _, isChecked ->
-                SharedPreferenceManager(requireContext()).setBoolean(it, isChecked)
+        binding.aeSettingNotification.setOnClickListener {
+            val builder = ShowDialogClass(mActivity,true)
+            val settingView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_eye_noti_setting,null)
+            val settingBack = settingView.findViewById<ImageView>(R.id.dialogEyeSettingBack)
+            val noiseDetail = settingView.findViewById<EyeSettingView>(R.id.dialogEyeSettingNoise)
+            val gyroDetail = settingView.findViewById<EyeSettingView>(R.id.dialogEyeSettingGyro)
+            val testNoti = settingView.findViewById<EyeSettingView>(R.id.dialogEyeSettingBetaNoti)
+
+            builder.setBackPressed(settingBack)
+            builder.show(settingView, true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
+
+//            noiseDetail.isEnabled = !isBeta(mActivity.serialExtra.toString())
+            noiseDetail.fetchEnable(!isBeta(mActivity.serialExtra.toString()))
+//            gyroDetail.isEnabled = !isBeta(mActivity.serialExtra.toString())
+            gyroDetail.fetchEnable(!isBeta(mActivity.serialExtra.toString()))
+
+            noiseDetail.setOnClickListener {
+                if (isBeta(mActivity.serialExtra.toString())) {
+                    SnackBarUtils(settingView,"베타 기기는 설정이 불가능합니다",
+                    ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)!!).show()
+                }
+            }
+            gyroDetail.setOnClickListener {
+                if (isBeta(mActivity.serialExtra.toString())) {
+                    SnackBarUtils(settingView,"베타 기기는 설정이 불가능합니다",
+                        ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)!!).show()
+                }
+            }
+
+            testNoti.setOnClickListener {
+                val perm = RequestPermissionsUtil(requireContext())
+                if (perm.isNotificationPermitted()) {
+                    if (SharedPreferenceManager(requireContext()).getBoolean(mActivity.serialExtra.toString(), false)) {
+                        val bundle = Bundle()
+                        bundle.putString("sort","noise")
+                        bundle.putString("payload","${Random.nextInt(60, 120)}")
+                        bundle.putString("device",mActivity.serialExtra.toString())
+                        val message = RemoteMessage(bundle)
+                        EyeNotiBuilder(requireContext()).sendNotification(message.data)
+                    } else {
+                        Toast.makeText(requireContext(), "먼저 알림을 활성화 해주세요", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "알림 권한이 거부되어있습니다", Toast.LENGTH_SHORT).show()
+                    RequestPermissionsUtil(requireContext()).requestNotification()
+                }
+            }
+
+            val settingSwitch = settingView.findViewById<EyeSettingView>(R.id.dialogEyeSettingToggle)
+            mActivity.serialExtra?.let { serial ->
+                val notiChecked = SharedPreferenceManager(requireContext()).getBoolean(serial, false)
+                settingSwitch.fetchToggle(notiChecked).setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        if (RequestPermissionsUtil(requireContext()).isNotificationPermitted()) {
+                            RequestPermissionsUtil(requireContext()).requestNotification()
+                        }
+                    }
+
+                    CoroutineScope(Dispatchers.IO).launch {
+                        SharedPreferenceManager(requireContext()).setBoolean(serial, isChecked)
+                        withContext(Dispatchers.Main) {
+                            SnackBarUtils(settingView,
+                                "알림을 ${if(isChecked) "허용" else "거부"}하였습니다",
+                                if (isChecked) ResourcesCompat.getDrawable(resources,R.drawable.alert_on,null)!!
+                                else ResourcesCompat.getDrawable(resources,R.drawable.alert_off,null)!!).show()
+                        }
+                    }
+                }
             }
         }
 
@@ -144,6 +219,10 @@ class EyeSettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         applyData()
+    }
+
+    private fun isBeta(serial: String) : Boolean {
+        return serial == "AOA00000053638" || serial == "AOA0000002F479"
     }
 
     private fun callChangeAliasApi(dialog: ShowDialogClass, serial: String, alias: String) {

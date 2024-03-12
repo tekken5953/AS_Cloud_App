@@ -82,6 +82,16 @@
         <item name="android:background">@color/theme_view_color</item>
     </style>
 
+    <style name="FullDialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:statusBarColor">@color/ae_bg_color</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:background">@color/ae_bg_color</item>
+    </style>
+
     <style name="AlertDialogEndToStartAnimation">
         <item name="android:windowEnterAnimation">@anim/slide_end_to_start</item>
         <item name="android:windowExitAnimation">@anim/slide_start_to_end</item>
@@ -155,44 +165,4 @@
         <item name="android:layout_marginStart">6dp</item>
         <item name="android:textColor">@drawable/checked_radio_text_color</item>
     </style>
-
-<!--    <style name="DatePickerTheme" parent="Theme.AppCompat.NoActionBar">-->
-<!--        &lt;!&ndash; 상단 Title 배경색 &ndash;&gt;-->
-<!--        <item name="colorAccent">@color/main_blue_color</item>-->
-
-<!--        &lt;!&ndash; 선택한 날짜 배경 색 &ndash;&gt;-->
-<!--        <item name="colorControlActivated">@color/main_blue_color</item>-->
-
-<!--        &lt;!&ndash; Highlight item color&ndash;&gt;-->
-<!--        <item name="colorControlHighlight">@color/main_blue_color</item>-->
-
-<!--        &lt;!&ndash;Calender Background color &ndash;&gt;-->
-<!--        <item name="android:colorBackground">@color/calendar_bg</item>-->
-
-<!--        &lt;!&ndash; Week TextColor&ndash;&gt;-->
-<!--        <item name="android:textColorSecondary">@color/calendar_day_normal_font</item>-->
-
-<!--        &lt;!&ndash; Calender Number color arrow color (< >) &ndash;&gt;-->
-<!--        <item name="android:textColorPrimary">@color/main_blue_color</item>-->
-
-<!--        &lt;!&ndash;day , month TextColor&ndash;&gt;-->
-<!--        <item name="android:textColorPrimaryInverse">@color/main_blue_color</item>-->
-
-<!--        &lt;!&ndash; year&ndash;&gt;-->
-<!--        <item name="android:textColorSecondaryInverse">@color/calendar_month_font</item>-->
-
-<!--        &lt;!&ndash; 취소/확인버튼 색상 &ndash;&gt;-->
-<!--        <item name="android:textColor">@color/calendar_day_normal_font</item>-->
-
-<!--        <item name="android:textSize">20sp</item>-->
-
-<!--        <item name="cornerSize">16dp</item>-->
-
-<!--        <item name="windowActionBar">false</item>-->
-
-<!--        <item name="windowNoTitle">true</item>-->
-
-<!--        <item name="fontFamily">@font/font_style</item>-->
-
-<!--    </style>-->
 </resources>
