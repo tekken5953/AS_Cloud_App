@@ -183,4 +183,9 @@ class EyeDataModel {
         @SerializedName("is_master")
         val isMaster: String
     )
+
+    data class Members(
+        val id: String,
+        val isMaster: Boolean
+    )
 }

@@ -55,7 +55,7 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
 
         fun bind(dao: AdapterModel.NoiseDetailItem) {
             dao.date?.let { date ->
-                dao.value?.let { value ->
+                dao.noise?.let { value ->
                     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
                     val dateFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 

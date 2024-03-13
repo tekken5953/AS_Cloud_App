@@ -12,24 +12,33 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
 import app.airsignal.weather.as_eye.activity.EyeListActivity
+import app.airsignal.weather.as_eye.adapter.EyeMembersAdapter
 import app.airsignal.weather.as_eye.customview.EyeSettingView
+import app.airsignal.weather.as_eye.dao.EyeDataModel
+import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.databinding.EyeSettingFragmentBinding
 import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.room.repository.EyeGroupRepository
+import app.airsignal.weather.db.sp.SpDao.userEmail
 import app.airsignal.weather.firebase.fcm.EyeNotiBuilder
+import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
+import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.custom_view.ShowDialogClass
 import app.airsignal.weather.view.custom_view.SnackBarUtils
@@ -211,6 +220,69 @@ class EyeSettingFragment : Fragment() {
             }
         }
 
+        binding.aeSettingMembers.fetchEnable(mActivity.isMaster)
+
+        binding.aeSettingMembers.setOnClickListener {
+            if (mActivity.isMaster) {
+                val dialog = ShowDialogClass(mActivity, true)
+                val view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_eye_setting_members, null)
+                val rv = view.findViewById<RecyclerView>(R.id.dialogMembersRv)
+                val failMsg = view.findViewById<TextView>(R.id.dialogMembersFail)
+                val delete = view.findViewById<ImageView>(R.id.listItemMembersDelete)
+                val list = ArrayList<EyeDataModel.Members>()
+                val adapter = EyeMembersAdapter(requireContext(),list)
+                rv.adapter = adapter
+
+                HttpClient.getInstance(false).setClientBuilder().getOwner(mActivity.serialExtra.toString())
+                    .enqueue(object : Callback<List<ApiModel.Owner>>{
+                        override fun onResponse(
+                            call: Call<List<ApiModel.Owner>>,
+                            response: Response<List<ApiModel.Owner>>
+                        ) {
+                            if (response.isSuccessful) {
+                                val body = response.body()!!
+                                if (body.isNotEmpty()) {
+                                    list.clear()
+                                    rv.visibility = View.VISIBLE
+                                    failMsg.visibility = View.GONE
+
+                                    body.forEachIndexed { index, item ->
+                                        list.add(EyeDataModel.Members(item.id,item.master))
+                                        adapter.notifyItemInserted(index)
+                                    }
+                                } else {
+                                    rv.visibility = View.GONE
+                                    failMsg.visibility = View.VISIBLE
+                                }
+                            } else {
+                                rv.visibility = View.GONE
+                                failMsg.visibility = View.VISIBLE
+                            }
+                        }
+
+                        override fun onFailure(call: Call<List<ApiModel.Owner>>, t: Throwable) {
+                            rv.visibility = View.GONE
+                            failMsg.visibility = View.VISIBLE
+                        }
+                    })
+
+
+                dialog.setBackPressed(view.findViewById(R.id.dialogMembersBack))
+                dialog.show(view, true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
+            } else {
+                SnackBarUtils(requireView(),"소유자 전용 기능입니다",
+                ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)!!).show()
+            }
+        }
+
+        binding.aeSettingDeleteDevice.fetchTitleColor(R.color.red)
+        binding.aeSettingDeleteDevice.setOnClickListener {
+            showDeleteDialog()
+        }
+
+        binding.aeSettingModelName.fetchData(mActivity.modelName.toString())
+        binding.aeSettingModelName.setOnClickListener {  }
+
         return binding.root
     }
 
@@ -279,5 +351,45 @@ class EyeSettingFragment : Fragment() {
         } catch (e: UninitializedPropertyAccessException) {
             e.printStackTrace()
         }
+    }
+
+    private fun showDeleteDialog() {
+        val alias = mActivity.aliasExtra
+        val serial = mActivity.serialExtra
+        serial?.let {
+            if (isBeta(serial)) {
+                ToastUtils(requireContext()).showMessage("베타 테스트 기기는 삭제가 불가능합니다!")
+            } else {
+                val dialog = MakeDoubleDialog(requireContext())
+
+                val show = dialog.make(
+                    "${alias}(${serial})를\n삭제하시겠습니까?",
+                    "예", "아니오", android.R.color.holo_red_light
+                )
+
+                show.first.setOnClickListener {
+                    dialog.dismiss()
+                    deleteDevice(serial, SharedPreferenceManager(requireContext()).getString(userEmail))
+                }
+                show.second.setOnClickListener {
+                    dialog.dismiss()
+                }
+            }
+        }
+    }
+
+    private fun deleteDevice(sn: String, email: String) {
+        HttpClient.getInstance(false).setClientBuilder().deleteDevice(
+            sn, email
+        ).enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                ToastUtils(requireContext()).showMessage(requireContext().getString(R.string.success_to_delete))
+                RefreshUtils(requireContext()).refreshActivity()
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                ToastUtils(requireContext()).showMessage(requireContext().getString(R.string.fail_to_delete))
+            }
+        })
     }
 }

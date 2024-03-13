@@ -79,11 +79,11 @@ public interface MyApiImpl {
             @Query("id") String id
     );
 
-    @GET("noise/{sn}")
+    @GET("airsignal/noise/{sn}")
         // Eye 기간 별 소음 발생 목록
     Call<List<AdapterModel.NoiseDetailItem>> getNoise(
             @NotNull @Path("sn") String sn,
-            @Nullable @Query("flag") String flag,
+            @Nullable @Query("flag") Integer flag,
             @Nullable @Query("start") Integer start,
             @Nullable @Query("end") Integer end
     );

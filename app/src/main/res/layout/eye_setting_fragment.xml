@@ -31,12 +31,31 @@
             app:settingLeft="@string/noti_option" />
 
         <app.airsignal.weather.as_eye.customview.EyeSettingView
+            android:id="@+id/aeSettingMembers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:isArrow="true"
+            app:isToggle="false"
+            android:background="?android:attr/selectableItemBackground"
+            app:layout_constraintTop_toBottomOf="@id/aeSettingNotification"
+            app:settingLeft="멤버 관리" />
+
+        <app.airsignal.weather.as_eye.customview.EyeSettingView
+            android:id="@+id/aeSettingModelName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:isArrow="false"
+            app:isToggle="false"
+            app:layout_constraintTop_toBottomOf="@+id/aeSettingMembers"
+            app:settingLeft="모델명" />
+
+        <app.airsignal.weather.as_eye.customview.EyeSettingView
             android:id="@+id/aeSettingSerial"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:isArrow="false"
             app:isToggle="false"
-            app:layout_constraintTop_toBottomOf="@+id/aeSettingNotification"
+            app:layout_constraintTop_toBottomOf="@+id/aeSettingModelName"
             app:settingLeft="@string/device_serial_number" />
 
         <app.airsignal.weather.as_eye.customview.EyeSettingView
@@ -57,6 +76,14 @@
             app:layout_constraintTop_toBottomOf="@id/aeSettingWifi"
             app:settingLeft="설치 날짜" />
 
+        <app.airsignal.weather.as_eye.customview.EyeSettingView
+            android:id="@+id/aeSettingDeleteDevice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:isArrow="false"
+            app:isToggle="false"
+            app:layout_constraintTop_toBottomOf="@id/aeSettingSetupDate"
+            app:settingLeft="기기 삭제" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

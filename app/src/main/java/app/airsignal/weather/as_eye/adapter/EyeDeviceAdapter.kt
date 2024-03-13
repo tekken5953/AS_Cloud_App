@@ -133,49 +133,11 @@ class EyeDeviceAdapter(
                     }
                 }
             }
-
-            itemView.setOnLongClickListener {
-                if (dao.serial != "") {
-                    val dialog = MakeDoubleDialog(context)
-                    val show = dialog.make(
-                        "${dao.alias}(${dao.serial})를\n삭제하시겠습니까?",
-                        "예", "아니오", android.R.color.holo_red_light)
-
-                    show.first.setOnClickListener {
-                        dialog.dismiss()
-                        dao.serial?.let {
-                            if (isBeta(dao.serial)) {
-                                toast.showMessage("베타 테스트 기기는 삭제가 불가능합니다!")
-                            } else { deleteDevice(it, dao.email) }
-                        }
-                    }
-                    show.second.setOnClickListener {
-                        dialog.dismiss()
-                    }
-                }
-
-                true
-            }
         }
     }
 
     private fun getRs(id: Int): Drawable? {
         return ResourcesCompat.getDrawable(context.resources, id, null)
-    }
-
-    private fun deleteDevice(sn: String, email: String) {
-        HttpClient.getInstance(false).setClientBuilder().deleteDevice(
-            sn, email
-        ).enqueue(object : Callback<String> {
-            override fun onResponse(call: Call<String>, response: Response<String>) {
-                toast.showMessage(context.getString(R.string.success_to_delete))
-                RefreshUtils(context).refreshActivity()
-            }
-
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                toast.showMessage(context.getString(R.string.fail_to_delete))
-            }
-        })
     }
 
     private fun isBeta(serial: String) : Boolean {

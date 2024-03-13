@@ -13,12 +13,12 @@ import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.adapter.NoiseDetailAdapter
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.databinding.ActivityEyeNoiseDetailBinding
-import app.airsignal.weather.util.`object`.DataTypeParser
-import java.time.DayOfWeek
+import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.util.TimberUtil
+import app.airsignal.weather.viewmodel.NoiseDataViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.temporal.TemporalAdjusters
-import kotlin.random.Random
 
 class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() {
     override val resID: Int get() = R.layout.activity_eye_noise_detail
@@ -34,6 +34,8 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
         CUSTOM(7, "직접 입력", R.id.radioSelect)
     }
 
+    private var currentSort = -1
+
     private var startCalendar: LocalDate = LocalDate.now()
     private var endCalendar: LocalDate = LocalDate.now()
 
@@ -41,6 +43,10 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
     private val noiseAdapter by lazy { NoiseDetailAdapter(this, noiseList) }
 
     private val dateFilteredArray = ArrayList<AdapterModel.NoiseDetailItem>()
+
+    private val noiseViewModel by viewModel<NoiseDataViewModel>()
+
+    private val fetch by lazy {noiseViewModel.fetchData()}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,31 +69,14 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             }
         }
 
-        val testItemArray = listOf<Pair<LocalDateTime, Int>>(
-            Pair(LocalDateTime.now(), Random.nextInt(60, 120)),
-            Pair(LocalDateTime.now().minusHours(1), Random.nextInt(80, 120)),
-            Pair(LocalDateTime.now().minusHours(2), Random.nextInt(80, 120)),
-            Pair(LocalDateTime.now().minusHours(3), Random.nextInt(80, 120)),
-            Pair(LocalDateTime.now().minusDays(1).minusHours(5), Random.nextInt(80, 120)),
-            Pair(LocalDateTime.now().minusDays(1).minusHours(6), Random.nextInt(80, 120)),
-            Pair(LocalDateTime.now().minusDays(2).minusHours(4), Random.nextInt(80, 120)),
-            Pair(LocalDateTime.now().minusDays(3).minusHours(5), Random.nextInt(80, 120)),
-            Pair(LocalDateTime.now().minusDays(4).minusHours(7), Random.nextInt(80, 120)),
-            Pair(LocalDateTime.now().minusYears(1).minusMonths(4), Random.nextInt(80, 120)),
-            Pair(LocalDateTime.now().minusYears(1).minusMonths(7), Random.nextInt(80, 120)),
-            Pair(LocalDateTime.now().minusMonths(2).minusHours(3), Random.nextInt(80, 120)),
-            Pair(LocalDateTime.now().minusMonths(5).minusHours(9), Random.nextInt(80, 120)),
-        ).reversed()
+        TimberUtil().d("noisetest","hasObservers is ${fetch.hasObservers()}")
+        if (!fetch.hasActiveObservers()) {
+            applyNoiseViewModel()
+        }
 
-        repeat(testItemArray.size) {
-            val item = testItemArray[it]
-            dateFilteredArray.add(AdapterModel.NoiseDetailItem(item.first, item.second))
-            addNoiseItem(date = item.first, value = item.second)
-
-            if (it == testItemArray.lastIndex) {
-                val newArray = filterByDate(NoiseValueSort.THIS_WEEK.index)
-                binding.noiseDetailRv.smoothScrollToPosition(newArray.lastIndex)
-            }
+        if (currentSort == -1) {
+            currentSort = NoiseValueSort.THIS_WEEK.index
+            noiseViewModel.loadDataResult(intent?.extras?.getString("serial").toString(),NoiseValueSort.THIS_WEEK.index,null,null)
         }
     }
 
@@ -191,11 +180,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
                         if (seekBarValue.text.toString() != "") "${seekBarValue.text}dB" else "없음"
                     binding.noiseFilterByDateValue.text =
                         if (sort != -1) parsingLanguage(NoiseValueSort.values()[sort].title) else ""
-                    val db = seekBarValue.text.toString()
-                    applyFilterByDb(
-                        if (db != "") db.toInt() else 0,
-                        if (checkedTopId != -1) checkedTopId else checkedBottomId
-                    )
+                    filtering(sort)
                 } catch (e: NumberFormatException) {
                     e.stackTraceToString()
                     clearFilter()
@@ -268,11 +253,6 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
         }
     }
 
-    private fun addNoiseItem(date: LocalDateTime, value: Int) {
-        val item = AdapterModel.NoiseDetailItem(date, value)
-        noiseList.add(item)
-    }
-
     private fun clearFilter() {
         dateFilteredArray.clear()
         dateFilteredArray.addAll(noiseList)
@@ -293,25 +273,10 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
         }
     }
 
-    private fun applyFilterByDb(bound: Int, sort: Int) {
-        val parsedSort = paredSort(sort)
-        val sortArray = if (parsedSort != -1) filterByDate(parsedSort) else noiseList
-        val valueArray = filterByNoiseValue(sortArray, bound)
-        noiseAdapter.submitList(valueArray)
-        visibleNoResult(valueArray.isEmpty())
-    }
-
-    private fun applyFilterByDate(sort: Int) {
-        val newArray = filterByDate(sort)
-        changeFilteredArray(newArray)
-        noiseAdapter.submitList(newArray)
-        visibleNoResult(newArray.isEmpty())
-    }
-
-    private fun filterByNoiseValue(bound: Int): ArrayList<AdapterModel.NoiseDetailItem> {
-        val newList = ArrayList<AdapterModel.NoiseDetailItem>()
+    private fun filterByNoiseValue(newList: ArrayList<AdapterModel.NoiseDetailItem>, bound: Int)
+    : ArrayList<AdapterModel.NoiseDetailItem> {
         dateFilteredArray.forEach { oldItem ->
-            oldItem.value?.let { noise ->
+            oldItem.noise?.let { noise ->
                 if (noise >= bound) {
                     newList.add(oldItem)
                 }
@@ -319,123 +284,17 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
         }
 
         return newList
+    }
+
+    private fun filtering(sort: Int) {
+        if (sort != currentSort) {
+            currentSort = sort
+            noiseViewModel.loadDataResult(intent?.extras?.getString("serial").toString(), sort,null,null)
+        }
     }
 
     private fun visibleNoResult(b: Boolean) {
         binding.noiseDetailNoData.visibility = if (b) View.VISIBLE else View.GONE
-    }
-
-    private fun filterByNoiseValue(list: ArrayList<AdapterModel.NoiseDetailItem>, bound: Int)
-            : ArrayList<AdapterModel.NoiseDetailItem> {
-        val newList = ArrayList<AdapterModel.NoiseDetailItem>()
-        list.forEach { oldItem ->
-            oldItem.value?.let { noise ->
-                if (noise >= bound) {
-                    newList.add(oldItem)
-                }
-            }
-        }
-
-        return newList
-    }
-
-    private fun changeFilteredArray(newArray: ArrayList<AdapterModel.NoiseDetailItem>) {
-        dateFilteredArray.clear()
-        dateFilteredArray.addAll(newArray)
-    }
-
-    private fun filterByDate(sort: Int): ArrayList<AdapterModel.NoiseDetailItem> {
-        val newList = ArrayList<AdapterModel.NoiseDetailItem>()
-        noiseList.forEach { oldItem ->
-            oldItem.date?.let { oldItemDate ->
-                when (sort) {
-                    NoiseValueSort.TODAY.index -> {
-                        if (oldItemDate.year == LocalDateTime.now().year
-                            && oldItemDate.dayOfMonth == LocalDateTime.now().dayOfMonth
-                            && oldItemDate.monthValue == LocalDateTime.now().monthValue
-                        ) {
-                            oldItem.value?.let { oldItemValue ->
-                                addFilteredList(newList, oldItemValue, oldItemDate)
-                            }
-                        }
-                    }
-
-                    NoiseValueSort.LAST_24.index -> {
-                        if (System.currentTimeMillis() - DataTypeParser.parseLocalDateTimeToLong(
-                                oldItemDate
-                            )
-                            <= 1000 * 60 * 60 * 24
-                        ) {
-                            oldItem.value?.let { oldItemValue ->
-                                addFilteredList(newList, oldItemValue, oldItemDate)
-                            }
-                        }
-                    }
-
-                    NoiseValueSort.THIS_WEEK.index -> {
-                        val startWeek = LocalDateTime.now()
-                            .with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
-                        if (oldItemDate.isAfter(startWeek)) {
-                            oldItem.value?.let { oldItemValue ->
-                                addFilteredList(newList, oldItemValue, oldItemDate)
-                            }
-                        }
-                    }
-
-                    NoiseValueSort.THIS_MONTH.index -> {
-                        val startMonth =
-                            LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth())
-                        if (oldItemDate.isAfter(startMonth)) {
-                            oldItem.value?.let { oldItemValue ->
-                                addFilteredList(newList, oldItemValue, oldItemDate)
-                            }
-                        }
-                    }
-
-                    NoiseValueSort.THIS_YEAR.index -> {
-                        val startYear = LocalDateTime.now().with(TemporalAdjusters.firstDayOfYear())
-                        if (oldItemDate.isAfter(startYear)) {
-                            oldItem.value?.let { oldItemValue ->
-                                addFilteredList(newList, oldItemValue, oldItemDate)
-                            }
-                        }
-                    }
-
-                    NoiseValueSort.ENTIRE.index -> {
-                        oldItem.value?.let { oldItemValue ->
-                            addFilteredList(newList, oldItemValue, oldItemDate)
-                        }
-                    }
-
-                    NoiseValueSort.CUSTOM.index -> {
-                        if (oldItemDate.isAfter(startCalendar.atStartOfDay())
-                            && oldItemDate.isBefore(endCalendar.atTime(23,59,59))) {
-                            oldItem.value?.let { oldItemValue ->
-                                addFilteredList(newList, oldItemValue, oldItemDate)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return newList
-    }
-
-    private fun addFilteredList(
-        newList: ArrayList<AdapterModel.NoiseDetailItem>,
-        oldItemValue: Int,
-        oldDateValue: LocalDateTime
-    ) {
-        val valueFilter =
-            try {
-                binding.noiseFilterByDbValue.text.toString().replace("dB", "").toInt()
-            } catch (e: java.lang.NumberFormatException) { 0 }
-        valueFilter.let { filterValue ->
-            if (oldItemValue >= filterValue) {
-                newList.add(AdapterModel.NoiseDetailItem(oldDateValue, oldItemValue))
-            }
-        }
     }
 
     private fun parsingLanguage(s: String): String {
@@ -449,6 +308,50 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             NoiseValueSort.CUSTOM.title -> { getString(R.string.direct_input) }
             NoiseValueSort.NO_DECIBEL.title -> { getString(R.string.nothing) }
             else -> ""
+        }
+    }
+
+    private fun applyNoiseViewModel() {
+        try {
+            fetch.observe(this) { result ->
+                result?.let { noise ->
+                    when (noise) {
+                        // 통신 성공
+                        is BaseRepository.ApiState.Success -> {
+                            val body = noise.data
+                            noiseList.clear()
+                            TimberUtil().d("noisetest", body.toString())
+                            body?.let { b ->
+                                val parsed = b as ArrayList<AdapterModel.NoiseDetailItem>
+                                val db = binding.noiseFilterByDbValue.text.toString().replace("dB","")
+                                noiseAdapter.submitList(
+                                    if (db == "없음") parsed
+                                    else filterByNoiseValue(parsed,db.toInt()))
+                            }
+
+                            dateFilteredArray.clear()
+                            dateFilteredArray.addAll(noiseList)
+                        }
+
+                        // 통신 실패
+                        is BaseRepository.ApiState.Error -> {
+                            TimberUtil().e("noisetest", noise.errorMessage)
+                            Toast.makeText(
+                                this@EyeNoiseDetailActivity,
+                                "소음 불러오기에 실패했습니다",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        // 통신 중
+                        is BaseRepository.ApiState.Loading -> {}
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            TimberUtil().e("noisetest", e.stackTraceToString())
+            Toast.makeText(this@EyeNoiseDetailActivity, "소음 불러오기에 실패했습니다", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 }

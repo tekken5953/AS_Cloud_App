@@ -74,6 +74,7 @@ class EyeDetailReportFragment : Fragment() {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_detail_report_fragment, container, false)
         binding.reportLogViewEntire.setOnClickListener {
             val intent = Intent(mActivity, EyeNoiseDetailActivity::class.java)
+            intent.putExtra("serial",mActivity.serialExtra.toString())
             mActivity.startActivity(intent)
             mActivity.overridePendingTransition(R.anim.slide_bottom_to_top, R.anim.slide_top_to_bottom)
         }

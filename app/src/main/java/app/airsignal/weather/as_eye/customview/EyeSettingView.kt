@@ -57,4 +57,9 @@ class EyeSettingView(context: Context, attrs: AttributeSet?)
 
         return this
     }
+
+    fun fetchTitleColor(color: Int): EyeSettingView {
+        systemBinding.customEyeSettingTitle.setTextColor(context.getColor(color))
+        return this
+    }
 }

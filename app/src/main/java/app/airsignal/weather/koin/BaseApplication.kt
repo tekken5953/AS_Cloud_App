@@ -57,11 +57,13 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
         single { GetEyeDataRepo() }
         single { GetEyeDeviceListRepo() }
         single { SetEyeDeviceAliasRepo() }
+        single { NoiseDataRepo() }
         viewModel { GetAppVersionViewModel(get()) }
         viewModel { GetWeatherViewModel(get()) }
         viewModel { GetWarningViewModel(get()) }
         viewModel { GetEyeDataViewModel(get()) }
         viewModel { GetEyeDeviceListViewModel(get()) }
         viewModel { SetEyeDeviceAliasViewModel(get())}
+        viewModel { NoiseDataViewModel(get()) }
     }
 }

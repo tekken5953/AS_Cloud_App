@@ -9,7 +9,7 @@ import java.io.IOException
 class NoiseDataViewModel(private val repo: NoiseDataRepo): BaseViewModel() {
     private var getResultData: LiveData<BaseRepository.ApiState<List<AdapterModel.NoiseDetailItem>?>>? = null
 
-    fun loadDataResult(sn: String, flag: String?, start:Int ?, end: Int?) : NoiseDataViewModel {
+    fun loadDataResult(sn: String, flag: Int?, start:Int ?, end: Int?) : NoiseDataViewModel {
         repo.loadDataResult(sn, flag, start, end)
         return this
     }

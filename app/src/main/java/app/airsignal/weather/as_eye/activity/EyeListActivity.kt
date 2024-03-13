@@ -125,6 +125,8 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                     intent.apply {
                         putExtra("alias", deviceListItem[position].alias)
                         putExtra("serial", mSerial)
+                        putExtra("is_master", deviceListItem[position].isMaster)
+                        putExtra("model_name", deviceListItem[position].sort)
                         putExtra("create_at", deviceListItem[position].created_at?.format(
                             DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")))
                         deviceListItem[position].detail?.let { pDetail ->
