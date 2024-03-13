@@ -49,7 +49,7 @@ class ApiModel {
         @SerializedName("img")
         val img: String,
         @SerializedName("redirect")
-        val redirect: String
+        val redirect: String,
         ) : Parcelable {
         // Parcelable 구현
         constructor(parcel: Parcel) : this(

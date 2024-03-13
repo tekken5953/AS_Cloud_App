@@ -22,7 +22,6 @@ import android.view.View.*
 import android.view.animation.*
 import android.webkit.WebView
 import android.widget.*
-import android.widget.LinearLayout.LayoutParams
 import android.widget.LinearLayout.VISIBLE
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
@@ -118,6 +117,7 @@ import java.io.IOException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.collections.ArrayList
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -188,7 +188,6 @@ class MainActivity
 
     private val adViewClass by lazy { AdViewClass(this) }
 
-    private lateinit var indicators: Array<ImageView>
     private var isInAppMsgShow = false
 
     override fun onResume() {
@@ -378,8 +377,7 @@ class MainActivity
             }
             val oneHour = (1000 * 60 * 60).toLong()
             val sevenDays = (1000 * 60 * 60 * 24 * 7).toLong()
-//            val oneHour = (1000).toLong()
-//            val sevenDays = (1000 * 10).toLong()
+
             if (it.isNotEmpty()) {
                 if (!GetAppInfo.getInAppMsgEnabled(this@MainActivity)) {
                     if (isTimeToDialog(oneHour))  runOnUiThread { inAppMsgDialog() }
@@ -417,16 +415,6 @@ class MainActivity
             isClickable = true
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             offscreenPageLimit = 3
-
-            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    if (inAppList.isNotEmpty() && inAppList.size > 1) {
-                        updateIndicators(position)
-                        requestLayout()
-                    }
-                }
-            })
         }
 
         inAppCancel.setOnClickListener {
@@ -449,36 +437,10 @@ class MainActivity
 
         if (inAppList.isNotEmpty() && inAppList.size > 1) {
             inAppIndicator.removeAllViews()
-            createIndicators(inAppVp,inAppIndicator)
+            IndicatorView(this, inAppList.size).createIndicators(inAppIndicator,inAppVp,ColorStateList.valueOf(getColor(R.color.white)))
         }
 
         inAppAlert.show()
-    }
-
-    // 뷰페이저 인디케이터 업데이트
-    private fun updateIndicators(position: Int) {
-        for (i in indicators.indices) {
-            indicators[i].setImageResource(
-                if (i == position) R.drawable.indicator_fill // 선택된 원 이미지
-                else R.drawable.indicator_empty // 선택되지 않은 원 이미지
-            )
-        }
-    }
-    // 뷰페이저 인디케이터 생성
-    private fun createIndicators(viewpager: ViewPager2, indicator: LinearLayout) {
-        indicators = Array(inAppList.size) {
-            val indicatorView = ImageView(this)
-            val params = LayoutParams(
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT
-            )
-            params.setMargins(10, 0, 10, 0)
-            indicatorView.layoutParams = params
-            indicatorView.setImageResource(R.drawable.indicator_empty) // 선택되지 않은 원 이미지
-            indicator.addView(indicatorView)
-            indicatorView
-        }
-        updateIndicators(viewpager.currentItem)
     }
 
     // 공유하기 언어별 대응

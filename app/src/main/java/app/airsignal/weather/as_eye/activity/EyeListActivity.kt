@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
 import android.text.Spannable
@@ -43,11 +44,13 @@ import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.ShowDialogClass
+import app.airsignal.weather.view.dialog.IndicatorView
 import app.airsignal.weather.viewmodel.GetEyeDeviceListViewModel
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @SuppressLint("NotifyDataSetChanged")
 class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
@@ -68,10 +71,10 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     private val deviceListViewModel by viewModel<GetEyeDeviceListViewModel>()
     private val listLiveData by lazy {deviceListViewModel.fetchData()}
 
-    private lateinit var indicators: Array<ImageView>
 
     private val viewPagerList = ArrayList<Int>()
     private val vpAdapter by lazy {TutorialViewPagerAdapter(this, viewPagerList)}
+    private val indicatorView by lazy { IndicatorView(this,viewPagerList.size) }
 
     private val sp by lazy {SharedPreferenceManager(this)}
 
@@ -122,6 +125,8 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                     intent.apply {
                         putExtra("alias", deviceListItem[position].alias)
                         putExtra("serial", mSerial)
+                        putExtra("create_at", deviceListItem[position].created_at?.format(
+                            DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")))
                         deviceListItem[position].detail?.let { pDetail ->
                             putExtra("ssid", pDetail.ssid)
                         }
@@ -494,7 +499,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 if (viewPagerList.isNotEmpty() && viewPagerList.size > 1) {
-                    updateIndicators(position)
+                    indicatorView.updateIndicators(position)
                     vpAdapter.pausePreviousLottie(position)
                     vpAdapter.playCurrentLottie(position)
                     viewPager.requestLayout()
@@ -504,42 +509,6 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                     cancel.text = getString(R.string.close) else cancel.text = "SKIP"
             }
         })
-    }
-
-    private fun createIndicator(container: LinearLayout, viewPager: ViewPager2) {
-        indicators = Array(viewPagerList.size) {
-            val indicatorView = ImageView(this)
-            val params = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-            params.setMargins(10, 0, 10, 0)
-            indicatorView.layoutParams = params
-            indicatorView.setImageResource(R.drawable.indicator_empty) // 선택되지 않은 원 이미지
-            indicatorView.scaleType = ImageView.ScaleType.FIT_XY
-            container.addView(indicatorView)
-            indicatorView
-        }
-        updateIndicators(viewPager.currentItem)
-    }
-
-    private fun updateIndicators(position: Int) {
-        for (i in indicators.indices) {
-            val animator = ValueAnimator.ofInt(
-                indicators[i].layoutParams.width,
-                if (i == position) 120 else 35
-            )
-            animator.addUpdateListener { valueAnimator ->
-                val value = valueAnimator.animatedValue as Int
-                val params = indicators[i].layoutParams
-                params.width = value
-                indicators[i].layoutParams = params
-            }
-
-            animator.duration = 300
-
-            animator.start()
-        }
     }
 
     private fun createViewPager(vp: ViewPager2,
@@ -553,7 +522,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
         if (viewPagerList.isNotEmpty() && viewPagerList.size > 1) {
             indicatorContainer.removeAllViews()
-            createIndicator(indicatorContainer,vp)
+            indicatorView.createIndicators(indicatorContainer,vp, ColorStateList.valueOf(getColor(R.color.main_black)))
         }
     }
 }

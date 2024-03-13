@@ -39,6 +39,7 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
     val aliasExtra by lazy {intent.getStringExtra("alias")}
     val serialExtra by lazy {intent.getStringExtra("serial")}
     val ssidExtra by lazy {intent.getStringExtra("ssid")}
+    val createExtra by lazy {intent.getStringExtra("create_at")}
 
     enum class AverageFlag(val flag: String) {
         HOURLY("hour"),

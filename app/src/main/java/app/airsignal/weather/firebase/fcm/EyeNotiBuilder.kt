@@ -7,12 +7,10 @@ import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.view.View
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.SharedPreferenceManager
@@ -22,9 +20,7 @@ import kotlin.random.Random
 class EyeNotiBuilder(private val context: Context) {
     private val notificationManager: NotificationManager? =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
-    lateinit var notificationChannel: NotificationChannel
-    
-    private val groupName = "에어시그널"
+    private lateinit var notificationChannel: NotificationChannel
 
     private fun createNotificationChannel() {
         val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -119,17 +115,4 @@ class EyeNotiBuilder(private val context: Context) {
             else -> null
         }
     }
-
-//    fun showGroupedNotification() {
-//        val summaryNotification = NotificationCompat.Builder(context, notificationChannel.id)
-//            .setSmallIcon(R.drawable.ic_stat_airsignal_default)
-//            .setGroup("에어시그널")
-//            .setGroupSummary(true)
-//            .build()
-//
-//        with(NotificationManagerCompat.from(context)) {
-//            // 0을 사용하여 그룹 알림을 식별
-//            notify(0, summaryNotification)
-//        }
-//    }
 }

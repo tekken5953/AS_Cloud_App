@@ -275,6 +275,7 @@ class EyeSettingFragment : Fragment() {
             binding.aeSettingSerial.fetchData(mActivity.serialExtra ?: "")
             binding.aeSettingName.fetchData(mActivity.aliasExtra ?: "")
             binding.aeSettingWifi.fetchData(mActivity.ssidExtra ?: "")
+            binding.aeSettingSetupDate.fetchData(mActivity.createExtra ?: "")
         } catch (e: UninitializedPropertyAccessException) {
             e.printStackTrace()
         }
