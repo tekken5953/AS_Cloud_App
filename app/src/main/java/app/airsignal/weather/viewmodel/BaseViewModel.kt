@@ -1,13 +1,20 @@
 package app.airsignal.weather.viewmodel
 
 import androidx.lifecycle.ViewModel
+import app.airsignal.weather.util.TimberUtil
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.job
+import okhttp3.internal.notify
 
 open class BaseViewModel : ViewModel() {
-    private var job: Job? = null
+    protected var job: Job? = null
 
     override fun onCleared() {
         super.onCleared()
-        if (job != null) job?.cancel()
+        job?.cancel()
+    }
+
+    fun cancelJob() {
+        onCleared()
     }
 }

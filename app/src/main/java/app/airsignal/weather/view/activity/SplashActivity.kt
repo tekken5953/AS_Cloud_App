@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.os.Looper
 import androidx.core.os.HandlerCompat
 import app.airsignal.weather.R
+import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivitySplashBinding
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
@@ -102,19 +103,31 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
     private fun enterPage(inAppMsgList: Array<ApiModel.InAppMsgItem>?) {
-        if (isReady) {
-            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
-                    EnterPageUtil(this@SplashActivity).toMain(
-                        getUserLoginPlatform(this), inAppMsgList, R.anim.fade_in, R.anim.fade_out
-                    )
-                } else { EnterPageUtil(this@SplashActivity).toPermission() }
-            }, 500)
-        } else {
-            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                enterPage(inAppMsgList)
-            }, 300)
-        }
+            if (isReady) {
+                TimberUtil().d("fcmtest", "enterPage intent category is ${intent.categories}")
+                if (intent?.hasCategory("android.intent.category.APP_MESSAGING") == true) {
+                    HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                        EnterPageUtil(this@SplashActivity).toList(R.anim.fade_in)
+                    }, 500)
+                } else {
+                    HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                        if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
+                            EnterPageUtil(this@SplashActivity).toMain(
+                                getUserLoginPlatform(this),
+                                inAppMsgList,
+                                R.anim.fade_in,
+                                R.anim.fade_out
+                            )
+                        } else {
+                            EnterPageUtil(this@SplashActivity).toPermission()
+                        }
+                    }, 500)
+                }
+            } else {
+                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                    enterPage(inAppMsgList)
+                }, 500)
+            }
     }
 
     // 앱 버전 뷰모델 데이터 호출

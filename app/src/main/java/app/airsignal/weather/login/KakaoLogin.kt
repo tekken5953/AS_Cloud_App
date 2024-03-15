@@ -74,7 +74,7 @@ class KakaoLogin(private val activity: Activity) {
                     UserApiClient.instance.me { user, _ ->
                         user?.kakaoAccount?.let { account ->
                             writeLoginHistory(
-                                isLogin = true, platform = LOGIN_KAKAO, email = account.email!!,
+                                isLogin = true, platform = LOGIN_KAKAO, email = account.email ?: "",
                                 isAuto = false, isSuccess = true
                             )
                             RDBLogcat.writeLoginPref(
@@ -191,8 +191,8 @@ class KakaoLogin(private val activity: Activity) {
             user?.kakaoAccount?.let { account ->
                 SharedPreferenceManager(activity)
                     .setString(lastLoginPhone, account.phoneNumber.toString())
-                    .setString(userId, account.profile!!.nickname.toString())
-                    .setString(userProfile, account.profile!!.profileImageUrl.toString())
+                    .setString(userId, account.profile?.nickname.toString())
+                    .setString(userProfile, account.profile?.profileImageUrl.toString())
                     .setString(userEmail, account.email.toString())
             }
         }

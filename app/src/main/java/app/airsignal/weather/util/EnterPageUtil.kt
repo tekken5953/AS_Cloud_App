@@ -2,6 +2,7 @@ package app.airsignal.weather.util
 
 import android.app.Activity
 import android.content.Intent
+import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.view.activity.LoginActivity
 import app.airsignal.weather.view.activity.MainActivity
@@ -50,6 +51,15 @@ class EnterPageUtil(private val activity: Activity) {
             }
             this.startActivity(intent)
             this.overridePendingTransition(startAnimation,0)
+            this.finish()
+        }
+    }
+
+    fun toList(anim: Int) {
+        val intent = Intent(activity, EyeListActivity::class.java)
+        activity.run {
+            this.startActivity(intent)
+            this.overridePendingTransition(anim,0)
             this.finish()
         }
     }

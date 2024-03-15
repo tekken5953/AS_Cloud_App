@@ -1,6 +1,7 @@
 package app.airsignal.weather.db.sp
 
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -72,5 +73,17 @@ object GetSystemInfo {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(getPlayStoreURL(activity))
         activity.startActivity(intent)
+    }
+
+    fun isAppRunning(context: Context): Boolean {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val packageName = context.packageName
+        val runningAppProcesses = activityManager.runningAppProcesses ?: return false
+        for (processInfo in runningAppProcesses) {
+            if (processInfo.processName == packageName) {
+                return true
+            }
+        }
+        return false
     }
 }

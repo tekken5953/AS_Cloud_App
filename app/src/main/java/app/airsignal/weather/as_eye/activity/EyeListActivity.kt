@@ -1,6 +1,5 @@
 package app.airsignal.weather.as_eye.activity
 
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
@@ -38,7 +37,6 @@ import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.db.sp.SpDao.TUTORIAL_SKIP
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.OnAdapterItemClick
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
@@ -58,9 +56,9 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
     companion object { const val ENTIRE_GROUP = "전체" }
 
-    private val deviceListItem = ArrayList<EyeDataModel.Device>()
-    private val deviceListAdapter by lazy { EyeDeviceAdapter(this, deviceListItem) }
-    private val allDevicesList = ArrayList<EyeDataModel.Device>()
+    private val allDeviceList = ArrayList<EyeDataModel.Device>()
+    private val groupDeviceList = ArrayList<EyeDataModel.Device>()
+    private val deviceListAdapter by lazy { EyeDeviceAdapter(this, groupDeviceList) }
     private val categoryItem = ArrayList<EyeDataModel.Category>()
     private val categoryAdapter by lazy { EyeCategoryAdapter(this, categoryItem) }
     private val groupList = ArrayList<EyeDataModel.Group>()
@@ -78,35 +76,39 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
     private val sp by lazy {SharedPreferenceManager(this)}
 
-    override fun onPause() {
-        super.onPause()
-        viewPagerList.clear()
+    override fun onStart() {
+        super.onStart()
+        loadDeviceList()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
 
-        loadDeviceList()
-
         binding.aeListDeviceRv.adapter = deviceListAdapter
         binding.aeListCategoryRv.adapter = categoryAdapter
 
-        addCategoryFirstItem()
-
         categoryAdapter.setOnItemClickListener(object : OnAdapterItemClick.OnAdapterItemClick {
             override fun onItemClick(v: View, position: Int) {
-                deviceListItem.clear()
+                groupDeviceList.clear()
                 categoryAdapter.changeSelected(position)
                 if (position == 0) {
-                    loadDeviceList()
+                    if (allDeviceList.isNotEmpty()) {
+                        groupDeviceList.addAll(allDeviceList)
+                        deviceListAdapter.notifyItemRangeChanged(0, allDeviceList.size)
+                        addLastAddItem()
+                    } else {
+                        loadDeviceList()
+                    }
                 } else {
                     CoroutineScope(Dispatchers.IO).launch {
                         @SuppressLint("SuspiciousIndentation")
                         val group = db.findByCategoryName(categoryItem[position].name)
-                        allDevicesList.forEachIndexed { index, device ->
+                        TimberUtil().d("eyetest","group db list : $group")
+                        allDeviceList.forEachIndexed { index, device ->
                             if (group.device.contains(device.serial)) {
-                                deviceListItem.add(device)
+                                TimberUtil().d("eyetest","db contains : ${device.serial}")
+                                groupDeviceList.add(device)
                                 deviceListAdapter.notifyItemInserted(index)
                             }
                         }
@@ -119,22 +121,9 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
         deviceListAdapter.setOnItemClickListener(object : OnAdapterItemClick.OnAdapterItemClick {
             override fun onItemClick(v: View, position: Int) {
-                val mSerial = deviceListItem[position].serial
+                val mSerial = groupDeviceList[position].serial
                 if (mSerial != "") {
-                    val intent = Intent(this@EyeListActivity, EyeDetailActivity::class.java)
-                    intent.apply {
-                        putExtra("alias", deviceListItem[position].alias)
-                        putExtra("serial", mSerial)
-                        putExtra("is_master", deviceListItem[position].isMaster)
-                        putExtra("model_name", deviceListItem[position].sort)
-                        putExtra("create_at", deviceListItem[position].created_at?.format(
-                            DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")))
-                        deviceListItem[position].detail?.let { pDetail ->
-                            putExtra("ssid", pDetail.ssid)
-                        }
-                    }
-                    startActivity(intent)
-                    finish()
+                    moveToDetail(position)
                 } else {
                     val intent = Intent(this@EyeListActivity, AddEyeDeviceActivity::class.java)
                     startActivity(intent)
@@ -182,8 +171,31 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         }
     }
 
+    private fun moveToDetail(position: Int) {
+        val mSerial = groupDeviceList[position].serial
+        if (mSerial != "") {
+            val intent = Intent(this@EyeListActivity, EyeDetailActivity::class.java)
+            intent.apply {
+                putExtra("alias", groupDeviceList[position].alias)
+                putExtra("serial", mSerial)
+                putExtra("is_master", groupDeviceList[position].isMaster)
+                putExtra("model_name", groupDeviceList[position].sort)
+                putExtra(
+                    "create_at", groupDeviceList[position].created_at?.format(
+                        DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")
+                    )
+                )
+                groupDeviceList[position].detail?.let { pDetail ->
+                    putExtra("ssid", pDetail.ssid)
+                }
+            }
+            startActivity(intent)
+            finish()
+        }
+    }
+
     private fun addCategoryFirstItem() {
-        addCategoryItem(ENTIRE_GROUP, deviceListItem.map {it.serial}.toMutableList())
+        addCategoryItem(ENTIRE_GROUP, groupDeviceList.map {it.serial}.toMutableList())
     }
 
     private fun readCategoryItems() {
@@ -277,6 +289,12 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         }
     }
 
+    private fun destroyObserver() {
+        deviceListViewModel.cancelJob()
+        listLiveData.removeObservers(this)
+        TimberUtil().w("lifecycle_test", "리스트 옵저버 제거")
+    }
+
     private fun showCategoryPb() {
         binding.aeListLoading.bringToFront()
         binding.aeListLoading.visibility = View.VISIBLE
@@ -338,9 +356,11 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
             AnimationUtils.loadAnimation(this, R.anim.trans_bottom_to_top_add_group)
         rv.animation = AnimationUtils.loadAnimation(this, R.anim.fade_in_group_add)
         groupList.clear()
-        allDevicesList.forEachIndexed { index, d ->
-            addGroupList(EyeDataModel.Group(false, d))
-            groupAdapter.notifyItemInserted(index)
+        groupDeviceList.forEachIndexed { index, d ->
+            if (d.serial != "") {
+                addGroupList(EyeDataModel.Group(false, d))
+                groupAdapter.notifyItemInserted(index)
+            }
         }
 
         dialog.show(groupView, true, null)
@@ -371,7 +391,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                 EyeDataModel.Device(
                     createdAt, isMaster, sort, sp.getString(SpDao.userEmail), alias, serial, detail)
 
-            deviceListItem.add(item)
+            groupDeviceList.add(item)
         }
     }
 
@@ -386,60 +406,41 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     private fun addLastAddItem() {
         addListItem(null,false, "", "", "",
             EyeDataModel.DeviceDetail(null, report = false, power = true))
+
+        deviceListAdapter.notifyItemInserted(groupDeviceList.lastIndex)
     }
 
     private fun loadDeviceList() {
-        if (listLiveData.hasActiveObservers()) {
-            deviceListViewModel.loadDataResult()
-        } else {
-            applyDeviceList()
-            deviceListViewModel.loadDataResult()
-        }
+        if (listLiveData.hasActiveObservers()) { destroyObserver() }
+        TimberUtil().w("lifecycle_test","리스트 옵저버 생성")
+        applyDeviceList()
+        deviceListViewModel.loadDataResult()
     }
 
     private fun applyDeviceList() {
         try {
-            listLiveData.observe(this@EyeListActivity) { result ->
+            listLiveData.observe(this) { result ->
                 result?.let { list ->
                     when (list) {
                         // 통신 성공
                         is BaseRepository.ApiState.Success -> {
-                            deviceListItem.clear()
-                            allDevicesList.clear()
-
-                            LoggerUtil().d("eyetest","device list : $list")
-
                             list.data?.let { pList ->
-                                pList.forEach { device ->
-                                    val detail = device.detail?.let { pDetail ->
-                                        EyeDataModel.DeviceDetail(
-                                            pDetail.ssid,
-                                            pDetail.report,
-                                            pDetail.power
-                                        )
-                                    } ?: EyeDataModel.DeviceDetail(
-                                        "",
-                                        report = false,
-                                        power = false
-                                    )
+                                binding.aeListDeviceRv.removeAllViews()
+                                groupDeviceList.clear()
+                                allDeviceList.clear()
+                                pList.forEachIndexed { index,  device ->
+                                    TimberUtil().d("eyetest", "device[${device.serial}]")
+                                    groupDeviceList.add(device)
+                                    allDeviceList.add(device)
 
-                                    addListItem(
-                                        device.created_at,
-                                        device.isMaster,
-                                        device.sort,
-                                        device.alias,
-                                        device.serial,
-                                        detail
-                                    )
-                                    allDevicesList.add(device)
+                                    if (index == pList.lastIndex) {
+                                        addLastAddItem()
+                                        deviceListAdapter.notifyItemRangeChanged(0, groupDeviceList.size)
+
+                                        if (!sp.getBoolean(TUTORIAL_SKIP, false)) createTutorial()
+                                    }
                                 }
                             }
-
-                            addLastAddItem()
-
-                            deviceListAdapter.notifyItemRangeChanged(0, allDevicesList.size)
-
-                            if (!sp.getBoolean(TUTORIAL_SKIP, false)) createTutorial()
                         }
 
                         // 통신 실패
@@ -491,20 +492,18 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
         dialog.show(view,false, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
 
-        viewPagerList.run {
-            addAll(arrayListOf(R.raw.ani_tuto_plus,R.raw.ani_tuto_group,R.raw.ani_tuto_danger))
-        }
+        viewPagerList.addAll(arrayListOf(R.raw.ani_tuto_plus,R.raw.ani_tuto_group,R.raw.ani_tuto_alarm,R.raw.ani_tuto_danger,R.raw.ani_etc))
 
         createViewPager(viewPager, indicatorContainer)
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
+
                 if (viewPagerList.isNotEmpty() && viewPagerList.size > 1) {
                     indicatorView.updateIndicators(position)
                     vpAdapter.pausePreviousLottie(position)
                     vpAdapter.playCurrentLottie(position)
-                    viewPager.requestLayout()
                 }
 
                 if (position == viewPagerList.lastIndex)

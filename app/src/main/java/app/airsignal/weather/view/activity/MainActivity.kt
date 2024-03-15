@@ -190,6 +190,8 @@ class MainActivity
 
     private var isInAppMsgShow = false
 
+    private val fetch by lazy {getDataViewModel.fetchData()}
+
     override fun onResume() {
         super.onResume()
         addSideMenu()
@@ -202,6 +204,12 @@ class MainActivity
         super.onDestroy()
         isWarned = false
 //        binding.nestedAdView.destroy()
+    }
+
+    private fun destroyObserver() {
+        getDataViewModel.cancelJob()
+        fetch.removeObservers(this)
+        TimberUtil().w("lifecycle_test", "메인 옵저버 제거")
     }
 
     override fun onPause() {
@@ -328,23 +336,25 @@ class MainActivity
                 }
             })
 
-            binding.mainTopEye.setOnClickListener {
-                if (SharedPreferenceManager(this).getString("user_email") != "") {
-                    val intent = Intent(this, EyeListActivity::class.java)
-                    startActivity(intent)
-                } else {
-                    val builder = MakeDoubleDialog(this)
-                    val dialog = builder.make("로그인이 필요한 서비스입니다.",
-                        "로그인","취소",R.color.main_blue_color)
-                    dialog.first.setOnClickListener {
-                        builder.dismiss()
-                       EnterPageUtil(this).toLogin("main")
-                    }
-                    dialog.second.setOnClickListener {
-                        builder.dismiss()
+            binding.mainTopEye.setOnClickListener(object: OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    if (SharedPreferenceManager(this@MainActivity).getString("user_email") != "") {
+                        val intent = Intent(this@MainActivity, EyeListActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        val builder = MakeDoubleDialog(this@MainActivity)
+                        val dialog = builder.make("로그인이 필요한 서비스입니다.",
+                            "로그인","취소",R.color.main_blue_color)
+                        dialog.first.setOnClickListener {
+                            builder.dismiss()
+                            EnterPageUtil(this@MainActivity).toLogin("main")
+                        }
+                        dialog.second.setOnClickListener {
+                            builder.dismiss()
+                        }
                     }
                 }
-            }
+            })
 
             binding.mainSwipeLayout.setColorSchemeColors(
                 Color.parseColor("#22D3EE"),
@@ -543,112 +553,8 @@ class MainActivity
             eye.setOnClickListener(object : OnSingleClickListener() {
                 @SuppressLint("SetJavaScriptEnabled")
                 override fun onSingleClick(v: View?) {
-                    sideMenuBuilder.dismiss()
-                    val landingView = LayoutInflater
-                        .from(this@MainActivity)
-                        .inflate(R.layout.dialog_eye_landing, null)
-                    val landingBack = landingView.findViewById<ImageView>(R.id.eyeLandingBack)
-                    val landingBtn =
-                        landingView.findViewById<RelativeLayout>(R.id.eyeLandingRelative)
-                    val landingText = landingView.findViewById<TextView>(R.id.eyeLandingBtnTitle)
-                    val landingCheck: CheckBox = landingView.findViewById(R.id.eyeLandingBtnCheck)
-                    val landingWebView: WebView = landingView.findViewById(R.id.eyeLandingWebView)
-                    val landingFab: ImageView = landingView.findViewById(R.id.eyeLandingFab)
-                    val notiPerm = RequestPermissionsUtil(this@MainActivity)
-                    val dialog = ShowDialogClass(this@MainActivity, false).setBackPressed(landingBack)
-
-                    val requestOkText = "출시 알림받기 완료 \uD83D\uDE00"
-                    val requestNoText = "제품 출시 알림받기\n광고 및 이벤트성 알림 발송에 동의합니다"
-
-                    // 웹뷰 세팅
-                    WebViewSetting().apply(landingWebView)
-
-                    landingWebView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-                        landingFab.visibility = if (scrollY == 0) GONE else View.VISIBLE
-                    }
-
-                    landingFab.setOnClickListener {
-                        landingWebView.pageUp(true)
-                    }
-
-                    landingWebView.loadUrl(landingPageUrl)
-
-                    landingBtn.isActivated = landingCheck.isChecked
-
-                    landingCheck.visibility = if (getLandingEnable()) GONE else VISIBLE
-
-                    landingCheck.setOnCheckedChangeListener { _, isChecked ->
-                        landingBtn.isActivated = isChecked
-                    }
-
-                    val span = SpannableStringBuilder(requestNoText)
-                    val tx = requestNoText.split('\n')[1]
-                    span.setSpan(
-                        RelativeSizeSpan(0.7f),
-                        requestNoText.indexOf(tx),
-                        requestNoText.lastIndex + 1,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                    span.setSpan(
-                        ForegroundColorSpan(Color.parseColor("#90FFFFFF")),
-                        requestNoText.indexOf(tx),
-                        requestNoText.lastIndex + 1,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-
-                    landingBack.bringToFront()
-                    if (!getLandingEnable()) landingText.text = span else landingText.text = requestOkText
-
-                    landingBtn.setOnClickListener {
-                        if (!getLandingEnable()) {
-                            if (!notiPerm.isNotificationPermitted()) {
-                                ToastUtils(this@MainActivity).showMessage("알림을 허용해주세요")
-                                notiPerm.requestNotification()
-                            } else {
-                                if (landingCheck.isChecked) {
-                                    val subModal = MakeSingleDialog(this@MainActivity)
-                                    subModal.makeDialog(
-                                        "출시가 완료되면 알림 메시지를 보낼게요 ${String(Character.toChars(0x1F514))}",
-                                        R.color.main_blue_color, "확인", false
-                                    )
-                                    subModal.apply.setOnClickListener {
-                                        CoroutineScope(Dispatchers.IO).launch {
-                                            setLandingNotification(this@MainActivity,true)
-                                        }
-                                        landingBtn.isActivated = false
-                                        landingText.text = requestOkText
-                                        landingCheck.visibility = GONE
-                                        subModal.dismiss()
-                                    }
-                                } else {
-                                    ToastUtils(this@MainActivity).showMessage("알림 동의를 체크해주세요!")
-                                }
-                            }
-                        } else {
-                            val cancelModal = MakeDoubleDialog(this@MainActivity)
-                            val make = cancelModal.make("알림받기를 취소하시겠습니까?","네",
-                                "아니오",R.color.red)
-                            make.first.setOnClickListener {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    setLandingNotification(this@MainActivity,false)
-
-                                    withContext(Dispatchers.Main) {
-                                        SnackBarUtils(landingView,"성공적으로 취소되었습니다",
-                                            getR(R.drawable.alert_off)!!).show()
-                                        landingBtn.isActivated = false
-                                        landingText.text = span
-                                        landingCheck.isChecked = false
-                                        landingCheck.visibility = VISIBLE
-                                        cancelModal.dismiss()
-                                    }
-                                }
-                            }
-                            make.second.setOnClickListener {
-                                cancelModal.dismiss()
-                            }
-                        }
-                    }
-                    dialog.show(landingView, true, null)
+                    val intent = Intent(this@MainActivity, EyeListActivity::class.java)
+                    startActivity(intent)
                 }
             })
             setting.setOnClickListener(object : OnSingleClickListener() {
@@ -664,6 +570,115 @@ class MainActivity
         } catch (e: NullPointerException) {
             e.printStackTrace()
         }
+    }
+
+    private fun startLanding() {
+        sideMenuBuilder.dismiss()
+        val landingView = LayoutInflater
+            .from(this@MainActivity)
+            .inflate(R.layout.dialog_eye_landing, null)
+        val landingBack = landingView.findViewById<ImageView>(R.id.eyeLandingBack)
+        val landingBtn =
+            landingView.findViewById<RelativeLayout>(R.id.eyeLandingRelative)
+        val landingText = landingView.findViewById<TextView>(R.id.eyeLandingBtnTitle)
+        val landingCheck: CheckBox = landingView.findViewById(R.id.eyeLandingBtnCheck)
+        val landingWebView: WebView = landingView.findViewById(R.id.eyeLandingWebView)
+        val landingFab: ImageView = landingView.findViewById(R.id.eyeLandingFab)
+        val notiPerm = RequestPermissionsUtil(this@MainActivity)
+        val dialog = ShowDialogClass(this@MainActivity, false).setBackPressed(landingBack)
+
+        val requestOkText = "출시 알림받기 완료 \uD83D\uDE00"
+        val requestNoText = "제품 출시 알림받기\n광고 및 이벤트성 알림 발송에 동의합니다"
+
+        // 웹뷰 세팅
+        WebViewSetting().apply(landingWebView)
+
+        landingWebView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            landingFab.visibility = if (scrollY == 0) GONE else View.VISIBLE
+        }
+
+        landingFab.setOnClickListener {
+            landingWebView.pageUp(true)
+        }
+
+        landingWebView.loadUrl(landingPageUrl)
+
+        landingBtn.isActivated = landingCheck.isChecked
+
+        landingCheck.visibility = if (getLandingEnable()) GONE else VISIBLE
+
+        landingCheck.setOnCheckedChangeListener { _, isChecked ->
+            landingBtn.isActivated = isChecked
+        }
+
+        val span = SpannableStringBuilder(requestNoText)
+        val tx = requestNoText.split('\n')[1]
+        span.setSpan(
+            RelativeSizeSpan(0.7f),
+            requestNoText.indexOf(tx),
+            requestNoText.lastIndex + 1,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        span.setSpan(
+            ForegroundColorSpan(Color.parseColor("#90FFFFFF")),
+            requestNoText.indexOf(tx),
+            requestNoText.lastIndex + 1,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        landingBack.bringToFront()
+        if (!getLandingEnable()) landingText.text = span else landingText.text = requestOkText
+
+        landingBtn.setOnClickListener {
+            if (!getLandingEnable()) {
+                if (!notiPerm.isNotificationPermitted()) {
+                    ToastUtils(this@MainActivity).showMessage("알림을 허용해주세요")
+                    notiPerm.requestNotification()
+                } else {
+                    if (landingCheck.isChecked) {
+                        val subModal = MakeSingleDialog(this@MainActivity)
+                        subModal.makeDialog(
+                            "출시가 완료되면 알림 메시지를 보낼게요 ${String(Character.toChars(0x1F514))}",
+                            R.color.main_blue_color, "확인", false
+                        )
+                        subModal.apply.setOnClickListener {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                setLandingNotification(this@MainActivity,true)
+                            }
+                            landingBtn.isActivated = false
+                            landingText.text = requestOkText
+                            landingCheck.visibility = GONE
+                            subModal.dismiss()
+                        }
+                    } else {
+                        ToastUtils(this@MainActivity).showMessage("알림 동의를 체크해주세요!")
+                    }
+                }
+            } else {
+                val cancelModal = MakeDoubleDialog(this@MainActivity)
+                val make = cancelModal.make("알림받기를 취소하시겠습니까?","네",
+                    "아니오",R.color.red)
+                make.first.setOnClickListener {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        setLandingNotification(this@MainActivity,false)
+
+                        withContext(Dispatchers.Main) {
+                            SnackBarUtils(landingView,"성공적으로 취소되었습니다",
+                                getR(R.drawable.alert_off)!!).show()
+                            landingBtn.isActivated = false
+                            landingText.text = span
+                            landingCheck.isChecked = false
+                            landingCheck.visibility = VISIBLE
+                            cancelModal.dismiss()
+                        }
+                    }
+                }
+                make.second.setOnClickListener {
+                    cancelModal.dismiss()
+                }
+            }
+        }
+        dialog.show(landingView, true, null)
     }
 
     private fun getLandingEnable(): Boolean {
@@ -1007,17 +1022,18 @@ class MainActivity
 
     // 현재 옵저버가 없으면 생성
     private fun getDataObservers() {
-        if (!getDataViewModel.fetchData().hasActiveObservers()) {
-            applyGetDataViewModel()
-        } else {
+        if (fetch.hasActiveObservers()) {
+            destroyObserver()
             binding.mainSwipeLayout.isRefreshing = false
         }
+        TimberUtil().w("lifecycle_test", "메인 옵저버 생성")
+        applyGetDataViewModel()
     }
 
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel() {
         try {
-            getDataViewModel.fetchData().observe(this) { entireData ->
+            fetch.observe(this) { entireData ->
                 entireData?.let { eData ->
                     binding.mainSwipeLayout.isRefreshing = false
 

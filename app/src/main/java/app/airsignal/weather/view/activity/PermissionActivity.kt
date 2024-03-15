@@ -1,5 +1,6 @@
 package app.airsignal.weather.view.activity
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -60,6 +61,7 @@ class PermissionActivity :
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()

@@ -149,11 +149,11 @@ class SettingActivity
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
                             LOGIN_KAKAO -> {
 //                                KakaoLogin(this@SettingActivity).logout(email)
-                                KakaoLogin(this@SettingActivity).logout(binding.settingPb)
+                                KakaoLogin(this@SettingActivity).disconnectFromKakao(binding.settingPb)
                             }
                             LOGIN_NAVER -> {
 //                                NaverLogin(this@SettingActivity).logout()
-                                NaverLogin(this@SettingActivity).logout()
+                                NaverLogin(this@SettingActivity).disconnectFromNaver(binding.settingPb)
                             }
                             LOGIN_GOOGLE -> {
                                 GoogleLogin(this@SettingActivity).logout(binding.settingPb)

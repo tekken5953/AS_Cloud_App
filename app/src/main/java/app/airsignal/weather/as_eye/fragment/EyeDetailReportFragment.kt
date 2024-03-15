@@ -139,7 +139,7 @@ class EyeDetailReportFragment : Fragment() {
             binding.pmAvgLineChartNoData.visibility = View.VISIBLE
         }
 
-        binding.reportLogTime.text = reportLogDate.format(DateTimeFormatter.ofPattern("yy.MM.dd hh:mm"))
+        binding.reportLogTime.text = reportLogDate.format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm"))
         binding.reportLogValue.text = "$reportLogValue" + "dB의 소음이 발생했습니다"
 
         binding.reportCaiPb.progress = setProgress(ReportIndex.CAI_INDEX, caiValue,caiLvl)

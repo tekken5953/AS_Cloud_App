@@ -72,6 +72,7 @@ class EyeDeviceAdapter(
             deviceName.text = dao.alias
             serial.text = dao.serial
 
+            //TODO 라스트 인덱스 필터 적용 후 request
             if (dao.alias == "") {
                 deviceName.visibility = View.GONE
                 serial.visibility = View.GONE

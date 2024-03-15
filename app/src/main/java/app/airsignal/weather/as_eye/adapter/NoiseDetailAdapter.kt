@@ -9,10 +9,12 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.os.HandlerCompat
+import androidx.recyclerview.widget.AdapterListUpdateCallback
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.ItemDiffCallback
+import app.airsignal.weather.as_eye.activity.EyeNoiseDetailActivity
 import app.airsignal.weather.dao.AdapterModel
 import java.time.format.DateTimeFormatter
 
@@ -31,14 +33,13 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
         return ViewHolder(view)
     }
 
-    fun submitList(newItems: ArrayList<AdapterModel.NoiseDetailItem>) {
+    fun submitList(newItems: ArrayList<AdapterModel.NoiseDetailItem>, callback: () -> Unit) {
         val diffCallback = ItemDiffCallback(mList, newItems)
         val diffResult = DiffUtil.calculateDiff(diffCallback, true)
 
         mList = newItems
-        HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-            diffResult.dispatchUpdatesTo(this)
-        },200)
+        diffResult.dispatchUpdatesTo(this)
+        callback.invoke()
     }
 
     override fun getItemCount(): Int = mList.size

@@ -20,7 +20,7 @@
             android:src="@drawable/back_arrow" />
 
         <TextView
-            android:id="@+id/dialogNoiseDbBtn"
+            android:id="@+id/dialogNoiseApplyBtn"
             style="@style/basicMediumTextView"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
@@ -222,8 +222,8 @@
             android:id="@+id/dialogNoiseDbDatePicker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar"
             android:layout_gravity="center_horizontal"
+            android:theme="@android:style/Theme.Holo.Light.Dialog.NoActionBar"
             android:layout_marginTop="15dp"
             android:calendarViewShown="false"
             android:datePickerMode="spinner" />

@@ -1,6 +1,7 @@
 package app.airsignal.weather.firebase.fcm
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -12,8 +13,10 @@ import android.media.RingtoneManager
 import android.view.View
 import androidx.core.app.NotificationCompat
 import app.airsignal.weather.R
+import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.SharedPreferenceManager
+import app.airsignal.weather.db.sp.GetSystemInfo.isAppRunning
 import app.airsignal.weather.db.sp.SpDao
 import kotlin.random.Random
 
@@ -46,7 +49,6 @@ class EyeNotiBuilder(private val context: Context) {
             .setSmallIcon(R.drawable.ic_stat_airsignal_default)
     }
 
-    @SuppressLint("SuspiciousIndentation")
     fun sendNotification(data: Map<String, String>) {
         try {
             val appContext = context.applicationContext
@@ -55,12 +57,15 @@ class EyeNotiBuilder(private val context: Context) {
             intent.component =
                 ComponentName(
                     "app.airsignal.weather",
-                    "app.airsignal.weather.as_eye.activity.EyeListActivity"
+                    "app.airsignal.weather.view.activity.SplashActivity"
                 )
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP and Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addCategory("android.intent.category.APP_MESSAGING")
+            intent.addFlags (
+                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            )
 
             val pendingIntent =
-                PendingIntent.getActivity(appContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+                PendingIntent.getActivity(appContext, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
             val notificationBuilderInstance = buildNotificationBuilder()
             val sort = data["sort"]

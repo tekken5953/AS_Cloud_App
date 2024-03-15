@@ -88,7 +88,7 @@ class  FirstLocCheckDialog(
         dialog.setOnShowListener { dialogInterface ->
             val bottomSheetDialog = dialogInterface as BottomSheetDialog
             bottomSheetDialog.behavior.isDraggable = false
-            setupRatio(bottomSheetDialog, 65)
+            setupRatio(bottomSheetDialog, 75)
         }
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimationBottom
 

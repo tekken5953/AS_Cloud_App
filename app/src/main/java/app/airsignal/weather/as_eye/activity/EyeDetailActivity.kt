@@ -16,6 +16,7 @@ import app.airsignal.weather.as_eye.fragment.EyeSettingFragment
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivityEyeDetailBinding
 import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.util.OnSingleClickListener
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.getAverageTime
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
@@ -60,9 +61,17 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
 
     private var lastRefreshTime = 0L
 
+    private val fetch by lazy {dataViewModel.fetchData()}
+
     override fun onStart() {
         super.onStart()
         serialExtra?.let { sendApiData(it) }
+    }
+
+    private fun destroyObserver() {
+        dataViewModel.cancelJob()
+        fetch.removeObservers(this)
+        TimberUtil().w("lifecycle_test", "아이 디테일 옵저버 제거")
     }
 
     override fun onDestroy() {
@@ -94,14 +103,19 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
 
         binding.aeDetailBack.setOnClickListener { backToList() }
 
-        binding.asDetailRefresh.setOnClickListener {
-            serialExtra?.let { sendApiData(it) }
-        }
-
-        applyMeasuredData()
+        binding.asDetailRefresh.setOnClickListener(object: OnSingleClickListener(){
+            override fun onSingleClick(v: View?) {
+                serialExtra?.let { sendApiData(it) }
+            }
+        })
     }
 
     private fun sendApiData(serial: String) {
+        if (fetch.hasActiveObservers()) {
+            destroyObserver()
+        }
+        TimberUtil().w("lifecycle_test","아이 디테일 옵저버 생성")
+        applyMeasuredData()
         dataViewModel.loadData(serial,AverageFlag.HOURLY.flag,getAverageTime(getCurrentTime()),getAverageTime(getCurrentTime()))
     }
 
@@ -163,24 +177,22 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
     }
 
     private fun tabItemSelected(id: Int) {
-        run {
-            val transaction = supportFragmentManager.beginTransaction()
-            val fromFragment = currentFragment
-            currentFragment = id
+        val transaction = supportFragmentManager.beginTransaction()
 
-            setAnimation(transaction, fromFragment, currentFragment)
+        setAnimation(transaction, currentFragment, id)
 
-            transactionFragment(
-                transaction, when (id) {
-                    FRAGMENT_REPORT -> { reportFragment }
-                    FRAGMENT_LIVE -> { liveFragment }
-                    FRAGMENT_SETTING -> { settingFragment }
-                    else -> throw IllegalArgumentException("Invalid fragment id : $id")
-                }
-            )
+        transactionFragment(
+            transaction, when (id) {
+                FRAGMENT_REPORT -> { reportFragment }
+                FRAGMENT_LIVE -> { liveFragment }
+                FRAGMENT_SETTING -> { settingFragment }
+                else -> throw IllegalArgumentException("Invalid fragment id : $id")
+            }
+        )
 
-            changeTabResource(id)
-        }
+        changeTabResource(id)
+
+        currentFragment = id
     }
 
     private fun changeTabResource(id: Int) {
@@ -215,49 +227,50 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
 
     private fun applyMeasuredData() {
         try {
-            if (!dataViewModel.fetchData().hasObservers()) {
-                dataViewModel.fetchData().observe(this) { result ->
-                    result?.let { measured ->
-                        when (measured) {
-                            // 통신 성공
-                            is BaseRepository.ApiState.Success -> {
-                                hidePb()
-                                val body = measured.data
-                                entireData = body
+            fetch.observe(this) { result ->
+                result?.let { measured ->
+                    when (measured) {
+                        // 통신 성공
+                        is BaseRepository.ApiState.Success -> {
+                            hidePb()
+                            val body = measured.data
+                            entireData = body
 
-                                val current = body.current
+                            val current = body.current
 //                                if (isRefreshable()) {
-                                current.let { currentData ->
-                                    reportFragment.onDataTransfer(
-                                        EyeDataModel.ReportFragment(
-                                            currentData.flags,
-                                            currentData.CAIValue,
-                                            currentData.CAILvl,
-                                            currentData.virusValue,
-                                            currentData.virusLvl,
-                                            currentData.pm10p0Value,
-                                            body.average,
-                                            body.noiseRecent
-                                        )
+                            current.let { currentData ->
+                                reportFragment.onDataTransfer(
+                                    EyeDataModel.ReportFragment(
+                                        currentData.flags,
+                                        currentData.CAIValue,
+                                        currentData.CAILvl,
+                                        currentData.virusValue,
+                                        currentData.virusLvl,
+                                        currentData.pm10p0Value,
+                                        body.average,
+                                        body.noiseRecent
                                     )
+                                )
 
-                                    liveFragment.onDataTransfer(currentData)
-                                }
-
-                                if (currentFragment == -1) tabItemSelected(FRAGMENT_REPORT)
-
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    RDBLogcat.writeEyeMeasured(
-                                        this@EyeDetailActivity, body.toString()
-                                    )
-                                }
-//                                }
+                                liveFragment.onDataTransfer(currentData)
                             }
 
-                            is BaseRepository.ApiState.Error ->  hidePb()
-                            is BaseRepository.ApiState.Loading -> showPb()
+                            if (currentFragment == -1) {
+                                tabItemSelected(FRAGMENT_REPORT)
+                            }
+
+                            CoroutineScope(Dispatchers.IO).launch {
+                                RDBLogcat.writeEyeMeasured(
+                                    this@EyeDetailActivity, body.toString()
+                                )
+                            }
+//                                }
                         }
+
+                        is BaseRepository.ApiState.Error -> hidePb()
+                        is BaseRepository.ApiState.Loading -> showPb()
                     }
+
                 }
             }
         } catch (e: IOException) {
