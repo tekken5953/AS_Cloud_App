@@ -42,8 +42,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override val resID: Int get() = R.layout.activity_splash
 
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
+    private val fetch by lazy {appVersionViewModel.fetchData()}
 
     private var isReady = false
+    private var isDone = false
 
     init {
         TimberUtil().getInstance()
@@ -58,17 +60,19 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         window.setBackgroundDrawableResource(R.drawable.splash_lottie_bg)
 
         initBinding().run {
+            if (fetch.hasObservers()) fetch.removeObservers(this@SplashActivity)
+
             applyAppVersionData()
 
             binding.splashPB.addAnimatorListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationStart(animation: Animator) {
                     super.onAnimationStart(animation)
-                    appVersionViewModel.loadDataResult()
                 }
 
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
                     isReady = true
+                    appVersionViewModel.loadDataResult()
                 }
             })
 
@@ -103,93 +107,92 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
     private fun enterPage(inAppMsgList: Array<ApiModel.InAppMsgItem>?) {
+        if (intent?.hasCategory("android.intent.category.APP_MESSAGING") == true) {
+            if (!isDone) {
+                isDone = true
+                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                    TimberUtil().d("fcmtest", "enterPage intent category is ${intent.categories}")
+                    EnterPageUtil(this@SplashActivity).toList(R.anim.fade_in)
+                }, 2000)
+            }
+        } else {
             if (isReady) {
-                TimberUtil().d("fcmtest", "enterPage intent category is ${intent.categories}")
-                if (intent?.hasCategory("android.intent.category.APP_MESSAGING") == true) {
-                    HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                        EnterPageUtil(this@SplashActivity).toList(R.anim.fade_in)
-                    }, 500)
-                } else {
-                    HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                        if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
-                            EnterPageUtil(this@SplashActivity).toMain(
-                                getUserLoginPlatform(this),
-                                inAppMsgList,
-                                R.anim.fade_in,
-                                R.anim.fade_out
-                            )
-                        } else {
-                            EnterPageUtil(this@SplashActivity).toPermission()
-                        }
-                    }, 500)
-                }
+                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                    if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
+                        EnterPageUtil(this@SplashActivity).toMain(
+                            getUserLoginPlatform(this),
+                            inAppMsgList, R.anim.fade_in, R.anim.fade_out
+                        )
+                    } else {
+                        EnterPageUtil(this@SplashActivity).toPermission()
+                    }
+                }, 500)
             } else {
                 HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
                     enterPage(inAppMsgList)
                 }, 500)
             }
+        }
     }
 
     // 앱 버전 뷰모델 데이터 호출
     private fun applyAppVersionData() {
         try {
-            if (!appVersionViewModel.fetchData().hasObservers()) {
-                appVersionViewModel.fetchData().observe(this) { result ->
-                    result?.let { ver ->
-                        when (ver) {
-                            // 통신 성공
-                            is BaseRepository.ApiState.Success -> {
-                                val inAppArray = ver.data.inAppMsg
-                                val versionName = GetSystemInfo.getApplicationVersionName(this)
-                                val versionCode = GetSystemInfo.getApplicationVersionCode(this)
-                                val fullVersion = "${versionName}.${versionCode}"
-                                if (fullVersion == "${ver.data.serviceName}.${ver.data.serviceCode}") {
+            fetch.observe(this) { result ->
+                result?.let { ver ->
+                    when (ver) {
+                        // 통신 성공
+                        is BaseRepository.ApiState.Success -> {
+                            val inAppArray = ver.data.inAppMsg
+                            val versionName = GetSystemInfo.getApplicationVersionName(this)
+                            val versionCode = GetSystemInfo.getApplicationVersionCode(this)
+                            val fullVersion = "${versionName}.${versionCode}"
+                            if (fullVersion == "${ver.data.serviceName}.${ver.data.serviceCode}") {
+                                enterPage(inAppArray)
+                            } else {
+                                val array = ArrayList<String>()
+                                ver.data.test.forEach {
+                                    array.add("${it.name}.${it.code}")
+                                }
+
+                                if (array.contains(fullVersion)) {
                                     enterPage(inAppArray)
                                 } else {
-                                    val array = ArrayList<String>()
-                                    ver.data.test.forEach {
-                                        array.add("${it.name}.${it.code}")
-                                    }
-
-                                    if (array.contains(fullVersion)) {
-                                        enterPage(inAppArray)
-                                    } else {
-                                        MakeSingleDialog(this)
-                                            .makeDialog(
-                                                getString(R.string.not_latest_go_to_store),
-                                                R.color.main_blue_color,
-                                                getString(R.string.download),
-                                                true
-                                            )
-                                            .setOnClickListener { goToPlayStore(this@SplashActivity) }
-                                    }
+                                    MakeSingleDialog(this)
+                                        .makeDialog(
+                                            getString(R.string.not_latest_go_to_store),
+                                            R.color.main_blue_color,
+                                            getString(R.string.download),
+                                            true
+                                        )
+                                        .setOnClickListener { goToPlayStore(this@SplashActivity) }
                                 }
                             }
-
-                            // 통신 실패
-                            is BaseRepository.ApiState.Error -> {
-                                when (ver.errorMessage) {
-                                    ERROR_NETWORK -> {
-                                        if (GetLocation(this).isNetWorkConnected()) {
-                                            makeDialog(getString(R.string.unknown_error))
-                                        } else {
-                                            makeDialog(getString(R.string.error_network_connect))
-                                        }
-                                    }
-
-                                    ERROR_SERVER_CONNECTING -> {
-                                        makeDialog(getString(R.string.error_server_down))
-                                    }
-
-                                    else -> {
-                                        makeDialog(getString(R.string.unknown_error))
-                                    }
-                                }
-                            }
-
-                            // 통신 중
-                            is BaseRepository.ApiState.Loading -> {}
                         }
+
+                        // 통신 실패
+                        is BaseRepository.ApiState.Error -> {
+                            when (ver.errorMessage) {
+                                ERROR_NETWORK -> {
+                                    if (GetLocation(this).isNetWorkConnected()) {
+                                        makeDialog(getString(R.string.unknown_error))
+                                    } else {
+                                        makeDialog(getString(R.string.error_network_connect))
+                                    }
+                                }
+
+                                ERROR_SERVER_CONNECTING -> {
+                                    makeDialog(getString(R.string.error_server_down))
+                                }
+
+                                else -> {
+                                    makeDialog(getString(R.string.unknown_error))
+                                }
+                            }
+                        }
+
+                        // 통신 중
+                        is BaseRepository.ApiState.Loading -> {}
                     }
                 }
             }

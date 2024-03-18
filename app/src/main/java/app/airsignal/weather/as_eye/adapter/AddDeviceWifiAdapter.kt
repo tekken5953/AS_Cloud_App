@@ -31,9 +31,9 @@ class AddDeviceWifiAdapter(
         return ViewHolder(view)
     }
 
-    private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
+    private lateinit var onClickListener: OnAdapterItemSingleClick
 
-    fun setOnItemClickListener(listener: OnAdapterItemClick.OnAdapterItemClick) {
+    fun setOnItemClickListener(listener: OnAdapterItemSingleClick) {
         this.onClickListener = listener
     }
 

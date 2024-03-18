@@ -25,7 +25,7 @@ class EyeCategoryAdapter(
     private var mList = list
     var selectedPosition = 0
 
-    private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
+    private lateinit var onClickListener: OnAdapterItemSingleClick
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
@@ -36,7 +36,7 @@ class EyeCategoryAdapter(
         return ViewHolder(view)
     }
 
-    fun setOnItemClickListener(listener: OnAdapterItemClick.OnAdapterItemClick) {
+    fun setOnItemClickListener(listener: OnAdapterItemSingleClick) {
         this.onClickListener = listener
     }
 

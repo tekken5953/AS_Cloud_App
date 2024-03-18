@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.AddressListAdapter
+import app.airsignal.weather.as_eye.adapter.OnAdapterItemSingleClick
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.db.room.model.GpsEntity
@@ -151,8 +152,8 @@ class SearchDialog(
             }
 
             // 등록 된 주소 클릭 시 등록 된 주소로 데이터 호출
-            currentAdapter.setOnItemClickListener(object : OnAdapterItemClick.OnAdapterItemClick {
-                override fun onItemClick(v: View, position: Int) {
+            currentAdapter.setOnItemClickListener(object : OnAdapterItemSingleClick() {
+                override fun onSingleClick(v: View?, position: Int) {
                     CoroutineScope(Dispatchers.IO).launch {
                         val currentAddr = currentList[position]
                         dbUpdate(currentAddr.kr,currentAddr.en,currentAddr.kr ?: "")
@@ -183,9 +184,7 @@ class SearchDialog(
 
             searchEditListener(listView, searchView, noResult)
 
-            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                KeyboardController.onKeyboardUp(requireContext(), searchView)
-            },500)
+            KeyboardController.onKeyboardUp(requireContext(), searchView)
         }
     }
 

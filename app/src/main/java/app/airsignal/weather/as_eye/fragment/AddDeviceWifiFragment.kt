@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.as_eye.adapter.AddDeviceWifiAdapter
+import app.airsignal.weather.as_eye.adapter.OnAdapterItemSingleClick
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.FragmentAddDeviceWifiBinding
 import app.airsignal.weather.util.OnAdapterItemClick
@@ -51,8 +52,8 @@ class AddDeviceWifiFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        wifiAdapter.setOnItemClickListener(object : OnAdapterItemClick.OnAdapterItemClick{
-            override fun onItemClick(v: View, position: Int) {
+        wifiAdapter.setOnItemClickListener(object : OnAdapterItemSingleClick() {
+            override fun onSingleClick(v: View?, position: Int) {
                 wifiList[position].capability?.let {
                     parentActivity.transactionFragment(AddDeviceWifiPasswordFragment())
                 }

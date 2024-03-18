@@ -34,9 +34,7 @@ class EyeDeviceAdapter(
     RecyclerView.Adapter<EyeDeviceAdapter.ViewHolder>() {
     private var mList = list
 
-    private val toast by lazy { ToastUtils(context) }
-
-    private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
+    private lateinit var onClickListener: OnAdapterItemSingleClick
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
@@ -47,7 +45,7 @@ class EyeDeviceAdapter(
         return ViewHolder(view)
     }
 
-    fun setOnItemClickListener(listener: OnAdapterItemClick.OnAdapterItemClick) {
+    fun setOnItemClickListener(listener: OnAdapterItemSingleClick) {
         this.onClickListener = listener
     }
 

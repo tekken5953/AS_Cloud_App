@@ -61,6 +61,7 @@ import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SetAppInfo.removeSingleKey
 import app.airsignal.weather.db.sp.SetAppInfo.setLandingNotification
 import app.airsignal.weather.db.sp.SetAppInfo.setUserLastAddr
+import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.db.sp.SpDao.CURRENT_GPS_ID
 import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG
 import app.airsignal.weather.firebase.admob.AdViewClass
@@ -245,17 +246,15 @@ class MainActivity
             // 메인 하단 스크롤 유도 화살표 애니메이션 적용
             val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
             binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
+            val eyeIconAnim = AnimationUtils.loadAnimation(this, R.anim.anim_eye_icon_scale)
+            if (!SharedPreferenceManager(this).getBoolean(SpDao.TUTORIAL_SKIP, false))
+                binding.mainTopEye.startAnimation(eyeIconAnim)
 
             // UV 범주 아이템 추가
             addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
             addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
             addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
-            addUvLegendItem(
-                3,
-                "8 - 10",
-                getColor(R.color.uv_very_high),
-                getString(R.string.uv_very_high)
-            )
+            addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), getString(R.string.uv_very_high))
             addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
             // 스크롤 최상단으로 올리기 버튼
@@ -1776,14 +1775,13 @@ class MainActivity
         binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
         binding.mainMinTitle.text = getString(R.string.min)
         binding.mainMaxTitle.text = getString(R.string.max)
-        binding.mainTopEye.text = "AS-EYE"
         binding.mainShareIv.isEnabled = true
 
         setDrawable(binding.mainGpsFix, R.drawable.gps_fix)
         setDrawable(binding.mainMotionSLideImg, R.drawable.drop_down_bottom)
         setDrawable(binding.mainAddAddress, R.drawable.search)
         setDrawable(binding.mainSideMenuIv, R.drawable.ico_hamb_w)
-        binding.mainTopEye.setBackgroundResource(R.drawable.main_eye_bg)
+        setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_bk)
 
         // 원래 상태로 복구하기 위해 제약 조건 변경
         binding.mainMotionLayout.isInteractionEnabled = true
@@ -1835,6 +1833,7 @@ class MainActivity
         binding.mainShareIv.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainSkyText.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainErrorRenewBtn.isClickable = visibility == GONE
+        binding.mainTopEye.alpha = if (visibility == VISIBLE) 1f else 0f
     }
 
     // 현재 지역의 날씨 데이터 뷰모델 생성 및 호출
@@ -1960,8 +1959,7 @@ class MainActivity
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
             binding.mainGpsFix, binding.mainMotionSLideImg,
-            binding.mainShareIv,
-             binding.nestedAirHelp
+            binding.mainShareIv, binding.nestedAirHelp
         )
         val changeBoxViews = listOf(
             binding.mainWarningBox, binding.nestedSubAirFrame,
@@ -2033,9 +2031,11 @@ class MainActivity
         when (bg) {
             R.drawable.main_bg_clear, R.drawable.main_bg_snow -> {
                 changeTextToBlack()
+                setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_bk)
             }
             R.drawable.main_bg_night, R.drawable.main_bg_cloudy -> {
                 changeTextToWhite()
+                setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_w)
             }
         }
 

@@ -55,15 +55,15 @@
                     app:drawableStartCompat="@drawable/location_fill" />
             </ScrollView>
 
-            <TextView
+            <ImageView
                 android:id="@+id/mainTopEye"
-                style="@style/basicMediumTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
                 app:layout_constraintBottom_toBottomOf="@+id/topBarLinear"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/topBarLinear"
-                android:textColor="@color/main_blue_color"
-                android:textSize="16sp" />
+                app:layout_constraintTop_toTopOf="@+id/topBarLinear" />
 
             <RelativeLayout
                 android:id="@+id/topBarLinear"
@@ -76,6 +76,8 @@
                     android:id="@+id/mainSideMenuIv"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="24dp"
                     android:background="?android:attr/selectableItemBackgroundBorderless"

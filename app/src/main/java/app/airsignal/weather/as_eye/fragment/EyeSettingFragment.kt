@@ -15,7 +15,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -26,7 +25,6 @@ import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.as_eye.adapter.EyeMembersAdapter
 import app.airsignal.weather.as_eye.customview.EyeSettingView
 import app.airsignal.weather.as_eye.dao.EyeDataModel
-import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.databinding.EyeSettingFragmentBinding
 import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.room.repository.EyeGroupRepository

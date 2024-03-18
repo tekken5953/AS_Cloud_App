@@ -24,7 +24,7 @@ class AddInGroupDeviceAdapter(
     RecyclerView.Adapter<AddInGroupDeviceAdapter.ViewHolder>() {
     private var mList = list
 
-    private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
+    private lateinit var onClickListener: OnAdapterItemSingleClick
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
@@ -35,7 +35,7 @@ class AddInGroupDeviceAdapter(
         return ViewHolder(view)
     }
 
-    fun setOnItemClickListener(listener: OnAdapterItemClick.OnAdapterItemClick) {
+    fun setOnItemClickListener(listener: OnAdapterItemSingleClick) {
         this.onClickListener = listener
     }
 

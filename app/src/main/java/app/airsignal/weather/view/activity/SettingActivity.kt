@@ -25,6 +25,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.NoticeAdapter
+import app.airsignal.weather.as_eye.adapter.OnAdapterItemSingleClick
 import app.airsignal.weather.dao.IgnoredKeyFile.notiEnable
 import app.airsignal.weather.dao.IgnoredKeyFile.notiSound
 import app.airsignal.weather.dao.IgnoredKeyFile.notiVibrate
@@ -386,8 +387,8 @@ class SettingActivity
                 .setBackPressed(noticeMainView.findViewById(R.id.noticeBack))
                 .show(noticeMainView, true,ShowDialogClass.DialogTransition.END_TO_START)
 
-            noticeAdapter.setOnItemClickListener(object : NoticeAdapter.OnItemClickListener {
-                override fun onItemClick(v: View, position: Int) {
+            noticeAdapter.setOnItemClickListener(object : OnAdapterItemSingleClick() {
+                override fun onSingleClick(v: View?, position: Int) {
                     val item = noticeItem[position]
                     detailDate.text = item.created
                     detailDate.visibility = View.VISIBLE

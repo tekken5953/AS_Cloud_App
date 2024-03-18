@@ -59,6 +59,7 @@ class EyeNotiBuilder(private val context: Context) {
                     "app.airsignal.weather",
                     "app.airsignal.weather.view.activity.SplashActivity"
                 )
+
             intent.addCategory("android.intent.category.APP_MESSAGING")
             intent.addFlags (
                 Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -70,8 +71,7 @@ class EyeNotiBuilder(private val context: Context) {
             val notificationBuilderInstance = buildNotificationBuilder()
             val sort = data["sort"]
             val email = SharedPreferenceManager(context).getString(SpDao.userEmail)
-            val alias = data[email]
-            val content = alias ?: data["device"]
+            val content = data[email] ?: data["device"]
 
 //            alias?.let { pAlias  ->
                 sort?.let { pSort ->
