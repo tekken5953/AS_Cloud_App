@@ -1,7 +1,12 @@
 package app.airsignal.weather.util;
 
 import android.content.Context;
+import android.os.Looper;
 import android.widget.Toast;
+
+import androidx.core.os.HandlerCompat;
+
+import java.util.logging.Handler;
 
 public class ToastUtils {
     private final Context mContext;
@@ -30,11 +35,11 @@ public class ToastUtils {
     /**
      * 토스트메시지가 보여지는 시간을 동적으로 설정한다
      **/
-    public void showMessage(final String message, final int duration) {
+    public void showMessage(final String message, final long duration) {
         Runnable r = () -> {
             cancelToast();
-            toast = Toast.makeText(mContext, message, duration);
-            toast.show();
+            toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
+            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed(() -> toast.show(), duration);
         };
 
         r.run();

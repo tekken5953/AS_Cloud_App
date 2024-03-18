@@ -997,8 +997,7 @@ class MainActivity
     override fun onBackPressed() {
         // 뒤로가기 한번 클릭 시 토스트
         if (!isBackPressed) {
-            ToastUtils(this)
-                .showMessage(getString(R.string.back_press), 2)
+            ToastUtils(this).showMessage(getString(R.string.back_press), 2)
             isBackPressed = true
         }
         // 2초안에 한번 더 클릭 시 종료
