@@ -429,7 +429,8 @@
             android:layout_marginStart="17dp"
             android:textSize="16sp"
             android:alpha="0"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
 
         <Constraint
@@ -438,7 +439,8 @@
             android:layout_marginStart="17dp"
             android:textSize="18sp"
             android:alpha="0"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
 
         <Constraint
@@ -448,7 +450,8 @@
             android:textSize="14sp"
             android:text="@string/live_temp"
             android:alpha="0"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
 
         <Constraint
@@ -457,7 +460,8 @@
             android:layout_marginStart="17dp"
             android:textSize="18sp"
             android:alpha="0"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
 
         <Constraint
@@ -467,7 +471,8 @@
             android:textSize="14sp"
             android:text="@string/live_temp"
             android:alpha="0"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
 
         <Constraint
@@ -476,7 +481,8 @@
             android:layout_marginStart="17dp"
             android:textSize="18sp"
             android:alpha="0"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
 
         <Constraint

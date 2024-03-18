@@ -476,7 +476,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         val indicatorContainer = view.findViewById<LinearLayout>(R.id.eyeTutorialIndicator)
         val contents = view.findViewById<TextView>(R.id.eyeTutorialContents)
 
-        contents.text = "기기 추가"
+        contents.text = getGuideMsg(0)
 
         cancel.bringToFront()
 
@@ -518,14 +518,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                 if (position == viewPagerList.lastIndex)
                     cancel.text = getString(R.string.close) else cancel.text = "SKIP"
 
-                contents.text = when(position) {
-                    0 -> {"기기 추가"}
-                    1 -> {"그룹 관리"}
-                    2 -> {"알림 받기"}
-                    3 -> {"위험 데이터 확인"}
-                    4 -> {"기타 서비스"}
-                    else -> {""}
-                }
+                contents.text = getGuideMsg(position)
             }
         })
     }
@@ -542,6 +535,17 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         if (viewPagerList.isNotEmpty() && viewPagerList.size > 1) {
             indicatorContainer.removeAllViews()
             indicatorView.createIndicators(indicatorContainer,vp, ColorStateList.valueOf(getColor(R.color.main_black)))
+        }
+    }
+
+    private fun getGuideMsg(index: Int): String {
+        return when(index) {
+            0 -> {"+ 버튼을 눌러 새로운 기기를 쉽게 등록할 수 있어요"}
+            1 -> {"내가 보고싶은 기기의 그룹을 만들 수 있어요"}
+            2 -> {"소음과 진동을 알림받고 싶으시다면\n설정 페이지에서 알림을 허용해주세요"}
+            3 -> {"현재 위험 단계의 데이터가 있는 기기를 알려드려요"}
+            4 -> {"그 밖의 AS-Eye의 다양한 데이터와\n통계 서비스를 경험해보세요"}
+            else -> ""
         }
     }
 }
