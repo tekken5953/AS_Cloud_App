@@ -95,6 +95,7 @@ public interface MyApiImpl {
     );
 
     @GET("airsignal/average/{sn}")
+    // Eye 평균 값 불러오기
     Call<List<ApiModel.Average>> getAverage(
             @NotNull @Path("sn") String sn,
             @Nullable @Query("flag") String flag,
@@ -103,6 +104,7 @@ public interface MyApiImpl {
     );
 
     @GET("airsignal/average/{sn}")
+    // Eye 소음 평균 불러오기
     Call<List<ApiModel.NoiseAvg>> getNoiseAvg(
             @NotNull @Path("sn") String sn,
             @Nullable @Query("flag") String flag,
