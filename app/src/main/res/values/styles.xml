@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="settingSingleTextView">
         <item name="android:layout_height">55dp</item>
         <item name="android:letterSpacing">-0.04</item>
@@ -53,7 +54,7 @@
     <style name="CustomCheckBoxLanding">
         <item name="android:button">@drawable/landing_check_box</item>
     </style>
-    
+
     <style name="Theme.AirSignal_App.RemoveSplash" parent="Theme.AirSignal_App">
         <item name="android:windowIsTranslucent">true</item>
     </style>
@@ -74,13 +75,41 @@
     <style name="AlertDialog">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowTitleStyle">@null</item>
-        <item name="android:windowFrame">@null</item>
         <item name="android:statusBarColor">@color/theme_view_color</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowIsFloating">false</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:background">@color/theme_view_color</item>
+    </style>
+
+    <style name="FullDialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:statusBarColor">@color/ae_bg_color</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:background">@color/ae_bg_color</item>
+    </style>
+
+    <style name="AlertDialogEndToStartAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_end_to_start</item>
+        <item name="android:windowExitAnimation">@anim/slide_start_to_end</item>
+    </style>
+
+    <style name="AlertDialogStartToEndAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_start_to_end</item>
+        <item name="android:windowExitAnimation">@anim/slide_end_to_start</item>
+    </style>
+
+    <style name="AlertDialogBottomToTopAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_bottom_to_top</item>
+        <item name="android:windowExitAnimation">@anim/slide_top_to_bottom</item>
+    </style>
+
+    <style name="AlertDialogTopToBottomAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_top_to_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_bottom_to_top</item>
     </style>
 
     <style name="InAppDialogStyle">
@@ -125,5 +154,15 @@
         <item name="fontFamily">@font/spoqa_hansansneo_medium</item>
         <item name="android:textSize">16sp</item>
         <item name="android:layout_weight">0.5</item>
+    </style>
+
+    <style name="eyeRadioButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/ae_radio_bg</item>
+        <item name="fontFamily">@font/spoqa_hansansneo_medium</item>
+        <item name="autoSizeMaxTextSize">14sp</item>
+        <item name="android:layout_marginStart">6dp</item>
+        <item name="android:textColor">@drawable/checked_radio_text_color</item>
     </style>
 </resources>

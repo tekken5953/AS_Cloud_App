@@ -1,18 +1,19 @@
 package app.airsignal.weather.repository
 
+import android.accounts.NetworkErrorException
 import androidx.lifecycle.MutableLiveData
+import app.airsignal.weather.network.ErrorCode
 import app.airsignal.weather.network.ErrorCode.ERROR_API_PROTOCOL
 import app.airsignal.weather.network.ErrorCode.ERROR_NETWORK
 import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.network.ErrorCode.ERROR_UNKNOWN
 import app.airsignal.weather.network.retrofit.ApiModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.IOException
+import java.net.SocketTimeoutException
 
 /**
  * @author : Lee Jae Young
@@ -32,10 +33,14 @@ class GetAppVersionRepo: BaseRepository() {
                     try {
                         val responseBody = response.body()
                         responseBody?.let {
-                            if (response.isSuccessful)
-                                _getAppVersionResult.postValue(ApiState.Success(responseBody))
-                            else
-                                _getAppVersionResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
+                            if (response.isSuccessful) {
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    withContext(Dispatchers.Default) {
+                                        _getAppVersionResult.postValue(ApiState.Success(responseBody))
+                                    }
+                                }
+                            }
+                            else _getAppVersionResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
                         } ?: run {
                             _getAppVersionResult.postValue(ApiState.Error("RESPONSE_IS_NULL"))
                         }
@@ -48,7 +53,17 @@ class GetAppVersionRepo: BaseRepository() {
                     try {
                         _getAppVersionResult.postValue(ApiState.Error(ERROR_NETWORK))
                     } catch(e: Exception) {
-                        _getAppVersionResult.postValue(ApiState.Error(ERROR_UNKNOWN))
+                        when (e) {
+                            is SocketTimeoutException ->
+                                _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_TIMEOUT))
+                            is NetworkErrorException ->
+                                _getAppVersionResult.postValue(ApiState.Error(ERROR_NETWORK))
+                            is NullPointerException ->
+                                _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_NULL_POINT))
+                            else -> {
+                                _getAppVersionResult.postValue(ApiState.Error(ERROR_UNKNOWN))
+                            }
+                        }
                     }
                 }
             })

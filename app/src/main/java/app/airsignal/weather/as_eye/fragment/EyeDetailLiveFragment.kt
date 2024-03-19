@@ -2,20 +2,17 @@ package app.airsignal.weather.as_eye.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.os.HandlerCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.EyeDetailLiveFragmentBinding
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
+import java.time.LocalDateTime
 import kotlin.math.roundToInt
 
 class EyeDetailLiveFragment : Fragment() {
@@ -48,7 +45,7 @@ class EyeDetailLiveFragment : Fragment() {
     private fun refreshData() {
         try {
             entireData.let {
-                binding.aeLiveRefreshTime.text = DataTypeParser.currentDateTimeString("hh시 mm분 ss초")
+                binding.aeLiveRefreshTime.text = DataTypeParser.dateTimeString("yy.MM.dd hh:mm:ss", LocalDateTime.parse(entireData.date))
                 binding.aeLiveTemp.fetchData(entireData.tempValue.toString())
                 binding.aeLiveHumid.fetchData(entireData.humidValue.toString())
                 binding.aeLiveLight.fetchData(entireData.lightValue.toString())
@@ -72,7 +69,6 @@ class EyeDetailLiveFragment : Fragment() {
     }
 
     fun onDataTransfer(data: EyeDataModel.Measured?) {
-        TimberUtil().d("eyetest","live data received : $data")
         data?.let {
             entireData = it
             if (this@EyeDetailLiveFragment.isVisible) { refreshData() }

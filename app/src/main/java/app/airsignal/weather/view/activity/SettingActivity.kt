@@ -23,12 +23,9 @@ import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
-import app.airsignal.weather.network.retrofit.ApiModel
-import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.viewmodel.GetAppVersionViewModel
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.NoticeAdapter
-import app.airsignal.weather.as_eye.activity.EyeListActivity
+import app.airsignal.weather.as_eye.adapter.OnAdapterItemSingleClick
 import app.airsignal.weather.dao.IgnoredKeyFile.notiEnable
 import app.airsignal.weather.dao.IgnoredKeyFile.notiSound
 import app.airsignal.weather.dao.IgnoredKeyFile.notiVibrate
@@ -42,20 +39,6 @@ import app.airsignal.weather.dao.StaticDataObject.LANG_SYS
 import app.airsignal.weather.dao.StaticDataObject.THEME_DARK
 import app.airsignal.weather.dao.StaticDataObject.THEME_LIGHT
 import app.airsignal.weather.databinding.ActivitySettingBinding
-import app.airsignal.weather.db.SharedPreferenceManager
-import app.airsignal.weather.login.GoogleLogin
-import app.airsignal.weather.login.KakaoLogin
-import app.airsignal.weather.login.NaverLogin
-import app.airsignal.weather.network.retrofit.HttpClient
-import app.airsignal.weather.util.*
-import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
-import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
-import app.airsignal.weather.view.custom_view.CustomerServiceView
-import app.airsignal.weather.view.dialog.WebViewSetting
-import app.airsignal.weather.view.perm.BackLocCheckDialog
-import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.airsignal.weather.view.custom_view.ShowDialogClass
-import app.airsignal.weather.view.custom_view.SnackBarUtils
 import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
@@ -78,13 +61,25 @@ import app.airsignal.weather.db.sp.SetSystemInfo
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_DEFAULT
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
-import app.airsignal.weather.view.custom_view.MakeDoubleDialog
+import app.airsignal.weather.login.GoogleLogin
+import app.airsignal.weather.login.KakaoLogin
+import app.airsignal.weather.login.NaverLogin
+import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.network.retrofit.HttpClient
+import app.airsignal.weather.repository.BaseRepository
+import app.airsignal.weather.util.*
+import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
+import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
+import app.airsignal.weather.view.custom_view.CustomerServiceView
+import app.airsignal.weather.view.custom_view.ShowDialogClass
+import app.airsignal.weather.view.custom_view.SnackBarUtils
+import app.airsignal.weather.view.dialog.WebViewSetting
+import app.airsignal.weather.view.perm.BackLocCheckDialog
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.airsignal.weather.viewmodel.GetAppVersionViewModel
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -155,11 +150,11 @@ class SettingActivity
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
                             LOGIN_KAKAO -> {
 //                                KakaoLogin(this@SettingActivity).logout(email)
-                                KakaoLogin(this@SettingActivity).logout(binding.settingPb)
+                                KakaoLogin(this@SettingActivity).disconnectFromKakao(binding.settingPb)
                             }
                             LOGIN_NAVER -> {
 //                                NaverLogin(this@SettingActivity).logout()
-                                NaverLogin(this@SettingActivity).logout()
+                                NaverLogin(this@SettingActivity).disconnectFromNaver(binding.settingPb)
                             }
                             LOGIN_GOOGLE -> {
                                 GoogleLogin(this@SettingActivity).logout(binding.settingPb)
@@ -178,7 +173,7 @@ class SettingActivity
 
                 builder.show()
             } else if (binding.settingLogOut.text == getString(R.string.login_title)) {
-                EnterPageUtil(this).toLogin()
+                EnterPageUtil(this).toLogin("login")
             }
         }
 
@@ -193,9 +188,9 @@ class SettingActivity
             val radioGroup: RadioGroup = themeView.findViewById(R.id.changeThemeRadioGroup)
             val cancel: ImageView = themeView.findViewById(R.id.changeThemeBack)
 
-            ShowDialogClass(this)
+            ShowDialogClass(this, false)
                 .setBackPressed(themeView.findViewById(R.id.changeThemeBack))
-                .show(themeView, true)
+                .show(themeView, true, ShowDialogClass.DialogTransition.END_TO_START)
 
             // 현재 저장된 테마에 따라서 라디오버튼 체크
             when (getUserTheme(this)) {
@@ -265,9 +260,9 @@ class SettingActivity
             val radioGroup: RadioGroup = langView.findViewById(R.id.changeLangRadioGroup)
             val cancelBtn: ImageView = langView.findViewById(R.id.changeLangBack)
 
-            ShowDialogClass(this)
+            ShowDialogClass(this, false)
                 .setBackPressed(cancelBtn)
-                .show(langView, true)
+                .show(langView, true,ShowDialogClass.DialogTransition.END_TO_START)
 
             // 기존에 저장 된 언어로 라디오 버튼 체크
             when (getUserLocation(this)) {
@@ -388,12 +383,12 @@ class SettingActivity
                     })
             }
 
-            ShowDialogClass(this)
+            ShowDialogClass(this, false)
                 .setBackPressed(noticeMainView.findViewById(R.id.noticeBack))
-                .show(noticeMainView, true)
+                .show(noticeMainView, true,ShowDialogClass.DialogTransition.END_TO_START)
 
-            noticeAdapter.setOnItemClickListener(object : NoticeAdapter.OnItemClickListener {
-                override fun onItemClick(v: View, position: Int) {
+            noticeAdapter.setOnItemClickListener(object : OnAdapterItemSingleClick() {
+                override fun onSingleClick(v: View?, position: Int) {
                     val item = noticeItem[position]
                     detailDate.text = item.created
                     detailDate.visibility = View.VISIBLE
@@ -413,9 +408,9 @@ class SettingActivity
                             }
                         }
                     }
-                    ShowDialogClass(this@SettingActivity)
+                    ShowDialogClass(this@SettingActivity, false)
                         .setBackPressed(detailView.findViewById(R.id.detailBack))
-                        .show(detailView, true)
+                        .show(detailView, true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
                     noticeAdapter.notifyItemChanged(0)
                 }
             })
@@ -432,9 +427,11 @@ class SettingActivity
             val back = scaleView.findViewById<ImageView>(R.id.changeScaleBack)
             val rg = scaleView.findViewById<RadioGroup>(R.id.changeScaleRadioGroup)
 
-            val fontDialog = ShowDialogClass(this)
+            val fontDialog = ShowDialogClass(this, false)
 
-            fontDialog.setBackPressed(back).show(scaleView, true)
+            fontDialog
+                .setBackPressed(back)
+                .show(scaleView, true,ShowDialogClass.DialogTransition.END_TO_START)
 
             // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크
             when (getUserFontScale(this)) {
@@ -615,28 +612,9 @@ class SettingActivity
                 showSnackBar(notificationView, isChecked)
             }
 
-            ShowDialogClass(this)
+            ShowDialogClass(this, false)
                 .setBackPressed(notificationView.findViewById(R.id.notificationBack))
-                .show(notificationView, true)
-        }
-
-        binding.settingEye.setOnClickListener {
-            if (SharedPreferenceManager(this).getString("user_email") != "") {
-                val intent = Intent(this, EyeListActivity::class.java)
-                startActivity(intent)
-            } else {
-                val builder = MakeDoubleDialog(this)
-                val dialog = builder.make("로그인이 필요한 서비스입니다.",
-                    "로그인","취소",R.color.main_blue_color)
-                dialog.first.setOnClickListener {
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                }
-                dialog.second.setOnClickListener {
-                    builder.dismiss()
-                }
-            }
+                .show(notificationView, true,ShowDialogClass.DialogTransition.END_TO_START)
         }
     }
 
@@ -818,17 +796,17 @@ class SettingActivity
             customerEmail.fetchData(R.drawable.ico_cs_mail)
             customerHomePage.fetchData(R.drawable.ico_cs_web)
 
-            ShowDialogClass(this@SettingActivity)
+            ShowDialogClass(this@SettingActivity, false)
                 .setBackPressed(customerView.findViewById(R.id.customerBack))
-                .show(customerView, true)
+                .show(customerView, true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
         }
 
         appInfoPB.visibility = View.GONE
         appInfoVersionValue.visibility = View.VISIBLE
 
-        ShowDialogClass(this)
+        ShowDialogClass(this, false)
             .setBackPressed(viewAppInfo.findViewById(R.id.appInfoBack))
-            .show(viewAppInfo, true)
+            .show(viewAppInfo, true,ShowDialogClass.DialogTransition.END_TO_START)
     }
 
     // 유저 이메일에 따른 로그인 여부 적용
@@ -935,10 +913,14 @@ class SettingActivity
     ) {
         if (getUserLocation(this) != lang) { // 현재 설정된 언어인지 필터링
             cancel.isEnabled = false
-            setUserLocation(this, lang)  // 다른 언어라면 db 값 변경
-            radioGroup.check(radioButton.id) // 라디오 버튼 체크
-            Thread.sleep(100)
-            saveConfigChangeRestart() // 언어 설정 변경 후 어플리케이션 재시작
+            CoroutineScope(Dispatchers.IO).launch {
+                setUserLocation(this@SettingActivity, lang)  // 다른 언어라면 db 값 변경
+                withContext(Dispatchers.Main) {
+                    radioGroup.check(radioButton.id) // 라디오 버튼 체크
+                    delay(100)
+                    saveConfigChangeRestart() // 언어 설정 변경 후 어플리케이션 재시작
+                }
+            }
         }
     }
 
@@ -955,18 +937,19 @@ class SettingActivity
             AppCompatDelegate.setDefaultNightMode(mode)
             cancel.isEnabled = false
             // DB에 바뀐 정보 저장
-            setUserTheme(this@SettingActivity, dbData)
-            // 라디오 버튼 체크
-            radioGroup.check(radioButton.id)
-            delay(300)
-            val intent = Intent(this@SettingActivity, SplashActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(0, 0)
-            finish()
+            CoroutineScope(Dispatchers.IO).launch {
+                setUserTheme(this@SettingActivity, dbData)
+
+                withContext(Dispatchers.Main) {
+                    // 라디오 버튼 체크
+                    radioGroup.check(radioButton.id)
+                    cancel.isEnabled = true
+                }
+            }
         }
     }
 
-    // 언어 설정 변경 후 어플리케이션 재시작
+    // 설정 변경 후 어플리케이션 재시작
     @SuppressLint("InflateParams")
     private fun saveConfigChangeRestart() {
         val builder = Dialog(this)

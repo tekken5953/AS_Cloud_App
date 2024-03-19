@@ -3,11 +3,18 @@ package app.airsignal.weather.network.retrofit
 import android.annotation.SuppressLint
 import app.airsignal.weather.network.NetworkIgnored.hostingServerURL
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializer
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
+
 
 @SuppressLint("SetTextI18n")
 object HttpClient {
@@ -47,14 +54,14 @@ object HttpClient {
         }
 
         /** Gson Converter 생성**/
-        val gson = GsonBuilder().setLenient().setPrettyPrinting().create()
+        val gson = GsonBuilder().setLenient().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").setPrettyPrinting().create()
 
         /** 서버 URL 주소에 연결, GSON Convert 활성화**/
         val retrofit: Retrofit by lazy {
             Retrofit.Builder()
                 .baseUrl(hostingServerURL)
 //                .baseUrl(localServerURL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addConverterFactory(gsonConverterFactory() ?: GsonConverterFactory.create(gson))
                 .client(clientBuilder.build())
                 .build()
         }
@@ -62,5 +69,34 @@ object HttpClient {
         if (instance == null) instance = HttpClient // API 인터페이스 형태로 레트로핏 클라이언트 생성
 
         return retrofit.create(MyApiImpl::class.java)
+    }
+
+    private fun gsonConverterFactory(): GsonConverterFactory? {
+        val gson = GsonBuilder()
+            .setLenient()
+            .registerTypeAdapter(LocalDateTime::class.java,
+                JsonDeserializer { json, _, _ ->
+                    LocalDateTime.parse(
+                        json.asString,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                    )
+                })
+            .registerTypeAdapter(LocalDate::class.java,
+                JsonDeserializer { json, _, _ ->
+                    LocalDate.parse(
+                        json.asString,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                    )
+                })
+            .registerTypeAdapter(LocalTime::class.java,
+                JsonDeserializer { json, _, _ ->
+                    LocalTime.parse(
+                        json.asString,
+                        DateTimeFormatter.ofPattern("HH:mm:ss")
+                    )
+                })
+            .create()
+
+        return GsonConverterFactory.create(gson)
     }
 }

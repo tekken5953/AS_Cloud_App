@@ -22,12 +22,10 @@ import android.view.View.*
 import android.view.animation.*
 import android.webkit.WebView
 import android.widget.*
-import android.widget.LinearLayout.LayoutParams
 import android.widget.LinearLayout.VISIBLE
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
-import androidx.core.view.setMargins
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +34,7 @@ import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
 import app.airsignal.weather.address.AddressFromRegex
+import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.IgnoredKeyFile.landingPageUrl
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
@@ -44,6 +43,7 @@ import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.databinding.ActivityMainBinding
+import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetAppInfo.getEntireSun
@@ -61,6 +61,7 @@ import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SetAppInfo.removeSingleKey
 import app.airsignal.weather.db.sp.SetAppInfo.setLandingNotification
 import app.airsignal.weather.db.sp.SetAppInfo.setUserLastAddr
+import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.db.sp.SpDao.CURRENT_GPS_ID
 import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG
 import app.airsignal.weather.firebase.admob.AdViewClass
@@ -93,7 +94,6 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
 import app.airsignal.weather.util.`object`.DataTypeParser.getHourCountToTomorrow
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgSmall
 import app.airsignal.weather.util.`object`.DataTypeParser.isRainyDay
-import app.airsignal.weather.util.`object`.DataTypeParser.koreaSky
 import app.airsignal.weather.util.`object`.DataTypeParser.parseDayOfWeekToKorean
 import app.airsignal.weather.util.`object`.DataTypeParser.parseLocalDateTimeToLong
 import app.airsignal.weather.util.`object`.DataTypeParser.setUvBackgroundColor
@@ -118,6 +118,7 @@ import java.io.IOException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.collections.ArrayList
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
@@ -137,6 +138,8 @@ class MainActivity
         const val NO2_INDEX = 4
         const val O3_INDEX = 5
     }
+
+    private val fcm by lazy {SubFCM()}
 
     private var isBackPressed = false
     private var isProgressed = false
@@ -186,13 +189,14 @@ class MainActivity
 
     private val adViewClass by lazy { AdViewClass(this) }
 
-    private lateinit var indicators: Array<ImageView>
     private var isInAppMsgShow = false
+
+    private val fetch by lazy {getDataViewModel.fetchData()}
 
     override fun onResume() {
         super.onResume()
         addSideMenu()
-        binding.nestedAdView.resume()
+//        binding.nestedAdView.resume()
         applyRefreshScroll()
         getDataSingleTime(isCurrent = false)
     }
@@ -200,12 +204,18 @@ class MainActivity
     override fun onDestroy() {
         super.onDestroy()
         isWarned = false
-        binding.nestedAdView.destroy()
+//        binding.nestedAdView.destroy()
+    }
+
+    private fun destroyObserver() {
+        getDataViewModel.cancelJob()
+        fetch.removeObservers(this)
+        TimberUtil().w("lifecycle_test", "메인 옵저버 제거")
     }
 
     override fun onPause() {
         super.onPause()
-        binding.nestedAdView.pause()
+//        binding.nestedAdView.pause()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -215,8 +225,8 @@ class MainActivity
             initBinding()
             if (savedInstanceState == null) {
                 showProgressBar()
-                SubFCM().subTopic("patch")
-                SubFCM().subTopic("daily")
+                fcm.subTopic(SubFCM.Sort.FCM_PATCH.key)
+                fcm.subTopic(SubFCM.Sort.FCM_DAILY.key)
                 changeBackgroundResource(null)
                 window.statusBarColor = getColor(R.color.theme_view_color)
                 window.navigationBarColor = getColor(R.color.theme_view_color)
@@ -227,7 +237,7 @@ class MainActivity
                 }
             }
 
-            adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
+//            adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
 
             initializing()
 
@@ -236,17 +246,15 @@ class MainActivity
             // 메인 하단 스크롤 유도 화살표 애니메이션 적용
             val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
             binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
+            val eyeIconAnim = AnimationUtils.loadAnimation(this, R.anim.anim_eye_icon_scale)
+            if (!SharedPreferenceManager(this).getBoolean(SpDao.TUTORIAL_SKIP, false))
+                binding.mainTopEye.startAnimation(eyeIconAnim)
 
             // UV 범주 아이템 추가
             addUvLegendItem(0, "0 - 2", getColor(R.color.uv_low), getString(R.string.uv_low))
             addUvLegendItem(1, "3 - 5", getColor(R.color.uv_normal), getString(R.string.uv_normal))
             addUvLegendItem(2, "6 - 7", getColor(R.color.uv_high), getString(R.string.uv_high))
-            addUvLegendItem(
-                3,
-                "8 - 10",
-                getColor(R.color.uv_very_high),
-                getString(R.string.uv_very_high)
-            )
+            addUvLegendItem(3, "8 - 10", getColor(R.color.uv_very_high), getString(R.string.uv_very_high))
             addUvLegendItem(4, "11 - ", getColor(R.color.uv_caution), getString(R.string.uv_caution))
 
             // 스크롤 최상단으로 올리기 버튼
@@ -327,6 +335,25 @@ class MainActivity
                 }
             })
 
+            binding.mainTopEye.setOnClickListener(object: OnSingleClickListener() {
+                override fun onSingleClick(v: View?) {
+                    if (SharedPreferenceManager(this@MainActivity).getString("user_email") != "") {
+                        val intent = Intent(this@MainActivity, EyeListActivity::class.java)
+                        startActivity(intent)
+                    } else {
+                        val builder = MakeDoubleDialog(this@MainActivity)
+                        val dialog = builder.make("로그인이 필요한 서비스입니다.",
+                            "로그인","취소",R.color.main_blue_color)
+                        dialog.first.setOnClickListener {
+                            builder.dismiss()
+                            EnterPageUtil(this@MainActivity).toLogin("main")
+                        }
+                        dialog.second.setOnClickListener {
+                            builder.dismiss()
+                        }
+                    }
+                }
+            })
 
             binding.mainSwipeLayout.setColorSchemeColors(
                 Color.parseColor("#22D3EE"),
@@ -359,8 +386,7 @@ class MainActivity
             }
             val oneHour = (1000 * 60 * 60).toLong()
             val sevenDays = (1000 * 60 * 60 * 24 * 7).toLong()
-//            val oneHour = (1000).toLong()
-//            val sevenDays = (1000 * 10).toLong()
+
             if (it.isNotEmpty()) {
                 if (!GetAppInfo.getInAppMsgEnabled(this@MainActivity)) {
                     if (isTimeToDialog(oneHour))  runOnUiThread { inAppMsgDialog() }
@@ -398,16 +424,6 @@ class MainActivity
             isClickable = true
             orientation = ViewPager2.ORIENTATION_HORIZONTAL
             offscreenPageLimit = 3
-
-            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    if (inAppList.isNotEmpty() && inAppList.size > 1) {
-                        updateIndicators(position)
-                        requestLayout()
-                    }
-                }
-            })
         }
 
         inAppCancel.setOnClickListener {
@@ -430,36 +446,10 @@ class MainActivity
 
         if (inAppList.isNotEmpty() && inAppList.size > 1) {
             inAppIndicator.removeAllViews()
-            createIndicators(inAppVp,inAppIndicator)
+            IndicatorView(this, inAppList.size).createIndicators(inAppIndicator,inAppVp,ColorStateList.valueOf(getColor(R.color.white)))
         }
 
         inAppAlert.show()
-    }
-
-    // 뷰페이저 인디케이터 업데이트
-    private fun updateIndicators(position: Int) {
-        for (i in indicators.indices) {
-            indicators[i].setImageResource(
-                if (i == position) R.drawable.indicator_fill // 선택된 원 이미지
-                else R.drawable.indicator_empty // 선택되지 않은 원 이미지
-            )
-        }
-    }
-    // 뷰페이저 인디케이터 생성
-    private fun createIndicators(viewpager: ViewPager2, indicator: LinearLayout) {
-        indicators = Array(inAppList.size) {
-            val indicatorView = ImageView(this)
-            val params = LayoutParams(
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT
-            )
-            params.setMargins(10, 0, 10, 0)
-            indicatorView.layoutParams = params
-            indicatorView.setImageResource(R.drawable.indicator_empty) // 선택되지 않은 원 이미지
-            indicator.addView(indicatorView)
-            indicatorView
-        }
-        updateIndicators(viewpager.currentItem)
     }
 
     // 공유하기 언어별 대응
@@ -549,7 +539,7 @@ class MainActivity
                         CompletableFuture.supplyAsync {
                             sideMenuBuilder.dismiss()
                         }.thenAccept {
-                            EnterPageUtil(this@MainActivity).toLogin()
+                            EnterPageUtil(this@MainActivity).toLogin("main")
                         }
                     }
                 }
@@ -562,112 +552,8 @@ class MainActivity
             eye.setOnClickListener(object : OnSingleClickListener() {
                 @SuppressLint("SetJavaScriptEnabled")
                 override fun onSingleClick(v: View?) {
-                    sideMenuBuilder.dismiss()
-                    val landingView = LayoutInflater
-                        .from(this@MainActivity)
-                        .inflate(R.layout.dialog_eye_landing, null)
-                    val landingBack = landingView.findViewById<ImageView>(R.id.eyeLandingBack)
-                    val landingBtn =
-                        landingView.findViewById<RelativeLayout>(R.id.eyeLandingRelative)
-                    val landingText = landingView.findViewById<TextView>(R.id.eyeLandingBtnTitle)
-                    val landingCheck: CheckBox = landingView.findViewById(R.id.eyeLandingBtnCheck)
-                    val landingWebView: WebView = landingView.findViewById(R.id.eyeLandingWebView)
-                    val landingFab: ImageView = landingView.findViewById(R.id.eyeLandingFab)
-                    val notiPerm = RequestPermissionsUtil(this@MainActivity)
-                    val dialog = ShowDialogClass(this@MainActivity).setBackPressed(landingBack)
-
-                    val requestOkText = "출시 알림받기 완료 \uD83D\uDE00"
-                    val requestNoText = "제품 출시 알림받기\n광고 및 이벤트성 알림 발송에 동의합니다"
-
-                    // 웹뷰 세팅
-                    WebViewSetting().apply(landingWebView)
-
-                    landingWebView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-                        landingFab.visibility = if (scrollY == 0) GONE else View.VISIBLE
-                    }
-
-                    landingFab.setOnClickListener {
-                        landingWebView.pageUp(true)
-                    }
-
-                    landingWebView.loadUrl(landingPageUrl)
-
-                    landingBtn.isActivated = landingCheck.isChecked
-
-                    landingCheck.visibility = if (getLandingEnable()) GONE else VISIBLE
-
-                    landingCheck.setOnCheckedChangeListener { _, isChecked ->
-                        landingBtn.isActivated = isChecked
-                    }
-
-                    val span = SpannableStringBuilder(requestNoText)
-                    val tx = requestNoText.split('\n')[1]
-                    span.setSpan(
-                        RelativeSizeSpan(0.7f),
-                        requestNoText.indexOf(tx),
-                        requestNoText.lastIndex + 1,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                    span.setSpan(
-                        ForegroundColorSpan(Color.parseColor("#90FFFFFF")),
-                        requestNoText.indexOf(tx),
-                        requestNoText.lastIndex + 1,
-                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-
-                    landingBack.bringToFront()
-                    if (!getLandingEnable()) landingText.text = span else landingText.text = requestOkText
-
-                    landingBtn.setOnClickListener {
-                        if (!getLandingEnable()) {
-                            if (!notiPerm.isNotificationPermitted()) {
-                                ToastUtils(this@MainActivity).showMessage("알림을 허용해주세요")
-                                notiPerm.requestNotification()
-                            } else {
-                                if (landingCheck.isChecked) {
-                                    val subModal = MakeSingleDialog(this@MainActivity)
-                                    subModal.makeDialog(
-                                        "출시가 완료되면 알림 메시지를 보낼게요 ${String(Character.toChars(0x1F514))}",
-                                        R.color.main_blue_color, "확인", false
-                                    )
-                                    subModal.apply.setOnClickListener {
-                                        CoroutineScope(Dispatchers.IO).launch {
-                                            setLandingNotification(this@MainActivity,true)
-                                        }
-                                        landingBtn.isActivated = false
-                                        landingText.text = requestOkText
-                                        landingCheck.visibility = GONE
-                                        subModal.dismiss()
-                                    }
-                                } else {
-                                    ToastUtils(this@MainActivity).showMessage("알림 동의를 체크해주세요!")
-                                }
-                            }
-                        } else {
-                            val cancelModal = MakeDoubleDialog(this@MainActivity)
-                            val make = cancelModal.make("알림받기를 취소하시겠습니까?","네",
-                                "아니오",R.color.red)
-                            make.first.setOnClickListener {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    setLandingNotification(this@MainActivity,false)
-
-                                    withContext(Dispatchers.Main) {
-                                        SnackBarUtils(landingView,"성공적으로 취소되었습니다",
-                                            getR(R.drawable.alert_off)!!).show()
-                                        landingBtn.isActivated = false
-                                        landingText.text = span
-                                        landingCheck.isChecked = false
-                                        landingCheck.visibility = VISIBLE
-                                        cancelModal.dismiss()
-                                    }
-                                }
-                            }
-                            make.second.setOnClickListener {
-                                cancelModal.dismiss()
-                            }
-                        }
-                    }
-                    dialog.show(landingView, true)
+                    val intent = Intent(this@MainActivity, EyeListActivity::class.java)
+                    startActivity(intent)
                 }
             })
             setting.setOnClickListener(object : OnSingleClickListener() {
@@ -683,6 +569,115 @@ class MainActivity
         } catch (e: NullPointerException) {
             e.printStackTrace()
         }
+    }
+
+    private fun startLanding() {
+        sideMenuBuilder.dismiss()
+        val landingView = LayoutInflater
+            .from(this@MainActivity)
+            .inflate(R.layout.dialog_eye_landing, null)
+        val landingBack = landingView.findViewById<ImageView>(R.id.eyeLandingBack)
+        val landingBtn =
+            landingView.findViewById<RelativeLayout>(R.id.eyeLandingRelative)
+        val landingText = landingView.findViewById<TextView>(R.id.eyeLandingBtnTitle)
+        val landingCheck: CheckBox = landingView.findViewById(R.id.eyeLandingBtnCheck)
+        val landingWebView: WebView = landingView.findViewById(R.id.eyeLandingWebView)
+        val landingFab: ImageView = landingView.findViewById(R.id.eyeLandingFab)
+        val notiPerm = RequestPermissionsUtil(this@MainActivity)
+        val dialog = ShowDialogClass(this@MainActivity, false).setBackPressed(landingBack)
+
+        val requestOkText = "출시 알림받기 완료 \uD83D\uDE00"
+        val requestNoText = "제품 출시 알림받기\n광고 및 이벤트성 알림 발송에 동의합니다"
+
+        // 웹뷰 세팅
+        WebViewSetting().apply(landingWebView)
+
+        landingWebView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+            landingFab.visibility = if (scrollY == 0) GONE else View.VISIBLE
+        }
+
+        landingFab.setOnClickListener {
+            landingWebView.pageUp(true)
+        }
+
+        landingWebView.loadUrl(landingPageUrl)
+
+        landingBtn.isActivated = landingCheck.isChecked
+
+        landingCheck.visibility = if (getLandingEnable()) GONE else VISIBLE
+
+        landingCheck.setOnCheckedChangeListener { _, isChecked ->
+            landingBtn.isActivated = isChecked
+        }
+
+        val span = SpannableStringBuilder(requestNoText)
+        val tx = requestNoText.split('\n')[1]
+        span.setSpan(
+            RelativeSizeSpan(0.7f),
+            requestNoText.indexOf(tx),
+            requestNoText.lastIndex + 1,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+        span.setSpan(
+            ForegroundColorSpan(Color.parseColor("#90FFFFFF")),
+            requestNoText.indexOf(tx),
+            requestNoText.lastIndex + 1,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        landingBack.bringToFront()
+        if (!getLandingEnable()) landingText.text = span else landingText.text = requestOkText
+
+        landingBtn.setOnClickListener {
+            if (!getLandingEnable()) {
+                if (!notiPerm.isNotificationPermitted()) {
+                    ToastUtils(this@MainActivity).showMessage("알림을 허용해주세요")
+                    notiPerm.requestNotification()
+                } else {
+                    if (landingCheck.isChecked) {
+                        val subModal = MakeSingleDialog(this@MainActivity)
+                        subModal.makeDialog(
+                            "출시가 완료되면 알림 메시지를 보낼게요 ${String(Character.toChars(0x1F514))}",
+                            R.color.main_blue_color, "확인", false
+                        )
+                        subModal.apply.setOnClickListener {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                setLandingNotification(this@MainActivity,true)
+                            }
+                            landingBtn.isActivated = false
+                            landingText.text = requestOkText
+                            landingCheck.visibility = GONE
+                            subModal.dismiss()
+                        }
+                    } else {
+                        ToastUtils(this@MainActivity).showMessage("알림 동의를 체크해주세요!")
+                    }
+                }
+            } else {
+                val cancelModal = MakeDoubleDialog(this@MainActivity)
+                val make = cancelModal.make("알림받기를 취소하시겠습니까?","네",
+                    "아니오",R.color.red)
+                make.first.setOnClickListener {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        setLandingNotification(this@MainActivity,false)
+
+                        withContext(Dispatchers.Main) {
+                            SnackBarUtils(landingView,"성공적으로 취소되었습니다",
+                                getR(R.drawable.alert_off)!!).show()
+                            landingBtn.isActivated = false
+                            landingText.text = span
+                            landingCheck.isChecked = false
+                            landingCheck.visibility = VISIBLE
+                            cancelModal.dismiss()
+                        }
+                    }
+                }
+                make.second.setOnClickListener {
+                    cancelModal.dismiss()
+                }
+            }
+        }
+        dialog.show(landingView, true, null)
     }
 
     private fun getLandingEnable(): Boolean {
@@ -782,14 +777,15 @@ class MainActivity
         if (show) {
             if (!isProgressed) {
                 isProgressed = true
-                binding.mainLoadingView.playAnimation()
+                binding.mainLoadingView.visibility = View.VISIBLE
                 binding.mainLoadingView.alpha = SHOWING_LOADING_FLOAT
+                binding.mainLoadingView.bringToFront()
                 binding.mainMotionLayout.isInteractionEnabled = false
                 binding.mainMotionLayout.isEnabled = false
             }
         } else {
             if (binding.mainLoadingView.alpha == SHOWING_LOADING_FLOAT) {
-                binding.mainLoadingView.cancelAnimation()
+                binding.mainLoadingView.visibility = View.GONE
                 binding.mainLoadingView.alpha = NOT_SHOWING_LOADING_FLOAT
                 binding.mainMotionLayout.isInteractionEnabled = true
                 binding.mainMotionLayout.isEnabled = true
@@ -799,14 +795,10 @@ class MainActivity
     }
 
     // 프로그래스 보이기
-    private fun showProgressBar() {
-        setProgressVisibility(true)
-    }
+    private fun showProgressBar() { setProgressVisibility(true) }
 
     // 프로그래스 숨기기
-    private fun hideProgressBar() {
-        setProgressVisibility(false)
-    }
+    private fun hideProgressBar() { setProgressVisibility(false) }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
@@ -834,16 +826,16 @@ class MainActivity
         binding.mainUvCollapseRv.isClickable = false
         binding.nestedSubAirFrame.isClickable = false
 
-        // adView 닫기 클릭
-        binding.adViewCancelIv.setOnClickListener {
-            it.visibility = GONE
-            val layoutParams =
-                RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
-            layoutParams.addRule(RelativeLayout.BELOW, R.id.nested_daily_box)
-            layoutParams.setMargins(0)
-            binding.adViewBox.layoutParams = layoutParams
-            binding.nestedAdView.visibility = GONE
-        }
+//        // adView 닫기 클릭
+//        binding.adViewCancelIv.setOnClickListener {
+//            it.visibility = GONE
+//            val layoutParams =
+//                RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT)
+//            layoutParams.addRule(RelativeLayout.BELOW, R.id.nested_daily_box)
+//            layoutParams.setMargins(0)
+//            binding.adViewBox.layoutParams = layoutParams
+//            binding.nestedAdView.visibility = GONE
+//        }
 
         // 특정 포지션을 감지하고 처리
         val todaySection = binding.dailySectionToday
@@ -967,6 +959,7 @@ class MainActivity
             override fun onSingleClick(v: View?) {
                 if (binding.nestedAirHelpPopup.alpha == 0f) {
                     val fadeIn = AnimationUtils.loadAnimation(this@MainActivity, R.anim.fade_in)
+                    fadeIn.duration = 400
                     // 팝업 다이얼로그 생성
                     binding.nestedAirHelpPopup.apply {
                         bringToFront()
@@ -1004,8 +997,7 @@ class MainActivity
     override fun onBackPressed() {
         // 뒤로가기 한번 클릭 시 토스트
         if (!isBackPressed) {
-            ToastUtils(this)
-                .showMessage(getString(R.string.back_press), 2)
+            ToastUtils(this).showMessage(getString(R.string.back_press), 2)
             isBackPressed = true
         }
         // 2초안에 한번 더 클릭 시 종료
@@ -1022,23 +1014,24 @@ class MainActivity
     // 토픽을 갱신하는 작업
     private fun reNewTopicInMain(newAddr: String) {
         val old = getTopicNotification(this)
-        SubFCM().renewTopic(old, newAddr)
+        fcm.renewTopic(old, newAddr)
         SetAppInfo.setTopicNotification(this, newAddr)
     }
 
     // 현재 옵저버가 없으면 생성
     private fun getDataObservers() {
-        if (!getDataViewModel.fetchData().hasActiveObservers()) {
-            applyGetDataViewModel()
-        } else {
+        if (fetch.hasActiveObservers()) {
+            destroyObserver()
             binding.mainSwipeLayout.isRefreshing = false
         }
+        TimberUtil().w("lifecycle_test", "메인 옵저버 생성")
+        applyGetDataViewModel()
     }
 
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel() {
         try {
-            getDataViewModel.fetchData().observe(this) { entireData ->
+            fetch.observe(this) { entireData ->
                 entireData?.let { eData ->
                     binding.mainSwipeLayout.isRefreshing = false
 
@@ -1075,9 +1068,9 @@ class MainActivity
                 reNewTopicInMain(metaAddr)
             }
             runOnUiThread {
+                binding.mainGpsFix.clearAnimation()
                 binding.mainDailyWeatherRv.scrollToPosition(0)
                 binding.mainWarningVp.currentItem = 0
-                hideProgressBar()
                 showAllViews()
                 updateUIWithData(result)
                 RDBLogcat.writeGpsHistory(
@@ -1114,7 +1107,7 @@ class MainActivity
                 binding.mainSkyText.text = skyText
                 // 날씨에 따라 배경화면 변경
                 applyWindowBackground(currentSun, skyText)
-
+                hideProgressBar()
                 if (!isInAppMsgShow) {
                     CoroutineScope(Dispatchers.IO).launch {
                         startInAppMsg()
@@ -1130,9 +1123,7 @@ class MainActivity
     private fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean {
         val timeFormed = LocalDateTime.parse(currentTime)
         val realtimeFormed = LocalDateTime.parse(realTime)
-        return realtimeFormed?.let {
-            timeFormed.isAfter(it)
-        } ?: true
+        return realtimeFormed?.let { timeFormed.isAfter(it) } ?: true
     }
 
     // API 통신이 에러일 때 처리
@@ -1141,18 +1132,10 @@ class MainActivity
             hideProgressBar()
             try {
                 RDBLogcat.writeErrorANR("handleApiError", "handleApiError cause $errorMessage")
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            } catch (e: Exception) { e.printStackTrace() }
             if (GetLocation(this).isNetWorkConnected()) {
                 hideAllViews(error = errorMessage)
-            } else {
-                if (errorMessage == "text") {
-                    hideProgressBar()
-                } else {
-                    hideAllViews(error = ERROR_NETWORK)
-                }
-            }
+            } else { if (errorMessage != "text") { hideAllViews(error = ERROR_NETWORK) } }
         }
     }
 
@@ -1548,19 +1531,24 @@ class MainActivity
 
     // 하늘상태에 따라 윈도우 배경 변경
     private fun applyWindowBackground(progress: Int, sky: String?) {
-        val mSky = koreaSky(sky)
         val isNight = getIsNight(progress)
-        if (isNight && (mSky == "맑음" || mSky == "구름많음")) {
+        if (isNight && (sky == getString(R.string.sky_sunny) || sky == getString(R.string.sky_sunny_cloudy))) {
             changeBackgroundResource(R.drawable.main_bg_night)
             binding.mainSkyStarImg.setImageDrawable(getR(R.drawable.bg_nightsky))
         } else {
             binding.mainSkyStarImg.setImageDrawable(null)
-            val backgroundResource = when (mSky) {
-                "맑음", "구름많음" -> R.drawable.main_bg_clear
-                "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
-                "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
-                "번개,뇌우", "비/번개" -> R.drawable.main_bg_cloudy
-                "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.main_bg_snow
+            val backgroundResource = when (sky) {
+                getString(R.string.sky_sunny), getString(R.string.sky_sunny_cloudy) ->
+                    R.drawable.main_bg_clear
+                getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
+                getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
+                getString(R.string.sky_cloudy_rainy), getString(R.string.sky_sunny_cloudy_rainy),
+                getString(R.string.sky_cloudy_shower), getString(R.string.sky_shower), getString(R.string.sky_rainy),
+                getString(R.string.sky_cloudy) -> R.drawable.main_bg_cloudy
+                getString(R.string.sky_sunny_cloudy_snowy), getString(R.string.sky_snowy), getString(
+                    R.string.sky_cloudy_snowy
+                )
+                -> R.drawable.main_bg_snow
                 else -> R.drawable.main_bg_snow
             }
             changeBackgroundResource(backgroundResource)
@@ -1684,13 +1672,15 @@ class MainActivity
         val isNight = isThemeNight(this@MainActivity)
         val backgroundResourceId = if (isNight) R.color.black else R.color.white
 
-        error?.let { e ->
-            setOnClickListenerForErrorButton(e)
-            updateViewsForError(e)
-        }
-        binding.mainSkyImg.apply {
-            changeBackgroundResource(backgroundResourceId)
-            setImageDrawable(getR(if (isNight) R.drawable.ico_error_b else R.drawable.ico_error_w))
+        runOnUiThread {
+            error?.let { e ->
+                setOnClickListenerForErrorButton(e)
+                updateViewsForError(e)
+            }
+            binding.mainSkyImg.apply {
+                changeBackgroundResource(backgroundResourceId)
+                setImageDrawable(getR(if (isNight) R.drawable.ico_error_b else R.drawable.ico_error_w))
+            }
         }
     }
 
@@ -1701,74 +1691,76 @@ class MainActivity
 
     // 레이아웃 숨김처리에 따른 뷰 세팅
     private fun setVisibilityForViews(visibility: Int, error: String?) {
-        val textViewArray = arrayListOf(
-            binding.mainGpsTitleTv,
-            binding.mainLiveTempValue,
-            binding.mainLiveTempUnit,
-            binding.mainTopBarGpsTitle,
-            binding.mainSensTitle,
-            binding.mainSensValue,
-            binding.mainMaxValue,
-            binding.mainMaxTitle,
-            binding.mainMinValue,
-            binding.mainMinTitle,
-            binding.subAirPM25,
-            binding.subAirPM10,
-            binding.subAirHumid.getTitle(),
-            binding.subAirWind.getTitle(),
-            binding.subAirRainP.getTitle(),
-            binding.mainCompareTempTv
-        )
+        runOnUiThread {
+            val textViewArray = arrayListOf(
+                binding.mainGpsTitleTv,
+                binding.mainLiveTempValue,
+                binding.mainLiveTempUnit,
+                binding.mainTopBarGpsTitle,
+                binding.mainSensTitle,
+                binding.mainSensValue,
+                binding.mainMaxValue,
+                binding.mainMaxTitle,
+                binding.mainMinValue,
+                binding.mainMinTitle,
+                binding.subAirPM25,
+                binding.subAirPM10,
+                binding.subAirHumid.getTitle(),
+                binding.subAirWind.getTitle(),
+                binding.subAirRainP.getTitle(),
+                binding.mainCompareTempTv
+            )
 
-        val clickableChangeArray = arrayOf(
-            binding.mainSideMenuIv,
-            binding.mainShareIv,
-            binding.mainAddAddress,
-            binding.mainGpsFix
-        )
+            val clickableChangeArray = arrayOf(
+                binding.mainSideMenuIv,
+                binding.mainShareIv,
+                binding.mainAddAddress,
+                binding.mainGpsFix
+            )
 
-        clickableChangeArray.forEach {
-            it.isEnabled = visibility == VISIBLE
-        }
+            clickableChangeArray.forEach {
+                it.isEnabled = visibility == VISIBLE
+            }
 
-        // 숨김
-        if (visibility == GONE) {
-            if (error == ERROR_NETWORK ||
-                error == ERROR_GET_DATA
-            ) {
-                setDrawable(binding.mainAddAddress, null)
-                setDrawable(binding.mainSideMenuIv, null)
+            // 숨김
+            if (visibility == GONE) {
+                if (error == ERROR_NETWORK ||
+                    error == ERROR_GET_DATA
+                ) {
+                    setDrawable(binding.mainAddAddress, null)
+                    setDrawable(binding.mainSideMenuIv, null)
+                } else {
+                    tintImageDrawables()
+                }
+
+                clearTextViews(textViewArray)
+
+                setDrawable(binding.mainGpsFix, null)
+                setDrawable(binding.mainMotionSLideImg, null)
+                setDrawable(binding.mainGpsFix, null)
+                binding.mainShareIv.isEnabled = false
+                binding.mainSwipeLayout.isEnabled = false
+
+                binding.mainMotionLayout.apply {
+                    transitionToStart()
+                    Thread.sleep(100)
+                    isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
+                }
+
+                binding.mainMotionSlideGuide.apply {
+                    text = getString(R.string.error_guide)
+                    setTextColor(getC(R.color.theme_text_color))
+                }
+                applyBackground(binding.mainWarningBox, null)
+                applyBackground(binding.nestedSubAirFrame, null)
+
+                changeStrokeColor(binding.subAirPM10, getColor(android.R.color.transparent))
+                changeStrokeColor(binding.subAirPM25, getColor(android.R.color.transparent))
+
+                updateErrorViewsVisibility(GONE)
             } else {
-                tintImageDrawables()
+                updateViewsForVisibleState()
             }
-
-            clearTextViews(textViewArray)
-
-            setDrawable(binding.mainGpsFix, null)
-            setDrawable(binding.mainMotionSLideImg, null)
-            setDrawable(binding.mainGpsFix, null)
-            binding.mainShareIv.isEnabled = false
-            binding.mainSwipeLayout.isEnabled = false
-
-            binding.mainMotionLayout.apply {
-                transitionToStart()
-                Thread.sleep(100)
-                isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
-            }
-
-            binding.mainMotionSlideGuide.apply {
-                text = getString(R.string.error_guide)
-                setTextColor(getC(R.color.theme_text_color))
-            }
-            applyBackground(binding.mainWarningBox, null)
-            applyBackground(binding.nestedSubAirFrame, null)
-
-            changeStrokeColor(binding.subAirPM10, getColor(android.R.color.transparent))
-            changeStrokeColor(binding.subAirPM25, getColor(android.R.color.transparent))
-
-            updateErrorViewsVisibility(GONE)
-        } else {
-            updateViewsForVisibleState()
         }
     }
 
@@ -1788,6 +1780,7 @@ class MainActivity
         setDrawable(binding.mainMotionSLideImg, R.drawable.drop_down_bottom)
         setDrawable(binding.mainAddAddress, R.drawable.search)
         setDrawable(binding.mainSideMenuIv, R.drawable.ico_hamb_w)
+        setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_bk)
 
         // 원래 상태로 복구하기 위해 제약 조건 변경
         binding.mainMotionLayout.isInteractionEnabled = true
@@ -1839,6 +1832,7 @@ class MainActivity
         binding.mainShareIv.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainSkyText.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainErrorRenewBtn.isClickable = visibility == GONE
+        binding.mainTopEye.alpha = if (visibility == VISIBLE) 1f else 0f
     }
 
     // 현재 지역의 날씨 데이터 뷰모델 생성 및 호출
@@ -1964,12 +1958,11 @@ class MainActivity
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
             binding.mainGpsFix, binding.mainMotionSLideImg,
-            binding.mainShareIv,
-            binding.adViewCancelIv, binding.nestedAirHelp
+            binding.mainShareIv, binding.nestedAirHelp
         )
         val changeBoxViews = listOf(
             binding.mainWarningBox, binding.nestedSubAirFrame,
-            binding.nestedDailyBox, binding.nestedWeeklyBox, binding.adViewBox,
+            binding.nestedDailyBox, binding.nestedWeeklyBox,
             binding.nestedAirBox, binding.mainUVBox, binding.mainSunBox,
             binding.nestedTerms24Box
         )
@@ -2037,9 +2030,11 @@ class MainActivity
         when (bg) {
             R.drawable.main_bg_clear, R.drawable.main_bg_snow -> {
                 changeTextToBlack()
+                setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_bk)
             }
             R.drawable.main_bg_night, R.drawable.main_bg_cloudy -> {
                 changeTextToWhite()
+                setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_w)
             }
         }
 
@@ -2085,7 +2080,6 @@ class MainActivity
             location?.let { loc ->
                 val lat = loc.latitude
                 val lng = loc.longitude
-                hideProgressBar()
                 if (isKorea(lat, lng)) {
                     val addr = GetLocation(this@MainActivity).getAddress(lat, lng)
                     processAddress(lat, lng, addr)
@@ -2192,6 +2186,12 @@ class MainActivity
             (view as View).background = getR(it)
         } ?: apply {
             (view as View).background = null
+        }
+    }
+
+    fun recreateMainActivity(addrKr: String?, addrEn: String?) {
+        addrKr?.let {
+            loadSavedAddr(addrKr,addrEn)
         }
     }
 }

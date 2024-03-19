@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".as_eye.nfc.NfcReadFailFragment"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/nfcReadFTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/main_black"
+            android:text="NFC 읽기 실패"
+            style="@style/basicMediumTextView"/>
+
+        <Button
+            android:id="@+id/nfcReadFBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/permission_ok_btn_bg"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:text="재시도"
+            android:enabled="false"
+            android:textSize="18sp"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:textColor="@color/white"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

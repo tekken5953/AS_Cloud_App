@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/listItemAddEyeWifiSsid"
+        style="@style/basicMediumTextView"
+        android:textSize="16sp"
+        android:text="EBT_5G"
+        android:textColor="@color/main_black"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"/>
+
+    <ImageView
+        android:id="@+id/listItemAddEyeWifiLevel"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        app:tint="@color/main_black"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="7dp"
+        android:layout_toEndOf="@+id/listItemAddEyeWifiSsid"/>
+
+    <ImageView
+        android:id="@+id/listItemAddEyeWifiLock"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/lock"
+        android:visibility="gone"
+        app:tint="@color/main_black"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="7dp"
+        android:layout_toEndOf="@+id/listItemAddEyeWifiLevel"/>
+
+    <TextView
+        android:id="@+id/listItemAddEyeWifiConnect"
+        style="@style/basicMediumTextView"
+        android:text="@string/connect"
+        android:textColor="@color/main_blue_color"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="15dp"
+        android:textSize="16sp"/>
+
+</RelativeLayout>

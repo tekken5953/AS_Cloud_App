@@ -1,8 +1,6 @@
 package app.airsignal.weather.firebase.fcm
 
-import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_DAILY
-import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_EVENT
-import app.airsignal.weather.firebase.fcm.NotificationBuilder.Companion.FCM_PATCH
+import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.util.LoggerUtil
 import com.google.android.gms.tasks.OnCompleteListener
@@ -18,19 +16,41 @@ import java.util.*
 
 class SubFCM: FirebaseMessagingService() {
 
+    enum class Sort(val key: String) {
+        FCM_EYE_NOISE("noise"), FCM_EYE_BRIGHT("bright"), FCM_EYE_GYRO("gyro"),
+        FCM_DAILY("daily"), FCM_PATCH("patch"), FCM_EVENT("event")
+    }
+
+    enum class Channel(val value: String) {
+        NOTIFICATION_CHANNEL_ID("500"),             // FCM 채널 ID
+        NOTIFICATION_CHANNEL_NAME("AIRSIGNAL"),     // FCM 채널 NAME
+        NOTIFICATION_CHANNEL_DESCRIPTION("Channel description")
+    }
+
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+        LoggerUtil().d("TAG_FCM","onMessageReceived ${message.data}")
         when(message.data["sort"]) {
-            FCM_PATCH, FCM_DAILY -> {
+            Sort.FCM_PATCH.key,
+            Sort.FCM_DAILY.key-> {
                 NotificationBuilder().sendNotification(applicationContext,message.data)
             }
-            FCM_EVENT -> {
+            Sort.FCM_EVENT.key -> {
                 CoroutineScope(Dispatchers.IO).launch {
                     val isLandingEnable =
                         GetAppInfo.isLandingNotification(applicationContext)
                     if (isLandingEnable) {
                         NotificationBuilder().sendNotification(applicationContext,message.data)
+                    }
+                }
+            }
+            Sort.FCM_EYE_NOISE.key,
+            Sort.FCM_EYE_BRIGHT.key,
+            Sort.FCM_EYE_GYRO.key -> {
+                message.data["device"]?.let {
+                    if (SharedPreferenceManager(applicationContext).getBoolean(it, false)) {
+                        EyeNotiBuilder(applicationContext).sendNotification(message.data)
                     }
                 }
             }
@@ -42,7 +62,7 @@ class SubFCM: FirebaseMessagingService() {
         try {
             CoroutineScope(Dispatchers.Default).launch {
                 FirebaseMessaging.getInstance().subscribeToTopic(topic)
-                LoggerUtil().d("TAG_FCM","subscribe $topic")
+                LoggerUtil().d("TAG_FCM","subscribe success to $topic")
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -52,11 +72,10 @@ class SubFCM: FirebaseMessagingService() {
     }
 
     /** 토픽 구독 해제 **/
-    private fun unSubTopic(topic: String): SubFCM {
+    fun unSubTopic(topic: String): SubFCM {
         val encodedStream = encodeTopic(topic)
         CoroutineScope(Dispatchers.Default).launch {
             FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream)
-            LoggerUtil().d("TAG_FCM","unsubscribe $topic")
         }
         return this
     }
@@ -71,10 +90,7 @@ class SubFCM: FirebaseMessagingService() {
     fun renewTopic(old: String, new: String) {
         if (old != new) {
             val encodedStream = encodeTopic(new)
-            LoggerUtil().d("fcm_noti","old is $old new is $new")
             unSubTopic(old).subTopic(encodedStream)
-        } else {
-            LoggerUtil().d("fcm_noti","same topic $old")
         }
     }
 

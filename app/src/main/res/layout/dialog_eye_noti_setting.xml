@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/ae_bg_color">
+
+    <ImageView
+        android:id="@+id/dialogEyeSettingBack"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="18dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cd_icon_back"
+        android:src="@drawable/back_arrow"
+        app:tint="@color/main_black" />
+
+    <TextView
+        android:id="@+id/dialogEyeSettingTitle"
+        style="@style/basicMediumTextView"
+        android:textColor="@color/main_black"
+        android:textSize="16sp"
+        android:text="알림 설정"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@+id/dialogEyeSettingBack"
+        android:layout_alignBottom="@+id/dialogEyeSettingBack"/>
+
+    <app.airsignal.weather.as_eye.customview.EyeSettingView
+        android:id="@+id/dialogEyeSettingToggle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:isToggle="true"
+        app:isArrow="false"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/dialogEyeSettingBack"
+        app:settingLeft="알림 받기"/>
+
+    <app.airsignal.weather.as_eye.customview.EyeSettingView
+        android:id="@+id/dialogEyeSettingNoise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:isToggle="false"
+        app:isArrow="true"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_below="@+id/dialogEyeSettingToggle"
+        app:settingLeft="소음"/>
+
+    <app.airsignal.weather.as_eye.customview.EyeSettingView
+        android:id="@+id/dialogEyeSettingGyro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:isToggle="false"
+        app:isArrow="true"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_below="@+id/dialogEyeSettingNoise"
+        app:settingLeft="진동 감지"/>
+    
+    <app.airsignal.weather.as_eye.customview.EyeSettingView
+        android:id="@+id/dialogEyeSettingBetaNoti"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:isToggle="false"
+        app:isArrow="false"
+        app:settingLeft="테스트 알림 받기"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_below="@+id/dialogEyeSettingGyro"/>
+
+</RelativeLayout>

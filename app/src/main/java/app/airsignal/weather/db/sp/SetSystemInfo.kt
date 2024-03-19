@@ -37,23 +37,20 @@ object SetSystemInfo {
     fun setLocaleToKorea(context: Context) {
         val configuration = context.resources.configuration
         configuration.setLocale(Locale.KOREA)
-        @Suppress("DEPRECATION")
-        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+        context.createConfigurationContext(configuration)
     }
 
     /** 국가를 영어권으로 설정합니다 **/
     fun setLocaleToEnglish(context: Context) {
         val configuration = context.resources.configuration
         configuration.setLocale(Locale.ENGLISH)
-        @Suppress("DEPRECATION")
-        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+        context.createConfigurationContext(configuration)
     }
 
     /** 국가를 시스템으로 설정합니다 **/
     fun setLocaleToSystem(context: Context) {
         val configuration = context.resources.configuration
         configuration.setLocale(Locale.getDefault())
-        @Suppress("DEPRECATION")
-        context.resources.updateConfiguration(configuration, context.resources.displayMetrics)
+        context.createConfigurationContext(configuration)
     }
 }

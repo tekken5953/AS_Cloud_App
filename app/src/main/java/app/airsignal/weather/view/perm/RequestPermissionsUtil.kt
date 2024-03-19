@@ -20,6 +20,7 @@ import app.airsignal.weather.db.sp.GetAppInfo.getInitLocPermission
 class RequestPermissionsUtil(private val context: Context) {
 
     private val permissionNetWork = Manifest.permission.INTERNET
+    private val tagRequestPermission = 0x0000001
 
     /** 위치 권한 SDK 버전 29 이상**/
     private val permissionsLocation = arrayOf(
@@ -37,6 +38,42 @@ class RequestPermissionsUtil(private val context: Context) {
     private val permissionNotification = arrayOf(
         Manifest.permission.POST_NOTIFICATIONS
     )
+
+    private val blePermissionArray = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        arrayOf(
+            Manifest.permission.BLUETOOTH_SCAN,
+            Manifest.permission.BLUETOOTH_CONNECT,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.BLUETOOTH_ADVERTISE
+        )
+    } else {
+        arrayOf(
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+    }
+
+    fun isGrantBle(): Boolean {
+        for (perm in blePermissionArray) {
+            if (ContextCompat.checkSelfPermission(context, perm)
+                != PackageManager.PERMISSION_GRANTED
+            ) return false
+        }
+        return true
+    }
+
+    fun requestBlePermissions() {
+        try{
+            requestPermissions(
+                context as Activity,
+                blePermissionArray,
+                tagRequestPermission
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
     /** 위치정보 권한 요청**/
     fun requestLocation() {

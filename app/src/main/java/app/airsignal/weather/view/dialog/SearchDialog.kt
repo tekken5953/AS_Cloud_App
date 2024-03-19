@@ -17,10 +17,12 @@ import android.view.*
 import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.HandlerCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.AddressListAdapter
+import app.airsignal.weather.as_eye.adapter.OnAdapterItemSingleClick
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.db.room.model.GpsEntity
@@ -37,6 +39,7 @@ import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
 import app.airsignal.weather.util.KeyboardController
 import app.airsignal.weather.util.OnAdapterItemClick
 import app.airsignal.weather.util.`object`.DataTypeParser.convertAddress
+import app.airsignal.weather.view.activity.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -116,8 +119,8 @@ class SearchDialog(
 
                     withContext(Dispatchers.Main) {
                         this@SearchDialog.dismiss()
-                        delay(100)
-                        activity.recreate()
+                        delay(300)
+                        if (activity is MainActivity) activity.recreateMainActivity(dbFind.addrKr,dbFind.addrEn)
                     }
                 }
             }
@@ -149,15 +152,18 @@ class SearchDialog(
             }
 
             // 등록 된 주소 클릭 시 등록 된 주소로 데이터 호출
-            currentAdapter.setOnItemClickListener(object : OnAdapterItemClick.OnAdapterItemClick {
-                override fun onItemClick(v: View, position: Int) {
+            currentAdapter.setOnItemClickListener(object : OnAdapterItemSingleClick() {
+                override fun onSingleClick(v: View?, position: Int) {
                     CoroutineScope(Dispatchers.IO).launch {
                         val currentAddr = currentList[position]
                         dbUpdate(currentAddr.kr,currentAddr.en,currentAddr.kr ?: "")
 
                         withContext(Dispatchers.Main) {
-                            this@SearchDialog.dismiss()
-                            activity.recreate()
+                            withContext(Dispatchers.Main) {
+                                this@SearchDialog.dismiss()
+                                delay(300)
+                                if (activity is MainActivity) activity.recreateMainActivity(currentAddr.kr,currentAddr.en)
+                            }
                         }
                     }
                 }
@@ -177,6 +183,7 @@ class SearchDialog(
             val listView: ListView = view.findViewById(R.id.searchAddressListView)
 
             searchEditListener(listView, searchView, noResult)
+
             KeyboardController.onKeyboardUp(requireContext(), searchView)
         }
     }
@@ -301,9 +308,9 @@ class SearchDialog(
                         dbUpdate(model.addrKr,model.addrEn,model.name)
 
                         withContext(Dispatchers.Main) {
-                            builder.dismiss()
-                            delay(100)
-                            activity.recreate()
+                            this@SearchDialog.dismiss()
+                            delay(300)
+                            if (activity is MainActivity) activity.recreateMainActivity(model.addrKr,model.addrEn)
                         }
                     }
                 }

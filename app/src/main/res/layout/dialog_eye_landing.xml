@@ -64,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="제품 출시 알림받기\n광고 및 이벤트성 알림 발송에 동의합니다"
+                android:text="@string/landing_btn_title"
                 android:textSize="16sp"
                 android:textColor="@color/white"
                 android:fontFamily="@font/spoqa_hansansneo_bold"

@@ -19,6 +19,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
+import app.airsignal.weather.as_eye.adapter.OnAdapterItemSingleClick
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.db.room.repository.GpsRepository
@@ -40,7 +41,7 @@ class AddressListAdapter(
     private var visible = false
     val db = GpsRepository(context)
 
-    private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
+    private lateinit var onClickListener: OnAdapterItemSingleClick
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
@@ -51,7 +52,7 @@ class AddressListAdapter(
         return ViewHolder(view)
     }
 
-    fun setOnItemClickListener(listener: OnAdapterItemClick.OnAdapterItemClick) {
+    fun setOnItemClickListener(listener: OnAdapterItemSingleClick) {
         this.onClickListener = listener
     }
 

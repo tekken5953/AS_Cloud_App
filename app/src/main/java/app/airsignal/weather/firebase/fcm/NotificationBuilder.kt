@@ -17,27 +17,18 @@ import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.util.`object`.DataTypeParser.applySkyText
-import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgLarge
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetAppInfo.getNotificationAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getUserNotiEnable
 import app.airsignal.weather.db.sp.GetAppInfo.getUserNotiVibrate
 import app.airsignal.weather.db.sp.GetSystemInfo
+import app.airsignal.weather.util.`object`.DataTypeParser.applySkyText
+import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgLarge
 import kotlin.math.roundToInt
 
 
 class NotificationBuilder {
     lateinit var intent: Intent
-
-    companion object {
-        const val FCM_DAILY = "daily"
-        const val FCM_PATCH = "patch"
-        const val FCM_EVENT = "event"
-        const val NOTIFICATION_CHANNEL_ID = "500"             // FCM 채널 ID
-        const val NOTIFICATION_CHANNEL_NAME = "AIRSIGNAL"     // FCM 채널 NAME
-        const val NOTIFICATION_CHANNEL_DESCRIPTION = "Channel description"
-    }
 
     fun sendNotification(context: Context, data: Map<String,String>) {
         try {
@@ -45,7 +36,7 @@ class NotificationBuilder {
             val notificationManager =
                 appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
 
-            if (data["sort"] == FCM_PATCH) {
+            if (data["sort"] == SubFCM.Sort.FCM_PATCH.key) {
                 intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse(GetSystemInfo.getPlayStoreURL(appContext))
             } else {
@@ -58,18 +49,18 @@ class NotificationBuilder {
                 PendingIntent.getActivity(appContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
             val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val notificationChannel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                NOTIFICATION_CHANNEL_NAME,
+                SubFCM.Channel.NOTIFICATION_CHANNEL_ID.value,
+                SubFCM.Channel.NOTIFICATION_CHANNEL_NAME.value,
                 if (getUserNotiVibrate(appContext))
                     NotificationManager.IMPORTANCE_DEFAULT
                 else NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = NOTIFICATION_CHANNEL_DESCRIPTION
+                description = SubFCM.Channel.NOTIFICATION_CHANNEL_DESCRIPTION.value
                 lockscreenVisibility = View.VISIBLE
                 setSound(sound, AudioAttributes.Builder().build())
             }
 
-            val notificationBuilder = NotificationCompat.Builder(appContext, NOTIFICATION_CHANNEL_ID)
+            val notificationBuilder = NotificationCompat.Builder(appContext, SubFCM.Channel.NOTIFICATION_CHANNEL_ID.value)
 
             fun setNotiBuilder(
                 title: String, subtext: String?, content: String, imgPath: Bitmap?
@@ -88,7 +79,7 @@ class NotificationBuilder {
             }
 
             when (data["sort"]) {
-                FCM_DAILY -> {
+                SubFCM.Sort.FCM_DAILY.key -> {
                     val temp = parseStringToDoubleToInt(data["temp"].toString())
                     val rainType = data["rainType"]
                     val sky = data["sky"]
@@ -102,11 +93,11 @@ class NotificationBuilder {
                         imgPath = getSkyBitmap(appContext, rainType, sky, thunder, lunar ?: -1)
                     )
                 }
-                FCM_PATCH -> {
+                SubFCM.Sort.FCM_PATCH.key -> {
                     val payload = data["payload"] ?: "새로운 업데이트가 준비되었어요"
                     setNotiBuilder(title = "에어시그널", subtext = null, content = payload, null)
                 }
-                FCM_EVENT -> {
+                SubFCM.Sort.FCM_EVENT.key -> {
                     val payload = data["payload"] ?: "눌러서 이벤트를 확인하세요"
                     setNotiBuilder(title = "에어시그널", subtext = null, content = payload, null)
                 }

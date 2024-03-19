@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.R
+import app.airsignal.weather.as_eye.adapter.OnAdapterItemSingleClick
 
 /**
  * @author : Lee Jae Young
@@ -17,7 +18,7 @@ class NoticeAdapter(private val context: Context, list: ArrayList<ApiModel.Notic
     RecyclerView.Adapter<NoticeAdapter.ViewHolder>() {
     private val mList = list
 
-    private lateinit var onClickListener: OnItemClickListener
+    private lateinit var onClickListener: OnAdapterItemSingleClick
 
     interface OnItemClickListener {
         fun onItemClick(v: View, position: Int)
@@ -33,7 +34,7 @@ class NoticeAdapter(private val context: Context, list: ArrayList<ApiModel.Notic
         return ViewHolder(view)
     }
 
-    fun setOnItemClickListener(listener: OnItemClickListener) {
+    fun setOnItemClickListener(listener: OnAdapterItemSingleClick) {
         this.onClickListener = listener
     }
 

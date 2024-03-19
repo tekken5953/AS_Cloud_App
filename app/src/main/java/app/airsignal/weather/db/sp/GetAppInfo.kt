@@ -46,15 +46,15 @@ object GetAppInfo {
     }
 
     fun getUserNotiEnable(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(notiEnable)
+        return SharedPreferenceManager(context).getBoolean(notiEnable, true)
     }
 
     fun getUserNotiVibrate(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(notiVibrate)
+        return SharedPreferenceManager(context).getBoolean(notiVibrate, true)
     }
 
     fun getUserNotiSound(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(notiSound)
+        return SharedPreferenceManager(context).getBoolean(notiSound, false)
     }
 
     fun getUserLoginPlatform(context: Context): String {
@@ -129,7 +129,7 @@ object GetAppInfo {
     }
 
     fun isPermedBackLoc(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(IS_PERMED_BACK_LOG)
+        return SharedPreferenceManager(context).getBoolean(IS_PERMED_BACK_LOG, false)
     }
 
     fun getWarningFixed(context: Context): String {
@@ -145,11 +145,11 @@ object GetAppInfo {
     }
 
     fun isLandingNotification(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(LANDING_NOTIFICATION)
+        return SharedPreferenceManager(context).getBoolean(LANDING_NOTIFICATION, false)
     }
 
     fun getInAppMsgEnabled(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(SpDao.IN_APP_MSG)
+        return SharedPreferenceManager(context).getBoolean(SpDao.IN_APP_MSG, false)
     }
 
     fun getInAppMsgTime(context: Context): Long {

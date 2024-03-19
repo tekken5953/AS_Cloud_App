@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/listItemMembersId"
+        style="@style/basicMediumTextView"
+        android:textColor="@color/main_black"
+        android:textSize="16sp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="12dp"/>
+
+    <TextView
+        android:id="@+id/listItemMembersMaster"
+        style="@style/basicMediumTextView"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:background="@drawable/ae_device_master"
+        android:visibility="gone"
+        android:text="소유자"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/listItemMembersId"
+        android:layout_marginStart="6dp"/>
+
+    <ImageView
+        android:id="@+id/listItemMembersChangeMaster"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/change_alt"
+        app:tint="@color/main_black"
+        android:layout_toStartOf="@+id/listItemMembersDelete"
+        android:layout_marginEnd="12dp"
+        android:layout_centerVertical="true"/>
+
+    <ImageView
+        android:id="@+id/listItemMembersDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/cancel"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="12dp"
+        app:tint="@color/main_black"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#D9D9D9"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

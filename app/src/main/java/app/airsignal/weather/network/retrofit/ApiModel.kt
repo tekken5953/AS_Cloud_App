@@ -49,7 +49,7 @@ class ApiModel {
         @SerializedName("img")
         val img: String,
         @SerializedName("redirect")
-        val redirect: String
+        val redirect: String,
         ) : Parcelable {
         // Parcelable 구현
         constructor(parcel: Parcel) : this(
@@ -471,5 +471,56 @@ class ApiModel {
         val content: String,
         @SerializedName("href")
         val href: String?
+    )
+
+    data class Owner(
+        @SerializedName("userId")
+        val id: String,
+        @SerializedName("master")
+        val master: Boolean
+    )
+
+    data class Average(
+        @SerializedName("device")
+        val device: String,
+        @SerializedName("date")
+        val date: String,
+        @SerializedName("coValue")
+        val co: Double?,
+        @SerializedName("no2Value")
+        val no2: Double?,
+        @SerializedName("pm10p0Value")
+        val pm10: Double?,
+        @SerializedName("pm2p5Value")
+        val pm2p5: Double?,
+        @SerializedName("pm1p0Value")
+        val pm1p0: Double?,
+        @SerializedName("tempValue")
+        val temp: Double?,
+        @SerializedName("humidValue")
+        val humid: Double?,
+        @SerializedName("co2Value")
+        val co2: Double?,
+        @SerializedName("tvocValue")
+        val tvoc: Double?,
+        @SerializedName("lightValue")
+        val light: Double?,
+        @SerializedName("noiseValue")
+        val noise: Double?,
+        @SerializedName("gyroXValue")
+        val gyroX: Double?,
+        @SerializedName("gyroYValue")
+        val gyroY: Double?,
+        @SerializedName("gyroZValue")
+        val gyroZ: Double?,
+        @SerializedName("count")
+        val count: Double?
+    )
+
+    data class NoiseAvg(
+        @SerializedName("device")
+        val device: String,
+        @SerializedName("noiseValue")
+        val noise: Double?
     )
 }

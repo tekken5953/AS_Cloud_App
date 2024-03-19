@@ -11,16 +11,16 @@ object KeyboardController {
     // 키보드 올리기
     fun onKeyboardUp(context: Context, et: EditText) {
         val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        if (!inputMethodManager.isAcceptingText) {
-            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                inputMethodManager.showSoftInput(et, 1)
-            },300)
-        }
+        HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+            et.requestFocus()
+            inputMethodManager.showSoftInput(et,InputMethodManager.SHOW_IMPLICIT)
+        },300)
     }
 
     // 키보드 내리기
     fun onKeyboardDown(context: Context, et: EditText) {
         val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        et.clearFocus()
         inputMethodManager.hideSoftInputFromWindow(et.windowToken, 0)
     }
 }

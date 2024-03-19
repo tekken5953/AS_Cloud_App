@@ -55,7 +55,7 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
 
         val sort = intent.extras?.getString("sort")
 
-        val (webUrlTitleText,url) = when (sort) {
+        val (webUrlTitleText, url) = when (sort) {
             "as-eye" -> "AS-EYE" to "about:blank"
             "termsOfService" -> getString(R.string.term_of_services) to termsOfServiceURL
             "dataUsage" -> getString(R.string.data_usages) to privacyPolicyURI

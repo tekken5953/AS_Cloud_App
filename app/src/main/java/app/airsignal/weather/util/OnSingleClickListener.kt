@@ -2,6 +2,8 @@ package app.airsignal.weather.util
 
 import android.os.SystemClock
 import android.view.View
+import android.widget.Toast
+import app.airsignal.weather.koin.BaseApplication
 
 abstract class OnSingleClickListener : View.OnClickListener {
     private var mLastClickTime: Long = 0
@@ -14,6 +16,7 @@ abstract class OnSingleClickListener : View.OnClickListener {
         mLastClickTime = currentClickTime
         // 중복클릭 아닌 경우
         if (elapsedTime > MIN_CLICK_INTERVAL) { onSingleClick(v) }
+//        else { ToastUtils(BaseApplication.appContext).showMessage("잠시 후에 시도해주세요") }
     }
 
     companion object {

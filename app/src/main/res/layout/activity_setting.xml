@@ -36,30 +36,19 @@
                 android:text="@string/setting_title"
                 android:textColor="@color/theme_text_color"
                 android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/settingEye"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:text="eye"
-                android:textColor="@android:color/transparent"
-                android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"/>
         </RelativeLayout>
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/settingPb"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:visibility="gone"
             app:lottie_cacheComposition="true"
-            app:lottie_colorFilter="@color/lottie_loading_color"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:lottie_rawRes="@raw/lottie_loading"
+            app:lottie_rawRes="@raw/ani_loading_circle"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:lottie_clipToCompositionBounds="true"/>

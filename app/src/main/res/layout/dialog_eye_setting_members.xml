@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ae_bg_color">
+
+    <ImageView
+        android:id="@+id/dialogMembersBack"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="18dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cd_icon_back"
+        android:src="@drawable/back_arrow"
+        app:tint="@color/main_black" />
+
+    <TextView
+        android:id="@+id/dialogMembersTitle"
+        style="@style/basicMediumTextView"
+        android:layout_alignTop="@+id/dialogMembersBack"
+        android:layout_alignBottom="@+id/dialogMembersBack"
+        android:layout_centerHorizontal="true"
+        android:text="멤버 관리"
+        android:textColor="@color/main_black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/dialogMembersFail"
+        style="@style/basicMediumTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="멤버를 불러오지 못했습니다"
+        android:textColor="@color/main_black"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dialogMembersRv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/dialogMembersTitle"
+        android:layout_marginTop="20dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/list_item_members" />
+
+</RelativeLayout>

@@ -68,10 +68,10 @@ class SharedPreferenceManager(context: Context) {
     }
 
     /**Boolean 값 호출**/
-    fun getBoolean(key: String): Boolean {
+    fun getBoolean(key: String, default: Boolean): Boolean {
         return prefs.getBoolean(
             key,
-            DEFAULT_VALUE_BOOLEAN
+            default
         )
     }
 

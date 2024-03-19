@@ -1,39 +1,39 @@
 package app.airsignal.weather.view.activity
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.databinding.DataBindingUtil
-import androidx.databinding.ViewDataBinding
-import app.airsignal.weather.dao.StaticDataObject.LANG_EN
-import app.airsignal.weather.dao.StaticDataObject.LANG_KR
-import app.airsignal.weather.dao.StaticDataObject.THEME_DARK
-import app.airsignal.weather.dao.StaticDataObject.THEME_LIGHT
-import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
-import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
-import app.airsignal.weather.db.sp.GetAppInfo.getUserTheme
-import app.airsignal.weather.db.sp.SetSystemInfo
-import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
-import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
+    import androidx.appcompat.app.AppCompatActivity
+    import androidx.appcompat.app.AppCompatDelegate
+    import androidx.databinding.DataBindingUtil
+    import androidx.databinding.ViewDataBinding
+    import app.airsignal.weather.dao.StaticDataObject.LANG_EN
+    import app.airsignal.weather.dao.StaticDataObject.LANG_KR
+    import app.airsignal.weather.dao.StaticDataObject.THEME_DARK
+    import app.airsignal.weather.dao.StaticDataObject.THEME_LIGHT
+    import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
+    import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
+    import app.airsignal.weather.db.sp.GetAppInfo.getUserTheme
+    import app.airsignal.weather.db.sp.SetSystemInfo
+    import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
+    import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
+    import kotlinx.coroutines.*
 
-/**
- * @author : Lee Jae Young
- * @since : 2023-05-04 오후 2:56
- **/
-abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
+    /**
+     * @author : Lee Jae Young
+     * @since : 2023-05-04 오후 2:56
+     **/
+    abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
 
-    protected lateinit var binding: VB
-    abstract val resID: Int
+        protected lateinit var binding: VB
+        abstract val resID: Int
 
-    protected fun initBinding() {
-        binding = DataBindingUtil.setContentView(this, resID)
-        binding.lifecycleOwner = this
-    }
+        protected fun initBinding() {
+            binding = DataBindingUtil.setContentView(this@BaseActivity, resID)
+            binding.lifecycleOwner = this@BaseActivity
+        }
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
-        val context = newBase ?: this
-
+        val context = newBase ?: applicationContext
         applyUserLanguage(context)
         applyUserFontScale(context)
         applyUserTheme(context)

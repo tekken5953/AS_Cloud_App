@@ -54,12 +54,11 @@ class KakaoLogin(private val activity: Activity) {
                     btn.alpha = 1f
                     // 사용자가 취소
                     if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled)) {
-                        LoggerUtil().d(TAG_L,"카카오 로그인 취소")
                         return@loginWithKakaoTalk
                     }
                     // 다른 오류
                     else {
-                        LoggerUtil().d(TAG_L,"카카오 로그인 기타 오류 : ${error.localizedMessage}")
+                        LoggerUtil().e(TAG_L,"카카오 로그인 기타 오류 : ${error.localizedMessage}")
                         UserApiClient.instance.loginWithKakaoAccount(
                             activity,
                             callback = mCallback
@@ -75,7 +74,7 @@ class KakaoLogin(private val activity: Activity) {
                     UserApiClient.instance.me { user, _ ->
                         user?.kakaoAccount?.let { account ->
                             writeLoginHistory(
-                                isLogin = true, platform = LOGIN_KAKAO, email = account.email!!,
+                                isLogin = true, platform = LOGIN_KAKAO, email = account.email ?: "",
                                 isAuto = false, isSuccess = true
                             )
                             RDBLogcat.writeLoginPref(
@@ -192,8 +191,8 @@ class KakaoLogin(private val activity: Activity) {
             user?.kakaoAccount?.let { account ->
                 SharedPreferenceManager(activity)
                     .setString(lastLoginPhone, account.phoneNumber.toString())
-                    .setString(userId, account.profile!!.nickname.toString())
-                    .setString(userProfile, account.profile!!.profileImageUrl.toString())
+                    .setString(userId, account.profile?.nickname.toString())
+                    .setString(userProfile, account.profile?.profileImageUrl.toString())
                     .setString(userEmail, account.email.toString())
             }
         }

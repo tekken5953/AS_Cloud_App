@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="0.5"
-                    app:title="온도"
+                    app:title="@string/temp_short"
                     app:unit="℃" />
 
                 <app.airsignal.weather.as_eye.customview.EyeLiveSingleDataView
@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_weight="0.5"
-                    app:title="습도"
+                    app:title="@string/humid_short"
                     app:unit="%" />
             </TableRow>
 
@@ -83,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_weight="0.5"
-                    app:title="조도"
+                    app:title="@string/light"
                     app:unit="㏓" />
 
                 <app.airsignal.weather.as_eye.customview.EyeLiveSingleDataView
@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_weight="0.5"
-                    app:title="소음"
+                    app:title="@string/noise"
                     app:unit="㏈" />
             </TableRow>
 
@@ -103,7 +103,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/aeLiveTr2"
                 app:titleEnDouble="PM2.5"
                 android:layout_marginTop="10dp"
-                app:titleKrDouble="초미세먼지"
+                app:titleKrDouble="@string/pm2p5_short"
                 app:unitDouble="㎍/㎥" />
 
             <app.airsignal.weather.as_eye.customview.EyeLiveDoubleDataView
@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/aeLivePM25"
                 app:titleEnDouble="PM10"
-                app:titleKrDouble="미세먼지"
+                app:titleKrDouble="@string/pm10_short"
                 app:unitDouble="㎍/㎥" />
 
             <app.airsignal.weather.as_eye.customview.EyeLiveDoubleDataView
@@ -121,7 +121,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/aeLivePM10"
                 app:titleEnDouble="CO2"
-                app:titleKrDouble="이산화탄소"
+                app:titleKrDouble="@string/carbon_dioxide"
                 app:unitDouble="ppm" />
 
             <app.airsignal.weather.as_eye.customview.EyeLiveDoubleDataView
@@ -130,7 +130,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/aeLiveCO2"
                 app:titleEnDouble="CO"
-                app:titleKrDouble="일산화탄소"
+                app:titleKrDouble="@string/carbon_monoxide"
                 app:unitDouble="ppm" />
 
             <app.airsignal.weather.as_eye.customview.EyeLiveDoubleDataView
@@ -139,16 +139,16 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/aeLiveCO"
                 app:titleEnDouble="TVOC"
-                app:titleKrDouble="총휘발성\n유기화합물"
-                app:unitDouble="㎍/㎥" />
+                app:titleKrDouble="@string/tvoc_short"
+                app:unitDouble="ppm" />
 
             <app.airsignal.weather.as_eye.customview.EyeLiveDoubleDataView
                 android:id="@+id/aeLiveNO2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/aeLiveTVOC"
-                app:titleEnDouble="NO2"
-                app:titleKrDouble="이산화질소"
+                app:titleEnDouble="NOx"
+                app:titleKrDouble="@string/nitrogen_dioxide"
                 app:unitDouble="ppm" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

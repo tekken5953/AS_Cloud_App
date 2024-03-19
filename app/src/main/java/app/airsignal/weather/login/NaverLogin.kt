@@ -143,11 +143,6 @@ class NaverLogin(private val activity: Activity) {
         }
     }
 
-    /** 로그인 페이지로 이동 **/
-    private fun enterLoginPage() {
-        EnterPageUtil(activity).toLogin()
-    }
-
     /** 로그인 세션 유지 확인 **/
     fun isLogin() : Boolean {
         return NidOAuthLogin().callProfileApi(profileCallback).isCompleted

@@ -2,25 +2,29 @@ package app.airsignal.weather.as_eye.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import androidx.core.os.HandlerCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
+import app.airsignal.weather.adapter.ItemDiffCallback
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.util.OnAdapterItemClick
 import java.util.*
 
-class AddGroupAdapter(
+class AddInGroupDeviceAdapter(
     private val context: Context,
     list: ArrayList<EyeDataModel.Group>
 ) :
-    RecyclerView.Adapter<AddGroupAdapter.ViewHolder>() {
-    private val mList = list
+    RecyclerView.Adapter<AddInGroupDeviceAdapter.ViewHolder>() {
+    private var mList = list
 
-    private lateinit var onClickListener: OnAdapterItemClick.OnAdapterItemClick
+    private lateinit var onClickListener: OnAdapterItemSingleClick
 
     override fun onCreateViewHolder(
         parent: ViewGroup, viewType: Int
@@ -31,7 +35,7 @@ class AddGroupAdapter(
         return ViewHolder(view)
     }
 
-    fun setOnItemClickListener(listener: OnAdapterItemClick.OnAdapterItemClick) {
+    fun setOnItemClickListener(listener: OnAdapterItemSingleClick) {
         this.onClickListener = listener
     }
 
@@ -53,7 +57,7 @@ class AddGroupAdapter(
 
         fun bind(dao: EyeDataModel.Group) {
             alias.text = dao.device.alias
-            serial.text = dao.device.serial.serial
+            serial.text = dao.device.serial
 
             if (dao.device.isMaster) {
                 master.visibility = View.VISIBLE

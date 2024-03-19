@@ -31,4 +31,5 @@ object SpDao {
     const val TEXT_SCALE_DEFAULT = "default"
     const val IN_APP_MSG = "inAppMsg"
     const val IN_APP_MSG_TIME = "inAppMsgTime"
+    const val TUTORIAL_SKIP = "eye_tutorial_skip"
 }

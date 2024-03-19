@@ -153,6 +153,17 @@
                 app:framePosition="99"
                 app:motionTarget="@id/mainTopBarGpsTitleScroll" />
             <KeyAttribute
+                android:alpha="1"
+                app:curveFit="linear"
+                app:framePosition="1"
+                app:motionTarget="@id/mainTopEye" />
+            <KeyAttribute
+                android:alpha="0"
+                app:curveFit="linear"
+                app:framePosition="60"
+                app:motionTarget="@id/mainTopEye" />
+
+            <KeyAttribute
                 android:alpha="0"
                 app:curveFit="linear"
                 app:framePosition="60"
@@ -418,7 +429,8 @@
             android:layout_marginStart="17dp"
             android:textSize="16sp"
             android:alpha="0"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
 
         <Constraint
@@ -427,7 +439,8 @@
             android:layout_marginStart="17dp"
             android:textSize="18sp"
             android:alpha="0"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
 
         <Constraint
@@ -437,7 +450,8 @@
             android:textSize="14sp"
             android:text="@string/live_temp"
             android:alpha="0"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
 
         <Constraint
@@ -446,7 +460,8 @@
             android:layout_marginStart="17dp"
             android:textSize="18sp"
             android:alpha="0"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
 
         <Constraint
@@ -456,7 +471,8 @@
             android:textSize="14sp"
             android:text="@string/live_temp"
             android:alpha="0"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
 
         <Constraint
@@ -465,8 +481,20 @@
             android:layout_marginStart="17dp"
             android:textSize="18sp"
             android:alpha="0"
-            app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
+
+        <Constraint
+            android:id="@+id/mainTopEye"
+            style="@style/basicMediumTextView"
+            app:layout_constraintBottom_toBottomOf="@+id/topBarLinear"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/topBarLinear"
+            android:alpha="1"
+            android:textColor="@color/main_blue_color"
+            android:textSize="16sp" />
     </ConstraintSet>
 
 
@@ -677,5 +705,15 @@
             app:layout_constraintEnd_toEndOf="@+id/mainMinMaxTitleC"
             app:layout_constraintBottom_toTopOf="@+id/mainMinMaxTitleC"/>
 
+        <Constraint
+            android:id="@+id/mainTopEye"
+            style="@style/basicMediumTextView"
+            app:layout_constraintBottom_toBottomOf="@+id/topBarLinear"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/topBarLinear"
+            android:alpha="0"
+            android:textColor="@color/main_blue_color"
+            android:textSize="16sp" />
     </ConstraintSet>
 </MotionScene>
