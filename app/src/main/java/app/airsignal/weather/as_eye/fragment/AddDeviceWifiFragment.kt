@@ -14,14 +14,15 @@ import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.as_eye.adapter.AddDeviceWifiAdapter
 import app.airsignal.weather.as_eye.adapter.OnAdapterItemSingleClick
 import app.airsignal.weather.as_eye.dao.EyeDataModel
+import app.airsignal.weather.databinding.FragmentAddDeviceSerialBinding
 import app.airsignal.weather.databinding.FragmentAddDeviceWifiBinding
 import app.airsignal.weather.util.OnAdapterItemClick
 import kotlin.math.absoluteValue
 
 @Suppress("DEPRECATION")
-class AddDeviceWifiFragment : Fragment() {
+class AddDeviceWifiFragment : BaseEyeFragment<FragmentAddDeviceWifiBinding>() {
+    override val resID: Int get() = R.layout.fragment_add_device_wifi
     private lateinit var parentActivity: AddEyeDeviceActivity
-    private lateinit var binding: FragmentAddDeviceWifiBinding
     private val wifiList = ArrayList<EyeDataModel.Wifi>()
     private val wifiAdapter by lazy { AddDeviceWifiAdapter(requireContext(),wifiList) }
 

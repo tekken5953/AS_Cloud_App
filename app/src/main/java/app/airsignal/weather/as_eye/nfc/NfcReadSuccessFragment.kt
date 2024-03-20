@@ -1,21 +1,23 @@
 package app.airsignal.weather.as_eye.nfc
 
 import android.content.Context
+import android.graphics.Typeface
 import android.os.Bundle
-import android.os.Handler
 import android.os.Looper
 import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableStringBuilder
 import android.text.TextWatcher
+import android.text.style.StyleSpan
+import android.text.style.TypefaceSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.HandlerCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.as_eye.dao.EyeDataModel
-import app.airsignal.weather.as_eye.fragment.AddDeviceWifiPasswordFragment
 import app.airsignal.weather.databinding.NfcReadSuccessFragmentBinding
 import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.SpDao.userEmail
@@ -55,24 +57,23 @@ class NfcReadSuccessFragment : Fragment() {
                         EyeDataModel.PostDevice(serial,alias,isMaster))
                     }, 2000)
                 } else {
-                    if (binding.nfcReadSAliasEt.visibility == View.GONE)
+                    if (binding.nfcReadSAliasEt.visibility == View.GONE) {
+                        mActivity.changeProgressWithAnimation(75)
+                        mActivity.changeTitleWithAnimation(binding.nfcReadSTitle, "사용하실 기기명을\n입력해주세요", true)
+                        binding.nfcReadSSerial.visibility = View.GONE
+                        binding.nfcReadSDeviceImg.visibility = View.GONE
                         binding.nfcReadSAliasEt.visibility = View.VISIBLE
+                        binding.nfcReadSAliasContents.visibility = View.VISIBLE
+                    }
+
                     binding.nfcReadSBtn.text = "등록"
 
                     binding.nfcReadSAliasEt.addTextChangedListener(object : TextWatcher{
                         override fun beforeTextChanged(
-                            s: CharSequence?,
-                            start: Int,
-                            count: Int,
-                            after: Int
-                        ) {}
+                            s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                         override fun onTextChanged(
-                            s: CharSequence?,
-                            start: Int,
-                            before: Int,
-                            count: Int
-                        ) {}
+                            s: CharSequence?, start: Int, before: Int, count: Int) {}
 
                         override fun afterTextChanged(s: Editable?) {
                             binding.nfcReadSBtn.isEnabled = !s.isNullOrBlank()
@@ -100,6 +101,14 @@ class NfcReadSuccessFragment : Fragment() {
             if (binding.nfcReadSSerial.text.toString() != "") {
                 binding.nfcReadSBtn.isEnabled = true
             }
+
+            mActivity.changeTitleWithAnimation(binding.nfcReadSTitle, "AS-Eye를 찾았습니다", false)
+            val span = SpannableStringBuilder("기기명은 설정-기기명 변경 페이지에서\n언제든 수정이 가능합니다")
+            val target = "설정-기기명"
+            val length = target.length
+            span.setSpan(StyleSpan(Typeface.BOLD), span.indexOf(target),
+                span.indexOf(target) + length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            binding.nfcReadSAliasContents.text = span
         }
     }
 

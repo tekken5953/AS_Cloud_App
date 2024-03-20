@@ -89,6 +89,7 @@
                 android:layout_height="wrap_content"
                 app:isArrow="false"
                 app:isToggle="false"
+                android:background="?android:attr/selectableItemBackground"
                 app:layout_constraintTop_toBottomOf="@id/aeSettingSetupDate"
                 app:settingLeft="기기 삭제" />
 

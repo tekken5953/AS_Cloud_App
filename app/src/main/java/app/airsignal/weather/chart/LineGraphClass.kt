@@ -104,6 +104,7 @@ class LineGraphClass(private val context: Context) {
             textColor = context.getColor(R.color.eye_graph_gray)
             setDrawAxisLine(false)
             setDrawGridLines(true)
+            valueFormatter = YAxisValueFormat()
             spaceMax = 5f
             labelCount = 5
             typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_medium.ttf")
@@ -172,6 +173,12 @@ class LineGraphClass(private val context: Context) {
     class DataSetValueFormat : IndexAxisValueFormatter() {
         override fun getFormattedValue(value: Float): String {
             return value.roundToInt().toString()
+        }
+    }
+
+    inner class YAxisValueFormat : IndexAxisValueFormatter() {
+        override fun getFormattedValue(value: Float): String {
+            return value.toInt().toString()
         }
     }
 

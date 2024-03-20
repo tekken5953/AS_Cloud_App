@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.as_eye.dao.EyeDataModel
+import app.airsignal.weather.databinding.FragmentAddDeviceWifiBinding
 import app.airsignal.weather.databinding.FragmentAddDeviceWifiPasswordBinding
 import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.SpDao
@@ -38,9 +39,9 @@ import retrofit2.Response
 import java.util.*
 
 @SuppressLint("MissingPermission")
-class AddDeviceWifiPasswordFragment : Fragment() {
+class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPasswordBinding>() {
+    override val resID: Int get() = R.layout.fragment_add_device_wifi_password
     private lateinit var parentActivity: AddEyeDeviceActivity
-    private lateinit var binding: FragmentAddDeviceWifiPasswordBinding
 
     private var isPwdVisible = false
 

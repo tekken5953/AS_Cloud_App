@@ -18,6 +18,7 @@ import app.airsignal.weather.as_eye.fragment.AddDeviceSerialFragment
 import app.airsignal.weather.as_eye.nfc.NfcInfoFragment
 import app.airsignal.weather.databinding.ActivityAddEyeDeviceBinding
 import app.airsignal.weather.databinding.IncludeEyeAddItemBinding
+import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import kotlinx.coroutines.*
 
@@ -32,24 +33,27 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
 
     lateinit var nfcAdapter: NfcAdapter
 
-    override fun onStart() {
-        super.onStart()
-        transactionFragment(AddDeviceSerialFragment())
-    }
-
     override fun onResume() {
         super.onResume()
         enableNfc()
     }
 
-    override fun onStop() {
-        super.onStop()
-        if (!this.isFinishing) nfcAdapter.disableForegroundDispatch(this)
+    override fun onPause() {
+        super.onPause()
+        if (nfcAdapter.isEnabled) {
+            nfcAdapter.disableForegroundDispatch(this)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        transactionFragment(AddDeviceSerialFragment())
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent.action == NfcAdapter.ACTION_NDEF_DISCOVERED) {
+        LoggerUtil().w("testtest", "processIntent : ${intent.action}")
+        if (intent.action == NfcAdapter.ACTION_NDEF_DISCOVERED || intent.action == NfcAdapter.ACTION_TAG_DISCOVERED ) {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.addEyeDeviceFrame)
             if (currentFragment is NfcInfoFragment) {
                 currentFragment.handleNfcIntent(intent)
@@ -73,7 +77,7 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
         ble = BleClient(this).getInstance()
     }
 
-    private fun createCancelDialog() {
+    fun createCancelDialog() {
         val dialog = MakeDoubleDialog(this)
         val show = dialog.make(getString(R.string.eye_add_cancel),getString(R.string.yes),getString(R.string.no),R.color.red)
         show.first.setOnClickListener {
@@ -134,10 +138,12 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
 
     fun showPb() {
         binding.addEyeDeviceLoading.visibility = View.VISIBLE
+        blockTouch(true)
         binding.addEyeDeviceLoading.bringToFront()
     }
 
     fun hidePb() {
+        blockTouch(false)
         binding.addEyeDeviceLoading.visibility = View.GONE
     }
 
@@ -158,7 +164,9 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
     private fun enableNfc() {
         if (!nfcAdapter.isEnabled) {
             Toast.makeText(this, getString(R.string.nfc_disabled_msg), Toast.LENGTH_SHORT).show()
-            startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
+            val intent = Intent(Intent(Settings.ACTION_NFC_SETTINGS))
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
         } else {
             nfcAdapter.enableForegroundDispatch(
                 this,

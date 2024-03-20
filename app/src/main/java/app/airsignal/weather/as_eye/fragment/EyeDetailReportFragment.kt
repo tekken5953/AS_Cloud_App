@@ -16,6 +16,7 @@ import app.airsignal.weather.as_eye.activity.EyeNoiseDetailActivity
 import app.airsignal.weather.as_eye.adapter.ReportViewPagerAdapter
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.chart.LineGraphClass
+import app.airsignal.weather.databinding.EyeDetailLiveFragmentBinding
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.parseReportTitle
@@ -27,14 +28,14 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.roundToInt
 
-class EyeDetailReportFragment : Fragment() {
+class EyeDetailReportFragment : BaseEyeFragment<EyeDetailReportFragmentBinding>() {
+    override val resID: Int get() = R.layout.eye_detail_report_fragment
 
     enum class ReportIndex {
         VIRUS_INDEX, CAI_INDEX
     }
 
     private lateinit var mActivity: EyeDetailActivity
-    private lateinit var binding : EyeDetailReportFragmentBinding
     private val autoJob = Job()
     private val reportViewPagerItem = ArrayList<EyeDataModel.EyeReportAdapter>()
     private val reportViewPagerAdapter by lazy {

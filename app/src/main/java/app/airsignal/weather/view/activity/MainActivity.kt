@@ -796,10 +796,16 @@ class MainActivity
     }
 
     // 프로그래스 보이기
-    private fun showProgressBar() { setProgressVisibility(true) }
+    private fun showProgressBar() {
+        setProgressVisibility(true)
+        blockTouch(true)
+    }
 
     // 프로그래스 숨기기
-    private fun hideProgressBar() { setProgressVisibility(false) }
+    private fun hideProgressBar() {
+        setProgressVisibility(false)
+        blockTouch(false)
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {

@@ -2,8 +2,8 @@ package app.airsignal.weather.as_eye.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.nfc.NfcAdapter
 import android.os.Bundle
-import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
@@ -14,7 +14,6 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.core.os.HandlerCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.as_eye.nfc.NfcInfoFragment
@@ -23,7 +22,6 @@ import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.SpDao.userEmail
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.network.retrofit.HttpClient
-import app.airsignal.weather.network.retrofit.MyApiImpl
 import app.airsignal.weather.util.KeyboardController
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
@@ -33,21 +31,21 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 
-class AddDeviceSerialFragment : Fragment() {
-    private lateinit var parentActivity: AddEyeDeviceActivity
-    private lateinit var binding : FragmentAddDeviceSerialBinding
+class AddDeviceSerialFragment : BaseEyeFragment<FragmentAddDeviceSerialBinding>() {
+    override val resID: Int get() = R.layout.fragment_add_device_serial
+    private lateinit var baseActivity: AddEyeDeviceActivity
 
     private var stateInspection = 0
 
-    private val ble by lazy { parentActivity.ble }
+    private val ble by lazy { baseActivity.ble }
 
     private val maxSerialLength = 14
 
-    private val perm by lazy {RequestPermissionsUtil(parentActivity)}
+    private val perm by lazy {RequestPermissionsUtil(baseActivity)}
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is AddEyeDeviceActivity) parentActivity = context
+        if (context is AddEyeDeviceActivity) baseActivity = context
         if (!perm.isGrantBle()) perm.requestBlePermissions()
     }
 
@@ -58,8 +56,8 @@ class AddDeviceSerialFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_device_serial, container, false)
-        parentActivity.changeTitleWithAnimation(binding.addSerialTitle,getString(R.string.input_serial_on_back),false)
-        parentActivity.changeProgressWithAnimation(25)
+        baseActivity.changeTitleWithAnimation(binding.addSerialTitle,getString(R.string.input_serial_on_back),false)
+        baseActivity.changeProgressWithAnimation(25)
         binding.addSerialEt.visibility = View.VISIBLE
         binding.addSerialEt.animation = AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in_group_add)
         binding.addSerialBtn.visibility = View.VISIBLE
@@ -71,8 +69,8 @@ class AddDeviceSerialFragment : Fragment() {
                 KeyboardController.onKeyboardDown(requireContext(), binding.addSerialEt)
                 when (stateInspection) {
                     0 -> { getOwners(binding.addSerialEt.text.toString()) }
-                    1 -> { parentActivity.transactionFragment(NfcInfoFragment()) }
-                    2 -> { parentActivity.transactionFragment(AddDeviceBleFragment()) }
+                    1 -> { baseActivity.transactionFragment(NfcInfoFragment()) }
+                    2 -> { baseActivity.transactionFragment(AddDeviceBleFragment()) }
                 }
             }
         }
@@ -133,7 +131,7 @@ class AddDeviceSerialFragment : Fragment() {
     }
 
     private fun getOwners(sn: String) {
-        parentActivity.showPb()
+        baseActivity.showPb()
         HttpClient.setClientBuilder().getOwner(sn).enqueue(object : Callback<List<ApiModel.Owner>>{
             override fun onResponse(call: Call<List<ApiModel.Owner>>, response: Response<List<ApiModel.Owner>>) {
                 CoroutineScope(Dispatchers.IO).launch {
@@ -143,8 +141,11 @@ class AddDeviceSerialFragment : Fragment() {
                         TimberUtil().d("eyetest","serial : $sn body : $body")
                         ble.serial = sn
                         withContext(Dispatchers.Main) {
-                            parentActivity.hidePb()
+                            baseActivity.hidePb()
                             body?.let { responseBody ->
+                                binding.addSerialResultContainer.visibility = View.VISIBLE
+                                binding.addSerialResultContainer.animation = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+
                                 if (responseBody.find { it.id == SharedPreferenceManager(requireContext()).getString(userEmail)} != null) {
                                     failApi("중복 등록 에러","이미 등록하신 기기입니다", "중복 등록은 불가능합니다")
                                 } else {
@@ -153,7 +154,7 @@ class AddDeviceSerialFragment : Fragment() {
                                         if (master != null) {
                                             // 등록한 사용자가 있음
                                             successApi(1,
-                                                "'${master.id}'\n이 소유하신 기기입니다",
+                                                "'${master.id}'\n님이 소유하신 기기입니다",
                                                 "게스트로 등록하시겠습니까?"
                                             )
                                         } else {
@@ -187,26 +188,27 @@ class AddDeviceSerialFragment : Fragment() {
     }
 
     private fun successApi(inspectionCode: Int, title: String, caution: String) {
+        binding.addSerialResultContainer.isActivated = false
         stateInspection = inspectionCode
         binding.addSerialResultTitle.text = title
         binding.addSerialResultCaution.text = caution
         binding.addSerialResultError.visibility = View.GONE
         binding.addSerialResultTitle.visibility = View.VISIBLE
-        binding.addSerialResultCaution.visibility = if (caution != "") View.VISIBLE else View.GONE
+        binding.addSerialResultCaution.visibility = if (caution != "") View.VISIBLE else View.INVISIBLE
         binding.addSerialResultContainer.visibility = View.VISIBLE
         binding.addSerialResultContainer.startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in))
     }
 
     private fun failApi(errorMsg: String, title: String, caution: String) {
+        binding.addSerialResultContainer.isActivated = true
         stateInspection = 0
         TimberUtil().e("eyetest",errorMsg)
         binding.addSerialResultError.visibility = View.VISIBLE
         binding.addSerialResultTitle.visibility = View.VISIBLE
-        binding.addSerialResultCaution.visibility = View.GONE
+        binding.addSerialResultCaution.visibility = View.INVISIBLE
         binding.addSerialResultError.text = title
-        binding.addSerialResultCaution.visibility = if (caution != "") View.VISIBLE else View.GONE
+        binding.addSerialResultCaution.visibility = if (caution != "") View.VISIBLE else View.INVISIBLE
         binding.addSerialResultContainer.visibility = View.VISIBLE
         binding.addSerialResultContainer.startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in))
-
     }
 }

@@ -25,6 +25,7 @@ import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.as_eye.adapter.EyeMembersAdapter
 import app.airsignal.weather.as_eye.customview.EyeSettingView
 import app.airsignal.weather.as_eye.dao.EyeDataModel
+import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
 import app.airsignal.weather.databinding.EyeSettingFragmentBinding
 import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.room.repository.EyeGroupRepository
@@ -51,9 +52,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import kotlin.random.Random
 
-class EyeSettingFragment : Fragment() {
+class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
+    override val resID: Int get() = R.layout.eye_setting_fragment
     private lateinit var mActivity: EyeDetailActivity
-    private lateinit var binding: EyeSettingFragmentBinding
 
     private var isCanApi = false
 
@@ -227,6 +228,8 @@ class EyeSettingFragment : Fragment() {
         })
 
         binding.aeSettingMembers.fetchEnable(mActivity.isMaster)
+        binding.aeSettingNotification.fetchEnable(true)
+        binding.aeSettingName.fetchEnable(true)
 
         binding.aeSettingMembers.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {

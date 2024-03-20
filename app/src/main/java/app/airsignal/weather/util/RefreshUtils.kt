@@ -7,6 +7,8 @@ import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.view.WindowManager
+import app.airsignal.weather.view.activity.BaseActivity
 import com.airbnb.lottie.LottieAnimationView
 import kotlin.system.exitProcess
 
@@ -27,10 +29,12 @@ class RefreshUtils(private val context: Context) {
     fun refreshActivityAfterSecond(sec: Int, pbLayout: LottieAnimationView?) {
         pbLayout?.let {
             it.visibility = View.VISIBLE
+            blockTouch(true)
         }
         Handler(Looper.getMainLooper()).postDelayed ({
            this.refreshActivity()
             pbLayout?.let { it.visibility = View.GONE }
+            blockTouch(false)
         }, sec * 1000L)
     }
 
@@ -43,5 +47,10 @@ class RefreshUtils(private val context: Context) {
         val mainIntent = Intent.makeRestartActivityTask(componentName)
         context.startActivity(mainIntent)
         exitProcess(0)
+    }
+
+    fun blockTouch(b: Boolean) {
+        if (b) (context as Activity).window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        else (context as Activity).window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 }

@@ -25,15 +25,17 @@ import com.clj.fastble.exception.BleException
 import kotlinx.coroutines.*
 
 @SuppressLint("MissingPermission")
-class AddDeviceBleFragment : Fragment() {
-    private lateinit var parentActivity: AddEyeDeviceActivity
-    private lateinit var binding : FragmentAddDeviceBleBinding
+class AddDeviceBleFragment : BaseEyeFragment<FragmentAddDeviceBleBinding>() {
+    override val resID: Int get() = R.layout.activity_eye_detail
+
     private val animatorSet by lazy { AnimatorSet() }
     private var isAnimationEnabled = true
 
     private val mainDispatcher = CoroutineScope(Dispatchers.Main)
 
-    private val ble by lazy { parentActivity.ble }
+    private lateinit var baseActivity: AddEyeDeviceActivity
+
+    private val ble by lazy { baseActivity.ble }
     private val serial by lazy {ble.serial}
 
     private val scanCallback = object : BleScanCallback() {
@@ -102,7 +104,7 @@ class AddDeviceBleFragment : Fragment() {
                 binding.addBleTitle.text = getString(R.string.success_to_connect_eye)
                 ble.disconnect()
                 delay(3000)
-                parentActivity.transactionFragment(AddDeviceWifiFragment())
+                baseActivity.transactionFragment(AddDeviceWifiFragment())
             }
         }
 
@@ -124,7 +126,7 @@ class AddDeviceBleFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is AddEyeDeviceActivity) parentActivity = context
+        if (context is AddEyeDeviceActivity) baseActivity = context
     }
 
     override fun onCreateView(
@@ -133,7 +135,7 @@ class AddDeviceBleFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_device_ble, container, false)
-        parentActivity.changeProgressWithAnimation(50)
+        baseActivity.changeProgressWithAnimation(50)
 
         binding.addBleReconnectBtn.setOnClickListener {
             isAnimationEnabled = true

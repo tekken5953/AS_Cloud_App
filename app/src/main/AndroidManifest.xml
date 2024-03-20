@@ -54,8 +54,7 @@
         </activity>
         <activity
             android:name=".as_eye.activity.AddEyeDeviceActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize">
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -76,8 +75,7 @@
         </activity>
         <activity
             android:name=".as_eye.activity.EyeDetailActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize">
+            android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

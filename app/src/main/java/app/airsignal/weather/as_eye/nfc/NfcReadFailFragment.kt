@@ -25,10 +25,21 @@ class NfcReadFailFragment : Fragment() {
     ): View {
         binding = NfcReadFailFragmentBinding.inflate(inflater, null, false)
 
+        binding.nfcReadFCancelBtn.setOnClickListener {
+            mActivity.createCancelDialog()
+        }
+
+        binding.nfcReadFRetryBtn.setOnClickListener {
+            mActivity.transactionFragment(NfcInfoFragment())
+        }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mActivity.changeTitleWithAnimation(binding.nfcReadFTitle,"불러오기를 실패했습니다", false)
+        mActivity.changeTitleWithAnimation(binding.nfcReadFSubTitle,"스마트폰의 NFC 활성화를 확인해주세요", false)
     }
 }

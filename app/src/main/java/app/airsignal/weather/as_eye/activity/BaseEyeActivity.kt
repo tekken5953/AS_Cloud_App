@@ -1,9 +1,11 @@
 package app.airsignal.weather.as_eye.activity
 
 import android.graphics.Color
+import android.nfc.NfcAdapter
 import android.os.Build
 import android.view.View
 import android.view.WindowInsetsController
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -15,6 +17,7 @@ import androidx.databinding.ViewDataBinding
 abstract class BaseEyeActivity<VB : ViewDataBinding> : AppCompatActivity() {
     protected lateinit var binding: VB
     abstract val resID: Int
+
 
     protected fun initBinding() {
         binding = DataBindingUtil.setContentView(this@BaseEyeActivity, resID)
@@ -38,5 +41,10 @@ abstract class BaseEyeActivity<VB : ViewDataBinding> : AppCompatActivity() {
 
             decorView.systemUiVisibility = systemUiVisibility
         }
+    }
+
+    fun blockTouch(b: Boolean) {
+        if (b) this.window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        else this.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
 }

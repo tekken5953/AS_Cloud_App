@@ -46,6 +46,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginTop="30dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:gravity="center"
+            android:visibility="invisible"
+            android:background="@drawable/serial_result_bg"
             app:layout_constraintTop_toBottomOf="@+id/addSerialEt">
 
             <TextView
@@ -55,28 +60,25 @@
                 android:textColor="@color/main_black"
                 android:gravity="center"
                 android:textSize="16sp"
-                android:layout_marginStart="17dp"
-                android:layout_marginEnd="17dp"/>
+                android:lineHeight="27dp"
+                android:layout_marginTop="30dp"/>
 
             <TextView
                 android:id="@+id/addSerialResultError"
                 style="@style/basicMediumTextView"
                 android:layout_width="match_parent"
                 android:textColor="@color/red"
-                android:layout_marginTop="15dp"
-                android:textSize="16sp"
-                android:layout_marginStart="17dp"
-                android:layout_marginEnd="17dp"/>
+                android:layout_marginTop="16dp"
+                android:textSize="16sp"/>
 
             <TextView
                 android:id="@+id/addSerialResultCaution"
                 style="@style/basicMediumTextView"
                 android:layout_width="match_parent"
                 android:textColor="@color/main_blue_color"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="16dp"
                 android:textSize="14sp"
-                android:layout_marginStart="17dp"
-                android:layout_marginEnd="17dp"/>
+                android:layout_marginBottom="30dp"/>
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
