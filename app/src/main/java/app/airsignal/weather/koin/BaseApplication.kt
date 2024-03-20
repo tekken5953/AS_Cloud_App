@@ -2,7 +2,6 @@ package app.airsignal.weather.koin
 
 import android.app.Application
 import android.content.Context
-import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.location.GetLocation
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.repository.*
@@ -12,9 +11,8 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import kotlin.system.exitProcess
 
-class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
+class BaseApplication : Application() {
     companion object {
         lateinit var appContext: Context
     }
@@ -22,24 +20,11 @@ class BaseApplication : Application(), Thread.UncaughtExceptionHandler {
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
-        Thread.setDefaultUncaughtExceptionHandler(this)
 
         startKoin {
             androidLogger()
             androidContext(this@BaseApplication)
             modules(listOf(myModule))
-        }
-    }
-
-    // ANR 에러 발생 시 로그 저장 후 종료
-    override fun uncaughtException(p0: Thread, p1: Throwable) {
-        RDBLogcat.writeErrorANR(thread = "Thread is ${p0.name}", msg = "Error Msg is ${p1.stackTraceToString()}")
-        p1.printStackTrace()
-        if (p0.name == "WidgetProvider") {
-            HttpClient.getInstance(true).setClientBuilder()
-        } else {
-            Thread.sleep(100)
-            exitProcess(1)
         }
     }
 

@@ -11,7 +11,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.dao.EyeDataModel
-import app.airsignal.weather.util.OnAdapterItemClick
 
 class AddDeviceWifiAdapter(
     private val context: Context,
