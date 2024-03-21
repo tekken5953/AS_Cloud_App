@@ -1,11 +1,19 @@
 package app.airsignal.weather.as_eye.fragment
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Typeface
+import android.media.Image
 import android.os.Bundle
 import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableStringBuilder
 import android.text.TextWatcher
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -16,8 +24,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
@@ -25,7 +33,6 @@ import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.as_eye.adapter.EyeMembersAdapter
 import app.airsignal.weather.as_eye.customview.EyeSettingView
 import app.airsignal.weather.as_eye.dao.EyeDataModel
-import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
 import app.airsignal.weather.databinding.EyeSettingFragmentBinding
 import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.room.repository.EyeGroupRepository
@@ -34,10 +41,7 @@ import app.airsignal.weather.firebase.fcm.EyeNotiBuilder
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.OnSingleClickListener
-import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.TimberUtil
-import app.airsignal.weather.util.ToastUtils
+import app.airsignal.weather.util.*
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.custom_view.ShowDialogClass
@@ -73,7 +77,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_setting_fragment, container, false)
 
-        binding.aeSettingName.setOnClickListener(object : OnSingleClickListener(){
+        binding.aeSettingName.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 val changeDeviceNameDialog = ShowDialogClass(mActivity,true)
                 val changeDeviceNameView = LayoutInflater.from(requireContext())
@@ -133,7 +137,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                     if (changeDeviceBtn.isEnabled) {
                         mActivity.serialExtra?.let { serial ->
                             if (isBeta(serial)) {
-                                ToastUtils(requireContext()).showMessage("베타 테스트 기기는 수정이 불가능합니다!")
+                                ToastUtils(requireContext()).showMessage("베타 테스트 기기는 수정이 불가능합니다")
                             } else {
                                 if (!isCanApi) {
                                     isCanApi = true
@@ -152,7 +156,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
         binding.aeSettingSerial.setOnClickListener { }
         binding.aeSettingWifi.setOnClickListener { }
 
-        binding.aeSettingNotification.setOnClickListener(object : OnSingleClickListener(){
+        binding.aeSettingNotification.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 val builder = ShowDialogClass(mActivity,true)
                 val settingView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_eye_noti_setting,null)
@@ -238,7 +242,6 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                     val view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_eye_setting_members, null)
                     val rv = view.findViewById<RecyclerView>(R.id.dialogMembersRv)
                     val failMsg = view.findViewById<TextView>(R.id.dialogMembersFail)
-                    val delete = view.findViewById<ImageView>(R.id.listItemMembersDelete)
                     val serial = view.findViewById<TextView>(R.id.dialogMembersSerial)
                     val count = view.findViewById<TextView>(R.id.dialogMembersCount)
                     val list = ArrayList<EyeDataModel.Members>()
@@ -294,7 +297,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
         binding.aeSettingDeleteDevice.fetchTitleColor(R.color.red)
         binding.aeSettingDeleteDevice.setOnClickListener(object : OnSingleClickListener(){
             override fun onSingleClick(v: View?) {
-                showDeleteDialog()
+                showDeleteDialog(mActivity.isMaster)
             }
         })
 
@@ -373,12 +376,93 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
         }
     }
 
-    private fun showDeleteDialog() {
+    private fun showDeleteDialog(isMaster: Boolean) {
         val alias = mActivity.aliasExtra
-        val serial = mActivity.serialExtra
-        serial?.let {
-            if (isBeta(serial)) {
-                ToastUtils(requireContext()).showMessage("베타 테스트 기기는 삭제가 불가능합니다!")
+        val serial = mActivity.serialExtra ?: ""
+        if (isBeta(serial)) {
+            ToastUtils(requireContext()).showMessage("베타 테스트 기기는 삭제가 불가능합니다!")
+        } else {
+            if (isMaster) {
+                serial.let {
+                    val dialog = AlertDialog.Builder(context)
+                    val view = LayoutInflater.from(context)
+                        .inflate(R.layout.dialog_member_trans, null, false)
+                    dialog.setView(view)
+                    val alertDialog = dialog.create()
+
+                    val apply = view.findViewById<AppCompatButton>(R.id.dialogMemberTransApply)
+                    val cancel = view.findViewById<AppCompatButton>(R.id.dialogMemberTransCancel)
+                    val et = view.findViewById<EditText>(R.id.dialogMemberTransEt)
+                    val guide = view.findViewById<TextView>(R.id.dialogMemberTransGuide)
+                    val contents = view.findViewById<TextView>(R.id.dialogMemberTransContents)
+                    val title = view.findViewById<TextView>(R.id.dialogMemberTansTitle)
+                    val titleImg = view.findViewById<ImageView>(R.id.dialogMemberTransImg)
+
+                    title.text = "기기 삭제"
+                    titleImg.setImageDrawable(
+                        ResourcesCompat.getDrawable(resources, R.drawable.ico_setting_delete, null)
+                    )
+
+                    apply.text = "삭제하기"
+
+                    val guideText =
+                        "소유자 계정에서 기기를 삭제하면 등록된 모든 게스트의 기기도 삭제됩니다. 삭제를 원하시면 아래에 '삭제'를 입력해주세요"
+                    val changeDeleteText = "'삭제'"
+                    val guideSpan = SpannableStringBuilder(guideText)
+                    guideSpan.setSpan(
+                        ForegroundColorSpan(
+                            requireContext().getColor(R.color.ae_very_bad_main)
+                        ),
+                        guideText.indexOf(changeDeleteText),
+                        guideText.indexOf(changeDeleteText) + changeDeleteText.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    guideSpan.setSpan(
+                        StyleSpan(Typeface.BOLD),
+                        guideText.indexOf(changeDeleteText),
+                        guideText.indexOf(changeDeleteText) + changeDeleteText.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    guide.text = guideSpan
+
+                    val contentsText = "'${serial}'\n기기를 삭제하시겠습니까?"
+                    val changeSerialText = "'${serial}'"
+                    val contentsSpan = SpannableStringBuilder(contentsText)
+                    contentsSpan.setSpan(
+                        ForegroundColorSpan(requireContext().getColor(R.color.ae_very_bad_main)),
+                        contentsText.indexOf(changeSerialText),
+                        contentsText.indexOf(changeSerialText) + changeSerialText.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    contents.text = contentsSpan
+
+                    apply.setOnClickListener(object : OnSingleClickListener() {
+                        override fun onSingleClick(v: View?) {
+                            alertDialog.dismiss()
+                        }
+                    })
+
+                    cancel.setOnClickListener(object : OnSingleClickListener() {
+                        override fun onSingleClick(v: View?) {
+                            alertDialog.dismiss()
+                        }
+                    })
+
+                    et.doAfterTextChanged {
+                        if (et.text.toString() == "삭제") {
+                            apply.isEnabled = true
+                            apply.backgroundTintList =
+                                ColorStateList.valueOf(requireContext().getColor(R.color.ae_very_bad_main))
+                            KeyboardController.onKeyboardDown(requireContext(), et)
+                        } else {
+                            apply.isEnabled = false
+                            apply.backgroundTintList =
+                                ColorStateList.valueOf(requireContext().getColor(R.color.main_gray_color))
+                        }
+                    }
+
+                    alertDialog.show()
+                }
             } else {
                 val dialog = MakeDoubleDialog(requireContext())
 
@@ -391,9 +475,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                     dialog.dismiss()
                     deleteDevice(serial, SharedPreferenceManager(requireContext()).getString(userEmail))
                 }
-                show.second.setOnClickListener {
-                    dialog.dismiss()
-                }
+                show.second.setOnClickListener { dialog.dismiss() }
             }
         }
     }

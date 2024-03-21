@@ -5,17 +5,26 @@
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_bg"
     android:backgroundTint="@color/white">
+
+    <TableRow
+        android:id="@+id/dialogMemberTransTitleTr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="53dp">
+        <ImageView
+            android:id="@+id/dialogMemberTransImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/dialogMemberTansTitle"
+            style="@style/basicMediumTextView"
+            android:textColor="@color/main_black"
+            android:textSize="20sp"
+            android:layout_marginStart="5dp"/>
+    </TableRow>
     
-    <TextView
-        android:id="@+id/dialogMemberTansTitle"
-        style="@style/basicMediumTextView"
-        android:text="소유자 변경"
-        android:textColor="@color/main_black"
-        android:textSize="20sp"
-        android:layout_centerHorizontal="true"
-        android:drawablePadding="5dp"
-        android:layout_marginTop="53dp"
-        app:drawableStartCompat="@drawable/ico_member_trans" />
+
     
     <TextView
         android:id="@+id/dialogMemberTransContents"
@@ -28,7 +37,7 @@
         android:paddingEnd="20dp"
         android:layout_centerHorizontal="true"
         android:textColor="@color/main_black"
-        android:layout_below="@+id/dialogMemberTansTitle"
+        android:layout_below="@+id/dialogMemberTransTitleTr"
         android:layout_marginTop="21dp"/>
 
     <TextView
@@ -50,7 +59,7 @@
         android:layout_height="52dp"
         android:textSize="14sp"
         android:textColor="@color/main_black"
-        android:gravity="start|center_vertical"
+        android:gravity="center"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:textCursorDrawable="@color/main_blue_color"
@@ -96,7 +105,6 @@
             android:fontFamily="@font/spoqa_hansansneo_medium"
             android:background="@drawable/permission_ok_btn_bg"
             android:enabled="false"
-            android:text="변경하기"
             android:layout_weight="0.5"
             android:textSize="14sp"
             android:gravity="center"

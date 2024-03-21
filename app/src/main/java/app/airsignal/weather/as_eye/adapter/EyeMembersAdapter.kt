@@ -15,6 +15,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
@@ -93,6 +94,11 @@ class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataMod
                 val et = view.findViewById<EditText>(R.id.dialogMemberTransEt)
                 val guide = view.findViewById<TextView>(R.id.dialogMemberTransGuide)
                 val contents = view.findViewById<TextView>(R.id.dialogMemberTransContents)
+                val title = view.findViewById<TextView>(R.id.dialogMemberTansTitle)
+                val titleImg = view.findViewById<ImageView>(R.id.dialogMemberTransImg)
+
+                titleImg.setImageDrawable(ResourcesCompat.getDrawable(context.resources,R.drawable.ico_member_trans,null))
+                title.text = "소유자 변경"
 
                 val guideText = "소유자 권한을 변경 할 이메일인\n'${dao.id}'\n을 아래에 입력해주세요"
                 val guideSpan = SpannableStringBuilder(guideText)
