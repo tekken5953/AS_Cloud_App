@@ -49,9 +49,7 @@ class LoginActivity
         }
 
         // 뒤로가기 버튼 클릭
-        binding.loginMainBack.setOnClickListener {
-           finish()
-        }
+        binding.loginMainBack.setOnClickListener { finish() }
     }
 
     // 구글로그인 startActivityResult 변수
@@ -71,12 +69,8 @@ class LoginActivity
                     googleLogin.handleSignInResult(task, isAuto = false)
                 }
                 // 로그인 취소 됨
-                RESULT_CANCELED -> {
-                    binding.googleLoginButton.alpha = 1f
-                }
-                else -> {
-                    binding.googleLoginButton.alpha = 1f
-                }
+                RESULT_CANCELED -> { binding.googleLoginButton.alpha = 1f }
+                else -> { binding.googleLoginButton.alpha = 1f }
             }
         }
 }

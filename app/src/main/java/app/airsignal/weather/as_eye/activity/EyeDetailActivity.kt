@@ -111,11 +111,9 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
     }
 
     private fun sendApiData(serial: String) {
-        if (fetch.hasActiveObservers()) {
-            destroyObserver()
-        }
-        TimberUtil().w("lifecycle_test","아이 디테일 옵저버 생성")
+        if (fetch.hasObservers()) { destroyObserver() }
         applyMeasuredData()
+        TimberUtil().w("lifecycle_test","아이 디테일 옵저버 생성")
         dataViewModel.loadData(serial,AverageFlag.HOURLY.flag,getAverageTime(getCurrentTime()),getAverageTime(getCurrentTime()))
     }
 

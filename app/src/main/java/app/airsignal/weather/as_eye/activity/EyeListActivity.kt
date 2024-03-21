@@ -35,6 +35,7 @@ import app.airsignal.weather.db.sp.SpDao.TUTORIAL_SKIP
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.OnAdapterItemClick
+import app.airsignal.weather.util.OnSingleClickListener
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
@@ -124,44 +125,47 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
             }
         })
 
-        binding.aeListBack.setOnClickListener { finish() }
+        binding.aeListBack.setOnClickListener(object : OnSingleClickListener() {
+            override fun onSingleClick(v: View?) { finish() } })
 
-        binding.aeListCategorySelector.setOnClickListener {
-            val selectorBuilder = Dialog(this@EyeListActivity)
-            val selectorView = LayoutInflater.from(this@EyeListActivity)
-                .inflate(R.layout.dialog_add_group_selector,binding.aeListRoot,false)
-            selectorBuilder.setContentView(selectorView)
-            val add = selectorView.findViewById<EyeGroupSelectorView>(R.id.dialogAddGroupAdd)
-            val delete = selectorView.findViewById<EyeGroupSelectorView>(R.id.dialogAddGroupDelete)
-            val edit = selectorView.findViewById<EyeGroupSelectorView>(R.id.dialogAddGroupEdit)
+        binding.aeListCategorySelector.setOnClickListener(object : OnSingleClickListener() {
+            override fun onSingleClick(v: View?) {
+                val selectorBuilder = Dialog(this@EyeListActivity)
+                val selectorView = LayoutInflater.from(this@EyeListActivity)
+                    .inflate(R.layout.dialog_add_group_selector,binding.aeListRoot,false)
+                selectorBuilder.setContentView(selectorView)
+                val add = selectorView.findViewById<EyeGroupSelectorView>(R.id.dialogAddGroupAdd)
+                val delete = selectorView.findViewById<EyeGroupSelectorView>(R.id.dialogAddGroupDelete)
+                val edit = selectorView.findViewById<EyeGroupSelectorView>(R.id.dialogAddGroupEdit)
 
-            if (categoryAdapter.selectedPosition == 0) {
-                delete.fetchColor(false)
-                edit.fetchColor(false)
-                add.fetchColor(true)
-            } else {
-                delete.fetchColor(true)
-                edit.fetchColor(true)
-                add.fetchColor(false)
+                if (categoryAdapter.selectedPosition == 0) {
+                    delete.fetchColor(false)
+                    edit.fetchColor(false)
+                    add.fetchColor(true)
+                } else {
+                    delete.fetchColor(true)
+                    edit.fetchColor(true)
+                    add.fetchColor(false)
+                }
+
+                add.setOnClickListener {
+                    selectorBuilder.dismiss()
+                    showAddGroupDialog()
+                }
+
+                delete.setOnClickListener {
+                    selectorBuilder.dismiss()
+                    showDeleteGroupDialog()
+                }
+
+                edit.setOnClickListener {
+                    selectorBuilder.dismiss()
+                    showEditGroupDialog()
+                }
+
+                selectorBuilder.show()
             }
-
-            add.setOnClickListener {
-                selectorBuilder.dismiss()
-                showAddGroupDialog()
-            }
-
-            delete.setOnClickListener {
-                selectorBuilder.dismiss()
-                showDeleteGroupDialog()
-            }
-
-            edit.setOnClickListener {
-                selectorBuilder.dismiss()
-                showEditGroupDialog()
-            }
-
-            selectorBuilder.show()
-        }
+        })
 
         loadDeviceList()
     }
@@ -542,7 +546,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         return when(index) {
             0 -> {"+ 버튼을 눌러 새로운 기기를 쉽게 등록할 수 있어요"}
             1 -> {"내가 보고싶은 기기의 그룹을 만들 수 있어요"}
-            2 -> {"소음과 진동을 알림받고 싶으시다면\n설정 페이지에서 알림을 허용해주세요"}
+            2 -> {"위험 데이터를 알림받고 싶으시다면\n설정 페이지에서 알림을 허용해주세요"}
             3 -> {"현재 위험 단계의 데이터가 있는 기기를 알려드려요"}
             4 -> {"그 밖의 AS-Eye의 다양한 데이터와\n통계 서비스를 경험해보세요"}
             else -> ""

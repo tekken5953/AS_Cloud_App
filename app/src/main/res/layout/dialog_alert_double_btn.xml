@@ -14,7 +14,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginTop="73dp"
         android:lineHeight="24dp"
-        android:textSize="17sp"/>
+        android:textSize="16sp"/>
 
     <TableRow
         android:id="@+id/alertDoubleTr"

@@ -1,6 +1,5 @@
 package app.airsignal.weather.as_eye.activity
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Looper

@@ -239,9 +239,13 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                     val rv = view.findViewById<RecyclerView>(R.id.dialogMembersRv)
                     val failMsg = view.findViewById<TextView>(R.id.dialogMembersFail)
                     val delete = view.findViewById<ImageView>(R.id.listItemMembersDelete)
+                    val serial = view.findViewById<TextView>(R.id.dialogMembersSerial)
+                    val count = view.findViewById<TextView>(R.id.dialogMembersCount)
                     val list = ArrayList<EyeDataModel.Members>()
-                    val adapter = EyeMembersAdapter(requireContext(),list)
+                    val adapter = EyeMembersAdapter(requireContext(), list)
                     rv.adapter = adapter
+
+                    serial.text = mActivity.serialExtra
 
                     HttpClient.getInstance(false).setClientBuilder().getOwner(mActivity.serialExtra.toString())
                         .enqueue(object : Callback<List<ApiModel.Owner>>{
@@ -255,6 +259,8 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                                         list.clear()
                                         rv.visibility = View.VISIBLE
                                         failMsg.visibility = View.GONE
+
+                                        count.text = "총 ${body.size}명이 등록되어있습니다"
 
                                         body.forEachIndexed { index, item ->
                                             list.add(EyeDataModel.Members(item.id,item.master))
@@ -275,7 +281,6 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                                 failMsg.visibility = View.VISIBLE
                             }
                         })
-
 
                     dialog.setBackPressed(view.findViewById(R.id.dialogMembersBack))
                     dialog.show(view, true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
