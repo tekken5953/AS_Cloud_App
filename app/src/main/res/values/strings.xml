@@ -333,5 +333,6 @@
     <string name="fail_to_delete">삭제에 실패했습니다</string>
     <string name="nfc_disabled_msg">NFC가 비활성화되었습니다. NFC를 활성화하세요</string>
     <string name="yesterday">어제</string>
+    <string name="tomorrow_week">내일</string>
 
 </resources>

@@ -3,19 +3,11 @@ package app.airsignal.weather.view.activity
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
-import android.app.PendingIntent
-import android.content.Intent
-import android.nfc.NdefMessage
-import android.nfc.NdefRecord
-import android.nfc.NfcAdapter
-import android.nfc.Tag
-import android.nfc.tech.Ndef
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import androidx.core.os.HandlerCompat
 import app.airsignal.weather.R
-import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivitySplashBinding
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
@@ -33,9 +25,6 @@ import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.FirebaseApp
-import com.google.firebase.messaging.FirebaseMessaging
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.util.*
@@ -62,6 +51,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
         initBinding().run {
             if (fetch.hasObservers()) fetch.removeObservers(this@SplashActivity)
+
+            LoggerUtil().i("testtest",GetSystemInfo.getDisplayInfo(this@SplashActivity))
 
             applyAppVersionData()
 

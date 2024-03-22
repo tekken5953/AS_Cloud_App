@@ -7,6 +7,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
+import android.util.DisplayMetrics
+import android.view.WindowManager
 import androidx.core.content.pm.PackageInfoCompat
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
 import app.airsignal.weather.db.sp.SpDao.LANG_EN
@@ -85,5 +87,29 @@ object GetSystemInfo {
             }
         }
         return false
+    }
+
+    fun getDisplayInfo(context: Context): String {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+
+        val widthPixels = displayMetrics.widthPixels
+        val heightPixels = displayMetrics.heightPixels
+        val density = displayMetrics.density
+        val densityDpi = displayMetrics.densityDpi
+
+        // Density-independent pixels (dp) calculation
+        val screenWidthDp = widthPixels / density
+        val screenHeightDp = heightPixels / density
+
+        return """
+        Screen width: $widthPixels pixels
+        Screen height: $heightPixels pixels
+        Density: $density
+        Density DPI: $densityDpi
+        Screen width in dp: $screenWidthDp dp
+        Screen height in dp: $screenHeightDp dp
+    """.trimIndent()
     }
 }

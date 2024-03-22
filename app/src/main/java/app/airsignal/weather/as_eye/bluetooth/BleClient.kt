@@ -5,6 +5,9 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
 import android.content.pm.Capability
+import app.airsignal.weather.dao.IgnoredKeyFile.UUID_CONNECTING
+import app.airsignal.weather.dao.IgnoredKeyFile.UUID_PWD
+import app.airsignal.weather.dao.IgnoredKeyFile.UUID_SSID
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
@@ -26,12 +29,6 @@ class BleClient(private val activity: Activity) {
     var device: BleDevice? = null
     var serial = "Unknown"
     var scanning = false
-
-    companion object {
-        const val UUID_SSID = "37BE4E09-776F-4265-A6EE-6F3396E26639"
-        const val UUID_PWD = "557E202B-A185-4098-B5FB-BA1B61F699EA"
-        const val UUID_CONNECTING = "FC245120-55EC-4508-8BA8-A7B1C448C5ED"
-    }
 
     private enum class BleProtocolType {
         NOTIFY, READ, WRITE, WRITE_NO_RESPONSE, BROADCAST, INDICATE,

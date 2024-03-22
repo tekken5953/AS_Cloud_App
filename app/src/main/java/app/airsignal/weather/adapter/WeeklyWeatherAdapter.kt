@@ -90,11 +90,7 @@ class WeeklyWeatherAdapter(
                 date.setTextColor(context.getColor(R.color.main_blue_color))
             }
 
-            if (bindingAdapterPosition == 0) {
-                container.alpha = 0.7f
-            } else {
-                container.alpha = 1f
-            }
+            if (bindingAdapterPosition == 0) container.alpha = 0.6f else container.alpha = 1f
         }
     }
 }
