@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
@@ -24,9 +23,6 @@ import app.airsignal.weather.util.KeyboardController
 import app.airsignal.weather.util.OnSingleClickListener
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
-import app.airsignal.weather.view.custom_view.SnackBarUtils
-import io.opencensus.trace.Span
-import org.w3c.dom.Text
 
 
 class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataModel.Members>) :
@@ -89,7 +85,7 @@ class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataMod
                 dialog.setView(view)
                 val alertDialog = dialog.create()
 
-                val apply = view.findViewById<AppCompatButton>(R.id.dialogMemberTransApply)
+                val applyBtn = view.findViewById<AppCompatButton>(R.id.dialogMemberTransApply)
                 val cancel = view.findViewById<AppCompatButton>(R.id.dialogMemberTransCancel)
                 val et = view.findViewById<EditText>(R.id.dialogMemberTransEt)
                 val guide = view.findViewById<TextView>(R.id.dialogMemberTransGuide)
@@ -99,6 +95,7 @@ class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataMod
 
                 titleImg.setImageDrawable(ResourcesCompat.getDrawable(context.resources,R.drawable.ico_member_trans,null))
                 title.text = "소유자 변경"
+                applyBtn.text = "변경하기"
 
                 val guideText = "소유자 권한을 변경 할 이메일인\n'${dao.id}'\n을 아래에 입력해주세요"
                 val guideSpan = SpannableStringBuilder(guideText)
@@ -118,7 +115,8 @@ class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataMod
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 contents.text = contentsSpan
 
-                apply.setOnClickListener(object : OnSingleClickListener() {
+
+                applyBtn.setOnClickListener(object : OnSingleClickListener() {
                     override fun onSingleClick(v: View?) {
                         alertDialog.dismiss()
                     }
@@ -132,10 +130,10 @@ class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataMod
 
                 et.doAfterTextChanged {
                     if (et.text.toString() == dao.id) {
-                        apply.isEnabled = true
+                        applyBtn.isEnabled = true
                         KeyboardController.onKeyboardDown(context, et)
                     } else {
-                        apply.isEnabled = false
+                        applyBtn.isEnabled = false
                     }
                 }
 

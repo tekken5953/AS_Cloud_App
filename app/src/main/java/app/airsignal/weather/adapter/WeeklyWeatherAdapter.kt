@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
@@ -65,6 +66,7 @@ class WeeklyWeatherAdapter(
         private val minText: TextView = itemView.findViewById(R.id.weeklyMinText)
         private val maxText: TextView = itemView.findViewById(R.id.weeklyMaxText)
         private val section: TextView = itemView.findViewById(R.id.weeklyMinMaxSection)
+        private val container: RelativeLayout = itemView.findViewById(R.id.weeklyDayContainer)
 
         fun bind(dao: AdapterModel.WeeklyWeatherItem) {
             day.text = dao.day
@@ -83,9 +85,15 @@ class WeeklyWeatherAdapter(
             maxText.setTextColor(applyColor)
             section.setTextColor(applyColor)
 
-            if (bindingAdapterPosition == 0) {
+             if (bindingAdapterPosition == 1) {
                 day.setTextColor(context.getColor(R.color.main_blue_color))
                 date.setTextColor(context.getColor(R.color.main_blue_color))
+            }
+
+            if (bindingAdapterPosition == 0) {
+                container.alpha = 0.7f
+            } else {
+                container.alpha = 1f
             }
         }
     }

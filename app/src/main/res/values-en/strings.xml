@@ -70,6 +70,7 @@
 
     <string name="date">.</string>
     <string name="today">Today</string>
+    <string name="today_main">Tdy</string>
     <string name="min_max">Min/Max</string>
     <string name="similar_temp">Similar to yesterday</string>
     <string name="font_scale">Font Scale</string>
@@ -335,4 +336,5 @@
     <string name="success_to_delete">Success to remove</string>
     <string name="fail_to_delete">Fail to remove</string>
     <string name="nfc_disabled_msg">NFC가 비활성화되었습니다. NFC를 활성화하세요</string>
+    <string name="yesterday">Ysd</string>
 </resources>

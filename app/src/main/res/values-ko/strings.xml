@@ -66,6 +66,7 @@
     <string name="sky_cloudy_rainy_snowy">흐리고 비/눈</string>
     <string name="sky_rainy_snowy">비/눈</string>
     <string name="date">요일</string>
+    <string name="today_main">오늘</string>
     <string name="today">오늘</string>
     <string name="min_max">최저/최고</string>
     <string name="similar_temp">어제와 기온이 비슷해요</string>
@@ -328,4 +329,5 @@
     <string name="success_to_delete">삭제에 성공했습니다</string>
     <string name="fail_to_delete">삭제에 실패했습니다</string>
     <string name="nfc_disabled_msg">NFC가 비활성화되었습니다. NFC를 활성화하세요</string>
+    <string name="yesterday">어제</string>
 </resources>

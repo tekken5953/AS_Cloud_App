@@ -1188,22 +1188,22 @@ class MainActivity
         // 주간 오전 날씨
         val wfMin = listOf(
             week.wf0Am, week.wf1Am, week.wf2Am, week.wf3Am,
-            week.wf4Am, week.wf5Am, week.wf6Am
+            week.wf4Am, week.wf5Am, week.wf6Am, week.wf7Am
         )
         // 주간 오후 날씨
         val wfMax = listOf(
             week.wf0Pm, week.wf1Pm, week.wf2Pm, week.wf3Pm,
-            week.wf4Pm, week.wf5Pm, week.wf6Pm
+            week.wf4Pm, week.wf5Pm, week.wf6Pm, week.wf7Pm,
         )
         // 주간 최저 기온
         val taMin = listOf(
             week.taMin0, week.taMin1, week.taMin2, week.taMin3,
-            week.taMin4, week.taMin5, week.taMin6
+            week.taMin4, week.taMin5, week.taMin6, week.taMin7
         )
         // 주간 최고 기온
         val taMax = listOf(
             week.taMax0, week.taMax1, week.taMax2, week.taMax3, week.taMax4,
-            week.taMax5, week.taMax6
+            week.taMax5, week.taMax6, week.taMax7
         )
 
         // 최저/최대 기온 적용
@@ -1275,12 +1275,13 @@ class MainActivity
         val dateNow: LocalDateTime = LocalDateTime.now()
 
         // 주간별 날씨 아이템 추가
-        repeat(7) {
+        repeat(8) {
             try {
                 val formedDate = dateNow.plusDays(it.toLong())
                 val date: String = when (it) {
-                    0 -> getString(R.string.today)
-                    1 -> getString(R.string.tomorrow)
+                    0 -> getString(R.string.yesterday)
+                    1 -> getString(R.string.today_main)
+                    2 -> getString(R.string.tomorrow)
                     else -> {
                         "${
                             parseDayOfWeekToKorean(
