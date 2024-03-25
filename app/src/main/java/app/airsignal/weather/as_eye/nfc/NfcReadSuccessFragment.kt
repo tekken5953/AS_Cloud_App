@@ -9,7 +9,6 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.TextWatcher
 import android.text.style.StyleSpan
-import android.text.style.TypefaceSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +21,6 @@ import app.airsignal.weather.databinding.NfcReadSuccessFragmentBinding
 import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.SpDao.userEmail
 import app.airsignal.weather.network.retrofit.HttpClient
-import app.airsignal.weather.util.TimberUtil
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -89,7 +87,6 @@ class NfcReadSuccessFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val args = arguments?.getString("payload")
-        TimberUtil().d("nfctest","receive payload is $args")
         args?.let {
             val sep = it.split(" ")
             val deviceSerial = sep[2].substring(sep[2].indexOf(":") + 1 , sep[2].lastIndex + 1)
@@ -126,13 +123,13 @@ class NfcReadSuccessFragment : Fragment() {
                             mActivity.finish()
                         }
                     } catch (e: Exception) {
-                        TimberUtil().e("eyetest",e.stackTraceToString())
+                        e.stackTraceToString()
                     }
                 }
 
                 override fun onFailure(call: Call<String>, t: Throwable) {
                     mActivity.hidePb()
-                    TimberUtil().e("eyetest",t.stackTraceToString())
+                    t.stackTraceToString()
                 }
             }
         )

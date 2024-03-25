@@ -18,7 +18,6 @@ import app.airsignal.weather.as_eye.fragment.AddDeviceSerialFragment
 import app.airsignal.weather.as_eye.nfc.NfcInfoFragment
 import app.airsignal.weather.databinding.ActivityAddEyeDeviceBinding
 import app.airsignal.weather.databinding.IncludeEyeAddItemBinding
-import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import kotlinx.coroutines.*
 
@@ -52,7 +51,6 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        LoggerUtil().w("testtest", "processIntent : ${intent.action}")
         if (intent.action == NfcAdapter.ACTION_NDEF_DISCOVERED || intent.action == NfcAdapter.ACTION_TAG_DISCOVERED ) {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.addEyeDeviceFrame)
             if (currentFragment is NfcInfoFragment) {

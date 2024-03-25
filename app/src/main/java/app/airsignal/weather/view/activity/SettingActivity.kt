@@ -33,6 +33,7 @@ import app.airsignal.weather.dao.RDBLogcat.LOGIN_GOOGLE
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_NAVER
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_PHONE
+import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.dao.StaticDataObject.LANG_SYS
@@ -625,19 +626,9 @@ class SettingActivity
         alertOn.setTint(getColor(R.color.theme_view_color))
         alertOff.setTint(getColor(R.color.theme_view_color))
         if (isAllow) {
-            if (!isInit) {
-                SnackBarUtils.make(
-                    view,
-                    getString(R.string.allowed_noti), alertOn
-                ).show()
-            }
+            if (!isInit) { SnackBarUtils.make(view, getString(R.string.allowed_noti), alertOn).show() }
         } else {
-            if (!isInit) {
-                SnackBarUtils.make(
-                    view,
-                    getString(R.string.denied_noti), alertOff
-                ).show()
-            }
+            if (!isInit) { SnackBarUtils.make(view, getString(R.string.denied_noti), alertOff).show() }
         }
     }
 
@@ -682,15 +673,9 @@ class SettingActivity
     private fun applyDeviceTheme() {
         // 설정 페이지 테마 항목이름 바꾸기
         when (getUserTheme(this)) {
-            THEME_DARK -> {
-                binding.settingSystemTheme.fetchData(getString(R.string.theme_dark))
-            }
-            THEME_LIGHT -> {
-                binding.settingSystemTheme.fetchData(getString(R.string.theme_light))
-            }
-            else -> {
-                binding.settingSystemTheme.fetchData(getString(R.string.theme_system))
-            }
+            THEME_DARK -> { binding.settingSystemTheme.fetchData(getString(R.string.theme_dark)) }
+            THEME_LIGHT -> { binding.settingSystemTheme.fetchData(getString(R.string.theme_light)) }
+            else -> { binding.settingSystemTheme.fetchData(getString(R.string.theme_system)) }
         }
     }
 
@@ -699,7 +684,6 @@ class SettingActivity
     private fun applyAppVersionResult() {
         val viewAppInfo: View =
             LayoutInflater.from(this).inflate(R.layout.dialog_app_info, null)
-
         val appInfoVersionValue: TextView = viewAppInfo.findViewById(R.id.appInfoVersionValue)
         val appInfoIsRecent: TextView = viewAppInfo.findViewById(R.id.appInfoIsRecent)
         val appInfoDownBtn: Button = viewAppInfo.findViewById(R.id.appInfoDownBtn)
@@ -840,12 +824,8 @@ class SettingActivity
     private fun applyFontScale() {
         // 설정 페이지 폰트크기 항목이름 바꾸기
         when (getUserFontScale(this)) {
-            "small" -> {
-                binding.settingSystemFont.fetchData(getString(R.string.font_small))
-            }
-            "big" -> {
-                binding.settingSystemFont.fetchData(getString(R.string.font_large))
-            }
+            "small" -> { binding.settingSystemFont.fetchData(getString(R.string.font_small)) }
+            "big" -> { binding.settingSystemFont.fetchData(getString(R.string.font_large)) }
             else -> {
                 binding.settingSystemFont.fetchData(getString(R.string.font_normal))
             }
@@ -882,12 +862,7 @@ class SettingActivity
 
     // 이미지 드로어블 할당
     private fun setImageDrawable(imageView: ImageView, src: Int) {
-        imageView.setImageDrawable(
-            ResourcesCompat.getDrawable(
-                resources,
-                src, null
-            )
-        )
+        imageView.setImageDrawable(ResourcesCompat.getDrawable(resources, src, null))
     }
 
     // 메인 액티비티로 이동

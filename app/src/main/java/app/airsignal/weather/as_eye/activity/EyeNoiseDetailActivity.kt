@@ -14,7 +14,6 @@ import app.airsignal.weather.as_eye.adapter.NoiseDetailAdapter
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.databinding.ActivityEyeNoiseDetailBinding
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.viewmodel.NoiseDataViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDate
@@ -51,7 +50,6 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
     private val noiseViewModel by viewModel<NoiseDataViewModel>()
 
     private val fetch by lazy {noiseViewModel.fetchData()}
-
     private val serial by lazy {intent?.extras?.getString("serial").toString()}
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +60,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             noiseDetailRv.adapter = noiseAdapter
             noiseDetailBack.setOnClickListener {
                 finish()
+                @Suppress("DEPRECATION")
                 overridePendingTransition(R.anim.slide_bottom_to_top, R.anim.slide_top_to_bottom)
             }
 
@@ -174,7 +173,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             callApi(NoiseValueSort.THIS_WEEK.index) // 이번 주 데이터 호출
         }
 
-        visibleNoResult(allList.isEmpty())
+        visibleNoResult(allList.isEmpty()) // 빈 데이터 처리
     }
 
     // API 통신 옵저버 - 날짜로 데이터 불러옴 - UI 처리
@@ -186,7 +185,6 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
                         // 통신 성공
                         is BaseRepository.ApiState.Success -> {
                             val body = noise.data   // 통신 결과 데이터
-                            TimberUtil().d("noisetest", body.toString()) // 결과 로깅
 
                             allList.clear() // 새로 불러왔기 때문에 전체 리스트 클리어
                             filteredList.clear() // 전체 리스트가 클리어 됐기 때문에 필터 리스트도 클리어
@@ -217,7 +215,6 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
 
                         // 통신 실패
                         is BaseRepository.ApiState.Error -> {
-                            TimberUtil().e("noisetest", noise.errorMessage)
                             Toast.makeText(
                                 this@EyeNoiseDetailActivity,
                                 "소음 불러오기에 실패했습니다",
@@ -230,7 +227,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
                 }
             }
         } catch (e: Exception) {    // 익셉션 발생
-            TimberUtil().e("noisetest", e.stackTraceToString())
+            e.stackTraceToString()
             Toast.makeText(this@EyeNoiseDetailActivity, "소음 불러오기에 실패했습니다", Toast.LENGTH_SHORT)
                 .show()
         }

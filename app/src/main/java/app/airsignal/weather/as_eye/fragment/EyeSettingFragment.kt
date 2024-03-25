@@ -170,7 +170,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                     override fun onSingleClick(v: View?) {
                         if (isBeta(mActivity.serialExtra.toString())) {
                             SnackBarUtils(settingView,"베타 기기는 설정이 불가능합니다",
-                                ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)!!).show()
+                                ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)).show()
                         }
                     }
                 })
@@ -178,7 +178,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                     override fun onSingleClick(v: View?) {
                         if (isBeta(mActivity.serialExtra.toString())) {
                             SnackBarUtils(settingView,"베타 기기는 설정이 불가능합니다",
-                                ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)!!).show()
+                                ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)).show()
                         }
                     }
                 })
@@ -217,8 +217,8 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                             withContext(Dispatchers.Main) {
                                 SnackBarUtils(settingView,
                                     "알림을 ${if(isChecked) "허용" else "거부"}하였습니다",
-                                    if (isChecked) ResourcesCompat.getDrawable(resources,R.drawable.alert_on,null)!!
-                                    else ResourcesCompat.getDrawable(resources,R.drawable.alert_off,null)!!).show()
+                                    if (isChecked) ResourcesCompat.getDrawable(resources,R.drawable.alert_on,null)
+                                    else ResourcesCompat.getDrawable(resources,R.drawable.alert_off,null)).show()
                             }
                         }
                     }
@@ -240,7 +240,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                     val serial = view.findViewById<TextView>(R.id.dialogMembersSerial)
                     val count = view.findViewById<TextView>(R.id.dialogMembersCount)
                     val list = ArrayList<EyeDataModel.Members>()
-                    val adapter = EyeMembersAdapter(requireContext(), list)
+                    val adapter = EyeMembersAdapter(mActivity, list)
                     rv.adapter = adapter
 
                     serial.text = mActivity.serialExtra
@@ -284,7 +284,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                     dialog.show(view, true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
                 } else {
                     SnackBarUtils(requireView(),"소유자 전용 기능입니다",
-                        ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)!!).show()
+                        ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)).show()
                 }
             }
         })
@@ -315,7 +315,6 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
 
     private fun callChangeAliasApi(dialog: ShowDialogClass, serial: String, alias: String) {
         applyPostAlias(dialog,serial,alias)
-        TimberUtil().d("eyetest","serial is $serial alias is $alias")
         deviceAliasViewModel.loadDataResult(serial,alias)
     }
 

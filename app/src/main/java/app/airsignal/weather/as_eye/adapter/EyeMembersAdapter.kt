@@ -2,6 +2,7 @@ package app.airsignal.weather.as_eye.adapter
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -18,11 +19,14 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
+import app.airsignal.weather.as_eye.activity.EyeDetailActivity
+import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.util.KeyboardController
 import app.airsignal.weather.util.OnSingleClickListener
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
+import app.airsignal.weather.view.custom_view.SnackBarUtils
 
 
 class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataModel.Members>) :
@@ -118,12 +122,20 @@ class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataMod
 
                 applyBtn.setOnClickListener(object : OnSingleClickListener() {
                     override fun onSingleClick(v: View?) {
+                        ToastUtils(context).showMessage("소유자 변경이 완료되었습니다",3000)
                         alertDialog.dismiss()
+                        if (context is EyeDetailActivity) {
+                            val intent = Intent(context, EyeListActivity::class.java)
+                            context.startActivity(intent)
+                            context.finish()
+                            context.overridePendingTransition(R.anim.slide_top_to_bottom,R.anim.slide_bottom_to_top)
+                        }
                     }
                 })
 
                 cancel.setOnClickListener(object : OnSingleClickListener() {
                     override fun onSingleClick(v: View?) {
+                        ToastUtils(context).showMessage("소유자 변경을 취소하였습니다",3000)
                         alertDialog.dismiss()
                     }
                 })
@@ -132,9 +144,7 @@ class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataMod
                     if (et.text.toString() == dao.id) {
                         applyBtn.isEnabled = true
                         KeyboardController.onKeyboardDown(context, et)
-                    } else {
-                        applyBtn.isEnabled = false
-                    }
+                    } else { applyBtn.isEnabled = false }
                 }
 
                 alertDialog.show()

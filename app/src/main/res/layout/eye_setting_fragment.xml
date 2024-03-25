@@ -9,9 +9,10 @@
         android:scrollbars="none"
         android:overScrollMode="ifContentScrolls"
         android:clipToPadding="false">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             tools:context=".as_eye.fragment.EyeSettingFragment"
             android:background="@color/ae_bg_color"
             android:id="@+id/aeSettingViewParent">
@@ -24,6 +25,7 @@
                 android:background="?android:attr/selectableItemBackground"
                 app:isArrow="true"
                 app:isToggle="false"
+                android:textSize="16sp"
                 app:layout_constraintTop_toTopOf="parent"
                 app:settingLeft="@string/device_alias" />
 
@@ -34,6 +36,7 @@
                 android:background="?android:attr/selectableItemBackground"
                 app:isArrow="true"
                 app:isToggle="false"
+                android:textSize="16sp"
                 app:layout_constraintTop_toBottomOf="@+id/aeSettingName"
                 app:settingLeft="@string/noti_option" />
 
@@ -43,6 +46,7 @@
                 android:layout_height="wrap_content"
                 app:isArrow="true"
                 app:isToggle="false"
+                android:textSize="16sp"
                 android:background="?android:attr/selectableItemBackground"
                 app:layout_constraintTop_toBottomOf="@id/aeSettingNotification"
                 app:settingLeft="멤버 관리" />
@@ -53,6 +57,7 @@
                 android:layout_height="wrap_content"
                 app:isArrow="false"
                 app:isToggle="false"
+                android:textSize="16sp"
                 app:layout_constraintTop_toBottomOf="@+id/aeSettingMembers"
                 app:settingLeft="모델명" />
 
@@ -62,6 +67,7 @@
                 android:layout_height="wrap_content"
                 app:isArrow="false"
                 app:isToggle="false"
+                android:textSize="16sp"
                 app:layout_constraintTop_toBottomOf="@+id/aeSettingModelName"
                 app:settingLeft="@string/device_serial_number" />
 
@@ -71,6 +77,7 @@
                 android:layout_height="wrap_content"
                 app:isArrow="false"
                 app:isToggle="false"
+                android:textSize="16sp"
                 app:layout_constraintTop_toBottomOf="@id/aeSettingSerial"
                 app:settingLeft="@string/wifi" />
 
@@ -80,6 +87,7 @@
                 android:layout_height="wrap_content"
                 app:isArrow="false"
                 app:isToggle="false"
+                android:textSize="16sp"
                 app:layout_constraintTop_toBottomOf="@id/aeSettingWifi"
                 app:settingLeft="설치 날짜" />
 
@@ -89,6 +97,7 @@
                 android:layout_height="wrap_content"
                 app:isArrow="false"
                 app:isToggle="false"
+                android:textSize="16sp"
                 android:background="?android:attr/selectableItemBackground"
                 app:layout_constraintTop_toBottomOf="@id/aeSettingSetupDate"
                 app:settingLeft="기기 삭제" />

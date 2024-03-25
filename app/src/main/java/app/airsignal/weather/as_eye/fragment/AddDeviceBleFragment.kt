@@ -13,11 +13,9 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.databinding.FragmentAddDeviceBleBinding
-import app.airsignal.weather.util.TimberUtil
 import com.clj.fastble.callback.BleGattCallback
 import com.clj.fastble.callback.BleScanCallback
 import com.clj.fastble.data.BleDevice
@@ -53,7 +51,6 @@ class AddDeviceBleFragment : BaseEyeFragment<FragmentAddDeviceBleBinding>() {
         override fun onScanning(bleDevice: BleDevice?) {
             bleDevice?.let {
                 if (bleDevice.name != null) {
-                    TimberUtil().d("testtest", "onScanning ${bleDevice.name}")
                     if (serial != "Unknown" && bleDevice.device?.name == serial) {
                         ble.device = bleDevice
                         mainDispatcher.launch {

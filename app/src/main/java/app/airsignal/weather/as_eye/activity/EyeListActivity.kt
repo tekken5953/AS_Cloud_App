@@ -34,9 +34,7 @@ import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.db.sp.SpDao.TUTORIAL_SKIP
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.OnAdapterItemClick
 import app.airsignal.weather.util.OnSingleClickListener
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.ShowDialogClass
@@ -98,10 +96,8 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                     CoroutineScope(Dispatchers.IO).launch {
                         @SuppressLint("SuspiciousIndentation")
                         val group = db.findByCategoryName(categoryItem[position].name)
-                        TimberUtil().d("eyetest","group db list : $group")
                         allDeviceList.forEachIndexed { index, device ->
                             if (group.device.contains(device.serial)) {
-                                TimberUtil().d("eyetest","db contains : ${device.serial}")
                                 groupDeviceList.add(device)
                                 deviceListAdapter.notifyItemInserted(index)
                             }
@@ -291,7 +287,6 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     private fun destroyObserver() {
         deviceListViewModel.cancelJob()
         listLiveData?.removeObservers(this)
-        TimberUtil().w("lifecycle_test", "리스트 옵저버 제거")
     }
 
     private fun showCategoryPb() {
@@ -411,7 +406,6 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
     private fun initViewModel() {
         if (listLiveData?.hasActiveObservers() == true) { destroyObserver() }
-        TimberUtil().w("lifecycle_test","리스트 옵저버 생성")
         applyDeviceList()
     }
 
@@ -434,7 +428,6 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                                     groupDeviceList.clear()
                                     allDeviceList.clear()
                                     pList.forEachIndexed { index,  device ->
-                                        TimberUtil().d("eyetest", "device[${device.serial}]")
                                         groupDeviceList.add(device)
                                         allDeviceList.add(device)
 
@@ -453,7 +446,6 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                             // 통신 실패
                             is BaseRepository.ApiState.Error -> {
                                 hideCategoryPb()
-                                TimberUtil().e("eyetest", result.toString())
                                 ToastUtils(this@EyeListActivity).showMessage("장치를 불러오는데 실패했습니다")
                                 isLoaded = false
                             }
@@ -467,7 +459,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                 }
             }
         } catch(e: IOException) {
-            TimberUtil().e("eyetest", e.stackTraceToString())
+            e.stackTraceToString()
             ToastUtils(this).showMessage("장치를 불러오는데 실패했습니다")
         }
     }

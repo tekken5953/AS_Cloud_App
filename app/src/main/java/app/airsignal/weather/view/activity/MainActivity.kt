@@ -195,7 +195,6 @@ class MainActivity
     private fun destroyObserver() {
         getDataViewModel.cancelJob()
         fetch.removeObservers(this)
-        TimberUtil().w("lifecycle_test", "메인 옵저버 제거")
     }
 
     override fun onPause() {
@@ -849,7 +848,6 @@ class MainActivity
             destroyObserver()
             binding.mainSwipeLayout.isRefreshing = false
         }
-        TimberUtil().w("lifecycle_test", "메인 옵저버 생성")
         applyGetDataViewModel()
     }
 

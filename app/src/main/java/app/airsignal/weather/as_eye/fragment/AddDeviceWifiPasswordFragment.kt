@@ -14,19 +14,15 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.as_eye.dao.EyeDataModel
-import app.airsignal.weather.databinding.FragmentAddDeviceWifiBinding
 import app.airsignal.weather.databinding.FragmentAddDeviceWifiPasswordBinding
 import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.network.retrofit.HttpClient
-import app.airsignal.weather.network.retrofit.MyApiImpl
 import app.airsignal.weather.util.KeyboardController
-import app.airsignal.weather.util.TimberUtil
 import com.clj.fastble.callback.BleGattCallback
 import com.clj.fastble.callback.BleReadCallback
 import com.clj.fastble.callback.BleWriteCallback
@@ -229,10 +225,6 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
             ble.device?.let {
                 ble.instance.disconnect(it)
             }
-            TimberUtil().e(
-                "testtest",
-                "onWriteFailure is ${exception?.description}"
-            )
         }
     }
 
@@ -434,12 +426,12 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
                             confirmWifiConnect()
                         }
                     } catch (e: Exception) {
-                        TimberUtil().e("eyetest",e.stackTraceToString())
+                        e.stackTraceToString()
                     }
                 }
 
                 override fun onFailure(call: Call<String>, t: Throwable) {
-                    TimberUtil().e("eyetest",t.stackTraceToString())
+                    t.stackTraceToString()
                 }
             }
         )

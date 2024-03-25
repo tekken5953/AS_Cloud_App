@@ -1,19 +1,15 @@
 package app.airsignal.weather.view.custom_view
 
 import android.app.Activity
-import android.app.Dialog
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.StyleRes
 import app.airsignal.weather.R
 import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
 import app.airsignal.weather.db.sp.SetSystemInfo
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
-import app.airsignal.weather.util.TimberUtil
 import java.util.concurrent.CompletableFuture
 
 /**

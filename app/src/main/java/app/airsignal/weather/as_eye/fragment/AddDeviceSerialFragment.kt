@@ -2,7 +2,6 @@ package app.airsignal.weather.as_eye.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.os.Looper
 import android.text.Editable
@@ -23,7 +22,6 @@ import app.airsignal.weather.db.sp.SpDao.userEmail
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.KeyboardController
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import kotlinx.coroutines.*
 import retrofit2.Call
@@ -138,7 +136,6 @@ class AddDeviceSerialFragment : BaseEyeFragment<FragmentAddDeviceSerialBinding>(
                     if (response.isSuccessful) {
                         delay(2000)
                         val body = response.body()
-                        TimberUtil().d("eyetest","serial : $sn body : $body")
                         ble.serial = sn
                         withContext(Dispatchers.Main) {
                             baseActivity.hidePb()
@@ -202,7 +199,6 @@ class AddDeviceSerialFragment : BaseEyeFragment<FragmentAddDeviceSerialBinding>(
     private fun failApi(errorMsg: String, title: String, caution: String) {
         binding.addSerialResultContainer.isActivated = true
         stateInspection = 0
-        TimberUtil().e("eyetest",errorMsg)
         binding.addSerialResultError.visibility = View.VISIBLE
         binding.addSerialResultTitle.visibility = View.VISIBLE
         binding.addSerialResultCaution.visibility = View.INVISIBLE

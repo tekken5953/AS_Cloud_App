@@ -14,7 +14,6 @@ import app.airsignal.weather.db.sp.GetAppInfo.getNotificationAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getWarningFixed
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.viewmodel.GetWarningViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel

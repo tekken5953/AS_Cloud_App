@@ -10,14 +10,12 @@ import app.airsignal.weather.dao.RDBLogcat.LOGIN_FAILED
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_GOOGLE
 import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.dao.RDBLogcat.writeLoginPref
-import app.airsignal.weather.dao.StaticDataObject.TAG_L
-import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.db.sp.SetAppInfo.setUserEmail
 import app.airsignal.weather.db.sp.SetAppInfo.setUserId
 import app.airsignal.weather.db.sp.SetAppInfo.setUserLoginPlatform
 import app.airsignal.weather.db.sp.SetAppInfo.setUserProfile
-import app.airsignal.weather.util.LoggerUtil
+import app.airsignal.weather.util.RefreshUtils
+import app.airsignal.weather.util.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -56,7 +54,7 @@ class GoogleLogin(private val activity: Activity) {
             result.launch(signInIntent)
             mBtn.alpha = 0.7f
         } catch (e: Exception) {
-            LoggerUtil().e(TAG_L,e.stackTraceToString())
+            e.stackTraceToString()
             RDBLogcat.writeErrorNotANR(activity, LOGIN_FAILED, e.localizedMessage!!)
         }
     }
@@ -125,20 +123,9 @@ class GoogleLogin(private val activity: Activity) {
             val account = completedTask.getResult(ApiException::class.java)
             val email = account.email!!.lowercase()
             val displayName = account.displayName
-            val id = account.id!!.lowercase()
+            val id = account.id?.lowercase()
             val photo: String = account?.photoUrl.toString()
             val token = account.idToken
-            LoggerUtil().d(
-                TAG_L,
-                """
-                gLogin
-                Id : ${id}Account$account
-                DisplayName : $displayName
-                Token : $token
-                Email : $email
-                profile : $photo
-                """.trimIndent()
-            )
 
             setUserId(activity, displayName.toString())
             setUserProfile(activity, photo)
@@ -148,7 +135,6 @@ class GoogleLogin(private val activity: Activity) {
             setUserLoginPlatform(activity, LOGIN_GOOGLE)
             activity.finish()
         } catch (e: ApiException) {
-            LoggerUtil().e(TAG_L,e.stackTraceToString())
             e.printStackTrace()
         }
     }

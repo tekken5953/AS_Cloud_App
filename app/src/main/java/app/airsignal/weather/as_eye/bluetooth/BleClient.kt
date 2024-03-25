@@ -4,11 +4,9 @@ import android.app.Activity
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
-import android.content.pm.Capability
 import app.airsignal.weather.dao.IgnoredKeyFile.UUID_CONNECTING
 import app.airsignal.weather.dao.IgnoredKeyFile.UUID_PWD
 import app.airsignal.weather.dao.IgnoredKeyFile.UUID_SSID
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.clj.fastble.BleManager
@@ -17,11 +15,6 @@ import com.clj.fastble.callback.BleReadCallback
 import com.clj.fastble.callback.BleScanCallback
 import com.clj.fastble.callback.BleWriteCallback
 import com.clj.fastble.data.BleDevice
-import com.clj.fastble.exception.BleException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.*
 
 class BleClient(private val activity: Activity) {
@@ -81,7 +74,7 @@ class BleClient(private val activity: Activity) {
                 instance.scan(scanCallback)
             }
         } else {
-            makeToast(activity, "BLE 미지원 디바이스")
+            makeToast(activity, "BLE를 지원하지 않는 디바이스입니다")
         }
     }
 
@@ -103,11 +96,7 @@ class BleClient(private val activity: Activity) {
     }
 
     fun disconnect() {
-        device?.let {
-            if (isConnected()) {
-                instance.disconnect(device)
-            }
-        }
+        device?.let { if (isConnected()) { instance.disconnect(device) } }
     }
 
     fun postSsid(writeSsidCallback: BleWriteCallback) {
@@ -201,36 +190,16 @@ class BleClient(private val activity: Activity) {
 
     private fun parseProperty(i: Int): BleProtocolType {
         return when (i) {
-            BluetoothGattCharacteristic.PROPERTY_NOTIFY -> {
-                BleProtocolType.NOTIFY
-            }
-            BluetoothGattCharacteristic.PROPERTY_READ -> {
-                BleProtocolType.READ
-            }
-            BluetoothGattCharacteristic.PROPERTY_WRITE -> {
-                BleProtocolType.WRITE
-            }
-            BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE -> {
-                BleProtocolType.WRITE_NO_RESPONSE
-            }
-            BluetoothGattCharacteristic.PROPERTY_BROADCAST -> {
-                BleProtocolType.BROADCAST
-            }
-            BluetoothGattCharacteristic.PROPERTY_INDICATE -> {
-                BleProtocolType.INDICATE
-            }
-            BluetoothGattCharacteristic.PROPERTY_EXTENDED_PROPS -> {
-                BleProtocolType.EXTENDED_PROPS
-            }
-            BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE -> {
-                BleProtocolType.SIGNED_WRITE
-            }
-            10 -> {
-                BleProtocolType.READ_AND_WRITE
-            }
-            else -> {
-                BleProtocolType.UNKNOWN
-            }
+            BluetoothGattCharacteristic.PROPERTY_NOTIFY -> { BleProtocolType.NOTIFY }
+            BluetoothGattCharacteristic.PROPERTY_READ -> { BleProtocolType.READ }
+            BluetoothGattCharacteristic.PROPERTY_WRITE -> { BleProtocolType.WRITE }
+            BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE -> { BleProtocolType.WRITE_NO_RESPONSE }
+            BluetoothGattCharacteristic.PROPERTY_BROADCAST -> { BleProtocolType.BROADCAST }
+            BluetoothGattCharacteristic.PROPERTY_INDICATE -> { BleProtocolType.INDICATE }
+            BluetoothGattCharacteristic.PROPERTY_EXTENDED_PROPS -> { BleProtocolType.EXTENDED_PROPS }
+            BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE -> { BleProtocolType.SIGNED_WRITE }
+            10 -> { BleProtocolType.READ_AND_WRITE }
+            else -> { BleProtocolType.UNKNOWN }
         }
     }
 }

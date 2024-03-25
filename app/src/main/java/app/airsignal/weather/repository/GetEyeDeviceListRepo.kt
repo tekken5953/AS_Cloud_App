@@ -5,7 +5,6 @@ import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.network.ErrorCode.ERROR_API_PROTOCOL
 import app.airsignal.weather.network.ErrorCode.ERROR_GET_DATA
 import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
-import app.airsignal.weather.util.TimberUtil
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,10 +36,10 @@ class GetEyeDeviceListRepo : BaseRepository() {
                         }
                     } catch (e: NullPointerException) {
                         _getListResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
-                        TimberUtil().e("eyetest",e.stackTraceToString())
+                        e.stackTraceToString()
                     } catch (e: JsonSyntaxException) {
                         _getListResult.postValue(ApiState.Error(ERROR_GET_DATA))
-                        TimberUtil().e("eyetest",e.stackTraceToString())
+                        e.stackTraceToString()
                     }
                 }
 
@@ -48,7 +47,7 @@ class GetEyeDeviceListRepo : BaseRepository() {
                     call: Call<List<EyeDataModel.Device>>,
                     t: Throwable
                 ) {
-                    TimberUtil().e("eyetest",t.stackTraceToString())
+                    t.stackTraceToString()
                     try {
                         _getListResult.postValue(ApiState.Error(ERROR_GET_DATA))
                     } catch (e: Exception) {

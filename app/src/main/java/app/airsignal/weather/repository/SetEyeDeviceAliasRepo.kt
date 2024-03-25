@@ -9,7 +9,6 @@ import app.airsignal.weather.network.ErrorCode.ERROR_NULL_POINT
 import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.network.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.weather.network.ErrorCode.ERROR_UNKNOWN
-import app.airsignal.weather.util.TimberUtil
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,7 +28,6 @@ class SetEyeDeviceAliasRepo : BaseRepository() {
             _setAliasResult.postValue(ApiState.Loading)
             impl.updateAlias(sn,alias).enqueue(object : Callback<String>{
                 override fun onResponse(call: Call<String>, response: Response<String>) {
-                    TimberUtil().d("eyetest",response.body().toString())
                     try {
                         if (response.isSuccessful) {
                             val responseBody = response.body()
@@ -46,7 +44,7 @@ class SetEyeDeviceAliasRepo : BaseRepository() {
                 }
 
                 override fun onFailure(call: Call<String>, t: Throwable) {
-                    TimberUtil().e("eyetest",t.stackTraceToString())
+                    t.stackTraceToString()
                     try {
                         _setAliasResult.postValue(ApiState.Error(ERROR_GET_DATA))
                         call.cancel()

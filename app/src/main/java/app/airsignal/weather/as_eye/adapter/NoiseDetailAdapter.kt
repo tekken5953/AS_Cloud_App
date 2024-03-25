@@ -2,21 +2,16 @@ package app.airsignal.weather.as_eye.adapter
 
 import android.content.Context
 import android.graphics.Typeface
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.os.HandlerCompat
-import androidx.recyclerview.widget.AdapterListUpdateCallback
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.ItemDiffCallback
-import app.airsignal.weather.as_eye.activity.EyeNoiseDetailActivity
 import app.airsignal.weather.dao.AdapterModel
-import app.airsignal.weather.util.LoggerUtil
 import java.time.format.DateTimeFormatter
 
 

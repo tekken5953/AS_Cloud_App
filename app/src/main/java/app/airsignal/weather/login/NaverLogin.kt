@@ -14,12 +14,9 @@ import app.airsignal.weather.dao.RDBLogcat.LOGIN_NAVER
 import app.airsignal.weather.dao.RDBLogcat.writeErrorNotANR
 import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
 import app.airsignal.weather.dao.RDBLogcat.writeLoginPref
-import app.airsignal.weather.dao.StaticDataObject.TAG_L
 import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.db.sp.SetAppInfo
-import app.airsignal.weather.util.EnterPageUtil
-import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
@@ -163,8 +160,7 @@ class NaverLogin(private val activity: Activity) {
             override fun onFailure(httpStatus: Int, message: String) {
                 // 서버에서 토큰 삭제에 실패했어도 클라이언트에 있는 토큰은 삭제되어 로그아웃된 상태입니다.
                 // 클라이언트에 토큰 정보가 없기 때문에 추가로 처리할 수 있는 작업은 없습니다.
-                LoggerUtil().e(TAG_L,"errorCode: ${NaverIdLoginSDK.getLastErrorCode().code}")
-                LoggerUtil().e(TAG_L,"errorDesc: ${NaverIdLoginSDK.getLastErrorDescription()}")
+                println(NaverIdLoginSDK.getLastErrorDescription())
                 activity.recreate()
             }
 

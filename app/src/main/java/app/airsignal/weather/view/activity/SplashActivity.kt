@@ -52,15 +52,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         initBinding().run {
             if (fetch.hasObservers()) fetch.removeObservers(this@SplashActivity)
 
-            LoggerUtil().i("testtest",GetSystemInfo.getDisplayInfo(this@SplashActivity))
-
             applyAppVersionData()
 
             binding.splashPB.addAnimatorListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationStart(animation: Animator) {
-                    super.onAnimationStart(animation)
-                }
-
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
                     isReady = true
@@ -103,9 +97,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             if (!isDone) {
                 isDone = true
                 HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                    TimberUtil().d("fcmtest", "enterPage intent category is ${intent.categories}")
                     EnterPageUtil(this@SplashActivity).toList(R.anim.fade_in)
-                }, 2000)
+                },2000)
             }
         } else {
             if (isReady) {
@@ -115,9 +108,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             getUserLoginPlatform(this),
                             inAppMsgList, R.anim.fade_in, R.anim.fade_out
                         )
-                    } else {
-                        EnterPageUtil(this@SplashActivity).toPermission()
-                    }
+                    } else { EnterPageUtil(this@SplashActivity).toPermission() }
                 }, 500)
             } else {
                 HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
@@ -156,8 +147,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                             R.color.main_blue_color,
                                             getString(R.string.download),
                                             true
-                                        )
-                                        .setOnClickListener { goToPlayStore(this@SplashActivity) }
+                                        ).setOnClickListener { goToPlayStore(this@SplashActivity) }
                                 }
                             }
                         }
@@ -168,18 +158,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                 ERROR_NETWORK -> {
                                     if (GetLocation(this).isNetWorkConnected()) {
                                         makeDialog(getString(R.string.unknown_error))
-                                    } else {
-                                        makeDialog(getString(R.string.error_network_connect))
-                                    }
+                                    } else { makeDialog(getString(R.string.error_network_connect)) }
                                 }
 
-                                ERROR_SERVER_CONNECTING -> {
-                                    makeDialog(getString(R.string.error_server_down))
-                                }
+                                ERROR_SERVER_CONNECTING -> { makeDialog(getString(R.string.error_server_down)) }
 
-                                else -> {
-                                    makeDialog(getString(R.string.unknown_error))
-                                }
+                                else -> { makeDialog(getString(R.string.unknown_error)) }
                             }
                         }
 
@@ -188,9 +172,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     }
                 }
             }
-        } catch (e: IOException) {
-            makeDialog("앱 버전을 불러올 수 없습니다.")
-        }
+        } catch (e: IOException) { makeDialog("앱 버전을 불러올 수 없습니다.") }
     }
 
     // 다이얼로그 생성

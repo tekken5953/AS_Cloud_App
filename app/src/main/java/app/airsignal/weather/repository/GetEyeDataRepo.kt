@@ -12,7 +12,6 @@ import app.airsignal.weather.network.ErrorCode.ERROR_NULL_POINT
 import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.network.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.weather.network.ErrorCode.ERROR_UNKNOWN
-import app.airsignal.weather.util.TimberUtil
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +35,6 @@ class GetEyeDataRepo : BaseRepository() {
                         call: Call<EyeDataModel.Entire>,
                         response: Response<EyeDataModel.Entire>
                     ) {
-                        TimberUtil().d("eyetest",response.body().toString())
                         try {
                             if (response.isSuccessful) {
                                 HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
@@ -60,7 +58,7 @@ class GetEyeDataRepo : BaseRepository() {
                         call: Call<EyeDataModel.Entire>,
                         t: Throwable
                     ) {
-                        TimberUtil().e("eyetest",t.stackTraceToString())
+                        t.stackTraceToString()
                         try {
                             _getEyeResult.postValue(ApiState.Error(ERROR_GET_DATA))
                             call.cancel()

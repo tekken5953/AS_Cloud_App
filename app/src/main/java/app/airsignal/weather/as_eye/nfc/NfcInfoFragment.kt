@@ -4,26 +4,21 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.os.Looper
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.Toast
 import androidx.core.os.HandlerCompat
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.databinding.NfcInfoFragmentBinding
-import app.airsignal.weather.util.LoggerUtil
-import app.airsignal.weather.util.TimberUtil
 
 
 class NfcInfoFragment : Fragment() {
@@ -111,7 +106,6 @@ class NfcInfoFragment : Fragment() {
 
     private fun processNfcPayload(payload: String?) {
         payload?.let {
-            TimberUtil().d("nfctest","NFC에서 읽은 데이터: $it")
             val space = it.replace("\u0002"," ").replace("ko"," ")
             val bundle = Bundle()
             bundle.putString("payload",space)

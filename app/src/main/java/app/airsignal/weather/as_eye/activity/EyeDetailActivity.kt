@@ -17,7 +17,6 @@ import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivityEyeDetailBinding
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.OnSingleClickListener
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.getAverageTime
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.viewmodel.GetEyeDataViewModel
@@ -71,7 +70,6 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
     private fun destroyObserver() {
         dataViewModel.cancelJob()
         fetch.removeObservers(this)
-        TimberUtil().w("lifecycle_test", "아이 디테일 옵저버 제거")
     }
 
     override fun onDestroy() {
@@ -113,7 +111,6 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
     private fun sendApiData(serial: String) {
         if (fetch.hasObservers()) { destroyObserver() }
         applyMeasuredData()
-        TimberUtil().w("lifecycle_test","아이 디테일 옵저버 생성")
         dataViewModel.loadData(serial,AverageFlag.HOURLY.flag,getAverageTime(getCurrentTime()),getAverageTime(getCurrentTime()))
     }
 
@@ -272,15 +269,13 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
                 }
             }
         } catch (e: IOException) {
-            TimberUtil().e("eyetest", "IOException $entireData ${e.stackTraceToString()}")
+            e.stackTraceToString()
             hidePb()
         } catch (e: NullPointerException) {
-            TimberUtil().e("eyetest", "NullPointerException $entireData ${e.stackTraceToString()}")
+            e.stackTraceToString()
             hidePb()
         } catch (e: IndexOutOfBoundsException) {
-            TimberUtil().e(
-                "eyetest", "IndexOutOfBoundsException $entireData ${e.stackTraceToString()}"
-            )
+            e.stackTraceToString()
             hidePb()
         }
     }
