@@ -1072,7 +1072,7 @@ class MainActivity
                 val skyImg = applySkyImg(
                     this, dailyIndex.rainType, dailyIndex.sky, thunder,
                     isLarge = false, isNight = isNight, lunar = lunar
-                ) ?: getR(com.google.android.material.R.drawable.mtrl_ic_error)!!
+                ) ?: getR(com.google.android.material.R.drawable.mtrl_ic_error)
                 val temperature = "${dailyIndex.temp.roundToInt()}˚"
                 val rainType = dailyIndex.rainType
                 val rainP = dailyIndex.rainP!!
@@ -1091,21 +1091,20 @@ class MainActivity
         val dateNow: LocalDateTime = LocalDateTime.now()
 
         // 주간별 날씨 아이템 추가
-        repeat(8) {
+        repeat(7) {
             try {
-                val formedDate = dateNow.plusDays(it.toLong() - 1)
+                val formedDate = dateNow.plusDays(it.toLong())
                 val date: String = when (it) {
-                    0 -> getString(R.string.yesterday)
-                    1 -> getString(R.string.today_main)
-                    2 -> getString(R.string.tomorrow_week)
+                    0 -> getString(R.string.today_main)
+                    1 -> getString(R.string.tomorrow_week)
                     else -> "${parseDayOfWeekToKorean(this, dateNow.dayOfWeek.value + it)}${getString(R.string.date)}"
                 }
 
                 addWeeklyWeatherItem(
                     date,
                     dateAppendZero(formedDate),
-                    getSkyImgSmall(this, wfMin[it]!!, isNight = false)!!,
-                    getSkyImgSmall(this, wfMax[it]!!, isNight = true)!!,
+                    getSkyImgSmall(this, wfMin[it], isNight = false)!!,
+                    getSkyImgSmall(this, wfMax[it], isNight = true)!!,
                     "${(taMin[it]?: 0.0).roundToInt()}˚",
                     "${(taMax[it]?: 0.0).roundToInt()}˚"
                 )
@@ -1350,7 +1349,7 @@ class MainActivity
 
     // 시간별 날씨 리사이클러뷰 아이템 추가
     private fun addDailyWeatherItem(
-        time: String, img: Drawable, value: String, date: String,
+        time: String, img: Drawable?, value: String, date: String,
         isRain: Boolean, rainP: Double?
     ) {
         val item = AdapterModel.DailyWeatherItem(time, img, value, date, rainP, isRain)

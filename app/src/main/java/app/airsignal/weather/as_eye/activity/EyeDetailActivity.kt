@@ -230,7 +230,6 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
                             hidePb()
                             val body = measured.data
                             entireData = body
-
                             val current = body.current
 //                                if (isRefreshable()) {
                             current.let { currentData ->
@@ -250,14 +249,10 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
                                 liveFragment.onDataTransfer(currentData)
                             }
 
-                            if (currentFragment == -1) {
-                                tabItemSelected(FRAGMENT_REPORT)
-                            }
+                            if (currentFragment == -1) { tabItemSelected(FRAGMENT_REPORT) }
 
                             CoroutineScope(Dispatchers.IO).launch {
-                                RDBLogcat.writeEyeMeasured(
-                                    this@EyeDetailActivity, body.toString()
-                                )
+                                RDBLogcat.writeEyeMeasured(this@EyeDetailActivity, body.toString())
                             }
 //                                }
                         }

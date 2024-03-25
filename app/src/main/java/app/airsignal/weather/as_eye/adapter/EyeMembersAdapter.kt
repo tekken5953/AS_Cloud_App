@@ -26,7 +26,6 @@ import app.airsignal.weather.util.KeyboardController
 import app.airsignal.weather.util.OnSingleClickListener
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
-import app.airsignal.weather.view.custom_view.SnackBarUtils
 
 
 class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataModel.Members>) :

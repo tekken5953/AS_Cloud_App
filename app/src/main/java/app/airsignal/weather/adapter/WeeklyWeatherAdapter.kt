@@ -66,7 +66,6 @@ class WeeklyWeatherAdapter(
         private val minText: TextView = itemView.findViewById(R.id.weeklyMinText)
         private val maxText: TextView = itemView.findViewById(R.id.weeklyMaxText)
         private val section: TextView = itemView.findViewById(R.id.weeklyMinMaxSection)
-        private val container: RelativeLayout = itemView.findViewById(R.id.weeklyDayContainer)
 
         fun bind(dao: AdapterModel.WeeklyWeatherItem) {
             day.text = dao.day
@@ -85,12 +84,10 @@ class WeeklyWeatherAdapter(
             maxText.setTextColor(applyColor)
             section.setTextColor(applyColor)
 
-             if (bindingAdapterPosition == 1) {
+             if (bindingAdapterPosition == 0) {
                 day.setTextColor(context.getColor(R.color.main_blue_color))
                 date.setTextColor(context.getColor(R.color.main_blue_color))
             }
-
-            if (bindingAdapterPosition == 0) container.alpha = 0.6f else container.alpha = 1f
         }
     }
 }
