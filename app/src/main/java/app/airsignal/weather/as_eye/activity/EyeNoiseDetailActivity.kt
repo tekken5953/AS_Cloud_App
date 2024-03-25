@@ -108,9 +108,15 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
 
     // 스크롤을 가장 아래로
     private fun moveScrollToLastPosition(position: Int) {
-        HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-            binding.noiseDetailRv.smoothScrollToPosition(position)
-        },300)
+        try {
+            if (filteredList.isNotEmpty()) {
+                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                    binding.noiseDetailRv.smoothScrollToPosition(position)
+                },300)
+            }
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+        }
     }
 
     // 날짜로 API 호출
