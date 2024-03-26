@@ -252,7 +252,6 @@ class MainActivity
             binding.mainTopBarGpsTitle.setOnFocusChangeListener { v, hasFocus ->
                 v.isSelected = hasFocus
             }
-            binding.mainTopBarGpsTitleScroll.isHorizontalScrollBarEnabled = false
 
             // 플러스 모양 추가시 주소등록 다이얼로그
             binding.mainAddAddress.setOnClickListener(object : OnSingleClickListener() {
@@ -1747,10 +1746,8 @@ class MainActivity
             }
 
             binding.dailySectionTomorrow.setTextColor(subColor)
-            binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate()
-                .setTint(color)
-            binding.subAirWind.getValue().compoundDrawableTintList =
-                ColorStateList.valueOf(color)
+            binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate().setTint(color)
+            binding.subAirWind.getValue().compoundDrawableTintList = ColorStateList.valueOf(color)
 
             dailyWeatherAdapter.setIsWhite(isWhite)
             weeklyWeatherAdapter.setIsWhite(isWhite)

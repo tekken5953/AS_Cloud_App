@@ -28,33 +28,6 @@
                 app:layout_constraintBottom_toTopOf="@+id/nested_scrollview"
                 app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
 
-            <ScrollView
-                android:id="@+id/mainTopBarGpsTitleScroll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:orientation="horizontal"
-                android:overScrollMode="ifContentScrolls"
-                android:scrollbars="none"
-                app:layout_constraintBottom_toBottomOf="@+id/topBarLinear"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/topBarLinear">
-
-                <TextView
-                    android:id="@+id/mainTopBarGpsTitle"
-                    style="@style/basicTextView"
-                    android:contentDescription="@string/cd_img_location"
-                    android:drawablePadding="3dp"
-                    android:ellipsize="marquee"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:maxEms="12"
-                    android:singleLine="true"
-                    android:textSize="14sp"
-                    app:drawableStartCompat="@drawable/location_fill" />
-            </ScrollView>
-
             <ImageView
                 android:id="@+id/mainTopEye"
                 android:layout_width="wrap_content"
@@ -68,7 +41,7 @@
             <RelativeLayout
                 android:id="@+id/topBarLinear"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginTop="18dp"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -113,6 +86,35 @@
                     app:tint="@android:color/transparent" />
 
             </RelativeLayout>
+
+            <ScrollView
+                android:id="@+id/mainTopBarGpsTitleScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginEnd="15dp"
+                android:orientation="horizontal"
+                android:overScrollMode="ifContentScrolls"
+                android:scrollbars="none"
+                android:layout_marginTop="18dp"
+                app:layout_constraintBottom_toBottomOf="@+id/topBarLinear"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/topBarLinear">
+
+                <TextView
+                    android:id="@+id/mainTopBarGpsTitle"
+                    style="@style/basicTextView"
+                    android:contentDescription="@string/cd_img_location"
+                    android:drawablePadding="3dp"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:layout_gravity="center"
+                    android:focusableInTouchMode="true"
+                    android:maxEms="10"
+                    android:singleLine="true"
+                    android:textSize="14sp"
+                    app:drawableStartCompat="@drawable/location_fill" />
+            </ScrollView>
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/mainLoadingView"
@@ -218,7 +220,7 @@
                 android:id="@+id/mainLiveTempValue"
                 style="@style/basicMediumTextView"
                 android:layout_marginTop="12dp"
-                android:textSize="64sp"
+                android:textSize="60sp"
                 app:layout_constraintStart_toStartOf="@+id/mainGpsTitleTv"
                 app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv" />
 
@@ -270,7 +272,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
                 app:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
                 app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue">
 

@@ -4,16 +4,19 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.os.Looper
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.Toast
 import androidx.core.os.HandlerCompat
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
@@ -25,8 +28,24 @@ class NfcInfoFragment : Fragment() {
     private lateinit var mActivity: AddEyeDeviceActivity
     private lateinit var binding : NfcInfoFragmentBinding
 
+    private val nfcAdapter by lazy {mActivity.nfcAdapter}
+
+    private var isInit = false
+
     fun handleNfcIntent(intent: Intent) {
         processIntent(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        enableNfc()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (nfcAdapter.isEnabled) {
+            nfcAdapter.disableForegroundDispatch(mActivity)
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -111,5 +130,32 @@ class NfcInfoFragment : Fragment() {
             bundle.putString("payload",space)
             mActivity.transactionFragment(NfcReadSuccessFragment(),bundle)
         } ?: run { mActivity.transactionFragment(NfcReadFailFragment()) }
+    }
+
+    private fun enableNfc() {
+        if (!isInit) {
+            if (!nfcAdapter.isEnabled) {
+                isInit = true
+                Toast.makeText(mActivity, getString(R.string.nfc_disabled_msg), Toast.LENGTH_SHORT).show()
+                val intent = Intent(Intent(Settings.ACTION_NFC_SETTINGS))
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+            } else {
+                isInit = true
+                nfcAdapter.enableForegroundDispatch(
+                    mActivity,
+                    PendingIntent.getActivity(
+                        mActivity, 0,
+                        Intent(mActivity, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                    ),
+                    null,
+                    null
+                )
+            }
+        } else {
+            Toast.makeText(mActivity, "Nfc 비활성화 상태에선 기기 등록 진행이 불가능합니다", Toast.LENGTH_SHORT).show()
+            mActivity.finish()
+        }
     }
 }

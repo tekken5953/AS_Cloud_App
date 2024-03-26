@@ -32,18 +32,6 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
 
     lateinit var nfcAdapter: NfcAdapter
 
-    override fun onResume() {
-        super.onResume()
-        enableNfc()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (nfcAdapter.isEnabled) {
-            nfcAdapter.disableForegroundDispatch(this)
-        }
-    }
-
     override fun onStart() {
         super.onStart()
         transactionFragment(AddDeviceSerialFragment())
@@ -157,25 +145,5 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
 
     override fun onBackPressed() {
         createCancelDialog()
-    }
-
-    private fun enableNfc() {
-        if (!nfcAdapter.isEnabled) {
-            Toast.makeText(this, getString(R.string.nfc_disabled_msg), Toast.LENGTH_SHORT).show()
-            val intent = Intent(Intent(Settings.ACTION_NFC_SETTINGS))
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
-        } else {
-            nfcAdapter.enableForegroundDispatch(
-                this,
-                PendingIntent.getActivity(
-                    this, 0,
-                    Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-                ),
-                null,
-                null
-            )
-        }
     }
 }
