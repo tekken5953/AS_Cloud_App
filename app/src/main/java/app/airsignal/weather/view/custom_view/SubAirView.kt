@@ -53,15 +53,15 @@ class SubAirView(context: Context, attrs: AttributeSet?)
                     "서북서" -> R.drawable.ico_wind_wnw
                     "북서" -> R.drawable.ico_wind_nw
                     "북북서" -> R.drawable.ico_wind_nnw
-                    else -> R.drawable.cancel
+                    else -> null
                 }),null,null,null
             )
         }
     }
 
     // 이미지 적용
-    private fun drawable(int: Int): Drawable? {
-        return ResourcesCompat.getDrawable(resources, int, null)
+    private fun drawable(int: Int?): Drawable? {
+        return int?.let {ResourcesCompat.getDrawable(resources, int, null)}
     }
 
     fun fetchData(value: String, img: Int, vector: String?): SubAirView {

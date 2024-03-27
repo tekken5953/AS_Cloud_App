@@ -571,7 +571,8 @@
             app:layout_constraintStart_toStartOf="@+id/mainSkyImg"
             app:layout_constraintEnd_toEndOf="@+id/mainSkyImg"
             android:layout_marginTop="3dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/nested_scrollview"
             app:layout_constraintTop_toBottomOf="@+id/mainSkyImg"/>
         <Constraint
             android:id="@+id/mainLiveTempValue"

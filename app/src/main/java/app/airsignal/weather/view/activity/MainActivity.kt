@@ -596,12 +596,8 @@ class MainActivity
                             loadSavedAddr(addrArray[index],
                                 resources.getStringArray(R.array.address_english)[index])
                     }
-                } else {
-                    checkLocationAvailability()
-                }
-            } else {
-                checkLocationAvailability()
-            }
+                } else { checkLocationAvailability() }
+            } else { checkLocationAvailability() }
 
             // TimeOut
             HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
@@ -768,9 +764,7 @@ class MainActivity
                     }
                     airQAdapter.notifyDataSetChanged()
 
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                } catch (e: Exception) { e.printStackTrace() }
             }
         })
 
@@ -796,9 +790,7 @@ class MainActivity
                                     )
                                     return@forEach
                                 }
-                            } catch (e: NullPointerException) {
-                                e.printStackTrace()
-                            }
+                            } catch (e: NullPointerException) { e.printStackTrace() }
                         }
                         startAnimation(fadeIn)
                         alpha = 1f

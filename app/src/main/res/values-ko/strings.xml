@@ -133,7 +133,7 @@
     <string name="input_address">주소를 입력해주세요</string>
     <string name="last_software">최신 소프트웨어입니다.</string>
     <string name="not_latest_version">최신 버전이 있습니다</string>
-    <string name="not_latest_go_to_store">최신 버전이 있습니다.\n스토어로 이동하시겠습니까?</string>
+    <string name="not_latest_go_to_store">최신 버전 설치가 필요합니다\n스토어로 이동하시겠습니까?</string>
     <string name="fail_to_get_version">앱 정보를 불러오는데 실패했습니다</string>
     <string name="list_of_open_source">오픈소스 라이센스 목록</string>
     <string name="good">좋음</string>

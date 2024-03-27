@@ -40,6 +40,7 @@ import app.airsignal.weather.dao.StaticDataObject.LANG_SYS
 import app.airsignal.weather.dao.StaticDataObject.THEME_DARK
 import app.airsignal.weather.dao.StaticDataObject.THEME_LIGHT
 import app.airsignal.weather.databinding.ActivitySettingBinding
+import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
@@ -741,6 +742,7 @@ class SettingActivity
 
         // 새로운 버전 다운로드 실행
         appInfoDownBtn.setOnClickListener {
+            SharedPreferenceManager(this).setBoolean("skip_patch", false)
             goToPlayStore(this)
         }
 

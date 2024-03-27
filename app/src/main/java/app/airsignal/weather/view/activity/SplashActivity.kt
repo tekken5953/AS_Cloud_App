@@ -10,6 +10,7 @@ import androidx.core.os.HandlerCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivitySplashBinding
+import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.db.sp.GetSystemInfo.goToPlayStore
@@ -21,7 +22,9 @@ import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.TimberUtil
+import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.util.`object`.DataTypeParser
+import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
@@ -126,28 +129,58 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     when (ver) {
                         // 통신 성공
                         is BaseRepository.ApiState.Success -> {
+                            val sp = SharedPreferenceManager(this@SplashActivity)
                             val inAppArray = ver.data.inAppMsg
                             val versionName = GetSystemInfo.getApplicationVersionName(this)
                             val versionCode = GetSystemInfo.getApplicationVersionCode(this)
                             val fullVersion = "${versionName}.${versionCode}"
+
+                            // 현재 버전이 최신 버전인 경우
                             if (fullVersion == "${ver.data.serviceName}.${ver.data.serviceCode}") {
-                                enterPage(inAppArray)
-                            } else {
+                                enterPage(inAppArray)   // 메인 페이지로 이동
+                            } else { // 현재 버전이 최신 버전이 아닌 경우
                                 val array = ArrayList<String>()
                                 ver.data.test.forEach {
                                     array.add("${it.name}.${it.code}")
                                 }
 
+                                // 테스트 버전에 현재 버전이 포함되는 경우
                                 if (array.contains(fullVersion)) {
-                                    enterPage(inAppArray)
+                                    // 스킵이 설정되어 있지 않은 경우
+                                    if (!sp.getBoolean("skip_patch", false)) {
+                                        // 최신 버전 설치와 현재 버전 사용 선택 다이얼로그 노출
+                                        val dialog = MakeDoubleDialog(this)
+                                            .make(
+                                                "최신 버전이 있습니다",
+                                                "다운로드", "현재 버전 이용", R.color.main_blue_color
+                                            )
+                                        // 설치 선택 시 스토어 이동
+                                        dialog.first.setOnClickListener {
+                                            sp.setBoolean("skip_patch", false)
+                                            goToPlayStore(this@SplashActivity)
+                                        }
+                                        // 현재 버전 이용 선택 시 메인 이동
+                                        dialog.second.setOnClickListener {
+                                            sp.setBoolean("skip_patch", true)
+                                            ToastUtils(this@SplashActivity).showMessage("최신버전은 스토어 혹은 앱 설정에서 다운로드 가능합니다")
+                                            enterPage(inAppArray)
+                                        }
+                                    } else {
+                                        // 스킵이 설정되어 있는 경우 메인 이동
+                                        enterPage(inAppArray)
+                                    }
                                 } else {
+                                    // 모든 허용 버전에 해당되지 않은 경우
                                     MakeSingleDialog(this)
                                         .makeDialog(
                                             getString(R.string.not_latest_go_to_store),
                                             R.color.main_blue_color,
                                             getString(R.string.download),
                                             true
-                                        ).setOnClickListener { goToPlayStore(this@SplashActivity) }
+                                        ).setOnClickListener {
+                                            sp.setBoolean("skip_patch", false)
+                                            goToPlayStore(this@SplashActivity)
+                                        }
                                 }
                             }
                         }
