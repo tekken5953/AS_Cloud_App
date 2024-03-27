@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build.VERSION
 import android.os.Bundle
+import android.os.Looper
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
@@ -22,6 +23,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.HandlerCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.NoticeAdapter
@@ -60,6 +62,7 @@ import app.airsignal.weather.db.sp.SetAppInfo.setUserLocation
 import app.airsignal.weather.db.sp.SetAppInfo.setUserNoti
 import app.airsignal.weather.db.sp.SetAppInfo.setUserTheme
 import app.airsignal.weather.db.sp.SetSystemInfo
+import app.airsignal.weather.db.sp.SpDao.PATCH_SKIP
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_DEFAULT
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
@@ -79,6 +82,7 @@ import app.airsignal.weather.view.dialog.WebViewSetting
 import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
+import com.bumptech.glide.Glide
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
@@ -742,7 +746,7 @@ class SettingActivity
 
         // 새로운 버전 다운로드 실행
         appInfoDownBtn.setOnClickListener {
-            SharedPreferenceManager(this).setBoolean("skip_patch", false)
+            SharedPreferenceManager(this).setBoolean(PATCH_SKIP, false)
             goToPlayStore(this)
         }
 
@@ -837,34 +841,23 @@ class SettingActivity
     // 마지막 로그인 플랫폼 종류
     private fun applyLastLogin(): String {
         val lastLogin = getUserLoginPlatform(this)
-        if (lastLogin != "") {
-            binding.settingLogOut.text = getString(R.string.setting_logout)
-        } else {
-            binding.settingLogOut.text = getString(R.string.login_title)
-        }
 
         // 로그인 플랫폼 아이콘 설정
-        when (lastLogin) {
-            LOGIN_GOOGLE -> {
-                setImageDrawable(binding.settingUserIcon, R.drawable.google_icon)
-            }
-            LOGIN_KAKAO -> {
-                setImageDrawable(binding.settingUserIcon, R.drawable.kakao_icon)
-            }
-            LOGIN_NAVER -> {
-                setImageDrawable(binding.settingUserIcon, R.drawable.naver_icon)
-            }
-            LOGIN_PHONE -> {
-                setImageDrawable(binding.settingUserIcon, R.drawable.phone_icon)
-            }
-        }
+        HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+            if (lastLogin != "") { binding.settingLogOut.text = getString(R.string.setting_logout) }
+            else { binding.settingLogOut.text = getString(R.string.login_title) }
+
+            Glide.with(this).load(
+                when(lastLogin) {
+                    LOGIN_GOOGLE -> { R.drawable.google_icon }
+                    LOGIN_KAKAO -> { R.drawable.kakao_icon }
+                    LOGIN_NAVER -> { R.drawable.naver_icon }
+                    LOGIN_PHONE -> { R.drawable.phone_icon }
+                    else -> { R.drawable.user }
+            }).into(binding.settingUserIcon)
+        },500)
 
         return lastLogin
-    }
-
-    // 이미지 드로어블 할당
-    private fun setImageDrawable(imageView: ImageView, src: Int) {
-        imageView.setImageDrawable(ResourcesCompat.getDrawable(resources, src, null))
     }
 
     // 메인 액티비티로 이동

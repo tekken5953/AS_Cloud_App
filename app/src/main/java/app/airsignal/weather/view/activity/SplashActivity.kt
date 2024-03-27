@@ -14,6 +14,7 @@ import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.db.sp.GetSystemInfo.goToPlayStore
+import app.airsignal.weather.db.sp.SpDao.PATCH_SKIP
 import app.airsignal.weather.location.GetLocation
 import app.airsignal.weather.network.ErrorCode.ERROR_NETWORK
 import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
@@ -71,10 +72,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 sort = RDBLogcat.USER_PREF_DEVICE,
                 title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
                 value = "name is ${GetSystemInfo.getApplicationVersionName(this@SplashActivity)} code is ${
-                    GetSystemInfo.getApplicationVersionCode(
-                        this@SplashActivity
-                    )
-                }"
+                    GetSystemInfo.getApplicationVersionCode(this@SplashActivity)}"
             )
 
             // 유저 디바이스 설정 - SDK 버전
@@ -147,22 +145,22 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                 // 테스트 버전에 현재 버전이 포함되는 경우
                                 if (array.contains(fullVersion)) {
                                     // 스킵이 설정되어 있지 않은 경우
-                                    if (!sp.getBoolean("skip_patch", false)) {
+                                    if (!sp.getBoolean(PATCH_SKIP, false)) {
                                         // 최신 버전 설치와 현재 버전 사용 선택 다이얼로그 노출
                                         val dialog = MakeDoubleDialog(this)
                                             .make(
-                                                "최신 버전이 있습니다",
-                                                "다운로드", "현재 버전 이용", R.color.main_blue_color
+                                                getString(R.string.exist_last_version),
+                                                getString(R.string.download), getString(R.string.use_current_version), R.color.main_blue_color
                                             )
                                         // 설치 선택 시 스토어 이동
                                         dialog.first.setOnClickListener {
-                                            sp.setBoolean("skip_patch", false)
+                                            sp.setBoolean(PATCH_SKIP, false)
                                             goToPlayStore(this@SplashActivity)
                                         }
                                         // 현재 버전 이용 선택 시 메인 이동
                                         dialog.second.setOnClickListener {
-                                            sp.setBoolean("skip_patch", true)
-                                            ToastUtils(this@SplashActivity).showMessage("최신버전은 스토어 혹은 앱 설정에서 다운로드 가능합니다")
+                                            sp.setBoolean(PATCH_SKIP, true)
+                                            ToastUtils(this@SplashActivity).showMessage(getString(R.string.patch_store_notice))
                                             enterPage(inAppArray)
                                         }
                                     } else {
@@ -178,7 +176,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                             getString(R.string.download),
                                             true
                                         ).setOnClickListener {
-                                            sp.setBoolean("skip_patch", false)
+                                            sp.setBoolean(PATCH_SKIP, false)
                                             goToPlayStore(this@SplashActivity)
                                         }
                                 }
@@ -205,7 +203,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     }
                 }
             }
-        } catch (e: IOException) { makeDialog("앱 버전을 불러올 수 없습니다.") }
+        } catch (e: IOException) { makeDialog(getString(R.string.fail_to_get_app_version)) }
     }
 
     // 다이얼로그 생성

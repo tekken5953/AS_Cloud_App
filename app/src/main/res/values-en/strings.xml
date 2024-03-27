@@ -335,7 +335,11 @@
     <string name="apply_changes">Apply</string>
     <string name="success_to_delete">Success to remove</string>
     <string name="fail_to_delete">Fail to remove</string>
-    <string name="nfc_disabled_msg">NFC가 비활성화되었습니다. NFC를 활성화하세요</string>
+    <string name="nfc_disabled_msg">NFC is disabled. Enable NFC</string>
     <string name="yesterday">Ysd</string>
     <string name="tomorrow_week">Tmrw</string>
+    <string name="patch_store_notice">The latest version can be downloaded\nfrom the store or app settings</string>
+    <string name="use_current_version">Use this version</string>
+    <string name="exist_last_version">We have the latest version</string>
+    <string name="fail_to_get_app_version">Fail to get app version</string>
 </resources>

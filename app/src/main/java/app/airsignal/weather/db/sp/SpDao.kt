@@ -5,6 +5,7 @@ object SpDao {
     const val lastLoginPhone = "phone_number"
     const val userLocation = "user_location"
     const val userId = "user_id"
+    const val userTheme = "theme"
     const val userProfile = "user_profile"
     const val userEmail = "user_email"
     const val notiEnable = "notification_enable"
@@ -32,4 +33,5 @@ object SpDao {
     const val IN_APP_MSG = "inAppMsg"
     const val IN_APP_MSG_TIME = "inAppMsgTime"
     const val TUTORIAL_SKIP = "eye_tutorial_skip"
+    const val PATCH_SKIP = "skip_patch"
 }

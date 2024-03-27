@@ -21,6 +21,7 @@ import app.airsignal.weather.db.sp.SpDao.userEmail
 import app.airsignal.weather.db.sp.SpDao.userFontScale
 import app.airsignal.weather.db.sp.SpDao.userLocation
 import app.airsignal.weather.db.sp.SpDao.userProfile
+import app.airsignal.weather.db.sp.SpDao.userTheme
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,7 +31,7 @@ import java.util.*
  **/
 object GetAppInfo {
     fun getUserTheme(context: Context): String {
-        return SharedPreferenceManager(context).getString("theme")
+        return SharedPreferenceManager(context).getString(userTheme)
     }
 
     fun getUserEmail(context: Context): String {
@@ -98,7 +99,7 @@ object GetAppInfo {
     /** HH:mm 포맷의 시간을 분으로 변환 **/
     fun parseTimeToMinutes(time: String): Int {
         return try {
-            val timeSplit = time.replace(" ", "")
+            val timeSplit = time.replace(" ","")
             val hour = timeSplit.substring(0, 2).toInt()
             val minutes = timeSplit.substring(2, 4).toInt()
             hour * 60 + minutes

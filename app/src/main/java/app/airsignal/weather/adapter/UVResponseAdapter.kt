@@ -36,9 +36,7 @@ class UVResponseAdapter(private val context: Context, list: ArrayList<AdapterMod
         holder.bind(mList[position])
     }
 
-    fun setIsWhite(b: Boolean) {
-        isWhite = b
-    }
+    fun setIsWhite(b: Boolean) { isWhite = b }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val text: TextView = itemView.findViewById(R.id.listItemUvResponseText)

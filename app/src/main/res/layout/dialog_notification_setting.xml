@@ -192,7 +192,7 @@
         android:layout_marginTop="16dp"
         android:textColor="@color/theme_sub_color"
         android:gravity="start"
-        android:textSize="13sp"
+        android:textSize="14sp"
         android:lineHeight="14dp"
         android:layout_below="@+id/notificationLine3"
         android:text="@string/notification_explain_text"/>

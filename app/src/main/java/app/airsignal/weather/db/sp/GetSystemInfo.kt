@@ -13,6 +13,8 @@ import androidx.core.content.pm.PackageInfoCompat
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
 import app.airsignal.weather.db.sp.SpDao.LANG_EN
 import app.airsignal.weather.db.sp.SpDao.LANG_KR
+import com.kakao.sdk.common.util.Utility
+import timber.log.Timber
 import java.util.*
 /**
  * @author : Lee Jae Young
@@ -112,4 +114,7 @@ object GetSystemInfo {
         Screen height in dp: $screenHeightDp dp
     """.trimIndent()
     }
+
+        /** 앱 키해시 불러오기 */
+    fun getKeyHash(context: Context): String { return Utility.getKeyHash(context) }
 }

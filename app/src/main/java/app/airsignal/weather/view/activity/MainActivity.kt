@@ -503,9 +503,10 @@ class MainActivity
                 warning.visibility = VISIBLE
                 warning.setOnClickListener(object : OnSingleClickListener() {
                     override fun onSingleClick(v: View?) {
-                        sideMenuBuilder.dismiss()
-                        val intent = Intent(this@MainActivity, WarningDetailActivity::class.java)
-                        startActivity(intent)
+                        closeMenuAndCallback {
+                            val intent = Intent(this@MainActivity, WarningDetailActivity::class.java)
+                            startActivity(intent)
+                        }
                     }
                 })
             }
@@ -513,39 +514,38 @@ class MainActivity
             headerTr.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
                     if (getUserLoginPlatform(this@MainActivity) == "") {
-                        CompletableFuture.supplyAsync {
-                            sideMenuBuilder.dismiss()
-                        }.thenAccept {
+                        closeMenuAndCallback {
                             EnterPageUtil(this@MainActivity).toLogin("main")
                         }
                     }
                 }
             })
             weather.setOnClickListener(object : OnSingleClickListener() {
-                override fun onSingleClick(v: View?) {
-                    sideMenuBuilder.dismiss()
-                }
+                override fun onSingleClick(v: View?) { sideMenuBuilder.dismiss() }
             })
             eye.setOnClickListener(object : OnSingleClickListener() {
-                @SuppressLint("SetJavaScriptEnabled")
                 override fun onSingleClick(v: View?) {
-                    val intent = Intent(this@MainActivity, EyeListActivity::class.java)
-                    startActivity(intent)
+                    closeMenuAndCallback {
+                        val intent = Intent(this@MainActivity, EyeListActivity::class.java)
+                        startActivity(intent)
+                    }
                 }
             })
             setting.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
-                    CompletableFuture.supplyAsync {
-                        sideMenuBuilder.dismiss()
-                    }.thenAccept {
+                    closeMenuAndCallback {
                         val intent = Intent(this@MainActivity, SettingActivity::class.java)
                         startActivity(intent)
                     }
                 }
             })
-        } catch (e: NullPointerException) {
-            e.printStackTrace()
-        }
+        } catch (e: NullPointerException) { e.printStackTrace() }
+    }
+
+    private fun closeMenuAndCallback(callback: () -> Unit) {
+        CompletableFuture
+            .supplyAsync { sideMenuBuilder.dismiss() }
+            .thenAccept { callback.invoke() }
     }
 
     // 진동 발생
@@ -878,9 +878,7 @@ class MainActivity
     private fun handleApiSuccess(result: ApiModel.GetEntireData) {
         try {
             val metaAddr = result.meta.address ?: "주소 호출 에러"
-            CoroutineScope(Dispatchers.IO).launch {
-                reNewTopicInMain(metaAddr)
-            }
+            CoroutineScope(Dispatchers.IO).launch { reNewTopicInMain(metaAddr) }
             runOnUiThread {
                 binding.mainGpsFix.clearAnimation()
                 binding.mainDailyWeatherRv.scrollToPosition(0)
@@ -1303,7 +1301,7 @@ class MainActivity
     private fun applyWindowBackground(progress: Int, sky: String?) {
         val isNight = getIsNight(progress)
         if (isNight && (sky == getString(R.string.sky_sunny) || sky == getString(R.string.sky_sunny_cloudy))) {
-            changeBackgroundResource(R.drawable.main_bg_night)
+            changeBackgroundResource(R.drawable.main_bg_night_test)
             binding.mainSkyStarImg.setImageDrawable(getR(R.drawable.bg_nightsky))
         } else {
             binding.mainSkyStarImg.setImageDrawable(null)
@@ -1782,7 +1780,7 @@ class MainActivity
                 changeTextToBlack()
                 setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_bk)
             }
-            R.drawable.main_bg_night, R.drawable.main_bg_cloudy -> {
+            R.drawable.main_bg_night_test, R.drawable.main_bg_cloudy -> {
                 changeTextToWhite()
                 setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_w)
             }
@@ -1882,9 +1880,7 @@ class MainActivity
         CoroutineScope(Dispatchers.Default).launch {
             val lm = getSystemService(LOCATION_SERVICE) as LocationManager
             val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            location?.let { loc ->
-                loadCurrentViewModelData(loc.latitude, loc.longitude, null)
-            }
+            location?.let { loc -> loadCurrentViewModelData(loc.latitude, loc.longitude, null) }
         }
     }
 
@@ -1929,11 +1925,8 @@ class MainActivity
 
     // 뷰 백그라운드 적용
     private fun <T> applyBackground(view: T, res: Int?) {
-        res?.let {
-            (view as View).background = getR(it)
-        } ?: apply {
-            (view as View).background = null
-        }
+        res?.let { (view as View).background = getR(it) } ?:
+        apply { (view as View).background = null }
     }
 
     fun recreateMainActivity(addrKr: String?, addrEn: String?) {
