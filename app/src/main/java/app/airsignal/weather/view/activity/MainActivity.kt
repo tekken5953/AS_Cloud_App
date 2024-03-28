@@ -93,6 +93,7 @@ import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.view.*
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
+import app.airsignal.weather.view.custom_view.TestAirQView
 import app.airsignal.weather.view.dialog.*
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetWeatherViewModel
@@ -1110,6 +1111,8 @@ class MainActivity
 
         val pm25 = (air.pm25Value ?: air.pm25Value24 ?: 0.0)
         val pm10 = (air.pm10Value ?: air.pm10Value24 ?: 0.0)
+        val pm25G = (air.pm25Grade ?: air.pm25Grade1h ?: 0)
+        val pm10G = (air.pm10Grade ?: air.pm10Grade1h ?: 0)
 
         updateAirQData(PM2p5_INDEX, getString(R.string.pm2_5_full), "PM2.5", "㎍/㎥", pm25.toInt().toString())
         updateAirQData(PM10_INDEX, getString(R.string.pm10_full), "PM10", "㎍/㎥", pm10.toInt().toString())
@@ -1134,6 +1137,13 @@ class MainActivity
 
         binding.subAirPM25.text = "${getString(R.string.pm2_5_full)}   ${pm25.toInt()}"
         binding.subAirPM10.text = "${getString(R.string.pm10_full)}   ${(pm10.toInt())}"
+
+        binding.testAir1.fetchData(TestAirQView.AirQ.PM10, pm10.toInt(), pm10G)
+        binding.testAir2.fetchData(TestAirQView.AirQ.PM2_5, pm25.toInt(), pm25G)
+        binding.testAir3.fetchData(TestAirQView.AirQ.CO, air.coValue ?: 0.0, air.coGrade ?: 0)
+        binding.testAir4.fetchData(TestAirQView.AirQ.NO2, air.no2Value ?: 0.0, air.no2Grade ?: 0)
+        binding.testAir5.fetchData(TestAirQView.AirQ.SO2, air.so2Value ?: 0.0, air.so2Grade ?: 0)
+        binding.testAir6.fetchData(TestAirQView.AirQ.O3, air.o3Value ?: 0.0, air.o3Grade ?: 0)
     }
 
     @SuppressLint("SetTextI18n")
@@ -1697,7 +1707,8 @@ class MainActivity
             binding.mainSunRiseTom,
             binding.mainTermsTitle,
             binding.mainTermsExplain,
-            binding.mainSkyText
+            binding.mainSkyText,
+            binding.mainTestAirTitle
         )
         val changeColorSubTextViews = listOf(
             binding.mainLicenseText, binding.nestedAirTitleKr, binding.nestedAirUnit,
@@ -1716,6 +1727,9 @@ class MainActivity
             binding.nestedAirBox, binding.mainUVBox, binding.mainSunBox,
             binding.nestedTerms24Box
         )
+
+        val gridBoxView = listOf(binding.testAir1,binding.testAir2,binding.testAir3,
+        binding.testAir4,binding.testAir5,binding.testAir6)
 
         // 리소스 색상 가져오기
         val colorWhite = getColor(R.color.white)
@@ -1756,10 +1770,13 @@ class MainActivity
         }
 
         // 글자색 변경: 텍스트 및 리소스 색상 사용
-        fun changeTextToWhite() {
+         fun changeTextToWhite() {
             changeTextColor(colorWhite, colorSubWhite, true)
             changeBoxViews.forEach {
-                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#10000000"))
+                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40000000"))
+            }
+            gridBoxView.forEach {
+                it?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40000000"))
             }
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility =
@@ -1770,6 +1787,9 @@ class MainActivity
             changeTextColor(colorBlack, colorSubBlack, false)
             changeBoxViews.forEach {
                 it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40FFFFFF"))
+            }
+            gridBoxView.forEach {
+                it?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40FFFFFF"))
             }
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR

@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
-            app:layoutDescription="@xml/main_motion_scene"
+            app:layoutDescription="@xml/main_motion_scene_750"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             tools:showPaths="true">
 
@@ -27,33 +27,6 @@
                 android:orientation="vertical"
                 app:layout_constraintBottom_toTopOf="@+id/nested_scrollview"
                 app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
-
-            <ScrollView
-                android:id="@+id/mainTopBarGpsTitleScroll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:orientation="horizontal"
-                android:overScrollMode="ifContentScrolls"
-                android:scrollbars="none"
-                app:layout_constraintBottom_toBottomOf="@+id/topBarLinear"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/topBarLinear">
-
-                <TextView
-                    android:id="@+id/mainTopBarGpsTitle"
-                    style="@style/basicTextView"
-                    android:contentDescription="@string/cd_img_location"
-                    android:drawablePadding="3dp"
-                    android:ellipsize="marquee"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:maxEms="12"
-                    android:singleLine="true"
-                    android:textSize="14sp"
-                    app:drawableStartCompat="@drawable/location_fill" />
-            </ScrollView>
 
             <ImageView
                 android:id="@+id/mainTopEye"
@@ -68,7 +41,7 @@
             <RelativeLayout
                 android:id="@+id/topBarLinear"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginTop="18dp"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -113,6 +86,35 @@
                     app:tint="@android:color/transparent" />
 
             </RelativeLayout>
+
+            <ScrollView
+                android:id="@+id/mainTopBarGpsTitleScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="15dp"
+                android:orientation="horizontal"
+                android:overScrollMode="ifContentScrolls"
+                android:scrollbars="none"
+                app:layout_constraintBottom_toBottomOf="@+id/topBarLinear"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/topBarLinear">
+
+                <TextView
+                    android:id="@+id/mainTopBarGpsTitle"
+                    style="@style/basicTextView"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/cd_img_location"
+                    android:drawablePadding="3dp"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:maxEms="10"
+                    android:singleLine="true"
+                    android:textSize="14sp"
+                    app:drawableStartCompat="@drawable/location_fill" />
+            </ScrollView>
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/mainLoadingView"
@@ -209,7 +211,7 @@
                 style="@style/basicMediumTextView"
                 android:alpha="0"
                 android:lineHeight="25dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
                 app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
                 app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
@@ -218,7 +220,7 @@
                 android:id="@+id/mainLiveTempValue"
                 style="@style/basicMediumTextView"
                 android:layout_marginTop="12dp"
-                android:textSize="64sp"
+                android:textSize="60sp"
                 app:layout_constraintStart_toStartOf="@+id/mainGpsTitleTv"
                 app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv" />
 
@@ -270,7 +272,6 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="@+id/mainLiveTempValue"
                 app:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"
                 app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue">
 
@@ -383,7 +384,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="25dp"
                 android:background="@drawable/main_bottom_content_box_bg"
                 android:clickable="false"
                 app:layout_constraintBottom_toTopOf="@+id/mainMotionSlideGuide">
@@ -392,29 +393,29 @@
                     android:id="@+id/subAirTr"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="18dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="25dp"
                     android:gravity="center">
 
                     <TextView
                         android:id="@+id/subAirPM10"
                         style="@style/basicMediumTextView"
                         android:background="@drawable/main_pm_bg"
-                        android:paddingStart="8dp"
-                        android:paddingTop="4dp"
-                        android:paddingEnd="8dp"
-                        android:paddingBottom="4dp"
+                        android:paddingStart="10dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="6dp"
                         android:textColor="@android:color/transparent" />
 
                     <TextView
                         android:id="@+id/subAirPM25"
                         style="@style/basicMediumTextView"
-                        android:layout_marginStart="12dp"
+                        android:layout_marginStart="15dp"
                         android:background="@drawable/main_pm_bg"
-                        android:paddingStart="8dp"
-                        android:paddingTop="4dp"
-                        android:paddingEnd="8dp"
-                        android:paddingBottom="4dp"
+                        android:paddingStart="10dp"
+                        android:paddingTop="6dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="6dp"
                         android:textColor="@android:color/transparent" />
                 </TableRow>
 
@@ -449,7 +450,7 @@
             <TextView
                 android:id="@+id/mainMotionSlideGuide"
                 style="@style/basicTextView"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="15dp"
                 android:contentDescription="@string/cd_text_more"
                 android:text="@string/slide_more"
                 android:textColor="@android:color/transparent"
@@ -510,7 +511,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="8dp"
                         android:layout_marginEnd="12dp"
                         android:background="@drawable/scrolled_box_bg">
 
@@ -934,7 +935,6 @@
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="12dp"
-                        android:layout_marginBottom="20dp"
                         android:background="@drawable/scrolled_box_bg">
 
                         <LinearLayout
@@ -1096,10 +1096,118 @@
                         </TableRow>
                     </RelativeLayout>
 
+                    <RelativeLayout
+                        android:id="@+id/mainTestAirBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/mainSunBox"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="6dp"
+                        android:layout_marginBottom="14dp">
+
+                        <TextView
+                            android:id="@+id/mainTestAirTitle"
+                            style="@style/basicMediumTextView"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="24dp"
+                            android:drawablePadding="5dp"
+                            android:text="실시간 공기질"
+                            android:textColor="@color/theme_text_color"
+                            android:textSize="18sp"
+                            app:drawableStartCompat="@drawable/ico_airquality" />
+
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnCount="2"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <app.airsignal.weather.view.custom_view.TestAirQView
+                                android:id="@+id/testAir1"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_row="0"
+                                android:layout_column="0"
+                                android:layout_margin="6dp"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:background="@drawable/scrolled_box_bg"
+                                app:airTitle="미세먼지1"
+                                app:airUnit="ppm" />
+
+                            <app.airsignal.weather.view.custom_view.TestAirQView
+                                android:id="@+id/testAir2"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_row="0"
+                                android:layout_column="1"
+                                android:layout_margin="6dp"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:background="@drawable/scrolled_box_bg"
+                                app:airTitle="미세먼지2"
+                                app:airUnit="ppm" />
+
+                            <app.airsignal.weather.view.custom_view.TestAirQView
+                                android:id="@+id/testAir3"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_row="1"
+                                android:layout_column="0"
+                                android:layout_margin="6dp"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:background="@drawable/scrolled_box_bg"
+                                app:airTitle="미세먼지3"
+                                app:airUnit="ppm" />
+
+                            <app.airsignal.weather.view.custom_view.TestAirQView
+                                android:id="@+id/testAir4"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_row="1"
+                                android:layout_column="1"
+                                android:layout_margin="6dp"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:background="@drawable/scrolled_box_bg"
+                                app:airTitle="미세먼지4"
+                                app:airUnit="ppm" />
+
+                            <app.airsignal.weather.view.custom_view.TestAirQView
+                                android:id="@+id/testAir5"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_row="2"
+                                android:layout_column="0"
+                                android:layout_margin="6dp"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:background="@drawable/scrolled_box_bg"
+                                app:airTitle="미세먼지5"
+                                app:airUnit="ppm" />
+
+                            <app.airsignal.weather.view.custom_view.TestAirQView
+                                android:id="@+id/testAir6"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_row="2"
+                                android:layout_column="1"
+                                android:layout_margin="6dp"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:background="@drawable/scrolled_box_bg"
+                                app:airTitle="미세먼지6"
+                                app:airUnit="ppm" />
+                        </GridLayout>
+                    </RelativeLayout>
+
                     <TextView
                         android:id="@+id/mainLicenseText"
                         style="@style/basicMediumTextView"
-                        android:layout_below="@+id/mainSunBox"
+                        android:layout_below="@+id/mainTestAirBox"
                         android:layout_centerHorizontal="true"
                         android:layout_marginStart="24dp"
                         android:layout_marginEnd="24dp"
@@ -1121,7 +1229,6 @@
                 android:src="@drawable/scroll_to_top_src"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
-
         </androidx.constraintlayout.motion.widget.MotionLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>
