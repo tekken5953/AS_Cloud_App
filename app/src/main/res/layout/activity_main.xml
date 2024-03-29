@@ -496,8 +496,7 @@
                         android:id="@+id/nested_air_help_popup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignTop="@+id/nested_air_box"
-                        android:layout_centerHorizontal="true"
+                        android:layout_below="@+id/nested_weekly_box"
                         android:layout_marginStart="20dp"
                         android:layout_marginEnd="20dp"
                         android:alpha="0"
@@ -687,137 +686,105 @@
                     </RelativeLayout>
 
                     <RelativeLayout
-                        android:id="@+id/nested_air_box"
+                        android:id="@+id/mainAirBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_terms24_box"
-                        android:layout_marginStart="12dp"
                         android:layout_marginTop="16dp"
-                        android:layout_marginEnd="12dp"
-                        android:background="@drawable/scrolled_box_bg"
-                        android:paddingStart="20dp"
-                        android:paddingEnd="20dp">
+                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="6dp">
 
-                        <TextView
-                            android:id="@+id/nested_air_title"
-                            style="@style/basicMediumTextView"
-                            android:layout_marginTop="24dp"
-                            android:drawablePadding="5dp"
-                            android:text="@string/live_air_quality"
-                            android:textColor="@color/theme_text_color"
-                            android:textSize="18sp"
-                            app:drawableStartCompat="@drawable/ico_airquality" />
-
-                        <TableRow
-                            android:id="@+id/nested_air_tr"
+                        <GridLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/nested_air_title"
-                            android:layout_marginTop="21dp"
-                            android:gravity="center">
+                            android:columnCount="2"
+                            android:orientation="horizontal">
 
-                            <RelativeLayout
-                                android:id="@+id/nested_air_right_linear"
-                                android:layout_width="wrap_content"
+                            <app.airsignal.weather.view.custom_view.TestAirQView
+                                android:id="@+id/testAir1"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginEnd="30dp">
+                                android:layout_row="0"
+                                android:layout_column="0"
+                                android:layout_margin="6dp"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:background="@drawable/scrolled_box_bg"
+                                app:airTitle="미세먼지"
+                                app:airUnit="㎛/㎥" />
 
-                                <TextView
-                                    android:id="@+id/nested_air_title_en"
-                                    style="@style/basicMediumTextView"
-                                    android:layout_alignParentTop="true"
-                                    android:layout_centerHorizontal="true"
-                                    android:textColor="@color/theme_text_color"
-                                    android:textSize="17sp" />
-
-                                <TextView
-                                    android:id="@+id/nested_air_title_kr"
-                                    style="@style/basicTextView"
-                                    android:layout_below="@+id/nested_air_title_en"
-                                    android:layout_centerHorizontal="true"
-                                    android:layout_marginBottom="10dp"
-                                    android:textColor="@color/theme_sub_color"
-                                    android:textSize="14sp" />
-
-                                <View
-                                    android:id="@+id/nested_air_line"
-                                    android:layout_width="90dp"
-                                    android:layout_height="1.5dp"
-                                    android:layout_below="@+id/nested_air_title_kr"
-                                    android:layout_marginTop="9dp"
-                                    android:background="@color/theme_line_color" />
-
-                                <TextView
-                                    android:id="@+id/nested_air_value"
-                                    style="@style/basicMediumTextView"
-                                    android:layout_below="@+id/nested_air_line"
-                                    android:layout_centerHorizontal="true"
-                                    android:layout_marginTop="8dp"
-                                    android:letterSpacing="-0.064"
-                                    android:textSize="24sp" />
-
-                                <TextView
-                                    android:id="@+id/nested_air_unit"
-                                    style="@style/basicTextView"
-                                    android:layout_below="@id/nested_air_value"
-                                    android:layout_centerHorizontal="true"
-                                    android:layout_marginTop="5dp"
-                                    android:textColor="@color/theme_sub_color"
-                                    android:textSize="12sp" />
-                            </RelativeLayout>
-
-                            <androidx.cardview.widget.CardView
-                                android:id="@+id/nested_air_cpv_card"
-                                android:layout_width="110dp"
-                                android:layout_height="110dp"
-                                android:layout_marginStart="26dp"
-                                android:translationZ="0dp"
-                                app:cardCornerRadius="55dp"
-                                app:cardElevation="0dp">
-
-                                <TextView
-                                    android:id="@+id/nested_air_cpv_text"
-                                    style="@style/basicMediumTextView"
-                                    android:layout_gravity="center"
-                                    android:gravity="center"
-                                    android:textColor="@color/white"
-                                    android:textSize="21sp" />
-
-                            </androidx.cardview.widget.CardView>
-
-                            <ImageView
-                                android:id="@+id/nested_air_help"
-                                android:layout_width="wrap_content"
+                            <app.airsignal.weather.view.custom_view.TestAirQView
+                                android:id="@+id/testAir2"
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="top"
-                                android:layout_marginTop="5dp"
-                                android:contentDescription="@string/cd_icon_help"
-                                android:src="@drawable/help" />
+                                android:layout_row="0"
+                                android:layout_column="1"
+                                android:layout_margin="6dp"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:background="@drawable/scrolled_box_bg"
+                                app:airTitle="초미세먼지"
+                                app:airUnit="㎛/㎥" />
 
-                        </TableRow>
+                            <app.airsignal.weather.view.custom_view.TestAirQView
+                                android:id="@+id/testAir3"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_row="1"
+                                android:layout_column="0"
+                                android:layout_margin="6dp"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:background="@drawable/scrolled_box_bg"
+                                app:airTitle="일산화탄소"
+                                app:airUnit="ppm" />
 
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/nested_air_rv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/nested_air_tr"
-                            android:layout_centerHorizontal="true"
-                            android:layout_marginTop="35dp"
-                            android:layout_marginBottom="12dp"
-                            android:orientation="horizontal"
-                            android:overScrollMode="never"
-                            android:scrollbars="none"
-                            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                            app:spanCount="2"
-                            tools:listitem="@layout/list_item_pm_title" />
+                            <app.airsignal.weather.view.custom_view.TestAirQView
+                                android:id="@+id/testAir4"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_row="1"
+                                android:layout_column="1"
+                                android:layout_margin="6dp"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:background="@drawable/scrolled_box_bg"
+                                app:airTitle="이산화질소"
+                                app:airUnit="ppm" />
 
+                            <app.airsignal.weather.view.custom_view.TestAirQView
+                                android:id="@+id/testAir5"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_row="2"
+                                android:layout_column="0"
+                                android:layout_margin="6dp"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:background="@drawable/scrolled_box_bg"
+                                app:airTitle="아황산가스"
+                                app:airUnit="ppm" />
+
+                            <app.airsignal.weather.view.custom_view.TestAirQView
+                                android:id="@+id/testAir6"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_row="2"
+                                android:layout_column="1"
+                                android:layout_margin="6dp"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:background="@drawable/scrolled_box_bg"
+                                app:airTitle="오존"
+                                app:airUnit="ppm"/>
+                        </GridLayout>
                     </RelativeLayout>
 
                     <RelativeLayout
                         android:id="@+id/mainUVBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/nested_air_box"
+                        android:layout_below="@+id/mainAirBox"
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="12dp"
@@ -828,103 +795,44 @@
                         <TextView
                             android:id="@+id/mainUvTitle"
                             style="@style/basicMediumTextView"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginTop="24dp"
-                            android:drawablePadding="5dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
                             android:text="@string/uv_title"
                             android:textColor="@color/theme_text_color"
-                            android:textSize="18sp"
-                            app:drawableStartCompat="@drawable/ico_uv" />
+                            android:textSize="18sp" />
 
                         <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/mainUVLegendRv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignTop="@+id/mainUVLegendCardView"
-                            android:layout_alignParentEnd="true"
-                            android:layout_marginStart="33dp"
-                            android:layout_marginEnd="25dp"
-                            android:layout_marginBottom="25dp"
-                            android:layout_toEndOf="@+id/mainUVLegendCardView"
-                            android:background="@drawable/uv_legend_ripple_bg"
-                            android:clickable="true"
-                            android:clipToPadding="false"
-                            android:nestedScrollingEnabled="false"
-                            android:orientation="vertical"
-                            android:overScrollMode="never"
-                            android:scrollbars="none"
-                            app:layoutManager=".util.LinearLayoutManagerWrapper"
-                            tools:itemCount="5"
-                            tools:listitem="@layout/list_item_uv_legend" />
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/mainUVLegendCardView"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            android:layout_below="@+id/mainUvTitle"
-                            android:layout_alignStart="@+id/mainUvTitle"
-                            android:layout_marginStart="18dp"
-                            android:layout_marginTop="25dp"
-                            android:translationZ="0dp"
-                            app:cardBackgroundColor="#4ADE80"
-                            app:cardCornerRadius="50dp"
-                            app:cardElevation="0dp">
-
-                            <TextView
-                                android:id="@+id/mainUvValue"
-                                style="@style/basicMediumTextView"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="4dp"
-                                android:gravity="center"
-                                android:letterSpacing="-0.02"
-                                android:lineSpacingExtra="2dp"
-                                android:textColor="@color/white"
-                                android:textSize="20sp" />
-                        </androidx.cardview.widget.CardView>
-
-                        <RelativeLayout
-                            android:id="@+id/mainUvCollapsedLayout"
+                            android:id="@+id/mainUvCollapseRv"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@id/mainUVLegendRv"
-                            android:visibility="visible">
+                            android:layout_below="@+id/mainUvTitle"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginBottom="16dp"
+                            android:clipToPadding="false"
+                            android:nestedScrollingEnabled="false"
+                            android:overScrollMode="never"
+                            android:scrollbars="none"
+                            android:layout_toStartOf="@+id/mainUvValue"
+                            app:layoutManager=".util.LinearLayoutManagerWrapper"
+                            tools:listitem="@layout/list_item_uv_collapsed" />
 
-                            <View
-                                android:id="@+id/mainUvLine"
-                                android:layout_width="match_parent"
-                                android:layout_height="1dp"
-                                android:layout_alignParentTop="true"
-                                android:layout_marginStart="18dp"
-                                android:layout_marginTop="13dp"
-                                android:layout_marginEnd="18dp"
-                                android:background="@color/theme_line_color" />
-
-                            <TextView
-                                android:id="@+id/mainUvCollapsedTitle"
-                                style="@style/basicMediumTextView"
-                                android:layout_below="@+id/mainUvLine"
-                                android:layout_marginStart="20dp"
-                                android:layout_marginTop="16dp"
-                                android:text="@string/how_to_response_title"
-                                android:textColor="@color/theme_text_color"
-                                android:textSize="14sp" />
-
-                            <androidx.recyclerview.widget.RecyclerView
-                                android:id="@+id/mainUvCollapseRv"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@+id/mainUvCollapsedTitle"
-                                android:layout_marginStart="20dp"
-                                android:layout_marginTop="12dp"
-                                android:layout_marginEnd="20dp"
-                                android:layout_marginBottom="25dp"
-                                android:clipToPadding="false"
-                                android:nestedScrollingEnabled="false"
-                                android:overScrollMode="never"
-                                android:scrollbars="none"
-                                app:layoutManager=".util.LinearLayoutManagerWrapper"
-                                tools:listitem="@layout/list_item_uv_collapsed" />
-                        </RelativeLayout>
+                        <TextView
+                            android:id="@+id/mainUvValue"
+                            android:layout_width="90dp"
+                            android:layout_height="90dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginEnd="20dp"
+                            style="@style/basicMediumTextView"
+                            android:background="@drawable/uv_low_bg"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:letterSpacing="-0.02"
+                            android:lineSpacingExtra="2dp"
+                            android:textColor="@color/white"
+                            android:textSize="20sp" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -935,6 +843,7 @@
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="12dp"
+                        android:layout_marginBottom="20dp"
                         android:background="@drawable/scrolled_box_bg">
 
                         <LinearLayout
@@ -1096,118 +1005,10 @@
                         </TableRow>
                     </RelativeLayout>
 
-                    <RelativeLayout
-                        android:id="@+id/mainTestAirBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/mainSunBox"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginStart="6dp"
-                        android:layout_marginEnd="6dp"
-                        android:layout_marginBottom="14dp">
-
-                        <TextView
-                            android:id="@+id/mainTestAirTitle"
-                            style="@style/basicMediumTextView"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginTop="24dp"
-                            android:drawablePadding="5dp"
-                            android:text="실시간 공기질"
-                            android:textColor="@color/theme_text_color"
-                            android:textSize="18sp"
-                            app:drawableStartCompat="@drawable/ico_airquality" />
-
-                        <GridLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:columnCount="2"
-                            android:layout_marginTop="12dp"
-                            android:orientation="horizontal">
-
-                            <app.airsignal.weather.view.custom_view.TestAirQView
-                                android:id="@+id/testAir1"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_row="0"
-                                android:layout_column="0"
-                                android:layout_margin="6dp"
-                                android:layout_columnWeight="1"
-                                android:layout_gravity="fill_horizontal"
-                                android:background="@drawable/scrolled_box_bg"
-                                app:airTitle="미세먼지1"
-                                app:airUnit="ppm" />
-
-                            <app.airsignal.weather.view.custom_view.TestAirQView
-                                android:id="@+id/testAir2"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_row="0"
-                                android:layout_column="1"
-                                android:layout_margin="6dp"
-                                android:layout_columnWeight="1"
-                                android:layout_gravity="fill_horizontal"
-                                android:background="@drawable/scrolled_box_bg"
-                                app:airTitle="미세먼지2"
-                                app:airUnit="ppm" />
-
-                            <app.airsignal.weather.view.custom_view.TestAirQView
-                                android:id="@+id/testAir3"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_row="1"
-                                android:layout_column="0"
-                                android:layout_margin="6dp"
-                                android:layout_columnWeight="1"
-                                android:layout_gravity="fill_horizontal"
-                                android:background="@drawable/scrolled_box_bg"
-                                app:airTitle="미세먼지3"
-                                app:airUnit="ppm" />
-
-                            <app.airsignal.weather.view.custom_view.TestAirQView
-                                android:id="@+id/testAir4"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_row="1"
-                                android:layout_column="1"
-                                android:layout_margin="6dp"
-                                android:layout_columnWeight="1"
-                                android:layout_gravity="fill_horizontal"
-                                android:background="@drawable/scrolled_box_bg"
-                                app:airTitle="미세먼지4"
-                                app:airUnit="ppm" />
-
-                            <app.airsignal.weather.view.custom_view.TestAirQView
-                                android:id="@+id/testAir5"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_row="2"
-                                android:layout_column="0"
-                                android:layout_margin="6dp"
-                                android:layout_columnWeight="1"
-                                android:layout_gravity="fill_horizontal"
-                                android:background="@drawable/scrolled_box_bg"
-                                app:airTitle="미세먼지5"
-                                app:airUnit="ppm" />
-
-                            <app.airsignal.weather.view.custom_view.TestAirQView
-                                android:id="@+id/testAir6"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_row="2"
-                                android:layout_column="1"
-                                android:layout_margin="6dp"
-                                android:layout_columnWeight="1"
-                                android:layout_gravity="fill_horizontal"
-                                android:background="@drawable/scrolled_box_bg"
-                                app:airTitle="미세먼지6"
-                                app:airUnit="ppm" />
-                        </GridLayout>
-                    </RelativeLayout>
-
                     <TextView
                         android:id="@+id/mainLicenseText"
                         style="@style/basicMediumTextView"
-                        android:layout_below="@+id/mainTestAirBox"
+                        android:layout_below="@+id/mainSunBox"
                         android:layout_centerHorizontal="true"
                         android:layout_marginStart="24dp"
                         android:layout_marginEnd="24dp"

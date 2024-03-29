@@ -16,26 +16,8 @@ class ApiModel {
         @SerializedName("test")
         val test: List<Test>,
         @SerializedName("inAppMsg")
-        val inAppMsg: Array<InAppMsgItem>?
-    ) {
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as AppVersion
-
-            if (inAppMsg != null) {
-                if (other.inAppMsg == null) return false
-                if (!inAppMsg.contentEquals(other.inAppMsg)) return false
-            } else if (other.inAppMsg != null) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return inAppMsg?.contentHashCode() ?: 0
-        }
-    }
+        val inAppMsg: List<InAppMsgItem?>?
+    )
 
     data class Test(
         @SerializedName("name")
@@ -49,33 +31,8 @@ class ApiModel {
         @SerializedName("img")
         val img: String,
         @SerializedName("redirect")
-        val redirect: String,
-        ) : Parcelable {
-        // Parcelable 구현
-        constructor(parcel: Parcel) : this(
-            parcel.readString() ?: "",
-            parcel.readString() ?: ""
+        val redirect: String
         )
-
-        override fun writeToParcel(parcel: Parcel, flags: Int) {
-            parcel.writeString(img)
-            parcel.writeString(redirect)
-        }
-
-        override fun describeContents(): Int {
-            return 0
-        }
-
-        companion object CREATOR : Parcelable.Creator<InAppMsgItem> {
-            override fun createFromParcel(parcel: Parcel): InAppMsgItem {
-                return InAppMsgItem(parcel)
-            }
-
-            override fun newArray(size: Int): Array<InAppMsgItem?> {
-                return arrayOfNulls(size)
-            }
-        }
-    }
 
     /**
      * 메타 데이터 모델

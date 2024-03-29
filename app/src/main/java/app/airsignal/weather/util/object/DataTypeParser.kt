@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
-import androidx.cardview.widget.CardView
+import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
 import java.text.SimpleDateFormat
@@ -305,16 +305,20 @@ object DataTypeParser {
     }
 
     /** UV 범주 색상 적용 **/
-    fun setUvBackgroundColor(context: Context, flag: String, cardView: CardView) {
+    fun applyUvColor(context: Context, flag: String, textView: TextView) {
         val flagMap = mapOf (
-            "낮음" to R.color.uv_low,
-            "보통" to R.color.uv_normal,
-            "높음" to R.color.uv_high,
-            "매우높음" to R.color.uv_very_high,
-            "위험" to R.color.uv_caution
+            "낮음" to Pair(R.drawable.uv_low_bg,R.color.uv_low),
+            "보통" to Pair(R.drawable.uv_normal_bg,R.color.uv_normal),
+            "높음" to Pair(R.drawable.uv_high_bg,R.color.uv_high),
+            "매우높음" to Pair(R.drawable.uv_veryhigh_bg,R.color.uv_very_high),
+            "위험" to Pair(R.drawable.uv_caution_bg,R.color.uv_caution)
         )
 
-        flagMap[flag]?.let { cardView.setCardBackgroundColor(context.getColor(it))}
+
+        flagMap[flag]?.let {
+            textView.setBackgroundResource(it.first)
+            textView.setTextColor(context.getColor(it.second))
+        }
     }
 
     /** 상태 바 설정 **/

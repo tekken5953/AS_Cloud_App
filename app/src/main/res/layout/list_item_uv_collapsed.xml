@@ -3,27 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="15dp"
-    android:paddingEnd="15dp"
-    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
     android:background="@android:color/transparent">
 
-    <ImageView
+    <View
         android:id="@+id/listItemUvResponseDot"
-        android:layout_width="6dp"
-        android:layout_height="6dp"
-        android:src="@drawable/dot"
-        android:layout_marginTop="5dp"
-        android:contentDescription="@string/cd_list_item"
-        app:tint="@color/theme_text_color"/>
+        android:layout_width="2dp"
+        android:layout_height="18dp"
+        android:layout_centerVertical="true"
+        android:background="@drawable/dot_bg"/>
 
     <TextView
         android:id="@+id/listItemUvResponseText"
         style="@style/basicTextView"
         android:layout_toEndOf="@+id/listItemUvResponseDot"
-        android:gravity="start"
-        android:textSize="14sp"
+        android:layout_centerVertical="true"
+        android:gravity="start|center_vertical"
+        android:textSize="12sp"
+        android:lineSpacingExtra="6sp"
         android:textColor="@color/theme_text_color"
-        android:layout_marginStart="10dp" />
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="4dp" />
 
 </RelativeLayout>

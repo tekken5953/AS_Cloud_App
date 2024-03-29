@@ -2,14 +2,15 @@ package app.airsignal.weather.adapter
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
+
 
 /**
  * @author : Lee Jae Young
@@ -34,21 +35,36 @@ class UVResponseAdapter(private val context: Context, list: ArrayList<AdapterMod
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(mList[position])
+
+        holder.text.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                val lineCount = holder.text.lineCount
+                val layoutParams = holder.dot.layoutParams as RelativeLayout.LayoutParams
+                layoutParams.height = convertPixelsToDp(18 * lineCount)
+                layoutParams.addRule(Gravity.CENTER_VERTICAL)
+                holder.dot.layoutParams = layoutParams
+
+                holder.text.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
     }
 
     fun setIsWhite(b: Boolean) { isWhite = b }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val text: TextView = itemView.findViewById(R.id.listItemUvResponseText)
-        private val dot: ImageView = itemView.findViewById(R.id.listItemUvResponseDot)
+        val text: TextView = itemView.findViewById(R.id.listItemUvResponseText)
+        val dot: View = itemView.findViewById(R.id.listItemUvResponseDot)
 
         fun bind(dao: AdapterModel.UVResponseItem) {
             text.text = dao.text
 
             text.setTextColor(if(isWhite)context.getColor(R.color.white) else context.getColor(R.color.main_black))
-            dot.imageTintList = ColorStateList.valueOf(
-                context.getColor(if(isWhite)R.color.white else R.color.main_black)
-            )
+            dot.setBackgroundColor(if(isWhite)context.getColor(R.color.white) else context.getColor(R.color.main_black))
         }
+    }
+
+    private fun convertPixelsToDp(px: Int): Int {
+        val scale = context.resources.displayMetrics.density
+        return (px * scale).toInt()
     }
 }

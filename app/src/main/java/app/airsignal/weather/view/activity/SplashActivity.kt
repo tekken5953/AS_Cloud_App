@@ -53,6 +53,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
         window.setBackgroundDrawableResource(R.drawable.splash_lottie_bg)
 
+        blockTouch(true)
+
         initBinding().run {
             if (fetch.hasObservers()) fetch.removeObservers(this@SplashActivity)
 
@@ -93,7 +95,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     }
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
-    private fun enterPage(inAppMsgList: Array<ApiModel.InAppMsgItem>?) {
+    private fun enterPage(inAppMsgList: List<ApiModel.InAppMsgItem?>?) {
         if (intent?.hasCategory("android.intent.category.APP_MESSAGING") == true) {
             if (!isDone) {
                 isDone = true
@@ -107,7 +109,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
                         EnterPageUtil(this@SplashActivity).toMain(
                             getUserLoginPlatform(this),
-                            inAppMsgList, R.anim.fade_in, R.anim.fade_out
+                            inAppMsgList?.toTypedArray(), R.anim.fade_in, R.anim.fade_out
                         )
                     } else { EnterPageUtil(this@SplashActivity).toPermission() }
                 }, 500)
@@ -127,6 +129,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     when (ver) {
                         // 통신 성공
                         is BaseRepository.ApiState.Success -> {
+                            blockTouch(false)
                             val sp = SharedPreferenceManager(this@SplashActivity)
                             val inAppArray = ver.data.inAppMsg
                             val versionName = GetSystemInfo.getApplicationVersionName(this)
@@ -185,6 +188,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
                         // 통신 실패
                         is BaseRepository.ApiState.Error -> {
+                            blockTouch(false)
                             when (ver.errorMessage) {
                                 ERROR_NETWORK -> {
                                     if (GetLocation(this).isNetWorkConnected()) {
@@ -203,7 +207,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     }
                 }
             }
-        } catch (e: IOException) { makeDialog(getString(R.string.fail_to_get_app_version)) }
+        } catch (e: IOException) {
+            blockTouch(false)
+            makeDialog(getString(R.string.fail_to_get_app_version))
+        }
     }
 
     // 다이얼로그 생성

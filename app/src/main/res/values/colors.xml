@@ -16,6 +16,10 @@
     <color name="air_normal">#4ADE80</color>
     <color name="air_bad">#FACC15</color>
     <color name="air_very_bad">#F87171</color>
+    <color name="air_good_sub">#205CC4FF</color>
+    <color name="air_normal_sub">#204ADE80</color>
+    <color name="air_bad_sub">#20FACC15</color>
+    <color name="air_very_bad_sub">#20F87171</color>
 
     <color name="mode_black_color">#000000</color>
 
