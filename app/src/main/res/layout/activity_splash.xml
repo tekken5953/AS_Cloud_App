@@ -6,8 +6,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.activity.SplashActivity"
-        android:background="@drawable/splash_lottie_bg">
+        tools:context=".view.activity.SplashActivity">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/splashPB"

@@ -30,13 +30,13 @@ class EnterPageUtil(private val activity: Activity) {
      *
      * @param sort 간편로그인의 분류 ex) "카카오"
      */
-    fun toMain(sort: String?, inAppMsg: Array<ApiModel.InAppMsgItem>?) {
+    fun toMain(sort: String?, inAppMsg: Array<ApiModel.InAppMsgItem?>?) {
         sort?.let { setUserLoginPlatform(activity, it) }
         val intent = Intent(activity, MainActivity::class.java)
         activity.run {
             var count = 0
             inAppMsg?.forEachIndexed { index, data ->
-                data.let {
+                data?.let {
                     count++
                     intent.putExtra("${IN_APP_MSG_REDIRECT}${index}",data.redirect)
                     intent.putExtra("${IN_APP_MSG}${index}", data.img)
@@ -50,7 +50,7 @@ class EnterPageUtil(private val activity: Activity) {
         }
     }
 
-    fun toMain(sort: String?, inAppMsg: Array<ApiModel.InAppMsgItem?>?, startAnimation: Int, endAnimation: Int) {
+    fun toMain(sort: String?, inAppMsg: Array<ApiModel.InAppMsgItem?>?, startAnimation: Int, endAnimation: Int?) {
         sort?.let { setUserLoginPlatform(activity, it) }
         val intent = Intent(activity, MainActivity::class.java)
         activity.run {

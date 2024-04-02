@@ -41,7 +41,6 @@ import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetAppInfo.getEntireSun
-import app.airsignal.weather.db.sp.GetAppInfo.getIsNight
 import app.airsignal.weather.db.sp.GetAppInfo.getTopicNotification
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
@@ -78,6 +77,7 @@ import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyImg
 import app.airsignal.weather.util.`object`.DataTypeParser.applySkyText
+import app.airsignal.weather.util.`object`.DataTypeParser.applyUvColor
 import app.airsignal.weather.util.`object`.DataTypeParser.dateAppendZero
 import app.airsignal.weather.util.`object`.DataTypeParser.getComparedTemp
 import app.airsignal.weather.util.`object`.DataTypeParser.getHourCountToTomorrow
@@ -85,7 +85,6 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgSmall
 import app.airsignal.weather.util.`object`.DataTypeParser.isRainyDay
 import app.airsignal.weather.util.`object`.DataTypeParser.parseDayOfWeekToKorean
 import app.airsignal.weather.util.`object`.DataTypeParser.parseLocalDateTimeToLong
-import app.airsignal.weather.util.`object`.DataTypeParser.applyUvColor
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSky
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
@@ -120,6 +119,8 @@ class MainActivity
     }
 
     private val fcm by lazy { SubFCM() }
+
+    private var isNight = false
 
     private var isBackPressed = false
     private var isProgressed = false
@@ -339,6 +340,11 @@ class MainActivity
             }
         } catch (e: androidx.fragment.app.Fragment.InstantiationException) {
             RefreshUtils(this).refreshApplication()
+        }
+
+        binding.mainAnimationSwitch?.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (!binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.playAnimation()
+            else binding.mainSkyStarImg.pauseAnimation()
         }
     }
 
@@ -876,6 +882,8 @@ class MainActivity
             val metaAddr = result.meta.address ?: "주소 호출 에러"
             CoroutineScope(Dispatchers.IO).launch { reNewTopicInMain(metaAddr) }
             runOnUiThread {
+                isNight = true
+//                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
                 binding.mainGpsFix.clearAnimation()
                 binding.mainDailyWeatherRv.scrollToPosition(0)
                 binding.mainWarningVp.currentItem = 0
@@ -914,7 +922,7 @@ class MainActivity
 
                 binding.mainSkyText.text = skyText
                 // 날씨에 따라 배경화면 변경
-                applyWindowBackground(currentSun, skyText)
+                applyWindowBackground(skyText)
                 hideProgressBar()
                 if (!isInAppMsgShow) {
                     CoroutineScope(Dispatchers.IO).launch {
@@ -976,7 +984,7 @@ class MainActivity
                 this,
                 if (isAfterRealtime) result.current.rainType else realtimeFirst.rainType,
                 realtimeFirst.sky, result.thunder,
-                isLarge = true, isNight = getIsNight(currentSun),
+                isLarge = true, isNight = isNight,
                 lunar
             )
         )
@@ -1036,7 +1044,6 @@ class MainActivity
                 if (getEntireSun(sunrise, sunset) == 0) 1 else getEntireSun(sunrise, sunset)
             val dailySunProgress =
                 100 * (parseTimeToMinutes(dailyTime) - parseTimeToMinutes(sunrise)) / entireSun
-            val isNight = getIsNight(dailySunProgress)
 
             if (realtimeIndex == 0) {
                 val isAfterRealtime =
@@ -1291,13 +1298,14 @@ class MainActivity
     }
 
     // 하늘상태에 따라 윈도우 배경 변경
-    private fun applyWindowBackground(progress: Int, sky: String?) {
-        val isNight = getIsNight(progress)
+    private fun applyWindowBackground(sky: String?) {
         if (isNight && (sky == getString(R.string.sky_sunny) || sky == getString(R.string.sky_sunny_cloudy))) {
-            changeBackgroundResource(R.drawable.main_bg_night_test)
-            binding.mainSkyStarImg.setImageDrawable(getR(R.drawable.bg_nightsky))
+            changeBackgroundResource(R.drawable.main_bg_night)
+            binding.mainSkyStarImg.setAnimation(R.raw.ani_main_night_stars)
+            if (!binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.playAnimation()
         } else {
-            binding.mainSkyStarImg.setImageDrawable(null)
+            val emptyJson = "{}"
+            binding.mainSkyStarImg.setAnimationFromJson(emptyJson, "emptyKey")
             val backgroundResource = when (sky) {
                 getString(R.string.sky_sunny), getString(R.string.sky_sunny_cloudy) -> R.drawable.main_bg_clear
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
@@ -1307,10 +1315,12 @@ class MainActivity
                 getString(R.string.sky_cloudy) -> R.drawable.main_bg_cloudy
                 getString(R.string.sky_sunny_cloudy_snowy), getString(R.string.sky_snowy),
                 getString(R.string.sky_cloudy_snowy) -> R.drawable.main_bg_snow
-                else -> R.drawable.main_bg_snow
+                else -> R.drawable.main_bg_clear
             }
             changeBackgroundResource(backgroundResource)
         }
+
+        binding.mainSkyStarImg.invalidate()
     }
 
     private fun changeBackgroundResource(id: Int?) {
@@ -1426,8 +1436,8 @@ class MainActivity
 
     // 모든 뷰 숨김 처리 및 에러 메시지 표시
     private fun hideAllViews(error: String?) {
-        val isNight = isThemeNight(this@MainActivity)
-        val backgroundResourceId = if (isNight) R.color.black else R.color.white
+        val isThemeNight = isThemeNight(this@MainActivity)
+        val backgroundResourceId = if (isThemeNight) R.color.black else R.color.white
 
         runOnUiThread {
             error?.let { e ->
@@ -1436,7 +1446,7 @@ class MainActivity
             }
             binding.mainSkyImg.apply {
                 changeBackgroundResource(backgroundResourceId)
-                setImageDrawable(getR(if (isNight) R.drawable.ico_error_b else R.drawable.ico_error_w))
+                setImageDrawable(getR(if (isThemeNight) R.drawable.ico_error_b else R.drawable.ico_error_w))
             }
         }
     }
@@ -1767,7 +1777,7 @@ class MainActivity
                 changeTextToBlack()
                 setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_bk)
             }
-            R.drawable.main_bg_night_test, R.drawable.main_bg_cloudy -> {
+            R.drawable.main_bg_night, R.drawable.main_bg_cloudy -> {
                 changeTextToWhite()
                 setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_w)
             }

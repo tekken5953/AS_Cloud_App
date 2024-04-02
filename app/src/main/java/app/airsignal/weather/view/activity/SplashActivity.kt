@@ -109,8 +109,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
                         EnterPageUtil(this@SplashActivity).toMain(
                             getUserLoginPlatform(this),
-                            inAppMsgList?.toTypedArray(), R.anim.fade_in, R.anim.fade_out
-                        )
+                            inAppMsgList?.toTypedArray())
                     } else { EnterPageUtil(this@SplashActivity).toPermission() }
                 }, 500)
             } else {

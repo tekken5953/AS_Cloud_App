@@ -129,7 +129,8 @@ object DataTypeParser {
         val id = when(sky) {
             "맑음" ->
                 if (!isNight) R.drawable.b_ico_sunny
-                else  applyLunarImg(lunar)
+//                else  applyLunarImg(lunar)
+                else R.drawable.ico_moon_big
             "구름많음" ->
                 if (!isNight)  R.drawable.b_ico_m_cloudy
                 else  R.drawable.b_ico_m_ncloudy

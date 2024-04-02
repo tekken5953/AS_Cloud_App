@@ -23,13 +23,13 @@ class TestAirQView(context: Context, attrs: AttributeSet?)
     : RelativeLayout(context, attrs) {
     private var airBinding: CustomViewAirqBinding
 
-    enum class AirQ(val title: String,val en: String) {
-        PM2_5(title = "초미세먼지", "PM2.5"),
-        PM10(title = "미세먼지", "PM10"),
-        NO2(title = "이산화질소", "NO2"),
-        SO2(title = "아황산가스", "SO2"),
-        CO(title = "일산화탄소", "CO"),
-        O3(title = "오존", "O3")
+    enum class AirQ(val title: String,val en: String, val sort: String) {
+        PM2_5(title = "초미세먼지", en = "ultrafine dust", sort = "PM2.5"),
+        PM10(title = "미세먼지", en = "fine dust",sort = "PM10"),
+        NO2(title = "이산화질소", en = "nitrogen dioxide", sort = "NO2"),
+        SO2(title = "아황산가스", en = "sulfur dioxide", sort = "SO2"),
+        CO(title = "일산화탄소", en = "carbon monoxide", sort = "CO"),
+        O3(title = "오존", en = "ozone", sort = "O3")
     }
 
     init {
@@ -43,7 +43,7 @@ class TestAirQView(context: Context, attrs: AttributeSet?)
             val unit = typedArray.getString(R.styleable.TestAirQView_airUnit)
 
             airBinding.apply {
-                listItemNestedAirTitle.text = title
+                listItemNestedAirTitle.text = translateTitle(title ?: "")
                 listItemNestedAirUnit.text = unit
             }
 
@@ -61,36 +61,36 @@ class TestAirQView(context: Context, attrs: AttributeSet?)
                     popupHelp.apply {
                         bringToFront()
                         when(airBinding.listItemNestedAirTitle.text.toString()) {
-                            AirQ.PM2_5.title -> {
+                            context.getString(R.string.pm2_5_full) -> {
                                 popupHelp.fetchData(
-                                modifyDataSort(context, AirQ.PM2_5.title),
-                                modifyDataGraph(context, AirQ.PM2_5.title)!!,
-                                AirQ.PM2_5.en, AirQ.PM2_5.title) }
-                            AirQ.PM10.title -> {
+                                modifyDataSort(context, context.getString(R.string.pm2_5_full)),
+                                modifyDataGraph(context, context.getString(R.string.pm2_5_full))!!,
+                                AirQ.PM2_5.sort, context.getString(R.string.pm2_5_full)) }
+                            context.getString(R.string.pm10_full) -> {
                                 popupHelp.fetchData(
-                                    modifyDataSort(context, AirQ.PM10.title),
-                                    modifyDataGraph(context, AirQ.PM10.title)!!,
-                                    AirQ.PM10.en, AirQ.PM10.title) }
-                            AirQ.NO2.title -> {
+                                    modifyDataSort(context, context.getString(R.string.pm10_full)),
+                                    modifyDataGraph(context, context.getString(R.string.pm10_full))!!,
+                                    AirQ.PM10.sort, context.getString(R.string.pm10_full)) }
+                            context.getString(R.string.no2_full) -> {
                                 popupHelp.fetchData(
-                                    modifyDataSort(context, AirQ.NO2.title),
-                                    modifyDataGraph(context, AirQ.NO2.title)!!,
-                                    AirQ.NO2.en, AirQ.NO2.title)}
-                            AirQ.SO2.title -> {
+                                    modifyDataSort(context, context.getString(R.string.no2_full)),
+                                    modifyDataGraph(context, context.getString(R.string.no2_full))!!,
+                                    AirQ.NO2.sort, context.getString(R.string.no2_full))}
+                            context.getString(R.string.so2_full) -> {
                                 popupHelp.fetchData(
-                                    modifyDataSort(context, AirQ.SO2.title),
-                                    modifyDataGraph(context, AirQ.SO2.title)!!,
-                                    AirQ.SO2.en, AirQ.SO2.title) }
-                            AirQ.O3.title -> {
+                                    modifyDataSort(context, context.getString(R.string.so2_full)),
+                                    modifyDataGraph(context, context.getString(R.string.so2_full))!!,
+                                    AirQ.SO2.sort, context.getString(R.string.so2_full)) }
+                            context.getString(R.string.o3_full) -> {
                                 popupHelp.fetchData(
-                                    modifyDataSort(context, AirQ.O3.title),
-                                    modifyDataGraph(context, AirQ.O3.title)!!,
-                                    AirQ.O3.en, AirQ.O3.title) }
-                            AirQ.CO.title -> {
+                                    modifyDataSort(context, context.getString(R.string.o3_full)),
+                                    modifyDataGraph(context, context.getString(R.string.o3_full))!!,
+                                    AirQ.O3.sort, context.getString(R.string.o3_full)) }
+                            context.getString(R.string.co_full) -> {
                                 popupHelp.fetchData(
-                                    modifyDataSort(context, AirQ.CO.title),
-                                    modifyDataGraph(context, AirQ.CO.title)!!,
-                                    AirQ.CO.en, AirQ.CO.title) }
+                                    modifyDataSort(context, context.getString(R.string.co_full)),
+                                    modifyDataGraph(context, context.getString(R.string.co_full))!!,
+                                    AirQ.CO.sort, context.getString(R.string.co_full)) }
                         }
                         startAnimation(fadeIn)
                         alpha = 1f
@@ -142,6 +142,18 @@ class TestAirQView(context: Context, attrs: AttributeSet?)
         val color = if (isWhite) context.getColor(R.color.white) else context.getColor(R.color.main_black)
         airBinding.listItemNestedAirTitle.setTextColor(color)
         airBinding.listItemNestedAirHelp.imageTintList = ColorStateList.valueOf(color)
+    }
+
+    private fun translateTitle(title: String): String {
+        return when(title) {
+            AirQ.PM2_5.title -> {context.getString(R.string.pm2_5_full)}
+            AirQ.PM10.title -> {context.getString(R.string.pm10_full)}
+            AirQ.NO2.title -> {context.getString(R.string.no2_full)}
+            AirQ.O3.title -> {context.getString(R.string.o3_full)}
+            AirQ.SO2.title -> {context.getString(R.string.so2_full)}
+            AirQ.CO.title -> {context.getString(R.string.co_full)}
+            else -> {""}
+        }
     }
 
     private fun getProgressDrawable(grade: Int): Drawable? {
