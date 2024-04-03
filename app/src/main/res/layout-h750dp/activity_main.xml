@@ -194,6 +194,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
 
+            <ImageView
+                android:id="@+id/mainBottomDecoImg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
             <TextView
                 android:id="@+id/mainErrorTitle"
                 style="@style/basicMediumTextView"
@@ -223,47 +230,75 @@
                 app:layout_constraintStart_toStartOf="@+id/mainGpsTitleTv"
                 app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv" />
 
-            <TextView
-                android:id="@+id/mainLiveTempTitleC"
-                style="@style/basicTextView"
-                android:layout_marginStart="17dp"
-                android:alpha="0"
-                android:text="@string/live_temp"
-                android:textColor="@android:color/transparent"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-                app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
+            <TableRow
+                android:id="@+id/liveCTr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:layout_constraintStart_toEndOf="@+id/mainLiveTempValue"
+                app:layout_constraintTop_toTopOf="@id/mainLiveTempValue"
+                app:layout_constraintBottom_toBottomOf="@id/mainLiveTempValue">
+                <LinearLayout
+                    android:id="@+id/liveCTempContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/mainLiveTempTitleC"
+                        style="@style/basicTextView"
+                        android:text="@string/live_temp"
+                        android:textColor="@android:color/transparent"
+                        android:textSize="14sp"/>
 
-            <TextView
-                android:id="@+id/mainLiveTempValueC"
-                style="@style/basicMediumTextView"
-                android:layout_marginStart="17dp"
-                android:alpha="0"
-                android:textColor="@android:color/transparent"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-                app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
+                    <TextView
+                        android:id="@+id/mainLiveTempValueC"
+                        style="@style/basicMediumTextView"
+                        android:textColor="@android:color/transparent"
+                        android:textSize="18sp" />
+                </LinearLayout>
 
-            <TextView
-                android:id="@+id/mainSensTitleC"
-                style="@style/basicTextView"
-                android:layout_marginStart="17dp"
-                android:alpha="0"
-                android:text="@string/sens_temp"
-                android:textColor="@android:color/transparent"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-                app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
+                <LinearLayout
+                    android:id="@+id/liveCSensContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp">
+                    <TextView
+                        android:id="@+id/mainSensTitleC"
+                        style="@style/basicTextView"
+                        android:text="@string/sens_temp"
+                        android:textColor="@android:color/transparent"
+                        android:textSize="14sp"/>
 
-            <TextView
-                android:id="@+id/mainSensValueC"
-                style="@style/basicMediumTextView"
-                android:layout_marginStart="17dp"
-                android:alpha="0"
-                android:textColor="@android:color/transparent"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-                app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
+                    <TextView
+                        android:id="@+id/mainSensValueC"
+                        style="@style/basicMediumTextView"
+                        android:textColor="@android:color/transparent"
+                        android:textSize="18sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/liveCMinMaxContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/mainMinMaxTitleC"
+                        style="@style/basicTextView"
+                        android:text="@string/min_max"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/mainMinMaxValueC"
+                        style="@style/basicMediumTextView"
+                        android:textColor="@android:color/transparent"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </TableRow>
 
             <TableRow
                 android:id="@+id/mainMinMaxTr"
@@ -301,26 +336,6 @@
                     android:textColor="#FB3737"
                     android:textSize="16sp" />
             </TableRow>
-
-            <TextView
-                android:id="@+id/mainMinMaxTitleC"
-                style="@style/basicTextView"
-                android:layout_marginStart="17dp"
-                android:alpha="0"
-                android:text="@string/min_max"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-                app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
-
-            <TextView
-                android:id="@+id/mainMinMaxValueC"
-                style="@style/basicMediumTextView"
-                android:layout_marginStart="17dp"
-                android:alpha="0"
-                android:textColor="@android:color/transparent"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
-                app:layout_constraintEnd_toStartOf="@+id/mainLiveTempValue" />
 
             <TextView
                 android:id="@+id/mainLiveTempUnit"

@@ -168,62 +168,12 @@
                 android:alpha="0"
                 app:curveFit="linear"
                 app:framePosition="60"
-                app:motionTarget="@id/mainMinMaxValueC" />
+                app:motionTarget="@id/liveCTr" />
             <KeyAttribute
                 android:alpha="1"
                 app:curveFit="linear"
                 app:framePosition="99"
-                app:motionTarget="@id/mainMinMaxValueC" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainMinMaxTitleC" />
-            <KeyAttribute
-                android:alpha="0.8"
-                app:curveFit="linear"
-                app:framePosition="99"
-                app:motionTarget="@id/mainMinMaxTitleC" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainLiveTempValueC" />
-            <KeyAttribute
-                android:alpha="1"
-                app:curveFit="linear"
-                app:framePosition="99"
-                app:motionTarget="@id/mainLiveTempValueC" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainLiveTempTitleC" />
-            <KeyAttribute
-                android:alpha="0.8"
-                app:curveFit="linear"
-                app:framePosition="99"
-                app:motionTarget="@id/mainLiveTempTitleC" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainSensValueC" />
-            <KeyAttribute
-                android:alpha="1"
-                app:curveFit="linear"
-                app:framePosition="99"
-                app:motionTarget="@id/mainSensValueC" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainSensTitleC" />
-            <KeyAttribute
-                android:alpha="0.8"
-                app:curveFit="linear"
-                app:framePosition="99"
-                app:motionTarget="@id/mainSensTitleC" />
+                app:motionTarget="@id/liveCTr" />
         </KeyFrameSet>
     </Transition>
 
@@ -275,9 +225,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
         <Constraint
+            android:id="@+id/mainBottomDecoImg"
+            android:alpha="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <Constraint
             android:id="@+id/mainSkyImg"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
             android:layout_marginBottom="3dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -287,6 +243,7 @@
             android:id="@+id/mainSkyText"
             style="@style/basicMediumTextView"
             android:textSize="16sp"
+            android:alpha="1"
             app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             app:layout_constraintTop_toBottomOf="@+id/mainSkyImg"/>
@@ -411,61 +368,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
         <Constraint
-            android:id="@+id/mainLiveTempTitleC"
-            style="@style/basicMediumTextView"
-            android:layout_marginStart="17dp"
-            android:textSize="16sp"
+            android:id="@+id/liveCTr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
             android:alpha="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
-        <Constraint
-            android:id="@+id/mainLiveTempValueC"
-            style="@style/basicMediumTextView"
-            android:layout_marginStart="17dp"
-            android:textSize="18sp"
-            android:alpha="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
-        <Constraint
-            android:id="@+id/mainSensTitleC"
-            style="@style/basicTextView"
-            android:layout_marginStart="17dp"
-            android:textSize="14sp"
-            android:text="@string/live_temp"
-            android:alpha="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
-        <Constraint
-            android:id="@+id/mainSensValueC"
-            style="@style/basicMediumTextView"
-            android:layout_marginStart="17dp"
-            android:textSize="18sp"
-            android:alpha="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
-        <Constraint
-            android:id="@+id/mainMinMaxTitleC"
-            style="@style/basicTextView"
-            android:layout_marginStart="17dp"
-            android:textSize="14sp"
-            android:text="@string/live_temp"
-            android:alpha="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
-        <Constraint
-            android:id="@+id/mainMinMaxValueC"
-            style="@style/basicMediumTextView"
-            android:layout_marginStart="17dp"
-            android:textSize="18sp"
-            android:alpha="0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"/>
+            app:layout_constraintStart_toEndOf="@+id/mainLiveTempValue"
+            app:layout_constraintTop_toTopOf="@id/mainLiveTempValue"
+            app:layout_constraintBottom_toBottomOf="@id/mainLiveTempValue"/>
         <Constraint
             android:id="@+id/mainTopEye"
             style="@style/basicMediumTextView"
@@ -555,24 +465,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:alpha="0"/>
-
+        <Constraint
+            android:id="@+id/mainBottomDecoImg"
+            android:alpha="0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"/>
         <Constraint
             android:id="@id/mainSkyImg"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:layout_marginTop="10dp"
             android:layout_marginStart="30dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
         <Constraint
             android:id="@+id/mainSkyText"
-            style="@style/basicMediumTextView"
-            android:textSize="12sp"
+            android:alpha="0"
+            android:layout_height="0.0001dp"
             app:layout_constraintStart_toStartOf="@+id/mainSkyImg"
             app:layout_constraintEnd_toEndOf="@+id/mainSkyImg"
-            android:layout_marginTop="3dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/nested_scrollview"
             app:layout_constraintTop_toBottomOf="@+id/mainSkyImg"/>
         <Constraint
             android:id="@+id/mainLiveTempValue"
@@ -642,50 +555,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
         <Constraint
-            android:id="@+id/mainLiveTempTitleC"
-            style="@style/basicTextView"
-            android:layout_marginStart="25dp"
-            app:layout_constraintStart_toEndOf="@+id/mainSkyImg"
-            app:layout_constraintEnd_toStartOf="@+id/mainSensTitleC"
-            app:layout_constraintBottom_toTopOf="@+id/mainSkyText" />
-        <Constraint
-            android:id="@+id/mainLiveTempValueC"
-            style="@style/basicMediumTextView"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/mainLiveTempTitleC"
-            app:layout_constraintEnd_toEndOf="@+id/mainLiveTempTitleC"
-            app:layout_constraintBottom_toTopOf="@+id/mainLiveTempTitleC"/>
-        <Constraint
-            android:id="@+id/mainSensTitleC"
-            style="@style/basicTextView"
-            android:textSize="14sp"
+            android:id="@+id/liveCTr"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="1"
+            android:gravity="center"
+            android:layout_marginStart="10dp"
             app:layout_constraintStart_toEndOf="@+id/mainSkyImg"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/mainLiveTempTitleC"
-            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempTitleC"/>
-        <Constraint
-            android:id="@+id/mainSensValueC"
-            style="@style/basicMediumTextView"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/mainSensTitleC"
-            app:layout_constraintEnd_toEndOf="@+id/mainSensTitleC"
-            app:layout_constraintBottom_toTopOf="@+id/mainSensTitleC"/>
-        <Constraint
-            android:id="@+id/mainMinMaxTitleC"
-            style="@style/basicTextView"
-            android:textSize="14sp"
-            android:layout_marginEnd="25dp"
-            app:layout_constraintStart_toEndOf="@+id/mainSensTitleC"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/mainSensTitleC"
-            app:layout_constraintBottom_toBottomOf="@+id/mainSensTitleC" />
-        <Constraint
-            android:id="@+id/mainMinMaxValueC"
-            style="@style/basicMediumTextView"
-            android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/mainMinMaxTitleC"
-            app:layout_constraintEnd_toEndOf="@+id/mainMinMaxTitleC"
-            app:layout_constraintBottom_toTopOf="@+id/mainMinMaxTitleC"/>
+            app:layout_constraintTop_toTopOf="@+id/mainSkyImg"
+            app:layout_constraintBottom_toBottomOf="@+id/mainSkyImg"/>
         <Constraint
             android:id="@+id/mainTopEye"
             style="@style/basicMediumTextView"

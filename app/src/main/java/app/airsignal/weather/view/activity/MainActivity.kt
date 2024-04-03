@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.*
@@ -170,12 +171,16 @@ class MainActivity
 
     private val fetch by lazy { getDataViewModel.fetchData() }
 
+    private val ioThread by lazy { CoroutineScope(Dispatchers.IO) }
+
     override fun onResume() {
         super.onResume()
         addSideMenu()
 //        binding.nestedAdView.resume()
         applyRefreshScroll()
         getDataSingleTime(isCurrent = false)
+
+        if (!fetch.hasActiveObservers()) applyGetDataViewModel()
     }
 
     override fun onDestroy() {
@@ -346,10 +351,6 @@ class MainActivity
         } catch (e: androidx.fragment.app.Fragment.InstantiationException) {
             RefreshUtils(this).refreshApplication()
         }
-
-        if (GetAppInfo.getWeatherAnimEnabled(this)) {
-            if (!binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.playAnimation()
-        } else binding.mainSkyStarImg.pauseAnimation()
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -414,7 +415,7 @@ class MainActivity
         }
 
         inAppCancel.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
+            ioThread.launch {
                 SetAppInfo.setInAppMsgDenied(this@MainActivity, false)
                 withContext(Dispatchers.Main) {
                     inAppAlert.dismiss()
@@ -423,7 +424,7 @@ class MainActivity
         }
 
         inAppHide.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
+            ioThread.launch {
                 SetAppInfo.setInAppMsgDenied(this@MainActivity, true)
                 withContext(Dispatchers.Main) {
                     inAppAlert.dismiss()
@@ -884,9 +885,10 @@ class MainActivity
     private fun handleApiSuccess(result: ApiModel.GetEntireData) {
         try {
             val metaAddr = result.meta.address ?: getString(R.string.address_error)
-            CoroutineScope(Dispatchers.IO).launch { reNewTopicInMain(metaAddr) }
+            ioThread.launch { reNewTopicInMain(metaAddr) }
             runOnUiThread {
-                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
+//                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
+                isNight = true
                 binding.mainGpsFix.clearAnimation()
                 binding.mainDailyWeatherRv.scrollToPosition(0)
                 binding.mainWarningVp.currentItem = 0
@@ -923,14 +925,14 @@ class MainActivity
                     )
                 }
 
-                binding.mainSkyText.text = skyText
+//                val testSky = getString(R.string.sky_sunny)
+//                applyWindowBackground(testSky)
                 // 날씨에 따라 배경화면 변경
                 applyWindowBackground(skyText)
+                binding.mainSkyText.text = skyText
                 hideProgressBar()
                 if (!isInAppMsgShow) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        startInAppMsg()
-                    }
+                    ioThread.launch { startInAppMsg() }
                     isInAppMsgShow = true
                 }
 
@@ -1305,13 +1307,19 @@ class MainActivity
 
     // 하늘상태에 따라 윈도우 배경 변경
     private fun applyWindowBackground(sky: String?) {
+        val isAnimationEnable =
         if (isNight && (sky == getString(R.string.sky_sunny) || sky == getString(R.string.sky_sunny_cloudy))) {
             changeBackgroundResource(R.drawable.main_bg_night)
-            binding.mainSkyStarImg.setAnimation(R.raw.ani_main_night_stars)
-            if (!binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.playAnimation()
+            binding.mainBottomDecoImg?.setImageResource(R.drawable.ic_main_night)
+            setAnimation(R.raw.ani_main_night_stars)
         } else {
-            val emptyJson = "{}"
-            binding.mainSkyStarImg.setAnimationFromJson(emptyJson, "emptyKey")
+            if (sky == getString(R.string.sky_sunny) || sky == getString(R.string.sky_sunny_cloudy)) {
+                binding.mainBottomDecoImg?.setImageResource(R.drawable.ic_main_mount)
+                setAnimation(R.raw.ani_test_clear_birds)
+            } else {
+                binding.mainBottomDecoImg?.setImageDrawable(null)
+                setAnimation(null)
+            }
             val backgroundResource = when (sky) {
                 getString(R.string.sky_sunny), getString(R.string.sky_sunny_cloudy) -> R.drawable.main_bg_clear
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
@@ -1327,6 +1335,22 @@ class MainActivity
         }
 
         binding.mainSkyStarImg.invalidate()
+    }
+
+    private fun setAnimation(animationResource: Int?) {
+        val isAnimationEnable = GetAppInfo.getWeatherAnimEnabled(this)
+        if (isAnimationEnable) {
+            animationResource?.let {
+                binding.mainSkyStarImg.setAnimation(it)
+                if (!binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.playAnimation()
+            } ?: run {
+                val emptyJson = "{}"
+                binding.mainSkyStarImg.setAnimationFromJson(emptyJson, "emptyKey")
+            }
+        } else {
+            val emptyJson = "{}"
+            binding.mainSkyStarImg.setAnimationFromJson(emptyJson, "emptyKey")
+        }
     }
 
     private fun changeBackgroundResource(id: Int?) {
@@ -1860,7 +1884,7 @@ class MainActivity
 
     private fun callSavedLoc() {
         try {
-            CoroutineScope(Dispatchers.IO).launch {
+            ioThread.launch {
                 val db = GpsRepository(this@MainActivity).findByName(CURRENT_GPS_ID)
                 val lat = db.lat
                 val lng = db.lng
@@ -1899,7 +1923,7 @@ class MainActivity
     private fun processAddress(lat: Double, lng: Double, address: String?) {
         address?.let { addr ->
             // 주소 정보를 저장하고 업데이트
-            CoroutineScope(Dispatchers.IO).launch {
+            ioThread.launch {
                 setUserLastAddr(this@MainActivity, addr)
                 updateCurrentAddress(lat, lng, addr)
             }

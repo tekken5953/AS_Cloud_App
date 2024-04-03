@@ -115,11 +115,8 @@ class SettingActivity
         super.onResume()
 
         applyDeviceTheme()
-
         applyUserEmail()
-
         applyUserLanguage()
-
         applyFontScale()
     }
 

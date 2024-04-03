@@ -28,7 +28,6 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     private val warningAdapter = WarningDetailAdapter(this, warningList)
     private val warningViewModel by viewModel<GetWarningViewModel>()
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
