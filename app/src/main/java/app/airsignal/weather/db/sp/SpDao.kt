@@ -36,4 +36,6 @@ object SpDao {
     const val IN_APP_MSG_TIME = "inAppMsgTime"
     const val TUTORIAL_SKIP = "eye_tutorial_skip"
     const val PATCH_SKIP = "skip_patch"
+    const val WEATHER_ANIMATION_ENABLE = "weather_animation_enabled"
+    const val WEATHER_BOX_OPACITY = "weather_box_opacity"
 }

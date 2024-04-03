@@ -20,6 +20,7 @@ import android.webkit.WebView
 import android.widget.*
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -35,7 +36,6 @@ import app.airsignal.weather.dao.RDBLogcat.LOGIN_GOOGLE
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_NAVER
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_PHONE
-import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.dao.StaticDataObject.LANG_SYS
@@ -51,16 +51,20 @@ import app.airsignal.weather.db.sp.GetAppInfo.getUserNotiEnable
 import app.airsignal.weather.db.sp.GetAppInfo.getUserNotiSound
 import app.airsignal.weather.db.sp.GetAppInfo.getUserNotiVibrate
 import app.airsignal.weather.db.sp.GetAppInfo.getUserTheme
+import app.airsignal.weather.db.sp.GetAppInfo.getWeatherAnimEnabled
+import app.airsignal.weather.db.sp.GetAppInfo.getWeatherBoxOpacity
 import app.airsignal.weather.db.sp.GetAppInfo.isPermedBackLoc
 import app.airsignal.weather.db.sp.GetSystemInfo.getApplicationVersionCode
 import app.airsignal.weather.db.sp.GetSystemInfo.getApplicationVersionName
 import app.airsignal.weather.db.sp.GetSystemInfo.goToPlayStore
+import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SetAppInfo.removeAllKeys
 import app.airsignal.weather.db.sp.SetAppInfo.setInitBackLocPermission
 import app.airsignal.weather.db.sp.SetAppInfo.setUserFontScale
 import app.airsignal.weather.db.sp.SetAppInfo.setUserLocation
 import app.airsignal.weather.db.sp.SetAppInfo.setUserNoti
 import app.airsignal.weather.db.sp.SetAppInfo.setUserTheme
+import app.airsignal.weather.db.sp.SetAppInfo.setWeatherBoxOpacity
 import app.airsignal.weather.db.sp.SetSystemInfo
 import app.airsignal.weather.db.sp.SpDao.PATCH_SKIP
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
@@ -74,6 +78,7 @@ import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
+import app.airsignal.weather.util.`object`.DataTypeParser.progressToHex
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.custom_view.CustomerServiceView
 import app.airsignal.weather.view.custom_view.ShowDialogClass
@@ -341,10 +346,7 @@ class SettingActivity
             noticeItem.clear()
 
             CoroutineScope(Dispatchers.IO).launch {
-                HttpClient
-                    .getInstance(false)
-                    .setClientBuilder()
-                    .notice.enqueue(object : Callback<List<ApiModel.NoticeItem>> {
+                HttpClient.retrofit.notice.enqueue(object : Callback<List<ApiModel.NoticeItem>> {
                         @SuppressLint("NotifyDataSetChanged")
                         override fun onResponse(
                             call: Call<List<ApiModel.NoticeItem>>,
@@ -621,6 +623,15 @@ class SettingActivity
             ShowDialogClass(this, false)
                 .setBackPressed(notificationView.findViewById(R.id.notificationBack))
                 .show(notificationView, true,ShowDialogClass.DialogTransition.END_TO_START)
+        }
+
+
+        binding.settingAnimation.setOnClickListener {
+            makeWeatherAnimationEnabledDialog()
+        }
+
+        binding.settingOpacityText.setOnClickListener {
+            makeWeatherBoxOpacityDialog()
         }
     }
 
@@ -917,6 +928,95 @@ class SettingActivity
                 }
             }
         }
+    }
+
+    private fun makeWeatherAnimationEnabledDialog() {
+        val animationView: View =
+            LayoutInflater.from(this).inflate(R.layout.dialog_setting_animation, null)
+
+        val switch: SwitchCompat = animationView.findViewById(R.id.aniSettingSwitch)
+
+        switch.isChecked = getWeatherAnimEnabled(this)
+
+        switch.setOnCheckedChangeListener { _, isChecked ->
+            CoroutineScope(Dispatchers.IO).launch {
+                SetAppInfo.setWeatherAnimEnabled(this@SettingActivity, isChecked)
+
+                withContext(Dispatchers.Main) {
+                    SnackBarUtils(animationView,getString(R.string.ok_change_setting),
+                    ResourcesCompat.getDrawable(resources,R.drawable.check_small, null))
+                }
+            }
+        }
+
+
+        ShowDialogClass(this, false)
+            .setBackPressed(animationView.findViewById(R.id.aniBack))
+            .show(animationView, true,ShowDialogClass.DialogTransition.END_TO_START)
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun makeWeatherBoxOpacityDialog() {
+        val opacityView: View =
+            LayoutInflater.from(this).inflate(R.layout.dialog_setting_opacity, null)
+
+        val seekBar: AppCompatSeekBar = opacityView.findViewById(R.id.opacitySeekbar)
+        val opacityValue: TextView = opacityView.findViewById(R.id.opacityValue)
+        val opacityBox: LinearLayout = opacityView.findViewById(R.id.opacityPreviewContainer)
+        val opacityRollback: TextView = opacityView.findViewById(R.id.opacityRollback)
+
+        val userThemeColor = when(getUserTheme(this)) {
+            THEME_DARK -> { "FFFFFF" }
+            THEME_LIGHT -> { "000000" }
+            else -> { "FFFFFF" }
+        }
+
+        val savedProgress = getWeatherBoxOpacity(this)
+        val transSavedProgress = progressToHex(savedProgress)
+        seekBar.progress = savedProgress
+        opacityValue.text = "$savedProgress%"
+        opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress}${userThemeColor}"))
+
+        opacityRollback.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                if (seekBar.progress != 40) setWeatherBoxOpacity(this@SettingActivity, 40)
+
+                withContext(Dispatchers.Main) {
+                    seekBar.progress = 40
+                    opacityValue.text = "40%"
+                    opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40${userThemeColor}"))
+                }
+            }
+        }
+
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                seekBar: SeekBar?, progress: Int, fromUser: Boolean
+            ) {
+                opacityValue.text = "$progress%"
+                opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${progressToHex(progress)}${userThemeColor}"))
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                seekBar?.let {
+                    it.scaleY = 2.0f
+                }
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                seekBar?.let {
+                    ㅑㅅ.ㅅ
+                    it.scaleY = 1.0f
+                    CoroutineScope(Dispatchers.IO).launch {
+                        setWeatherBoxOpacity(this@SettingActivity, it.progress )
+                    }
+                }
+            }
+        })
+
+        ShowDialogClass(this, false)
+            .setBackPressed(opacityView.findViewById(R.id.opacityBack))
+            .show(opacityView, true,ShowDialogClass.DialogTransition.END_TO_START)
     }
 
     // 설정 변경 후 어플리케이션 재시작

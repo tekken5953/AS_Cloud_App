@@ -1,10 +1,10 @@
 package app.airsignal.weather.repository
 
 import app.airsignal.weather.network.retrofit.HttpClient
+import app.airsignal.weather.network.retrofit.MyApiImpl
 
 open class BaseRepository {
-    private val httpClient = HttpClient
-    val impl = httpClient.getInstance(isWidget = false).setClientBuilder()
+    val impl: MyApiImpl = HttpClient.retrofit
 
     sealed class ApiState<out T> {
         data class Success<out T>(val data: T) : ApiState<T>()

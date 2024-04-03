@@ -58,16 +58,6 @@
                 app:curveFit="linear"
                 app:framePosition="1"
                 app:motionTarget="@id/mainGpsFix" />
-            <KeyAttribute
-                android:alpha="1"
-                app:curveFit="linear"
-                app:framePosition="0"
-                app:motionTarget="@id/mainAnimationSwitch" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="1"
-                app:motionTarget="@id/mainAnimationSwitch" />
 
 
             <KeyAttribute
@@ -279,20 +269,11 @@
         <Constraint
             android:id="@+id/mainSkyStarImg"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/cd_img_star"
             android:alpha="1"
-            app:layout_constraintBottom_toBottomOf="@+id/mainSkyImg"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/mainSkyImg"/>
-        <Constraint
-            android:id="@+id/mainAnimationSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:alpha="1"
-            app:layout_constraintBottom_toBottomOf="@+id/mainMotionSlideGuide"
-            app:layout_constraintTop_toTopOf="@+id/mainMotionSlideGuide"
-            app:layout_constraintStart_toStartOf="@+id/nested_subAir_frame"/>
+            app:layout_constraintStart_toStartOf="parent" />
         <Constraint
             android:id="@+id/mainSkyImg"
             android:layout_width="180dp"
@@ -574,11 +555,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:alpha="0"/>
-        <Constraint
-            android:id="@+id/mainAnimationSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:alpha="0"/>
+
         <Constraint
             android:id="@id/mainSkyImg"
             android:layout_width="70dp"

@@ -130,7 +130,7 @@ class AddDeviceSerialFragment : BaseEyeFragment<FragmentAddDeviceSerialBinding>(
 
     private fun getOwners(sn: String) {
         baseActivity.showPb()
-        HttpClient.setClientBuilder().getOwner(sn).enqueue(object : Callback<List<ApiModel.Owner>>{
+        HttpClient.retrofit.getOwner(sn).enqueue(object : Callback<List<ApiModel.Owner>>{
             override fun onResponse(call: Call<List<ApiModel.Owner>>, response: Response<List<ApiModel.Owner>>) {
                 CoroutineScope(Dispatchers.IO).launch {
                     if (response.isSuccessful) {

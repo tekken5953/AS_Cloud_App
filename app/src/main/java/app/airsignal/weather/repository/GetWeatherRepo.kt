@@ -14,6 +14,8 @@ import app.airsignal.weather.network.NetworkUtils.modifyCurrentRainType
 import app.airsignal.weather.network.NetworkUtils.modifyCurrentTempType
 import app.airsignal.weather.network.NetworkUtils.modifyCurrentWindSpeed
 import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.util.LoggerUtil
+import app.airsignal.weather.util.TimberUtil
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,10 +35,9 @@ class GetWeatherRepo : BaseRepository() {
         MutableLiveData<ApiState<ApiModel.GetEntireData>?>()
 
     fun loadDataResult(lat: Double?, lng: Double?, addr: String?) {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             _getDataResult.postValue(ApiState.Loading)
-            impl.getForecast(lat, lng, addr)
-                .enqueue(object : Callback<ApiModel.GetEntireData> {
+            impl.getForecast(lat, lng, addr).enqueue(object : Callback<ApiModel.GetEntireData> {
                     override fun onResponse(
                         call: Call<ApiModel.GetEntireData>,
                         response: Response<ApiModel.GetEntireData>

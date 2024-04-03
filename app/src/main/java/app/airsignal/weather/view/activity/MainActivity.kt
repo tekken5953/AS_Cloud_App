@@ -41,6 +41,7 @@ import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetAppInfo.getEntireSun
+import app.airsignal.weather.db.sp.GetAppInfo.getIsNight
 import app.airsignal.weather.db.sp.GetAppInfo.getTopicNotification
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
@@ -85,6 +86,7 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgSmall
 import app.airsignal.weather.util.`object`.DataTypeParser.isRainyDay
 import app.airsignal.weather.util.`object`.DataTypeParser.parseDayOfWeekToKorean
 import app.airsignal.weather.util.`object`.DataTypeParser.parseLocalDateTimeToLong
+import app.airsignal.weather.util.`object`.DataTypeParser.progressToHex
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSky
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
@@ -179,6 +181,7 @@ class MainActivity
     override fun onDestroy() {
         super.onDestroy()
         isWarned = false
+        destroyObserver()
 //        binding.nestedAdView.destroy()
     }
 
@@ -209,6 +212,8 @@ class MainActivity
                     isEnabled = false
                     setTransition(R.id.start, R.id.end)
                 }
+
+                applyGetDataViewModel()
             }
 
 //            adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
@@ -342,10 +347,9 @@ class MainActivity
             RefreshUtils(this).refreshApplication()
         }
 
-        binding.mainAnimationSwitch?.setOnCheckedChangeListener { buttonView, isChecked ->
+        if (GetAppInfo.getWeatherAnimEnabled(this)) {
             if (!binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.playAnimation()
-            else binding.mainSkyStarImg.pauseAnimation()
-        }
+        } else binding.mainSkyStarImg.pauseAnimation()
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -835,14 +839,14 @@ class MainActivity
         SetAppInfo.setTopicNotification(this, newAddr)
     }
 
-    // 현재 옵저버가 없으면 생성
-    private fun getDataObservers() {
-        if (fetch.hasActiveObservers()) {
-            destroyObserver()
-            binding.mainSwipeLayout.isRefreshing = false
-        }
-        applyGetDataViewModel()
-    }
+//    // 현재 옵저버가 없으면 생성
+//    private fun getDataObservers() {
+//        if (fetch.hasActiveObservers()) {
+//            destroyObserver()
+//            binding.mainSwipeLayout.isRefreshing = false
+//        }
+//        applyGetDataViewModel()
+//    }
 
     @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel() {
@@ -879,11 +883,10 @@ class MainActivity
     // API 통신이 성공일 때 처리
     private fun handleApiSuccess(result: ApiModel.GetEntireData) {
         try {
-            val metaAddr = result.meta.address ?: "주소 호출 에러"
+            val metaAddr = result.meta.address ?: getString(R.string.address_error)
             CoroutineScope(Dispatchers.IO).launch { reNewTopicInMain(metaAddr) }
             runOnUiThread {
-                isNight = true
-//                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
+                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
                 binding.mainGpsFix.clearAnimation()
                 binding.mainDailyWeatherRv.scrollToPosition(0)
                 binding.mainWarningVp.currentItem = 0
@@ -930,6 +933,9 @@ class MainActivity
                     }
                     isInAppMsgShow = true
                 }
+
+                val skyImgAnimation = AnimationUtils.loadAnimation(this@MainActivity, R.anim.main_sky_img_anim)
+                binding.mainSkyImg.startAnimation(skyImgAnimation)
             }
         } catch (e: Exception) {
             handleApiError(e.localizedMessage ?: e.stackTraceToString())
@@ -1600,13 +1606,13 @@ class MainActivity
 
     // 현재 지역의 날씨 데이터 뷰모델 생성 및 호출
     private fun loadCurrentViewModelData(lat: Double, lng: Double, addr: String?) {
-        getDataObservers()
+//        getDataObservers()
         getDataViewModel.loadData(lat, lng, addr)
     }
 
     // 저장된 지역의 날씨 데이터 뷰모델 생성 및 호출
     private fun loadSavedViewModelData(addr: String) {
-        getDataObservers()
+//        getDataObservers()
         getDataViewModel.loadData(null, null, addr)
     }
     // 현재 위치 정보로 DB 갱신
@@ -1746,14 +1752,17 @@ class MainActivity
             warningViewPagerAdapter.notifyDataSetChanged()
         }
 
+        val savedProgress = GetAppInfo.getWeatherBoxOpacity(this)
+        val transSavedProgress = progressToHex(savedProgress)
+
         // 글자색 변경: 텍스트 및 리소스 색상 사용
         fun changeTextToWhite() {
             changeTextColor(colorWhite, colorSubWhite, true)
             changeBoxViews.forEach {
-                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40000000"))
+                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress}000000"))
             }
             gridBoxView.forEach {
-                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40000000"))
+                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress}000000"))
             }
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility =
@@ -1763,10 +1772,10 @@ class MainActivity
         fun changeTextToBlack() {
             changeTextColor(colorBlack, colorSubBlack, false)
             changeBoxViews.forEach {
-                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40FFFFFF"))
+                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress}FFFFFF"))
             }
             gridBoxView.forEach {
-                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40FFFFFF"))
+                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress}FFFFFF"))
             }
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR

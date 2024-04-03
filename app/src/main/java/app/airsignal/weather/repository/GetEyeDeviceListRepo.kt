@@ -20,42 +20,40 @@ class GetEyeDeviceListRepo : BaseRepository() {
         MutableLiveData<ApiState<List<EyeDataModel.Device>?>>()
 
     fun loadDataResult() {
-        CoroutineScope(Dispatchers.Default).launch {
-            _getListResult.postValue(ApiState.Loading)
-            impl.deviceList.enqueue(object : Callback<List<EyeDataModel.Device>> {
-                override fun onResponse(
-                    call: Call<List<EyeDataModel.Device>>,
-                    response: Response<List<EyeDataModel.Device>>
-                ) {
-                    try {
-                        if (response.isSuccessful) {
-                            val responseBody = response.body()
-                            _getListResult.postValue(ApiState.Success(sortData(responseBody)))
-                        } else {
-                            _getListResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
-                        }
-                    } catch (e: NullPointerException) {
-                        _getListResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
-                        e.stackTraceToString()
-                    } catch (e: JsonSyntaxException) {
-                        _getListResult.postValue(ApiState.Error(ERROR_GET_DATA))
-                        e.stackTraceToString()
+        _getListResult.postValue(ApiState.Loading)
+        impl.deviceList.enqueue(object : Callback<List<EyeDataModel.Device>> {
+            override fun onResponse(
+                call: Call<List<EyeDataModel.Device>>,
+                response: Response<List<EyeDataModel.Device>>
+            ) {
+                try {
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        _getListResult.postValue(ApiState.Success(sortData(responseBody)))
+                    } else {
+                        _getListResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
                     }
+                } catch (e: NullPointerException) {
+                    _getListResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
+                    e.stackTraceToString()
+                } catch (e: JsonSyntaxException) {
+                    _getListResult.postValue(ApiState.Error(ERROR_GET_DATA))
+                    e.stackTraceToString()
                 }
+            }
 
-                override fun onFailure(
-                    call: Call<List<EyeDataModel.Device>>,
-                    t: Throwable
-                ) {
-                    t.stackTraceToString()
-                    try {
-                        _getListResult.postValue(ApiState.Error(ERROR_GET_DATA))
-                    } catch (e: Exception) {
-                        _getListResult.postValue(ApiState.Error(t.stackTraceToString()))
-                    }
+            override fun onFailure(
+                call: Call<List<EyeDataModel.Device>>,
+                t: Throwable
+            ) {
+                t.stackTraceToString()
+                try {
+                    _getListResult.postValue(ApiState.Error(ERROR_GET_DATA))
+                } catch (e: Exception) {
+                    _getListResult.postValue(ApiState.Error(t.stackTraceToString()))
                 }
-            })
-        }
+            }
+        })
     }
 
     private fun sortData(rawData: List<EyeDataModel.Device>?): List<EyeDataModel.Device>?  {

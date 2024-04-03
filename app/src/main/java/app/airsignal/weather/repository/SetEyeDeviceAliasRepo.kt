@@ -24,45 +24,43 @@ class SetEyeDeviceAliasRepo : BaseRepository() {
         MutableLiveData<ApiState<String?>>()
 
     fun loadDataResult(alias: String, sn: String) {
-        CoroutineScope(Dispatchers.Default).launch {
-            _setAliasResult.postValue(ApiState.Loading)
-            impl.updateAlias(sn,alias).enqueue(object : Callback<String>{
-                override fun onResponse(call: Call<String>, response: Response<String>) {
-                    try {
-                        if (response.isSuccessful) {
-                            val responseBody = response.body()
-                            _setAliasResult.postValue(ApiState.Success(responseBody))
-                        } else {
-                            _setAliasResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
-                            call.cancel()
-                        }
-                    } catch (e: NullPointerException) {
-                        _setAliasResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
-                    } catch (e: JsonSyntaxException) {
-                        _setAliasResult.postValue(ApiState.Error(ERROR_GET_DATA))
-                    }
-                }
-
-                override fun onFailure(call: Call<String>, t: Throwable) {
-                    t.stackTraceToString()
-                    try {
-                        _setAliasResult.postValue(ApiState.Error(ERROR_GET_DATA))
+        _setAliasResult.postValue(ApiState.Loading)
+        impl.updateAlias(sn, alias).enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                try {
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        _setAliasResult.postValue(ApiState.Success(responseBody))
+                    } else {
+                        _setAliasResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
                         call.cancel()
-                    } catch (e: Exception) {
-                        when (e) {
-                            is SocketTimeoutException ->
-                                _setAliasResult.postValue(ApiState.Error(ERROR_TIMEOUT))
-                            is NetworkErrorException ->
-                                _setAliasResult.postValue(ApiState.Error(ERROR_NETWORK))
-                            is NullPointerException ->
-                                _setAliasResult.postValue(ApiState.Error(ERROR_NULL_POINT))
-                            else -> {
-                                _setAliasResult.postValue(ApiState.Error(ERROR_UNKNOWN))
-                            }
+                    }
+                } catch (e: NullPointerException) {
+                    _setAliasResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
+                } catch (e: JsonSyntaxException) {
+                    _setAliasResult.postValue(ApiState.Error(ERROR_GET_DATA))
+                }
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                t.stackTraceToString()
+                try {
+                    _setAliasResult.postValue(ApiState.Error(ERROR_GET_DATA))
+                    call.cancel()
+                } catch (e: Exception) {
+                    when (e) {
+                        is SocketTimeoutException ->
+                            _setAliasResult.postValue(ApiState.Error(ERROR_TIMEOUT))
+                        is NetworkErrorException ->
+                            _setAliasResult.postValue(ApiState.Error(ERROR_NETWORK))
+                        is NullPointerException ->
+                            _setAliasResult.postValue(ApiState.Error(ERROR_NULL_POINT))
+                        else -> {
+                            _setAliasResult.postValue(ApiState.Error(ERROR_UNKNOWN))
                         }
                     }
                 }
-            })
-        }
+            }
+        })
     }
 }

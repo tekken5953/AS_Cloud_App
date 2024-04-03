@@ -2,7 +2,6 @@ package app.airsignal.weather.as_eye.adapter
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,22 +9,9 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.HandlerCompat
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
-import app.airsignal.weather.adapter.ItemDiffCallback
 import app.airsignal.weather.as_eye.dao.EyeDataModel
-import app.airsignal.weather.dao.AdapterModel
-import app.airsignal.weather.network.retrofit.HttpClient
-import app.airsignal.weather.util.OnAdapterItemClick
-import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.ToastUtils
-import app.airsignal.weather.view.custom_view.MakeDoubleDialog
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.util.*
 
 class EyeDeviceAdapter(
     private val context: Context,

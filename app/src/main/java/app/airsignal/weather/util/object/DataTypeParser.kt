@@ -130,7 +130,7 @@ object DataTypeParser {
             "맑음" ->
                 if (!isNight) R.drawable.b_ico_sunny
 //                else  applyLunarImg(lunar)
-                else R.drawable.ico_moon_big
+                 else R.drawable.ico_moon_big
             "구름많음" ->
                 if (!isNight)  R.drawable.b_ico_m_cloudy
                 else  R.drawable.b_ico_m_ncloudy
@@ -448,5 +448,9 @@ object DataTypeParser {
             "cai" -> {"환기가 필요합니다"}
             else -> {"환기가 필요합니다"}
         }
+    }
+
+    fun progressToHex(progress: Int): String {
+        return if (progress == 0) "00" else if (progress == 100) "" else if (progress < 10) "0${progress}" else progress.toString()
     }
 }

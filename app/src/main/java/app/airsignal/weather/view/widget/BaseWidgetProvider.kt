@@ -50,7 +50,7 @@ open class BaseWidgetProvider: AppWidgetProvider() {
 
     suspend fun requestWeather(context: Context,lat: Double, lng: Double, rCount: Int): ApiModel.WidgetData? {
         try {
-            return HttpClient.getInstance(true).setClientBuilder()
+            return HttpClient.retrofit
                 .getWidgetForecast(lat, lng, rCount)
                 .awaitResponse().body()
         } catch (e: Exception) {

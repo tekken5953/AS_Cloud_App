@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/opacityTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+        <ImageView
+            android:id="@+id/opacityBack"
+            style="@style/BasicImageButtonIcon"
+            android:layout_marginStart="20dp"
+            android:contentDescription="@string/cd_icon_back"
+            android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/back_arrow"
+            app:tint="@color/theme_text_color"/>
+
+        <TextView
+            android:id="@+id/opacityTitle"
+            style="@style/basicMediumTextView"
+            android:layout_centerInParent="true"
+            android:text="창 투명도 설정"
+            android:textColor="@color/theme_text_color"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/opacityRollback"
+            style="@style/basicMediumTextView"
+            android:text="초기화"
+            android:textColor="@color/main_blue_color"
+            android:textSize="16sp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="20dp"/>
+    </RelativeLayout>
+
+    <TableRow
+        android:id="@+id/opacitySettingTr"
+        android:layout_width="match_parent"
+        android:layout_height="76dp"
+        android:layout_marginTop="22dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:gravity="center_vertical"
+        android:layout_below="@+id/opacityTopBar">
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/opacitySeekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:max="100"
+            android:min="0"
+            android:layout_weight="0.99"
+            android:progressDrawable="@drawable/setting_opacity_seekbar_track"
+            android:splitTrack="false"
+            android:thumb="@drawable/noise_pb_thumb" />
+
+        <TextView
+            android:id="@+id/opacityValue"
+            style="@style/basicMediumTextView"
+            android:text="40%"
+            android:textColor="@color/theme_text_color"
+            android:textSize="18sp"/>
+    </TableRow>
+
+    <View
+        android:id="@+id/opacityLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/theme_line_color"
+        android:layout_below="@+id/opacitySettingTr"
+        android:layout_marginTop="10dp"/>
+
+    <LinearLayout
+        android:id="@+id/opacityPreviewContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/opacityLine"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/scrolled_box_bg">
+        <TextView
+            android:id="@+id/opacityPreviewText"
+            style="@style/basicMediumTextView"
+            android:text="투명도 설정 미리보기"
+            android:textColor="@color/theme_text_color"
+            android:textSize="16sp"
+            android:layout_marginTop="70dp"
+            android:layout_marginBottom="70dp"/>
+    </LinearLayout>
+</RelativeLayout>

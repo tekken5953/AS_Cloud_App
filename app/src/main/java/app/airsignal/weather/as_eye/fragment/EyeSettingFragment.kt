@@ -245,7 +245,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
 
                     serial.text = mActivity.serialExtra
 
-                    HttpClient.getInstance(false).setClientBuilder().getOwner(mActivity.serialExtra.toString())
+                    HttpClient.retrofit.getOwner(mActivity.serialExtra.toString())
                         .enqueue(object : Callback<List<ApiModel.Owner>>{
                             override fun onResponse(
                                 call: Call<List<ApiModel.Owner>>,
@@ -475,7 +475,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
     }
 
     private fun deleteDevice(sn: String, email: String) {
-        HttpClient.getInstance(false).setClientBuilder().deleteDevice(
+        HttpClient.retrofit.deleteDevice(
             sn, email
         ).enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {

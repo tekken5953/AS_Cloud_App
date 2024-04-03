@@ -76,8 +76,8 @@ class SharedPreferenceManager(context: Context) {
     }
 
     /**Integer 값 호출**/
-    fun getInt(key: String): Int {
-        return prefs.getInt(key, DEFAULT_VALUE_INT)
+    fun getInt(key: String, defaultValue: Int): Int {
+        return prefs.getInt(key, defaultValue)
     }
 
     /**Long 값 호출**/

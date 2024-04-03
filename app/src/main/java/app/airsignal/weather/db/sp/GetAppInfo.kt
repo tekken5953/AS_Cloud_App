@@ -12,6 +12,8 @@ import app.airsignal.weather.db.sp.SpDao.LAST_REFRESH42
 import app.airsignal.weather.db.sp.SpDao.NOTIFICATION_ADDRESS
 import app.airsignal.weather.db.sp.SpDao.NOTIFICATION_TOPIC_DAILY
 import app.airsignal.weather.db.sp.SpDao.WARNING_FIXED
+import app.airsignal.weather.db.sp.SpDao.WEATHER_ANIMATION_ENABLE
+import app.airsignal.weather.db.sp.SpDao.WEATHER_BOX_OPACITY
 import app.airsignal.weather.db.sp.SpDao.lastAddress
 import app.airsignal.weather.db.sp.SpDao.lastLoginPlatform
 import app.airsignal.weather.db.sp.SpDao.notiEnable
@@ -155,5 +157,13 @@ object GetAppInfo {
 
     fun getInAppMsgTime(context: Context): Long {
         return SharedPreferenceManager(context).getLong(IN_APP_MSG_TIME)
+    }
+
+    fun getWeatherAnimEnabled(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(WEATHER_ANIMATION_ENABLE, true)
+    }
+
+    fun getWeatherBoxOpacity(context: Context): Int {
+        return SharedPreferenceManager(context).getInt(WEATHER_BOX_OPACITY, 40)
     }
 }

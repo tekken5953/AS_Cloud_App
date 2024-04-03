@@ -342,4 +342,6 @@
     <string name="use_current_version">Use this version</string>
     <string name="exist_last_version">We have the latest version</string>
     <string name="fail_to_get_app_version">Fail to get app version</string>
+    <string name="address_error">Error Address</string>
+    <string name="ok_change_setting">설정이 변경되었습니다</string>
 </resources>

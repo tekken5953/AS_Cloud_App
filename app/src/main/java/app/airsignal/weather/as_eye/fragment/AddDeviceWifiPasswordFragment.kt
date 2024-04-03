@@ -416,7 +416,7 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
     }
 
     private fun postDevice(email: String, item: EyeDataModel.PostDevice) {
-        HttpClient.getInstance(false).setClientBuilder().postDevice(
+        HttpClient.retrofit.postDevice(
             email, item
         ).enqueue(
             object : Callback<String> {
