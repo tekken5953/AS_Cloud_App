@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture
  * @since : 2023-03-28 오전 11:15
  **/
 
-class ShowDialogClass(private val activity: Activity, private val isEye: Boolean) {
+class ShowDialogClass(private val activity: Activity, isEye: Boolean) {
     private var builder: androidx.appcompat.app.AlertDialog.Builder =
         androidx.appcompat.app.AlertDialog.Builder(activity, if (!isEye) R.style.AlertDialog else R.style.FullDialog)
     private lateinit var alertDialog: androidx.appcompat.app.AlertDialog
@@ -77,9 +77,7 @@ class ShowDialogClass(private val activity: Activity, private val isEye: Boolean
     }
 
     /** 다이얼로그 뷰 소멸 **/
-    fun dismiss() {
-        if (alertDialog.isShowing) alertDialog.dismiss()
-    }
+    fun dismiss() { if (alertDialog.isShowing) alertDialog.dismiss() }
 
     /** 다이얼로그 뷰 갱신 **/
     fun show(v: View, cancelable: Boolean, transition: DialogTransition?) {

@@ -18,7 +18,6 @@ import android.view.View
 import android.view.Window
 import android.webkit.WebView
 import android.widget.*
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.appcompat.widget.SwitchCompat
@@ -109,6 +108,9 @@ class SettingActivity
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
     private var isBackAllow = false
 
+    private val ioThread by lazy {CoroutineScope(Dispatchers.IO)}
+    private val mainDispatcher by lazy { Dispatchers.Main }
+
     override fun onResume() {
         super.onResume()
 
@@ -119,7 +121,6 @@ class SettingActivity
         applyUserLanguage()
 
         applyFontScale()
-
     }
 
     @SuppressLint("InflateParams")
@@ -157,7 +158,7 @@ class SettingActivity
 
                 apply.setOnClickListener {
                     builder.dismiss()
-                    CoroutineScope(Dispatchers.IO).launch {
+                    ioThread.launch {
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
                             LOGIN_KAKAO -> {
 //                                KakaoLogin(this@SettingActivity).logout(email)
@@ -200,7 +201,7 @@ class SettingActivity
             val cancel: ImageView = themeView.findViewById(R.id.changeThemeBack)
 
             ShowDialogClass(this, false)
-                .setBackPressed(themeView.findViewById(R.id.changeThemeBack))
+                .setBackPressed(cancel)
                 .show(themeView, true, ShowDialogClass.DialogTransition.END_TO_START)
 
             // 현재 저장된 테마에 따라서 라디오버튼 체크
@@ -226,35 +227,29 @@ class SettingActivity
                     // 시스템 설정
                     systemTheme.id -> {
                         changedThemeRadio(
-                            mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
                             dbData = LANG_SYS,
                             radioGroup = radioGroup,
-                            radioButton = systemTheme,
-                            cancel
+                            radioButton = systemTheme
                         )
                         changeCheckIcon(systemTheme, lightTheme, darkTheme)
                     }
                     // 라이트 모드
                     lightTheme.id -> {
                         changedThemeRadio(
-                            mode = AppCompatDelegate.MODE_NIGHT_NO,
                             dbData = THEME_LIGHT,
                             radioGroup = radioGroup,
-                            radioButton = lightTheme,
-                            cancel
+                            radioButton = lightTheme
                         )
-                        changeCheckIcon(lightTheme, systemTheme, darkTheme)
+                        changeCheckIcon(systemTheme, lightTheme, darkTheme)
                     }
                     // 다크 모드
                     darkTheme.id -> {
                         changedThemeRadio(
-                            mode = AppCompatDelegate.MODE_NIGHT_YES,
                             dbData = THEME_DARK,
                             radioGroup = radioGroup,
-                            radioButton = darkTheme,
-                            cancel
+                            radioButton = darkTheme
                         )
-                        changeCheckIcon(darkTheme, systemTheme, lightTheme)
+                        changeCheckIcon(systemTheme, lightTheme, darkTheme)
                     }
                 }
             }
@@ -345,7 +340,7 @@ class SettingActivity
             recyclerView.adapter = noticeAdapter
             noticeItem.clear()
 
-            CoroutineScope(Dispatchers.IO).launch {
+            ioThread.launch {
                 HttpClient.retrofit.notice.enqueue(object : Callback<List<ApiModel.NoticeItem>> {
                         @SuppressLint("NotifyDataSetChanged")
                         override fun onResponse(
@@ -894,9 +889,9 @@ class SettingActivity
     ) {
         if (getUserLocation(this) != lang) { // 현재 설정된 언어인지 필터링
             cancel.isEnabled = false
-            CoroutineScope(Dispatchers.IO).launch {
+            ioThread.launch {
                 setUserLocation(this@SettingActivity, lang)  // 다른 언어라면 db 값 변경
-                withContext(Dispatchers.Main) {
+                withContext(mainDispatcher) {
                     radioGroup.check(radioButton.id) // 라디오 버튼 체크
                     delay(100)
                     saveConfigChangeRestart() // 언어 설정 변경 후 어플리케이션 재시작
@@ -907,25 +902,18 @@ class SettingActivity
 
     // 테마 라디오 버튼 클릭 시 이벤트 처리
     private fun changedThemeRadio(
-        mode: Int,
         dbData: String,
         radioGroup: RadioGroup,
-        radioButton: RadioButton,
-        cancel: ImageView
+        radioButton: RadioButton
     ) {
-        CoroutineScope(Dispatchers.Main).launch {
-            // 테마모드 변경
-            AppCompatDelegate.setDefaultNightMode(mode)
-            cancel.isEnabled = false
-            // DB에 바뀐 정보 저장
-            CoroutineScope(Dispatchers.IO).launch {
-                setUserTheme(this@SettingActivity, dbData)
+        // DB에 바뀐 정보 저장
+        ioThread.launch {
+            setUserTheme(this@SettingActivity, dbData)
 
-                withContext(Dispatchers.Main) {
-                    // 라디오 버튼 체크
-                    radioGroup.check(radioButton.id)
-                    cancel.isEnabled = true
-                }
+            withContext(mainDispatcher) {
+                radioGroup.check(radioButton.id)
+                delay(100)
+                saveConfigChangeRestart()
             }
         }
     }
@@ -939,16 +927,15 @@ class SettingActivity
         switch.isChecked = getWeatherAnimEnabled(this)
 
         switch.setOnCheckedChangeListener { _, isChecked ->
-            CoroutineScope(Dispatchers.IO).launch {
+            ioThread.launch {
                 SetAppInfo.setWeatherAnimEnabled(this@SettingActivity, isChecked)
 
-                withContext(Dispatchers.Main) {
+                withContext(mainDispatcher) {
                     SnackBarUtils(animationView,getString(R.string.ok_change_setting),
                     ResourcesCompat.getDrawable(resources,R.drawable.check_small, null))
                 }
             }
         }
-
 
         ShowDialogClass(this, false)
             .setBackPressed(animationView.findViewById(R.id.aniBack))
@@ -978,10 +965,10 @@ class SettingActivity
         opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress}${userThemeColor}"))
 
         opacityRollback.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
+            ioThread.launch {
                 if (seekBar.progress != 40) setWeatherBoxOpacity(this@SettingActivity, 40)
 
-                withContext(Dispatchers.Main) {
+                withContext(mainDispatcher) {
                     seekBar.progress = 40
                     opacityValue.text = "40%"
                     opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40${userThemeColor}"))
@@ -997,17 +984,11 @@ class SettingActivity
                 opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${progressToHex(progress)}${userThemeColor}"))
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                seekBar?.let {
-                    it.scaleY = 2.0f
-                }
-            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 seekBar?.let {
-                    ㅑㅅ.ㅅ
-                    it.scaleY = 1.0f
-                    CoroutineScope(Dispatchers.IO).launch {
+                    ioThread.launch {
                         setWeatherBoxOpacity(this@SettingActivity, it.progress )
                     }
                 }
@@ -1038,9 +1019,7 @@ class SettingActivity
 
         title.text = getString(R.string.save_change)
         apply.text = getString(R.string.ok)
-        apply.setOnClickListener {
-            RefreshUtils(this).refreshApplication()
-        }
+        apply.setOnClickListener { RefreshUtils(this).refreshApplication() }
         builder.show()
     }
 
