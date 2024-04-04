@@ -124,12 +124,10 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
 
     fun showPb() {
         binding.addEyeDeviceLoading.visibility = View.VISIBLE
-        blockTouch(true)
         binding.addEyeDeviceLoading.bringToFront()
     }
 
     fun hidePb() {
-        blockTouch(false)
         binding.addEyeDeviceLoading.visibility = View.GONE
     }
 

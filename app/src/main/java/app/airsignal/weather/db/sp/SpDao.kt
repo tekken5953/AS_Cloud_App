@@ -38,4 +38,5 @@ object SpDao {
     const val PATCH_SKIP = "skip_patch"
     const val WEATHER_ANIMATION_ENABLE = "weather_animation_enabled"
     const val WEATHER_BOX_OPACITY = "weather_box_opacity"
+    const val WEATHER_BOX_OPACITY2 = "weather_box_opacity2"
 }

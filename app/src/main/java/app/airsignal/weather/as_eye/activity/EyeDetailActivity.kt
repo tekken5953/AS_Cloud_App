@@ -280,13 +280,11 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
         binding.aeDetailPb.visibility = View.VISIBLE
         binding.eyeDetailContainer.isEnabled = false
         binding.aeDetailFrame.isEnabled = false
-        blockTouch(true)
     }
 
     fun hidePb() {
         binding.aeDetailPb.visibility = View.GONE
         binding.eyeDetailContainer.isEnabled = true
         binding.aeDetailFrame.isEnabled = true
-        blockTouch(false)
     }
 }

@@ -53,8 +53,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
         window.setBackgroundDrawableResource(R.drawable.splash_lottie_bg)
 
-        blockTouch(true)
-
         initBinding().run {
             if (fetch.hasObservers()) fetch.removeObservers(this@SplashActivity)
 
@@ -128,7 +126,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     when (ver) {
                         // 통신 성공
                         is BaseRepository.ApiState.Success -> {
-                            blockTouch(false)
                             val sp = SharedPreferenceManager(this@SplashActivity)
                             val inAppArray = ver.data.inAppMsg
                             val versionName = GetSystemInfo.getApplicationVersionName(this)
@@ -187,7 +184,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
                         // 통신 실패
                         is BaseRepository.ApiState.Error -> {
-                            blockTouch(false)
                             when (ver.errorMessage) {
                                 ERROR_NETWORK -> {
                                     if (GetLocation(this).isNetWorkConnected()) {
@@ -207,7 +203,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 }
             }
         } catch (e: IOException) {
-            blockTouch(false)
             makeDialog(getString(R.string.fail_to_get_app_version))
         }
     }

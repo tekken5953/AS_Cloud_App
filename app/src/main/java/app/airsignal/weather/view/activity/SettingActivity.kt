@@ -52,6 +52,7 @@ import app.airsignal.weather.db.sp.GetAppInfo.getUserNotiVibrate
 import app.airsignal.weather.db.sp.GetAppInfo.getUserTheme
 import app.airsignal.weather.db.sp.GetAppInfo.getWeatherAnimEnabled
 import app.airsignal.weather.db.sp.GetAppInfo.getWeatherBoxOpacity
+import app.airsignal.weather.db.sp.GetAppInfo.getWeatherBoxOpacity2
 import app.airsignal.weather.db.sp.GetAppInfo.isPermedBackLoc
 import app.airsignal.weather.db.sp.GetSystemInfo.getApplicationVersionCode
 import app.airsignal.weather.db.sp.GetSystemInfo.getApplicationVersionName
@@ -64,6 +65,7 @@ import app.airsignal.weather.db.sp.SetAppInfo.setUserLocation
 import app.airsignal.weather.db.sp.SetAppInfo.setUserNoti
 import app.airsignal.weather.db.sp.SetAppInfo.setUserTheme
 import app.airsignal.weather.db.sp.SetAppInfo.setWeatherBoxOpacity
+import app.airsignal.weather.db.sp.SetAppInfo.setWeatherBoxOpacity2
 import app.airsignal.weather.db.sp.SetSystemInfo
 import app.airsignal.weather.db.sp.SpDao.PATCH_SKIP
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
@@ -948,27 +950,41 @@ class SettingActivity
         val opacityValue: TextView = opacityView.findViewById(R.id.opacityValue)
         val opacityBox: LinearLayout = opacityView.findViewById(R.id.opacityPreviewContainer)
         val opacityRollback: TextView = opacityView.findViewById(R.id.opacityRollback)
+        val opacityPreviewText: TextView = opacityView.findViewById(R.id.opacityPreviewText)
 
-        val userThemeColor = when(getUserTheme(this)) {
-            THEME_DARK -> { "FFFFFF" }
-            THEME_LIGHT -> { "000000" }
-            else -> { "FFFFFF" }
-        }
+        val seekBar2: AppCompatSeekBar = opacityView.findViewById(R.id.opacitySeekbar2)
+        val opacityValue2: TextView = opacityView.findViewById(R.id.opacityValue2)
+        val opacityBox2: LinearLayout = opacityView.findViewById(R.id.opacityPreviewContainer2)
+        val opacityPreviewText2: TextView = opacityView.findViewById(R.id.opacityPreviewText2)
+
+
+        opacityPreviewText.setTextColor(getColor(R.color.main_black))
+        opacityPreviewText2.setTextColor(getColor(R.color.white))
 
         val savedProgress = getWeatherBoxOpacity(this)
+        val savedProgress2 = getWeatherBoxOpacity2(this)
         val transSavedProgress = progressToHex(savedProgress)
+        val transSavedProgress2 = progressToHex(savedProgress2)
         seekBar.progress = savedProgress
+        seekBar2.progress = savedProgress2
         opacityValue.text = "$savedProgress%"
-        opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress}${userThemeColor}"))
+        opacityValue2.text = "$savedProgress2%"
+        opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress}FFFFFF"))
+        opacityBox2.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress2}000000"))
 
         opacityRollback.setOnClickListener {
             ioThread.launch {
-                if (seekBar.progress != 40) setWeatherBoxOpacity(this@SettingActivity, 40)
+                if (seekBar.progress != 60) setWeatherBoxOpacity(this@SettingActivity, 60)
+                if (seekBar2.progress != 60) setWeatherBoxOpacity(this@SettingActivity, 60)
 
                 withContext(mainDispatcher) {
-                    seekBar.progress = 40
-                    opacityValue.text = "40%"
-                    opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#40${userThemeColor}"))
+                    seekBar.progress = 60
+                    opacityValue.text = "60%"
+                    opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#60FFFFFF"))
+
+                    seekBar2.progress = 60
+                    opacityValue2.text = "60%"
+                    opacityBox2.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#60000000"))
                 }
             }
         }
@@ -978,7 +994,7 @@ class SettingActivity
                 seekBar: SeekBar?, progress: Int, fromUser: Boolean
             ) {
                 opacityValue.text = "$progress%"
-                opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${progressToHex(progress)}${userThemeColor}"))
+                opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${progressToHex(progress)}FFFFFF"))
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -987,6 +1003,25 @@ class SettingActivity
                 seekBar?.let {
                     ioThread.launch {
                         setWeatherBoxOpacity(this@SettingActivity, it.progress )
+                    }
+                }
+            }
+        })
+
+        seekBar2.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                seekBar: SeekBar?, progress: Int, fromUser: Boolean
+            ) {
+                opacityValue2.text = "$progress%"
+                opacityBox2.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${progressToHex(progress)}000000"))
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                seekBar?.let {
+                    ioThread.launch {
+                        setWeatherBoxOpacity2(this@SettingActivity, it.progress )
                     }
                 }
             }

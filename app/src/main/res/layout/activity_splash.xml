@@ -19,7 +19,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:lottie_rawRes="@raw/ani_splash"
             app:lottie_autoPlay="true"
-            app:lottie_loop="false"/>
+            app:lottie_loop="false" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

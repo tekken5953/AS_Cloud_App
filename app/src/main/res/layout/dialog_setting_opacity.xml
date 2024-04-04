@@ -40,8 +40,8 @@
     <TableRow
         android:id="@+id/opacitySettingTr"
         android:layout_width="match_parent"
-        android:layout_height="76dp"
-        android:layout_marginTop="22dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:gravity="center_vertical"
@@ -62,36 +62,112 @@
         <TextView
             android:id="@+id/opacityValue"
             style="@style/basicMediumTextView"
-            android:text="40%"
+            android:text="0%"
             android:textColor="@color/theme_text_color"
             android:textSize="18sp"/>
     </TableRow>
+
+    <LinearLayout
+        android:id="@+id/opacityBgLinear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/opacitySettingTr"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:background="@drawable/main_bg_clear">
+        <LinearLayout
+            android:id="@+id/opacityPreviewContainer"
+            android:layout_width="373dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/scrolled_box_bg"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/opacityPreviewText"
+                style="@style/basicMediumTextView"
+                android:layout_marginTop="45dp"
+                android:layout_marginBottom="45dp"
+                android:text="검은색 글씨 일 때"
+                android:textColor="@color/main_black"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
 
     <View
         android:id="@+id/opacityLine"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/theme_line_color"
-        android:layout_below="@+id/opacitySettingTr"
-        android:layout_marginTop="10dp"/>
+        android:layout_below="@+id/opacityBgLinear"/>
 
-    <LinearLayout
-        android:id="@+id/opacityPreviewContainer"
+    <TableRow
+        android:id="@+id/opacitySettingTr2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/opacityLine"
-        android:gravity="center"
-        android:layout_marginTop="30dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/scrolled_box_bg">
+        android:layout_marginTop="32dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:gravity="center_vertical"
+        android:layout_below="@+id/opacityLine">
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/opacitySeekbar2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:max="100"
+            android:min="0"
+            android:layout_weight="0.99"
+            android:progressDrawable="@drawable/setting_opacity_seekbar_track"
+            android:splitTrack="false"
+            android:thumb="@drawable/noise_pb_thumb" />
+
         <TextView
-            android:id="@+id/opacityPreviewText"
+            android:id="@+id/opacityValue2"
             style="@style/basicMediumTextView"
-            android:text="투명도 설정 미리보기"
+            android:text="0%"
             android:textColor="@color/theme_text_color"
-            android:textSize="16sp"
-            android:layout_marginTop="70dp"
-            android:layout_marginBottom="70dp"/>
+            android:textSize="18sp"/>
+    </TableRow>
+
+    <LinearLayout
+        android:id="@+id/opacityBgLinear2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/opacitySettingTr2"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:paddingTop="20dp"
+        android:background="@drawable/main_bg_night"
+        android:paddingBottom="20dp">
+        <LinearLayout
+            android:id="@+id/opacityPreviewContainer2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/scrolled_box_bg">
+            <TextView
+                android:id="@+id/opacityPreviewText2"
+                style="@style/basicMediumTextView"
+                android:text="하얀색 글씨 일 때"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:layout_marginTop="45dp"
+                android:layout_marginBottom="45dp"/>
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

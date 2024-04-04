@@ -311,29 +311,27 @@
 
                 <TextView
                     android:id="@+id/mainMinTitle"
-                    style="@style/basicTextView"
-                    android:textColor="#5CC4FF"
+                    style="@style/basicMediumTextView"
                     android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/mainMinValue"
                     style="@style/basicMediumTextView"
                     android:layout_marginStart="3dp"
-                    android:textColor="#5CC4FF"
                     android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/mainMaxTitle"
-                    style="@style/basicTextView"
+                    style="@style/basicMediumTextView"
+                    android:textColor="@color/red"
                     android:layout_marginStart="10dp"
-                    android:textColor="#FB3737"
                     android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/mainMaxValue"
                     style="@style/basicMediumTextView"
                     android:layout_marginStart="3dp"
-                    android:textColor="#FB3737"
+                    android:textColor="@color/red"
                     android:textSize="16sp" />
             </TableRow>
 
@@ -485,7 +483,6 @@
                 app:layout_constraintStart_toEndOf="@+id/mainMotionSlideGuide"
                 app:layout_constraintTop_toTopOf="@+id/mainMotionSlideGuide"
                 app:tint="@android:color/transparent" />
-
 
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/nested_scrollview"
@@ -881,10 +878,10 @@
                                 android:paddingStart="20dp"
                                 android:paddingEnd="20dp"
                                 app:arcColor="#E1E1E1"
-                                app:arcWidth="9dp"
+                                app:arcWidth="6dp"
                                 app:max="100"
                                 app:progressColor="#FF8A48"
-                                app:progressWidth="9dp"
+                                app:progressWidth="6dp"
                                 app:rotation="180"
                                 app:roundEdges="true"
                                 app:startAngle="90"

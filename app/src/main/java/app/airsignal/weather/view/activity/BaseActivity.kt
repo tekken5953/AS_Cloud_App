@@ -60,9 +60,4 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
             else -> { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) }
         }
     }
-
-    fun blockTouch(b: Boolean) {
-        if (b) this.window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-        else this.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-    }
 }

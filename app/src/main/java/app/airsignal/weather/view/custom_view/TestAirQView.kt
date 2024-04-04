@@ -32,6 +32,9 @@ class TestAirQView(context: Context, attrs: AttributeSet?)
         O3(title = "오존", en = "ozone", sort = "O3")
     }
 
+    private data class Range(val min: Double, val max: Double)
+    private data class Grade(val grade: Int, val percentage: Int)
+
     init {
         val inflater = LayoutInflater.from(context)
         airBinding = CustomViewAirqBinding.inflate(inflater, this, true)
@@ -167,61 +170,53 @@ class TestAirQView(context: Context, attrs: AttributeSet?)
     }
 
     private fun getModerate(sort: AirQ, value: Double): Pair<Int, Int> {
-        return when(sort) {
-            AirQ.PM2_5 -> {
-                when (value) {
-                    in 0.0..15.0 -> { Pair(1, (value / (15.0 - 0.0) * 100).toInt()) }
-                    in 16.0..35.0 -> { Pair(2, (value / (35.0 - 16.0) * 100).toInt()) }
-                    in 36.0..75.0 -> { Pair(3, (value / (75.0 - 36.0) * 100).toInt()) }
-                    in 76.0..500.0 -> { Pair(4, (value / (500.0 - 76.0) * 100).toInt()) }
-                    else -> { Pair(0,0) }
+        fun calculateGrade(value: Double, ranges: List<Range>): Grade {
+            ranges.forEachIndexed { index, range ->
+                if (value in range.min..range.max) {
+                    val percentage = ((value - range.min) / (range.max - range.min) * 100).toInt()
+                    return Grade(index + 1, percentage)
                 }
             }
-            AirQ.CO -> {
-                when (value) {
-                    in 0.0..2.0 -> { Pair(1, (value / (2.0 - 0.0) * 100).toInt()) }
-                    in 2.1..9.0 -> { Pair(2, (value / (9.0 - 2.1) * 100).toInt()) }
-                    in 9.01..15.0 -> { Pair(3, (value / (15.0 - 9.01) * 100).toInt()) }
-                    in 15.01..500.0 -> { Pair(4, (value / (500.0 - 15.01) * 100).toInt()) }
-                    else -> { Pair(0,0) }
-                }
-            }
-            AirQ.NO2 -> {
-                when (value) {
-                    in 0.0..0.03 -> { Pair(1, (value / (0.03 - 0.0) * 100).toInt()) }
-                    in 0.031..0.06 -> { Pair(2, (value / (0.06 - 0.031) * 100).toInt()) }
-                    in 0.061..0.2 -> { Pair(3, (value / (0.2 - 0.061) * 100).toInt()) }
-                    in 0.201..10.0 -> { Pair(4, (value / (10.0 - 0.201) * 100).toInt()) }
-                    else -> { Pair(0,0) }
-                }
-            }
-            AirQ.PM10 -> {
-                when (value) {
-                    in 0.0..30.0 -> { Pair(1, (value / (30.0 - 0.0) * 100).toInt()) }
-                    in 31.0..80.0 -> { Pair(2, (value / (80.0 - 31.0) * 100).toInt()) }
-                    in 81.0..150.0 -> { Pair(3, (value / (150.0 - 81.0) * 100).toInt()) }
-                    in 151.0..500.0 -> { Pair(4, (value / (500.0 - 151.0) * 100).toInt()) }
-                    else -> { Pair(0,0) }
-                }
-            }
-            AirQ.SO2 -> {
-                when (value) {
-                    in 0.0..0.02 -> { Pair(1, (value / (0.02 - 0.0) * 100).toInt()) }
-                    in 0.021..0.05 -> { Pair(2, (value / (0.05 - 0.021) * 100).toInt()) }
-                    in 0.051..0.15 -> { Pair(3, (value / (0.15 - 0.051) * 100).toInt()) }
-                    in 0.151..10.0 -> { Pair(4, (value / (10.0 - 0.151) * 100).toInt()) }
-                    else -> { Pair(0,0) }
-                }
-            }
-            AirQ.O3 -> {
-                when (value) {
-                    in 0.0..0.03 -> { Pair(1, (value / (0.03 - 0.0) * 100).toInt()) }
-                    in 0.031..0.09 -> { Pair(2, (value / (0.09 - 0.031) * 100).toInt()) }
-                    in 0.091..0.15 -> { Pair(3, (value / (0.15 - 0.091) * 100).toInt()) }
-                    in 0.151..10.0 -> { Pair(4, (value / (10.0 - 0.151) * 100).toInt()) }
-                    else -> { Pair(0,0) }
-                }
-            }
+            return Grade(0, 0)
         }
+
+        return when (sort) {
+            AirQ.PM2_5 -> calculateGrade(value, listOf(
+                Range(0.0, 15.0),
+                Range(16.0, 35.0),
+                Range(36.0, 75.0),
+                Range(76.0, 500.0)
+            ))
+            AirQ.CO -> calculateGrade(value, listOf(
+                Range(0.0, 2.0),
+                Range(2.1, 9.0),
+                Range(9.01, 15.0),
+                Range(15.01, 500.0)
+            ))
+            AirQ.NO2 -> calculateGrade(value, listOf(
+                Range(0.0, 0.03),
+                Range(0.031, 0.06),
+                Range(0.061, 0.2),
+                Range(0.201, 10.0)
+            ))
+            AirQ.PM10 -> calculateGrade(value, listOf(
+                Range(0.0, 30.0),
+                Range(31.0, 80.0),
+                Range(81.0, 150.0),
+                Range(151.0, 500.0)
+            ))
+            AirQ.SO2 -> calculateGrade(value, listOf(
+                Range(0.0, 0.02),
+                Range(0.021, 0.05),
+                Range(0.051, 0.15),
+                Range(0.151, 10.0)
+            ))
+            AirQ.O3 -> calculateGrade(value, listOf(
+                Range(0.0, 0.03),
+                Range(0.031, 0.09),
+                Range(0.091, 0.15),
+                Range(0.151, 10.0)
+            ))
+        }.let { Pair(it.grade, it.percentage) }
     }
 }

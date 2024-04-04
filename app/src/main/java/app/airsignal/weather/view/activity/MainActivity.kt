@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.LayerDrawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.*
@@ -47,6 +46,7 @@ import app.airsignal.weather.db.sp.GetAppInfo.getTopicNotification
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
+import app.airsignal.weather.db.sp.GetAppInfo.getWeatherAnimEnabled
 import app.airsignal.weather.db.sp.GetAppInfo.millsToString
 import app.airsignal.weather.db.sp.GetAppInfo.parseTimeToMinutes
 import app.airsignal.weather.db.sp.GetSystemInfo.getLocale
@@ -680,13 +680,11 @@ class MainActivity
     // 프로그래스 보이기
     private fun showProgressBar() {
         setProgressVisibility(true)
-        blockTouch(true)
     }
 
     // 프로그래스 숨기기
     private fun hideProgressBar() {
         setProgressVisibility(false)
-        blockTouch(false)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -887,8 +885,9 @@ class MainActivity
             val metaAddr = result.meta.address ?: getString(R.string.address_error)
             ioThread.launch { reNewTopicInMain(metaAddr) }
             runOnUiThread {
-//                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
-                isNight = true
+                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
+//                isNight = true
+
                 binding.mainGpsFix.clearAnimation()
                 binding.mainDailyWeatherRv.scrollToPosition(0)
                 binding.mainWarningVp.currentItem = 0
@@ -925,11 +924,14 @@ class MainActivity
                     )
                 }
 
-//                val testSky = getString(R.string.sky_sunny)
-//                applyWindowBackground(testSky)
                 // 날씨에 따라 배경화면 변경
-                applyWindowBackground(skyText)
-                binding.mainSkyText.text = skyText
+                val testSky = getString(R.string.sky_cloudy)
+                applyWindowBackground(testSky)
+                binding.mainSkyText.text = testSky
+
+//                applyWindowBackground(skyText)
+//                binding.mainSkyText.text = skyText
+
                 hideProgressBar()
                 if (!isInAppMsgShow) {
                     ioThread.launch { startInAppMsg() }
@@ -1307,38 +1309,77 @@ class MainActivity
 
     // 하늘상태에 따라 윈도우 배경 변경
     private fun applyWindowBackground(sky: String?) {
-        val isAnimationEnable =
-        if (isNight && (sky == getString(R.string.sky_sunny) || sky == getString(R.string.sky_sunny_cloudy))) {
-            changeBackgroundResource(R.drawable.main_bg_night)
-            binding.mainBottomDecoImg?.setImageResource(R.drawable.ic_main_night)
-            setAnimation(R.raw.ani_main_night_stars)
-        } else {
-            if (sky == getString(R.string.sky_sunny) || sky == getString(R.string.sky_sunny_cloudy)) {
-                binding.mainBottomDecoImg?.setImageResource(R.drawable.ic_main_mount)
-                setAnimation(R.raw.ani_test_clear_birds)
-            } else {
-                binding.mainBottomDecoImg?.setImageDrawable(null)
-                setAnimation(null)
-            }
-            val backgroundResource = when (sky) {
-                getString(R.string.sky_sunny), getString(R.string.sky_sunny_cloudy) -> R.drawable.main_bg_clear
+        if (isNight) {
+            when(sky) {
+                getString(R.string.sky_sunny), getString(R.string.sky_sunny_cloudy) -> {
+                    changeBackgroundResource(R.drawable.main_bg_night)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_clear_night)
+                    setAnimation(R.raw.ani_main_night_stars)
+                }
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
                 getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
                 getString(R.string.sky_cloudy_rainy), getString(R.string.sky_sunny_cloudy_rainy),
                 getString(R.string.sky_cloudy_shower), getString(R.string.sky_shower), getString(R.string.sky_rainy),
-                getString(R.string.sky_cloudy) -> R.drawable.main_bg_cloudy
-                getString(R.string.sky_sunny_cloudy_snowy), getString(R.string.sky_snowy),
-                getString(R.string.sky_cloudy_snowy) -> R.drawable.main_bg_snow
-                else -> R.drawable.main_bg_clear
+                getString(R.string.sky_cloudy) -> {
+                    changeBackgroundResource(R.drawable.main_bg_cloudy_night)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud_night)
+                    setAnimation(R.raw.ani_main_night_stars)
+                }
+                getString(R.string.sky_snowy),
+                getString(R.string.sky_cloudy_snowy) -> {
+                    changeBackgroundResource(R.drawable.main_bg_night)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_clear_night)
+                    setAnimation(R.raw.ani_main_night_stars)
+                }
+                getString(R.string.sky_sunny_cloudy_snowy) -> {
+                    changeBackgroundResource(R.drawable.main_bg_cloudy_night)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud_night)
+                    setAnimation(R.raw.ani_main_night_stars)
+                }
+                else ->   {
+                    changeBackgroundResource(R.drawable.main_bg_night)
+                    setAnimation(null)
+                }
             }
-            changeBackgroundResource(backgroundResource)
+        } else {
+            when(sky) {
+                getString(R.string.sky_sunny), getString(R.string.sky_sunny_cloudy) -> {
+                    changeBackgroundResource(R.drawable.main_bg_clear)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_clear)
+                    setAnimation(R.raw.ani_test_clear_birds)
+                }
+                getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
+                getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
+                getString(R.string.sky_cloudy_rainy), getString(R.string.sky_sunny_cloudy_rainy),
+                getString(R.string.sky_cloudy_shower), getString(R.string.sky_shower), getString(R.string.sky_rainy),
+                getString(R.string.sky_cloudy) -> {
+                    changeBackgroundResource(R.drawable.main_bg_cloudy)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud)
+                    setAnimation(null)
+                }
+                getString(R.string.sky_snowy),
+                getString(R.string.sky_cloudy_snowy) -> {
+                    changeBackgroundResource(R.drawable.main_bg_snow)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
+                    setAnimation(R.raw.ani_test_clear_birds)
+                }
+                getString(R.string.sky_sunny_cloudy_snowy) -> {
+                    changeBackgroundResource(R.drawable.main_bg_cloudy)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
+                    setAnimation(null)
+                }
+                else ->   {
+                    changeBackgroundResource(R.drawable.main_bg_night)
+                    setAnimation(null)
+                }
+            }
         }
 
         binding.mainSkyStarImg.invalidate()
     }
 
     private fun setAnimation(animationResource: Int?) {
-        val isAnimationEnable = GetAppInfo.getWeatherAnimEnabled(this)
+        val isAnimationEnable = getWeatherAnimEnabled(this)
         if (isAnimationEnable) {
             animationResource?.let {
                 binding.mainSkyStarImg.setAnimation(it)
@@ -1681,7 +1722,6 @@ class MainActivity
             binding.mainLiveTempUnit,
             binding.mainCompareTempTv,
             binding.mainTopBarGpsTitle,
-            binding.mainMotionSlideGuide,
             binding.mainGpsTitleTv,
             binding.mainSensTitle,
             binding.mainSensValue,
@@ -1721,8 +1761,7 @@ class MainActivity
         )
         val changeTintImageViews = listOf(
             binding.mainSideMenuIv, binding.mainAddAddress,
-            binding.mainGpsFix, binding.mainMotionSLideImg,
-            binding.mainShareIv
+            binding.mainGpsFix, binding.mainShareIv
         )
         val changeBoxViews = listOf(
             binding.mainWarningBox, binding.nestedSubAirFrame,
@@ -1776,18 +1815,22 @@ class MainActivity
             warningViewPagerAdapter.notifyDataSetChanged()
         }
 
-        val savedProgress = GetAppInfo.getWeatherBoxOpacity(this)
-        val transSavedProgress = progressToHex(savedProgress)
+        val savedProgressBlackBox = GetAppInfo.getWeatherBoxOpacity(this)
+        val transSavedProgressBlackBox = progressToHex(savedProgressBlackBox)
+        val savedProgressWhiteBox = GetAppInfo.getWeatherBoxOpacity2(this)
+        val transSavedProgressWhiteBox = progressToHex(savedProgressWhiteBox)
 
         // 글자색 변경: 텍스트 및 리소스 색상 사용
         fun changeTextToWhite() {
             changeTextColor(colorWhite, colorSubWhite, true)
             changeBoxViews.forEach {
-                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress}000000"))
+                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgressWhiteBox}000000"))
             }
             gridBoxView.forEach {
-                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress}000000"))
+                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgressWhiteBox}000000"))
             }
+            binding.mainMotionSLideImg.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
+            binding.mainMotionSlideGuide.setTextColor(getC(R.color.white))
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility =
                 window.decorView.systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
@@ -1796,11 +1839,13 @@ class MainActivity
         fun changeTextToBlack() {
             changeTextColor(colorBlack, colorSubBlack, false)
             changeBoxViews.forEach {
-                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress}FFFFFF"))
+                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgressBlackBox}FFFFFF"))
             }
             gridBoxView.forEach {
-                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress}FFFFFF"))
+                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgressBlackBox}FFFFFF"))
             }
+            binding.mainMotionSLideImg.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
+            binding.mainMotionSlideGuide.setTextColor(getC(R.color.white))
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
@@ -1810,9 +1855,20 @@ class MainActivity
                 changeTextToBlack()
                 setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_bk)
             }
-            R.drawable.main_bg_night, R.drawable.main_bg_cloudy -> {
+            R.drawable.main_bg_night, R.drawable.main_bg_cloudy, R.drawable.main_bg_cloudy_night -> {
                 changeTextToWhite()
                 setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_w)
+            }
+        }
+
+        when(bg) {
+            R.drawable.main_bg_cloudy,R.drawable.main_bg_cloudy_night -> {
+                binding.mainMinTitle.setTextColor(getColor(R.color.min_temp_cloud_color))
+                binding.mainMinValue.setTextColor(getColor(R.color.min_temp_cloud_color))
+            }
+            else -> {
+                binding.mainMinTitle.setTextColor(getColor(R.color.min_temp_main_color))
+                binding.mainMinValue.setTextColor(getColor(R.color.min_temp_main_color))
             }
         }
 

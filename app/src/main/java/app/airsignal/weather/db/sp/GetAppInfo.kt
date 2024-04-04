@@ -14,6 +14,7 @@ import app.airsignal.weather.db.sp.SpDao.NOTIFICATION_TOPIC_DAILY
 import app.airsignal.weather.db.sp.SpDao.WARNING_FIXED
 import app.airsignal.weather.db.sp.SpDao.WEATHER_ANIMATION_ENABLE
 import app.airsignal.weather.db.sp.SpDao.WEATHER_BOX_OPACITY
+import app.airsignal.weather.db.sp.SpDao.WEATHER_BOX_OPACITY2
 import app.airsignal.weather.db.sp.SpDao.lastAddress
 import app.airsignal.weather.db.sp.SpDao.lastLoginPlatform
 import app.airsignal.weather.db.sp.SpDao.notiEnable
@@ -164,6 +165,10 @@ object GetAppInfo {
     }
 
     fun getWeatherBoxOpacity(context: Context): Int {
-        return SharedPreferenceManager(context).getInt(WEATHER_BOX_OPACITY, 40)
+        return SharedPreferenceManager(context).getInt(WEATHER_BOX_OPACITY, 60)
+    }
+
+    fun getWeatherBoxOpacity2(context: Context): Int {
+        return SharedPreferenceManager(context).getInt(WEATHER_BOX_OPACITY2, 60)
     }
 }

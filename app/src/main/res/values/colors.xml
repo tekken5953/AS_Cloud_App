@@ -7,7 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="red">#FF0000</color>
+    <color name="red">#f26470</color>
     <color name="wblack">#404040</color>
 
     <color name="progressError">#A0A0A0</color>// 프로그래스 바 에러 컬러
@@ -74,6 +74,8 @@
     <color name="progress_color">#5CC4FF</color>
     <color name="secondary_progress_color">#C0E5F9</color>
 
-    <color name="tutorial_background">#80000000</color>
+    <color name="tutorial_background">#80000000</color>>
 
+    <color name="min_temp_main_color">#2E65D4</color>
+    <color name="min_temp_cloud_color">#00C2FF</color>
 </resources>
