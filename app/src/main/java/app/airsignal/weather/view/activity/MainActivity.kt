@@ -4,11 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.graphics.ColorFilter
-import android.graphics.ColorMatrix
-import android.graphics.ColorMatrixColorFilter
-import android.graphics.Typeface
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.location.Location
@@ -43,15 +39,12 @@ import app.airsignal.weather.databinding.ActivityMainBinding
 import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetAppInfo
-import app.airsignal.weather.db.sp.GetAppInfo.getEntireSun
 import app.airsignal.weather.db.sp.GetAppInfo.getIsNight
 import app.airsignal.weather.db.sp.GetAppInfo.getTopicNotification
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.db.sp.GetAppInfo.getWeatherAnimEnabled
-import app.airsignal.weather.db.sp.GetAppInfo.millsToString
-import app.airsignal.weather.db.sp.GetAppInfo.parseTimeToMinutes
 import app.airsignal.weather.db.sp.GetSystemInfo.getLocale
 import app.airsignal.weather.db.sp.GetSystemInfo.isThemeNight
 import app.airsignal.weather.db.sp.SetAppInfo
@@ -89,7 +82,6 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getHourCountToTomorrow
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgSmall
 import app.airsignal.weather.util.`object`.DataTypeParser.isRainyDay
 import app.airsignal.weather.util.`object`.DataTypeParser.parseDayOfWeekToKorean
-import app.airsignal.weather.util.`object`.DataTypeParser.parseLocalDateTimeToLong
 import app.airsignal.weather.util.`object`.DataTypeParser.progressToHex
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSky
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
@@ -861,9 +853,9 @@ class MainActivity
                     )
                 }
 //                 날씨에 따라 배경화면 변경
-                val testSky = getString(R.string.sky_rainy)
-                applyWindowBackground(testSky)
-                binding.mainSkyText.text = testSky
+//                val testSky = getString(R.string.sky_rainy)
+//                applyWindowBackground(testSky)
+//                binding.mainSkyText.text = testSky
 
 //                isNight = true
                 isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
@@ -1227,13 +1219,19 @@ class MainActivity
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_clear_night)
                     setAnimation(R.raw.ani_main_night_stars)
                 }
+                getString(R.string.sky_cloudy) -> {
+                    changeBackgroundResource(R.drawable.main_bg_cloudy_night)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud_night)
+                    setAnimation(null)
+                }
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
                 getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
                 getString(R.string.sky_cloudy_rainy), getString(R.string.sky_sunny_cloudy_rainy),
                 getString(R.string.sky_cloudy_shower), getString(R.string.sky_shower), getString(R.string.sky_rainy),
-                getString(R.string.sky_cloudy) -> {
+                 -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy_night)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud_night)
+
                     setAnimation(R.raw.ani_main_rain)
                 }
                 getString(R.string.sky_snowy), getString(R.string.sky_cloudy_snowy) -> {

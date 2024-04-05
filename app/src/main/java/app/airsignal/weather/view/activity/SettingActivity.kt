@@ -973,8 +973,10 @@ class SettingActivity
         opacityBox2.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress2}000000"))
 
         opacityRollback.setOnClickListener {
+            ToastUtils(this@SettingActivity).showMessage("설정이 초기화되었습니다",1)
+
             ioThread.launch {
-                if (seekBar.progress != 60) setWeatherBoxOpacity(this@SettingActivity, 80)
+                if (seekBar.progress != 80) setWeatherBoxOpacity(this@SettingActivity, 80)
                 if (seekBar2.progress != 60) setWeatherBoxOpacity(this@SettingActivity, 60)
 
                 withContext(mainDispatcher) {
@@ -1003,6 +1005,7 @@ class SettingActivity
                 seekBar?.let {
                     ioThread.launch {
                         setWeatherBoxOpacity(this@SettingActivity, it.progress )
+                        ToastUtils(this@SettingActivity).showMessage("설정이 저장되었습니다",1)
                     }
                 }
             }
@@ -1023,6 +1026,7 @@ class SettingActivity
                     ioThread.launch {
                         setWeatherBoxOpacity2(this@SettingActivity, it.progress )
                     }
+                    ToastUtils(this@SettingActivity).showMessage("설정이 저장되었습니다",1)
                 }
             }
         })
