@@ -17,8 +17,8 @@ class SunProgress(private val seekArc: SeekArc) {
         CoroutineScope(Dispatchers.Main).launch {
             seekArc.apply {
                 this.sweepAngle = 180
-                this.arcColor = Color.parseColor("#E1E1E1")
                 val isNight = GetAppInfo.getIsNight(currentSun)
+                this.arcColor = Color.parseColor(if (isNight) "#407E5DFF" else "#40FF8A48")
                 this.isClockwise = !isNight
                 this.startAngle = if (isNight) 180 else 90
                 this.arcRotation = if (isNight) 90 else 180

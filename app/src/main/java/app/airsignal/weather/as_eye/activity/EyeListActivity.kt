@@ -497,7 +497,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
         dialog.show(view,false, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
 
-        viewPagerList.addAll(arrayListOf(R.raw.ani_tuto_plus,R.raw.ani_tuto_group,R.raw.ani_tuto_alarm,R.raw.ani_tuto_danger,R.raw.ani_etc))
+        viewPagerList.addAll(arrayListOf(R.raw.ani_tuto_plus,R.raw.ani_tuto_group,R.raw.ani_tuto_alarm,R.raw.ani_tuto_danger,R.raw.ani_tuto_etc))
 
         createViewPager(viewPager, indicatorContainer)
 

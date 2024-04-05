@@ -242,7 +242,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                                         isLarge = false,
                                         isNight = isNight,
                                         lunar = it.lunar?.date ?: -1
-                                    )!!.toBitmap()
+                                    )?.toBitmap()
                                 )
                             }
                             2 -> {
@@ -260,7 +260,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                                         isLarge = false,
                                         isNight = isNight,
                                         lunar = it.lunar?.date ?: -1
-                                    )!!.toBitmap()
+                                    )?.toBitmap()
                                 )
                             }
                             3 -> {
@@ -278,7 +278,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                                         isLarge = false,
                                         isNight = isNight,
                                         lunar = it.lunar?.date ?: -1
-                                    )!!.toBitmap()
+                                    )?.toBitmap()
                                 )
                             }
                         }

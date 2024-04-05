@@ -12,14 +12,14 @@
 
     <color name="progressError">#A0A0A0</color>// 프로그래스 바 에러 컬러
 
-    <color name="air_good">#5CC4FF</color>
-    <color name="air_normal">#4ADE80</color>
-    <color name="air_bad">#FACC15</color>
-    <color name="air_very_bad">#F87171</color>
-    <color name="air_good_sub">#205CC4FF</color>
-    <color name="air_normal_sub">#204ADE80</color>
-    <color name="air_bad_sub">#20FACC15</color>
-    <color name="air_very_bad_sub">#20F87171</color>
+    <color name="air_good">#5C8DEF </color>
+    <color name="air_normal">#35CB93</color>
+    <color name="air_bad">#FCB052</color>
+    <color name="air_very_bad">#F04655</color>
+    <color name="air_good_sub">#205C8DEF</color>
+    <color name="air_normal_sub">#2035CB93</color>
+    <color name="air_bad_sub">#20FCB052</color>
+    <color name="air_very_bad_sub">#20F04655</color>
 
     <color name="mode_black_color">#000000</color>
 

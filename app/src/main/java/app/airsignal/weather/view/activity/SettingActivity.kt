@@ -974,13 +974,13 @@ class SettingActivity
 
         opacityRollback.setOnClickListener {
             ioThread.launch {
-                if (seekBar.progress != 60) setWeatherBoxOpacity(this@SettingActivity, 60)
+                if (seekBar.progress != 60) setWeatherBoxOpacity(this@SettingActivity, 80)
                 if (seekBar2.progress != 60) setWeatherBoxOpacity(this@SettingActivity, 60)
 
                 withContext(mainDispatcher) {
-                    seekBar.progress = 60
-                    opacityValue.text = "60%"
-                    opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#60FFFFFF"))
+                    seekBar.progress = 80
+                    opacityValue.text = "80%"
+                    opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#80FFFFFF"))
 
                     seekBar2.progress = 60
                     opacityValue2.text = "60%"

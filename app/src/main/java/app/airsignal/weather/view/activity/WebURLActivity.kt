@@ -65,7 +65,6 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
 
         binding.webUrlTitle.text = webUrlTitleText
 
-        webView.clearCache(true)
         webView.loadUrl(url) // 페이지 로딩
     }
 }
