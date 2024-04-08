@@ -437,15 +437,9 @@ class SettingActivity
 
             // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크
             when (getUserFontScale(this)) {
-                TEXT_SCALE_SMALL -> {
-                    rg.check(small.id)
-                }
-                TEXT_SCALE_BIG -> {
-                    rg.check(big.id)
-                }
-                else -> {
-                    rg.check(default.id)
-                }
+                TEXT_SCALE_SMALL -> { rg.check(small.id) }
+                TEXT_SCALE_BIG -> { rg.check(big.id) }
+                else -> { rg.check(default.id) }
             }
 
             // 설정 변경시
@@ -541,12 +535,8 @@ class SettingActivity
                     // 29 이하
                     else {
                         notiBackTitle.text = getString(R.string.perm_back_setting)
-                        if (isPermedBackLoc(this)) {
-                            notiBackContent.text = getString(R.string.background_location_active)
-                        } else {
-                            notiBackContent.text =
-                                getString(R.string.background_location_not_active)
-                        }
+                        if (isPermedBackLoc(this)) notiBackContent.text = getString(R.string.background_location_active)
+                        else notiBackContent.text = getString(R.string.background_location_not_active)
                     }
 
                     setNightAlertsSpan(notiBackTitle)
@@ -564,9 +554,7 @@ class SettingActivity
                             ).show()
                         }
                     }
-                } else {
-                    notiBackTr.visibility = View.GONE
-                }
+                } else notiBackTr.visibility = View.GONE
             }
 
             setNightAlertsSpan(notiSettingTitle)
@@ -587,9 +575,7 @@ class SettingActivity
                             showSnackBar(notificationView, true)
                             setVisibility(true)
                             applyBack(true)
-                        } else {
-                            notiPerm.requestNotification()
-                        }
+                        } else notiPerm.requestNotification()
                     } else {
                         setUserNoti(this, notiEnable, false)
                         showSnackBar(notificationView, false)
@@ -635,11 +621,8 @@ class SettingActivity
         val alertOff = ContextCompat.getDrawable(this, R.drawable.alert_off)!!
         alertOn.setTint(getColor(R.color.theme_view_color))
         alertOff.setTint(getColor(R.color.theme_view_color))
-        if (isAllow) {
-            if (!isInit) { SnackBarUtils.make(view, getString(R.string.allowed_noti), alertOn).show() }
-        } else {
-            if (!isInit) { SnackBarUtils.make(view, getString(R.string.denied_noti), alertOff).show() }
-        }
+        if (isAllow) { if (!isInit) { SnackBarUtils.make(view, getString(R.string.allowed_noti), alertOn).show() } }
+        else { if (!isInit) { SnackBarUtils.make(view, getString(R.string.denied_noti), alertOff).show() } }
     }
 
     // 알림 텍스트 색상 설정
@@ -666,9 +649,7 @@ class SettingActivity
                         findCharacterIndex(textView.text as String, '을'),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                } catch (e: IndexOutOfBoundsException) {
-                    e.printStackTrace()
-                }
+                } catch (e: IndexOutOfBoundsException) { e.printStackTrace() }
             }
 
             if (textView.text == getString(R.string.allowed) || textView.text == getString(R.string.background_location_active)) {
@@ -819,15 +800,9 @@ class SettingActivity
     private fun applyUserLanguage() {
         // 설정 페이지 언어 항목이름 바꾸기
         when (getUserLocation(this)) {
-            LANG_EN -> {
-                binding.settingSystemLang.fetchData(getString(R.string.english))
-            }
-            LANG_KR -> {
-                binding.settingSystemLang.fetchData(getString(R.string.korean))
-            }
-            else -> {
-                binding.settingSystemLang.fetchData(getString(R.string.system_lang))
-            }
+            LANG_EN -> { binding.settingSystemLang.fetchData(getString(R.string.english)) }
+            LANG_KR -> { binding.settingSystemLang.fetchData(getString(R.string.korean)) }
+            else -> { binding.settingSystemLang.fetchData(getString(R.string.system_lang)) }
         }
     }
 
@@ -837,9 +812,7 @@ class SettingActivity
         when (getUserFontScale(this)) {
             "small" -> { binding.settingSystemFont.fetchData(getString(R.string.font_small)) }
             "big" -> { binding.settingSystemFont.fetchData(getString(R.string.font_large)) }
-            else -> {
-                binding.settingSystemFont.fetchData(getString(R.string.font_normal))
-            }
+            else -> binding.settingSystemFont.fetchData(getString(R.string.font_normal))
         }
     }
 
@@ -973,7 +946,7 @@ class SettingActivity
         opacityBox2.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress2}000000"))
 
         opacityRollback.setOnClickListener {
-            ToastUtils(this@SettingActivity).showMessage("설정이 초기화되었습니다",1)
+            ToastUtils(this@SettingActivity).showMessage(getString(R.string.settings_initialized),1)
 
             ioThread.launch {
                 if (seekBar.progress != 80) setWeatherBoxOpacity(this@SettingActivity, 80)
@@ -1004,8 +977,8 @@ class SettingActivity
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 seekBar?.let {
                     ioThread.launch {
-                        setWeatherBoxOpacity(this@SettingActivity, it.progress )
-                        ToastUtils(this@SettingActivity).showMessage("설정이 저장되었습니다",1)
+                        setWeatherBoxOpacity(this@SettingActivity, it.progress)
+                        ToastUtils(this@SettingActivity).showMessage(getString(R.string.ok_change_setting),1)
                     }
                 }
             }
@@ -1026,7 +999,7 @@ class SettingActivity
                     ioThread.launch {
                         setWeatherBoxOpacity2(this@SettingActivity, it.progress )
                     }
-                    ToastUtils(this@SettingActivity).showMessage("설정이 저장되었습니다",1)
+                    ToastUtils(this@SettingActivity).showMessage(getString(R.string.ok_change_setting),1)
                 }
             }
         })

@@ -331,7 +331,7 @@
     <string name="apply_changes">적용</string>
     <string name="success_to_delete">삭제에 성공했습니다</string>
     <string name="fail_to_delete">삭제에 실패했습니다</string>
-    <string name="nfc_disabled_msg">NFC가 비활성화되었습니다. NFC를 활성화하세요</string>
+    <string name="nfc_disabled_msg">NFC가 비활성화되었습니다. 활성화해주세요</string>
     <string name="yesterday">어제</string>
     <string name="tomorrow_week">내일</string>
     <string name="patch_store_notice">최신버전은 스토어 혹은 앱 설정에서 다운로드 가능합니다</string>
@@ -340,5 +340,5 @@
     <string name="fail_to_get_app_version">앱 버전을 불러올 수 없습니다.</string>
     <string name="address_error">주소 호출 에러</string>
     <string name="ok_change_setting">설정이 변경되었습니다</string>
-
+    <string name="settings_initialized">설정이 초기화되었습니다</string>
 </resources>

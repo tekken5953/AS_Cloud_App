@@ -815,63 +815,66 @@ class MainActivity
     private fun handleApiSuccess(result: ApiModel.GetEntireData) {
         try {
             val metaAddr = result.meta.address ?: getString(R.string.address_error)
-            ioThread.launch { reNewTopicInMain(metaAddr) }
-            runOnUiThread {
-                binding.mainGpsFix.clearAnimation()
-                binding.mainDailyWeatherRv.scrollToPosition(0)
-                binding.mainWarningVp.currentItem = 0
-                showAllViews()
-                updateUIWithData(result)
-
-                RDBLogcat.writeGpsHistory(
-                    this,
-                    isSearched = false,
-                    gpsValue = metaAddr,
-                    responseData = "${getUserLastAddress(this)},${result}"
-                )
-
-                isDataResponse = true
-
-                // 메인 날씨 텍스트 세팅
-                val skyText = if (currentIsAfterRealtime(
-                        result.current.currentTime,
-                        result.realtime[0].forecast
-                    )
-                ) {
-                    translateSky(
-                        this, applySkyText(this,
-                            result.current.rainType,
-                            result.realtime[0].sky, result.thunder
-                        )
-                    )
-                } else {
-                    translateSky(
-                        this, applySkyText(this,
-                            result.realtime[0].rainType,
-                            result.realtime[0].sky, result.thunder
-                        )
-                    )
-                }
-//                 날씨에 따라 배경화면 변경
-//                val testSky = getString(R.string.sky_rainy)
-//                applyWindowBackground(testSky)
-//                binding.mainSkyText.text = testSky
-
-//                isNight = true
+            ioThread.launch {
+                reNewTopicInMain(metaAddr)
+//                                isNight = true
                 isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
 
-                applyWindowBackground(skyText)
-                binding.mainSkyText.text = skyText
+                withContext(mainDispatcher) {
+                    binding.mainGpsFix.clearAnimation()
+                    binding.mainDailyWeatherRv.scrollToPosition(0)
+                    binding.mainWarningVp.currentItem = 0
+                    showAllViews()
+                    updateUIWithData(result)
 
-                hideProgressBar()
+                    RDBLogcat.writeGpsHistory(
+                        this@MainActivity,
+                        isSearched = false,
+                        gpsValue = metaAddr,
+                        responseData = "${getUserLastAddress(this@MainActivity)},${result}"
+                    )
 
-                if (!isInAppMsgShow) {
-                    ioThread.launch { startInAppMsg() }
-                    isInAppMsgShow = true
+                    isDataResponse = true
+
+                    // 메인 날씨 텍스트 세팅
+                    val skyText = if (currentIsAfterRealtime(
+                            result.current.currentTime,
+                            result.realtime[0].forecast
+                        )
+                    ) {
+                        translateSky(
+                            this@MainActivity, applySkyText(this@MainActivity,
+                                result.current.rainType,
+                                result.realtime[0].sky, result.thunder
+                            )
+                        )
+                    } else {
+                        translateSky(
+                            this@MainActivity, applySkyText(this@MainActivity,
+                                result.realtime[0].rainType,
+                                result.realtime[0].sky, result.thunder
+                            )
+                        )
+                    }
+//                 날씨에 따라 배경화면 변경
+                    val testSky = getString(R.string.sky_cloudy)
+                    applyWindowBackground(testSky)
+                    binding.mainSkyText.text = testSky
+
+//                    applyWindowBackground(skyText)
+//                    binding.mainSkyText.text = skyText
+
+                    hideProgressBar()
+
+                    if (!isInAppMsgShow) {
+                        ioThread.launch { startInAppMsg() }
+                        isInAppMsgShow = true
+                    }
+
+                    val skyImgAnimation =
+                        AnimationUtils.loadAnimation(this@MainActivity, R.anim.main_sky_img_anim)
+                    binding.mainSkyImg.startAnimation(skyImgAnimation)
                 }
-
-                val skyImgAnimation = AnimationUtils.loadAnimation(this@MainActivity, R.anim.main_sky_img_anim)
-                binding.mainSkyImg.startAnimation(skyImgAnimation)
             }
         } catch (e: Exception) {
             handleApiError(e.localizedMessage ?: e.stackTraceToString())
@@ -1017,7 +1020,6 @@ class MainActivity
                 val date: String = when (it) {
                     0 -> getString(R.string.today_main)
                     1 -> getString(R.string.tomorrow_week)
-                    2 -> getString(R.string.daily_next_tomorrow)
                     else -> "${
                         parseDayOfWeekToKorean(this, dateNow.dayOfWeek.value + it)
                     }${getString(R.string.date)}"
@@ -1222,7 +1224,7 @@ class MainActivity
                 getString(R.string.sky_cloudy) -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy_night)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud_night)
-                    setAnimation(null)
+                    setAnimation(R.raw.ani_main_cloudy)
                 }
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
                 getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
@@ -1231,19 +1233,18 @@ class MainActivity
                  -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy_night)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud_night)
-
                     setAnimation(R.raw.ani_main_rain)
                 }
-                getString(R.string.sky_snowy), getString(R.string.sky_cloudy_snowy) -> {
+                getString(R.string.sky_snowy), getString(R.string.sky_sunny_cloudy_snowy) -> {
                     changeBackgroundResource(R.drawable.main_bg_night)
                     binding.mainBottomDecoImg.colorFilter = setBrightness(0.6f)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
                     setAnimation(R.raw.ani_main_snow)
                 }
-                getString(R.string.sky_sunny_cloudy_snowy) -> {
+                getString(R.string.sky_cloudy_snowy) -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy_night)
                     binding.mainBottomDecoImg.colorFilter = setBrightness(0.6f)
-                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud_night)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
                     setAnimation(R.raw.ani_main_snow)
                 }
                 else ->   {
@@ -1261,7 +1262,7 @@ class MainActivity
                 getString(R.string.sky_cloudy) -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud)
-                    setAnimation(null)
+                    setAnimation(R.raw.ani_main_cloudy)
                 }
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
                 getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
@@ -1273,12 +1274,12 @@ class MainActivity
                     setAnimation(R.raw.ani_main_rain)
                 }
                 getString(R.string.sky_snowy),
-                getString(R.string.sky_cloudy_snowy) -> {
+                getString(R.string.sky_sunny_cloudy_snowy) -> {
                     changeBackgroundResource(R.drawable.main_bg_snow)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
                     setAnimation(R.raw.ani_main_snow)
                 }
-                getString(R.string.sky_sunny_cloudy_snowy) -> {
+                getString(R.string.sky_cloudy_snowy) -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
                     setAnimation(R.raw.ani_main_snow)
@@ -1693,22 +1694,24 @@ class MainActivity
                 changeTintLineViews.forEach { it.setBackgroundColor(color) }
                 changeTintImageViews.forEach { it.imageTintList = ColorStateList.valueOf(color) }
                 delay(delayMillis)
+
+                launch {
+                    binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate().setTint(color)
+                    binding.subAirWind.getValue().compoundDrawableTintList = ColorStateList.valueOf(color)
+
+                    gridBoxView.forEach { it.fetchWhite(isWhite) }
+                    dailyWeatherAdapter.setIsWhite(isWhite)
+                    weeklyWeatherAdapter.setIsWhite(isWhite)
+                    uvResponseAdapter.setIsWhite(isWhite)
+                    uvResponseAdapter.notifyDataSetChanged()
+                    weeklyWeatherAdapter.notifyDataSetChanged()
+                    dailyWeatherAdapter.notifyDataSetChanged()
+                    dailyWeatherAdapter.submitList(dailyWeatherList)
+                    warningViewPagerAdapter.changeTextColor(color)
+                    reportViewPagerItem.addAll(warningList)
+                    warningViewPagerAdapter.notifyDataSetChanged()
+                }
             }
-
-            binding.mainTopBarGpsTitle.compoundDrawablesRelative[0].mutate().setTint(color)
-            binding.subAirWind.getValue().compoundDrawableTintList = ColorStateList.valueOf(color)
-
-            gridBoxView.forEach { it?.fetchWhite(isWhite) }
-            dailyWeatherAdapter.setIsWhite(isWhite)
-            weeklyWeatherAdapter.setIsWhite(isWhite)
-            uvResponseAdapter.setIsWhite(isWhite)
-            uvResponseAdapter.notifyDataSetChanged()
-            weeklyWeatherAdapter.notifyDataSetChanged()
-            dailyWeatherAdapter.notifyDataSetChanged()
-            dailyWeatherAdapter.submitList(dailyWeatherList)
-            warningViewPagerAdapter.changeTextColor(color)
-            reportViewPagerItem.addAll(warningList)
-            warningViewPagerAdapter.notifyDataSetChanged()
         }
 
         val savedProgressBlackBox = GetAppInfo.getWeatherBoxOpacity(this)
@@ -1728,8 +1731,7 @@ class MainActivity
             binding.mainMotionSLideImg.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
             binding.mainMotionSlideGuide.setTextColor(getC(R.color.white))
             @Suppress("DEPRECATION")
-            window.decorView.systemUiVisibility =
-                window.decorView.systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+            window.decorView.systemUiVisibility = window.decorView.systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
         }
 
         fun changeTextToBlack() {
