@@ -8,7 +8,7 @@ import android.widget.Toast;
 public class ToastUtils {
     private final Context mContext;
     private Toast toast;
-    private Handler mHandler;
+    private final Handler mHandler;
 
     /**
      * Constructor

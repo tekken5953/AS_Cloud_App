@@ -265,7 +265,7 @@ object DataTypeParser {
         )
 
         return colorMap[grade]?.let { ResourcesCompat.getColor(context.resources, it, null) }
-            ?:  ResourcesCompat.getColor(context.resources, R.color.progressError, null)
+            ?:  ResourcesCompat.getColor(context.resources, R.color.main_gray_color, null)
     }
 
     /** 등급에 따른 텍스트 변환 **/

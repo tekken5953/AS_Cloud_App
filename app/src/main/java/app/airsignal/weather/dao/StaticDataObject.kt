@@ -1,7 +1,6 @@
 package app.airsignal.weather.dao
 
 object StaticDataObject {
-    const val TAG_L = "TAG_LOGIN"                         // Logger 태그 키값
     const val LANG_KR = "korea"
     const val LANG_EN = "english"
     const val LANG_SYS = "system"

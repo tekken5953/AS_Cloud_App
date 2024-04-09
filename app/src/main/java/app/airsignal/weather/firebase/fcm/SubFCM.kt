@@ -34,15 +34,6 @@ class SubFCM: FirebaseMessagingService() {
             Sort.FCM_DAILY.key-> {
                 NotificationBuilder().sendNotification(applicationContext,message.data)
             }
-            Sort.FCM_EVENT.key -> {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val isLandingEnable =
-                        GetAppInfo.isLandingNotification(applicationContext)
-                    if (isLandingEnable) {
-                        NotificationBuilder().sendNotification(applicationContext,message.data)
-                    }
-                }
-            }
             Sort.FCM_EYE_NOISE.key,
             Sort.FCM_EYE_BRIGHT.key,
             Sort.FCM_EYE_GYRO.key -> {

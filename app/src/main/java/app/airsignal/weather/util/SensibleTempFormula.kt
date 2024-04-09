@@ -56,7 +56,5 @@ class SensibleTempFormula {
     }
 
     /** 현재 월수 출력 **/
-    private fun getCurrentSeason() : Int {
-        return LocalDateTime.now().monthValue
-    }
+    private fun getCurrentSeason() : Int { return LocalDateTime.now().monthValue }
 }

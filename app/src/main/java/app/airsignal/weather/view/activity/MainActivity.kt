@@ -92,7 +92,6 @@ import app.airsignal.weather.view.custom_view.TestAirQView
 import app.airsignal.weather.view.dialog.*
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetWeatherViewModel
-import com.google.android.gms.ads.AdView
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -185,11 +184,6 @@ class MainActivity
     private fun destroyObserver() {
         getDataViewModel.cancelJob()
         fetch.removeObservers(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-//        binding.nestedAdView.pause()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -461,8 +455,6 @@ class MainActivity
     }
 
     private fun applyRefreshScroll() {
-        // MotionLayout 상태 변경 리스너를 설정합니다.
-        // 스와이프 리프래시 레이아웃의 상태를 모션레이아웃의 스와이프 상태에 맞춰서 변경합니다.
         binding.mainMotionLayout.setTransitionListener(object : MotionLayout.TransitionListener {
             override fun onTransitionStarted(motionLayout: MotionLayout, startId: Int, endId: Int) {}
 
@@ -487,7 +479,6 @@ class MainActivity
             val setting = sideMenuView.findViewById<TextView>(R.id.navMenuSetting)
             val warning = sideMenuView.findViewById<TextView>(R.id.navMenuWarning)
             val headerTr = sideMenuView.findViewById<TableRow>(R.id.headerTr)
-            val adView = sideMenuView.findViewById<AdView>(R.id.navMenuAdview)
             val eye = sideMenuView.findViewById<TextView>(R.id.navMenuEye)
 
             sideMenuBuilder.apply {
@@ -647,7 +638,7 @@ class MainActivity
             }
         } else {
             if (binding.mainLoadingView.alpha == SHOWING_LOADING_FLOAT) {
-                binding.mainLoadingView.visibility = View.GONE
+                binding.mainLoadingView.visibility = GONE
                 binding.mainLoadingView.alpha = NOT_SHOWING_LOADING_FLOAT
                 binding.mainMotionLayout.isInteractionEnabled = true
                 binding.mainMotionLayout.isEnabled = true
@@ -857,12 +848,12 @@ class MainActivity
                         )
                     }
 //                 날씨에 따라 배경화면 변경
-                    val testSky = getString(R.string.sky_cloudy)
-                    applyWindowBackground(testSky)
-                    binding.mainSkyText.text = testSky
+//                    val testSky = getString(R.string.sky_cloudy)
+//                    applyWindowBackground(testSky)
+//                    binding.mainSkyText.text = testSky
 
-//                    applyWindowBackground(skyText)
-//                    binding.mainSkyText.text = skyText
+                    applyWindowBackground(skyText)
+                    binding.mainSkyText.text = skyText
 
                     hideProgressBar()
 
@@ -1028,8 +1019,8 @@ class MainActivity
                 addWeeklyWeatherItem(
                     date,
                     dateAppendZero(formedDate),
-                    getSkyImgSmall(this, wfMin[it], isNight = false)!!,
-                    getSkyImgSmall(this, wfMax[it], isNight = true)!!,
+                    getSkyImgSmall(this, wfMin[it], false)!!,
+                    getSkyImgSmall(this, wfMax[it], true)!!,
                     "${(taMin[it] ?: 0.0).roundToInt()}˚",
                     "${(taMax[it] ?: 0.0).roundToInt()}˚"
                 )
@@ -1202,7 +1193,7 @@ class MainActivity
     private fun updateTerm24(terms24: String?) {
         // 24절기 세팅
         terms24?.let { term ->
-            val bundle = Term24Class().getTerms24Bundle(term)
+            val bundle = Term24Class.getTerms24Bundle(term)
             bundle?.let { b ->
                 binding.nestedTerms24Box.visibility = VISIBLE
                 binding.mainTermsTitle.text = b.getString("title")
@@ -1229,8 +1220,7 @@ class MainActivity
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
                 getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
                 getString(R.string.sky_cloudy_rainy), getString(R.string.sky_sunny_cloudy_rainy),
-                getString(R.string.sky_cloudy_shower), getString(R.string.sky_shower), getString(R.string.sky_rainy),
-                 -> {
+                getString(R.string.sky_cloudy_shower), getString(R.string.sky_shower), getString(R.string.sky_rainy), -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy_night)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud_night)
                     setAnimation(R.raw.ani_main_rain)
@@ -1247,7 +1237,7 @@ class MainActivity
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
                     setAnimation(R.raw.ani_main_snow)
                 }
-                else ->   {
+                else -> {
                     changeBackgroundResource(R.drawable.main_bg_night)
                     setAnimation(null)
                 }
@@ -1267,14 +1257,12 @@ class MainActivity
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
                 getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
                 getString(R.string.sky_cloudy_rainy), getString(R.string.sky_sunny_cloudy_rainy),
-                getString(R.string.sky_cloudy_shower), getString(R.string.sky_shower), getString(R.string.sky_rainy),
-                 -> {
+                getString(R.string.sky_cloudy_shower), getString(R.string.sky_shower), getString(R.string.sky_rainy), -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud)
                     setAnimation(R.raw.ani_main_rain)
                 }
-                getString(R.string.sky_snowy),
-                getString(R.string.sky_sunny_cloudy_snowy) -> {
+                getString(R.string.sky_snowy), getString(R.string.sky_sunny_cloudy_snowy) -> {
                     changeBackgroundResource(R.drawable.main_bg_snow)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
                     setAnimation(R.raw.ani_main_snow)
@@ -1295,9 +1283,8 @@ class MainActivity
     }
 
     private fun setBrightness(level: Float): ColorFilter {
-        val brightnessValue = level
         val colorMatrix = ColorMatrix().apply {
-            setScale(brightnessValue, brightnessValue, brightnessValue, 1f)
+            setScale(level, level, level, 1f)
         }
 
         return ColorMatrixColorFilter(colorMatrix)
@@ -1365,7 +1352,7 @@ class MainActivity
             tv.visibility = if (comparisonText.isNotEmpty()) View.VISIBLE else GONE
             tv.text = comparisonText
         } ?: run {
-            tv.visibility = View.GONE
+            tv.visibility = GONE
             tv.text = ""
         }
     }

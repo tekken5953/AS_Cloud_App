@@ -23,11 +23,8 @@ class SunProgress(private val seekArc: SeekArc) {
                 this.startAngle = if (isNight) 180 else 90
                 this.arcRotation = if (isNight) 90 else 180
                 this.progressColor = Color.parseColor(if (isNight) "#7E5DFF" else "#FF8A48")
-                val animatorSun =
-                    ObjectAnimator.ofInt(
-                        seekArc, "progress",
-                        if (isNight) currentSun - 100 else currentSun
-                    )
+                val animatorSun = ObjectAnimator.ofInt(seekArc, "progress",
+                    if (isNight) currentSun - 100 else currentSun)
                 animatorSun.duration = 800
                 animatorSun.start()
             }
@@ -35,7 +32,5 @@ class SunProgress(private val seekArc: SeekArc) {
     }
 
     /** 일출/일몰 그래프 터치 막기 **/
-    fun disableTouch() {
-        seekArc.setOnTouchListener { _, _ -> true } // 자외선 그래프 클릭 방지
-    }
+    fun disableTouch() { seekArc.setOnTouchListener { _, _ -> true } }
 }

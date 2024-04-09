@@ -8,7 +8,6 @@ import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG
 import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG_TIME
 import app.airsignal.weather.db.sp.SpDao.IS_INIT_BACK_LOC_PERMISSION
 import app.airsignal.weather.db.sp.SpDao.IS_PERMED_BACK_LOG
-import app.airsignal.weather.db.sp.SpDao.LANDING_NOTIFICATION
 import app.airsignal.weather.db.sp.SpDao.LAST_REFRESH22
 import app.airsignal.weather.db.sp.SpDao.LAST_REFRESH42
 import app.airsignal.weather.db.sp.SpDao.NOTIFICATION_ADDRESS
@@ -113,10 +112,6 @@ object SetAppInfo {
 
     fun setLastRefreshTime22(context: Context, time: Long) {
         SharedPreferenceManager(context).setLong(LAST_REFRESH22,time)
-    }
-
-    fun setLandingNotification(context: Context, b: Boolean) {
-        SharedPreferenceManager(context).setBoolean(LANDING_NOTIFICATION,b)
     }
 
     fun setInAppMsgDenied(context: Context, enabled: Boolean) {

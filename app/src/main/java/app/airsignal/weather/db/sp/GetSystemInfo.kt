@@ -14,8 +14,8 @@ import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
 import app.airsignal.weather.db.sp.SpDao.LANG_EN
 import app.airsignal.weather.db.sp.SpDao.LANG_KR
 import com.kakao.sdk.common.util.Utility
-import timber.log.Timber
 import java.util.*
+
 /**
  * @author : Lee Jae Young
  * @since : 2023-06-12 오후 2:08

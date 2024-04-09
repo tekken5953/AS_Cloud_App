@@ -6,7 +6,6 @@ import app.airsignal.weather.db.sp.SpDao.INITIALIZED_LOC_PERMISSION
 import app.airsignal.weather.db.sp.SpDao.INITIALIZED_NOTI_PERMISSION
 import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG_TIME
 import app.airsignal.weather.db.sp.SpDao.IS_PERMED_BACK_LOG
-import app.airsignal.weather.db.sp.SpDao.LANDING_NOTIFICATION
 import app.airsignal.weather.db.sp.SpDao.LAST_REFRESH22
 import app.airsignal.weather.db.sp.SpDao.LAST_REFRESH42
 import app.airsignal.weather.db.sp.SpDao.NOTIFICATION_ADDRESS
@@ -77,7 +76,7 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getString(NOTIFICATION_TOPIC_DAILY)
     }
 
-    fun getEntireSun(sunRise: String, sunSet: String): Int {
+    private fun getEntireSun(sunRise: String, sunSet: String): Int {
         val sunsetTime = parseTimeToMinutes(sunSet)
         val sunriseTime = parseTimeToMinutes(sunRise)
         return sunsetTime - sunriseTime
@@ -95,12 +94,12 @@ object GetAppInfo {
     }
 
     /** 데이터 포멧에 맞춰서 시간변환 **/
-    fun millsToString(mills: Long, pattern: String): String {
+    private fun millsToString(mills: Long, pattern: String): String {
         return SimpleDateFormat(pattern, Locale.getDefault()).format(Date(mills))
     }
     
     /** HH:mm 포맷의 시간을 분으로 변환 **/
-    fun parseTimeToMinutes(time: String): Int {
+    private fun parseTimeToMinutes(time: String): Int {
         return try {
             val timeSplit = time.replace(" ","")
             val hour = timeSplit.substring(0, 2).toInt()
@@ -146,10 +145,6 @@ object GetAppInfo {
 
     fun getLastRefreshTime22(context: Context): Long {
         return SharedPreferenceManager(context).getLong(LAST_REFRESH22)
-    }
-
-    fun isLandingNotification(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(LANDING_NOTIFICATION, false)
     }
 
     fun getInAppMsgEnabled(context: Context): Boolean {

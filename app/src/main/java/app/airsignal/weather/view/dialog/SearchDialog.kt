@@ -17,7 +17,6 @@ import android.view.*
 import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.os.HandlerCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
@@ -37,7 +36,6 @@ import app.airsignal.weather.db.sp.SpDao.CURRENT_GPS_ID
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
 import app.airsignal.weather.util.KeyboardController
-import app.airsignal.weather.util.OnAdapterItemClick
 import app.airsignal.weather.util.`object`.DataTypeParser.convertAddress
 import app.airsignal.weather.view.activity.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -45,6 +43,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author : Lee Jae Young
@@ -65,11 +64,10 @@ class SearchDialog(
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        return if (layoutId == 0) {
+        return if (layoutId == 0)
             inflater.inflate(R.layout.dialog_address_change, container, false)
-        } else {
-            inflater.inflate(R.layout.dialog_address_search, container, false)
-        }
+        else inflater.inflate(R.layout.dialog_address_search, container, false)
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -77,15 +75,9 @@ class SearchDialog(
         super.onViewCreated(view, savedInstanceState)
         // 텍스트 폰트 크기 적용
         when (getUserFontScale(activity)) {
-            TEXT_SCALE_SMALL -> {
-                SetSystemInfo.setTextSizeSmall(activity)
-            }
-            TEXT_SCALE_BIG -> {
-                SetSystemInfo.setTextSizeLarge(activity)
-            }
-            else -> {
-                SetSystemInfo.setTextSizeDefault(activity)
-            }
+            TEXT_SCALE_SMALL -> { SetSystemInfo.setTextSizeSmall(activity) }
+            TEXT_SCALE_BIG -> { SetSystemInfo.setTextSizeLarge(activity) }
+            else -> { SetSystemInfo.setTextSizeDefault(activity) }
         }
 
         if (layoutId == 0) {  // 등록된 주소 다이얼로그
@@ -103,11 +95,10 @@ class SearchDialog(
             // 삭제 버튼 클릭
             val deleteList: TextView = view.findViewById(R.id.changeAddressEdit)
             deleteList.setOnClickListener {
-                if (!currentAdapter.getCheckBoxVisible()) {
+                if (!currentAdapter.getCheckBoxVisible())
                     currentAdapter.updateCheckBoxVisible(true)
-                } else {
-                    currentAdapter.updateCheckBoxVisible(false)
-                }
+                else currentAdapter.updateCheckBoxVisible(false)
+
             }
 
             // 현재 주소 클릭 시 현재 주소로 데이터 호출
@@ -177,9 +168,9 @@ class SearchDialog(
             val searchBack: ImageView = view.findViewById(R.id.searchBack)
             val noResult: TextView = view.findViewById(R.id.searchAddressNoResult)
             searchBack.setOnClickListener {
-                this@SearchDialog.dismiss()
-                show(0)
+                CompletableFuture.supplyAsync { this@SearchDialog.dismiss() }.thenAccept { show(0) }
             }
+
             val listView: ListView = view.findViewById(R.id.searchAddressListView)
 
             searchEditListener(listView, searchView, noResult)
@@ -189,7 +180,7 @@ class SearchDialog(
     }
 
     // 검색창 리스너
-    @SuppressLint("ClickableViewAccessibility", "InflateParams")
+    @SuppressLint("ClickableViewAccessibility")
     private fun searchEditListener(listView: ListView, editText: EditText, noResult: TextView) {
         @SuppressLint("InflateParams")
         val searchItem = ArrayList<String>()
@@ -207,10 +198,7 @@ class SearchDialog(
                     editText.text.clear()
                     return@setOnTouchListener true
                 }
-
-            } catch (e: java.lang.NullPointerException) {
-                e.printStackTrace()
-            }
+            } catch (e: java.lang.NullPointerException) { e.printStackTrace() }
 
             false
         }
@@ -378,13 +366,10 @@ class SearchDialog(
     }
 
     // 바텀 다이얼로그 비율설정
-    private fun getBottomSheetDialogDefaultHeight(per: Int): Int {
-        return getWindowHeight() * per / 100
-    }
+    private fun getBottomSheetDialogDefaultHeight(per: Int): Int { return getWindowHeight() * per / 100 }
 
     // 디바이스 높이 구하기
     private fun getWindowHeight(): Int {
-        // Calculate window height for fullscreen use
         val displayMetrics = DisplayMetrics()
         @Suppress("DEPRECATION")
         (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)

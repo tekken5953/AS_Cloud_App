@@ -38,12 +38,6 @@ class UVResponseAdapter(private val context: Context, list: ArrayList<AdapterMod
 
         holder.text.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                val lineCount = holder.text.lineCount
-                val layoutParams = holder.dot.layoutParams as RelativeLayout.LayoutParams
-                layoutParams.height = convertPixelsToDp(18 * lineCount)
-                layoutParams.addRule(Gravity.CENTER_VERTICAL)
-                holder.dot.layoutParams = layoutParams
-
                 holder.text.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         })
@@ -53,7 +47,7 @@ class UVResponseAdapter(private val context: Context, list: ArrayList<AdapterMod
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val text: TextView = itemView.findViewById(R.id.listItemUvResponseText)
-        val dot: View = itemView.findViewById(R.id.listItemUvResponseDot)
+        private val dot: View = itemView.findViewById(R.id.listItemUvResponseDot)
 
         fun bind(dao: AdapterModel.UVResponseItem) {
             text.text = dao.text
@@ -61,10 +55,5 @@ class UVResponseAdapter(private val context: Context, list: ArrayList<AdapterMod
             text.setTextColor(if(isWhite)context.getColor(R.color.white) else context.getColor(R.color.main_black))
             dot.setBackgroundColor(if(isWhite)context.getColor(R.color.white) else context.getColor(R.color.main_black))
         }
-    }
-
-    private fun convertPixelsToDp(px: Int): Int {
-        val scale = context.resources.displayMetrics.density
-        return (px * scale).toInt()
     }
 }

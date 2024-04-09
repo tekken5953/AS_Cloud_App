@@ -54,7 +54,6 @@ object RDBLogcat {
     private const val ERROR_ANR = "ANR 에러"
     const val LOGIN_FAILED = "로그인 시도 실패"
     const val DATA_CALL_ERROR = "데이터 호출 실패"
-    private const val WORK_MANAGER = "워크 매니저"
 
     /** 안드로이드 ID(Unique) 반환 **/
     @SuppressLint("HardwareIds")
