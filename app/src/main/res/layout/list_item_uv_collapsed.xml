@@ -23,6 +23,7 @@
         android:layout_centerVertical="true"
         android:gravity="start|center_vertical"
         android:textSize="12sp"
+        android:text="123123123123123"
         android:lineSpacingExtra="6sp"
         android:textColor="@color/theme_text_color"
         android:layout_marginStart="8dp"

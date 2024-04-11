@@ -23,7 +23,9 @@ object AdapterModel {
         val minImg: Drawable?,
         val maxImg: Drawable?,
         val minText: String,
-        val maxText: String
+        val maxText: String,
+        val minRain: Int,
+        val maxRain: Int
     )
 
     // 자외선 단계별 대응요령

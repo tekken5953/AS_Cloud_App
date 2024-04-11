@@ -10,6 +10,7 @@ import android.graphics.drawable.GradientDrawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.*
+import android.provider.ContactsContract.Data
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -944,6 +945,15 @@ class MainActivity
             week.taMax0, week.taMax1, week.taMax2, week.taMax3, week.taMax4,
             week.taMax5, week.taMax6, week.taMax7
         )
+        // 오전 강수확률
+        val amRain = listOf(
+            week.rnSt0Am, week.rnSt1Am, week.rnSt2Am, week.rnSt3Am,
+            week.rnSt4Am, week.rnSt5Am, week.rnSt6Am
+        )
+        val pmRain = listOf(
+            week.rnSt0Pm, week.rnSt1Pm, week.rnSt2Pm, week.rnSt3Pm,
+            week.rnSt4Pm, week.rnSt5Pm, week.rnSt6Pm
+        )
 
         // 최저/최대 기온 적용
         result.today?.let { mToday ->
@@ -1022,7 +1032,9 @@ class MainActivity
                     getSkyImgSmall(this, wfMin[it], false)!!,
                     getSkyImgSmall(this, wfMax[it], true)!!,
                     "${(taMin[it] ?: 0.0).roundToInt()}˚",
-                    "${(taMax[it] ?: 0.0).roundToInt()}˚"
+                    "${(taMax[it] ?: 0.0).roundToInt()}˚",
+                    amRain[it]?.toInt() ?: 0,
+                    pmRain[it]?.toInt() ?: 0
                 )
             } catch (e: Exception) {
                 RDBLogcat.writeErrorANR(
@@ -1037,6 +1049,8 @@ class MainActivity
     private fun updateAirQualityData(air: ApiModel.AirQualityData) {
         val pm25 = (air.pm25Value ?: air.pm25Value24 ?: 0.0)
         val pm10 = (air.pm10Value ?: air.pm10Value24 ?: 0.0)
+        val pm25Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade("PM2.5", pm25.toDouble()))
+        val pm10Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade("PM10", pm10.toDouble()))
 
         binding.mainAirPm10.setOnClickListener(binding.nestedAirHelpPopup)
             .fetchData(TestAirQView.AirQ.PM10, pm10.toInt())
@@ -1051,14 +1065,12 @@ class MainActivity
         binding.mainAirO3.setOnClickListener(binding.nestedAirHelpPopup)
             .fetchData(TestAirQView.AirQ.O3, air.o3Value ?: 0.0)
 
-        binding.subAirPM25.text = "${getString(R.string.pm2_5_full)}   ${pm25.toInt()}"
-        binding.subAirPM10.text = "${getString(R.string.pm10_full)}   ${(pm10.toInt())}"
+        binding.subAirPM25.text = "${getString(R.string.pm2_5_full)}   $pm25Grade"
+        binding.subAirPM10.text = "${getString(R.string.pm10_full)}   $pm10Grade"
         changeStrokeColor(binding.subAirPM25, DataTypeParser.getDataColor(this,
-            DataTypeParser.convertValueToGrade("PM2.5", pm25.toDouble()))
-        )
+            DataTypeParser.convertValueToGrade("PM2.5", pm25.toDouble())))
         changeStrokeColor(binding.subAirPM10, DataTypeParser.getDataColor(this,
-            DataTypeParser.convertValueToGrade("PM10", pm10))
-        )
+            DataTypeParser.convertValueToGrade("PM10", pm10.toDouble())))
     }
 
     private fun updateUVData(uv: ApiModel.UV?) {
@@ -1215,7 +1227,7 @@ class MainActivity
                 getString(R.string.sky_cloudy) -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy_night)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud_night)
-                    setAnimation(R.raw.ani_main_cloudy)
+                    setAnimation(null)
                 }
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
                 getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
@@ -1252,7 +1264,7 @@ class MainActivity
                 getString(R.string.sky_cloudy) -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud)
-                    setAnimation(R.raw.ani_main_cloudy)
+                    setAnimation(null)
                 }
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
                 getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
@@ -1331,9 +1343,9 @@ class MainActivity
     // 시간별 날씨 리사이클러뷰 아이템 추가
     private fun addWeeklyWeatherItem(
         day: String, date: String, minImg: Drawable,
-        maxImg: Drawable, minText: String, maxText: String,
+        maxImg: Drawable, minText: String, maxText: String,minRain: Int, maxRain: Int
     ) {
-        val item = AdapterModel.WeeklyWeatherItem(day, date, minImg, maxImg, minText, maxText)
+        val item = AdapterModel.WeeklyWeatherItem(day, date, minImg, maxImg, minText, maxText,minRain,maxRain)
 
         this.weeklyWeatherList.add(item)
     }

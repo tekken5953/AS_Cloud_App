@@ -417,6 +417,7 @@
                         android:paddingTop="6dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="6dp"
+                        android:textSize="16sp"
                         android:textColor="@android:color/transparent" />
 
                     <TextView
@@ -428,6 +429,7 @@
                         android:paddingTop="6dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="6dp"
+                        android:textSize="16sp"
                         android:textColor="@android:color/transparent" />
                 </TableRow>
 

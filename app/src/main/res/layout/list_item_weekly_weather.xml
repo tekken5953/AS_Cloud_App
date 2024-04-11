@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:background="@android:color/transparent"
@@ -31,12 +32,24 @@
             android:textSize="12sp" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/weeklyMinRain"
+        style="@style/basicTextView"
+        android:textColor="@color/eye_noise_header"
+        android:textSize="12sp"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="4dp"
+        app:drawableStartCompat="@drawable/test_rain"
+        android:layout_toStartOf="@+id/imgContainer"/>
+
     <LinearLayout
+        android:id="@+id/imgContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="horizontal"
         android:gravity="center">
+
         <ImageView
             android:id="@+id/weeklyMinIv"
             android:contentDescription="@string/cd_img_sky"
@@ -49,7 +62,18 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="8dp"/>
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/weeklyMaxRain"
+        style="@style/basicTextView"
+        android:textSize="12sp"
+        android:textColor="@color/eye_noise_header"
+        android:layout_toEndOf="@+id/imgContainer"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="4dp"
+        app:drawableStartCompat="@drawable/test_rain" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -85,13 +109,4 @@
             android:textSize="16sp"
             android:layout_marginStart="1dp"/>
     </LinearLayout>
-
-<!--    <View-->
-<!--        android:id="@+id/weeklyBottomLine"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="1dp"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:background="@color/theme_line_color"-->
-<!--        android:layout_marginStart="24dp"-->
-<!--        android:layout_marginEnd="24dp"/>-->
 </RelativeLayout>

@@ -60,6 +60,8 @@ class WeeklyWeatherAdapter(
         private val minText: TextView = itemView.findViewById(R.id.weeklyMinText)
         private val maxText: TextView = itemView.findViewById(R.id.weeklyMaxText)
         private val section: TextView = itemView.findViewById(R.id.weeklyMinMaxSection)
+        private val minRain: TextView = itemView.findViewById(R.id.weeklyMinRain)
+        private val maxRain: TextView = itemView.findViewById(R.id.weeklyMaxRain)
 
         fun bind(dao: AdapterModel.WeeklyWeatherItem) {
             day.text = dao.day
@@ -71,6 +73,12 @@ class WeeklyWeatherAdapter(
 
             val applyColor = context.getColor(if(isWhite)R.color.white else R.color.main_black)
             val applySubColor = context.getColor(if(isWhite)R.color.sub_white else R.color.sub_black)
+
+            minRain.text = "${dao.minRain}%"
+            maxRain.text = "${dao.maxRain}%"
+
+//            if (dao.minRain >= 60) minRain.visibility = View.VISIBLE else View.GONE
+//            if (dao.maxRain >= 60) maxRain.visibility = View.VISIBLE else View.GONE
 
             day.setTextColor(applyColor)
             date.setTextColor(applySubColor)
