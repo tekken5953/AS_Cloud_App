@@ -20,7 +20,6 @@
             android:lines="1"
             android:textSize="14sp"
             android:letterSpacing="-0.04"
-            android:fontFamily="@font/spoqa_hansansneo_medium"
             android:textColor="@color/theme_text_color" />
 
         <TextView
@@ -35,7 +34,7 @@
     <TextView
         android:id="@+id/weeklyMinRain"
         style="@style/basicTextView"
-        android:textColor="@color/eye_noise_header"
+        android:textColor="@color/sub_black"
         android:textSize="12sp"
         android:layout_centerVertical="true"
         android:layout_marginEnd="4dp"
@@ -62,14 +61,13 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="8dp"/>
-
     </LinearLayout>
 
     <TextView
         android:id="@+id/weeklyMaxRain"
         style="@style/basicTextView"
         android:textSize="12sp"
-        android:textColor="@color/eye_noise_header"
+        android:textColor="@color/sub_black"
         android:layout_toEndOf="@+id/imgContainer"
         android:layout_centerVertical="true"
         android:layout_marginStart="4dp"

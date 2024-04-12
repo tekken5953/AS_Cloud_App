@@ -20,10 +20,6 @@ class NoticeAdapter(private val context: Context, list: ArrayList<ApiModel.Notic
 
     private lateinit var onClickListener: OnAdapterItemSingleClick
 
-    interface OnItemClickListener {
-        fun onItemClick(v: View, position: Int)
-    }
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int

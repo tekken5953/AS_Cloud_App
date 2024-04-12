@@ -59,11 +59,8 @@ class AddInGroupDeviceAdapter(
             alias.text = dao.device.alias
             serial.text = dao.device.serial
 
-            if (dao.device.isMaster) {
-                master.visibility = View.VISIBLE
-            } else {
-                master.visibility = View.GONE
-            }
+            if (dao.device.isMaster) { master.visibility = View.VISIBLE }
+            else { master.visibility = View.GONE }
 
             itemView.setOnClickListener {
                 val position = bindingAdapterPosition
@@ -81,11 +78,7 @@ class AddInGroupDeviceAdapter(
         notifyDataSetChanged()
     }
 
-    fun getChecked(p: Int): Boolean {
-        return mList[p].isChecked
-    }
+    fun getChecked(p: Int): Boolean { return mList[p].isChecked }
 
-    fun getCheckedCount(): Int {
-        return mList.count{it.isChecked}
-    }
+    fun getCheckedCount(): Int { return mList.count{it.isChecked} }
 }

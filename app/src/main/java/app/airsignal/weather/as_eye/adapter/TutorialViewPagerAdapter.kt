@@ -49,9 +49,7 @@ class TutorialViewPagerAdapter(
 
     fun pausePreviousLottie(position: Int) {
         for ((index, lottieView) in lottieViews.withIndex()) {
-            if (index != position) {
-                lottieView.pauseAnimation()
-            }
+            if (index != position) lottieView.pauseAnimation()
         }
     }
 

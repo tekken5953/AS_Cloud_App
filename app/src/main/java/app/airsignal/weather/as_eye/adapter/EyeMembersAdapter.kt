@@ -58,9 +58,7 @@ class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataMod
             id.text = dao.id
 
             delete.visibility = if (dao.isMaster) View.GONE else View.VISIBLE
-
             changeMaster.visibility = if(dao.isMaster) View.GONE else View.VISIBLE
-
             isMaster.text = if (dao.isMaster) "소유자" else "게스트"
             isMaster.setTextColor(context.getColor(if(dao.isMaster) R.color.main_blue_color else R.color.eye_graph_gray))
 
@@ -77,9 +75,7 @@ class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataMod
                     dialog.dismiss()
                     ToastUtils(context).showMessage("삭제가 완료되었습니다")
                 }
-                make.second.setOnClickListener {
-                    dialog.dismiss()
-                }
+                make.second.setOnClickListener { dialog.dismiss() }
             }
 
             changeMaster.setOnClickListener {
@@ -118,7 +114,6 @@ class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataMod
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 contents.text = contentsSpan
 
-
                 applyBtn.setOnClickListener(object : OnSingleClickListener() {
                     override fun onSingleClick(v: View?) {
                         ToastUtils(context).showMessage("소유자 변경이 완료되었습니다",3000)
@@ -127,6 +122,7 @@ class EyeMembersAdapter(private val context: Context, list: ArrayList<EyeDataMod
                             val intent = Intent(context, EyeListActivity::class.java)
                             context.startActivity(intent)
                             context.finish()
+                            @Suppress("DEPRECATION")
                             context.overridePendingTransition(R.anim.slide_top_to_bottom,R.anim.slide_bottom_to_top)
                         }
                     }

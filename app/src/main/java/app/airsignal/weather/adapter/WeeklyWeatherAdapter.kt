@@ -48,9 +48,7 @@ class WeeklyWeatherAdapter(
         holder.bind(mList[position])
     }
 
-    fun setIsWhite(b: Boolean) {
-        isWhite = b
-    }
+    fun setIsWhite(b: Boolean) { isWhite = b }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val day: TextView = itemView.findViewById(R.id.weeklyDayText)
@@ -76,6 +74,11 @@ class WeeklyWeatherAdapter(
 
             minRain.text = "${dao.minRain}%"
             maxRain.text = "${dao.maxRain}%"
+
+            maxRain.setTextColor(applyColor)
+            minRain.setTextColor(applyColor)
+            maxRain.compoundDrawablesRelative[0]?.mutate()?.setTint(applyColor)
+            minRain.compoundDrawablesRelative[0]?.mutate()?.setTint(applyColor)
 
 //            if (dao.minRain >= 60) minRain.visibility = View.VISIBLE else View.GONE
 //            if (dao.maxRain >= 60) maxRain.visibility = View.VISIBLE else View.GONE

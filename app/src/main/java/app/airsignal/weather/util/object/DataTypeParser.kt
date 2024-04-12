@@ -137,8 +137,7 @@ object DataTypeParser {
             "흐림" -> R.drawable.b_ico_cloudy
             "소나기", "비" -> R.drawable.b_ico_rainy
             "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.b_ico_snow
-            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
-                R.drawable.b_ico_cloudy_rainy
+            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> R.drawable.b_ico_cloudy_rainy
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
             else -> R.drawable.cancel
         }
@@ -158,8 +157,7 @@ object DataTypeParser {
                 "흐림" -> R.drawable.b_ico_cloudy
                 "소나기", "비" -> R.drawable.b_ico_rainy
                 "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.b_ico_snow
-                "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
-                    R.drawable.b_ico_cloudy_rainy
+                "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> R.drawable.b_ico_cloudy_rainy
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
                 else -> R.drawable.cancel
             }
@@ -178,10 +176,8 @@ object DataTypeParser {
         return if (rainType == "없음" || rainType == null) {
             when (sky) {
                 "맑음", "구름많음" -> {
-                    if (sort == "22")
-                        if (isNight) R.drawable.w_bg_night else R.drawable.w_bg_sunny
-                    else
-                        if (isNight) R.drawable.widget_bg4x2_night else R.drawable.widget_bg4x2_sunny
+                    if (sort == "22") if (isNight) R.drawable.w_bg_night else R.drawable.w_bg_sunny
+                    else if (isNight) R.drawable.widget_bg4x2_night else R.drawable.widget_bg4x2_sunny
                 }
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
                 "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
@@ -225,8 +221,7 @@ object DataTypeParser {
             "흐림" -> R.drawable.b_ico_cloudy
             "소나기", "비" -> R.drawable.b_ico_rainy
             "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.sm_snow
-            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
-                R.drawable.b_ico_cloudy_rainy
+            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> R.drawable.b_ico_cloudy_rainy
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
             else -> R.drawable.cancel
         }
@@ -250,9 +245,7 @@ object DataTypeParser {
         } else if (rain == "없음" && (thunder == null || thunder < 0.2)) {
             if (isLarge) getSkyImgLarge(context, sky, isNight ?: false, lunar)
             else getSkyImgSmall(context, sky, isNight ?: false)
-        } else {
-            getDrawable(context, R.drawable.b_ico_cloudy_th)
-        }
+        } else getDrawable(context, R.drawable.b_ico_cloudy_th)
     }
 
     /** 등급에 따른 색상 변환 **/
@@ -412,9 +405,7 @@ object DataTypeParser {
 
     /** 문자열에서 해당 문자의 인덱스 반환 **/
     fun findCharacterIndex(input: String, targetChar: Char): Int {
-        for (index in input.indices) {
-            if (input[index] == targetChar) return index
-        }
+        for (index in input.indices) { if (input[index] == targetChar) return index }
         return -1 // 문자가 없는 경우 -1을 반환
     }
 
