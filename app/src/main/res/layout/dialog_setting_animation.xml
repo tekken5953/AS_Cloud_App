@@ -22,7 +22,7 @@
             android:id="@+id/aniTitle"
             style="@style/basicMediumTextView"
             android:layout_centerInParent="true"
-            android:text="애니메이션 설정"
+            android:text="@string/setting_animation"
             android:textColor="@color/theme_text_color"
             android:textSize="16sp" />
     </RelativeLayout>
@@ -41,7 +41,7 @@
             style="@style/settingMultiTextView"
             android:layout_weight="0.95"
             android:textSize="16sp"
-            android:text="날씨 배경 애니메이션"
+            android:text="@string/setting_animation_weather"
             android:lineHeight="20.03dp"
             android:background="?selectableItemBackground" />
 

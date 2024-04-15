@@ -37,9 +37,7 @@ class UVResponseAdapter(private val context: Context, list: ArrayList<AdapterMod
         holder.bind(mList[position])
 
         holder.text.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                holder.text.viewTreeObserver.removeOnGlobalLayoutListener(this)
-            }
+            override fun onGlobalLayout() { holder.text.viewTreeObserver.removeOnGlobalLayoutListener(this) }
         })
     }
 

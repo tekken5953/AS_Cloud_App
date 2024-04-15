@@ -10,7 +10,6 @@ import android.graphics.drawable.GradientDrawable
 import android.location.Location
 import android.location.LocationManager
 import android.os.*
-import android.provider.ContactsContract.Data
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
@@ -89,7 +88,7 @@ import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.view.*
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
-import app.airsignal.weather.view.custom_view.TestAirQView
+import app.airsignal.weather.view.custom_view.ExternalAirView
 import app.airsignal.weather.view.dialog.*
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetWeatherViewModel
@@ -361,13 +360,13 @@ class MainActivity
                 val oneHour = (1000 * 60 * 60).toLong()
                 val sevenDays = (1000 * 60 * 60 * 24 * 7).toLong()
 
-                if (inAppExtraSize != 0) {
-                    if (!GetAppInfo.getInAppMsgEnabled(this@MainActivity)) {
-                        if (isTimeToDialog(oneHour)) runOnUiThread { inAppMsgDialog() }
-                    } else {
-                        if (isTimeToDialog(sevenDays)) runOnUiThread { inAppMsgDialog() }
-                    }
-                }
+                if (inAppExtraSize == 0) return
+
+                val hour = if (GetAppInfo.getInAppMsgEnabled(this@MainActivity)) sevenDays else oneHour
+
+                if (!isTimeToDialog(hour)) return
+
+                runOnUiThread { inAppMsgDialog() }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -681,6 +680,21 @@ class MainActivity
 
         binding.mainUvCollapseRv.isClickable = false
         binding.nestedSubAirFrame.isClickable = false
+
+        binding.mainSunRiseTitle.text = getString(R.string.sunrise)
+        binding.mainUvTitle.text = getString(R.string.uv_title)
+        binding.mainWeeklyWeatherTitle.text = getString(R.string.weekly_weather)
+        binding.dailySectionAfterTomorrow.text = getString(R.string.daily_next_tomorrow)
+        binding.dailySectionToday.text = getString(R.string.daily_today)
+        binding.dailySectionTomorrow.text = getString(R.string.daily_tomorrow)
+        binding.mainDailyWeatherTitle.text = getString(R.string.daily_weather)
+        binding.mainMinMaxTitleC.text = getString(R.string.min_max)
+        binding.mainSensTitleC.text = getString(R.string.sens_temp)
+        binding.mainLiveTempTitleC.text = getString(R.string.live_temp)
+        binding.mainLicenseText.text = getString(R.string.data_api_license)
+        binding.mainSunTomTitle.text = getString(R.string.tomorrow)
+        binding.mainSunSetTitle.text = getString(R.string.sunset)
+        binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
 
 //        // adView 닫기 클릭
 //        binding.adViewCancelIv.setOnClickListener {
@@ -1050,27 +1064,29 @@ class MainActivity
         val pm25 = (air.pm25Value ?: air.pm25Value24 ?: 0.0)
         val pm10 = (air.pm10Value ?: air.pm10Value24 ?: 0.0)
         val pm25Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade("PM2.5", pm25.toDouble()))
-        val pm10Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade("PM10", pm10.toDouble()))
+        val pm10Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade("PM10",
+            pm10
+        ))
 
         binding.mainAirPm10.setOnClickListener(binding.nestedAirHelpPopup)
-            .fetchData(TestAirQView.AirQ.PM10, pm10.toInt())
+            .fetchData(ExternalAirView.AirQ.PM10, pm10.toInt())
         binding.mainAirPm2p5.setOnClickListener(binding.nestedAirHelpPopup)
-            .fetchData(TestAirQView.AirQ.PM2_5, pm25.toInt())
+            .fetchData(ExternalAirView.AirQ.PM2_5, pm25.toInt())
         binding.mainAirCo.setOnClickListener(binding.nestedAirHelpPopup)
-            .fetchData(TestAirQView.AirQ.CO, air.coValue ?: 0.0)
+            .fetchData(ExternalAirView.AirQ.CO, air.coValue ?: 0.0)
         binding.mainAirNo2.setOnClickListener(binding.nestedAirHelpPopup)
-            .fetchData(TestAirQView.AirQ.NO2, air.no2Value ?: 0.0)
+            .fetchData(ExternalAirView.AirQ.NO2, air.no2Value ?: 0.0)
         binding.mainAirSo2.setOnClickListener(binding.nestedAirHelpPopup)
-            .fetchData(TestAirQView.AirQ.SO2, air.so2Value ?: 0.0)
+            .fetchData(ExternalAirView.AirQ.SO2, air.so2Value ?: 0.0)
         binding.mainAirO3.setOnClickListener(binding.nestedAirHelpPopup)
-            .fetchData(TestAirQView.AirQ.O3, air.o3Value ?: 0.0)
+            .fetchData(ExternalAirView.AirQ.O3, air.o3Value ?: 0.0)
 
         binding.subAirPM25.text = "${getString(R.string.pm2_5_full)}   $pm25Grade"
         binding.subAirPM10.text = "${getString(R.string.pm10_full)}   $pm10Grade"
         changeStrokeColor(binding.subAirPM25, DataTypeParser.getDataColor(this,
             DataTypeParser.convertValueToGrade("PM2.5", pm25.toDouble())))
         changeStrokeColor(binding.subAirPM10, DataTypeParser.getDataColor(this,
-            DataTypeParser.convertValueToGrade("PM10", pm10.toDouble())))
+            DataTypeParser.convertValueToGrade("PM10", pm10)))
     }
 
     private fun updateUVData(uv: ApiModel.UV?) {
@@ -1785,9 +1801,7 @@ class MainActivity
         val handler = Handler(Looper.getMainLooper())
         if (warningList.size > 1) {
             vp.currentItem = if (vp.currentItem + 1 < warningList.size) vp.currentItem + 1 else 0
-            handler.postDelayed({
-                warningSlideAuto()
-            }, 5000)
+            handler.postDelayed({ warningSlideAuto() }, 5000)
         }
     }
 
@@ -1798,10 +1812,23 @@ class MainActivity
 
     private fun checkLocationAvailability() {
         val locationClass = GetLocation(this)
-        if (!locationClass.isNetWorkConnected()) hideAllViews(ERROR_NETWORK)
-        else if (locationClass.isGPSConnected()) requestLocationWithGPS()
-        else if (locationClass.isNetworkProviderConnected()) requestLocationWithNetworkProvider()
-        else hideAllViews(ERROR_GPS_CONNECTED)
+
+        if (!locationClass.isNetWorkConnected())  {
+            hideAllViews(ERROR_NETWORK)
+            return
+        }
+
+        if (locationClass.isGPSConnected()) {
+            requestLocationWithGPS()
+            return
+        }
+
+        if (locationClass.isNetworkProviderConnected()) {
+            requestLocationWithNetworkProvider()
+            return
+        }
+
+        hideAllViews(ERROR_GPS_CONNECTED)
     }
 
     private fun requestLocationWithGPS() {

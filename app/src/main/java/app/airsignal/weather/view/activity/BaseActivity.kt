@@ -1,7 +1,6 @@
 package app.airsignal.weather.view.activity
 
 import android.content.Context
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.databinding.DataBindingUtil
@@ -14,8 +13,15 @@ import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
 import app.airsignal.weather.db.sp.GetAppInfo.getUserTheme
 import app.airsignal.weather.db.sp.SetSystemInfo
+import app.airsignal.weather.db.sp.SetSystemInfo.updateConfiguration
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
+import app.airsignal.weather.util.TimberUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.*
 
 abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
     protected lateinit var binding: VB
@@ -24,37 +30,40 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity() {
     protected fun initBinding() {
         binding = DataBindingUtil.setContentView(this@BaseActivity, resID)
         binding.lifecycleOwner = this@BaseActivity
+//        applyUserLanguage()
+//        applyUserFontScale()
+//        applyUserTheme()
     }
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase)
         val context = newBase ?: applicationContext
-        applyUserLanguage(context)
-        applyUserFontScale(context)
-        applyUserTheme(context)
+        applyUserLanguage()
+        applyUserFontScale()
+        applyUserTheme()
     }
 
     // 설정된 언어정보 불러오기
-    private fun applyUserLanguage(context: Context) {
-        when (getUserLocation(context)) {
-            LANG_KR -> { SetSystemInfo.setLocaleToKorea(context) }
-            LANG_EN -> { SetSystemInfo.setLocaleToEnglish(context) }
-            else -> { SetSystemInfo.setLocaleToSystem(context) }
+    private fun applyUserLanguage() {
+        when (getUserLocation(this@BaseActivity)) {
+            LANG_KR -> {  updateConfiguration(this@BaseActivity, Locale.KOREA) }
+            LANG_EN -> {  updateConfiguration(this@BaseActivity, Locale.ENGLISH) }
+            else -> {  updateConfiguration(this@BaseActivity, Locale.getDefault()) }
         }
     }
 
     // 설정된 폰트크기 불러오기
-    private fun applyUserFontScale(context: Context) {
-        when (getUserFontScale(context)) {
-            TEXT_SCALE_SMALL -> { SetSystemInfo.setTextSizeSmall(context) }
-            TEXT_SCALE_BIG -> { SetSystemInfo.setTextSizeLarge(context) }
-            else -> { SetSystemInfo.setTextSizeDefault(context) }
+    private fun applyUserFontScale() {
+        when (getUserFontScale(this@BaseActivity)) {
+            TEXT_SCALE_SMALL -> { SetSystemInfo.setTextSizeSmall(this@BaseActivity) }
+            TEXT_SCALE_BIG -> { SetSystemInfo.setTextSizeLarge(this@BaseActivity) }
+            else -> { SetSystemInfo.setTextSizeDefault(this@BaseActivity) }
         }
     }
 
     // 설정된 테마 정보 불러오기
-    private fun applyUserTheme(context: Context) {
-        when (getUserTheme(context)) {
+    private fun applyUserTheme() {
+        when (getUserTheme(this@BaseActivity)) {
             THEME_DARK -> { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) }
             THEME_LIGHT -> { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) }
             else -> { AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM) }

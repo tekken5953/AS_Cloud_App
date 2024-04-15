@@ -1,12 +1,17 @@
 package app.airsignal.weather.network.retrofit
 
+import android.app.Application
+import app.airsignal.weather.R
+import app.airsignal.weather.koin.BaseApplication
 import app.airsignal.weather.network.NetworkIgnored.hostingServerURL
+import app.airsignal.weather.util.ToastUtils
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.SocketTimeoutException
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -47,22 +52,28 @@ object HttpClient {
     private val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
         retryOnConnectionFailure(retryOnConnectionFailure = false)
         connectionPool(ConnectionPool())
-        connectTimeout(12, TimeUnit.SECONDS)
+        connectTimeout(8, TimeUnit.SECONDS)
         readTimeout(8, TimeUnit.SECONDS)
         writeTimeout(8, TimeUnit.SECONDS)
         addInterceptor { chain ->
-            val request = chain.request().newBuilder()
-                .addHeader("Connection", "close")
-                .addHeader("Platform", "android")
-                .build()
-            chain.proceed(request)
+            try {
+                val request = chain.request().newBuilder()
+                    .addHeader("Connection", "close")
+                    .addHeader("Platform", "android")
+                    .build()
+                chain.proceed(request)
+            } catch (e: SocketTimeoutException) {
+                val context = BaseApplication.appContext
+                ToastUtils(context).showMessage(context.getString(R.string.api_timeout_retry))
+                chain.proceed(chain.request())
+                throw e
+            }
         }.build()
     }
 
     private val gson =
         GsonBuilder().setLenient().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").setPrettyPrinting()
             .create()
-
 
     val retrofit: MyApiImpl =
         Retrofit.Builder()

@@ -15,8 +15,8 @@ class WidgetPermActivity : AppCompatActivity() {
         } else {
             val id = intent.extras?.getInt("id")
             when(intent.extras?.getString("sort")) {
-                "22" -> WidgetProvider().processUpdate(this, id!!)
-                "42" -> WidgetProvider42().processUpdate(this, id!!)
+                "22" -> WidgetProvider().processUpdate(this, id)
+                "42" -> WidgetProvider42().processUpdate(this, id)
             }
             finish()
         }

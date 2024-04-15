@@ -177,7 +177,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                 putExtra("model_name", groupDeviceList[position].sort)
                 putExtra(
                     "create_at", groupDeviceList[position].created_at?.format(
-                        DateTimeFormatter.ofPattern("YYYY-MM-dd HH:mm")
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
                     )
                 )
                 groupDeviceList[position].detail?.let { pDetail ->
@@ -336,9 +336,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
             } else {
                 checkedArray.clear()
                 groupList.forEachIndexed { index, data ->
-                    if (groupAdapter.getChecked(index)) {
-                        checkedArray.add(data.device)
-                    }
+                    if (groupAdapter.getChecked(index)) { checkedArray.add(data.device) }
                 }
                 addGroupIntoDB(EyeDataModel.Category(aliasEt.text.toString(), checkedArray.map {it.serial}.toMutableList()))
                 addCategoryItem(aliasEt.text.toString(), checkedArray.map {it.serial}.toMutableList())
@@ -381,8 +379,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         detail: EyeDataModel.DeviceDetail?
     ) {
         serial?.let {
-            val item =
-                EyeDataModel.Device(
+            val item = EyeDataModel.Device(
                     createdAt, isMaster, sort, sp.getString(SpDao.userEmail), alias, serial, detail)
 
             groupDeviceList.add(item)
@@ -490,9 +487,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                         recreate()
                     }
                 }
-            } else {
-                viewPager.currentItem = viewPagerList.lastIndex
-            }
+            } else viewPager.currentItem = viewPagerList.lastIndex
         }
 
         dialog.show(view,false, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)

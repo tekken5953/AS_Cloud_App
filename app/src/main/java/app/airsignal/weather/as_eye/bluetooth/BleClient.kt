@@ -54,9 +54,8 @@ class BleClient(private val activity: Activity) {
     }
 
     fun startScan(scanCallback: BleScanCallback) {
-        if (!instance.isSupportBle) {
-            makeToast(activity, "블루투스 기능을 확인해 주세요")
-        } else {
+        if (!instance.isSupportBle) makeToast(activity, "블루투스 기능을 확인해 주세요")
+        else {
             val perm = RequestPermissionsUtil(activity)
             if (perm.isGrantBle()) {
                 scanLeDevice(scanCallback)
@@ -73,9 +72,7 @@ class BleClient(private val activity: Activity) {
                 scanning = true
                 instance.scan(scanCallback)
             }
-        } else {
-            makeToast(activity, "BLE를 지원하지 않는 디바이스입니다")
-        }
+        } else makeToast(activity, "BLE를 지원하지 않는 디바이스입니다")
     }
 
     fun destroyBle() {
@@ -95,9 +92,7 @@ class BleClient(private val activity: Activity) {
         instance.connect(device, connectCallback)
     }
 
-    fun disconnect() {
-        device?.let { if (isConnected()) { instance.disconnect(device) } }
-    }
+    fun disconnect() { device?.let { if (isConnected()) { instance.disconnect(device) } } }
 
     fun postSsid(writeSsidCallback: BleWriteCallback) {
         val gatt = getGatt()
@@ -140,9 +135,7 @@ class BleClient(private val activity: Activity) {
                         parse == BleProtocolType.READ_AND_WRITE
                     ) {
                         when (val uuid = char.uuid.toString()) {
-                            UUID_PWD.lowercase(
-                                Locale.getDefault()
-                            ) -> {
+                            UUID_PWD.lowercase(Locale.getDefault()) -> {
                                 instance.write(
                                     device,
                                     service.uuid.toString(),

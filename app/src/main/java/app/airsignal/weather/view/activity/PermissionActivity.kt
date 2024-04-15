@@ -40,7 +40,8 @@ class PermissionActivity :
     override fun onResume() {
         super.onResume()
         if (perm.isLocationPermitted()) {   // 위치 서비스 이용 가능?
-            @Suppress("DEPRECATION") val inAppExtraList = intent.getParcelableArrayExtra(IN_APP_MSG)?.map {it as ApiModel.InAppMsgItem?}?.toTypedArray()
+            @Suppress("DEPRECATION")
+            val inAppExtraList = intent.getParcelableArrayExtra(IN_APP_MSG)?.map {it as ApiModel.InAppMsgItem?}?.toTypedArray()
             if (!perm.isNotificationPermitted()) {  // 알림 서비스 이용 가능?
                 val initNotiPermission = getInitNotiPermission(this)
                 if (initNotiPermission == "") { // 알림 서비스 권한 호출이 처음?
@@ -94,13 +95,11 @@ class PermissionActivity :
         val spanUserData = SpannableStringBuilder(binding.permissionUserDataNotice.text.toString())
 
         spanUserData.setSpan(UnderlineSpan(),
-                userDataIndex,
-                userDataIndex + getString(R.string.data_usages).length,
+                userDataIndex, userDataIndex + getString(R.string.data_usages).length,
                 Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
 
         spanUserData.setSpan(ForegroundColorSpan(getColor(R.color.main_blue_color)),
-            userDataIndex,
-            userDataIndex + getString(R.string.data_usages).length,
+            userDataIndex, userDataIndex + getString(R.string.data_usages).length,
             Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
 
         binding.permissionUserDataNotice.text = spanUserData

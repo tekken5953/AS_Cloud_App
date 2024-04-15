@@ -30,17 +30,13 @@ class SideMenuBuilder(private val context: Context) {
 
     /** 다이얼로그 뒤로가기 버튼 리스너 등록 **/
     fun setBackPressed(imageView: View): SideMenuBuilder {
-        imageView.setOnClickListener {
-            dismiss()
-        }
+        imageView.setOnClickListener { dismiss() }
         return this
     }
 
     /** 다이얼로그 뷰 소멸 **/
     fun dismiss() {
-        if (alertDialog.isShowing) {
-            alertDialog.dismiss()
-        }
+        if (alertDialog.isShowing) alertDialog.dismiss()
     }
 
     /** 다이얼로그 뷰 갱신 **/

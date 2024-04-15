@@ -137,9 +137,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                 enterPage(inAppArray)   // 메인 페이지로 이동
                             } else { // 현재 버전이 최신 버전이 아닌 경우
                                 val array = ArrayList<String>()
-                                ver.data.test.forEach {
-                                    array.add("${it.name}.${it.code}")
-                                }
+                                ver.data.test.forEach { array.add("${it.name}.${it.code}") }
 
                                 // 테스트 버전에 현재 버전이 포함되는 경우
                                 if (array.contains(fullVersion)) {
@@ -162,10 +160,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                             ToastUtils(this@SplashActivity).showMessage(getString(R.string.patch_store_notice))
                                             enterPage(inAppArray)
                                         }
-                                    } else {
-                                        // 스킵이 설정되어 있는 경우 메인 이동
-                                        enterPage(inAppArray)
-                                    }
+                                    } else enterPage(inAppArray)  // 스킵이 설정되어 있는 경우 메인 이동
                                 } else {
                                     // 모든 허용 버전에 해당되지 않은 경우
                                     MakeSingleDialog(this)
@@ -193,18 +188,15 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
                                 ERROR_SERVER_CONNECTING -> { makeDialog(getString(R.string.error_server_down)) }
 
-                                else -> { makeDialog(getString(R.string.unknown_error)) }
+                                else -> makeDialog(getString(R.string.unknown_error))
                             }
                         }
-
                         // 통신 중
                         is BaseRepository.ApiState.Loading -> {}
                     }
                 }
             }
-        } catch (e: IOException) {
-            makeDialog(getString(R.string.fail_to_get_app_version))
-        }
+        } catch (e: IOException) { makeDialog(getString(R.string.fail_to_get_app_version)) }
     }
 
     // 다이얼로그 생성

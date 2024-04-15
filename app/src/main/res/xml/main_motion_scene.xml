@@ -60,51 +60,51 @@
                 app:motionTarget="@id/mainGpsFix" />
 
 
-            <KeyAttribute
-                android:alpha="1"
-                app:curveFit="linear"
-                app:framePosition="0"
-                app:motionTarget="@id/mainCompareTempTv" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainCompareTempTv" />
-            <KeyAttribute
-                android:alpha="1"
-                app:curveFit="linear"
-                app:framePosition="0"
-                app:motionTarget="@id/mainSensTitle" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainSensTitle" />
-            <KeyAttribute
-                android:alpha="1"
-                app:curveFit="linear"
-                app:framePosition="0"
-                app:motionTarget="@id/mainSensValue" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainSensValue" />
-            <KeyAttribute
-                android:alpha="1"
-                app:curveFit="linear"
-                app:framePosition="0"
-                app:motionTarget="@id/mainMinMaxTr" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainMinMaxTr" />
 
             <KeyAttribute
                 android:alpha="1"
                 app:curveFit="linear"
                 app:framePosition="0"
+                app:motionTarget="@id/mainCompareTempTv" />
+            <KeyAttribute
+                android:alpha="0"
+                app:curveFit="linear"
+                app:framePosition="60"
+                app:motionTarget="@id/mainCompareTempTv" />
+            <KeyAttribute
+                android:alpha="1"
+                app:curveFit="linear"
+                app:framePosition="0"
+                app:motionTarget="@id/mainSensTitle" />
+            <KeyAttribute
+                android:alpha="0"
+                app:curveFit="linear"
+                app:framePosition="60"
+                app:motionTarget="@id/mainSensTitle" />
+            <KeyAttribute
+                android:alpha="1"
+                app:curveFit="linear"
+                app:framePosition="0"
+                app:motionTarget="@id/mainSensValue" />
+            <KeyAttribute
+                android:alpha="0"
+                app:curveFit="linear"
+                app:framePosition="60"
+                app:motionTarget="@id/mainSensValue" />
+            <KeyAttribute
+                android:alpha="1"
+                app:curveFit="linear"
+                app:framePosition="0"
+                app:motionTarget="@id/mainMinMaxTr" />
+            <KeyAttribute
+                android:alpha="0"
+                app:curveFit="linear"
+                app:framePosition="60"
+                app:motionTarget="@id/mainMinMaxTr" />
+            <KeyAttribute
+                android:alpha="1"
+                app:curveFit="linear"
+                app:framePosition="0"
                 app:motionTarget="@id/mainLiveTempValue" />
             <KeyAttribute
                 android:alpha="0"
@@ -141,6 +141,7 @@
                 app:curveFit="linear"
                 app:framePosition="60"
                 app:motionTarget="@id/mainLiveTempUnit" />
+
 
 
             <KeyAttribute
@@ -402,6 +403,7 @@
 
 
 
+
     <ConstraintSet android:id="@+id/end">
         <Constraint
             android:id="@+id/mainTopBarGpsTitleScroll"
@@ -418,7 +420,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@+id/topBarLinear"/>
+            app:layout_constraintTop_toBottomOf="@+id/topBarLinear"
+            app:layout_constraintBottom_toTopOf="@+id/nested_scrollview"/>
         <Constraint
             android:id="@+id/mainGpsTitleTv"
             style="@style/basicTextView"
@@ -476,10 +479,11 @@
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
+            app:layout_constraintTop_toTopOf="@id/mainMotionLinear"
+            app:layout_constraintBottom_toBottomOf="@id/mainMotionLinear"/>
         <Constraint
             android:id="@+id/mainSkyText"
             android:alpha="0"

@@ -22,14 +22,14 @@
             android:id="@+id/opacityTitle"
             style="@style/basicMediumTextView"
             android:layout_centerInParent="true"
-            android:text="창 투명도 설정"
+            android:text="@string/setting_opacity"
             android:textColor="@color/theme_text_color"
             android:textSize="16sp" />
 
         <TextView
             android:id="@+id/opacityRollback"
             style="@style/basicMediumTextView"
-            android:text="초기화"
+            android:text="@string/reset"
             android:textColor="@color/main_blue_color"
             android:textSize="16sp"
             android:layout_alignParentEnd="true"
@@ -97,7 +97,7 @@
                 style="@style/basicMediumTextView"
                 android:layout_marginTop="45dp"
                 android:layout_marginBottom="45dp"
-                android:text="검은색 글씨 일 때"
+                android:text="@string/opacity_black"
                 android:textColor="@color/main_black"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -167,7 +167,7 @@
             <TextView
                 android:id="@+id/opacityPreviewText2"
                 style="@style/basicMediumTextView"
-                android:text="하얀색 글씨 일 때"
+                android:text="@string/opacity_white"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:layout_marginTop="45dp"

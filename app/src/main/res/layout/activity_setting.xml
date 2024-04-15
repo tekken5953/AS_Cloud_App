@@ -181,7 +181,7 @@
                     style="@style/basicTextView"
                     android:layout_marginTop="25dp"
                     android:fontFamily="@font/spoqa_hansansneo_bold"
-                    android:text="디스플레이"
+                    android:text="@string/display"
                     android:textColor="@color/theme_sub_color"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="@+id/settingUserTitle"
@@ -203,7 +203,7 @@
                     android:layout_height="55dp"
                     app:layout="@layout/custom_view_setting_system"
                     app:layout_constraintTop_toBottomOf="@+id/settingDisplayLine"
-                    app:left="애니메이션 설정" />
+                    app:left="@string/setting_animation" />
 
                 <app.airsignal.weather.view.custom_view.SettingSystemView
                     android:id="@+id/settingOpacityText"
@@ -211,7 +211,7 @@
                     android:layout_height="55dp"
                     app:layout="@layout/custom_view_setting_system"
                     app:layout_constraintTop_toBottomOf="@+id/settingAnimation"
-                    app:left="창 투명도 설정" />
+                    app:left="@string/setting_opacity" />
 
                 <TextView
                     android:id="@+id/settingNotiTitle"

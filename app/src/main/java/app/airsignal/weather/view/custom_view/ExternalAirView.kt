@@ -12,14 +12,13 @@ import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.CustomViewAirqBinding
 import app.airsignal.weather.util.OnSingleClickListener
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-07-03 오후 1:46
  **/
-class TestAirQView(context: Context, attrs: AttributeSet?)
+class ExternalAirView(context: Context, attrs: AttributeSet?)
     : RelativeLayout(context, attrs) {
     private var airBinding: CustomViewAirqBinding
 
@@ -54,7 +53,7 @@ class TestAirQView(context: Context, attrs: AttributeSet?)
         }
     }
 
-    fun setOnClickListener(popupHelp: AirQView): TestAirQView {
+    fun setOnClickListener(popupHelp: AirQView): ExternalAirView {
         airBinding.listItemNestedAirHelp.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 if (popupHelp.alpha == 0f) {
@@ -112,7 +111,7 @@ class TestAirQView(context: Context, attrs: AttributeSet?)
     }
 
     // 데이터 적용
-    fun fetchData(sort: AirQ, value: Double): TestAirQView {
+    fun fetchData(sort: AirQ, value: Double): ExternalAirView {
         val moderate = getModerate(sort, value)
         val grade = moderate.first
         val progress = moderate.second
@@ -127,7 +126,7 @@ class TestAirQView(context: Context, attrs: AttributeSet?)
     }
 
     // 데이터 적용
-    fun fetchData(sort: AirQ, value: Int): TestAirQView {
+    fun fetchData(sort: AirQ, value: Int): ExternalAirView {
         val moderate = getModerate(sort, value.toDouble())
         val grade = moderate.first
         val progress = moderate.second

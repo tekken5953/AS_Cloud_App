@@ -23,9 +23,11 @@ import app.airsignal.weather.R
 import app.airsignal.weather.adapter.AddressListAdapter
 import app.airsignal.weather.as_eye.adapter.OnAdapterItemSingleClick
 import app.airsignal.weather.dao.AdapterModel
+import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
+import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
@@ -59,6 +61,20 @@ class SearchDialog(
     private val currentAdapter = AddressListAdapter(activity, currentList)
     private val db by lazy { GpsRepository(activity) }
 
+    init {
+        when (GetAppInfo.getUserLocation(activity)) {
+            StaticDataObject.LANG_KR -> { SetSystemInfo.updateConfiguration(activity, Locale.KOREA) }
+            StaticDataObject.LANG_EN -> { SetSystemInfo.updateConfiguration(activity, Locale.ENGLISH) }
+            else -> { SetSystemInfo.updateConfiguration(activity, Locale.getDefault()) }
+        }
+        // 텍스트 폰트 크기 적용
+        when (getUserFontScale(activity)) {
+            TEXT_SCALE_SMALL -> { SetSystemInfo.setTextSizeSmall(activity) }
+            TEXT_SCALE_BIG -> { SetSystemInfo.setTextSizeLarge(activity) }
+            else -> { SetSystemInfo.setTextSizeDefault(activity) }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -67,18 +83,11 @@ class SearchDialog(
         return if (layoutId == 0)
             inflater.inflate(R.layout.dialog_address_change, container, false)
         else inflater.inflate(R.layout.dialog_address_search, container, false)
-
     }
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // 텍스트 폰트 크기 적용
-        when (getUserFontScale(activity)) {
-            TEXT_SCALE_SMALL -> { SetSystemInfo.setTextSizeSmall(activity) }
-            TEXT_SCALE_BIG -> { SetSystemInfo.setTextSizeLarge(activity) }
-            else -> { SetSystemInfo.setTextSizeDefault(activity) }
-        }
 
         if (layoutId == 0) {  // 등록된 주소 다이얼로그
             val changeAddressView: TextView = view.findViewById(R.id.changeAddressView)

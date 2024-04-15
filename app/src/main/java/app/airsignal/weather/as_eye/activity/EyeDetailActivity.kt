@@ -115,36 +115,38 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
     }
 
     private fun setAnimation(transaction: FragmentTransaction, from: Int, to: Int) {
-        var enterAnimation: Int? = null
-        var exitAnimation: Int? = null
-        when (to) {
-            FRAGMENT_REPORT -> {
-                if (from == FRAGMENT_LIVE) {
-                    enterAnimation = R.anim.enter_from_start
-                    exitAnimation = R.anim.exit_to_end
-                } else if (from == FRAGMENT_SETTING) {
-                    enterAnimation = R.anim.enter_from_start
-                    exitAnimation = R.anim.exit_to_end
-                }
+        val enterAnimation: Int? = when (to) {
+            FRAGMENT_REPORT -> when (from) {
+                FRAGMENT_LIVE, FRAGMENT_SETTING -> R.anim.enter_from_start
+                else -> null
             }
-            FRAGMENT_LIVE -> {
-                if (from == FRAGMENT_REPORT) {
-                    enterAnimation = R.anim.enter_from_end
-                    exitAnimation = R.anim.exit_to_start
-                } else if (from == FRAGMENT_SETTING) {
-                    enterAnimation = R.anim.enter_from_start
-                    exitAnimation = R.anim.exit_to_end
-                }
+            FRAGMENT_LIVE -> when (from) {
+                FRAGMENT_REPORT -> R.anim.enter_from_end
+                FRAGMENT_SETTING -> R.anim.enter_from_start
+                else -> null
             }
-            FRAGMENT_SETTING -> {
-                if (from == FRAGMENT_LIVE) {
-                    enterAnimation = R.anim.enter_from_end
-                    exitAnimation = R.anim.exit_to_start
-                } else if (from == FRAGMENT_REPORT) {
-                    enterAnimation = R.anim.enter_from_end
-                    exitAnimation = R.anim.exit_to_start
-                }
+            FRAGMENT_SETTING -> when (from) {
+                FRAGMENT_LIVE, FRAGMENT_REPORT -> R.anim.enter_from_end
+                else -> null
             }
+            else -> null
+        }
+
+        val exitAnimation: Int? = when (to) {
+            FRAGMENT_REPORT -> when (from) {
+                FRAGMENT_LIVE, FRAGMENT_SETTING -> R.anim.exit_to_end
+                else -> null
+            }
+            FRAGMENT_LIVE -> when (from) {
+                FRAGMENT_REPORT -> R.anim.exit_to_start
+                FRAGMENT_SETTING -> R.anim.exit_to_end
+                else -> null
+            }
+            FRAGMENT_SETTING -> when (from) {
+                FRAGMENT_LIVE, FRAGMENT_REPORT -> R.anim.exit_to_start
+                else -> null
+            }
+            else -> null
         }
 
         enterAnimation?.let { enter ->

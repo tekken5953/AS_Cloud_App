@@ -27,9 +27,7 @@ open class BaseWidgetProvider: AppWidgetProvider() {
 
     }
 
-    override fun onDisabled(context: Context) {
-        super.onDisabled(context)
-    }
+    override fun onDisabled(context: Context) { super.onDisabled(context) }
 
     override fun onAppWidgetOptionsChanged(
         context: Context,
@@ -55,9 +53,7 @@ open class BaseWidgetProvider: AppWidgetProvider() {
                 .awaitResponse().body()
         } catch (e: Exception) {
             RDBLogcat.writeWidgetHistory(
-                context,
-                "error",
-                "weather call error cause ${e.localizedMessage}"
+                context, "error", "weather call error cause ${e.localizedMessage}"
             )
         }
         return null

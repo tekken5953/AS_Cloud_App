@@ -345,4 +345,15 @@
     <string name="address_error">Error Address</string>
     <string name="ok_change_setting">Settings have been changed</string>
     <string name="settings_initialized">Settings have been initialized</string>
+    <string name="setting_animation">Animation</string>
+    <string name="setting_opacity">Opacity</string>
+    <string name="setting_animation_weather">Weather background</string>
+    <string name="opacity_black">Text black</string>
+    <string name="opacity_white">Text white</string>
+    <string name="display">Display</string>
+    <string name="reset">reset</string>
+    <string name="fail_to_get_notice">Fail to get notice</string>
+    <string name="fail_to_get_noise">Fail to get Noise Data</string>
+    <string name="api_timeout_retry">Request time has expired. Retry this request</string>
+    <string name="no_content">There is no content</string>
 </resources>

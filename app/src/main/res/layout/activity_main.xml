@@ -311,29 +311,27 @@
 
                 <TextView
                     android:id="@+id/mainMinTitle"
-                    style="@style/basicTextView"
-                    android:textColor="#5CC4FF"
+                    style="@style/basicMediumTextView"
                     android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/mainMinValue"
                     style="@style/basicMediumTextView"
                     android:layout_marginStart="3dp"
-                    android:textColor="#5CC4FF"
                     android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/mainMaxTitle"
-                    style="@style/basicTextView"
+                    style="@style/basicMediumTextView"
+                    android:textColor="@color/red"
                     android:layout_marginStart="10dp"
-                    android:textColor="#FB3737"
                     android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/mainMaxValue"
                     style="@style/basicMediumTextView"
                     android:layout_marginStart="3dp"
-                    android:textColor="#FB3737"
+                    android:textColor="@color/red"
                     android:textSize="16sp" />
             </TableRow>
 
@@ -419,6 +417,7 @@
                         android:paddingTop="6dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="6dp"
+                        android:textSize="16sp"
                         android:textColor="@android:color/transparent" />
 
                     <TextView
@@ -430,6 +429,7 @@
                         android:paddingTop="6dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="6dp"
+                        android:textSize="16sp"
                         android:textColor="@android:color/transparent" />
                 </TableRow>
 
@@ -485,7 +485,6 @@
                 app:layout_constraintStart_toEndOf="@+id/mainMotionSlideGuide"
                 app:layout_constraintTop_toTopOf="@+id/mainMotionSlideGuide"
                 app:tint="@android:color/transparent" />
-
 
             <androidx.core.widget.NestedScrollView
                 android:id="@+id/nested_scrollview"
@@ -716,7 +715,7 @@
                             android:columnCount="2"
                             android:orientation="horizontal">
 
-                            <app.airsignal.weather.view.custom_view.TestAirQView
+                            <app.airsignal.weather.view.custom_view.ExternalAirView
                                 android:id="@+id/mainAirPm10"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -726,10 +725,10 @@
                                 android:layout_columnWeight="1"
                                 android:layout_gravity="fill_horizontal"
                                 android:background="@drawable/scrolled_box_bg"
-                                app:airTitle="@string/pm10_full"
+                                app:airTitle="미세먼지"
                                 app:airUnit="㎛/㎥" />
 
-                            <app.airsignal.weather.view.custom_view.TestAirQView
+                            <app.airsignal.weather.view.custom_view.ExternalAirView
                                 android:id="@+id/mainAirPm2p5"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -739,10 +738,10 @@
                                 android:layout_columnWeight="1"
                                 android:layout_gravity="fill_horizontal"
                                 android:background="@drawable/scrolled_box_bg"
-                                app:airTitle="@string/pm2.5_full"
+                                app:airTitle="초미세먼지"
                                 app:airUnit="㎛/㎥" />
 
-                            <app.airsignal.weather.view.custom_view.TestAirQView
+                            <app.airsignal.weather.view.custom_view.ExternalAirView
                                 android:id="@+id/mainAirCo"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -752,10 +751,10 @@
                                 android:layout_columnWeight="1"
                                 android:layout_gravity="fill_horizontal"
                                 android:background="@drawable/scrolled_box_bg"
-                                app:airTitle="@string/co_full"
+                                app:airTitle="일산화탄소"
                                 app:airUnit="ppm" />
 
-                            <app.airsignal.weather.view.custom_view.TestAirQView
+                            <app.airsignal.weather.view.custom_view.ExternalAirView
                                 android:id="@+id/mainAirNo2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -765,10 +764,10 @@
                                 android:layout_columnWeight="1"
                                 android:layout_gravity="fill_horizontal"
                                 android:background="@drawable/scrolled_box_bg"
-                                app:airTitle="@string/no2_full"
+                                app:airTitle="이산화질소"
                                 app:airUnit="ppm" />
 
-                            <app.airsignal.weather.view.custom_view.TestAirQView
+                            <app.airsignal.weather.view.custom_view.ExternalAirView
                                 android:id="@+id/mainAirSo2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -778,10 +777,10 @@
                                 android:layout_columnWeight="1"
                                 android:layout_gravity="fill_horizontal"
                                 android:background="@drawable/scrolled_box_bg"
-                                app:airTitle="@string/so2_full"
+                                app:airTitle="아황산가스"
                                 app:airUnit="ppm" />
 
-                            <app.airsignal.weather.view.custom_view.TestAirQView
+                            <app.airsignal.weather.view.custom_view.ExternalAirView
                                 android:id="@+id/mainAirO3"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -791,7 +790,7 @@
                                 android:layout_columnWeight="1"
                                 android:layout_gravity="fill_horizontal"
                                 android:background="@drawable/scrolled_box_bg"
-                                app:airTitle="@string/o3_full"
+                                app:airTitle="오존"
                                 app:airUnit="ppm"/>
                         </GridLayout>
                     </RelativeLayout>
@@ -880,7 +879,7 @@
                                 android:layout_marginTop="95dp"
                                 android:paddingStart="20dp"
                                 android:paddingEnd="20dp"
-                                app:arcColor="#E1E1E1"
+                                app:arcColor="#90FF8A48"
                                 app:arcWidth="6dp"
                                 app:max="100"
                                 app:progressColor="#FF8A48"

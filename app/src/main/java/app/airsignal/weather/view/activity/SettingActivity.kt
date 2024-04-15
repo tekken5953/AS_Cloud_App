@@ -127,7 +127,6 @@ class SettingActivity
         super.onCreate(savedInstanceState)
 
         initBinding()
-
         setStatusBar(this)
 
         if (isInit) { isInit = false }
@@ -183,8 +182,13 @@ class SettingActivity
                 }
 
                 builder.show()
-            } else if (binding.settingLogOut.text == getString(R.string.login_title)) {
+
+                return@setOnClickListener
+            }
+
+            if (binding.settingLogOut.text == getString(R.string.login_title)) {
                 EnterPageUtil(this).toLogin("login")
+                return@setOnClickListener
             }
         }
 
@@ -378,7 +382,7 @@ class SettingActivity
                         ) {
                             nullText.visibility = View.VISIBLE
                             Toast.makeText(this@SettingActivity,
-                                "공지사항을 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                                getString(R.string.fail_to_get_notice), Toast.LENGTH_SHORT).show()
 
                             t.printStackTrace()
                         }
@@ -810,8 +814,8 @@ class SettingActivity
     private fun applyFontScale() {
         // 설정 페이지 폰트크기 항목이름 바꾸기
         when (getUserFontScale(this)) {
-            "small" -> { binding.settingSystemFont.fetchData(getString(R.string.font_small)) }
-            "big" -> { binding.settingSystemFont.fetchData(getString(R.string.font_large)) }
+            TEXT_SCALE_SMALL -> { binding.settingSystemFont.fetchData(getString(R.string.font_small)) }
+            TEXT_SCALE_BIG -> { binding.settingSystemFont.fetchData(getString(R.string.font_large)) }
             else -> binding.settingSystemFont.fetchData(getString(R.string.font_normal))
         }
     }
@@ -859,6 +863,7 @@ class SettingActivity
         radioButton: RadioButton,
         cancel: ImageView
     ) {
+        TimberUtil().d("testtest","current lang : ${getUserLocation(this)} changed lang : $lang")
         if (getUserLocation(this) != lang) { // 현재 설정된 언어인지 필터링
             cancel.isEnabled = false
             ioThread.launch {

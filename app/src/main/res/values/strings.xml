@@ -341,4 +341,15 @@
     <string name="address_error">주소 호출 에러</string>
     <string name="ok_change_setting">설정이 변경되었습니다</string>
     <string name="settings_initialized">설정이 초기화되었습니다</string>
+    <string name="setting_animation">애니메이션 설정</string>
+    <string name="setting_opacity">창 투명도 설정</string>
+    <string name="setting_animation_weather">날씨 배경 애니메이션</string>
+    <string name="opacity_black">검은색 글씨 일 때</string>
+    <string name="opacity_white">하얀색 글씨 일 때</string>
+    <string name="display">디스플레이</string>
+    <string name="reset">초기화</string>
+    <string name="fail_to_get_notice">공지사항을 불러오는데 실패했습니다.</string>
+    <string name="fail_to_get_noise">소음 불러오기에 실패했습니다</string>
+    <string name="api_timeout_retry">요청시간이 만료되었습니다. 해당 요청을 재시도합니다</string>
+    <string name="no_content">내용이 없습니다</string>
 </resources>

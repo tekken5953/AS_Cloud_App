@@ -1,5 +1,6 @@
 package app.airsignal.weather.as_eye.activity
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Looper
@@ -86,7 +87,6 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
                 // dB만 필터 적용
                 submit(filterByNoise(getCurrentNoiseValue()))
             } else {    // 이번 주 필터가 아닐 때
-                //TODO 현재 Sort에 따라 호출 여부 나누기
                 callApi(NoiseValueSort.THIS_WEEK.index)
             }
         }
@@ -217,7 +217,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
                         is BaseRepository.ApiState.Error -> {
                             Toast.makeText(
                                 this@EyeNoiseDetailActivity,
-                                "소음 불러오기에 실패했습니다",
+                                getString(R.string.fail_to_get_noise),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -228,12 +228,13 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             }
         } catch (e: Exception) {    // 익셉션 발생
             e.stackTraceToString()
-            Toast.makeText(this@EyeNoiseDetailActivity, "소음 불러오기에 실패했습니다", Toast.LENGTH_SHORT)
+            Toast.makeText(this@EyeNoiseDetailActivity, getString(R.string.fail_to_get_noise), Toast.LENGTH_SHORT)
                 .show()
         }
     }
 
     // 필터 다이얼로그 생성
+    @SuppressLint("SetTextI18n")
     private fun createFilterDialog() {
         val noiseDbFilterBuilder = AlertDialog.Builder(this@EyeNoiseDetailActivity) // 빌더 정의
         val noiseDbFilterView = LayoutInflater.from(this@EyeNoiseDetailActivity)    // 뷰 정의

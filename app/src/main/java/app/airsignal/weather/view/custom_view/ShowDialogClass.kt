@@ -6,10 +6,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import app.airsignal.weather.R
+import app.airsignal.weather.dao.StaticDataObject
+import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
 import app.airsignal.weather.db.sp.SetSystemInfo
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -33,46 +36,17 @@ class ShowDialogClass(private val activity: Activity, isEye: Boolean) {
             TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(activity)
             else -> SetSystemInfo.setTextSizeDefault(activity)
         }
+
+        when (GetAppInfo.getUserLocation(activity)) {
+            StaticDataObject.LANG_KR -> { SetSystemInfo.updateConfiguration(activity, Locale.KOREA) }
+            StaticDataObject.LANG_EN -> { SetSystemInfo.updateConfiguration(activity, Locale.ENGLISH) }
+            else -> { SetSystemInfo.updateConfiguration(activity, Locale.getDefault()) }
+        }
     }
 
     /** 다이얼로그 뒤로가기 버튼 리스너 등록 **/
     fun setBackPressed(view: View): ShowDialogClass {
         view.setOnClickListener { dismiss() }
-        return this
-    }
-
-    /** 다이얼로그 뒤로가기 버튼 후 액티비티 갱신 **/
-    fun setBackPressRefresh(imageView: ImageView): ShowDialogClass {
-        imageView.setOnClickListener {
-            CompletableFuture
-                .supplyAsync { dismiss() }
-                .thenAccept {
-                    activity.let {
-                        it.finish() //인텐트 종료
-                        it.overridePendingTransition(0, 0) //인텐트 효과 없애기
-                        val intent = it.intent //인텐트
-                        it.startActivity(intent) //액티비티 열기
-                        it.overridePendingTransition(0, 0) //인텐트 효과 없애기
-                    }
-                }
-        }
-        return this
-    }
-
-    fun setBackPressRefresh(imageView: TextView): ShowDialogClass {
-        imageView.setOnClickListener {
-            CompletableFuture
-                .supplyAsync { dismiss() }
-                .thenAccept {
-                    activity.let {
-                        it.finish() //인텐트 종료
-                        it.overridePendingTransition(0, 0) //인텐트 효과 없애기
-                        val intent = it.intent //인텐트
-                        it.startActivity(intent) //액티비티 열기
-                        it.overridePendingTransition(0, 0) //인텐트 효과 없애기
-                    }
-                }
-        }
         return this
     }
 
