@@ -356,4 +356,5 @@
     <string name="fail_to_get_noise">Fail to get Noise Data</string>
     <string name="api_timeout_retry">Request time has expired. Retry this request</string>
     <string name="no_content">There is no content</string>
+    <string name="skip">SKIP</string>
 </resources>

@@ -154,6 +154,7 @@ class AddDeviceSerialFragment : BaseEyeFragment<FragmentAddDeviceSerialBinding>(
                                                 "'${master.id}'\n님이 소유하신 기기입니다",
                                                 "게스트로 등록하시겠습니까?"
                                             )
+
                                         } else {
                                             // 게스트는 있지만 소유자가 없음
                                             successApi(2,

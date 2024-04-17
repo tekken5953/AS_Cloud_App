@@ -18,6 +18,7 @@ import app.airsignal.weather.as_eye.fragment.AddDeviceSerialFragment
 import app.airsignal.weather.as_eye.nfc.NfcInfoFragment
 import app.airsignal.weather.databinding.ActivityAddEyeDeviceBinding
 import app.airsignal.weather.databinding.IncludeEyeAddItemBinding
+import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import kotlinx.coroutines.*
 
@@ -32,15 +33,43 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
 
     lateinit var nfcAdapter: NfcAdapter
 
+    override fun onResume() {
+        super.onResume()
+        enableNfc()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (nfcAdapter.isEnabled) nfcAdapter.disableForegroundDispatch(this)
+    }
+
     override fun onStart() {
         super.onStart()
         transactionFragment(AddDeviceSerialFragment())
     }
 
+    private fun enableNfc() {
+        TimberUtil().d("testtest","enableNfc is ${nfcAdapter.isEnabled}")
+        if (!nfcAdapter.isEnabled) {
+            Toast.makeText(this, getString(R.string.nfc_disabled_msg), Toast.LENGTH_SHORT).show()
+            val intent = Intent(Intent(Settings.ACTION_NFC_SETTINGS))
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+        } else {
+            nfcAdapter.enableForegroundDispatch(
+                this,
+                PendingIntent.getActivity(
+                    this, 0,
+                    Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP).setAction(NfcAdapter.ACTION_NDEF_DISCOVERED),
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+                ), null, null)
+        }
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent.action == NfcAdapter.ACTION_NDEF_DISCOVERED || intent.action == NfcAdapter.ACTION_TAG_DISCOVERED ) {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.addEyeDeviceFrame)
+        if (intent.action == NfcAdapter.ACTION_NDEF_DISCOVERED || intent.action == NfcAdapter.ACTION_TAG_DISCOVERED) {
+            val currentFragment = getCurrentFragment()
             if (currentFragment is NfcInfoFragment) {
                 currentFragment.handleNfcIntent(intent)
             }
@@ -61,6 +90,10 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
         }
 
         ble = BleClient(this).getInstance()
+    }
+
+    fun getCurrentFragment(): Fragment? {
+       return supportFragmentManager.findFragmentById(R.id.addEyeDeviceFrame)
     }
 
     fun createCancelDialog() {

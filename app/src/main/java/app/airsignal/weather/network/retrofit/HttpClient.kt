@@ -1,6 +1,5 @@
 package app.airsignal.weather.network.retrofit
 
-import android.app.Application
 import app.airsignal.weather.R
 import app.airsignal.weather.koin.BaseApplication
 import app.airsignal.weather.network.NetworkIgnored.hostingServerURL
@@ -19,35 +18,6 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 object HttpClient {
-
-    private fun gsonConverterFactory(): GsonConverterFactory? {
-        val gson = GsonBuilder()
-            .setLenient()
-            .registerTypeAdapter(LocalDateTime::class.java,
-                JsonDeserializer { json, _, _ ->
-                    LocalDateTime.parse(
-                        json.asString,
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-                    )
-                })
-            .registerTypeAdapter(LocalDate::class.java,
-                JsonDeserializer { json, _, _ ->
-                    LocalDate.parse(
-                        json.asString,
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                    )
-                })
-            .registerTypeAdapter(LocalTime::class.java,
-                JsonDeserializer { json, _, _ ->
-                    LocalTime.parse(
-                        json.asString,
-                        DateTimeFormatter.ofPattern("HH:mm:ss")
-                    )
-                })
-            .create()
-
-        return GsonConverterFactory.create(gson)
-    }
 
     private val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
         retryOnConnectionFailure(retryOnConnectionFailure = false)
@@ -82,10 +52,38 @@ object HttpClient {
     val retrofit: MyApiImpl =
         Retrofit.Builder()
             .baseUrl(hostingServerURL)
-//                .baseUrl(localServerURL)
             .addConverterFactory(gsonConverterFactory() ?: GsonConverterFactory.create(gson))
             .client(clientBuilder.build())
             .build()
             .create(MyApiImpl::class.java)
+
+    private fun gsonConverterFactory(): GsonConverterFactory? {
+        val gson = GsonBuilder()
+            .setLenient()
+            .registerTypeAdapter(LocalDateTime::class.java,
+                JsonDeserializer { json, _, _ ->
+                    LocalDateTime.parse(
+                        json.asString,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+                    )
+                })
+            .registerTypeAdapter(LocalDate::class.java,
+                JsonDeserializer { json, _, _ ->
+                    LocalDate.parse(
+                        json.asString,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                    )
+                })
+            .registerTypeAdapter(LocalTime::class.java,
+                JsonDeserializer { json, _, _ ->
+                    LocalTime.parse(
+                        json.asString,
+                        DateTimeFormatter.ofPattern("HH:mm:ss")
+                    )
+                })
+            .create()
+
+        return GsonConverterFactory.create(gson)
+    }
 
 }

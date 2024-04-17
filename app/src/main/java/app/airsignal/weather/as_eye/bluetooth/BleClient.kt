@@ -7,6 +7,8 @@ import android.content.Context
 import app.airsignal.weather.dao.IgnoredKeyFile.UUID_CONNECTING
 import app.airsignal.weather.dao.IgnoredKeyFile.UUID_PWD
 import app.airsignal.weather.dao.IgnoredKeyFile.UUID_SSID
+import app.airsignal.weather.util.LoggerUtil
+import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.clj.fastble.BleManager
@@ -15,6 +17,7 @@ import com.clj.fastble.callback.BleReadCallback
 import com.clj.fastble.callback.BleScanCallback
 import com.clj.fastble.callback.BleWriteCallback
 import com.clj.fastble.data.BleDevice
+import timber.log.Timber
 import java.util.*
 
 class BleClient(private val activity: Activity) {
@@ -94,7 +97,7 @@ class BleClient(private val activity: Activity) {
 
     fun disconnect() { device?.let { if (isConnected()) { instance.disconnect(device) } } }
 
-    fun postSsid(writeSsidCallback: BleWriteCallback) {
+    fun postSsid(ssid: String, writeSsidCallback: BleWriteCallback) {
         val gatt = getGatt()
         gatt?.let {
             gatt.services.forEach { service ->
@@ -112,7 +115,7 @@ class BleClient(private val activity: Activity) {
                                     device,
                                     service.uuid.toString(),
                                     uuid,
-                                    serial.toByteArray(),
+                                    ssid.toByteArray(),
                                     writeSsidCallback
                                 )
                             }
@@ -156,24 +159,30 @@ class BleClient(private val activity: Activity) {
     fun readConnected(readCallback: BleReadCallback) {
         val gatt = getGatt()
         gatt?.let {
+            TimberUtil().d("testtest","read connected")
             it.services.forEach { service ->
-                service.characteristics.forEach { char ->
+                service.characteristics.forEachIndexed { index, char ->
+                    TimberUtil().d("testtest","service is ${parseProperty(char.properties)}")
                     if (parseProperty(char.properties) == BleProtocolType.READ ||
                         parseProperty(char.properties) == BleProtocolType.READ_AND_WRITE
                     ) {
-                        val uuid = char.uuid.toString()
-                        if (uuid == UUID_CONNECTING.lowercase(Locale.getDefault())
-                        ) {
-                            instance.read(
-                                device,
-                                service.uuid.toString(),
-                                uuid,
-                                readCallback
-                            )
+                        TimberUtil().d("testtest","$index is ${char.uuid}")
+                        when (val uuid = char.uuid.toString()) {
+                            UUID_CONNECTING.lowercase() -> {
+                                TimberUtil().d("testtest","find char : $uuid")
+                                instance.read(
+                                    device,
+                                    service.uuid.toString(),
+                                    uuid,
+                                    readCallback
+                                )
+                            }
                         }
                     }
                 }
             }
+        } ?: run {
+            TimberUtil().e("testtest","readConnected is null")
         }
     }
 

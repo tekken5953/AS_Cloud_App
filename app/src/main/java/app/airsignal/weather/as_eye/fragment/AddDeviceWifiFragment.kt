@@ -4,9 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.HandlerCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
@@ -56,7 +59,10 @@ class AddDeviceWifiFragment : BaseEyeFragment<FragmentAddDeviceWifiBinding>() {
         wifiAdapter.setOnItemClickListener(object : OnAdapterItemSingleClick() {
             override fun onSingleClick(v: View?, position: Int) {
                 wifiList[position].capability?.let {
-                    parentActivity.transactionFragment(AddDeviceWifiPasswordFragment())
+                    val bundle = Bundle()
+                    bundle.putString("ssid",wifiList[position].ssid)
+                    bundle.putBoolean("capability", isCapability(it))
+                    parentActivity.transactionFragment(AddDeviceWifiPasswordFragment(), bundle)
                 }
             }
         })
@@ -73,20 +79,27 @@ class AddDeviceWifiFragment : BaseEyeFragment<FragmentAddDeviceWifiBinding>() {
         binding.addWifiConnectRv.visibility = View.VISIBLE
         wifiList.clear()
         wifiAdapter.notifyDataSetChanged()
-        wifiManager.scanResults.forEachIndexed { index, data ->
-            if (data.SSID != "") {
-                addWifi(data.SSID, data.level, data.capabilities)
-                wifiAdapter.notifyItemInserted(index)
+        HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+            wifiManager.scanResults.forEachIndexed { index, data ->
+                if (data.SSID != "") {
+                    addWifi(data.SSID, data.level, data.capabilities)
+                    wifiAdapter.notifyItemInserted(index)
+                }
             }
-        }
-        val sortedByLevel = wifiList.sortedBy { it.level?.absoluteValue }
-        wifiList.clear()
-        wifiList.addAll(sortedByLevel)
-        wifiAdapter.notifyItemRangeChanged(0, wifiList.size)
+            val sortedByLevel = wifiList.sortedBy { it.level?.absoluteValue }
+            wifiList.clear()
+            wifiList.addAll(sortedByLevel)
+            wifiAdapter.notifyItemRangeChanged(0, wifiList.size)
+        },1000)
     }
 
     private fun addWifi(ssid: String, level: Int?, capability: String?) {
         val item = EyeDataModel.Wifi(ssid,level,capability)
         wifiList.add(item)
+    }
+
+    private fun isCapability(capabilities: String): Boolean {
+        return capabilities.contains("WPA") || capabilities.contains("WPA2")
+                || capabilities.contains("WEP")
     }
 }

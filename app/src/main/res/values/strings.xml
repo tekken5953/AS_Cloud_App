@@ -352,4 +352,5 @@
     <string name="fail_to_get_noise">소음 불러오기에 실패했습니다</string>
     <string name="api_timeout_retry">요청시간이 만료되었습니다. 해당 요청을 재시도합니다</string>
     <string name="no_content">내용이 없습니다</string>
+    <string name="skip">건너뛰기</string>
 </resources>

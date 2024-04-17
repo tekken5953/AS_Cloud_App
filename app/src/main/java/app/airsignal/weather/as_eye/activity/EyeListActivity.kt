@@ -408,9 +408,7 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
         val userId = SharedPreferenceManager(this).getString(userEmail)
         if (userId != "") {
             deviceListViewModel.loadDataResult(userId)
-        } else {
-            Toast.makeText(this, "로그인이 필요합니다", Toast.LENGTH_SHORT).show()
-        }
+        } else Toast.makeText(this, "로그인이 필요합니다", Toast.LENGTH_SHORT).show()
     }
 
     private fun applyDeviceList() {
@@ -510,15 +508,14 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                 }
 
                 if (position == viewPagerList.lastIndex)
-                    cancel.text = getString(R.string.close) else cancel.text = "SKIP"
+                    cancel.text = getString(R.string.close) else cancel.text = getString(R.string.skip)
 
                 contents.text = getGuideMsg(position)
             }
         })
     }
 
-    private fun createViewPager(vp: ViewPager2,
-                                indicatorContainer: LinearLayout) {
+    private fun createViewPager(vp: ViewPager2, indicatorContainer: LinearLayout) {
         vp.apply {
             adapter = vpAdapter
             isClickable = false

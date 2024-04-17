@@ -23,6 +23,7 @@ import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.KeyboardController
+import app.airsignal.weather.util.ToastUtils
 import com.clj.fastble.callback.BleGattCallback
 import com.clj.fastble.callback.BleReadCallback
 import com.clj.fastble.callback.BleWriteCallback
@@ -49,10 +50,13 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
 
     private var isCapability = true
 
+    private var ssid: String? = null
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is AddEyeDeviceActivity) parentActivity = context
         isCapability = arguments?.getBoolean("capability") ?: true
+        ssid = arguments?.getString("ssid")
     }
 
     override fun onDestroyView() {
@@ -68,15 +72,10 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
 
         override fun onConnectFail(bleDevice: BleDevice?, exception: BleException?) {
             mainDispatcher.launch {
-                if (isInit) {
-                    binding.addWifiPwdTitle.text = getString(R.string.eye_disconnect_retry)
-                    ble.destroyBle()
-                    delay(1500)
-                    parentActivity.finish()
-                } else {
-                    delay(5000)
-                    reconnect()
-                }
+                binding.addWifiPwdTitle.text = getString(R.string.eye_disconnect_retry)
+                ble.destroyBle()
+                delay(1500)
+                parentActivity.finish()
             }
         }
 
@@ -101,11 +100,8 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
                             getString(R.string.sending_wifi_info), true
                         )
                         KeyboardController.onKeyboardDown(requireContext(),binding.addWifiPwdEt)
-                        ble.postSsid(writePwdCallback)
+                        postSSID()
                     }
-                } else {
-                    // 와이파이 연결상태 불러오기
-                    ble.readConnected(readCallback)
                 }
             }
         }
@@ -217,7 +213,8 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
                 ble.instance.removeConnectGattCallback(ble.device)
                 delay(2000)
                 if (isCapability) ble.postPwd(binding.addWifiPwdEt.text.toString(), writePwdCallback)
-                else ble.readConnected(readCallback = readCallback)
+//                else ble.readConnected(readCallback = readCallback)
+                else inputDeviceAlias()
             }
         }
 
@@ -329,31 +326,35 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
                     binding.addWifiPwdTitle,
                     getString(R.string.sending_wifi_info), true
                 )
+                binding.addWifiPwdBtn.isEnabled = false
                 KeyboardController.onKeyboardDown(requireContext(),binding.addWifiPwdEt)
-                ble.postSsid(writeSsidCallback)
+                postSSID()
             }
         }
 
         return binding.root
     }
 
+    private fun postSSID() {
+        ssid?.let {
+            ble.postSsid(it, writeSsidCallback)
+        } ?: run {
+            binding.addWifiPwdBtn.isEnabled = true
+            ToastUtils(requireContext()).showMessage("올바르지 않은 Wifi 입니다")
+            parentActivity.transactionFragment(AddDeviceWifiFragment())
+        }
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         arguments?.let {
             val serial = it.getString("serial")
             val deviceId = it.getString("deviceId")
             val alias = it.getString("alias")
             val isMaster = it.getString("isMaster")
-            serial?.let { s ->
-                deviceId?.let { d ->
-                    alias?.let { a ->
-                        isMaster?.let { m ->
-                            postDevice(d, EyeDataModel.PostDevice(s, a, m))
-                        }
-                    }
-                }
+            if (serial != null && deviceId != null && alias != null && isMaster != null) {
+                postDevice(deviceId, EyeDataModel.PostDevice(serial, alias, isMaster))
             }
         } ?: run {
             ble.device?.let {
@@ -371,7 +372,6 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
 
     private fun reconnect() {
         if (!ble.isConnected()) {
-            isInit = false
             ble.device?.let { device ->
                 ble.connectDevice(device, connectCallback)
             }
@@ -387,10 +387,11 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
         parentActivity.changeTitleWithAnimation(binding.addWifiPwdTitle, getString(R.string.transferring_data_to_device),true)
         parentActivity.changeProgressWithAnimation(90)
         parentActivity.showPb()
-
+        isInit = false
         CoroutineScope(Dispatchers.Main).launch {
-            delay(2000)
-            reconnect()
+            delay(5000)
+//            ble.readConnected(readCallback)
+            inputDeviceAlias()
         }
     }
 
@@ -416,18 +417,11 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
     }
 
     private fun postDevice(email: String, item: EyeDataModel.PostDevice) {
-        HttpClient.retrofit.postDevice(
-            email, item
-        ).enqueue(
+        HttpClient.retrofit.postDevice(email, item).enqueue(
             object : Callback<String> {
                 override fun onResponse(call: Call<String>, response: Response<String>) {
-                    try {
-                        if (response.isSuccessful) {
-                            confirmWifiConnect()
-                        }
-                    } catch (e: Exception) {
-                        e.stackTraceToString()
-                    }
+                    try { if (response.isSuccessful) confirmWifiConnect()
+                    } catch (e: Exception) { e.stackTraceToString() }
                 }
 
                 override fun onFailure(call: Call<String>, t: Throwable) {
