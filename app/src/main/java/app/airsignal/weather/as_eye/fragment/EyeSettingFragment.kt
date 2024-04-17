@@ -73,8 +73,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+        savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_setting_fragment, container, false)
 
         binding.aeSettingName.setOnClickListener(object : OnSingleClickListener() {
@@ -191,9 +190,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                             bundle.putString("device",mActivity.serialExtra.toString())
                             val message = RemoteMessage(bundle)
                             EyeNotiBuilder(requireContext()).sendNotification(message.data)
-                        } else {
-                            Toast.makeText(requireContext(), "먼저 알림을 활성화 해주세요", Toast.LENGTH_SHORT).show()
-                        }
+                        } else Toast.makeText(requireContext(), "먼저 알림을 활성화 해주세요", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(requireContext(), "알림 권한이 거부되어있습니다", Toast.LENGTH_SHORT).show()
                         RequestPermissionsUtil(requireContext()).requestNotification()
@@ -255,7 +252,6 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                                         list.clear()
                                         rv.visibility = View.VISIBLE
                                         failMsg.visibility = View.GONE
-
                                         count.text = "총 ${body.size}명이 등록되어있습니다"
 
                                         body.forEachIndexed { index, item ->
@@ -313,7 +309,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
 
     private fun callChangeAliasApi(dialog: ShowDialogClass, serial: String, alias: String) {
         applyPostAlias(dialog,serial,alias)
-        deviceAliasViewModel.loadDataResult(serial,alias)
+        deviceAliasViewModel.loadDataResult(SharedPreferenceManager(requireContext()).getString(userEmail),serial,alias)
     }
 
     private fun applyPostAlias(dialog: ShowDialogClass, serial: String, alias: String) {

@@ -23,9 +23,9 @@ class SetEyeDeviceAliasRepo : BaseRepository() {
     var _setAliasResult =
         MutableLiveData<ApiState<String?>>()
 
-    fun loadDataResult(alias: String, sn: String) {
+    fun loadDataResult(userId: String, alias: String, sn: String) {
         _setAliasResult.postValue(ApiState.Loading)
-        impl.updateAlias(sn, alias).enqueue(object : Callback<String> {
+        impl.updateAlias(sn, alias, userId).enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 try {
                     if (response.isSuccessful) {

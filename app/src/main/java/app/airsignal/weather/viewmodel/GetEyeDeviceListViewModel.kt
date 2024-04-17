@@ -10,10 +10,10 @@ import kotlinx.coroutines.launch
 class GetEyeDeviceListViewModel(private val repo: GetEyeDeviceListRepo): BaseViewModel() {
     private var getResultData: LiveData<BaseRepository.ApiState<List<EyeDataModel.Device>?>>? = null
 
-    fun loadDataResult() {
+    fun loadDataResult(userId: String) {
         job?.cancel()
         job = viewModelScope.launch {
-            repo.loadDataResult()
+            repo.loadDataResult(userId)
         }
     }
 

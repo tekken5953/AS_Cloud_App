@@ -14,10 +14,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -32,6 +29,7 @@ import app.airsignal.weather.db.room.model.EyeGroupEntity
 import app.airsignal.weather.db.room.repository.EyeGroupRepository
 import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.db.sp.SpDao.TUTORIAL_SKIP
+import app.airsignal.weather.db.sp.SpDao.userEmail
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.OnSingleClickListener
@@ -407,7 +405,12 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
     }
 
     private fun loadDeviceList() {
-        deviceListViewModel.loadDataResult()
+        val userId = SharedPreferenceManager(this).getString(userEmail)
+        if (userId != "") {
+            deviceListViewModel.loadDataResult(userId)
+        } else {
+            Toast.makeText(this, "로그인이 필요합니다", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun applyDeviceList() {

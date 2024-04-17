@@ -12,6 +12,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -57,6 +58,7 @@ public interface MyApiImpl {
     @POST("device/{sn}")
         // Eye Alias 변경
     Call<String> updateAlias(
+            @Header("Authorization") String userId,
             @Path("sn") String sn,
             @Body String alias
     );
@@ -70,7 +72,9 @@ public interface MyApiImpl {
 
     @GET("device")
         // Eye 기기 조회
-    Call<List<EyeDataModel.Device>> getDeviceList();
+    Call<List<EyeDataModel.Device>> getDeviceList(
+            @Header("Authorization") String userId
+    );
 
     @DELETE("device/{sn}")
         // Eye 기기 삭제

@@ -77,16 +77,16 @@ class WeeklyWeatherAdapter(
 
             maxRain.setTextColor(applyColor)
             minRain.setTextColor(applyColor)
-            maxRain.compoundDrawablesRelative[0]?.mutate()?.setTint(applyColor)
-            minRain.compoundDrawablesRelative[0]?.mutate()?.setTint(applyColor)
+            maxRain.compoundDrawablesRelative[0]?.mutate()?.setTint(applySubColor)
+            minRain.compoundDrawablesRelative[0]?.mutate()?.setTint(applySubColor)
 
 //            if (dao.minRain >= 60) minRain.visibility = View.VISIBLE else View.GONE
 //            if (dao.maxRain >= 60) maxRain.visibility = View.VISIBLE else View.GONE
 
             day.setTextColor(applyColor)
             date.setTextColor(applySubColor)
-            minText.setTextColor(applyColor)
-            maxText.setTextColor(applyColor)
+            minText.setTextColor(applySubColor)
+            maxText.setTextColor(applySubColor)
             section.setTextColor(applyColor)
 
              if (bindingAdapterPosition == 0) {

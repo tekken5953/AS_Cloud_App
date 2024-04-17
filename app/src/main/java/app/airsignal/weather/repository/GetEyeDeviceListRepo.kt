@@ -19,9 +19,9 @@ class GetEyeDeviceListRepo : BaseRepository() {
     var _getListResult =
         MutableLiveData<ApiState<List<EyeDataModel.Device>?>>()
 
-    fun loadDataResult() {
+    fun loadDataResult(userId: String) {
         _getListResult.postValue(ApiState.Loading)
-        impl.deviceList.enqueue(object : Callback<List<EyeDataModel.Device>> {
+        impl.getDeviceList(userId).enqueue(object : Callback<List<EyeDataModel.Device>> {
             override fun onResponse(
                 call: Call<List<EyeDataModel.Device>>,
                 response: Response<List<EyeDataModel.Device>>
