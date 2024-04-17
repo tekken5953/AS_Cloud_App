@@ -312,7 +312,7 @@
     <string name="nothing">Nothing</string>
     <string name="calendar">Date</string>
     <string name="this_week">this week</string>
-    <string name="eye_noise_no_data">The data is not exist</string>
+    <string name="eye_noise_no_data">Today data is not exist</string>
     <string name="eye_add_group">Add \na group</string>
     <string name="change_group_name">Change \ngroup name</string>
     <string name="remove_group">Delete \na group</string>

@@ -121,9 +121,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                             changeDeviceEt.requestFocus()
                             return@setOnTouchListener true
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    } catch (e: Exception) { e.printStackTrace() }
 
                     false
                 }

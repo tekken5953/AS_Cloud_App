@@ -305,7 +305,7 @@
     <string name="nothing">없음</string>
     <string name="calendar">날짜</string>
     <string name="this_week">이번주</string>
-    <string name="eye_noise_no_data">데이터가 없습니다</string>
+    <string name="eye_noise_no_data">오늘 데이터가 없습니다</string>
     <string name="eye_add_group">그룹 추가</string>
     <string name="change_group_name">그룹명 변경</string>
     <string name="remove_group">그룹 삭제</string>

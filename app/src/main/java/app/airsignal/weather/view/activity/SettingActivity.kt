@@ -863,7 +863,6 @@ class SettingActivity
         radioButton: RadioButton,
         cancel: ImageView
     ) {
-        TimberUtil().d("testtest","current lang : ${getUserLocation(this)} changed lang : $lang")
         if (getUserLocation(this) != lang) { // 현재 설정된 언어인지 필터링
             cancel.isEnabled = false
             ioThread.launch {

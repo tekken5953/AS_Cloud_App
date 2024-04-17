@@ -72,7 +72,11 @@ object HttpClient {
     }
 
     private val gson =
-        GsonBuilder().setLenient().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").setPrettyPrinting()
+        GsonBuilder()
+            .setLenient()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+            .setPrettyPrinting()
+            .serializeNulls()
             .create()
 
     val retrofit: MyApiImpl =
@@ -81,6 +85,7 @@ object HttpClient {
 //                .baseUrl(localServerURL)
             .addConverterFactory(gsonConverterFactory() ?: GsonConverterFactory.create(gson))
             .client(clientBuilder.build())
-            .build().create(MyApiImpl::class.java)
+            .build()
+            .create(MyApiImpl::class.java)
 
 }

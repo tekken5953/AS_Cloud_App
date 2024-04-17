@@ -82,8 +82,7 @@ class PermissionActivity :
 
         // 유저 디바이스 설정 - 디바이스 모델
         writeUserPref(
-            this,
-            sort = RDBLogcat.USER_PREF_DEVICE,
+            this, sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_DEVICE_MODEL,
             value = Build.MODEL
         )
@@ -126,7 +125,5 @@ class PermissionActivity :
     @Deprecated("Deprecated in Java", ReplaceWith(
         "EnterPageUtil(this).fullyExit()",
         "app.airsignal.weather.util.EnterPageUtil"))
-    override fun onBackPressed() {
-        enter.fullyExit()
-    }
+    override fun onBackPressed() { enter.fullyExit() }
 }
