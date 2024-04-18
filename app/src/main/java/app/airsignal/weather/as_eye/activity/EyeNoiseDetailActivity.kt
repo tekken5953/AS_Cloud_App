@@ -14,6 +14,7 @@ import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.adapter.NoiseDetailAdapter
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.databinding.ActivityEyeNoiseDetailBinding
+import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.viewmodel.NoiseDataViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -95,7 +96,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
     // 분류로 API 호출
     private fun callApi(sort: Int) {
         if (!fetch.hasActiveObservers()) applyNoiseViewModel()  // 현재 동작중인 옵저버가 없으면 생성
-        noiseViewModel.loadDataResult(serial, sort,null,null)
+        noiseViewModel.loadDataResult(getUserEmail(this), serial, sort,null,null)
     }
 
     // 변경 된 어레이로 리스트 변경
@@ -121,7 +122,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
     // 날짜로 API 호출
     private fun callApi(start: Int, end: Int) {
         if (!fetch.hasActiveObservers()) applyNoiseViewModel()  // 현재 동작중인 옵저버가 없으면 생성
-        noiseViewModel.loadDataResult(serial,null, start, end)
+        noiseViewModel.loadDataResult(getUserEmail(this), serial,null, start, end)
     }
 
     // dB 값으로 필터 적용된 리스트 반환

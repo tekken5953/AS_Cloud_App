@@ -39,10 +39,9 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
         airBinding = CustomViewAirqBinding.inflate(inflater, this, true)
 
         attrs?.let { set ->
-            val typedArray = context.obtainStyledAttributes(set, R.styleable.TestAirQView)
-
-            val title = typedArray.getString(R.styleable.TestAirQView_airTitle)
-            val unit = typedArray.getString(R.styleable.TestAirQView_airUnit)
+            val typedArray = context.obtainStyledAttributes(set, R.styleable.ExternalAirView)
+            val title = typedArray.getString(R.styleable.ExternalAirView_airTitle)
+            val unit = typedArray.getString(R.styleable.ExternalAirView_airUnit)
 
             airBinding.apply {
                 listItemNestedAirTitle.text = translateTitle(title ?: "")
@@ -115,7 +114,7 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
         val moderate = getModerate(sort, value)
         val grade = moderate.first
         val progress = moderate.second
-        airBinding.listItemNestedAirPb.progress = progress
+        airBinding.listItemNestedAirPb.progress = if (grade == 4) 100 else progress
         airBinding.listItemNestedAirValue.text = value.toString()
         airBinding.listItemNestedAirValue.setTextColor(DataTypeParser.getDataColor(context,grade))
         airBinding.listItemNestedAirGrade.setTextColor(DataTypeParser.getDataColor(context,grade))
@@ -130,7 +129,7 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
         val moderate = getModerate(sort, value.toDouble())
         val grade = moderate.first
         val progress = moderate.second
-        airBinding.listItemNestedAirPb.progress = progress
+        airBinding.listItemNestedAirPb.progress = if (grade == 4) 100 else progress
         airBinding.listItemNestedAirValue.text = value.toString()
         airBinding.listItemNestedAirValue.setTextColor(DataTypeParser.getDataColor(context,grade))
         airBinding.listItemNestedAirGrade.setTextColor(DataTypeParser.getDataColor(context,grade))

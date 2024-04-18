@@ -11,10 +11,10 @@ import java.io.IOException
 class GetEyeDataViewModel(private val repo: GetEyeDataRepo) : BaseViewModel() {
     private var getEyeDataResult: LiveData<BaseRepository.ApiState<EyeDataModel.Entire>?>? = null
 
-    fun loadData(sn: String, flag: String?, start: Int?, end: Int?): GetEyeDataViewModel {
+    fun loadData(userId: String, sn: String, flag: String?, start: Int?, end: Int?): GetEyeDataViewModel {
         job?.cancel()
         job = viewModelScope.launch {
-            repo.loadDataResult(sn, flag, start, end)
+            repo.loadDataResult(userId, sn, flag, start, end)
         }
         return this
     }

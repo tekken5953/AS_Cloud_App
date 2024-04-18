@@ -26,9 +26,9 @@ class GetEyeDataRepo : BaseRepository() {
     var _getEyeResult =
         MutableLiveData<ApiState<EyeDataModel.Entire>?>()
 
-    fun loadDataResult(sn: String, flag: String?, start: Int?, end: Int?) {
+    fun loadDataResult(userId: String, sn: String, flag: String?, start: Int?, end: Int?) {
         _getEyeResult.postValue(ApiState.Loading)
-        impl.getEntire(sn, flag, start, end)
+        impl.getEntire(userId, sn, flag, start, end)
             .enqueue(object : Callback<EyeDataModel.Entire> {
                 override fun onResponse(
                     call: Call<EyeDataModel.Entire>,

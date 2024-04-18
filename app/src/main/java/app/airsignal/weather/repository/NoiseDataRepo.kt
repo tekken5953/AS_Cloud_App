@@ -2,13 +2,9 @@ package app.airsignal.weather.repository
 
 import android.accounts.NetworkErrorException
 import androidx.lifecycle.MutableLiveData
-import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.network.ErrorCode
 import com.google.gson.JsonSyntaxException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,9 +15,9 @@ class NoiseDataRepo : BaseRepository() {
     var _getNoiseResult =
         MutableLiveData<ApiState<List<AdapterModel.NoiseDetailItem>?>>()
 
-    fun loadDataResult(sn: String, flag: Int?, start: Int?, end: Int?) {
+    fun loadDataResult(userId: String, sn: String, flag: Int?, start: Int?, end: Int?) {
         _getNoiseResult.postValue(ApiState.Loading)
-        impl.getNoise(sn, flag, start, end)
+        impl.getNoise(userId, sn, flag, start, end)
             .enqueue(object : Callback<List<AdapterModel.NoiseDetailItem>> {
                 override fun onResponse(
                     call: Call<List<AdapterModel.NoiseDetailItem>>,

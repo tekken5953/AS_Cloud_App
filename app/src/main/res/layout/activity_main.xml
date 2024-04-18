@@ -247,7 +247,6 @@
                     <TextView
                         android:id="@+id/mainLiveTempTitleC"
                         style="@style/basicTextView"
-                        android:text="@string/live_temp"
                         android:textColor="@android:color/transparent"
                         android:textSize="14sp"/>
 
@@ -269,7 +268,6 @@
                     <TextView
                         android:id="@+id/mainSensTitleC"
                         style="@style/basicTextView"
-                        android:text="@string/sens_temp"
                         android:textColor="@android:color/transparent"
                         android:textSize="14sp"/>
 
@@ -289,7 +287,6 @@
                     <TextView
                         android:id="@+id/mainMinMaxTitleC"
                         style="@style/basicTextView"
-                        android:text="@string/min_max"
                         android:textSize="14sp" />
 
                     <TextView
@@ -417,7 +414,7 @@
                         android:paddingTop="6dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="6dp"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textColor="@android:color/transparent" />
 
                     <TextView
@@ -429,7 +426,7 @@
                         android:paddingTop="6dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="6dp"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         android:textColor="@android:color/transparent" />
                 </TableRow>
 
@@ -466,7 +463,6 @@
                 style="@style/basicTextView"
                 android:layout_marginBottom="15dp"
                 android:contentDescription="@string/cd_text_more"
-                android:text="@string/slide_more"
                 android:textColor="@android:color/transparent"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -533,7 +529,6 @@
                             android:layout_marginStart="20dp"
                             android:layout_marginTop="24dp"
                             android:drawablePadding="5dp"
-                            android:text="@string/daily_weather"
                             android:textColor="@color/theme_text_color"
                             android:textSize="18sp"
                             app:drawableStartCompat="@drawable/ico_time" />
@@ -552,7 +547,6 @@
                             <TextView
                                 android:id="@+id/dailySectionToday"
                                 style="@style/basicMediumTextView"
-                                android:text="@string/daily_today"
                                 android:textColor="@color/theme_text_color"
                                 android:textSize="16sp" />
 
@@ -560,7 +554,6 @@
                                 android:id="@+id/dailySectionTomorrow"
                                 style="@style/basicTextView"
                                 android:layout_marginStart="12dp"
-                                android:text="@string/daily_tomorrow"
                                 android:textColor="@color/theme_text_color"
                                 android:textSize="16sp" />
 
@@ -568,7 +561,6 @@
                                 android:id="@+id/dailySectionAfterTomorrow"
                                 style="@style/basicTextView"
                                 android:layout_marginStart="12dp"
-                                android:text="@string/daily_next_tomorrow"
                                 android:textColor="@color/theme_text_color"
                                 android:textSize="16sp" />
                         </TableRow>
@@ -641,7 +633,6 @@
                             android:layout_marginStart="20dp"
                             android:layout_marginTop="24dp"
                             android:drawablePadding="5dp"
-                            android:text="@string/weekly_weather"
                             android:textColor="@color/theme_text_color"
                             android:textSize="18sp"
                             app:drawableStartCompat="@drawable/ico_weekly" />
@@ -812,7 +803,6 @@
                             style="@style/basicMediumTextView"
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="16dp"
-                            android:text="@string/uv_title"
                             android:textColor="@color/theme_text_color"
                             android:textSize="18sp" />
 
@@ -916,7 +906,6 @@
                                 android:layout_marginBottom="6dp"
                                 android:ellipsize="end"
                                 android:lines="1"
-                                android:text="@string/sunrise"
                                 android:textColor="@color/theme_text_color"
                                 android:textSize="16sp" />
 
@@ -960,7 +949,6 @@
                                 android:layout_marginBottom="6dp"
                                 android:ellipsize="end"
                                 android:lines="1"
-                                android:text="@string/sunset"
                                 android:textColor="@color/theme_text_color"
                                 android:textSize="16sp" />
 
@@ -1001,7 +989,6 @@
                                 android:id="@+id/mainSunTomTitle"
                                 style="@style/basicMediumTextView"
                                 android:fontFamily="@font/spoqa_hansansneo_medium"
-                                android:text="@string/tomorrow"
                                 android:textColor="@color/theme_text_color"
                                 android:textSize="16sp" />
 
@@ -1026,7 +1013,6 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginStart="24dp"
                         android:layout_marginEnd="24dp"
-                        android:text="@string/data_api_license"
                         android:textColor="@color/sub_gray_color"
                         android:textSize="11sp"
                         android:textStyle="italic" />

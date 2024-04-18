@@ -23,6 +23,7 @@ import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.KeyboardController
+import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
 import com.clj.fastble.callback.BleGattCallback
 import com.clj.fastble.callback.BleReadCallback
@@ -68,11 +69,14 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
     }
 
     private val connectCallback = object : BleGattCallback() {
-        override fun onStartConnect() {}
+        override fun onStartConnect() {
+            TimberUtil().w("testtest","start connect")
+        }
 
         override fun onConnectFail(bleDevice: BleDevice?, exception: BleException?) {
             mainDispatcher.launch {
-                binding.addWifiPwdTitle.text = getString(R.string.eye_disconnect_retry)
+                TimberUtil().w("testtest","connect fail : ${exception}")
+                binding.addWifiPwdTitle.text = getString(R.string.eye_fail_to_connect_bt)
                 ble.destroyBle()
                 delay(1500)
                 parentActivity.finish()
@@ -81,27 +85,26 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
 
         override fun onConnectSuccess(bleDevice: BleDevice?, gatt: BluetoothGatt?, status: Int) {
             mainDispatcher.launch {
-                if (isInit) {
-                    if (isCapability) {
-                        parentActivity.changeTitleWithAnimation(
-                            binding.addWifiPwdTitle,
-                            getString(R.string.eye_input_wifi_password),
-                            true
-                        )
-                        binding.addWifiPwdEt.visibility = View.VISIBLE
-                        binding.addWifiPwdEt.animation =
-                            AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
-                        binding.addWifiPwdBtn.visibility = View.VISIBLE
-                        binding.addWifiPwdBtn.animation =
-                            AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
-                    } else {
-                        parentActivity.changeTitleWithAnimation(
-                            binding.addWifiPwdTitle,
-                            getString(R.string.sending_wifi_info), true
-                        )
-                        KeyboardController.onKeyboardDown(requireContext(),binding.addWifiPwdEt)
-                        postSSID()
-                    }
+                TimberUtil().d("testtest","connect success - device : ${bleDevice?.name} isCapability : $isCapability")
+                if (isCapability) {
+                    parentActivity.changeTitleWithAnimation(
+                        binding.addWifiPwdTitle,
+                        getString(R.string.eye_input_wifi_password),
+                        true
+                    )
+                    binding.addWifiPwdEt.visibility = View.VISIBLE
+                    binding.addWifiPwdEt.animation =
+                        AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+                    binding.addWifiPwdBtn.visibility = View.VISIBLE
+                    binding.addWifiPwdBtn.animation =
+                        AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+                } else {
+                    parentActivity.changeTitleWithAnimation(
+                        binding.addWifiPwdTitle,
+                        getString(R.string.sending_wifi_info), true
+                    )
+                    KeyboardController.onKeyboardDown(requireContext(), binding.addWifiPwdEt)
+                    postSSID()
                 }
             }
         }
@@ -111,7 +114,15 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
             device: BleDevice?,
             gatt: BluetoothGatt?,
             status: Int
-        ) {}
+        ) {
+            TimberUtil().w("testtest","connect fail : ${isActiveDisConnected}")
+            mainDispatcher.launch {
+                binding.addWifiPwdTitle.text = getString(R.string.eye_disconnect_retry)
+                ble.destroyBle()
+                delay(1500)
+                parentActivity.finish()
+            }
+        }
     }
 
     private fun inputDeviceAlias() {
@@ -348,25 +359,31 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        arguments?.let {
-            val serial = it.getString("serial")
-            val deviceId = it.getString("deviceId")
-            val alias = it.getString("alias")
-            val isMaster = it.getString("isMaster")
+        arguments?.let { arg ->
+            val serial = arg.getString("serial")
+            val deviceId = arg.getString("deviceId")
+            val alias = arg.getString("alias")
+            val isMaster = arg.getString("isMaster")
+            val ssid = arg.getString("ssid")
+            val capability = arg.getBoolean("capability")
+            TimberUtil().d("testtest","ssid : $ssid capa : $capability serial : $serial deviceId : $deviceId alias : $alias isMaster : $isMaster")
             if (serial != null && deviceId != null && alias != null && isMaster != null) {
                 postDevice(deviceId, EyeDataModel.PostDevice(serial, alias, isMaster))
-            }
-        } ?: run {
-            ble.device?.let {
-                ble.connectDevice(it, connectCallback)
-            } ?: run {
-                mainDispatcher.launch {
-                    binding.addWifiPwdTitle.text = getString(R.string.fail_to_connect_bt_retry)
-                    ble.destroyBle()
-                    delay(1500)
-                    parentActivity.finish()
+            } else if (ssid != null) {
+                ble.device?.let { device ->
+                    ble.connectDevice(device, connectCallback)
+                } ?: run {
+                    mainDispatcher.launch {
+                        binding.addWifiPwdTitle.text = getString(R.string.fail_to_connect_bt_retry)
+                        ble.destroyBle()
+                        delay(1500)
+                        parentActivity.finish()
+                    }
                 }
             }
+        } ?: run {
+            ToastUtils(requireContext()).showMessage("올바르지 않은 Wifi 입니다")
+            parentActivity.transactionFragment(AddDeviceWifiFragment())
         }
     }
 

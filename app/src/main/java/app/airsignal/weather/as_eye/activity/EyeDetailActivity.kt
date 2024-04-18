@@ -15,6 +15,7 @@ import app.airsignal.weather.as_eye.fragment.EyeDetailReportFragment
 import app.airsignal.weather.as_eye.fragment.EyeSettingFragment
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivityEyeDetailBinding
+import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.OnSingleClickListener
 import app.airsignal.weather.util.`object`.DataTypeParser.getAverageTime
@@ -111,7 +112,7 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
     private fun sendApiData(serial: String) {
         if (fetch.hasObservers()) { destroyObserver() }
         applyMeasuredData()
-        dataViewModel.loadData(serial,AverageFlag.HOURLY.flag,getAverageTime(getCurrentTime()),getAverageTime(getCurrentTime()))
+        dataViewModel.loadData(GetAppInfo.getUserEmail(this), serial,AverageFlag.HOURLY.flag,getAverageTime(getCurrentTime()),getAverageTime(getCurrentTime()))
     }
 
     private fun setAnimation(transaction: FragmentTransaction, from: Int, to: Int) {

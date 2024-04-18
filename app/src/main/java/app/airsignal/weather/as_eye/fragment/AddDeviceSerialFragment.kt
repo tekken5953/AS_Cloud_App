@@ -2,8 +2,10 @@ package app.airsignal.weather.as_eye.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -11,6 +13,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.core.os.HandlerCompat
 import androidx.databinding.DataBindingUtil
 import app.airsignal.weather.R
@@ -67,7 +70,15 @@ class AddDeviceSerialFragment : BaseEyeFragment<FragmentAddDeviceSerialBinding>(
                 KeyboardController.onKeyboardDown(requireContext(), binding.addSerialEt)
                 when (stateInspection) {
                     0 -> { getOwners(binding.addSerialEt.text.toString()) }
-                    1 -> { baseActivity.transactionFragment(NfcInfoFragment()) }
+                    1 -> {
+                        if (baseActivity.enableNfc()) baseActivity.transactionFragment(NfcInfoFragment())
+                        else {
+                            Toast.makeText(requireContext(), getString(R.string.nfc_disabled_msg), Toast.LENGTH_SHORT).show()
+                            val intent = Intent(Intent(Settings.ACTION_NFC_SETTINGS))
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            startActivity(intent)
+                        }
+                    }
                     2 -> { baseActivity.transactionFragment(AddDeviceBleFragment()) }
                 }
             }

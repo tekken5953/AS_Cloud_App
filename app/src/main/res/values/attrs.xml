@@ -8,7 +8,7 @@
         <attr name="graphImg" format="integer"/>
     </declare-styleable>
 
-    <declare-styleable name="TestAirQView">
+    <declare-styleable name="ExternalAirView">
         <attr name="airTitle" format="string"/>
         <attr name="airUnit" format="string"/>
     </declare-styleable>

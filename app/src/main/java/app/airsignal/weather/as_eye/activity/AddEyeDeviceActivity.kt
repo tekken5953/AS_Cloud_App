@@ -45,16 +45,19 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
 
     override fun onStart() {
         super.onStart()
-        transactionFragment(AddDeviceSerialFragment())
+        if (!ble.isConnected()) transactionFragment(AddDeviceSerialFragment())
     }
 
-    private fun enableNfc() {
+    fun enableNfc(): Boolean {
         TimberUtil().d("testtest","enableNfc is ${nfcAdapter.isEnabled}")
         if (!nfcAdapter.isEnabled) {
-            Toast.makeText(this, getString(R.string.nfc_disabled_msg), Toast.LENGTH_SHORT).show()
-            val intent = Intent(Intent(Settings.ACTION_NFC_SETTINGS))
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
+            if (getCurrentFragment() == NfcInfoFragment()) {
+                Toast.makeText(this, getString(R.string.nfc_disabled_msg), Toast.LENGTH_SHORT).show()
+                val intent = Intent(Intent(Settings.ACTION_NFC_SETTINGS))
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
+            }
+            return false
         } else {
             nfcAdapter.enableForegroundDispatch(
                 this,
@@ -63,6 +66,8 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
                     Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP).setAction(NfcAdapter.ACTION_NDEF_DISCOVERED),
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
                 ), null, null)
+
+            return true
         }
     }
 

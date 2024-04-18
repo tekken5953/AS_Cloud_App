@@ -357,4 +357,5 @@
     <string name="api_timeout_retry">Request time has expired. Retry this request</string>
     <string name="no_content">There is no content</string>
     <string name="skip">SKIP</string>
+    <string name="eye_fail_to_connect_bt">Fail to connect bluetooth. Please retry</string>
 </resources>

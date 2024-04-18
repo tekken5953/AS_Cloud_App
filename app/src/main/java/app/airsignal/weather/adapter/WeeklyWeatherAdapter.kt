@@ -75,8 +75,8 @@ class WeeklyWeatherAdapter(
             minRain.text = "${dao.minRain}%"
             maxRain.text = "${dao.maxRain}%"
 
-            maxRain.setTextColor(applyColor)
-            minRain.setTextColor(applyColor)
+            maxRain.setTextColor(applySubColor)
+            minRain.setTextColor(applySubColor)
             maxRain.compoundDrawablesRelative[0]?.mutate()?.setTint(applySubColor)
             minRain.compoundDrawablesRelative[0]?.mutate()?.setTint(applySubColor)
 
@@ -85,8 +85,8 @@ class WeeklyWeatherAdapter(
 
             day.setTextColor(applyColor)
             date.setTextColor(applySubColor)
-            minText.setTextColor(applySubColor)
-            maxText.setTextColor(applySubColor)
+            minText.setTextColor(applyColor)
+            maxText.setTextColor(applyColor)
             section.setTextColor(applyColor)
 
              if (bindingAdapterPosition == 0) {

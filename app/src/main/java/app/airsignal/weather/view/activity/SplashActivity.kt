@@ -131,6 +131,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             val versionName = GetSystemInfo.getApplicationVersionName(this)
                             val versionCode = GetSystemInfo.getApplicationVersionCode(this)
                             val fullVersion = "${versionName}.${versionCode}"
+                            val skipThisPatchKey = PATCH_SKIP + "${ver.data.serviceName}.${ver.data.serviceCode}"
 
                             // 현재 버전이 최신 버전인 경우
                             if (fullVersion == "${ver.data.serviceName}.${ver.data.serviceCode}") {
@@ -142,7 +143,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                 // 테스트 버전에 현재 버전이 포함되는 경우
                                 if (array.contains(fullVersion)) {
                                     // 스킵이 설정되어 있지 않은 경우
-                                    if (!sp.getBoolean(PATCH_SKIP, false)) {
+                                    if (!sp.getBoolean(skipThisPatchKey, false)) {
                                         // 최신 버전 설치와 현재 버전 사용 선택 다이얼로그 노출
                                         val dialog = MakeDoubleDialog(this)
                                             .make(
@@ -151,12 +152,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                             )
                                         // 설치 선택 시 스토어 이동
                                         dialog.first.setOnClickListener {
-                                            sp.setBoolean(PATCH_SKIP, false)
+                                            sp.setBoolean(skipThisPatchKey, false)
                                             goToPlayStore(this@SplashActivity)
                                         }
                                         // 현재 버전 이용 선택 시 메인 이동
                                         dialog.second.setOnClickListener {
-                                            sp.setBoolean(PATCH_SKIP, true)
+                                            sp.setBoolean(skipThisPatchKey, true)
                                             ToastUtils(this@SplashActivity).showMessage(getString(R.string.patch_store_notice))
                                             enterPage(inAppArray)
                                         }

@@ -20,6 +20,7 @@ import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.FragmentAddDeviceSerialBinding
 import app.airsignal.weather.databinding.FragmentAddDeviceWifiBinding
 import app.airsignal.weather.util.OnAdapterItemClick
+import app.airsignal.weather.util.TimberUtil
 import kotlin.math.absoluteValue
 
 @Suppress("DEPRECATION")
@@ -58,6 +59,7 @@ class AddDeviceWifiFragment : BaseEyeFragment<FragmentAddDeviceWifiBinding>() {
 
         wifiAdapter.setOnItemClickListener(object : OnAdapterItemSingleClick() {
             override fun onSingleClick(v: View?, position: Int) {
+                TimberUtil().d("testtest","wifi click : ${wifiList[position]}")
                 wifiList[position].capability?.let {
                     val bundle = Bundle()
                     bundle.putString("ssid",wifiList[position].ssid)

@@ -1875,11 +1875,16 @@ class MainActivity
                         ToastUtils(this@MainActivity)
                             .showMessage(getString(R.string.last_location_call_msg), 1)
                         processAddress(mLat, mLng, addr)
-                    } else hideAllViews(ERROR_NOT_SERVICED_LOCATION)
+                    } else {
+                        ToastUtils(this@MainActivity).showMessage(getString(R.string.error_not_service_locale))
+                        loadSavedViewModelData("서울특별시")
+                    }
                 }
             }
         } catch (e: NumberFormatException) {
             handleLocationFailure(e.stackTraceToString())
+            hideAllViews(ERROR_GET_LOCATION_FAILED)
+        } catch (e: NullPointerException) {
             hideAllViews(ERROR_GET_LOCATION_FAILED)
         }
     }
