@@ -922,7 +922,6 @@
                                 android:padding="0.5dp"
                                 android:textColor="@color/theme_text_color"
                                 android:textSize="18sp" />
-
                         </LinearLayout>
 
                         <LinearLayout

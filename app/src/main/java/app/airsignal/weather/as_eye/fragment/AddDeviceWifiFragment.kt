@@ -4,23 +4,18 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.os.Bundle
-import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.HandlerCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.as_eye.adapter.AddDeviceWifiAdapter
 import app.airsignal.weather.as_eye.adapter.OnAdapterItemSingleClick
 import app.airsignal.weather.as_eye.dao.EyeDataModel
-import app.airsignal.weather.databinding.FragmentAddDeviceSerialBinding
 import app.airsignal.weather.databinding.FragmentAddDeviceWifiBinding
-import app.airsignal.weather.util.OnAdapterItemClick
-import app.airsignal.weather.util.TimberUtil
 import kotlin.math.absoluteValue
 
 @Suppress("DEPRECATION")
@@ -59,7 +54,6 @@ class AddDeviceWifiFragment : BaseEyeFragment<FragmentAddDeviceWifiBinding>() {
 
         wifiAdapter.setOnItemClickListener(object : OnAdapterItemSingleClick() {
             override fun onSingleClick(v: View?, position: Int) {
-                TimberUtil().d("testtest","wifi click : ${wifiList[position]}")
                 wifiList[position].capability?.let {
                     val bundle = Bundle()
                     bundle.putString("ssid",wifiList[position].ssid)

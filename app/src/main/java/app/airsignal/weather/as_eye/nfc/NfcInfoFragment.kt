@@ -4,25 +4,21 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.os.Looper
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.Toast
 import androidx.core.os.HandlerCompat
 import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.databinding.NfcInfoFragmentBinding
-import app.airsignal.weather.util.TimberUtil
 
 
 class NfcInfoFragment : Fragment() {
@@ -80,7 +76,6 @@ class NfcInfoFragment : Fragment() {
     private fun processIntent(intent: Intent) {
         if (NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action || NfcAdapter.ACTION_TAG_DISCOVERED == intent.action) {
             @Suppress("DEPRECATION") val rawMessages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
-            TimberUtil().d("testtest","process intent : $rawMessages")
             if (rawMessages != null) {
                 binding.nfcInfoProgress.text = "스캔 성공"
                 binding.nfcInfoProgress.setTextColor(requireContext().getColor(R.color.main_blue_color))

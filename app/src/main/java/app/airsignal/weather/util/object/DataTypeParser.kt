@@ -364,7 +364,11 @@ object DataTypeParser {
 
     /** LocalDateTime을 Long으로 파싱 **/
     fun parseLocalDateTimeToLong(localDateTime: LocalDateTime): Long {
-        return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        return try {
+            localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        } catch (e: NullPointerException) {
+            LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        }
     }
 
     /** Long을 LocalDateTime으로 파싱 **/

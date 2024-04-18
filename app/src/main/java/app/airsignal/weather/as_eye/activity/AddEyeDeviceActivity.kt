@@ -18,7 +18,6 @@ import app.airsignal.weather.as_eye.fragment.AddDeviceSerialFragment
 import app.airsignal.weather.as_eye.nfc.NfcInfoFragment
 import app.airsignal.weather.databinding.ActivityAddEyeDeviceBinding
 import app.airsignal.weather.databinding.IncludeEyeAddItemBinding
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import kotlinx.coroutines.*
 
@@ -49,7 +48,6 @@ class AddEyeDeviceActivity : BaseEyeActivity<ActivityAddEyeDeviceBinding>() {
     }
 
     fun enableNfc(): Boolean {
-        TimberUtil().d("testtest","enableNfc is ${nfcAdapter.isEnabled}")
         if (!nfcAdapter.isEnabled) {
             if (getCurrentFragment() == NfcInfoFragment()) {
                 Toast.makeText(this, getString(R.string.nfc_disabled_msg), Toast.LENGTH_SHORT).show()

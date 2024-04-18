@@ -71,6 +71,11 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
 
     private var isLoaded = false
 
+    override fun onResume() {
+        super.onResume()
+        loadDeviceList()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
@@ -160,8 +165,6 @@ class EyeListActivity : BaseEyeActivity<ActivityEyeListBinding>() {
                 selectorBuilder.show()
             }
         })
-
-        loadDeviceList()
     }
 
     private fun moveToDetail(position: Int) {

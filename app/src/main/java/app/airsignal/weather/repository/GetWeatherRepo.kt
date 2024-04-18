@@ -14,8 +14,6 @@ import app.airsignal.weather.network.NetworkUtils.modifyCurrentRainType
 import app.airsignal.weather.network.NetworkUtils.modifyCurrentTempType
 import app.airsignal.weather.network.NetworkUtils.modifyCurrentWindSpeed
 import app.airsignal.weather.network.retrofit.ApiModel
-import app.airsignal.weather.util.LoggerUtil
-import app.airsignal.weather.util.TimberUtil
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

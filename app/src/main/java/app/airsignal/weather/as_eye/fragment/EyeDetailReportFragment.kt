@@ -144,7 +144,7 @@ class EyeDetailReportFragment : BaseEyeFragment<EyeDetailReportFragmentBinding>(
         }
 
         val currentTimeMillis = System.currentTimeMillis()
-        val logDateTimeInMillis = parseLocalDateTimeToLong(reportLogDate)
+        val logDateTimeInMillis = parseLocalDateTimeToLong(reportLogDate ?: LocalDateTime.now())
 
         val isWithin24Hours = currentTimeMillis - logDateTimeInMillis <= 1000 * 60 * 60 * 24
 
@@ -152,13 +152,11 @@ class EyeDetailReportFragment : BaseEyeFragment<EyeDetailReportFragmentBinding>(
             reportLogDate?.format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")) ?: ""
         } else ""
 
-
         val logValueText = if (isWithin24Hours) "$reportLogValue dB의 소음이 발생했습니다"
         else "24시간 내 발생한 소음이 없습니다"
 
-
         binding.reportLogTime.text = logTimeText
-        binding.reportLogValue.text = logValueText
+        binding.reportLogValue.text = if (logTimeText != "") logValueText else "24시간 내 발생한 소음이 없습니다"
 
         binding.reportCaiPb.progress = setProgress(ReportIndex.CAI_INDEX, caiValue,caiLvl)
         binding.reportVirusPb.progress = setProgress(ReportIndex.VIRUS_INDEX, virusValue,virusLvl)

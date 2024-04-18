@@ -23,7 +23,6 @@ import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.KeyboardController
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
 import com.clj.fastble.callback.BleGattCallback
 import com.clj.fastble.callback.BleReadCallback
@@ -69,13 +68,10 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
     }
 
     private val connectCallback = object : BleGattCallback() {
-        override fun onStartConnect() {
-            TimberUtil().w("testtest","start connect")
-        }
+        override fun onStartConnect() {}
 
         override fun onConnectFail(bleDevice: BleDevice?, exception: BleException?) {
             mainDispatcher.launch {
-                TimberUtil().w("testtest","connect fail : ${exception}")
                 binding.addWifiPwdTitle.text = getString(R.string.eye_fail_to_connect_bt)
                 ble.destroyBle()
                 delay(1500)
@@ -85,7 +81,6 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
 
         override fun onConnectSuccess(bleDevice: BleDevice?, gatt: BluetoothGatt?, status: Int) {
             mainDispatcher.launch {
-                TimberUtil().d("testtest","connect success - device : ${bleDevice?.name} isCapability : $isCapability")
                 if (isCapability) {
                     parentActivity.changeTitleWithAnimation(
                         binding.addWifiPwdTitle,
@@ -115,7 +110,6 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
             gatt: BluetoothGatt?,
             status: Int
         ) {
-            TimberUtil().w("testtest","connect fail : ${isActiveDisConnected}")
             mainDispatcher.launch {
                 binding.addWifiPwdTitle.text = getString(R.string.eye_disconnect_retry)
                 ble.destroyBle()
@@ -366,7 +360,6 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
             val isMaster = arg.getString("isMaster")
             val ssid = arg.getString("ssid")
             val capability = arg.getBoolean("capability")
-            TimberUtil().d("testtest","ssid : $ssid capa : $capability serial : $serial deviceId : $deviceId alias : $alias isMaster : $isMaster")
             if (serial != null && deviceId != null && alias != null && isMaster != null) {
                 postDevice(deviceId, EyeDataModel.PostDevice(serial, alias, isMaster))
             } else if (ssid != null) {

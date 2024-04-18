@@ -52,7 +52,7 @@ class NfcReadSuccessFragment : Fragment() {
                     mActivity.showPb()
                     HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
                         postDevice(SharedPreferenceManager(requireContext()).getString(userEmail),
-                        EyeDataModel.PostDevice(serial,alias,isMaster))
+                        EyeDataModel.PostDevice(serial,binding.nfcReadSAliasEt.text.toString(),isMaster))
                     }, 2000)
                 } else {
                     if (binding.nfcReadSAliasEt.visibility == View.GONE) {
@@ -92,7 +92,6 @@ class NfcReadSuccessFragment : Fragment() {
             val deviceSerial = sep[2].substring(sep[2].indexOf(":") + 1 , sep[2].lastIndex + 1)
             binding.nfcReadSSerial.text = deviceSerial
             serial = deviceSerial
-            alias = binding.nfcReadSAliasEt.text.toString()
             deviceId = SharedPreferenceManager(requireContext()).getString(userEmail)
             isMaster = "F"
             if (binding.nfcReadSSerial.text.toString() != "") {

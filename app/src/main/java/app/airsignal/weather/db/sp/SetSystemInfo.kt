@@ -2,9 +2,7 @@ package app.airsignal.weather.db.sp
 
 import android.app.Activity
 import android.content.Context
-import android.content.res.Configuration
 import android.view.WindowManager
-import app.airsignal.weather.util.TimberUtil
 import java.util.*
 
 /**
