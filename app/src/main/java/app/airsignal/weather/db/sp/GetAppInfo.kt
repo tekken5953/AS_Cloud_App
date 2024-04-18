@@ -6,12 +6,14 @@ import app.airsignal.weather.db.sp.SpDao.INITIALIZED_LOC_PERMISSION
 import app.airsignal.weather.db.sp.SpDao.INITIALIZED_NOTI_PERMISSION
 import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG_TIME
 import app.airsignal.weather.db.sp.SpDao.IS_PERMED_BACK_LOG
-import app.airsignal.weather.db.sp.SpDao.LANDING_NOTIFICATION
 import app.airsignal.weather.db.sp.SpDao.LAST_REFRESH22
 import app.airsignal.weather.db.sp.SpDao.LAST_REFRESH42
 import app.airsignal.weather.db.sp.SpDao.NOTIFICATION_ADDRESS
 import app.airsignal.weather.db.sp.SpDao.NOTIFICATION_TOPIC_DAILY
 import app.airsignal.weather.db.sp.SpDao.WARNING_FIXED
+import app.airsignal.weather.db.sp.SpDao.WEATHER_ANIMATION_ENABLE
+import app.airsignal.weather.db.sp.SpDao.WEATHER_BOX_OPACITY
+import app.airsignal.weather.db.sp.SpDao.WEATHER_BOX_OPACITY2
 import app.airsignal.weather.db.sp.SpDao.lastAddress
 import app.airsignal.weather.db.sp.SpDao.lastLoginPlatform
 import app.airsignal.weather.db.sp.SpDao.notiEnable
@@ -21,6 +23,7 @@ import app.airsignal.weather.db.sp.SpDao.userEmail
 import app.airsignal.weather.db.sp.SpDao.userFontScale
 import app.airsignal.weather.db.sp.SpDao.userLocation
 import app.airsignal.weather.db.sp.SpDao.userProfile
+import app.airsignal.weather.db.sp.SpDao.userTheme
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,7 +33,7 @@ import java.util.*
  **/
 object GetAppInfo {
     fun getUserTheme(context: Context): String {
-        return SharedPreferenceManager(context).getString("theme")
+        return SharedPreferenceManager(context).getString(userTheme)
     }
 
     fun getUserEmail(context: Context): String {
@@ -73,7 +76,7 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getString(NOTIFICATION_TOPIC_DAILY)
     }
 
-    fun getEntireSun(sunRise: String, sunSet: String): Int {
+    private fun getEntireSun(sunRise: String, sunSet: String): Int {
         val sunsetTime = parseTimeToMinutes(sunSet)
         val sunriseTime = parseTimeToMinutes(sunRise)
         return sunsetTime - sunriseTime
@@ -91,14 +94,14 @@ object GetAppInfo {
     }
 
     /** 데이터 포멧에 맞춰서 시간변환 **/
-    fun millsToString(mills: Long, pattern: String): String {
+    private fun millsToString(mills: Long, pattern: String): String {
         return SimpleDateFormat(pattern, Locale.getDefault()).format(Date(mills))
     }
     
     /** HH:mm 포맷의 시간을 분으로 변환 **/
-    fun parseTimeToMinutes(time: String): Int {
+    private fun parseTimeToMinutes(time: String): Int {
         return try {
-            val timeSplit = time.replace(" ", "")
+            val timeSplit = time.replace(" ","")
             val hour = timeSplit.substring(0, 2).toInt()
             val minutes = timeSplit.substring(2, 4).toInt()
             hour * 60 + minutes
@@ -144,15 +147,23 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getLong(LAST_REFRESH22)
     }
 
-    fun isLandingNotification(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(LANDING_NOTIFICATION, false)
-    }
-
     fun getInAppMsgEnabled(context: Context): Boolean {
         return SharedPreferenceManager(context).getBoolean(SpDao.IN_APP_MSG, false)
     }
 
     fun getInAppMsgTime(context: Context): Long {
         return SharedPreferenceManager(context).getLong(IN_APP_MSG_TIME)
+    }
+
+    fun getWeatherAnimEnabled(context: Context): Boolean {
+        return SharedPreferenceManager(context).getBoolean(WEATHER_ANIMATION_ENABLE, true)
+    }
+
+    fun getWeatherBoxOpacity(context: Context): Int {
+        return SharedPreferenceManager(context).getInt(WEATHER_BOX_OPACITY, 60)
+    }
+
+    fun getWeatherBoxOpacity2(context: Context): Int {
+        return SharedPreferenceManager(context).getInt(WEATHER_BOX_OPACITY2, 60)
     }
 }

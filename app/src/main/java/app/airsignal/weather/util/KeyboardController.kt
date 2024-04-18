@@ -14,7 +14,7 @@ object KeyboardController {
         HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
             et.requestFocus()
             inputMethodManager.showSoftInput(et,InputMethodManager.SHOW_IMPLICIT)
-        },300)
+        },100)
     }
 
     // 키보드 내리기

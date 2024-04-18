@@ -1,19 +1,18 @@
 package app.airsignal.weather.view.custom_view
 
 import android.app.Activity
-import android.app.Dialog
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.StyleRes
 import app.airsignal.weather.R
+import app.airsignal.weather.dao.StaticDataObject
+import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
 import app.airsignal.weather.db.sp.SetSystemInfo
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
-import app.airsignal.weather.util.TimberUtil
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -21,7 +20,7 @@ import java.util.concurrent.CompletableFuture
  * @since : 2023-03-28 오전 11:15
  **/
 
-class ShowDialogClass(private val activity: Activity, private val isEye: Boolean) {
+class ShowDialogClass(private val activity: Activity, isEye: Boolean) {
     private var builder: androidx.appcompat.app.AlertDialog.Builder =
         androidx.appcompat.app.AlertDialog.Builder(activity, if (!isEye) R.style.AlertDialog else R.style.FullDialog)
     private lateinit var alertDialog: androidx.appcompat.app.AlertDialog
@@ -37,6 +36,12 @@ class ShowDialogClass(private val activity: Activity, private val isEye: Boolean
             TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(activity)
             else -> SetSystemInfo.setTextSizeDefault(activity)
         }
+
+        when (GetAppInfo.getUserLocation(activity)) {
+            StaticDataObject.LANG_KR -> { SetSystemInfo.updateConfiguration(activity, Locale.KOREA) }
+            StaticDataObject.LANG_EN -> { SetSystemInfo.updateConfiguration(activity, Locale.ENGLISH) }
+            else -> { SetSystemInfo.updateConfiguration(activity, Locale.getDefault()) }
+        }
     }
 
     /** 다이얼로그 뒤로가기 버튼 리스너 등록 **/
@@ -45,45 +50,8 @@ class ShowDialogClass(private val activity: Activity, private val isEye: Boolean
         return this
     }
 
-    /** 다이얼로그 뒤로가기 버튼 후 액티비티 갱신 **/
-    fun setBackPressRefresh(imageView: ImageView): ShowDialogClass {
-        imageView.setOnClickListener {
-            CompletableFuture
-                .supplyAsync { dismiss() }
-                .thenAccept {
-                    activity.let {
-                        it.finish() //인텐트 종료
-                        it.overridePendingTransition(0, 0) //인텐트 효과 없애기
-                        val intent = it.intent //인텐트
-                        it.startActivity(intent) //액티비티 열기
-                        it.overridePendingTransition(0, 0) //인텐트 효과 없애기
-                    }
-                }
-        }
-        return this
-    }
-
-    fun setBackPressRefresh(imageView: TextView): ShowDialogClass {
-        imageView.setOnClickListener {
-            CompletableFuture
-                .supplyAsync { dismiss() }
-                .thenAccept {
-                    activity.let {
-                        it.finish() //인텐트 종료
-                        it.overridePendingTransition(0, 0) //인텐트 효과 없애기
-                        val intent = it.intent //인텐트
-                        it.startActivity(intent) //액티비티 열기
-                        it.overridePendingTransition(0, 0) //인텐트 효과 없애기
-                    }
-                }
-        }
-        return this
-    }
-
     /** 다이얼로그 뷰 소멸 **/
-    fun dismiss() {
-        if (alertDialog.isShowing) alertDialog.dismiss()
-    }
+    fun dismiss() { if (alertDialog.isShowing) alertDialog.dismiss() }
 
     /** 다이얼로그 뷰 갱신 **/
     fun show(v: View, cancelable: Boolean, transition: DialogTransition?) {

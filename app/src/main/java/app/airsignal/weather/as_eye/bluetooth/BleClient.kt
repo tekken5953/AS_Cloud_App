@@ -4,7 +4,10 @@ import android.app.Activity
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
-import android.content.pm.Capability
+import app.airsignal.weather.dao.IgnoredKeyFile.UUID_CONNECTING
+import app.airsignal.weather.dao.IgnoredKeyFile.UUID_PWD
+import app.airsignal.weather.dao.IgnoredKeyFile.UUID_SSID
+import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
@@ -14,11 +17,7 @@ import com.clj.fastble.callback.BleReadCallback
 import com.clj.fastble.callback.BleScanCallback
 import com.clj.fastble.callback.BleWriteCallback
 import com.clj.fastble.data.BleDevice
-import com.clj.fastble.exception.BleException
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 class BleClient(private val activity: Activity) {
@@ -26,12 +25,6 @@ class BleClient(private val activity: Activity) {
     var device: BleDevice? = null
     var serial = "Unknown"
     var scanning = false
-
-    companion object {
-        const val UUID_SSID = "37BE4E09-776F-4265-A6EE-6F3396E26639"
-        const val UUID_PWD = "557E202B-A185-4098-B5FB-BA1B61F699EA"
-        const val UUID_CONNECTING = "FC245120-55EC-4508-8BA8-A7B1C448C5ED"
-    }
 
     private enum class BleProtocolType {
         NOTIFY, READ, WRITE, WRITE_NO_RESPONSE, BROADCAST, INDICATE,
@@ -64,9 +57,8 @@ class BleClient(private val activity: Activity) {
     }
 
     fun startScan(scanCallback: BleScanCallback) {
-        if (!instance.isSupportBle) {
-            makeToast(activity, "블루투스 기능을 확인해 주세요")
-        } else {
+        if (!instance.isSupportBle) makeToast(activity, "블루투스 기능을 확인해 주세요")
+        else {
             val perm = RequestPermissionsUtil(activity)
             if (perm.isGrantBle()) {
                 scanLeDevice(scanCallback)
@@ -83,9 +75,7 @@ class BleClient(private val activity: Activity) {
                 scanning = true
                 instance.scan(scanCallback)
             }
-        } else {
-            makeToast(activity, "BLE 미지원 디바이스")
-        }
+        } else makeToast(activity, "BLE를 지원하지 않는 디바이스입니다")
     }
 
     fun destroyBle() {
@@ -105,15 +95,9 @@ class BleClient(private val activity: Activity) {
         instance.connect(device, connectCallback)
     }
 
-    fun disconnect() {
-        device?.let {
-            if (isConnected()) {
-                instance.disconnect(device)
-            }
-        }
-    }
+    fun disconnect() { device?.let { if (isConnected()) { instance.disconnect(device) } } }
 
-    fun postSsid(writeSsidCallback: BleWriteCallback) {
+    fun postSsid(ssid: String, writeSsidCallback: BleWriteCallback) {
         val gatt = getGatt()
         gatt?.let {
             gatt.services.forEach { service ->
@@ -131,7 +115,7 @@ class BleClient(private val activity: Activity) {
                                     device,
                                     service.uuid.toString(),
                                     uuid,
-                                    serial.toByteArray(),
+                                    ssid.toByteArray(),
                                     writeSsidCallback
                                 )
                             }
@@ -154,9 +138,7 @@ class BleClient(private val activity: Activity) {
                         parse == BleProtocolType.READ_AND_WRITE
                     ) {
                         when (val uuid = char.uuid.toString()) {
-                            UUID_PWD.lowercase(
-                                Locale.getDefault()
-                            ) -> {
+                            UUID_PWD.lowercase(Locale.getDefault()) -> {
                                 instance.write(
                                     device,
                                     service.uuid.toString(),
@@ -177,24 +159,30 @@ class BleClient(private val activity: Activity) {
     fun readConnected(readCallback: BleReadCallback) {
         val gatt = getGatt()
         gatt?.let {
+            TimberUtil().d("testtest","read connected")
             it.services.forEach { service ->
-                service.characteristics.forEach { char ->
+                service.characteristics.forEachIndexed { index, char ->
+                    TimberUtil().d("testtest","service is ${parseProperty(char.properties)}")
                     if (parseProperty(char.properties) == BleProtocolType.READ ||
                         parseProperty(char.properties) == BleProtocolType.READ_AND_WRITE
                     ) {
-                        val uuid = char.uuid.toString()
-                        if (uuid == UUID_CONNECTING.lowercase(Locale.getDefault())
-                        ) {
-                            instance.read(
-                                device,
-                                service.uuid.toString(),
-                                uuid,
-                                readCallback
-                            )
+                        TimberUtil().d("testtest","$index is ${char.uuid}")
+                        when (val uuid = char.uuid.toString()) {
+                            UUID_CONNECTING.lowercase() -> {
+                                TimberUtil().d("testtest","find char : $uuid")
+                                instance.read(
+                                    device,
+                                    service.uuid.toString(),
+                                    uuid,
+                                    readCallback
+                                )
+                            }
                         }
                     }
                 }
             }
+        } ?: run {
+            TimberUtil().e("testtest","readConnected is null")
         }
     }
 
@@ -204,36 +192,16 @@ class BleClient(private val activity: Activity) {
 
     private fun parseProperty(i: Int): BleProtocolType {
         return when (i) {
-            BluetoothGattCharacteristic.PROPERTY_NOTIFY -> {
-                BleProtocolType.NOTIFY
-            }
-            BluetoothGattCharacteristic.PROPERTY_READ -> {
-                BleProtocolType.READ
-            }
-            BluetoothGattCharacteristic.PROPERTY_WRITE -> {
-                BleProtocolType.WRITE
-            }
-            BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE -> {
-                BleProtocolType.WRITE_NO_RESPONSE
-            }
-            BluetoothGattCharacteristic.PROPERTY_BROADCAST -> {
-                BleProtocolType.BROADCAST
-            }
-            BluetoothGattCharacteristic.PROPERTY_INDICATE -> {
-                BleProtocolType.INDICATE
-            }
-            BluetoothGattCharacteristic.PROPERTY_EXTENDED_PROPS -> {
-                BleProtocolType.EXTENDED_PROPS
-            }
-            BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE -> {
-                BleProtocolType.SIGNED_WRITE
-            }
-            10 -> {
-                BleProtocolType.READ_AND_WRITE
-            }
-            else -> {
-                BleProtocolType.UNKNOWN
-            }
+            BluetoothGattCharacteristic.PROPERTY_NOTIFY -> { BleProtocolType.NOTIFY }
+            BluetoothGattCharacteristic.PROPERTY_READ -> { BleProtocolType.READ }
+            BluetoothGattCharacteristic.PROPERTY_WRITE -> { BleProtocolType.WRITE }
+            BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE -> { BleProtocolType.WRITE_NO_RESPONSE }
+            BluetoothGattCharacteristic.PROPERTY_BROADCAST -> { BleProtocolType.BROADCAST }
+            BluetoothGattCharacteristic.PROPERTY_INDICATE -> { BleProtocolType.INDICATE }
+            BluetoothGattCharacteristic.PROPERTY_EXTENDED_PROPS -> { BleProtocolType.EXTENDED_PROPS }
+            BluetoothGattCharacteristic.PROPERTY_SIGNED_WRITE -> { BleProtocolType.SIGNED_WRITE }
+            10 -> { BleProtocolType.READ_AND_WRITE }
+            else -> { BleProtocolType.UNKNOWN }
         }
     }
 }

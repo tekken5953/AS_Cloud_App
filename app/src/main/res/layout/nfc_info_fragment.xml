@@ -11,38 +11,57 @@
 
         <ImageView
             android:id="@+id/nfcInfoDeviceImg"
-            android:layout_width="220dp"
-            android:layout_height="220dp"
+            android:layout_width="320dp"
+            android:layout_height="270dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="80dp"
             android:src="@drawable/test_nfc"
             android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="56dp"/>
 
         <TextView
             android:id="@+id/nfcInfoTitle"
-            style="@style/basicMediumTextView"
-            android:layout_marginTop="20dp"
-            android:text="NFC Tag Scan"
+            style="@style/basicTextView"
+            android:layout_width="0dp"
+            android:layout_marginTop="45dp"
+            android:text="AS-EYE 옆면에 부착 된 스티커에 가까이 대세요"
             android:textColor="@color/main_black"
-            android:textSize="20sp"
+            android:textSize="16sp"
+            android:gravity="start"
             app:layout_constraintEnd_toEndOf="@+id/nfcInfoDeviceImg"
             app:layout_constraintStart_toStartOf="@+id/nfcInfoDeviceImg"
             app:layout_constraintTop_toBottomOf="@+id/nfcInfoDeviceImg" />
 
 
         <TextView
-            android:id="@+id/nfcInfoProgress"
+            android:id="@+id/nfcInfoSubTitle"
+            android:layout_width="0dp"
             style="@style/basicTextView"
-            android:layout_marginTop="30dp"
-            android:text="Not yet Scanned"
-            android:textColor="@color/main_black"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="10dp"
+            android:text="특정 기기에서는 NFC 태그 읽기/쓰기 기능 활성화가 필요합니다"
+            android:textColor="#9C9C9C"
+            android:textSize="14sp"
+            android:gravity="start"
+            app:layout_constraintEnd_toEndOf="@+id/nfcInfoDeviceImg"
+            app:layout_constraintStart_toStartOf="@+id/nfcInfoDeviceImg"
             app:layout_constraintTop_toBottomOf="@+id/nfcInfoTitle" />
+
+        <TextView
+            android:id="@+id/nfcInfoProgress"
+            android:layout_width="0dp"
+            style="@style/basicTextView"
+            android:layout_marginTop="20dp"
+            android:text="스캔 대기중"
+            android:textColor="@color/main_black"
+            android:textSize="14sp"
+            android:gravity="start"
+            app:layout_constraintEnd_toEndOf="@+id/nfcInfoDeviceImg"
+            app:layout_constraintStart_toStartOf="@+id/nfcInfoDeviceImg"
+            app:layout_constraintTop_toBottomOf="@+id/nfcInfoSubTitle"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

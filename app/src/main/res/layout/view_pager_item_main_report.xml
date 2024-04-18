@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:paddingStart="15dp"
-    android:paddingEnd="15dp"
-    android:paddingTop="11dp"
-    android:paddingBottom="11dp">
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="9dp"
+    android:paddingBottom="9dp">
 
     <TextView
         android:id="@+id/vpWarningText"
@@ -16,7 +16,7 @@
         android:maxLines="1"
         android:maxEms="17"
         android:ellipsize="end"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:gravity="start|center_vertical"
         android:drawablePadding="5dp"
         app:drawableStartCompat="@drawable/ico_warning"

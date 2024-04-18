@@ -7,12 +7,15 @@ import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.view.WindowManager
+import app.airsignal.weather.view.activity.BaseActivity
 import com.airbnb.lottie.LottieAnimationView
 import kotlin.system.exitProcess
 
 class RefreshUtils(private val context: Context) {
 
     /** 액티비티 갱신 **/
+    @Suppress("DEPRECATION")
     fun refreshActivity() {
         (context as Activity).let {
             it.finish() //인텐트 종료

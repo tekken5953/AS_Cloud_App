@@ -6,8 +6,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.activity.SplashActivity"
-        android:background="@drawable/splash_lottie_bg">
+        tools:context=".view.activity.SplashActivity">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/splashPB"
@@ -18,9 +17,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:lottie_rawRes="@raw/ani_splash"
+            app:lottie_rawRes="@raw/ani_loading_splash"
             app:lottie_autoPlay="true"
-            app:lottie_loop="false"/>
+            app:lottie_loop="false" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

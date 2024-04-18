@@ -14,13 +14,11 @@ import app.airsignal.weather.db.sp.GetAppInfo.getNotificationAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getWarningFixed
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.viewmodel.GetWarningViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.util.*
-
 
 class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     override val resID: Int get() = R.layout.activity_warning_detail
@@ -29,7 +27,6 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     private val warningAdapter = WarningDetailAdapter(this, warningList)
     private val warningViewModel by viewModel<GetWarningViewModel>()
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
@@ -43,9 +40,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
         binding.warningBack.setOnClickListener { finish() }
 
         binding.warningMainLayout.setOnClickListener {
-            if (binding.warningAddr.isShowing) {
-                binding.warningAddr.dismiss()
-            }
+            if (binding.warningAddr.isShowing) binding.warningAddr.dismiss()
         }
 
         val regexAddress = if (intent.extras?.getBoolean("isMain") == true) {
@@ -53,9 +48,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
         } else { getWarningFixed(this) }
 
         // 수정 된 주소에 따른 적용
-        val regexAddr =
-            if (regexAddress != "Error") regexAddress
-            else getNotificationAddress(this)
+        val regexAddr = if (regexAddress != "Error") regexAddress else getNotificationAddress(this)
 
         binding.warningAddr.selectItemByIndex(parseStringToIndex(regexAddr))
         warningViewModel.loadDataResult(parseRegionToCode(regexAddr))
@@ -72,7 +65,6 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     }
 
     // 앱 버전 뷰모델 데이터 호출
-    @SuppressLint("NotifyDataSetChanged")
     private fun applyWarning() {
         try {
             warningViewModel.fetchData().observe(this) { result ->
@@ -88,23 +80,12 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
                                 } else showNoResult()
                             } ?: showNoResult()
                         }
-                        is BaseRepository.ApiState.Error -> {
-                            showNoResult()
-                            warningAdapter.notifyDataSetChanged()
-                        }
-                        is BaseRepository.ApiState.Loading -> {
-                            binding.warningPb.visibility = View.VISIBLE
-                        }
+                        is BaseRepository.ApiState.Error -> { showNoResult() }
+                        is BaseRepository.ApiState.Loading -> { binding.warningPb.visibility = View.VISIBLE }
                     }
-                } ?: run {
-                    showNoResult()
-                    warningAdapter.notifyDataSetChanged()
-                }
+                } ?: run { showNoResult() }
             }
-        } catch (e: IOException) {
-            showNoResult()
-            warningAdapter.notifyDataSetChanged()
-        }
+        } catch (e: IOException) { showNoResult() }
     }
 
     @SuppressLint("SetTextI18n")
@@ -130,6 +111,8 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
 
             binding.warningNoResult.visibility = View.VISIBLE
             binding.warningPb.visibility = View.GONE
+
+            warningAdapter.notifyItemRangeChanged(0, warningList.lastIndex)
         }
     }
 
@@ -153,7 +136,8 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             "전라북도" to 146,
             "경상남도" to 159,
             "경상북도" to 143,
-            "제주도" to 184
+            "제주도" to 184,
+            "제주특별자치도" to 184
         )
         return regionMap[fullName] ?: 109
     }
@@ -170,7 +154,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
         "전북" to "전라북도",
         "경남" to "경상남도",
         "경북" to "경상북도",
-        "제주" to "제주도")
+        "제주" to "제주특별자치도")
         return regionMap[region] ?: region
     }
 
@@ -187,6 +171,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             "전라북도" to 8,
             "경상남도" to 9,
             "경상북도" to 10,
+            "제주특별자치도" to 11,
             "제주도" to 11
         )
         return regionMap[fullName] ?: 0

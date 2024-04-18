@@ -70,6 +70,7 @@
 
     <string name="date">.</string>
     <string name="today">Today</string>
+    <string name="today_main">Tdy</string>
     <string name="min_max">Min/Max</string>
     <string name="similar_temp">Similar to yesterday</string>
     <string name="font_scale">Font Scale</string>
@@ -311,7 +312,7 @@
     <string name="nothing">Nothing</string>
     <string name="calendar">Date</string>
     <string name="this_week">this week</string>
-    <string name="eye_noise_no_data">The data is not exist</string>
+    <string name="eye_noise_no_data">Today data is not exist</string>
     <string name="eye_add_group">Add \na group</string>
     <string name="change_group_name">Change \ngroup name</string>
     <string name="remove_group">Delete \na group</string>
@@ -334,5 +335,27 @@
     <string name="apply_changes">Apply</string>
     <string name="success_to_delete">Success to remove</string>
     <string name="fail_to_delete">Fail to remove</string>
-    <string name="nfc_disabled_msg">NFC가 비활성화되었습니다. NFC를 활성화하세요</string>
+    <string name="nfc_disabled_msg">NFC is disabled. Enable NFC</string>
+    <string name="yesterday">Ysd</string>
+    <string name="tomorrow_week">Tmrw</string>
+    <string name="patch_store_notice">The latest version can be downloaded\nfrom the store or app settings</string>
+    <string name="use_current_version">Use this version</string>
+    <string name="exist_last_version">We have the latest version</string>
+    <string name="fail_to_get_app_version">Fail to get app version</string>
+    <string name="address_error">Error Address</string>
+    <string name="ok_change_setting">Settings have been changed</string>
+    <string name="settings_initialized">Settings have been initialized</string>
+    <string name="setting_animation">Animation</string>
+    <string name="setting_opacity">Opacity</string>
+    <string name="setting_animation_weather">Weather background</string>
+    <string name="opacity_black">Text black</string>
+    <string name="opacity_white">Text white</string>
+    <string name="display">Display</string>
+    <string name="reset">reset</string>
+    <string name="fail_to_get_notice">Fail to get notice</string>
+    <string name="fail_to_get_noise">Fail to get Noise Data</string>
+    <string name="api_timeout_retry">Request time has expired. Retry this request</string>
+    <string name="no_content">There is no content</string>
+    <string name="skip">SKIP</string>
+    <string name="eye_fail_to_connect_bt">Fail to connect bluetooth. Please retry</string>
 </resources>

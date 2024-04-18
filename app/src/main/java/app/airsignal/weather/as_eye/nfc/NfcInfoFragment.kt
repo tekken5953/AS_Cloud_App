@@ -16,18 +16,16 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.os.HandlerCompat
 import androidx.fragment.app.Fragment
+import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.databinding.NfcInfoFragmentBinding
-import app.airsignal.weather.util.TimberUtil
 
 
 class NfcInfoFragment : Fragment() {
     private lateinit var mActivity: AddEyeDeviceActivity
     private lateinit var binding : NfcInfoFragmentBinding
 
-    fun handleNfcIntent(intent: Intent) {
-        processIntent(intent)
-    }
+    fun handleNfcIntent(intent: Intent) { processIntent(intent) }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -50,6 +48,8 @@ class NfcInfoFragment : Fragment() {
             true
         }
 
+        mActivity.changeProgressWithAnimation(50)
+
         return binding.root
     }
 
@@ -70,7 +70,6 @@ class NfcInfoFragment : Fragment() {
         })
         animatorSet.interpolator = AccelerateDecelerateInterpolator()
 
-
         animatorSet.start()
     }
 
@@ -78,7 +77,8 @@ class NfcInfoFragment : Fragment() {
         if (NfcAdapter.ACTION_NDEF_DISCOVERED == intent.action || NfcAdapter.ACTION_TAG_DISCOVERED == intent.action) {
             @Suppress("DEPRECATION") val rawMessages = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
             if (rawMessages != null) {
-                binding.nfcInfoProgress.text = "Success to Scan"
+                binding.nfcInfoProgress.text = "스캔 성공"
+                binding.nfcInfoProgress.setTextColor(requireContext().getColor(R.color.main_blue_color))
                 for (message in rawMessages) {
                     val ndefMessage = message as NdefMessage
                     val records = ndefMessage.records
@@ -90,26 +90,24 @@ class NfcInfoFragment : Fragment() {
 
                     HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
                         processNfcPayload(sb.toString())
-                    },2000)
+                    },1500)
                 }
             } else {
-                binding.nfcInfoProgress.text = "Fail to Scan"
+                binding.nfcInfoProgress.text = "스캔 실패"
+                binding.nfcInfoProgress.setTextColor(requireContext().getColor(R.color.red))
                 HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
                     processNfcPayload(null)
-                },2000)
+                },1500)
             }
         }
     }
 
     private fun processNfcPayload(payload: String?) {
         payload?.let {
-            TimberUtil().d("nfctest","NFC에서 읽은 데이터: $it")
             val space = it.replace("\u0002"," ").replace("ko"," ")
             val bundle = Bundle()
             bundle.putString("payload",space)
             mActivity.transactionFragment(NfcReadSuccessFragment(),bundle)
-        } ?: run {
-            mActivity.transactionFragment(NfcReadFailFragment())
-        }
+        } ?: run { mActivity.transactionFragment(NfcReadFailFragment()) }
     }
 }

@@ -15,9 +15,9 @@ import app.airsignal.weather.as_eye.fragment.EyeDetailReportFragment
 import app.airsignal.weather.as_eye.fragment.EyeSettingFragment
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivityEyeDetailBinding
+import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.OnSingleClickListener
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.`object`.DataTypeParser.getAverageTime
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.viewmodel.GetEyeDataViewModel
@@ -71,7 +71,6 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
     private fun destroyObserver() {
         dataViewModel.cancelJob()
         fetch.removeObservers(this)
-        TimberUtil().w("lifecycle_test", "아이 디테일 옵저버 제거")
     }
 
     override fun onDestroy() {
@@ -111,45 +110,44 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
     }
 
     private fun sendApiData(serial: String) {
-        if (fetch.hasActiveObservers()) {
-            destroyObserver()
-        }
-        TimberUtil().w("lifecycle_test","아이 디테일 옵저버 생성")
+        if (fetch.hasObservers()) { destroyObserver() }
         applyMeasuredData()
-        dataViewModel.loadData(serial,AverageFlag.HOURLY.flag,getAverageTime(getCurrentTime()),getAverageTime(getCurrentTime()))
+        dataViewModel.loadData(GetAppInfo.getUserEmail(this), serial,AverageFlag.HOURLY.flag,getAverageTime(getCurrentTime()),getAverageTime(getCurrentTime()))
     }
 
     private fun setAnimation(transaction: FragmentTransaction, from: Int, to: Int) {
-        var enterAnimation: Int? = null
-        var exitAnimation: Int? = null
-        when (to) {
-            FRAGMENT_REPORT -> {
-                if (from == FRAGMENT_LIVE) {
-                    enterAnimation = R.anim.enter_from_start
-                    exitAnimation = R.anim.exit_to_end
-                } else if (from == FRAGMENT_SETTING) {
-                    enterAnimation = R.anim.enter_from_start
-                    exitAnimation = R.anim.exit_to_end
-                }
+        val enterAnimation: Int? = when (to) {
+            FRAGMENT_REPORT -> when (from) {
+                FRAGMENT_LIVE, FRAGMENT_SETTING -> R.anim.enter_from_start
+                else -> null
             }
-            FRAGMENT_LIVE -> {
-                if (from == FRAGMENT_REPORT) {
-                    enterAnimation = R.anim.enter_from_end
-                    exitAnimation = R.anim.exit_to_start
-                } else if (from == FRAGMENT_SETTING) {
-                    enterAnimation = R.anim.enter_from_start
-                    exitAnimation = R.anim.exit_to_end
-                }
+            FRAGMENT_LIVE -> when (from) {
+                FRAGMENT_REPORT -> R.anim.enter_from_end
+                FRAGMENT_SETTING -> R.anim.enter_from_start
+                else -> null
             }
-            FRAGMENT_SETTING -> {
-                if (from == FRAGMENT_LIVE) {
-                    enterAnimation = R.anim.enter_from_end
-                    exitAnimation = R.anim.exit_to_start
-                } else if (from == FRAGMENT_REPORT) {
-                    enterAnimation = R.anim.enter_from_end
-                    exitAnimation = R.anim.exit_to_start
-                }
+            FRAGMENT_SETTING -> when (from) {
+                FRAGMENT_LIVE, FRAGMENT_REPORT -> R.anim.enter_from_end
+                else -> null
             }
+            else -> null
+        }
+
+        val exitAnimation: Int? = when (to) {
+            FRAGMENT_REPORT -> when (from) {
+                FRAGMENT_LIVE, FRAGMENT_SETTING -> R.anim.exit_to_end
+                else -> null
+            }
+            FRAGMENT_LIVE -> when (from) {
+                FRAGMENT_REPORT -> R.anim.exit_to_start
+                FRAGMENT_SETTING -> R.anim.exit_to_end
+                else -> null
+            }
+            FRAGMENT_SETTING -> when (from) {
+                FRAGMENT_LIVE, FRAGMENT_REPORT -> R.anim.exit_to_start
+                else -> null
+            }
+            else -> null
         }
 
         enterAnimation?.let { enter ->
@@ -235,7 +233,6 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
                             hidePb()
                             val body = measured.data
                             entireData = body
-
                             val current = body.current
 //                                if (isRefreshable()) {
                             current.let { currentData ->
@@ -255,14 +252,10 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
                                 liveFragment.onDataTransfer(currentData)
                             }
 
-                            if (currentFragment == -1) {
-                                tabItemSelected(FRAGMENT_REPORT)
-                            }
+                            if (currentFragment == -1) { tabItemSelected(FRAGMENT_REPORT) }
 
                             CoroutineScope(Dispatchers.IO).launch {
-                                RDBLogcat.writeEyeMeasured(
-                                    this@EyeDetailActivity, body.toString()
-                                )
+                                RDBLogcat.writeEyeMeasured(this@EyeDetailActivity, body.toString())
                             }
 //                                }
                         }
@@ -274,15 +267,13 @@ class EyeDetailActivity : BaseEyeActivity<ActivityEyeDetailBinding>() {
                 }
             }
         } catch (e: IOException) {
-            TimberUtil().e("eyetest", "IOException $entireData ${e.stackTraceToString()}")
+            e.stackTraceToString()
             hidePb()
         } catch (e: NullPointerException) {
-            TimberUtil().e("eyetest", "NullPointerException $entireData ${e.stackTraceToString()}")
+            e.stackTraceToString()
             hidePb()
         } catch (e: IndexOutOfBoundsException) {
-            TimberUtil().e(
-                "eyetest", "IndexOutOfBoundsException $entireData ${e.stackTraceToString()}"
-            )
+            e.stackTraceToString()
             hidePb()
         }
     }

@@ -13,11 +13,9 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
 import app.airsignal.weather.databinding.FragmentAddDeviceBleBinding
-import app.airsignal.weather.util.TimberUtil
 import com.clj.fastble.callback.BleGattCallback
 import com.clj.fastble.callback.BleScanCallback
 import com.clj.fastble.data.BleDevice
@@ -25,15 +23,17 @@ import com.clj.fastble.exception.BleException
 import kotlinx.coroutines.*
 
 @SuppressLint("MissingPermission")
-class AddDeviceBleFragment : Fragment() {
-    private lateinit var parentActivity: AddEyeDeviceActivity
-    private lateinit var binding : FragmentAddDeviceBleBinding
+class AddDeviceBleFragment : BaseEyeFragment<FragmentAddDeviceBleBinding>() {
+    override val resID: Int get() = R.layout.activity_eye_detail
+
     private val animatorSet by lazy { AnimatorSet() }
     private var isAnimationEnabled = true
 
     private val mainDispatcher = CoroutineScope(Dispatchers.Main)
 
-    private val ble by lazy { parentActivity.ble }
+    private lateinit var baseActivity: AddEyeDeviceActivity
+
+    private val ble by lazy { baseActivity.ble }
     private val serial by lazy {ble.serial}
 
     private val scanCallback = object : BleScanCallback() {
@@ -51,7 +51,6 @@ class AddDeviceBleFragment : Fragment() {
         override fun onScanning(bleDevice: BleDevice?) {
             bleDevice?.let {
                 if (bleDevice.name != null) {
-                    TimberUtil().d("testtest", "onScanning ${bleDevice.name}")
                     if (serial != "Unknown" && bleDevice.device?.name == serial) {
                         ble.device = bleDevice
                         mainDispatcher.launch {
@@ -102,7 +101,7 @@ class AddDeviceBleFragment : Fragment() {
                 binding.addBleTitle.text = getString(R.string.success_to_connect_eye)
                 ble.disconnect()
                 delay(3000)
-                parentActivity.transactionFragment(AddDeviceWifiFragment())
+                baseActivity.transactionFragment(AddDeviceWifiFragment())
             }
         }
 
@@ -124,7 +123,7 @@ class AddDeviceBleFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is AddEyeDeviceActivity) parentActivity = context
+        if (context is AddEyeDeviceActivity) baseActivity = context
     }
 
     override fun onCreateView(
@@ -133,7 +132,7 @@ class AddDeviceBleFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_add_device_ble, container, false)
-        parentActivity.changeProgressWithAnimation(50)
+        baseActivity.changeProgressWithAnimation(50)
 
         binding.addBleReconnectBtn.setOnClickListener {
             isAnimationEnabled = true

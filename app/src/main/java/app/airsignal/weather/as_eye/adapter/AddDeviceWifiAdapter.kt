@@ -8,17 +8,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
+import app.airsignal.weather.adapter.ItemDiffCallback
 import app.airsignal.weather.as_eye.dao.EyeDataModel
-import app.airsignal.weather.util.OnAdapterItemClick
+import app.airsignal.weather.dao.AdapterModel
 
 class AddDeviceWifiAdapter(
     private val context: Context,
     list: ArrayList<EyeDataModel.Wifi>
 ) :
     RecyclerView.Adapter<AddDeviceWifiAdapter.ViewHolder>() {
-    private val mList = list
+    private var mList = list
 
     var isCapability = false
 
@@ -75,6 +77,7 @@ class AddDeviceWifiAdapter(
             }
         }
     }
+
 
     // 비밀번호 유무
     fun isCapability(capabilities: String): Boolean {

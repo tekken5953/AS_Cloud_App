@@ -12,7 +12,6 @@ import app.airsignal.weather.network.ErrorCode.ERROR_NULL_POINT
 import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
 import app.airsignal.weather.network.ErrorCode.ERROR_TIMEOUT
 import app.airsignal.weather.network.ErrorCode.ERROR_UNKNOWN
-import app.airsignal.weather.util.TimberUtil
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,60 +26,57 @@ class GetEyeDataRepo : BaseRepository() {
     var _getEyeResult =
         MutableLiveData<ApiState<EyeDataModel.Entire>?>()
 
-    fun loadDataResult(sn: String, flag: String?, start: Int?, end: Int?) {
-        CoroutineScope(Dispatchers.Default).launch {
-            _getEyeResult.postValue(ApiState.Loading)
-            impl.getEntire(sn, flag, start, end)
-                .enqueue(object : Callback<EyeDataModel.Entire> {
-                    override fun onResponse(
-                        call: Call<EyeDataModel.Entire>,
-                        response: Response<EyeDataModel.Entire>
-                    ) {
-                        TimberUtil().d("eyetest",response.body().toString())
-                        try {
-                            if (response.isSuccessful) {
-                                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                                    val responseBody = processData(response.body())
-                                    _getEyeResult.postValue(ApiState.Success(responseBody))
-                                },1500)
-                            } else {
-                                _getEyeResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
-                                call.cancel()
-                            }
-                        } catch (e: NullPointerException) {
-                            _getEyeResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
-                            e.stackTraceToString()
-                        } catch (e: JsonSyntaxException) {
-                            _getEyeResult.postValue(ApiState.Error(ERROR_GET_DATA))
-                            e.stackTraceToString()
-                        }
-                    }
-
-                    override fun onFailure(
-                        call: Call<EyeDataModel.Entire>,
-                        t: Throwable
-                    ) {
-                        TimberUtil().e("eyetest",t.stackTraceToString())
-                        try {
-                            _getEyeResult.postValue(ApiState.Error(ERROR_GET_DATA))
+    fun loadDataResult(userId: String, sn: String, flag: String?, start: Int?, end: Int?) {
+        _getEyeResult.postValue(ApiState.Loading)
+        impl.getEntire(userId, sn, flag, start, end)
+            .enqueue(object : Callback<EyeDataModel.Entire> {
+                override fun onResponse(
+                    call: Call<EyeDataModel.Entire>,
+                    response: Response<EyeDataModel.Entire>
+                ) {
+                    try {
+                        if (response.isSuccessful) {
+                            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                                val responseBody = processData(response.body())
+                                _getEyeResult.postValue(ApiState.Success(responseBody))
+                            }, 1500)
+                        } else {
+                            _getEyeResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
                             call.cancel()
-                        } catch (e: Exception) {
-                            e.stackTraceToString()
-                            when (e) {
-                                is SocketTimeoutException ->
-                                    _getEyeResult.postValue(ApiState.Error(ERROR_TIMEOUT))
-                                is NetworkErrorException ->
-                                    _getEyeResult.postValue(ApiState.Error(ERROR_NETWORK))
-                                is NullPointerException ->
-                                    _getEyeResult.postValue(ApiState.Error(ERROR_NULL_POINT))
-                                else -> {
-                                    _getEyeResult.postValue(ApiState.Error(ERROR_UNKNOWN))
-                                }
+                        }
+                    } catch (e: NullPointerException) {
+                        _getEyeResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
+                        e.stackTraceToString()
+                    } catch (e: JsonSyntaxException) {
+                        _getEyeResult.postValue(ApiState.Error(ERROR_GET_DATA))
+                        e.stackTraceToString()
+                    }
+                }
+
+                override fun onFailure(
+                    call: Call<EyeDataModel.Entire>,
+                    t: Throwable
+                ) {
+                    t.stackTraceToString()
+                    try {
+                        _getEyeResult.postValue(ApiState.Error(ERROR_GET_DATA))
+                        call.cancel()
+                    } catch (e: Exception) {
+                        e.stackTraceToString()
+                        when (e) {
+                            is SocketTimeoutException ->
+                                _getEyeResult.postValue(ApiState.Error(ERROR_TIMEOUT))
+                            is NetworkErrorException ->
+                                _getEyeResult.postValue(ApiState.Error(ERROR_NETWORK))
+                            is NullPointerException ->
+                                _getEyeResult.postValue(ApiState.Error(ERROR_NULL_POINT))
+                            else -> {
+                                _getEyeResult.postValue(ApiState.Error(ERROR_UNKNOWN))
                             }
                         }
                     }
-                })
-        }
+                }
+            })
     }
 
     private fun processData(rawData: EyeDataModel.Entire?): EyeDataModel.Entire {

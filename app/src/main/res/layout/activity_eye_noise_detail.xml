@@ -96,16 +96,13 @@
                     android:textColor="@color/main_black" />
             </LinearLayout>
 
-            <ImageView
+            <TextView
                 android:id="@+id/noiseFilterClear"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                style="@style/basicTextView"
+                android:text="필터\n초기화"
                 android:layout_marginStart="8dp"
-                android:layout_weight="0.1"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="8dp"
-                android:src="@drawable/test_remove_filter"
-                app:tint="@color/main_black" />
+                android:background="?android:attr/selectableItemBackground"
+                android:textSize="14sp"/>
         </TableRow>
 
         <androidx.recyclerview.widget.RecyclerView

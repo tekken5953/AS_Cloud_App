@@ -10,27 +10,56 @@
 
         <TextView
             android:id="@+id/nfcReadFTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/basicMediumTextView"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="52dp"
+            android:layout_marginEnd="20dp"
+            android:gravity="start"
             android:textColor="@color/main_black"
-            android:text="NFC 읽기 실패"
-            style="@style/basicMediumTextView"/>
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/nfcReadFSubTitle"
+            style="@style/basicMediumTextView"
+            android:layout_marginTop="16dp"
+            android:gravity="start"
+            android:visibility="invisible"
+            android:textColor="@color/main_black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/nfcReadFTitle"
+            app:layout_constraintTop_toBottomOf="@+id/nfcReadFTitle"/>
 
         <Button
-            android:id="@+id/nfcReadFBtn"
+            android:id="@+id/nfcReadFRetryBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/permission_ok_btn_bg"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:text="재시도"
-            android:enabled="false"
-            android:textSize="18sp"
+            android:enabled="true"
+            android:textSize="16sp"
             android:fontFamily="@font/spoqa_hansansneo_medium"
             android:textColor="@color/white"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toTopOf="@+id/nfcReadFCancelBtn"/>
+
+        <Button
+            android:id="@+id/nfcReadFCancelBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/permission_ok_btn_bg"
+            android:backgroundTint="#EBEBEB"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:text="취소"
+            android:enabled="false"
+            android:textSize="16sp"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:textColor="@color/main_black"
+            android:layout_marginBottom="52dp"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

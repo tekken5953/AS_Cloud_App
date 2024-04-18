@@ -8,7 +8,7 @@ import android.widget.Toast;
 public class ToastUtils {
     private final Context mContext;
     private Toast toast;
-    private Handler mHandler;
+    private final Handler mHandler;
 
     /**
      * Constructor
@@ -26,7 +26,7 @@ public class ToastUtils {
             cancelToast();
             toast = Toast.makeText(mContext, message, Toast.LENGTH_LONG);
             toast.show();
-            mHandler.postDelayed(this::cancelToast, duration);
+            mHandler.postDelayed(this::cancelToast, duration * 1000L);
         });
     }
 

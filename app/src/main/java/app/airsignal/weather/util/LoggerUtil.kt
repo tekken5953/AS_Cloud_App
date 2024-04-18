@@ -13,11 +13,6 @@ class LoggerUtil {
         return this
     }
 
-//    /** 앱 키해시 불러오기 */
-//    fun getKeyHash(context: Context) {
-//        Timber.tag("TAG_LOGIN").d("key_hash : ${Utility.getKeyHash(context)}")
-//    }
-
     fun d(tag: String, msg: String?) {
         Logger.t(tag).d(msg ?: "")
     }

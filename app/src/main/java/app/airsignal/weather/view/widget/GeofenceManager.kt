@@ -13,9 +13,8 @@ import com.google.android.gms.location.*
 import com.google.android.gms.location.GeofencingClient
 
 class GeofenceManager(private val context: Context) {
-    companion object {
-        private const val requestId = "request_id_geofence"
-    }
+    private val requestId = "request_id_geofence"
+
     private val geofencingClient: GeofencingClient by lazy {
         LocationServices.getGeofencingClient(BaseApplication.appContext)
     }
@@ -26,11 +25,7 @@ class GeofenceManager(private val context: Context) {
         location?.let {
             val geofence = Geofence.Builder()
                 .setRequestId(requestId)
-                .setCircularRegion(
-                    location.latitude,
-                    location.longitude,
-                    100f
-                )
+                .setCircularRegion(location.latitude, location.longitude, 100f)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build()
@@ -48,16 +43,14 @@ class GeofenceManager(private val context: Context) {
             ContextCompat.startForegroundService(context, intent)
 
             geofencingClient.addGeofences(geofencingRequest, pendingIntent)
-                .addOnFailureListener {
-                    removeGeofence(requestId)
-                }
+                .addOnFailureListener { removeGeofence() }
 
             return location
         }
         return null
     }
 
-    private fun removeGeofence(requestId: String) {
+    private fun removeGeofence() {
         geofencingClient.removeGeofences(listOf(requestId))
     }
 

@@ -25,10 +25,8 @@ class VibrateUtil(private val context: Context) {
     /** 기본 진동 발생 메서드 **/
     fun make(duration: Int) {
         CoroutineScope(Dispatchers.Default).launch {
-            vib.vibrate(
-                VibrationEffect.createOneShot(
-                    duration.toLong(), VibrationEffect.DEFAULT_AMPLITUDE
-                )
+            vib.vibrate(VibrationEffect.createOneShot(
+                duration.toLong(), VibrationEffect.DEFAULT_AMPLITUDE)
             )
         }
     }

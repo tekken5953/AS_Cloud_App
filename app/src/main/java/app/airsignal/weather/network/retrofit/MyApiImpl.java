@@ -12,6 +12,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -48,6 +49,7 @@ public interface MyApiImpl {
     @GET("airsignal/current/{sn}")
         // Eye 측정 데이터 호출
     Call<EyeDataModel.Entire> getEntire(
+            @Header("Authorization") String userId,
             @NotNull @Path("sn") String sn,
             @Nullable @Query("flag") String flag,
             @Nullable @Query("start") Integer start,
@@ -57,6 +59,7 @@ public interface MyApiImpl {
     @POST("device/{sn}")
         // Eye Alias 변경
     Call<String> updateAlias(
+            @Header("Authorization") String userId,
             @Path("sn") String sn,
             @Body String alias
     );
@@ -70,7 +73,9 @@ public interface MyApiImpl {
 
     @GET("device")
         // Eye 기기 조회
-    Call<List<EyeDataModel.Device>> getDeviceList();
+    Call<List<EyeDataModel.Device>> getDeviceList(
+            @Header("Authorization") String userId
+    );
 
     @DELETE("device/{sn}")
         // Eye 기기 삭제
@@ -82,6 +87,7 @@ public interface MyApiImpl {
     @GET("airsignal/noise/{sn}")
         // Eye 기간 별 소음 발생 목록
     Call<List<AdapterModel.NoiseDetailItem>> getNoise(
+            @Header("Authorization") String userId,
             @NotNull @Path("sn") String sn,
             @Nullable @Query("flag") Integer flag,
             @Nullable @Query("start") Integer start,
@@ -97,6 +103,7 @@ public interface MyApiImpl {
     @GET("airsignal/average/{sn}")
     // Eye 평균 값 불러오기
     Call<List<ApiModel.Average>> getAverage(
+            @Header("Authorization") String userId,
             @NotNull @Path("sn") String sn,
             @Nullable @Query("flag") String flag,
             @Nullable @Query("start") Integer start,
@@ -106,6 +113,7 @@ public interface MyApiImpl {
     @GET("airsignal/average/{sn}")
     // Eye 소음 평균 불러오기
     Call<List<ApiModel.NoiseAvg>> getNoiseAvg(
+            @Header("Authorization") String userId,
             @NotNull @Path("sn") String sn,
             @Nullable @Query("flag") String flag,
             @Nullable @Query("start") Integer start,

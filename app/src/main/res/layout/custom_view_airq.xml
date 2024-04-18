@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/listItemNestedAirHelp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/help"
+            android:layout_marginEnd="14dp"
+            app:layout_constraintBottom_toBottomOf="@+id/listItemNestedAirTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/listItemNestedAirTitle"
+            app:tint="@color/white" />
+
+        <TextView
+            android:id="@+id/listItemNestedAirTitle"
+            style="@style/basicMediumTextView"
+            android:layout_margin="14dp"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="27dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/listItemNestedAirPb"
+            app:layout_constraintEnd_toEndOf="@+id/listItemNestedAirPb"
+            app:layout_constraintStart_toStartOf="@+id/listItemNestedAirTitle"
+            app:layout_constraintTop_toBottomOf="@+id/listItemNestedAirTitle">
+
+            <TextView
+                android:id="@+id/listItemNestedAirGrade"
+                style="@style/basicMediumTextView"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:gravity="start"
+                android:textColor="#5CC4FF"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/listItemNestedAirValue"
+                style="@style/basicMediumTextView"
+                android:layout_toStartOf="@+id/listItemNestedAirUnit"
+                android:layout_marginEnd="2dp"
+                android:layout_centerVertical="true"
+                android:gravity="end"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/listItemNestedAirUnit"
+                style="@style/basicMediumTextView"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:gravity="start"
+                android:textAllCaps="false"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/listItemNestedAirPb"
+            style="@style/ProgressBarHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="6dp"
+            android:layout_marginBottom="13dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/listItemNestedAirTitle"
+            app:layout_constraintEnd_toEndOf="@+id/listItemNestedAirHelp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

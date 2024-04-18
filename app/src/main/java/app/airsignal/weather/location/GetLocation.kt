@@ -37,12 +37,10 @@ class GetLocation(private val context: Context) {
             }
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
-            } else {
-                ""
-            }
+            } else ""
         } catch (e: Exception) {
             e.printStackTrace()
-            return ""
+            ""
         }
     }
 
@@ -76,16 +74,13 @@ class GetLocation(private val context: Context) {
     fun getForegroundLocation(): Location? {
         try {
             val locationManager = context.applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager?
-            val locationGPS =
-                locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            val locationNetwork =
-                locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            val locationGPS = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            val locationNetwork = locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
             return if (locationGPS != null && locationNetwork != null) {
                 // 두 위치 중 더 정확한 위치를 반환
                 if (locationGPS.accuracy > locationNetwork.accuracy) locationGPS else locationNetwork
-            } else locationGPS
-                ?: locationNetwork
+            } else locationGPS ?: locationNetwork
         } catch (e: SecurityException) {
             e.printStackTrace()
             return null
@@ -109,7 +104,7 @@ class GetLocation(private val context: Context) {
 
     /** 핸드폰 위치 서비스가 켜져있는지 확인 **/
     fun requestSystemGPSEnable() {
-//        Toast.makeText(context, "핸드폰 GPS가 켜져있는지 확인해주세요", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(context, "핸드폰 GPS 가 켜져있는지 확인해주세요", Toast.LENGTH_SHORT).show()
         val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         context.startActivity(intent)
     }

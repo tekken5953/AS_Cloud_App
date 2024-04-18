@@ -19,13 +19,12 @@ import com.google.android.material.snackbar.Snackbar
  * @author : Lee Jae Young
  * @since : 2023-03-30 오후 1:22
  **/
-class SnackBarUtils(view: View, private val message: String, private val drawable: Drawable) {
+class SnackBarUtils(view: View, private val message: String, private val drawable: Drawable?) {
 
     /**Constructor**/
     companion object {
         @JvmStatic
-        fun make(view: View, message: String, drawable: Drawable) =
-            SnackBarUtils(view, message, drawable)
+        fun make(view: View, message: String, drawable: Drawable) = SnackBarUtils(view, message, drawable)
     }
 
     private val context = view.context
@@ -71,7 +70,5 @@ class SnackBarUtils(view: View, private val message: String, private val drawabl
     }
 
     /** 진동 발생 **/
-    private fun vibrate() {
-        VibrateUtil(context).make(100)
-    }
+    private fun vibrate() { VibrateUtil(context).make(100) }
 }

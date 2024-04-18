@@ -11,13 +11,14 @@ import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.databinding.EyeDetailLiveFragmentBinding
+import app.airsignal.weather.databinding.FragmentAddDeviceWifiPasswordBinding
 import app.airsignal.weather.util.`object`.DataTypeParser
 import java.time.LocalDateTime
 import kotlin.math.roundToInt
 
-class EyeDetailLiveFragment : Fragment() {
+class EyeDetailLiveFragment : BaseEyeFragment<EyeDetailLiveFragmentBinding>() {
+    override val resID: Int get() = R.layout.eye_detail_live_fragment
     private lateinit var mActivity: EyeDetailActivity
-    private lateinit var binding : EyeDetailLiveFragmentBinding
 
     private lateinit var entireData: EyeDataModel.Measured
 

@@ -14,7 +14,7 @@
         android:layout_alignEnd="@+id/alertSingleApplyBtn"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="62dp"
-        android:textSize="15sp"
+        android:textSize="17sp"
         android:lineHeight="24dp"/>
 
     <androidx.appcompat.widget.AppCompatButton
@@ -23,7 +23,7 @@
         android:layout_height="50dp"
         android:fontFamily="@font/spoqa_hansansneo_medium"
         android:background="@drawable/single_btn_apply_bg"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:elevation="0dp"
         android:translationZ="0dp"
         android:layout_below="@+id/alertSingleTitle"

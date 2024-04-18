@@ -8,6 +8,11 @@
         <attr name="graphImg" format="integer"/>
     </declare-styleable>
 
+    <declare-styleable name="ExternalAirView">
+        <attr name="airTitle" format="string"/>
+        <attr name="airUnit" format="string"/>
+    </declare-styleable>
+
     <declare-styleable name="SubAirView">
         <attr name="customImg" format="reference"/>
         <attr name="customTitle" format="string"/>

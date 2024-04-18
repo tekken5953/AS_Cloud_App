@@ -9,6 +9,18 @@
         android:background="@color/white"
         tools:context=".as_eye.nfc.NfcReadSuccessFragment">
 
+        <TextView
+            android:id="@+id/nfcReadSTitle"
+            style="@style/basicMediumTextView"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="52dp"
+            android:layout_marginEnd="20dp"
+            android:gravity="start"
+            android:textColor="@color/main_black"
+            android:textSize="24sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <LinearLayout
             android:id="@+id/nfcReadSContainer"
             android:layout_width="match_parent"
@@ -34,9 +46,8 @@
                 android:id="@+id/nfcReadSAliasEt"
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
-                android:layout_marginStart="27dp"
-                android:layout_marginTop="52dp"
-                android:layout_marginEnd="27dp"
+                android:layout_marginStart="17dp"
+                android:layout_marginEnd="17dp"
                 android:background="@drawable/eye_et_enable_bg"
                 android:fontFamily="@font/spoqa_hansansneo_medium"
                 android:hint="기기의 별명을 입력해주세요"
@@ -49,6 +60,18 @@
                 android:textColor="@color/main_black"
                 android:textColorHint="@color/eye_btn_disable_color"
                 android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/nfcReadSAliasContents"
+                style="@style/basicTextView"
+                android:layout_width="match_parent"
+                android:gravity="start"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/main_black"
+                android:textSize="16sp"
+                android:layout_marginStart="17dp"
+                android:layout_marginEnd="17dp"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <Button

@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
-import androidx.cardview.widget.CardView
+import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
 import java.text.SimpleDateFormat
@@ -129,15 +129,15 @@ object DataTypeParser {
         val id = when(sky) {
             "맑음" ->
                 if (!isNight) R.drawable.b_ico_sunny
-                else  applyLunarImg(lunar)
+//                else  applyLunarImg(lunar)
+                 else R.drawable.ico_moon_big
             "구름많음" ->
                 if (!isNight)  R.drawable.b_ico_m_cloudy
                 else  R.drawable.b_ico_m_ncloudy
             "흐림" -> R.drawable.b_ico_cloudy
             "소나기", "비" -> R.drawable.b_ico_rainy
             "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.b_ico_snow
-            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
-                R.drawable.b_ico_cloudy_rainy
+            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> R.drawable.b_ico_cloudy_rainy
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
             else -> R.drawable.cancel
         }
@@ -157,8 +157,7 @@ object DataTypeParser {
                 "흐림" -> R.drawable.b_ico_cloudy
                 "소나기", "비" -> R.drawable.b_ico_rainy
                 "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.b_ico_snow
-                "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
-                    R.drawable.b_ico_cloudy_rainy
+                "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> R.drawable.b_ico_cloudy_rainy
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
                 else -> R.drawable.cancel
             }
@@ -177,10 +176,8 @@ object DataTypeParser {
         return if (rainType == "없음" || rainType == null) {
             when (sky) {
                 "맑음", "구름많음" -> {
-                    if (sort == "22")
-                        if (isNight) R.drawable.w_bg_night else R.drawable.w_bg_sunny
-                    else
-                        if (isNight) R.drawable.widget_bg4x2_night else R.drawable.widget_bg4x2_sunny
+                    if (sort == "22") if (isNight) R.drawable.w_bg_night else R.drawable.w_bg_sunny
+                    else if (isNight) R.drawable.widget_bg4x2_night else R.drawable.widget_bg4x2_sunny
                 }
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
                 "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
@@ -224,8 +221,7 @@ object DataTypeParser {
             "흐림" -> R.drawable.b_ico_cloudy
             "소나기", "비" -> R.drawable.b_ico_rainy
             "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.sm_snow
-            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" ->
-                R.drawable.b_ico_cloudy_rainy
+            "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> R.drawable.b_ico_cloudy_rainy
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
             else -> R.drawable.cancel
         }
@@ -249,9 +245,7 @@ object DataTypeParser {
         } else if (rain == "없음" && (thunder == null || thunder < 0.2)) {
             if (isLarge) getSkyImgLarge(context, sky, isNight ?: false, lunar)
             else getSkyImgSmall(context, sky, isNight ?: false)
-        } else {
-            getDrawable(context, R.drawable.b_ico_cloudy_th)
-        }
+        } else getDrawable(context, R.drawable.b_ico_cloudy_th)
     }
 
     /** 등급에 따른 색상 변환 **/
@@ -264,7 +258,7 @@ object DataTypeParser {
         )
 
         return colorMap[grade]?.let { ResourcesCompat.getColor(context.resources, it, null) }
-            ?:  ResourcesCompat.getColor(context.resources, R.color.progressError, null)
+            ?:  ResourcesCompat.getColor(context.resources, R.color.main_gray_color, null)
     }
 
     /** 등급에 따른 텍스트 변환 **/
@@ -305,16 +299,20 @@ object DataTypeParser {
     }
 
     /** UV 범주 색상 적용 **/
-    fun setUvBackgroundColor(context: Context, flag: String, cardView: CardView) {
+    fun applyUvColor(context: Context, flag: String, textView: TextView) {
         val flagMap = mapOf (
-            "낮음" to R.color.uv_low,
-            "보통" to R.color.uv_normal,
-            "높음" to R.color.uv_high,
-            "매우높음" to R.color.uv_very_high,
-            "위험" to R.color.uv_caution
+            "낮음" to Pair(R.drawable.uv_low_bg,R.color.uv_low),
+            "보통" to Pair(R.drawable.uv_normal_bg,R.color.uv_normal),
+            "높음" to Pair(R.drawable.uv_high_bg,R.color.uv_high),
+            "매우높음" to Pair(R.drawable.uv_veryhigh_bg,R.color.uv_very_high),
+            "위험" to Pair(R.drawable.uv_caution_bg,R.color.uv_caution)
         )
 
-        flagMap[flag]?.let { cardView.setCardBackgroundColor(context.getColor(it))}
+
+        flagMap[flag]?.let {
+            textView.setBackgroundResource(it.first)
+            textView.setTextColor(context.getColor(it.second))
+        }
     }
 
     /** 상태 바 설정 **/
@@ -366,7 +364,11 @@ object DataTypeParser {
 
     /** LocalDateTime을 Long으로 파싱 **/
     fun parseLocalDateTimeToLong(localDateTime: LocalDateTime): Long {
-        return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        return try {
+            localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        } catch (e: NullPointerException) {
+            LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        }
     }
 
     /** Long을 LocalDateTime으로 파싱 **/
@@ -407,9 +409,7 @@ object DataTypeParser {
 
     /** 문자열에서 해당 문자의 인덱스 반환 **/
     fun findCharacterIndex(input: String, targetChar: Char): Int {
-        for (index in input.indices) {
-            if (input[index] == targetChar) return index
-        }
+        for (index in input.indices) { if (input[index] == targetChar) return index }
         return -1 // 문자가 없는 경우 -1을 반환
     }
 
@@ -443,5 +443,9 @@ object DataTypeParser {
             "cai" -> {"환기가 필요합니다"}
             else -> {"환기가 필요합니다"}
         }
+    }
+
+    fun progressToHex(progress: Int): String {
+        return if (progress == 0) "00" else if (progress == 100) "" else if (progress < 10) "0${progress}" else progress.toString()
     }
 }

@@ -14,8 +14,8 @@ import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.adapter.NoiseDetailAdapter
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.databinding.ActivityEyeNoiseDetailBinding
+import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.viewmodel.NoiseDataViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.time.LocalDate
@@ -52,7 +52,6 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
     private val noiseViewModel by viewModel<NoiseDataViewModel>()
 
     private val fetch by lazy {noiseViewModel.fetchData()}
-
     private val serial by lazy {intent?.extras?.getString("serial").toString()}
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +62,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             noiseDetailRv.adapter = noiseAdapter
             noiseDetailBack.setOnClickListener {
                 finish()
+                @Suppress("DEPRECATION")
                 overridePendingTransition(R.anim.slide_bottom_to_top, R.anim.slide_top_to_bottom)
             }
 
@@ -88,7 +88,6 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
                 // dB만 필터 적용
                 submit(filterByNoise(getCurrentNoiseValue()))
             } else {    // 이번 주 필터가 아닐 때
-                //TODO 현재 Sort에 따라 호출 여부 나누기
                 callApi(NoiseValueSort.THIS_WEEK.index)
             }
         }
@@ -97,7 +96,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
     // 분류로 API 호출
     private fun callApi(sort: Int) {
         if (!fetch.hasActiveObservers()) applyNoiseViewModel()  // 현재 동작중인 옵저버가 없으면 생성
-        noiseViewModel.loadDataResult(serial, sort,null,null)
+        noiseViewModel.loadDataResult(getUserEmail(this), serial, sort,null,null)
     }
 
     // 변경 된 어레이로 리스트 변경
@@ -109,15 +108,21 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
 
     // 스크롤을 가장 아래로
     private fun moveScrollToLastPosition(position: Int) {
-        HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-            binding.noiseDetailRv.smoothScrollToPosition(position)
-        },300)
+        try {
+            if (filteredList.isNotEmpty()) {
+                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                    binding.noiseDetailRv.smoothScrollToPosition(position)
+                },300)
+            }
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+        }
     }
 
     // 날짜로 API 호출
     private fun callApi(start: Int, end: Int) {
         if (!fetch.hasActiveObservers()) applyNoiseViewModel()  // 현재 동작중인 옵저버가 없으면 생성
-        noiseViewModel.loadDataResult(serial,null, start, end)
+        noiseViewModel.loadDataResult(getUserEmail(this), serial,null, start, end)
     }
 
     // dB 값으로 필터 적용된 리스트 반환
@@ -169,7 +174,7 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
             callApi(NoiseValueSort.THIS_WEEK.index) // 이번 주 데이터 호출
         }
 
-        visibleNoResult(allList.isEmpty())
+        visibleNoResult(allList.isEmpty()) // 빈 데이터 처리
     }
 
     // API 통신 옵저버 - 날짜로 데이터 불러옴 - UI 처리
@@ -181,7 +186,6 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
                         // 통신 성공
                         is BaseRepository.ApiState.Success -> {
                             val body = noise.data   // 통신 결과 데이터
-                            TimberUtil().d("noisetest", body.toString()) // 결과 로깅
 
                             allList.clear() // 새로 불러왔기 때문에 전체 리스트 클리어
                             filteredList.clear() // 전체 리스트가 클리어 됐기 때문에 필터 리스트도 클리어
@@ -212,10 +216,9 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
 
                         // 통신 실패
                         is BaseRepository.ApiState.Error -> {
-                            TimberUtil().e("noisetest", noise.errorMessage)
                             Toast.makeText(
                                 this@EyeNoiseDetailActivity,
-                                "소음 불러오기에 실패했습니다",
+                                getString(R.string.fail_to_get_noise),
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -225,13 +228,14 @@ class EyeNoiseDetailActivity : BaseEyeActivity<ActivityEyeNoiseDetailBinding>() 
                 }
             }
         } catch (e: Exception) {    // 익셉션 발생
-            TimberUtil().e("noisetest", e.stackTraceToString())
-            Toast.makeText(this@EyeNoiseDetailActivity, "소음 불러오기에 실패했습니다", Toast.LENGTH_SHORT)
+            e.stackTraceToString()
+            Toast.makeText(this@EyeNoiseDetailActivity, getString(R.string.fail_to_get_noise), Toast.LENGTH_SHORT)
                 .show()
         }
     }
 
     // 필터 다이얼로그 생성
+    @SuppressLint("SetTextI18n")
     private fun createFilterDialog() {
         val noiseDbFilterBuilder = AlertDialog.Builder(this@EyeNoiseDetailActivity) // 빌더 정의
         val noiseDbFilterView = LayoutInflater.from(this@EyeNoiseDetailActivity)    // 뷰 정의

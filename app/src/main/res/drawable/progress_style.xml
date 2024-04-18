@@ -6,10 +6,10 @@
         </shape>
     </item>
     <item android:id="@android:id/progress">
-        <clip>
+        <scale android:scaleWidth="100%">
             <shape>
                 <corners android:radius="8dp" />
             </shape>
-        </clip>
+        </scale>
     </item>
 </layer-list>

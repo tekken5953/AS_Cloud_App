@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
@@ -17,7 +16,9 @@ import app.airsignal.weather.as_eye.adapter.ReportViewPagerAdapter
 import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.chart.LineGraphClass
 import app.airsignal.weather.databinding.EyeDetailReportFragmentBinding
+import app.airsignal.weather.util.OnSingleClickListener
 import app.airsignal.weather.util.`object`.DataTypeParser
+import app.airsignal.weather.util.`object`.DataTypeParser.parseLocalDateTimeToLong
 import app.airsignal.weather.util.`object`.DataTypeParser.parseReportTitle
 import app.airsignal.weather.util.`object`.DataTypeParser.reportCationMsg
 import com.github.mikephil.charting.data.Entry
@@ -27,14 +28,15 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.roundToInt
 
-class EyeDetailReportFragment : Fragment() {
+
+class EyeDetailReportFragment : BaseEyeFragment<EyeDetailReportFragmentBinding>() {
+    override val resID: Int get() = R.layout.eye_detail_report_fragment
 
     enum class ReportIndex {
         VIRUS_INDEX, CAI_INDEX
     }
 
     private lateinit var mActivity: EyeDetailActivity
-    private lateinit var binding : EyeDetailReportFragmentBinding
     private val autoJob = Job()
     private val reportViewPagerItem = ArrayList<EyeDataModel.EyeReportAdapter>()
     private val reportViewPagerAdapter by lazy {
@@ -72,12 +74,14 @@ class EyeDetailReportFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_detail_report_fragment, container, false)
-        binding.reportLogViewEntire.setOnClickListener {
-            val intent = Intent(mActivity, EyeNoiseDetailActivity::class.java)
-            intent.putExtra("serial",mActivity.serialExtra.toString())
-            mActivity.startActivity(intent)
-            mActivity.overridePendingTransition(R.anim.slide_bottom_to_top, R.anim.slide_top_to_bottom)
-        }
+        binding.reportLogViewEntire.setOnClickListener(object : OnSingleClickListener(){
+            override fun onSingleClick(v: View?) {
+                val intent = Intent(mActivity, EyeNoiseDetailActivity::class.java)
+                intent.putExtra("serial",mActivity.serialExtra.toString())
+                mActivity.startActivity(intent)
+                mActivity.overridePendingTransition(R.anim.slide_bottom_to_top, R.anim.slide_top_to_bottom)
+            }
+        })
 
         return binding.root
     }
@@ -139,8 +143,20 @@ class EyeDetailReportFragment : Fragment() {
             binding.pmAvgLineChartNoData.visibility = View.VISIBLE
         }
 
-        binding.reportLogTime.text = reportLogDate.format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm"))
-        binding.reportLogValue.text = "$reportLogValue" + "dB의 소음이 발생했습니다"
+        val currentTimeMillis = System.currentTimeMillis()
+        val logDateTimeInMillis = parseLocalDateTimeToLong(reportLogDate ?: LocalDateTime.now())
+
+        val isWithin24Hours = currentTimeMillis - logDateTimeInMillis <= 1000 * 60 * 60 * 24
+
+        val logTimeText = if (isWithin24Hours) {
+            reportLogDate?.format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm")) ?: ""
+        } else ""
+
+        val logValueText = if (isWithin24Hours) "$reportLogValue dB의 소음이 발생했습니다"
+        else "24시간 내 발생한 소음이 없습니다"
+
+        binding.reportLogTime.text = logTimeText
+        binding.reportLogValue.text = if (logTimeText != "") logValueText else "24시간 내 발생한 소음이 없습니다"
 
         binding.reportCaiPb.progress = setProgress(ReportIndex.CAI_INDEX, caiValue,caiLvl)
         binding.reportVirusPb.progress = setProgress(ReportIndex.VIRUS_INDEX, virusValue,virusLvl)

@@ -29,9 +29,6 @@ class LoginActivity
 
         setStatusBar(this)
 
-        // 어디서 로그인 페이지로 넘어왔나?
-        val prevActivity = intent?.extras?.getString("prev")
-
         // 구글 로그인 버튼 클릭
         binding.googleLoginButton.setOnClickListener {
             googleLogin.login(binding.googleLoginButton, startActivityResult)
@@ -49,9 +46,7 @@ class LoginActivity
         }
 
         // 뒤로가기 버튼 클릭
-        binding.loginMainBack.setOnClickListener {
-           finish()
-        }
+        binding.loginMainBack.setOnClickListener { finish() }
     }
 
     // 구글로그인 startActivityResult 변수
@@ -65,18 +60,13 @@ class LoginActivity
                     val data = result.data
                     val task = GoogleSignIn.getSignedInAccountFromIntent(data)
 
-                    if (task.result.email == notificationAdmin) {
-                        SubFCM().subAdminTopic()
-                    }
+                    if (task.result.email == notificationAdmin) SubFCM().subAdminTopic()
+
                     googleLogin.handleSignInResult(task, isAuto = false)
                 }
                 // 로그인 취소 됨
-                RESULT_CANCELED -> {
-                    binding.googleLoginButton.alpha = 1f
-                }
-                else -> {
-                    binding.googleLoginButton.alpha = 1f
-                }
+                RESULT_CANCELED -> { binding.googleLoginButton.alpha = 1f }
+                else -> { binding.googleLoginButton.alpha = 1f }
             }
         }
 }

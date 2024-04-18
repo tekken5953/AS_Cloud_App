@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.repository.GetWeatherRepo
-import app.airsignal.weather.util.TimberUtil
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -19,7 +18,6 @@ class GetWeatherViewModel(private val repo: GetWeatherRepo) : BaseViewModel() {
 
     // MutableLiveData 값을 갱신하기 위한 함수
     fun loadData(lat: Double?, lng: Double?, addr: String?): GetWeatherViewModel {
-        TimberUtil().w("lifecycle_test", "메인 데이터 호출")
         job?.cancel()
         job = viewModelScope.launch {
             repo.loadDataResult(lat, lng, addr)

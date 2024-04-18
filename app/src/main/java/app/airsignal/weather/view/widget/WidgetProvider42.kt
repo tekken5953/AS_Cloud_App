@@ -75,41 +75,43 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         }
     }
 
-    fun processUpdate(context: Context, appWidgetId: Int) {
-        CoroutineScope(Dispatchers.Default).launch {
-            if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
-                requestPermissions(context,"42",appWidgetId)
-            } else {
-                val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
-                val refreshBtnIntent = Intent(context, WidgetProvider42::class.java).run {
-                    this.action = REFRESH_BUTTON_CLICKED_42
-                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                }
-
-                val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
-                    .run {
-                        this.action = ENTER_APPLICATION_42
-                        this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                        PendingIntent.getActivity(
-                            context,
-                            appWidgetId,
-                            this,
-                            PendingIntent.FLAG_IMMUTABLE
-                        )
+    fun processUpdate(context: Context, appWidgetId: Int?) {
+        appWidgetId?.let {
+            CoroutineScope(Dispatchers.Default).launch {
+                if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                    requestPermissions(context,"42",appWidgetId)
+                } else {
+                    val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
+                    val refreshBtnIntent = Intent(context, WidgetProvider42::class.java).run {
+                        this.action = REFRESH_BUTTON_CLICKED_42
+                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                     }
 
-                val pendingIntent = PendingIntent.getBroadcast(
-                    context,
-                    appWidgetId,
-                    refreshBtnIntent,
-                    PendingIntent.FLAG_IMMUTABLE
-                )
-                views.run {
-                    this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
-                    this.setOnClickPendingIntent(R.id.w42Background, enterPending)
-                }
-                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                    fetch(context, views)
+                    val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
+                        .run {
+                            this.action = ENTER_APPLICATION_42
+                            this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            PendingIntent.getActivity(
+                                context,
+                                appWidgetId,
+                                this,
+                                PendingIntent.FLAG_IMMUTABLE
+                            )
+                        }
+
+                    val pendingIntent = PendingIntent.getBroadcast(
+                        context,
+                        appWidgetId,
+                        refreshBtnIntent,
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+                    views.run {
+                        this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
+                        this.setOnClickPendingIntent(R.id.w42Background, enterPending)
+                    }
+                    if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                        fetch(context, views)
+                    }
                 }
             }
         }
@@ -242,7 +244,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                                         isLarge = false,
                                         isNight = isNight,
                                         lunar = it.lunar?.date ?: -1
-                                    )!!.toBitmap()
+                                    )?.toBitmap()
                                 )
                             }
                             2 -> {
@@ -260,7 +262,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                                         isLarge = false,
                                         isNight = isNight,
                                         lunar = it.lunar?.date ?: -1
-                                    )!!.toBitmap()
+                                    )?.toBitmap()
                                 )
                             }
                             3 -> {
@@ -278,7 +280,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                                         isLarge = false,
                                         isNight = isNight,
                                         lunar = it.lunar?.date ?: -1
-                                    )!!.toBitmap()
+                                    )?.toBitmap()
                                 )
                             }
                         }

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bg"
+    android:backgroundTint="@color/white">
+
+    <TableRow
+        android:id="@+id/dialogMemberTransTitleTr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="53dp">
+        <ImageView
+            android:id="@+id/dialogMemberTransImg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/dialogMemberTansTitle"
+            style="@style/basicMediumTextView"
+            android:textColor="@color/main_black"
+            android:textSize="20sp"
+            android:layout_marginStart="5dp"/>
+    </TableRow>
+    
+
+    
+    <TextView
+        android:id="@+id/dialogMemberTransContents"
+        style="@style/basicTextView"
+        android:layout_width="match_parent"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:lineHeight="21dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/main_black"
+        android:layout_below="@+id/dialogMemberTransTitleTr"
+        android:layout_marginTop="21dp"/>
+
+    <TextView
+        android:id="@+id/dialogMemberTransGuide"
+        style="@style/basicTextView"
+        android:textSize="14sp"
+        android:textColor="#9C9C9C"
+        android:lineHeight="21dp"
+        android:gravity="center"
+        android:layout_marginTop="25dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/dialogMemberTransContents"/>
+
+    <EditText
+        android:id="@+id/dialogMemberTransEt"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:textSize="14sp"
+        android:textColor="@color/main_black"
+        android:gravity="center"
+        android:inputType="text"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textCursorDrawable="@color/main_blue_color"
+        android:background="@drawable/eye_et_enable_bg"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_below="@+id/dialogMemberTransGuide"
+        android:layout_marginTop="25dp"/>
+
+    <TableRow
+        android:id="@+id/dialogMemberTransTr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/dialogMemberTransEt"
+        android:layout_marginTop="49dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/dialogMemberTransCancel"
+            android:layout_width="134dp"
+            android:layout_height="50dp"
+            android:layout_weight="0.5"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:background="@drawable/permission_cancel_btn_bg"
+            android:enabled="true"
+            android:textSize="14sp"
+            android:elevation="0dp"
+            android:translationZ="0dp"
+            android:textAllCaps="false"
+            android:gravity="center"
+            android:text="취소"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:textColor="@color/white"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/dialogMemberTransApply"
+            android:layout_width="134dp"
+            android:layout_height="50dp"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:background="@drawable/permission_ok_btn_bg"
+            android:enabled="false"
+            android:layout_weight="0.5"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:elevation="0dp"
+            android:translationZ="0dp"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/white"/>
+    </TableRow>
+    
+
+</RelativeLayout>

@@ -5,7 +5,6 @@ import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.network.ErrorCode.ERROR_API_PROTOCOL
 import app.airsignal.weather.network.ErrorCode.ERROR_GET_DATA
 import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
-import app.airsignal.weather.util.TimberUtil
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,43 +19,41 @@ class GetEyeDeviceListRepo : BaseRepository() {
     var _getListResult =
         MutableLiveData<ApiState<List<EyeDataModel.Device>?>>()
 
-    fun loadDataResult() {
-        CoroutineScope(Dispatchers.Default).launch {
-            _getListResult.postValue(ApiState.Loading)
-            impl.deviceList.enqueue(object : Callback<List<EyeDataModel.Device>> {
-                override fun onResponse(
-                    call: Call<List<EyeDataModel.Device>>,
-                    response: Response<List<EyeDataModel.Device>>
-                ) {
-                    try {
-                        if (response.isSuccessful) {
-                            val responseBody = response.body()
-                            _getListResult.postValue(ApiState.Success(sortData(responseBody)))
-                        } else {
-                            _getListResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
-                        }
-                    } catch (e: NullPointerException) {
-                        _getListResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
-                        TimberUtil().e("eyetest",e.stackTraceToString())
-                    } catch (e: JsonSyntaxException) {
-                        _getListResult.postValue(ApiState.Error(ERROR_GET_DATA))
-                        TimberUtil().e("eyetest",e.stackTraceToString())
+    fun loadDataResult(userId: String) {
+        _getListResult.postValue(ApiState.Loading)
+        impl.getDeviceList(userId).enqueue(object : Callback<List<EyeDataModel.Device>> {
+            override fun onResponse(
+                call: Call<List<EyeDataModel.Device>>,
+                response: Response<List<EyeDataModel.Device>>
+            ) {
+                try {
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        _getListResult.postValue(ApiState.Success(sortData(responseBody)))
+                    } else {
+                        _getListResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
                     }
+                } catch (e: NullPointerException) {
+                    _getListResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
+                    e.stackTraceToString()
+                } catch (e: JsonSyntaxException) {
+                    _getListResult.postValue(ApiState.Error(ERROR_GET_DATA))
+                    e.stackTraceToString()
                 }
+            }
 
-                override fun onFailure(
-                    call: Call<List<EyeDataModel.Device>>,
-                    t: Throwable
-                ) {
-                    TimberUtil().e("eyetest",t.stackTraceToString())
-                    try {
-                        _getListResult.postValue(ApiState.Error(ERROR_GET_DATA))
-                    } catch (e: Exception) {
-                        _getListResult.postValue(ApiState.Error(t.stackTraceToString()))
-                    }
+            override fun onFailure(
+                call: Call<List<EyeDataModel.Device>>,
+                t: Throwable
+            ) {
+                t.stackTraceToString()
+                try {
+                    _getListResult.postValue(ApiState.Error(ERROR_GET_DATA))
+                } catch (e: Exception) {
+                    _getListResult.postValue(ApiState.Error(t.stackTraceToString()))
                 }
-            })
-        }
+            }
+        })
     }
 
     private fun sortData(rawData: List<EyeDataModel.Device>?): List<EyeDataModel.Device>?  {

@@ -9,6 +9,8 @@ import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.activity.PermissionActivity
 import app.airsignal.weather.db.sp.SetAppInfo.setUserLoginPlatform
 import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG
+import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG_COUNT
+import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG_REDIRECT
 import app.airsignal.weather.view.activity.SplashActivity
 import kotlin.system.exitProcess
 
@@ -20,6 +22,7 @@ import kotlin.system.exitProcess
  * 페이지의 이동을 모아놓은 클래스
  **/
 
+@Suppress("DEPRECATION")
 class EnterPageUtil(private val activity: Activity) {
 
     /**
@@ -27,30 +30,22 @@ class EnterPageUtil(private val activity: Activity) {
      *
      * @param sort 간편로그인의 분류 ex) "카카오"
      */
-    fun toMain(sort: String?, inAppMsg: Array<ApiModel.InAppMsgItem>?) {
+    fun toMain(sort: String?, inAppMsg: Array<ApiModel.InAppMsgItem?>?) {
         sort?.let { setUserLoginPlatform(activity, it) }
         val intent = Intent(activity, MainActivity::class.java)
         activity.run {
-//            System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
-            inAppMsg?.let {
-                intent.putExtra(IN_APP_MSG, it)
+            var count = 0
+            inAppMsg?.forEachIndexed { index, data ->
+                data?.let {
+                    count++
+                    intent.putExtra("${IN_APP_MSG_REDIRECT}${index}",data.redirect)
+                    intent.putExtra("${IN_APP_MSG}${index}", data.img)
+                }
             }
+            intent.putExtra(IN_APP_MSG_COUNT, count)
+
             this.startActivity(intent)
             this.overridePendingTransition(0,0)
-            this.finish()
-        }
-    }
-
-    fun toMain(sort: String?, inAppMsg: Array<ApiModel.InAppMsgItem>?, startAnimation: Int, endAnimation: Int) {
-        sort?.let { setUserLoginPlatform(activity, it) }
-        val intent = Intent(activity, MainActivity::class.java)
-        activity.run {
-//            System.runFinalization() // 현재 구동중인 쓰레드가 다 종료되면 종료
-            inAppMsg?.let {
-                intent.putExtra(IN_APP_MSG, it)
-            }
-            this.startActivity(intent)
-            this.overridePendingTransition(startAnimation,0)
             this.finish()
         }
     }
@@ -86,15 +81,6 @@ class EnterPageUtil(private val activity: Activity) {
     /** 권한 요청 페이지로 이동 **/
     fun toPermission() {
         val intent = Intent(activity, PermissionActivity::class.java)
-        activity.run {
-            startActivity(intent)
-            overridePendingTransition(0,0)
-            finish()
-        }
-    }
-
-    fun toSplash() {
-        val intent = Intent(activity, SplashActivity::class.java)
         activity.run {
             startActivity(intent)
             overridePendingTransition(0,0)

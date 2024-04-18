@@ -54,7 +54,6 @@ class IndicatorView(private val context: Context, private val listSize: Int) {
             }
 
             animator.duration = 300
-
             animator.start()
         }
     }

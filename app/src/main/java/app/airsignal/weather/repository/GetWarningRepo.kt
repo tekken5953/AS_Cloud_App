@@ -24,34 +24,32 @@ class GetWarningRepo: BaseRepository() {
 
     @SuppressLint("MissingPermission")
     fun loadDataResult(code: Int) {
-        CoroutineScope(Dispatchers.Default).launch {
-            _getWarningResult.postValue(ApiState.Loading)
-            impl.getBroadCast(code).enqueue(object : Callback<ApiModel.BroadCastWeather> {
-                override fun onResponse(
-                    call: Call<ApiModel.BroadCastWeather>,
-                    response: Response<ApiModel.BroadCastWeather>
-                ) {
-                    val responseBody = response.body()!!
+        _getWarningResult.postValue(ApiState.Loading)
+        impl.getBroadCast(code).enqueue(object : Callback<ApiModel.BroadCastWeather> {
+            override fun onResponse(
+                call: Call<ApiModel.BroadCastWeather>,
+                response: Response<ApiModel.BroadCastWeather>
+            ) {
+                val responseBody = response.body()!!
 
-                    try {
-                        if (response.isSuccessful)
-                            _getWarningResult.postValue(ApiState.Success(responseBody))
-                        else
-                            _getWarningResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
-                    } catch(e: Exception) {
-                        _getWarningResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
-                    }
+                try {
+                    if (response.isSuccessful)
+                        _getWarningResult.postValue(ApiState.Success(responseBody))
+                    else
+                        _getWarningResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
+                } catch (e: Exception) {
+                    _getWarningResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
                 }
+            }
 
-                override fun onFailure(call: Call<ApiModel.BroadCastWeather>, t: Throwable) {
-                    try {
-                        t.printStackTrace()
-                        _getWarningResult.postValue(ApiState.Error(ERROR_NETWORK))
-                    } catch(e: Exception) {
-                        _getWarningResult.postValue(ApiState.Error(ERROR_UNKNOWN))
-                    }
+            override fun onFailure(call: Call<ApiModel.BroadCastWeather>, t: Throwable) {
+                try {
+                    t.printStackTrace()
+                    _getWarningResult.postValue(ApiState.Error(ERROR_NETWORK))
+                } catch (e: Exception) {
+                    _getWarningResult.postValue(ApiState.Error(ERROR_UNKNOWN))
                 }
-            })
-        }
+            }
+        })
     }
 }

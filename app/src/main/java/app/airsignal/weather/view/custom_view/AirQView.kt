@@ -39,8 +39,8 @@ class AirQView(context: Context, attrs: AttributeSet?)
     }
 
     // 외부 공기질 목록에 따른 내용 반환
-    fun modifyDataSort(context: Context, krName: String): String {
-        return when(krName) {
+    fun modifyDataSort(context: Context, name: String): String {
+        return when(name) {
             context.getString(R.string.pm2_5_full) -> context.getString(R.string.airq_question_pm2p5)
             context.getString(R.string.pm10_full) -> context.getString(R.string.airq_question_pm10)
             context.getString(R.string.o3_full) -> context.getString(R.string.airq_question_o3)
@@ -52,8 +52,8 @@ class AirQView(context: Context, attrs: AttributeSet?)
     }
 
     // 외부 공기질 목록에 따른 그래프 반환
-    fun modifyDataGraph(context: Context, krName: String): Drawable? {
-        return ResourcesCompat.getDrawable(context.resources,when(krName) {
+    fun modifyDataGraph(context: Context, name: String): Drawable? {
+        return ResourcesCompat.getDrawable(context.resources,when(name) {
             context.getString(R.string.pm2_5_full) -> R.drawable.graph_pm25
             context.getString(R.string.pm10_full) -> R.drawable.graph_pm10
             context.getString(R.string.o3_full) -> R.drawable.graph_03
@@ -65,9 +65,9 @@ class AirQView(context: Context, attrs: AttributeSet?)
 
     // 데이터 적용
     @SuppressLint("SetTextI18n")
-    fun fetchData(explain: String, graph: Drawable, nameEN: String, nameKR: String): AirQView {
+    fun fetchData(explain: String, graph: Drawable, unit: String, name: String): AirQView {
         airBinding.airQExplainText.text = explain
-        airBinding.airQName.text = "${nameEN}(${nameKR})"
+        airBinding.airQName.text = "${unit}(${name})"
         airBinding.airQGraphIv.setImageDrawable(graph)
         return this
     }

@@ -1,11 +1,19 @@
 package app.airsignal.weather.as_eye.fragment
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Typeface
+import android.media.Image
 import android.os.Bundle
 import android.text.Editable
+import android.text.Spannable
+import android.text.SpannableStringBuilder
 import android.text.TextWatcher
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -16,8 +24,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.EyeDetailActivity
@@ -33,10 +41,7 @@ import app.airsignal.weather.firebase.fcm.EyeNotiBuilder
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.OnSingleClickListener
-import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.TimberUtil
-import app.airsignal.weather.util.ToastUtils
+import app.airsignal.weather.util.*
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.custom_view.ShowDialogClass
@@ -51,9 +56,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import kotlin.random.Random
 
-class EyeSettingFragment : Fragment() {
+class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
+    override val resID: Int get() = R.layout.eye_setting_fragment
     private lateinit var mActivity: EyeDetailActivity
-    private lateinit var binding: EyeSettingFragmentBinding
 
     private var isCanApi = false
 
@@ -68,11 +73,10 @@ class EyeSettingFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+        savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_setting_fragment, container, false)
 
-        binding.aeSettingName.setOnClickListener(object : OnSingleClickListener(){
+        binding.aeSettingName.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 val changeDeviceNameDialog = ShowDialogClass(mActivity,true)
                 val changeDeviceNameView = LayoutInflater.from(requireContext())
@@ -84,12 +88,7 @@ class EyeSettingFragment : Fragment() {
                 changeDeviceEt.setText(mActivity.aliasExtra)
 
                 changeDeviceEt.addTextChangedListener(object : TextWatcher {
-                    override fun beforeTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        count: Int,
-                        after: Int
-                    ) {}
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                         s?.let {
@@ -121,9 +120,7 @@ class EyeSettingFragment : Fragment() {
                             changeDeviceEt.requestFocus()
                             return@setOnTouchListener true
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    } catch (e: Exception) { e.printStackTrace() }
 
                     false
                 }
@@ -132,7 +129,7 @@ class EyeSettingFragment : Fragment() {
                     if (changeDeviceBtn.isEnabled) {
                         mActivity.serialExtra?.let { serial ->
                             if (isBeta(serial)) {
-                                ToastUtils(requireContext()).showMessage("베타 테스트 기기는 수정이 불가능합니다!")
+                                ToastUtils(requireContext()).showMessage("베타 테스트 기기는 수정이 불가능합니다")
                             } else {
                                 if (!isCanApi) {
                                     isCanApi = true
@@ -151,7 +148,7 @@ class EyeSettingFragment : Fragment() {
         binding.aeSettingSerial.setOnClickListener { }
         binding.aeSettingWifi.setOnClickListener { }
 
-        binding.aeSettingNotification.setOnClickListener(object : OnSingleClickListener(){
+        binding.aeSettingNotification.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
                 val builder = ShowDialogClass(mActivity,true)
                 val settingView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_eye_noti_setting,null)
@@ -170,7 +167,7 @@ class EyeSettingFragment : Fragment() {
                     override fun onSingleClick(v: View?) {
                         if (isBeta(mActivity.serialExtra.toString())) {
                             SnackBarUtils(settingView,"베타 기기는 설정이 불가능합니다",
-                                ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)!!).show()
+                                ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)).show()
                         }
                     }
                 })
@@ -178,7 +175,7 @@ class EyeSettingFragment : Fragment() {
                     override fun onSingleClick(v: View?) {
                         if (isBeta(mActivity.serialExtra.toString())) {
                             SnackBarUtils(settingView,"베타 기기는 설정이 불가능합니다",
-                                ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)!!).show()
+                                ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)).show()
                         }
                     }
                 })
@@ -193,9 +190,7 @@ class EyeSettingFragment : Fragment() {
                             bundle.putString("device",mActivity.serialExtra.toString())
                             val message = RemoteMessage(bundle)
                             EyeNotiBuilder(requireContext()).sendNotification(message.data)
-                        } else {
-                            Toast.makeText(requireContext(), "먼저 알림을 활성화 해주세요", Toast.LENGTH_SHORT).show()
-                        }
+                        } else Toast.makeText(requireContext(), "먼저 알림을 활성화 해주세요", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(requireContext(), "알림 권한이 거부되어있습니다", Toast.LENGTH_SHORT).show()
                         RequestPermissionsUtil(requireContext()).requestNotification()
@@ -217,8 +212,8 @@ class EyeSettingFragment : Fragment() {
                             withContext(Dispatchers.Main) {
                                 SnackBarUtils(settingView,
                                     "알림을 ${if(isChecked) "허용" else "거부"}하였습니다",
-                                    if (isChecked) ResourcesCompat.getDrawable(resources,R.drawable.alert_on,null)!!
-                                    else ResourcesCompat.getDrawable(resources,R.drawable.alert_off,null)!!).show()
+                                    if (isChecked) ResourcesCompat.getDrawable(resources,R.drawable.alert_on,null)
+                                    else ResourcesCompat.getDrawable(resources,R.drawable.alert_off,null)).show()
                             }
                         }
                     }
@@ -227,6 +222,8 @@ class EyeSettingFragment : Fragment() {
         })
 
         binding.aeSettingMembers.fetchEnable(mActivity.isMaster)
+        binding.aeSettingNotification.fetchEnable(true)
+        binding.aeSettingName.fetchEnable(true)
 
         binding.aeSettingMembers.setOnClickListener(object : OnSingleClickListener() {
             override fun onSingleClick(v: View?) {
@@ -235,12 +232,15 @@ class EyeSettingFragment : Fragment() {
                     val view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_eye_setting_members, null)
                     val rv = view.findViewById<RecyclerView>(R.id.dialogMembersRv)
                     val failMsg = view.findViewById<TextView>(R.id.dialogMembersFail)
-                    val delete = view.findViewById<ImageView>(R.id.listItemMembersDelete)
+                    val serial = view.findViewById<TextView>(R.id.dialogMembersSerial)
+                    val count = view.findViewById<TextView>(R.id.dialogMembersCount)
                     val list = ArrayList<EyeDataModel.Members>()
-                    val adapter = EyeMembersAdapter(requireContext(),list)
+                    val adapter = EyeMembersAdapter(mActivity, list)
                     rv.adapter = adapter
 
-                    HttpClient.getInstance(false).setClientBuilder().getOwner(mActivity.serialExtra.toString())
+                    serial.text = mActivity.serialExtra
+
+                    HttpClient.retrofit.getOwner(mActivity.serialExtra.toString())
                         .enqueue(object : Callback<List<ApiModel.Owner>>{
                             override fun onResponse(
                                 call: Call<List<ApiModel.Owner>>,
@@ -252,6 +252,7 @@ class EyeSettingFragment : Fragment() {
                                         list.clear()
                                         rv.visibility = View.VISIBLE
                                         failMsg.visibility = View.GONE
+                                        count.text = "총 ${body.size}명이 등록되어있습니다"
 
                                         body.forEachIndexed { index, item ->
                                             list.add(EyeDataModel.Members(item.id,item.master))
@@ -273,12 +274,11 @@ class EyeSettingFragment : Fragment() {
                             }
                         })
 
-
                     dialog.setBackPressed(view.findViewById(R.id.dialogMembersBack))
                     dialog.show(view, true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
                 } else {
                     SnackBarUtils(requireView(),"소유자 전용 기능입니다",
-                        ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)!!).show()
+                        ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)).show()
                 }
             }
         })
@@ -286,7 +286,7 @@ class EyeSettingFragment : Fragment() {
         binding.aeSettingDeleteDevice.fetchTitleColor(R.color.red)
         binding.aeSettingDeleteDevice.setOnClickListener(object : OnSingleClickListener(){
             override fun onSingleClick(v: View?) {
-                showDeleteDialog()
+                showDeleteDialog(mActivity.isMaster)
             }
         })
 
@@ -309,8 +309,7 @@ class EyeSettingFragment : Fragment() {
 
     private fun callChangeAliasApi(dialog: ShowDialogClass, serial: String, alias: String) {
         applyPostAlias(dialog,serial,alias)
-        TimberUtil().d("eyetest","serial is $serial alias is $alias")
-        deviceAliasViewModel.loadDataResult(serial,alias)
+        deviceAliasViewModel.loadDataResult(SharedPreferenceManager(requireContext()).getString(userEmail),serial,alias)
     }
 
     private fun applyPostAlias(dialog: ShowDialogClass, serial: String, alias: String) {
@@ -365,12 +364,93 @@ class EyeSettingFragment : Fragment() {
         }
     }
 
-    private fun showDeleteDialog() {
+    private fun showDeleteDialog(isMaster: Boolean) {
         val alias = mActivity.aliasExtra
-        val serial = mActivity.serialExtra
-        serial?.let {
-            if (isBeta(serial)) {
-                ToastUtils(requireContext()).showMessage("베타 테스트 기기는 삭제가 불가능합니다!")
+        val serial = mActivity.serialExtra ?: ""
+        if (isBeta(serial)) {
+            ToastUtils(requireContext()).showMessage("베타 테스트 기기는 삭제가 불가능합니다!")
+        } else {
+            if (isMaster) {
+                serial.let {
+                    val dialog = AlertDialog.Builder(context)
+                    val view = LayoutInflater.from(context)
+                        .inflate(R.layout.dialog_member_trans, null, false)
+                    dialog.setView(view)
+                    val alertDialog = dialog.create()
+
+                    val apply = view.findViewById<AppCompatButton>(R.id.dialogMemberTransApply)
+                    val cancel = view.findViewById<AppCompatButton>(R.id.dialogMemberTransCancel)
+                    val et = view.findViewById<EditText>(R.id.dialogMemberTransEt)
+                    val guide = view.findViewById<TextView>(R.id.dialogMemberTransGuide)
+                    val contents = view.findViewById<TextView>(R.id.dialogMemberTransContents)
+                    val title = view.findViewById<TextView>(R.id.dialogMemberTansTitle)
+                    val titleImg = view.findViewById<ImageView>(R.id.dialogMemberTransImg)
+
+                    title.text = "기기 삭제"
+                    titleImg.setImageDrawable(
+                        ResourcesCompat.getDrawable(resources, R.drawable.ico_setting_delete, null)
+                    )
+
+                    apply.text = "삭제하기"
+
+                    val guideText =
+                        "소유자 계정에서 기기를 삭제하면 등록된 모든 게스트의 기기도 삭제됩니다. 삭제를 원하시면 아래에 '삭제'를 입력해주세요"
+                    val changeDeleteText = "'삭제'"
+                    val guideSpan = SpannableStringBuilder(guideText)
+                    guideSpan.setSpan(
+                        ForegroundColorSpan(
+                            requireContext().getColor(R.color.ae_very_bad_main)
+                        ),
+                        guideText.indexOf(changeDeleteText),
+                        guideText.indexOf(changeDeleteText) + changeDeleteText.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    guideSpan.setSpan(
+                        StyleSpan(Typeface.BOLD),
+                        guideText.indexOf(changeDeleteText),
+                        guideText.indexOf(changeDeleteText) + changeDeleteText.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    guide.text = guideSpan
+
+                    val contentsText = "'${serial}'\n기기를 삭제하시겠습니까?"
+                    val changeSerialText = "'${serial}'"
+                    val contentsSpan = SpannableStringBuilder(contentsText)
+                    contentsSpan.setSpan(
+                        ForegroundColorSpan(requireContext().getColor(R.color.ae_very_bad_main)),
+                        contentsText.indexOf(changeSerialText),
+                        contentsText.indexOf(changeSerialText) + changeSerialText.length,
+                        Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+                    contents.text = contentsSpan
+
+                    apply.setOnClickListener(object : OnSingleClickListener() {
+                        override fun onSingleClick(v: View?) {
+                            alertDialog.dismiss()
+                        }
+                    })
+
+                    cancel.setOnClickListener(object : OnSingleClickListener() {
+                        override fun onSingleClick(v: View?) {
+                            alertDialog.dismiss()
+                        }
+                    })
+
+                    et.doAfterTextChanged {
+                        if (et.text.toString() == "삭제") {
+                            apply.isEnabled = true
+                            apply.backgroundTintList =
+                                ColorStateList.valueOf(requireContext().getColor(R.color.ae_very_bad_main))
+                            KeyboardController.onKeyboardDown(requireContext(), et)
+                        } else {
+                            apply.isEnabled = false
+                            apply.backgroundTintList =
+                                ColorStateList.valueOf(requireContext().getColor(R.color.main_gray_color))
+                        }
+                    }
+
+                    alertDialog.show()
+                }
             } else {
                 val dialog = MakeDoubleDialog(requireContext())
 
@@ -383,15 +463,13 @@ class EyeSettingFragment : Fragment() {
                     dialog.dismiss()
                     deleteDevice(serial, SharedPreferenceManager(requireContext()).getString(userEmail))
                 }
-                show.second.setOnClickListener {
-                    dialog.dismiss()
-                }
+                show.second.setOnClickListener { dialog.dismiss() }
             }
         }
     }
 
     private fun deleteDevice(sn: String, email: String) {
-        HttpClient.getInstance(false).setClientBuilder().deleteDevice(
+        HttpClient.retrofit.deleteDevice(
             sn, email
         ).enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {

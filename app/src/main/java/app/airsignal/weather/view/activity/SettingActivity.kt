@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build.VERSION
 import android.os.Bundle
+import android.os.Looper
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.AbsoluteSizeSpan
@@ -17,11 +18,12 @@ import android.view.View
 import android.view.Window
 import android.webkit.WebView
 import android.widget.*
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.os.HandlerCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.NoticeAdapter
@@ -39,6 +41,7 @@ import app.airsignal.weather.dao.StaticDataObject.LANG_SYS
 import app.airsignal.weather.dao.StaticDataObject.THEME_DARK
 import app.airsignal.weather.dao.StaticDataObject.THEME_LIGHT
 import app.airsignal.weather.databinding.ActivitySettingBinding
+import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
@@ -47,17 +50,24 @@ import app.airsignal.weather.db.sp.GetAppInfo.getUserNotiEnable
 import app.airsignal.weather.db.sp.GetAppInfo.getUserNotiSound
 import app.airsignal.weather.db.sp.GetAppInfo.getUserNotiVibrate
 import app.airsignal.weather.db.sp.GetAppInfo.getUserTheme
+import app.airsignal.weather.db.sp.GetAppInfo.getWeatherAnimEnabled
+import app.airsignal.weather.db.sp.GetAppInfo.getWeatherBoxOpacity
+import app.airsignal.weather.db.sp.GetAppInfo.getWeatherBoxOpacity2
 import app.airsignal.weather.db.sp.GetAppInfo.isPermedBackLoc
 import app.airsignal.weather.db.sp.GetSystemInfo.getApplicationVersionCode
 import app.airsignal.weather.db.sp.GetSystemInfo.getApplicationVersionName
 import app.airsignal.weather.db.sp.GetSystemInfo.goToPlayStore
+import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SetAppInfo.removeAllKeys
 import app.airsignal.weather.db.sp.SetAppInfo.setInitBackLocPermission
 import app.airsignal.weather.db.sp.SetAppInfo.setUserFontScale
 import app.airsignal.weather.db.sp.SetAppInfo.setUserLocation
 import app.airsignal.weather.db.sp.SetAppInfo.setUserNoti
 import app.airsignal.weather.db.sp.SetAppInfo.setUserTheme
+import app.airsignal.weather.db.sp.SetAppInfo.setWeatherBoxOpacity
+import app.airsignal.weather.db.sp.SetAppInfo.setWeatherBoxOpacity2
 import app.airsignal.weather.db.sp.SetSystemInfo
+import app.airsignal.weather.db.sp.SpDao.PATCH_SKIP
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_DEFAULT
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
@@ -69,6 +79,7 @@ import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.*
 import app.airsignal.weather.util.`object`.DataTypeParser.findCharacterIndex
+import app.airsignal.weather.util.`object`.DataTypeParser.progressToHex
 import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
 import app.airsignal.weather.view.custom_view.CustomerServiceView
 import app.airsignal.weather.view.custom_view.ShowDialogClass
@@ -77,6 +88,7 @@ import app.airsignal.weather.view.dialog.WebViewSetting
 import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
+import com.bumptech.glide.Glide
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
@@ -98,17 +110,16 @@ class SettingActivity
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
     private var isBackAllow = false
 
+    private val ioThread by lazy {CoroutineScope(Dispatchers.IO)}
+    private val mainDispatcher by lazy { Dispatchers.Main }
+
     override fun onResume() {
         super.onResume()
 
         applyDeviceTheme()
-
         applyUserEmail()
-
         applyUserLanguage()
-
         applyFontScale()
-
     }
 
     @SuppressLint("InflateParams")
@@ -116,7 +127,6 @@ class SettingActivity
         super.onCreate(savedInstanceState)
 
         initBinding()
-
         setStatusBar(this)
 
         if (isInit) { isInit = false }
@@ -146,7 +156,7 @@ class SettingActivity
 
                 apply.setOnClickListener {
                     builder.dismiss()
-                    CoroutineScope(Dispatchers.IO).launch {
+                    ioThread.launch {
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
                             LOGIN_KAKAO -> {
 //                                KakaoLogin(this@SettingActivity).logout(email)
@@ -172,8 +182,13 @@ class SettingActivity
                 }
 
                 builder.show()
-            } else if (binding.settingLogOut.text == getString(R.string.login_title)) {
+
+                return@setOnClickListener
+            }
+
+            if (binding.settingLogOut.text == getString(R.string.login_title)) {
                 EnterPageUtil(this).toLogin("login")
+                return@setOnClickListener
             }
         }
 
@@ -189,7 +204,7 @@ class SettingActivity
             val cancel: ImageView = themeView.findViewById(R.id.changeThemeBack)
 
             ShowDialogClass(this, false)
-                .setBackPressed(themeView.findViewById(R.id.changeThemeBack))
+                .setBackPressed(cancel)
                 .show(themeView, true, ShowDialogClass.DialogTransition.END_TO_START)
 
             // 현재 저장된 테마에 따라서 라디오버튼 체크
@@ -215,35 +230,29 @@ class SettingActivity
                     // 시스템 설정
                     systemTheme.id -> {
                         changedThemeRadio(
-                            mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM,
                             dbData = LANG_SYS,
                             radioGroup = radioGroup,
-                            radioButton = systemTheme,
-                            cancel
+                            radioButton = systemTheme
                         )
                         changeCheckIcon(systemTheme, lightTheme, darkTheme)
                     }
                     // 라이트 모드
                     lightTheme.id -> {
                         changedThemeRadio(
-                            mode = AppCompatDelegate.MODE_NIGHT_NO,
                             dbData = THEME_LIGHT,
                             radioGroup = radioGroup,
-                            radioButton = lightTheme,
-                            cancel
+                            radioButton = lightTheme
                         )
-                        changeCheckIcon(lightTheme, systemTheme, darkTheme)
+                        changeCheckIcon(systemTheme, lightTheme, darkTheme)
                     }
                     // 다크 모드
                     darkTheme.id -> {
                         changedThemeRadio(
-                            mode = AppCompatDelegate.MODE_NIGHT_YES,
                             dbData = THEME_DARK,
                             radioGroup = radioGroup,
-                            radioButton = darkTheme,
-                            cancel
+                            radioButton = darkTheme
                         )
-                        changeCheckIcon(darkTheme, systemTheme, lightTheme)
+                        changeCheckIcon(systemTheme, lightTheme, darkTheme)
                     }
                 }
             }
@@ -334,11 +343,8 @@ class SettingActivity
             recyclerView.adapter = noticeAdapter
             noticeItem.clear()
 
-            CoroutineScope(Dispatchers.IO).launch {
-                HttpClient
-                    .getInstance(false)
-                    .setClientBuilder()
-                    .notice.enqueue(object : Callback<List<ApiModel.NoticeItem>> {
+            ioThread.launch {
+                HttpClient.retrofit.notice.enqueue(object : Callback<List<ApiModel.NoticeItem>> {
                         @SuppressLint("NotifyDataSetChanged")
                         override fun onResponse(
                             call: Call<List<ApiModel.NoticeItem>>,
@@ -376,7 +382,7 @@ class SettingActivity
                         ) {
                             nullText.visibility = View.VISIBLE
                             Toast.makeText(this@SettingActivity,
-                                "공지사항을 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                                getString(R.string.fail_to_get_notice), Toast.LENGTH_SHORT).show()
 
                             t.printStackTrace()
                         }
@@ -435,15 +441,9 @@ class SettingActivity
 
             // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크
             when (getUserFontScale(this)) {
-                TEXT_SCALE_SMALL -> {
-                    rg.check(small.id)
-                }
-                TEXT_SCALE_BIG -> {
-                    rg.check(big.id)
-                }
-                else -> {
-                    rg.check(default.id)
-                }
+                TEXT_SCALE_SMALL -> { rg.check(small.id) }
+                TEXT_SCALE_BIG -> { rg.check(big.id) }
+                else -> { rg.check(default.id) }
             }
 
             // 설정 변경시
@@ -539,12 +539,8 @@ class SettingActivity
                     // 29 이하
                     else {
                         notiBackTitle.text = getString(R.string.perm_back_setting)
-                        if (isPermedBackLoc(this)) {
-                            notiBackContent.text = getString(R.string.background_location_active)
-                        } else {
-                            notiBackContent.text =
-                                getString(R.string.background_location_not_active)
-                        }
+                        if (isPermedBackLoc(this)) notiBackContent.text = getString(R.string.background_location_active)
+                        else notiBackContent.text = getString(R.string.background_location_not_active)
                     }
 
                     setNightAlertsSpan(notiBackTitle)
@@ -562,9 +558,7 @@ class SettingActivity
                             ).show()
                         }
                     }
-                } else {
-                    notiBackTr.visibility = View.GONE
-                }
+                } else notiBackTr.visibility = View.GONE
             }
 
             setNightAlertsSpan(notiSettingTitle)
@@ -585,9 +579,7 @@ class SettingActivity
                             showSnackBar(notificationView, true)
                             setVisibility(true)
                             applyBack(true)
-                        } else {
-                            notiPerm.requestNotification()
-                        }
+                        } else notiPerm.requestNotification()
                     } else {
                         setUserNoti(this, notiEnable, false)
                         showSnackBar(notificationView, false)
@@ -616,6 +608,15 @@ class SettingActivity
                 .setBackPressed(notificationView.findViewById(R.id.notificationBack))
                 .show(notificationView, true,ShowDialogClass.DialogTransition.END_TO_START)
         }
+
+
+        binding.settingAnimation.setOnClickListener {
+            makeWeatherAnimationEnabledDialog()
+        }
+
+        binding.settingOpacityText.setOnClickListener {
+            makeWeatherBoxOpacityDialog()
+        }
     }
 
     // 알림 커스텀 스낵바 세팅
@@ -624,21 +625,8 @@ class SettingActivity
         val alertOff = ContextCompat.getDrawable(this, R.drawable.alert_off)!!
         alertOn.setTint(getColor(R.color.theme_view_color))
         alertOff.setTint(getColor(R.color.theme_view_color))
-        if (isAllow) {
-            if (!isInit) {
-                SnackBarUtils.make(
-                    view,
-                    getString(R.string.allowed_noti), alertOn
-                ).show()
-            }
-        } else {
-            if (!isInit) {
-                SnackBarUtils.make(
-                    view,
-                    getString(R.string.denied_noti), alertOff
-                ).show()
-            }
-        }
+        if (isAllow) { if (!isInit) { SnackBarUtils.make(view, getString(R.string.allowed_noti), alertOn).show() } }
+        else { if (!isInit) { SnackBarUtils.make(view, getString(R.string.denied_noti), alertOff).show() } }
     }
 
     // 알림 텍스트 색상 설정
@@ -665,9 +653,7 @@ class SettingActivity
                         findCharacterIndex(textView.text as String, '을'),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                } catch (e: IndexOutOfBoundsException) {
-                    e.printStackTrace()
-                }
+                } catch (e: IndexOutOfBoundsException) { e.printStackTrace() }
             }
 
             if (textView.text == getString(R.string.allowed) || textView.text == getString(R.string.background_location_active)) {
@@ -682,15 +668,9 @@ class SettingActivity
     private fun applyDeviceTheme() {
         // 설정 페이지 테마 항목이름 바꾸기
         when (getUserTheme(this)) {
-            THEME_DARK -> {
-                binding.settingSystemTheme.fetchData(getString(R.string.theme_dark))
-            }
-            THEME_LIGHT -> {
-                binding.settingSystemTheme.fetchData(getString(R.string.theme_light))
-            }
-            else -> {
-                binding.settingSystemTheme.fetchData(getString(R.string.theme_system))
-            }
+            THEME_DARK -> { binding.settingSystemTheme.fetchData(getString(R.string.theme_dark)) }
+            THEME_LIGHT -> { binding.settingSystemTheme.fetchData(getString(R.string.theme_light)) }
+            else -> { binding.settingSystemTheme.fetchData(getString(R.string.theme_system)) }
         }
     }
 
@@ -699,7 +679,6 @@ class SettingActivity
     private fun applyAppVersionResult() {
         val viewAppInfo: View =
             LayoutInflater.from(this).inflate(R.layout.dialog_app_info, null)
-
         val appInfoVersionValue: TextView = viewAppInfo.findViewById(R.id.appInfoVersionValue)
         val appInfoIsRecent: TextView = viewAppInfo.findViewById(R.id.appInfoIsRecent)
         val appInfoDownBtn: Button = viewAppInfo.findViewById(R.id.appInfoDownBtn)
@@ -757,6 +736,7 @@ class SettingActivity
 
         // 새로운 버전 다운로드 실행
         appInfoDownBtn.setOnClickListener {
+            SharedPreferenceManager(this).setBoolean(PATCH_SKIP, false)
             goToPlayStore(this)
         }
 
@@ -824,15 +804,9 @@ class SettingActivity
     private fun applyUserLanguage() {
         // 설정 페이지 언어 항목이름 바꾸기
         when (getUserLocation(this)) {
-            LANG_EN -> {
-                binding.settingSystemLang.fetchData(getString(R.string.english))
-            }
-            LANG_KR -> {
-                binding.settingSystemLang.fetchData(getString(R.string.korean))
-            }
-            else -> {
-                binding.settingSystemLang.fetchData(getString(R.string.system_lang))
-            }
+            LANG_EN -> { binding.settingSystemLang.fetchData(getString(R.string.english)) }
+            LANG_KR -> { binding.settingSystemLang.fetchData(getString(R.string.korean)) }
+            else -> { binding.settingSystemLang.fetchData(getString(R.string.system_lang)) }
         }
     }
 
@@ -840,54 +814,32 @@ class SettingActivity
     private fun applyFontScale() {
         // 설정 페이지 폰트크기 항목이름 바꾸기
         when (getUserFontScale(this)) {
-            "small" -> {
-                binding.settingSystemFont.fetchData(getString(R.string.font_small))
-            }
-            "big" -> {
-                binding.settingSystemFont.fetchData(getString(R.string.font_large))
-            }
-            else -> {
-                binding.settingSystemFont.fetchData(getString(R.string.font_normal))
-            }
+            TEXT_SCALE_SMALL -> { binding.settingSystemFont.fetchData(getString(R.string.font_small)) }
+            TEXT_SCALE_BIG -> { binding.settingSystemFont.fetchData(getString(R.string.font_large)) }
+            else -> binding.settingSystemFont.fetchData(getString(R.string.font_normal))
         }
     }
 
     // 마지막 로그인 플랫폼 종류
     private fun applyLastLogin(): String {
         val lastLogin = getUserLoginPlatform(this)
-        if (lastLogin != "") {
-            binding.settingLogOut.text = getString(R.string.setting_logout)
-        } else {
-            binding.settingLogOut.text = getString(R.string.login_title)
-        }
 
         // 로그인 플랫폼 아이콘 설정
-        when (lastLogin) {
-            LOGIN_GOOGLE -> {
-                setImageDrawable(binding.settingUserIcon, R.drawable.google_icon)
-            }
-            LOGIN_KAKAO -> {
-                setImageDrawable(binding.settingUserIcon, R.drawable.kakao_icon)
-            }
-            LOGIN_NAVER -> {
-                setImageDrawable(binding.settingUserIcon, R.drawable.naver_icon)
-            }
-            LOGIN_PHONE -> {
-                setImageDrawable(binding.settingUserIcon, R.drawable.phone_icon)
-            }
-        }
+        HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+            if (lastLogin != "") { binding.settingLogOut.text = getString(R.string.setting_logout) }
+            else { binding.settingLogOut.text = getString(R.string.login_title) }
+
+            Glide.with(this).load(
+                when(lastLogin) {
+                    LOGIN_GOOGLE -> { R.drawable.google_icon }
+                    LOGIN_KAKAO -> { R.drawable.kakao_icon }
+                    LOGIN_NAVER -> { R.drawable.naver_icon }
+                    LOGIN_PHONE -> { R.drawable.phone_icon }
+                    else -> { R.drawable.user }
+            }).into(binding.settingUserIcon)
+        },500)
 
         return lastLogin
-    }
-
-    // 이미지 드로어블 할당
-    private fun setImageDrawable(imageView: ImageView, src: Int) {
-        imageView.setImageDrawable(
-            ResourcesCompat.getDrawable(
-                resources,
-                src, null
-            )
-        )
     }
 
     // 메인 액티비티로 이동
@@ -913,9 +865,9 @@ class SettingActivity
     ) {
         if (getUserLocation(this) != lang) { // 현재 설정된 언어인지 필터링
             cancel.isEnabled = false
-            CoroutineScope(Dispatchers.IO).launch {
+            ioThread.launch {
                 setUserLocation(this@SettingActivity, lang)  // 다른 언어라면 db 값 변경
-                withContext(Dispatchers.Main) {
+                withContext(mainDispatcher) {
                     radioGroup.check(radioButton.id) // 라디오 버튼 체크
                     delay(100)
                     saveConfigChangeRestart() // 언어 설정 변경 후 어플리케이션 재시작
@@ -926,27 +878,139 @@ class SettingActivity
 
     // 테마 라디오 버튼 클릭 시 이벤트 처리
     private fun changedThemeRadio(
-        mode: Int,
         dbData: String,
         radioGroup: RadioGroup,
-        radioButton: RadioButton,
-        cancel: ImageView
+        radioButton: RadioButton
     ) {
-        CoroutineScope(Dispatchers.Main).launch {
-            // 테마모드 변경
-            AppCompatDelegate.setDefaultNightMode(mode)
-            cancel.isEnabled = false
-            // DB에 바뀐 정보 저장
-            CoroutineScope(Dispatchers.IO).launch {
-                setUserTheme(this@SettingActivity, dbData)
+        // DB에 바뀐 정보 저장
+        ioThread.launch {
+            setUserTheme(this@SettingActivity, dbData)
 
-                withContext(Dispatchers.Main) {
-                    // 라디오 버튼 체크
-                    radioGroup.check(radioButton.id)
-                    cancel.isEnabled = true
+            withContext(mainDispatcher) {
+                radioGroup.check(radioButton.id)
+                delay(100)
+                saveConfigChangeRestart()
+            }
+        }
+    }
+
+    private fun makeWeatherAnimationEnabledDialog() {
+        val animationView: View =
+            LayoutInflater.from(this).inflate(R.layout.dialog_setting_animation, null)
+
+        val switch: SwitchCompat = animationView.findViewById(R.id.aniSettingSwitch)
+
+        switch.isChecked = getWeatherAnimEnabled(this)
+
+        switch.setOnCheckedChangeListener { _, isChecked ->
+            ioThread.launch {
+                SetAppInfo.setWeatherAnimEnabled(this@SettingActivity, isChecked)
+
+                withContext(mainDispatcher) {
+                    SnackBarUtils(animationView,getString(R.string.ok_change_setting),
+                    ResourcesCompat.getDrawable(resources,R.drawable.check_small, null))
                 }
             }
         }
+
+        ShowDialogClass(this, false)
+            .setBackPressed(animationView.findViewById(R.id.aniBack))
+            .show(animationView, true,ShowDialogClass.DialogTransition.END_TO_START)
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun makeWeatherBoxOpacityDialog() {
+        val opacityView: View =
+            LayoutInflater.from(this).inflate(R.layout.dialog_setting_opacity, null)
+
+        val seekBar: AppCompatSeekBar = opacityView.findViewById(R.id.opacitySeekbar)
+        val opacityValue: TextView = opacityView.findViewById(R.id.opacityValue)
+        val opacityBox: LinearLayout = opacityView.findViewById(R.id.opacityPreviewContainer)
+        val opacityRollback: TextView = opacityView.findViewById(R.id.opacityRollback)
+        val opacityPreviewText: TextView = opacityView.findViewById(R.id.opacityPreviewText)
+
+        val seekBar2: AppCompatSeekBar = opacityView.findViewById(R.id.opacitySeekbar2)
+        val opacityValue2: TextView = opacityView.findViewById(R.id.opacityValue2)
+        val opacityBox2: LinearLayout = opacityView.findViewById(R.id.opacityPreviewContainer2)
+        val opacityPreviewText2: TextView = opacityView.findViewById(R.id.opacityPreviewText2)
+
+
+        opacityPreviewText.setTextColor(getColor(R.color.main_black))
+        opacityPreviewText2.setTextColor(getColor(R.color.white))
+
+        val savedProgress = getWeatherBoxOpacity(this)
+        val savedProgress2 = getWeatherBoxOpacity2(this)
+        val transSavedProgress = progressToHex(savedProgress)
+        val transSavedProgress2 = progressToHex(savedProgress2)
+        seekBar.progress = savedProgress
+        seekBar2.progress = savedProgress2
+        opacityValue.text = "$savedProgress%"
+        opacityValue2.text = "$savedProgress2%"
+        opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress}FFFFFF"))
+        opacityBox2.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress2}000000"))
+
+        opacityRollback.setOnClickListener {
+            ToastUtils(this@SettingActivity).showMessage(getString(R.string.settings_initialized),1)
+
+            ioThread.launch {
+                if (seekBar.progress != 80) setWeatherBoxOpacity(this@SettingActivity, 80)
+                if (seekBar2.progress != 60) setWeatherBoxOpacity(this@SettingActivity, 60)
+
+                withContext(mainDispatcher) {
+                    seekBar.progress = 80
+                    opacityValue.text = "80%"
+                    opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#80FFFFFF"))
+
+                    seekBar2.progress = 60
+                    opacityValue2.text = "60%"
+                    opacityBox2.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#60000000"))
+                }
+            }
+        }
+
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                seekBar: SeekBar?, progress: Int, fromUser: Boolean
+            ) {
+                opacityValue.text = "$progress%"
+                opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${progressToHex(progress)}FFFFFF"))
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                seekBar?.let {
+                    ioThread.launch {
+                        setWeatherBoxOpacity(this@SettingActivity, it.progress)
+                        ToastUtils(this@SettingActivity).showMessage(getString(R.string.ok_change_setting),1)
+                    }
+                }
+            }
+        })
+
+        seekBar2.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                seekBar: SeekBar?, progress: Int, fromUser: Boolean
+            ) {
+                opacityValue2.text = "$progress%"
+                opacityBox2.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${progressToHex(progress)}000000"))
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                seekBar?.let {
+                    ioThread.launch {
+                        setWeatherBoxOpacity2(this@SettingActivity, it.progress )
+                    }
+                    ToastUtils(this@SettingActivity).showMessage(getString(R.string.ok_change_setting),1)
+                }
+            }
+        })
+
+        ShowDialogClass(this, false)
+            .setBackPressed(opacityView.findViewById(R.id.opacityBack))
+            .show(opacityView, true,ShowDialogClass.DialogTransition.END_TO_START)
     }
 
     // 설정 변경 후 어플리케이션 재시작
@@ -968,9 +1032,7 @@ class SettingActivity
 
         title.text = getString(R.string.save_change)
         apply.text = getString(R.string.ok)
-        apply.setOnClickListener {
-            RefreshUtils(this).refreshApplication()
-        }
+        apply.setOnClickListener { RefreshUtils(this).refreshApplication() }
         builder.show()
     }
 

@@ -20,6 +20,11 @@
 
     <TextView
         android:id="@+id/w42Address"
+        android:layout_width="match_parent"
+        android:layout_toStartOf="@+id/w42Refresh"
+        android:layout_marginEnd="3dp"
+        android:lines="1"
+        android:ellipsize="end"
         style="@style/basicTextView"
         android:layout_marginTop="4dp"
         android:layout_marginStart="2dp"

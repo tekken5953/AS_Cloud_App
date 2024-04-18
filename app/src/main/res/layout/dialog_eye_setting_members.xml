@@ -37,12 +37,35 @@
         android:textSize="18sp"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/dialogMembersSerial"
+        style="@style/basicMediumTextView"
+        android:textSize="24sp"
+        android:textColor="@color/main_black"
+        android:layout_below="@+id/dialogMembersTitle"
+        android:text="AS-1234567789"
+        android:textAllCaps="true"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="40dp"/>
+
+    <TextView
+        android:id="@+id/dialogMembersCount"
+        style="@style/basicTextView"
+        android:text="총 3명이 등록되어있습니다"
+        android:textSize="14sp"
+        android:textColor="@color/eye_graph_gray"
+        android:layout_below="@+id/dialogMembersSerial"
+        android:layout_alignStart="@+id/dialogMembersSerial"
+        android:layout_marginTop="4dp"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dialogMembersRv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/dialogMembersTitle"
-        android:layout_marginTop="20dp"
+        android:layout_below="@+id/dialogMembersCount"
+        android:layout_marginTop="26dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/list_item_members" />
 

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/aniTopBar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+        <ImageView
+            android:id="@+id/aniBack"
+            style="@style/BasicImageButtonIcon"
+            android:layout_marginStart="20dp"
+            android:contentDescription="@string/cd_icon_back"
+            android:layout_centerVertical="true"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/back_arrow"
+            app:tint="@color/theme_text_color"/>
+
+        <TextView
+            android:id="@+id/aniTitle"
+            style="@style/basicMediumTextView"
+            android:layout_centerInParent="true"
+            android:text="@string/setting_animation"
+            android:textColor="@color/theme_text_color"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+    <TableRow
+        android:id="@+id/aniSettingTr"
+        android:layout_width="match_parent"
+        android:layout_height="76dp"
+        android:layout_marginTop="22dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:layout_below="@+id/aniTopBar">
+
+        <TextView
+            android:id="@+id/aniSettingTitle"
+            style="@style/settingMultiTextView"
+            android:layout_weight="0.95"
+            android:textSize="16sp"
+            android:text="@string/setting_animation_weather"
+            android:lineHeight="20.03dp"
+            android:background="?selectableItemBackground" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/aniSettingSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.05"
+            android:gravity="center_vertical|end"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:thumb="@drawable/switch_thumb"
+            app:track="@drawable/switch_selector" />
+    </TableRow>
+</RelativeLayout>

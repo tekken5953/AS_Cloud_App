@@ -3,24 +3,18 @@ package app.airsignal.weather.view.activity
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
-import android.app.PendingIntent
-import android.content.Intent
-import android.nfc.NdefMessage
-import android.nfc.NdefRecord
-import android.nfc.NfcAdapter
-import android.nfc.Tag
-import android.nfc.tech.Ndef
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import androidx.core.os.HandlerCompat
 import app.airsignal.weather.R
-import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivitySplashBinding
+import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.db.sp.GetSystemInfo.goToPlayStore
+import app.airsignal.weather.db.sp.SpDao.PATCH_SKIP
 import app.airsignal.weather.location.GetLocation
 import app.airsignal.weather.network.ErrorCode.ERROR_NETWORK
 import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
@@ -29,13 +23,12 @@ import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.TimberUtil
+import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.util.`object`.DataTypeParser
+import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.FirebaseApp
-import com.google.firebase.messaging.FirebaseMessaging
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.util.*
@@ -66,10 +59,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             applyAppVersionData()
 
             binding.splashPB.addAnimatorListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationStart(animation: Animator) {
-                    super.onAnimationStart(animation)
-                }
-
                 override fun onAnimationEnd(animation: Animator) {
                     super.onAnimationEnd(animation)
                     isReady = true
@@ -83,10 +72,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 sort = RDBLogcat.USER_PREF_DEVICE,
                 title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
                 value = "name is ${GetSystemInfo.getApplicationVersionName(this@SplashActivity)} code is ${
-                    GetSystemInfo.getApplicationVersionCode(
-                        this@SplashActivity
-                    )
-                }"
+                    GetSystemInfo.getApplicationVersionCode(this@SplashActivity)}"
             )
 
             // 유저 디바이스 설정 - SDK 버전
@@ -107,14 +93,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     }
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
-    private fun enterPage(inAppMsgList: Array<ApiModel.InAppMsgItem>?) {
+    private fun enterPage(inAppMsgList: List<ApiModel.InAppMsgItem?>?) {
         if (intent?.hasCategory("android.intent.category.APP_MESSAGING") == true) {
             if (!isDone) {
                 isDone = true
                 HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                    TimberUtil().d("fcmtest", "enterPage intent category is ${intent.categories}")
                     EnterPageUtil(this@SplashActivity).toList(R.anim.fade_in)
-                }, 2000)
+                },2000)
             }
         } else {
             if (isReady) {
@@ -122,11 +107,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
                         EnterPageUtil(this@SplashActivity).toMain(
                             getUserLoginPlatform(this),
-                            inAppMsgList, R.anim.fade_in, R.anim.fade_out
-                        )
-                    } else {
-                        EnterPageUtil(this@SplashActivity).toPermission()
-                    }
+                            inAppMsgList?.toTypedArray())
+                    } else { EnterPageUtil(this@SplashActivity).toPermission() }
                 }, 500)
             } else {
                 HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
@@ -144,29 +126,54 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     when (ver) {
                         // 통신 성공
                         is BaseRepository.ApiState.Success -> {
+                            val sp = SharedPreferenceManager(this@SplashActivity)
                             val inAppArray = ver.data.inAppMsg
                             val versionName = GetSystemInfo.getApplicationVersionName(this)
                             val versionCode = GetSystemInfo.getApplicationVersionCode(this)
                             val fullVersion = "${versionName}.${versionCode}"
-                            if (fullVersion == "${ver.data.serviceName}.${ver.data.serviceCode}") {
-                                enterPage(inAppArray)
-                            } else {
-                                val array = ArrayList<String>()
-                                ver.data.test.forEach {
-                                    array.add("${it.name}.${it.code}")
-                                }
+                            val skipThisPatchKey = PATCH_SKIP + "${ver.data.serviceName}.${ver.data.serviceCode}"
 
+                            // 현재 버전이 최신 버전인 경우
+                            if (fullVersion == "${ver.data.serviceName}.${ver.data.serviceCode}") {
+                                enterPage(inAppArray)   // 메인 페이지로 이동
+                            } else { // 현재 버전이 최신 버전이 아닌 경우
+                                val array = ArrayList<String>()
+                                ver.data.test.forEach { array.add("${it.name}.${it.code}") }
+
+                                // 테스트 버전에 현재 버전이 포함되는 경우
                                 if (array.contains(fullVersion)) {
-                                    enterPage(inAppArray)
+                                    // 스킵이 설정되어 있지 않은 경우
+                                    if (!sp.getBoolean(skipThisPatchKey, false)) {
+                                        // 최신 버전 설치와 현재 버전 사용 선택 다이얼로그 노출
+                                        val dialog = MakeDoubleDialog(this)
+                                            .make(
+                                                getString(R.string.exist_last_version),
+                                                getString(R.string.download), getString(R.string.use_current_version), R.color.main_blue_color
+                                            )
+                                        // 설치 선택 시 스토어 이동
+                                        dialog.first.setOnClickListener {
+                                            sp.setBoolean(skipThisPatchKey, false)
+                                            goToPlayStore(this@SplashActivity)
+                                        }
+                                        // 현재 버전 이용 선택 시 메인 이동
+                                        dialog.second.setOnClickListener {
+                                            sp.setBoolean(skipThisPatchKey, true)
+                                            ToastUtils(this@SplashActivity).showMessage(getString(R.string.patch_store_notice))
+                                            enterPage(inAppArray)
+                                        }
+                                    } else enterPage(inAppArray)  // 스킵이 설정되어 있는 경우 메인 이동
                                 } else {
+                                    // 모든 허용 버전에 해당되지 않은 경우
                                     MakeSingleDialog(this)
                                         .makeDialog(
                                             getString(R.string.not_latest_go_to_store),
                                             R.color.main_blue_color,
                                             getString(R.string.download),
                                             true
-                                        )
-                                        .setOnClickListener { goToPlayStore(this@SplashActivity) }
+                                        ).setOnClickListener {
+                                            sp.setBoolean(PATCH_SKIP, false)
+                                            goToPlayStore(this@SplashActivity)
+                                        }
                                 }
                             }
                         }
@@ -177,29 +184,20 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                 ERROR_NETWORK -> {
                                     if (GetLocation(this).isNetWorkConnected()) {
                                         makeDialog(getString(R.string.unknown_error))
-                                    } else {
-                                        makeDialog(getString(R.string.error_network_connect))
-                                    }
+                                    } else { makeDialog(getString(R.string.error_network_connect)) }
                                 }
 
-                                ERROR_SERVER_CONNECTING -> {
-                                    makeDialog(getString(R.string.error_server_down))
-                                }
+                                ERROR_SERVER_CONNECTING -> { makeDialog(getString(R.string.error_server_down)) }
 
-                                else -> {
-                                    makeDialog(getString(R.string.unknown_error))
-                                }
+                                else -> makeDialog(getString(R.string.unknown_error))
                             }
                         }
-
                         // 통신 중
                         is BaseRepository.ApiState.Loading -> {}
                     }
                 }
             }
-        } catch (e: IOException) {
-            makeDialog("앱 버전을 불러올 수 없습니다.")
-        }
+        } catch (e: IOException) { makeDialog(getString(R.string.fail_to_get_app_version)) }
     }
 
     // 다이얼로그 생성

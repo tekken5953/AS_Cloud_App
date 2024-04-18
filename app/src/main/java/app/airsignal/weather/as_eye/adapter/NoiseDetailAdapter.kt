@@ -2,19 +2,15 @@ package app.airsignal.weather.as_eye.adapter
 
 import android.content.Context
 import android.graphics.Typeface
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.os.HandlerCompat
-import androidx.recyclerview.widget.AdapterListUpdateCallback
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.ItemDiffCallback
-import app.airsignal.weather.as_eye.activity.EyeNoiseDetailActivity
 import app.airsignal.weather.dao.AdapterModel
 import java.time.format.DateTimeFormatter
 
@@ -63,6 +59,18 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
                     dataDate.text = date.format(timeFormatter)
                     dataValue.text = "${value}dB의 소음을 감지하였습니다"
 
+                    val current = mList[bindingAdapterPosition].date
+                    val prev = if (bindingAdapterPosition > 0) mList[bindingAdapterPosition-1].date else null
+                    val isHeader: Boolean? =
+                        prev?.let { p ->
+                            current?.let { c ->
+                                c.format(dateFormatter) != p.format(dateFormatter)
+                            } ?: false
+                        } ?: true
+
+                    if (isHeader == true) { changeHeaderVisibility(date.format(dateFormatter)) }
+                    else { changeHeaderVisibility(null) }
+
                     if (bindingAdapterPosition == itemCount - 1) {
                         headerValue.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
                         dataDate.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_bold.ttf")
@@ -72,22 +80,6 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
                         dataDate.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_medium.ttf")
                         dataValue.typeface = Typeface.createFromAsset(context.assets, "spoqa_hansansneo_medium.ttf")
                     }
-
-                    val current = mList[bindingAdapterPosition].date
-                    val prev = if (bindingAdapterPosition > 0) mList[bindingAdapterPosition-1].date else null
-                    val isHeader: Boolean? =
-                        prev?.let { p ->
-                            current?.let { c ->
-                                c.format(dateFormatter) != p.format(dateFormatter)
-                            } ?: false
-                        } ?: true
-                    isHeader?.let {
-                        if (it) {
-                            changeHeaderVisibility(date.format(dateFormatter))
-                        } else {
-                            changeHeaderVisibility(null)
-                        }
-                    } ?: changeHeaderVisibility(null)
                 }
             }
         }
@@ -96,9 +88,7 @@ class NoiseDetailAdapter(private val context: Context, list: ArrayList<AdapterMo
             value?.let {
                 headerContainer.visibility = View.VISIBLE
                 headerValue.text = value
-            } ?: run {
-                headerContainer.visibility = View.GONE
-            }
+            } ?: run { headerContainer.visibility = View.GONE }
         }
     }
 }
