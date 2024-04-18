@@ -49,9 +49,9 @@ class EyeNotiBuilder(private val context: Context) {
             .setSmallIcon(R.drawable.ic_stat_airsignal_default)
     }
 
+    @SuppressLint("SuspiciousIndentation")
     fun sendNotification(data: Map<String, String>) {
         try {
-            val appContext = context.applicationContext
             val intent = Intent("android.intent.action.MAIN")
             intent.setPackage("app.airsignal.weather")
             intent.component =
@@ -66,7 +66,7 @@ class EyeNotiBuilder(private val context: Context) {
             )
 
             val pendingIntent =
-                PendingIntent.getActivity(appContext, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+                PendingIntent.getActivity(context.applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
             val notificationBuilderInstance = buildNotificationBuilder()
             val sort = data["sort"]
