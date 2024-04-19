@@ -153,10 +153,10 @@ class EyeDetailReportFragment : BaseEyeFragment<EyeDetailReportFragmentBinding>(
         } else ""
 
         val logValueText = if (isWithin24Hours) "$reportLogValue dB의 소음이 발생했습니다"
-        else "24시간 내 발생한 소음이 없습니다"
+        else getString(R.string.no_result_noise_recently)
 
         binding.reportLogTime.text = logTimeText
-        binding.reportLogValue.text = if (logTimeText != "") logValueText else "24시간 내 발생한 소음이 없습니다"
+        binding.reportLogValue.text = if (logTimeText != "") logValueText else getString(R.string.no_result_noise_recently)
 
         binding.reportCaiPb.progress = setProgress(ReportIndex.CAI_INDEX, caiValue,caiLvl)
         binding.reportVirusPb.progress = setProgress(ReportIndex.VIRUS_INDEX, virusValue,virusLvl)

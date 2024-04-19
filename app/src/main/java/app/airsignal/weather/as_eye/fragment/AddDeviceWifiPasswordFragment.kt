@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
@@ -150,18 +151,9 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
             visibility = View.VISIBLE
             inputType = InputType.TYPE_CLASS_TEXT
             hint = context.getString(R.string.eye_example)
-            addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    s: CharSequence?,
-                    start: Int,
-                    count: Int,
-                    after: Int
-                ) {}
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    s?.let { binding.addWifiPwdBtn.isEnabled = it.isNotEmpty() }
-                }
-                override fun afterTextChanged(s: Editable?) {}
-            })
+            doOnTextChanged { text, _, _, _ ->
+                text?.let { binding.addWifiPwdBtn.isEnabled = it.isNotEmpty() }
+            }
         }
 
         binding.addWifiPwdBtn.visibility = View.VISIBLE
@@ -181,10 +173,8 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
 
     private val readCallback = object : BleReadCallback() {
         override fun onReadSuccess(data: ByteArray?) {
-            if (data?.toString(Charsets.UTF_8) == "1") {
-                // 연결 됨
-                inputDeviceAlias()
-            } else {
+            if (data?.toString(Charsets.UTF_8) == "1") inputDeviceAlias() // 연결 됨
+            else {
                 // 연결 안됨
                 mainDispatcher.launch {
                     parentActivity.hidePb()
@@ -270,23 +260,17 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
             false
         )
 
-        binding.addWifiPwdEt.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                s?.let {
-                    if (it.length >= 8) {
-                        binding.addWifiPwdBtn.isEnabled = true
-                        binding.addWifiPwdBtn.setTextColor(requireContext().getColor(R.color.white))
-                    } else {
-                        binding.addWifiPwdBtn.isEnabled = false
-                        binding.addWifiPwdBtn.setTextColor(requireContext().getColor(R.color.eye_btn_disable_color))
-                    }
+        binding.addWifiPwdEt.doOnTextChanged { text, _, _, _ ->
+            text?.let {
+                if (it.length >= 8) {
+                    binding.addWifiPwdBtn.isEnabled = true
+                    binding.addWifiPwdBtn.setTextColor(requireContext().getColor(R.color.white))
+                } else {
+                    binding.addWifiPwdBtn.isEnabled = false
+                    binding.addWifiPwdBtn.setTextColor(requireContext().getColor(R.color.eye_btn_disable_color))
                 }
             }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
+        }
 
         binding.addWifiPwdEt.setOnTouchListener { _, motionEvent ->
             try {
@@ -345,7 +329,7 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
             ble.postSsid(it, writeSsidCallback)
         } ?: run {
             binding.addWifiPwdBtn.isEnabled = true
-            ToastUtils(requireContext()).showMessage("올바르지 않은 Wifi 입니다")
+            ToastUtils(requireContext()).showMessage(getString(R.string.no_right_wifi))
             parentActivity.transactionFragment(AddDeviceWifiFragment())
         }
     }
@@ -375,7 +359,7 @@ class AddDeviceWifiPasswordFragment : BaseEyeFragment<FragmentAddDeviceWifiPassw
                 }
             }
         } ?: run {
-            ToastUtils(requireContext()).showMessage("올바르지 않은 Wifi 입니다")
+            ToastUtils(requireContext()).showMessage(getString(R.string.no_right_wifi))
             parentActivity.transactionFragment(AddDeviceWifiFragment())
         }
     }

@@ -8,7 +8,6 @@
         android:id="@+id/listItemAddEyeWifiSsid"
         style="@style/basicMediumTextView"
         android:textSize="16sp"
-        android:text="EBT_5G"
         android:textColor="@color/main_black"
         android:layout_centerVertical="true"
         android:layout_marginStart="10dp"/>

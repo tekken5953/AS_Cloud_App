@@ -18,7 +18,7 @@
         style="@style/basicMediumTextView"
         android:layout_width="53dp"
         android:layout_height="22dp"
-        android:text="소유자"
+        android:text="@string/owner"
         android:textColor="@color/white"
         android:textSize="12sp"
         android:layout_marginStart="6dp"

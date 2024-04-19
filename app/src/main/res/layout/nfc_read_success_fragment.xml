@@ -81,7 +81,7 @@
             android:background="@drawable/permission_ok_btn_bg"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:text="이 기기가 맞습니다"
+            android:text="@string/nfc_collect_device"
             android:enabled="false"
             android:textSize="18sp"
             android:fontFamily="@font/spoqa_hansansneo_medium"

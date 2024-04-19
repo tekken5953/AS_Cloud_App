@@ -7,13 +7,9 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.widget.TextViewCompat
 import app.airsignal.weather.R
-import app.airsignal.weather.databinding.CustomViewEyeDoubleBinding
 import app.airsignal.weather.databinding.CustomViewEyeGroupSelectorBinding
-
 
 @SuppressLint("Recycle", "CustomViewStyleable")
 class EyeGroupSelectorView(context: Context, attrs: AttributeSet?)
@@ -37,9 +33,9 @@ class EyeGroupSelectorView(context: Context, attrs: AttributeSet?)
 
     private fun getImage(title: String): Drawable? {
         return when(title) {
-            "그룹 추가" -> ResourcesCompat.getDrawable(resources, R.drawable.add, null)
-            "그룹 삭제" -> ResourcesCompat.getDrawable(resources, R.drawable.eye_device_remove, null)
-            "그룹명 변경" -> ResourcesCompat.getDrawable(resources, R.drawable.eye_device_edit, null)
+            context.getString(R.string.eye_group_add) -> ResourcesCompat.getDrawable(resources, R.drawable.add, null)
+            context.getString(R.string.eye_group_delete) -> ResourcesCompat.getDrawable(resources, R.drawable.eye_device_remove, null)
+            context.getString(R.string.eye_group_rename) -> ResourcesCompat.getDrawable(resources, R.drawable.eye_device_edit, null)
             else -> null
         }
     }

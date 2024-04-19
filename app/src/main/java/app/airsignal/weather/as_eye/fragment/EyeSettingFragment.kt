@@ -190,9 +190,9 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                             bundle.putString("device",mActivity.serialExtra.toString())
                             val message = RemoteMessage(bundle)
                             EyeNotiBuilder(requireContext()).sendNotification(message.data)
-                        } else Toast.makeText(requireContext(), "먼저 알림을 활성화 해주세요", Toast.LENGTH_SHORT).show()
+                        } else Toast.makeText(requireContext(), getString(R.string.eye_require_enable_noti), Toast.LENGTH_SHORT).show()
                     } else {
-                        Toast.makeText(requireContext(), "알림 권한이 거부되어있습니다", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.eye_noti_denied), Toast.LENGTH_SHORT).show()
                         RequestPermissionsUtil(requireContext()).requestNotification()
                     }
                 }
@@ -277,7 +277,7 @@ class EyeSettingFragment : BaseEyeFragment<EyeSettingFragmentBinding>() {
                     dialog.setBackPressed(view.findViewById(R.id.dialogMembersBack))
                     dialog.show(view, true, ShowDialogClass.DialogTransition.BOTTOM_TO_TOP)
                 } else {
-                    SnackBarUtils(requireView(),"소유자 전용 기능입니다",
+                    SnackBarUtils(requireView(),getString(R.string.eye_only_master),
                         ResourcesCompat.getDrawable(resources,R.drawable.caution_test,null)).show()
                 }
             }

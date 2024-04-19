@@ -67,8 +67,10 @@
             <TextView
                 android:id="@+id/asDetailTabReport"
                 style="@style/basicMediumTextView"
-                android:layout_height="32dp"
+                android:layout_height="match_parent"
                 android:layout_weight="0.35"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:background="@drawable/ae_detail_tap_enable"
                 android:text="@string/report"
                 android:textColor="@color/white"
@@ -77,7 +79,7 @@
             <TextView
                 android:id="@+id/asDetailTabLive"
                 style="@style/basicMediumTextView"
-                android:layout_height="32dp"
+                android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_weight="0.25"
                 android:text="@string/live_value"
@@ -87,7 +89,7 @@
             <TextView
                 android:id="@+id/asDetailTabSetting"
                 style="@style/basicMediumTextView"
-                android:layout_height="32dp"
+                android:layout_height="match_parent"
                 android:layout_marginStart="10dp"
                 android:layout_weight="0.4"
                 android:text="@string/setting"

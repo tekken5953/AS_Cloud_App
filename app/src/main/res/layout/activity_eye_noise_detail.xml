@@ -99,7 +99,7 @@
             <TextView
                 android:id="@+id/noiseFilterClear"
                 style="@style/basicTextView"
-                android:text="필터\n초기화"
+                android:text="@string/noise_clear_filter"
                 android:layout_marginStart="8dp"
                 android:background="?android:attr/selectableItemBackground"
                 android:textSize="14sp"/>

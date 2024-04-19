@@ -21,7 +21,7 @@
         style="@style/basicMediumTextView"
         android:textColor="@color/main_black"
         android:textSize="16sp"
-        android:text="알림 설정"
+        android:text="@string/eye_noti_title"
         android:layout_centerHorizontal="true"
         android:layout_alignTop="@+id/dialogEyeSettingBack"
         android:layout_alignBottom="@+id/dialogEyeSettingBack"/>
@@ -37,7 +37,7 @@
         android:paddingEnd="20dp"
         android:layout_marginTop="15dp"
         android:layout_below="@+id/dialogEyeSettingBack"
-        app:settingLeft="알림 받기"/>
+        app:settingLeft="@string/eye_noti_enable"/>
 
     <app.airsignal.weather.as_eye.customview.EyeSettingView
         android:id="@+id/dialogEyeSettingNoise"
@@ -49,7 +49,7 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:layout_below="@+id/dialogEyeSettingToggle"
-        app:settingLeft="소음"/>
+        app:settingLeft="@string/noise"/>
 
     <app.airsignal.weather.as_eye.customview.EyeSettingView
         android:id="@+id/dialogEyeSettingGyro"
@@ -61,7 +61,7 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:layout_below="@+id/dialogEyeSettingNoise"
-        app:settingLeft="진동 감지"/>
+        app:settingLeft="@string/eye_noti_gyro"/>
     
     <app.airsignal.weather.as_eye.customview.EyeSettingView
         android:id="@+id/dialogEyeSettingBetaNoti"
@@ -70,7 +70,7 @@
         app:isToggle="false"
         android:textSize="16sp"
         app:isArrow="false"
-        app:settingLeft="테스트 알림 받기"
+        app:settingLeft="@string/eye_noti_test"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:layout_below="@+id/dialogEyeSettingGyro"/>

@@ -12,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
+import androidx.core.animation.doOnCancel
+import androidx.core.animation.doOnEnd
 import androidx.databinding.DataBindingUtil
 import app.airsignal.weather.R
 import app.airsignal.weather.as_eye.activity.AddEyeDeviceActivity
@@ -43,9 +45,7 @@ class AddDeviceBleFragment : BaseEyeFragment<FragmentAddDeviceBleBinding>() {
                     binding.addBleTitle.text = getString(R.string.searching_eye)
                     startTextAnimation()
                 }
-            } else {
-                stopTextAnimation()
-            }
+            } else stopTextAnimation()
         }
 
         override fun onScanning(bleDevice: BleDevice?) {
@@ -157,7 +157,7 @@ class AddDeviceBleFragment : BaseEyeFragment<FragmentAddDeviceBleBinding>() {
     private fun changeModelVisibility(b: Boolean) {
         binding.addBleModelContainer.visibility = if (b) View.VISIBLE else View.INVISIBLE
         if (b) binding.addBleModelContainer.animation =
-                AnimationUtils.loadAnimation(requireContext(),R.anim.trans_bottom_to_top_add_group)
+            AnimationUtils.loadAnimation(requireContext(),R.anim.trans_bottom_to_top_add_group)
     }
 
     private fun startTextAnimation() {
@@ -173,23 +173,12 @@ class AddDeviceBleFragment : BaseEyeFragment<FragmentAddDeviceBleBinding>() {
             fadeInAnimator.interpolator = AccelerateInterpolator()
 
             // 애니메이션 반복 설정
-            animatorSet.playSequentially(fadeOutAnimator, fadeInAnimator)
-            animatorSet.duration = 2000
-            animatorSet.addListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(animation: Animator) {
-                }
-
-                override fun onAnimationEnd(animation: Animator) {
-                    startTextAnimation()
-                }
-
-                override fun onAnimationCancel(animation: Animator) {
-                    binding.addBleTitle.alpha = 1f
-                }
-
-                override fun onAnimationRepeat(animation: Animator) {
-                }
-            })
+            animatorSet.apply {
+                playSequentially(fadeOutAnimator, fadeInAnimator)
+                duration = 2000
+                doOnCancel { binding.addBleTitle.alpha = 1f }
+                doOnEnd { startTextAnimation() }
+            }
 
             // 애니메이션 시작
             animatorSet.start()
@@ -205,8 +194,6 @@ class AddDeviceBleFragment : BaseEyeFragment<FragmentAddDeviceBleBinding>() {
     private fun requestReconnect(b: Boolean) {
         binding.addBleReconnectBtn.visibility = if (b) View.GONE else View.VISIBLE
         binding.addBleReconnectTv.visibility = if (b) View.GONE else View.VISIBLE
-        if (!b) {
-            stopTextAnimation()
-        }
+        if (!b) stopTextAnimation()
     }
 }

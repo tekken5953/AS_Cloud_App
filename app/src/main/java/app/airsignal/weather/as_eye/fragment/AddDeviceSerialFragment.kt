@@ -13,7 +13,6 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.Toast
 import androidx.core.os.HandlerCompat
 import androidx.databinding.DataBindingUtil
 import app.airsignal.weather.R
@@ -25,6 +24,7 @@ import app.airsignal.weather.db.sp.SpDao.userEmail
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.KeyboardController
+import app.airsignal.weather.util.ToastUtils
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import kotlinx.coroutines.*
 import retrofit2.Call
@@ -73,7 +73,7 @@ class AddDeviceSerialFragment : BaseEyeFragment<FragmentAddDeviceSerialBinding>(
                     1 -> {
                         if (baseActivity.enableNfc()) baseActivity.transactionFragment(NfcInfoFragment())
                         else {
-                            Toast.makeText(requireContext(), getString(R.string.nfc_disabled_msg), Toast.LENGTH_SHORT).show()
+                            ToastUtils(requireContext()).showMessage(getString(R.string.nfc_disabled_msg))
                             val intent = Intent(Intent(Settings.ACTION_NFC_SETTINGS))
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             startActivity(intent)
@@ -124,9 +124,7 @@ class AddDeviceSerialFragment : BaseEyeFragment<FragmentAddDeviceSerialBinding>(
                     },500)
                     return@setOnTouchListener true
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            } catch (e: Exception) { e.printStackTrace() }
 
             false
         }
@@ -134,7 +132,6 @@ class AddDeviceSerialFragment : BaseEyeFragment<FragmentAddDeviceSerialBinding>(
         return binding.root
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
     }
@@ -155,7 +152,7 @@ class AddDeviceSerialFragment : BaseEyeFragment<FragmentAddDeviceSerialBinding>(
                                 binding.addSerialResultContainer.animation = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
 
                                 if (responseBody.find { it.id == SharedPreferenceManager(requireContext()).getString(userEmail)} != null) {
-                                    failApi("중복 등록 에러","이미 등록하신 기기입니다", "중복 등록은 불가능합니다")
+                                    failApi(getString(R.string.eye_duplicate_device),getString(R.string.eye_already_added))
                                 } else {
                                     if (body.isNotEmpty()) {
                                         val master = responseBody.find { it.master }
@@ -163,26 +160,26 @@ class AddDeviceSerialFragment : BaseEyeFragment<FragmentAddDeviceSerialBinding>(
                                             // 등록한 사용자가 있음
                                             successApi(1,
                                                 "'${master.id}'\n님이 소유하신 기기입니다",
-                                                "게스트로 등록하시겠습니까?"
+                                                getString(R.string.eye_add_guest)
                                             )
 
                                         } else {
                                             // 게스트는 있지만 소유자가 없음
                                             successApi(2,
-                                                "소유자가 없는 기기입니다\n새로 등록하시겠습니까?",
-                                                "올바른 시리얼 번호인지 확인해주세요"
+                                                getString(R.string.eye_no_master_device_add),
+                                                getString(R.string.eye_check_serial)
                                             )
                                         }
                                     } else {
                                         // 등록한 사용자가 없음
                                         successApi(2,
-                                            "등록되지 않은 기기입니다\n새로 등록하시겠습니까?",
-                                            "올바른 시리얼 번호인지 확인해주세요"
+                                            getString(R.string.eye_no_master_device_add),
+                                            getString(R.string.eye_check_serial)
                                         )
                                     }
                                 }
                             } ?: run {
-                                failApi(response.errorBody().toString(), "데이터 호출에 실패했습니다\n올바른 시리얼 번호인지 확인해주세요","")
+                                failApi(response.errorBody().toString(), getString(R.string.eye_fail_get_device_check_serial))
                             }
                         }
                     }
@@ -191,7 +188,7 @@ class AddDeviceSerialFragment : BaseEyeFragment<FragmentAddDeviceSerialBinding>(
 
             override fun onFailure(call: Call<List<ApiModel.Owner>>, t: Throwable) {
                 // 통신 실패
-                failApi(t.stackTraceToString(), "서버와 통신에 실패했습니다\n잠시후에 다시 시도해주세요", "")
+                failApi(t.stackTraceToString(), getString(R.string.eye_fail_server_retry))
             }
         })
     }
@@ -208,7 +205,7 @@ class AddDeviceSerialFragment : BaseEyeFragment<FragmentAddDeviceSerialBinding>(
         binding.addSerialResultContainer.startAnimation(AnimationUtils.loadAnimation(requireContext(),R.anim.fade_in))
     }
 
-    private fun failApi(errorMsg: String, title: String, caution: String) {
+    private fun failApi(title: String, caution: String) {
         binding.addSerialResultContainer.isActivated = true
         stateInspection = 0
         binding.addSerialResultError.visibility = View.VISIBLE
