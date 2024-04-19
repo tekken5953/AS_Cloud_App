@@ -1864,27 +1864,29 @@ class MainActivity
     private fun callSavedLoc() {
         try {
             ioThread.launch {
-                val db = GpsRepository(this@MainActivity).findByName(CURRENT_GPS_ID)
-                val lat = db.lat
-                val lng = db.lng
-                if (lat != null && lng != null) {
-                    val mLat = lat.toDouble()
-                    val mLng = lat.toDouble()
-                    val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
-                    if (isKorea(mLat, mLng)) {
-                        ToastUtils(this@MainActivity)
-                            .showMessage(getString(R.string.last_location_call_msg), 1)
-                        processAddress(mLat, mLng, addr)
-                    } else {
-                        ToastUtils(this@MainActivity).showMessage(getString(R.string.error_not_service_locale))
-                        loadSavedViewModelData("서울특별시")
+                try {
+                    val db = GpsRepository(this@MainActivity).findByName(CURRENT_GPS_ID)
+                    val lat = db.lat
+                    val lng = db.lng
+                    if (lat != null && lng != null) {
+                        val mLat = lat.toDouble()
+                        val mLng = lat.toDouble()
+                        val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
+                        if (isKorea(mLat, mLng)) {
+                            ToastUtils(this@MainActivity)
+                                .showMessage(getString(R.string.last_location_call_msg), 1)
+                            processAddress(mLat, mLng, addr)
+                        } else {
+                            ToastUtils(this@MainActivity).showMessage(getString(R.string.error_not_service_locale))
+                            loadSavedViewModelData("서울특별시")
+                        }
                     }
+                } catch (e: NullPointerException) {
+                    hideAllViews(ERROR_GET_LOCATION_FAILED)
                 }
             }
         } catch (e: NumberFormatException) {
             handleLocationFailure(e.stackTraceToString())
-            hideAllViews(ERROR_GET_LOCATION_FAILED)
-        } catch (e: NullPointerException) {
             hideAllViews(ERROR_GET_LOCATION_FAILED)
         }
     }
