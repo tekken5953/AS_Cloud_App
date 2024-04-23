@@ -33,13 +33,11 @@ class EyeDetailLiveFragment : BaseEyeFragment<EyeDetailLiveFragmentBinding>() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.eye_detail_live_fragment, container, false)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         refreshData()
     }
 
@@ -64,15 +62,13 @@ class EyeDetailLiveFragment : BaseEyeFragment<EyeDetailLiveFragmentBinding>() {
                 binding.aeLiveTVOC.fetchData(entireData.tvocValue.toString(),tvocd.first,tvocd.second)
                 binding.aeLiveNO2.fetchData(entireData.no2Value.toString(),no2d.first,no2d.second)
             }
-        } catch (e: UninitializedPropertyAccessException) {
-            e.printStackTrace()
-        }
+        } catch (e: UninitializedPropertyAccessException) { e.printStackTrace() }
     }
 
     fun onDataTransfer(data: EyeDataModel.Measured?) {
         data?.let {
             entireData = it
-            if (this@EyeDetailLiveFragment.isVisible) { refreshData() }
+            if (this@EyeDetailLiveFragment.isVisible) refreshData()
         }
     }
 

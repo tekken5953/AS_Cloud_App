@@ -31,7 +31,6 @@ class BaseApplication : Application() {
     /* single : 싱글톤 빈 정의를 제공. 즉 1번만 객체를 생성한다 */
     /* factory : 호출될 때마다 객체 생성 */
     /* viewModel : 뷰모델 의존성 제거 객체 생성 */
-
     private val myModule = module {
         single<Context> { applicationContext }
         single { GetLocation(get()) }

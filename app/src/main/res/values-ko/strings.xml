@@ -381,4 +381,6 @@
     <string name="nfc_wait_scan">스캔 대기중</string>
     <string name="nfc_collect_device">이 기기가 맞습니다</string>
     <string name="eye_fail_get_members">멤버를 불러오지 못했습니다</string>
+    <string name="nfc_scan_success">스캔 성공</string>
+    <string name="nfc_scan_fail">스캔 실패</string>
 </resources>

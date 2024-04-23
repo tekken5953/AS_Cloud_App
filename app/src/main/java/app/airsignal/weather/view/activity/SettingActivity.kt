@@ -113,6 +113,8 @@ class SettingActivity
     private val ioThread by lazy {CoroutineScope(Dispatchers.IO)}
     private val mainDispatcher by lazy { Dispatchers.Main }
 
+    private var lastLogin = ""
+
     override fun onResume() {
         super.onResume()
 
@@ -120,6 +122,7 @@ class SettingActivity
         applyUserEmail()
         applyUserLanguage()
         applyFontScale()
+        lastLogin = applyLastLogin()
     }
 
     @SuppressLint("InflateParams")
@@ -130,8 +133,6 @@ class SettingActivity
         setStatusBar(this)
 
         if (isInit) { isInit = false }
-
-        val lastLogin = applyLastLogin()
 
         // 뒤로가기 버튼 클릭
         binding.settingBack.setOnClickListener { goMain() }
@@ -159,11 +160,9 @@ class SettingActivity
                     ioThread.launch {
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
                             LOGIN_KAKAO -> {
-//                                KakaoLogin(this@SettingActivity).logout(email)
                                 KakaoLogin(this@SettingActivity).disconnectFromKakao(binding.settingPb)
                             }
                             LOGIN_NAVER -> {
-//                                NaverLogin(this@SettingActivity).logout()
                                 NaverLogin(this@SettingActivity).disconnectFromNaver(binding.settingPb)
                             }
                             LOGIN_GOOGLE -> {
@@ -177,9 +176,7 @@ class SettingActivity
                     }
                 }
 
-                cancel.setOnClickListener {
-                    builder.dismiss()
-                }
+                cancel.setOnClickListener { builder.dismiss() }
 
                 builder.show()
 
