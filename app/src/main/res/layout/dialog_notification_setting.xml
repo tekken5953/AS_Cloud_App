@@ -114,7 +114,6 @@
         android:layout_below="@+id/notificationLine11">
 
         <TextView
-            android:id="@+id/notiVibrateTitle"
             style="@style/settingMultiTextView"
             android:layout_weight="0.95"
             android:textSize="16sp"
@@ -153,7 +152,6 @@
         android:paddingEnd="24dp"
         android:layout_below="@+id/notificationLine2">
         <TextView
-            android:id="@+id/notiSoundTitle"
             style="@style/settingMultiTextView"
             android:layout_weight="0.95"
             android:textSize="16sp"
@@ -183,7 +181,6 @@
         android:layout_marginEnd="24dp"/>
 
     <TextView
-        android:id="@+id/notificationExplainText"
         style="@style/basicTextView"
         android:layout_width="match_parent"
         android:layout_marginStart="24dp"

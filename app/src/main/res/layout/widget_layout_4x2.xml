@@ -85,7 +85,6 @@
         android:textSize="13sp" />
 
     <LinearLayout
-        android:id="@+id/w42DailyLinear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/w42Temp"
@@ -189,7 +188,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/w42AirLinear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

@@ -19,7 +19,6 @@
             app:tint="@color/theme_text_color"/>
 
         <TextView
-            android:id="@+id/opacityTitle"
             style="@style/basicMediumTextView"
             android:layout_centerInParent="true"
             android:text="@string/setting_opacity"
@@ -141,7 +140,6 @@
     </TableRow>
 
     <LinearLayout
-        android:id="@+id/opacityBgLinear2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/opacitySettingTr2"
