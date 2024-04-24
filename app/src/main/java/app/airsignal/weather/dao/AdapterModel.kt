@@ -38,11 +38,4 @@ object AdapterModel {
         val kr: String?,
         val en: String?
     )
-
-    data class NoiseDetailItem(
-        @SerializedName("date")
-        val date: LocalDateTime?,
-        @SerializedName("noise")
-        val noise: Int?
-    )
 }

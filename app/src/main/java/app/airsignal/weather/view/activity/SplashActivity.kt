@@ -94,27 +94,18 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
     private fun enterPage(inAppMsgList: List<ApiModel.InAppMsgItem?>?) {
-        if (intent?.hasCategory("android.intent.category.APP_MESSAGING") == true) {
-            if (!isDone) {
-                isDone = true
-                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                    EnterPageUtil(this@SplashActivity).toList(R.anim.fade_in)
-                },2000)
-            }
+        if (isReady) {
+            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
+                    EnterPageUtil(this@SplashActivity).toMain(
+                        getUserLoginPlatform(this),
+                        inAppMsgList?.toTypedArray())
+                } else { EnterPageUtil(this@SplashActivity).toPermission() }
+            }, 500)
         } else {
-            if (isReady) {
-                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                    if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
-                        EnterPageUtil(this@SplashActivity).toMain(
-                            getUserLoginPlatform(this),
-                            inAppMsgList?.toTypedArray())
-                    } else { EnterPageUtil(this@SplashActivity).toPermission() }
-                }, 500)
-            } else {
-                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                    enterPage(inAppMsgList)
-                }, 500)
-            }
+            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                enterPage(inAppMsgList)
+            }, 500)
         }
     }
 

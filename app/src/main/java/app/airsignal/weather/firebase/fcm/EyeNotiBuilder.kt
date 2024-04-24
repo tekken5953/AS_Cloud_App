@@ -13,10 +13,8 @@ import android.media.RingtoneManager
 import android.view.View
 import androidx.core.app.NotificationCompat
 import app.airsignal.weather.R
-import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.SharedPreferenceManager
-import app.airsignal.weather.db.sp.GetSystemInfo.isAppRunning
 import app.airsignal.weather.db.sp.SpDao
 import kotlin.random.Random
 

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
-import app.airsignal.weather.as_eye.dao.EyeDataModel
 import app.airsignal.weather.db.SharedPreferenceManager
 import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.DatabaseReference

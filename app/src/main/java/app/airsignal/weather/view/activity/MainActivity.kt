@@ -28,7 +28,6 @@ import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
 import app.airsignal.weather.address.AddressFromRegex
-import app.airsignal.weather.as_eye.activity.EyeListActivity
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
 import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
@@ -36,7 +35,6 @@ import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.databinding.ActivityMainBinding
-import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetAppInfo.getIsNight
@@ -87,8 +85,8 @@ import app.airsignal.weather.util.`object`.DataTypeParser.translateSky
 import app.airsignal.weather.util.`object`.DataTypeParser.translateSkyText
 import app.airsignal.weather.util.`object`.DataTypeParser.translateUV
 import app.airsignal.weather.view.*
-import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.ExternalAirView
+import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.dialog.*
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetWeatherViewModel
@@ -216,9 +214,6 @@ class MainActivity
             // 메인 하단 스크롤 유도 화살표 애니메이션 적용
             val bottomArrowAnim = AnimationUtils.loadAnimation(this, R.anim.bottom_arrow_anim)
             binding.mainMotionSLideImg.startAnimation(bottomArrowAnim)
-            val eyeIconAnim = AnimationUtils.loadAnimation(this, R.anim.anim_eye_icon_scale)
-            if (!SharedPreferenceManager(this).getBoolean(SpDao.TUTORIAL_SKIP, false))
-                binding.mainTopEye.startAnimation(eyeIconAnim)
 
             // 스크롤 최상단으로 올리기 버튼
             binding.nestedFab.setOnClickListener(object : OnSingleClickListener() {
@@ -293,28 +288,6 @@ class MainActivity
                     } else {
                         doubleDialog.dismiss()
                         addShareMsg(LANG_KR)
-                    }
-                }
-            })
-
-            binding.mainTopEye.setOnClickListener(object : OnSingleClickListener() {
-                override fun onSingleClick(v: View?) {
-                    if (SharedPreferenceManager(this@MainActivity).getString("user_email") != "") {
-                        val intent = Intent(this@MainActivity, EyeListActivity::class.java)
-                        startActivity(intent)
-                    } else {
-                        val builder = MakeDoubleDialog(this@MainActivity)
-                        val dialog = builder.make(
-                            "로그인이 필요한 서비스입니다.",
-                            "로그인", "취소", R.color.main_blue_color
-                        )
-                        dialog.first.setOnClickListener {
-                            builder.dismiss()
-                            EnterPageUtil(this@MainActivity).toLogin("main")
-                        }
-                        dialog.second.setOnClickListener {
-                            builder.dismiss()
-                        }
                     }
                 }
             })
@@ -479,7 +452,6 @@ class MainActivity
             val setting = sideMenuView.findViewById<TextView>(R.id.navMenuSetting)
             val warning = sideMenuView.findViewById<TextView>(R.id.navMenuWarning)
             val headerTr = sideMenuView.findViewById<TableRow>(R.id.headerTr)
-            val eye = sideMenuView.findViewById<TextView>(R.id.navMenuEye)
 
             sideMenuBuilder.apply {
                 setBackPressed(cancel)
@@ -513,14 +485,6 @@ class MainActivity
             weather.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
                     sideMenuBuilder.dismiss()
-                }
-            })
-            eye.setOnClickListener(object : OnSingleClickListener() {
-                override fun onSingleClick(v: View?) {
-                    closeMenuAndCallback {
-                        val intent = Intent(this@MainActivity, EyeListActivity::class.java)
-                        startActivity(intent)
-                    }
                 }
             })
             setting.setOnClickListener(object : OnSingleClickListener() {
@@ -1541,7 +1505,6 @@ class MainActivity
         setDrawable(binding.mainMotionSLideImg, R.drawable.drop_down_bottom)
         setDrawable(binding.mainAddAddress, R.drawable.search)
         setDrawable(binding.mainSideMenuIv, R.drawable.ico_hamb_w)
-        setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_bk)
 
         // 원래 상태로 복구하기 위해 제약 조건 변경
         binding.mainMotionLayout.isInteractionEnabled = true
@@ -1589,7 +1552,6 @@ class MainActivity
         binding.mainShareIv.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainSkyText.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainErrorRenewBtn.isClickable = visibility == GONE
-        binding.mainTopEye.alpha = if (visibility == VISIBLE) 1f else 0f
     }
 
     // 현재 지역의 날씨 데이터 뷰모델 생성 및 호출
@@ -1766,11 +1728,9 @@ class MainActivity
         when (bg) {
             R.drawable.main_bg_clear, R.drawable.main_bg_snow -> {
                 changeTextToBlack()
-                setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_bk)
             }
             R.drawable.main_bg_night, R.drawable.main_bg_cloudy, R.drawable.main_bg_cloudy_night -> {
                 changeTextToWhite()
-                setDrawable(binding.mainTopEye, R.drawable.ico_eye_beta_w)
             }
         }
 

@@ -154,16 +154,6 @@
                 app:curveFit="linear"
                 app:framePosition="99"
                 app:motionTarget="@id/mainTopBarGpsTitleScroll" />
-            <KeyAttribute
-                android:alpha="1"
-                app:curveFit="linear"
-                app:framePosition="1"
-                app:motionTarget="@id/mainTopEye" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainTopEye" />
 
             <KeyAttribute
                 android:alpha="0"
@@ -378,16 +368,6 @@
             app:layout_constraintTop_toTopOf="@id/mainLiveTempValue"
             app:layout_constraintBottom_toBottomOf="@id/mainLiveTempValue"/>
         <Constraint
-            android:id="@+id/mainTopEye"
-            style="@style/basicMediumTextView"
-            app:layout_constraintBottom_toBottomOf="@+id/topBarLinear"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/topBarLinear"
-            android:alpha="1"
-            android:textColor="@color/main_blue_color"
-            android:textSize="16sp" />
-        <Constraint
             android:id="@+id/nested_scrollview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -569,16 +549,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/mainSkyImg"
             app:layout_constraintBottom_toBottomOf="@+id/mainSkyImg"/>
-        <Constraint
-            android:id="@+id/mainTopEye"
-            style="@style/basicMediumTextView"
-            app:layout_constraintBottom_toBottomOf="@+id/topBarLinear"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/topBarLinear"
-            android:alpha="0"
-            android:textColor="@color/main_blue_color"
-            android:textSize="16sp" />
         <Constraint
             android:id="@+id/nested_scrollview"
             app:layout_constraintTop_toBottomOf="@+id/mainSkyText"

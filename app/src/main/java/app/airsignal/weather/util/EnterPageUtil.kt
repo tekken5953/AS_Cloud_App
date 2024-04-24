@@ -2,16 +2,14 @@ package app.airsignal.weather.util
 
 import android.app.Activity
 import android.content.Intent
-import app.airsignal.weather.as_eye.activity.EyeListActivity
-import app.airsignal.weather.network.retrofit.ApiModel
-import app.airsignal.weather.view.activity.LoginActivity
-import app.airsignal.weather.view.activity.MainActivity
-import app.airsignal.weather.view.activity.PermissionActivity
 import app.airsignal.weather.db.sp.SetAppInfo.setUserLoginPlatform
 import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG
 import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG_COUNT
 import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG_REDIRECT
-import app.airsignal.weather.view.activity.SplashActivity
+import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.view.activity.LoginActivity
+import app.airsignal.weather.view.activity.MainActivity
+import app.airsignal.weather.view.activity.PermissionActivity
 import kotlin.system.exitProcess
 
 /**
@@ -46,15 +44,6 @@ class EnterPageUtil(private val activity: Activity) {
 
             this.startActivity(intent)
             this.overridePendingTransition(0,0)
-            this.finish()
-        }
-    }
-
-    fun toList(anim: Int) {
-        val intent = Intent(activity, EyeListActivity::class.java)
-        activity.run {
-            this.startActivity(intent)
-            this.overridePendingTransition(anim,0)
             this.finish()
         }
     }

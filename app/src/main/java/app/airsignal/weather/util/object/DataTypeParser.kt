@@ -417,34 +417,6 @@ object DataTypeParser {
         return ResourcesCompat.getDrawable(context.resources, resId, null)
     }
 
-    fun parseReportTitle(data: String): String {
-        return when(data) {
-            "co2" -> {"CO2(이산화탄소)"}
-            "co" -> {"CO(일산화탄소)"}
-            "pm1p0" -> {"PM1.0(극초미세먼지)"}
-            "pm2p5" -> {"PM2.5(초미세먼지)"}
-            "pm10p0" -> {"PM10(미세먼지)"}
-            "tvoc" -> {"TVOC(총휘발성유기화합물)"}
-            "no2" -> {"NO2(이산화질소)"}
-            "cai" -> {"CAI(통합 대기 환경지수)"}
-            else -> {""}
-        }
-    }
-
-    fun reportCationMsg(data: String): String {
-        return when(data) {
-            "co2" -> {"냉방 온도를 높이거나 난방 온도를 낮춰주세요\n사용하지 않는 콘센트는 빼주세요"}
-            "co" -> {"화재 발생 위험을 점검해주세요"}
-            "pm1p0" -> {"환기 후 물걸레 청소로 낮출 수 있습니다"}
-            "pm2p5" -> {"환기 후 물걸레 청소로 낮출 수 있습니다"}
-            "pm10p0" -> {"환기 후 물걸레 청소로 낮출 수 있습니다"}
-            "tvoc" -> {"환기가 필요합니다"}
-            "no2" -> {"연소 연료에 노출되어 있을 수 있어요"}
-            "cai" -> {"환기가 필요합니다"}
-            else -> {"환기가 필요합니다"}
-        }
-    }
-
     fun progressToHex(progress: Int): String {
         return if (progress == 0) "00" else if (progress == 100) "" else if (progress < 10) "0${progress}" else progress.toString()
     }

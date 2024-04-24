@@ -1,9 +1,7 @@
-package app.airsignal.weather.as_eye.adapter
+package app.airsignal.weather.util
 
 import android.os.SystemClock
 import android.view.View
-import androidx.recyclerview.widget.RecyclerView
-import app.airsignal.weather.util.OnAdapterItemClick
 
 abstract class OnAdapterItemSingleClick : OnAdapterItemClick.OnAdapterItemClick {
     private var mLastClickTime: Long = 0

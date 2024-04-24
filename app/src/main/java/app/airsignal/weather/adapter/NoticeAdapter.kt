@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.R
-import app.airsignal.weather.as_eye.adapter.OnAdapterItemSingleClick
+import app.airsignal.weather.util.OnAdapterItemSingleClick
 
 /**
  * @author : Lee Jae Young
