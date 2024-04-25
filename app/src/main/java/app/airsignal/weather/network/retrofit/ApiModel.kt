@@ -34,13 +34,6 @@ class ApiModel {
         val redirect: String
         )
 
-    /**
-     * 메타 데이터 모델
-     * @param address 앱의 테스트 버전 네임
-     * @param address1 앱의 테스트 버전 코드
-     * @param address2 앱 배포 날짜
-     * @param address3 앱의 배포 버전 네임
-     */
     data class MetaData(
         @SerializedName("address")
         val address: String?,

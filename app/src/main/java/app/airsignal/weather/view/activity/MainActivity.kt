@@ -787,6 +787,7 @@ class MainActivity
             val metaAddr = result.meta.address ?: getString(R.string.address_error)
             ioThread.launch {
                 reNewTopicInMain(metaAddr)
+
 //                                isNight = true
                 isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
 
@@ -808,15 +809,10 @@ class MainActivity
 
                     // 메인 날씨 텍스트 세팅
                     val skyText = if (currentIsAfterRealtime(
-                            result.current.currentTime,
-                            result.realtime[0].forecast
-                        )
-                    ) {
+                            result.current.currentTime, result.realtime[0].forecast)) {
                         translateSky(
                             this@MainActivity, applySkyText(this@MainActivity,
-                                result.current.rainType,
-                                result.realtime[0].sky, result.thunder
-                            )
+                                result.current.rainType, result.realtime[0].sky, result.thunder)
                         )
                     } else {
                         translateSky(
@@ -827,7 +823,7 @@ class MainActivity
                         )
                     }
 //                 날씨에 따라 배경화면 변경
-//                    val testSky = getString(R.string.sky_cloudy)
+//                    val testSky = getString(R.string.sky_snowy)
 //                    applyWindowBackground(testSky)
 //                    binding.mainSkyText.text = testSky
 
@@ -865,7 +861,7 @@ class MainActivity
             catch (e: Exception) { e.printStackTrace() }
             if (GetLocation(this).isNetWorkConnected()) {
                 hideAllViews(error = errorMessage)
-            } else { if (errorMessage != "text") hideAllViews(error = ERROR_NETWORK) }
+            } else if (errorMessage != "text") hideAllViews(error = ERROR_NETWORK)
         }
     }
 
@@ -889,7 +885,7 @@ class MainActivity
             this,
             if (isAfterRealtime) result.current.rainType else realtimeFirst.rainType,
             realtimeFirst.sky, result.thunder,
-            isLarge = true, isNight = isNight,  lunar = lunar
+            isLarge = true, isNight,  lunar = lunar
         ))
     }
 
@@ -955,7 +951,7 @@ class MainActivity
                 val skyImg = applySkyImg(
                     this, if (isAfterRealtime) current.rainType else dailyIndex.rainType,
                     if (isAfterRealtime) dailyIndex.sky else dailyIndex.sky, thunder,
-                    isLarge = false, isNight = isNight, lunar = lunar
+                    isLarge = false, isNight, lunar = lunar
                 )
                 val temperature =
                     if (isAfterRealtime) "${current.temperature.roundToInt()}˚" else "${dailyIndex.temp.roundToInt()}˚"
@@ -973,7 +969,7 @@ class MainActivity
             } else {
                 val skyImg = applySkyImg(
                     this, dailyIndex.rainType, dailyIndex.sky, thunder,
-                    isLarge = false, isNight = isNight, lunar = lunar
+                    isLarge = false, isNight, lunar = lunar
                 ) ?: getR(R.drawable.ic_error)
                 val temperature = "${dailyIndex.temp.roundToInt()}˚"
                 val rainType = dailyIndex.rainType
@@ -1221,13 +1217,13 @@ class MainActivity
                     changeBackgroundResource(R.drawable.main_bg_night)
                     binding.mainBottomDecoImg.colorFilter = setBrightness(0.6f)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
-                    setAnimation(R.raw.ani_main_snow)
+                    setAnimation(R.raw.ani_main_snow, 0.6F)
                 }
                 getString(R.string.sky_cloudy_snowy) -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy_night)
                     binding.mainBottomDecoImg.colorFilter = setBrightness(0.6f)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
-                    setAnimation(R.raw.ani_main_snow)
+                    setAnimation(R.raw.ani_main_snow, 0.6F)
                 }
                 else -> {
                     changeBackgroundResource(R.drawable.main_bg_night)
@@ -1257,12 +1253,12 @@ class MainActivity
                 getString(R.string.sky_snowy), getString(R.string.sky_sunny_cloudy_snowy) -> {
                     changeBackgroundResource(R.drawable.main_bg_snow)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
-                    setAnimation(R.raw.ani_main_snow)
+                    setAnimation(R.raw.ani_main_snow, 0.6F)
                 }
                 getString(R.string.sky_cloudy_snowy) -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
-                    setAnimation(R.raw.ani_main_snow)
+                    setAnimation(R.raw.ani_main_snow, 0.6F)
                 }
                 else -> {
                     changeBackgroundResource(R.drawable.main_bg_night)
@@ -1287,6 +1283,16 @@ class MainActivity
         if (isAnimationEnable) {
             animationResource?.let {
                 binding.mainSkyStarImg.setAnimation(it)
+                if (!binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.playAnimation()
+            } ?: run { setEmptyAnimation() }
+        } else setEmptyAnimation()
+    }
+    private fun setAnimation(animationResource: Int?, speed: Float) {
+        val isAnimationEnable = getWeatherAnimEnabled(this)
+        if (isAnimationEnable) {
+            animationResource?.let {
+                binding.mainSkyStarImg.setAnimation(it)
+                binding.mainSkyStarImg.speed = speed
                 if (!binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.playAnimation()
             } ?: run { setEmptyAnimation() }
         } else setEmptyAnimation()

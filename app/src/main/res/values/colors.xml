@@ -19,11 +19,11 @@
     <color name="air_bad_sub">#20FCB052</color>
     <color name="air_very_bad_sub">#20F04655</color>
 
-    <color name="uv_low">#5CC4FF</color>
-    <color name="uv_normal">#FACC15</color>
-    <color name="uv_high">#E68040</color>
-    <color name="uv_very_high">#F87171</color>
-    <color name="uv_caution">#7D38F2</color>
+    <color name="uv_low">#35CB93</color>
+    <color name="uv_normal">#FCB052</color>
+    <color name="uv_high">#EC7B36</color>
+    <color name="uv_very_high">#AD54D9</color>
+    <color name="uv_caution">#F04655</color>
 
     <color name="main_black">#4F4F4F</color>
     <color name="main_blue_color">#00C2FF</color>

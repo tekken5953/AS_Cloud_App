@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
+import org.apache.http.conn.ConnectionPoolTimeoutException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.SocketTimeoutException
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit
 object HttpClient {
 
     private val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
+        val context = BaseApplication.appContext
         retryOnConnectionFailure(retryOnConnectionFailure = false)
         connectionPool(ConnectionPool())
         connectTimeout(8, TimeUnit.SECONDS)
@@ -33,7 +35,11 @@ object HttpClient {
                     .build()
                 chain.proceed(request)
             } catch (e: SocketTimeoutException) {
-                val context = BaseApplication.appContext
+                ToastUtils(context).showMessage(context.getString(R.string.api_timeout_retry))
+                chain.proceed(chain.request())
+                throw e
+            }
+            catch (e: ConnectionPoolTimeoutException) {
                 ToastUtils(context).showMessage(context.getString(R.string.api_timeout_retry))
                 chain.proceed(chain.request())
                 throw e
