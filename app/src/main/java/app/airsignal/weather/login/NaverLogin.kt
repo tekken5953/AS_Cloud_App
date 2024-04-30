@@ -79,9 +79,7 @@ class NaverLogin(private val activity: Activity) {
     }
 
     /** 엑세스 토큰 리프래시 **/
-    suspend fun refreshToken() {
-        NidOAuthLogin().refreshToken()
-    }
+    suspend fun refreshToken() { NidOAuthLogin().refreshToken() }
 
     // 프로필 콜벡 메서드
     val profileCallback = object : NidProfileCallback<NidProfileResponse> {
@@ -90,11 +88,11 @@ class NaverLogin(private val activity: Activity) {
                 SharedPreferenceManager(activity)
                     .setString(lastLoginPhone, it.mobile.toString())
                     .setString(userId, it.name.toString())
-                    .setString(userProfile, it.profileImage!!)
+                    .setString(userProfile, it.profileImage ?: "")
                     .setString(userEmail, it.email.toString())
 
-                writeLoginHistory(isLogin = true, platform = LOGIN_NAVER, email = it.email.toString(),
-                    isAuto = false, isSuccess = true)
+                writeLoginHistory(isLogin = true, platform = LOGIN_NAVER,
+                    email = it.email.toString(), isAuto = false, isSuccess = true)
 
                 writeLoginPref(activity,
                     platform = LOGIN_NAVER,
@@ -150,7 +148,6 @@ class NaverLogin(private val activity: Activity) {
         NidOAuthLogin().callDeleteTokenApi(activity, object : OAuthLoginCallback {
             override fun onSuccess() {
                 //서버에서 토큰 삭제에 성공한 상태입니다.
-
                 toast.showMessage(activity.getString(R.string.naver_disconnect),1)
                 pb?.let {
                     RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = it)

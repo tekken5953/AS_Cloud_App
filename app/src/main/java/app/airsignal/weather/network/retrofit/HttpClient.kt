@@ -1,9 +1,6 @@
 package app.airsignal.weather.network.retrofit
 
-import app.airsignal.weather.R
-import app.airsignal.weather.koin.BaseApplication
 import app.airsignal.weather.network.NetworkIgnored.hostingServerURL
-import app.airsignal.weather.util.ToastUtils
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import okhttp3.ConnectionPool
@@ -19,9 +16,7 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 object HttpClient {
-
     private val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
-        val context = BaseApplication.appContext
         retryOnConnectionFailure(retryOnConnectionFailure = false)
         connectionPool(ConnectionPool())
         connectTimeout(8, TimeUnit.SECONDS)
@@ -35,12 +30,10 @@ object HttpClient {
                     .build()
                 chain.proceed(request)
             } catch (e: SocketTimeoutException) {
-                ToastUtils(context).showMessage(context.getString(R.string.api_timeout_retry))
                 chain.proceed(chain.request())
                 throw e
             }
             catch (e: ConnectionPoolTimeoutException) {
-                ToastUtils(context).showMessage(context.getString(R.string.api_timeout_retry))
                 chain.proceed(chain.request())
                 throw e
             }
@@ -66,6 +59,8 @@ object HttpClient {
     private fun gsonConverterFactory(): GsonConverterFactory? {
         val gson = GsonBuilder()
             .setLenient()
+            .setPrettyPrinting()
+            .serializeNulls()
             .registerTypeAdapter(LocalDateTime::class.java,
                 JsonDeserializer { json, _, _ ->
                     LocalDateTime.parse(
@@ -91,5 +86,4 @@ object HttpClient {
 
         return GsonConverterFactory.create(gson)
     }
-
 }

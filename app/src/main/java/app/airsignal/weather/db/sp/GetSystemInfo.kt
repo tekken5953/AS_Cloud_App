@@ -60,9 +60,7 @@ object GetSystemInfo {
             val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
             val appVersionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
             return appVersionCode.toString()
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
-        }
+        } catch (e: PackageManager.NameNotFoundException) { e.printStackTrace() }
 
         return ""
     }
