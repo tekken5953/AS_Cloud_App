@@ -130,7 +130,7 @@ class NaverLogin(private val activity: Activity) {
             val errorCode = NaverIdLoginSDK.getLastErrorCode().code
             val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
             writeErrorNotANR(activity,"naver login","error $errorCode $errorDescription")
-            toast.showMessage("로그인이 필요합니다",1)
+            toast.showMessage(activity.getString(R.string.require_login),1)
         }
 
         override fun onError(errorCode: Int, message: String) {

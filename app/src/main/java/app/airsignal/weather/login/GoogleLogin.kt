@@ -14,6 +14,7 @@ import app.airsignal.weather.db.sp.SetAppInfo.setUserEmail
 import app.airsignal.weather.db.sp.SetAppInfo.setUserId
 import app.airsignal.weather.db.sp.SetAppInfo.setUserLoginPlatform
 import app.airsignal.weather.db.sp.SetAppInfo.setUserProfile
+import app.airsignal.weather.koin.BaseApplication
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
@@ -39,9 +40,8 @@ class GoogleLogin(private val activity: Activity) {
     }
 
     private fun getAccessToken(): String? {
-        return try {
-            lastLogin?.idToken
-        } catch (e: Exception) {
+        return try { lastLogin?.idToken }
+        catch (e: Exception) {
             e.printStackTrace()
             null
         }
@@ -55,14 +55,12 @@ class GoogleLogin(private val activity: Activity) {
             mBtn.alpha = 0.7f
         } catch (e: Exception) {
             e.stackTraceToString()
-            RDBLogcat.writeErrorNotANR(activity, LOGIN_FAILED, e.localizedMessage!!)
+            RDBLogcat.writeErrorNotANR(activity, LOGIN_FAILED, e.localizedMessage ?: "")
         }
     }
 
     /** 토큰 유효성 검사 **/
-    fun isValidToken() : Boolean {
-        return lastLogin?.idToken != null
-    }
+    fun isValidToken() : Boolean { return lastLogin?.idToken != null }
 
     /** 로그아웃 진행 + 로그아웃 로그 저장 **/
     fun logout(pb: LottieAnimationView?) {
@@ -74,8 +72,7 @@ class GoogleLogin(private val activity: Activity) {
                 }
             }
             .addOnCanceledListener {
-                ToastUtils(activity)
-                    .showMessage("로그아웃에 실패했습니다",1)
+                ToastUtils(activity).showMessage("로그아웃에 실패했습니다",1)
             }
     }
 
@@ -86,8 +83,7 @@ class GoogleLogin(private val activity: Activity) {
                 handleSignInResult(it,isAuto = true)
             }
             .addOnFailureListener {
-                ToastUtils(activity)
-                    .showMessage("마지막 로그인 세션을 찾을 수 없습니다",1)
+                ToastUtils(activity).showMessage("마지막 로그인 세션을 찾을 수 없습니다",1)
             }
     }
 
@@ -114,14 +110,14 @@ class GoogleLogin(private val activity: Activity) {
      *
      * TODO 임시로 번호를 지정해 놓음**/
     private fun saveLogoutStatus() {
-        writeLoginHistory(isLogin = false, platform = LOGIN_GOOGLE, email = lastLogin?.email!!, isAuto = null, isSuccess = true)
+        writeLoginHistory(isLogin = false, platform = LOGIN_GOOGLE, email = lastLogin?.email ?: "", isAuto = null, isSuccess = true)
     }
 
     /** 로그인 이벤트 성공 **/
     fun handleSignInResult(completedTask: Task<GoogleSignInAccount>, isAuto: Boolean) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
-            val email = account.email!!.lowercase()
+            val email = account.email?.lowercase() ?: ""
             val displayName = account.displayName
             val id = account.id?.lowercase()
             val photo: String = account?.photoUrl.toString()

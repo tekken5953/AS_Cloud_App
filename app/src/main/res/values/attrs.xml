@@ -25,24 +25,4 @@
         <attr name="customerValue" format="string"/>
     </declare-styleable>
 
-    <declare-styleable name="EyeLiveSingleDataView">
-        <attr name="title" format="string"/>
-        <attr name="unit" format="string"/>
-    </declare-styleable>
-
-    <declare-styleable name="EyeLiveDoubleDataView">
-        <attr name="titleKrDouble" format="string"/>
-        <attr name="titleEnDouble" format="string"/>
-        <attr name="unitDouble" format="string"/>
-    </declare-styleable>
-
-    <declare-styleable name="EyeSettingView">
-        <attr name="settingLeft" format="string"/>
-        <attr name="isArrow" format="boolean"/>
-        <attr name="isToggle" format="boolean"/>
-    </declare-styleable>
-
-    <declare-styleable name="EyeGroupSelectorView">
-        <attr name="selectorTitle" format="string"/>
-    </declare-styleable>
 </resources>

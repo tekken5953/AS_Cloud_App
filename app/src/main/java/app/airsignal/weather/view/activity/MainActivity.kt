@@ -823,11 +823,11 @@ class MainActivity
                         )
                     }
 //                 날씨에 따라 배경화면 변경
-//                    val testSky = getString(R.string.sky_snowy)
-//                    applyWindowBackground(testSky)
-//                    binding.mainSkyText.text = testSky
+                    val testSky = getString(R.string.sky_cloudy)
 
+//                    applyWindowBackground(testSky)
                     applyWindowBackground(skyText)
+
                     binding.mainSkyText.text = skyText
 
                     hideProgressBar()
@@ -1203,7 +1203,7 @@ class MainActivity
                 getString(R.string.sky_cloudy) -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy_night)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud_night)
-                    setAnimation(null)
+                    setAnimation(R.raw.ani_main_cloudy)
                 }
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
                 getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
@@ -1240,7 +1240,7 @@ class MainActivity
                 getString(R.string.sky_cloudy) -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud)
-                    setAnimation(null)
+                    setAnimation(R.raw.ani_main_cloudy)
                 }
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
                 getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),

@@ -52,14 +52,12 @@ class SubFCM: FirebaseMessagingService() {
             CoroutineScope(Dispatchers.Default).launch {
                 FirebaseMessaging.getInstance().subscribeToTopic(topic)
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        } catch (e: Exception) { e.printStackTrace() }
         return this
     }
 
     /** 토픽 구독 해제 **/
-    fun unSubTopic(topic: String): SubFCM {
+    private fun unSubTopic(topic: String): SubFCM {
         val encodedStream = encodeTopic(topic)
         CoroutineScope(Dispatchers.Default).launch {
             FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream)
