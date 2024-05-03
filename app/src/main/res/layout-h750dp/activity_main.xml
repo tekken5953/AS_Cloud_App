@@ -169,9 +169,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/cd_img_star"
-                app:lottie_loop="true"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:lottie_loop="true" />
 
             <ImageView
                 android:id="@+id/mainSkyImg"
@@ -189,7 +189,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="fitXY"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <TextView
                 android:id="@+id/mainErrorTitle"
@@ -225,20 +225,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="@id/mainLiveTempValue"
                 app:layout_constraintStart_toEndOf="@+id/mainLiveTempValue"
-                app:layout_constraintTop_toTopOf="@id/mainLiveTempValue"
-                app:layout_constraintBottom_toBottomOf="@id/mainLiveTempValue">
+                app:layout_constraintTop_toTopOf="@id/mainLiveTempValue">
+
                 <LinearLayout
                     android:id="@+id/liveCTempContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/mainLiveTempTitleC"
                         style="@style/basicTextView"
                         android:textColor="@android:color/transparent"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/mainLiveTempValueC"
@@ -251,29 +253,31 @@
                     android:id="@+id/liveCSensContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center"
                     android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp">
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/mainSensTitleC"
                         style="@style/basicTextView"
                         android:textColor="@android:color/transparent"
-                        android:textSize="14sp"/>
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/mainSensValueC"
                         style="@style/basicMediumTextView"
                         android:textColor="@android:color/transparent"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/liveCMinMaxContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/mainMinMaxTitleC"
                         style="@style/basicTextView"
@@ -310,8 +314,8 @@
                 <TextView
                     android:id="@+id/mainMaxTitle"
                     style="@style/basicMediumTextView"
-                    android:textColor="@color/red"
                     android:layout_marginStart="10dp"
+                    android:textColor="@color/red"
                     android:textSize="16sp" />
 
                 <TextView
@@ -404,8 +408,8 @@
                         android:paddingTop="6dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="6dp"
-                        android:textSize="15sp"
-                        android:textColor="@android:color/transparent" />
+                        android:textColor="@android:color/transparent"
+                        android:textSize="15sp" />
 
                     <TextView
                         android:id="@+id/subAirPM25"
@@ -416,8 +420,8 @@
                         android:paddingTop="6dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="6dp"
-                        android:textSize="15sp"
-                        android:textColor="@android:color/transparent" />
+                        android:textColor="@android:color/transparent"
+                        android:textSize="15sp" />
                 </TableRow>
 
                 <app.airsignal.weather.view.custom_view.SubAirView
@@ -529,9 +533,9 @@
                             android:layout_height="wrap_content"
                             android:layout_alignTop="@+id/mainDailyWeatherTitle"
                             android:layout_alignBottom="@+id/mainDailyWeatherTitle"
-                            android:gravity="center_vertical"
                             android:layout_alignParentEnd="true"
                             android:layout_marginEnd="16dp"
+                            android:gravity="center_vertical"
                             android:orientation="horizontal">
 
                             <TextView
@@ -686,8 +690,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/nested_terms24_box"
-                        android:layout_marginTop="16dp"
                         android:layout_marginStart="6dp"
+                        android:layout_marginTop="16dp"
                         android:layout_marginEnd="6dp">
 
                         <GridLayout
@@ -702,9 +706,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_row="0"
                                 android:layout_column="0"
-                                android:layout_margin="6dp"
                                 android:layout_columnWeight="1"
                                 android:layout_gravity="fill_horizontal"
+                                android:layout_margin="6dp"
                                 android:background="@drawable/scrolled_box_bg"
                                 app:airTitle="미세먼지"
                                 app:airUnit="㎛/㎥" />
@@ -715,9 +719,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_row="0"
                                 android:layout_column="1"
-                                android:layout_margin="6dp"
                                 android:layout_columnWeight="1"
                                 android:layout_gravity="fill_horizontal"
+                                android:layout_margin="6dp"
                                 android:background="@drawable/scrolled_box_bg"
                                 app:airTitle="초미세먼지"
                                 app:airUnit="㎛/㎥" />
@@ -728,9 +732,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_row="1"
                                 android:layout_column="0"
-                                android:layout_margin="6dp"
                                 android:layout_columnWeight="1"
                                 android:layout_gravity="fill_horizontal"
+                                android:layout_margin="6dp"
                                 android:background="@drawable/scrolled_box_bg"
                                 app:airTitle="일산화탄소"
                                 app:airUnit="ppm" />
@@ -741,9 +745,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_row="1"
                                 android:layout_column="1"
-                                android:layout_margin="6dp"
                                 android:layout_columnWeight="1"
                                 android:layout_gravity="fill_horizontal"
+                                android:layout_margin="6dp"
                                 android:background="@drawable/scrolled_box_bg"
                                 app:airTitle="이산화질소"
                                 app:airUnit="ppm" />
@@ -754,9 +758,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_row="2"
                                 android:layout_column="0"
-                                android:layout_margin="6dp"
                                 android:layout_columnWeight="1"
                                 android:layout_gravity="fill_horizontal"
+                                android:layout_margin="6dp"
                                 android:background="@drawable/scrolled_box_bg"
                                 app:airTitle="아황산가스"
                                 app:airUnit="ppm" />
@@ -767,12 +771,12 @@
                                 android:layout_height="wrap_content"
                                 android:layout_row="2"
                                 android:layout_column="1"
-                                android:layout_margin="6dp"
                                 android:layout_columnWeight="1"
                                 android:layout_gravity="fill_horizontal"
+                                android:layout_margin="6dp"
                                 android:background="@drawable/scrolled_box_bg"
                                 app:airTitle="오존"
-                                app:airUnit="ppm"/>
+                                app:airUnit="ppm" />
                         </GridLayout>
                     </RelativeLayout>
 
@@ -801,27 +805,27 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/mainUvTitle"
-                            android:layout_marginTop="12dp"
                             android:layout_marginStart="16dp"
+                            android:layout_marginTop="12dp"
                             android:layout_marginEnd="16dp"
                             android:layout_marginBottom="8dp"
+                            android:layout_toStartOf="@+id/mainUvValue"
                             android:clipToPadding="false"
                             android:nestedScrollingEnabled="false"
                             android:overScrollMode="never"
                             android:scrollbars="none"
-                            android:layout_toStartOf="@+id/mainUvValue"
                             app:layoutManager=".util.LinearLayoutManagerWrapper"
                             tools:listitem="@layout/list_item_uv_collapsed" />
 
                         <TextView
                             android:id="@+id/mainUvValue"
+                            style="@style/basicMediumTextView"
                             android:layout_width="90dp"
                             android:layout_height="90dp"
                             android:layout_alignParentEnd="true"
+                            android:layout_gravity="center"
                             android:layout_marginTop="16dp"
                             android:layout_marginEnd="20dp"
-                            style="@style/basicMediumTextView"
-                            android:layout_gravity="center"
                             android:gravity="center"
                             android:letterSpacing="-0.02"
                             android:lineSpacingExtra="2dp"
@@ -837,7 +841,6 @@
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="12dp"
-                        android:layout_marginBottom="20dp"
                         android:background="@drawable/scrolled_box_bg">
 
                         <LinearLayout
@@ -995,10 +998,113 @@
                         </TableRow>
                     </RelativeLayout>
 
+                    <RelativeLayout
+                        android:id="@+id/mainLunarBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/mainSunBox"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="12dp"
+                        android:layout_marginBottom="20dp"
+                        android:animateLayoutChanges="true"
+                        android:background="@drawable/scrolled_box_bg"
+                        android:clickable="false">
+
+                        <ImageView
+                            android:id="@+id/mainLunarImg"
+                            android:layout_width="73dp"
+                            android:layout_height="73dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginStart="28dp"
+                            android:layout_marginTop="23dp"
+                            android:layout_marginBottom="23dp"/>
+
+                        <LinearLayout
+                            android:id="@+id/mainLunarLinear"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="60dp"
+                            android:layout_toEndOf="@+id/mainLunarImg"
+                            android:layout_marginEnd="16dp"
+                            android:gravity="center_vertical"
+                            android:orientation="vertical">
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:id="@+id/mainLunarShapeText"
+                                    style="@style/basicMediumTextView"
+                                    android:layout_weight="0.5"
+                                    android:gravity="start"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:id="@+id/mainLunarProgress"
+                                    style="@style/basicMediumTextView"
+                                    android:layout_weight="0.5"
+                                    android:gravity="end"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp" />
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="5dp">
+
+                                <TextView
+                                    android:id="@+id/mainLunarRiseTitle"
+                                    style="@style/basicMediumTextView"
+                                    android:layout_weight="0.5"
+                                    android:gravity="start"
+                                    android:text="@string/lunar_rise"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:id="@+id/mainLunarRiseValue"
+                                    style="@style/basicMediumTextView"
+                                    android:layout_weight="0.5"
+                                    android:gravity="end"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp" />
+                            </TableRow>
+
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:id="@+id/mainLunarSetTitle"
+                                    style="@style/basicMediumTextView"
+                                    android:layout_weight="0.5"
+                                    android:gravity="start"
+                                    android:text="@string/lunar_set"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:id="@+id/mainLunarSetValue"
+                                    style="@style/basicMediumTextView"
+                                    android:layout_weight="0.5"
+                                    android:gravity="end"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp" />
+                            </TableRow>
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
                     <TextView
                         android:id="@+id/mainLicenseText"
                         style="@style/basicMediumTextView"
-                        android:layout_below="@+id/mainSunBox"
+                        android:layout_below="@+id/mainLunarBox"
                         android:layout_centerHorizontal="true"
                         android:layout_marginStart="24dp"
                         android:layout_marginEnd="24dp"

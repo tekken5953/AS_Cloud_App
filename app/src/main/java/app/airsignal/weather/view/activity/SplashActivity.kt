@@ -10,7 +10,7 @@ import androidx.core.os.HandlerCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivitySplashBinding
-import app.airsignal.weather.db.SharedPreferenceManager
+import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
 import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.db.sp.GetSystemInfo.goToPlayStore

@@ -1,4 +1,4 @@
-package app.airsignal.weather.address
+package app.airsignal.weather.location
 
 
 /**

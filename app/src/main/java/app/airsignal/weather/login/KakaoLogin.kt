@@ -11,7 +11,7 @@ import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO
 import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO_EMAIL
 import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
-import app.airsignal.weather.db.SharedPreferenceManager
+import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.util.RefreshUtils

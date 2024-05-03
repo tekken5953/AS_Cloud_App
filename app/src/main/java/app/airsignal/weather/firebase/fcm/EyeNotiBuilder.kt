@@ -1,7 +1,6 @@
 package app.airsignal.weather.firebase.fcm
 
 import android.annotation.SuppressLint
-import android.app.ActivityManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -14,7 +13,7 @@ import android.view.View
 import androidx.core.app.NotificationCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.db.SharedPreferenceManager
+import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.db.sp.SpDao
 import kotlin.random.Random
 
@@ -71,21 +70,17 @@ class EyeNotiBuilder(private val context: Context) {
             val email = SharedPreferenceManager(context).getString(SpDao.userEmail)
             val content = data[email] ?: data["device"]
 
-//            alias?.let { pAlias  ->
-                sort?.let { pSort ->
-                    val payload =
-                         "${data["payload"]}${parseSortToTitle(pSort)} 감지되었습니다"
+            sort?.let { pSort ->
+                val payload =
+                    "${data["payload"]}${parseSortToTitle(pSort)} 감지되었습니다"
 
-                    setNotificationContent(
-                        notificationBuilderInstance,
-                        title = "에어시그널",
-                        subtext = content,
-                        content = payload
-                    )
-                }
-//            } ?: run {
-//                //TODO 토픽은 구독했지만 기기 등록이 안된 것으로 판명 or 로그인이 풀린 것으로 판명 에 대한 처리
-//            }
+                setNotificationContent(
+                    notificationBuilderInstance,
+                    title = "에어시그널",
+                    subtext = content,
+                    content = payload
+                )
+            }
 
             notificationBuilderInstance.setContentIntent(pendingIntent)
 

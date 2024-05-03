@@ -1,7 +1,6 @@
 package app.airsignal.weather.firebase.fcm
 
-import app.airsignal.weather.db.SharedPreferenceManager
-import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.SharedPreferenceManager
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService

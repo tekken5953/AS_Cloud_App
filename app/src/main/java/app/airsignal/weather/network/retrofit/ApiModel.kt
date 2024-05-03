@@ -334,7 +334,9 @@ class ApiModel {
         @SerializedName("term24")
         val term24: String?,
         @SerializedName("lunar")
-        val lunar: LunarDate?
+        val lunar: LunarDate?,
+        @SerializedName("lunAge")
+        val lunarAge: Float?
     )
 
     // 4x2 위젯 - 실시간 정보

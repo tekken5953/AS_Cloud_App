@@ -18,6 +18,7 @@ import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.location.GeofenceManager
 import kotlinx.coroutines.*
 import java.time.LocalDateTime
 import kotlin.math.roundToInt

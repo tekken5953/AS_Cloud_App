@@ -27,7 +27,7 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
-import app.airsignal.weather.address.AddressFromRegex
+import app.airsignal.weather.location.AddressFromRegex
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.IgnoredKeyFile.lastAddress
 import app.airsignal.weather.dao.IgnoredKeyFile.playStoreURL
@@ -37,7 +37,6 @@ import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.databinding.ActivityMainBinding
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetAppInfo
-import app.airsignal.weather.db.sp.GetAppInfo.getIsNight
 import app.airsignal.weather.db.sp.GetAppInfo.getTopicNotification
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
@@ -788,8 +787,8 @@ class MainActivity
             ioThread.launch {
                 reNewTopicInMain(metaAddr)
 
-//                                isNight = true
-                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
+                                isNight = true
+//                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
 
                 withContext(mainDispatcher) {
                     binding.mainGpsFix.clearAnimation()
@@ -840,6 +839,9 @@ class MainActivity
                     val skyImgAnimation =
                         AnimationUtils.loadAnimation(this@MainActivity, R.anim.main_sky_img_anim)
                     binding.mainSkyImg.startAnimation(skyImgAnimation)
+
+                    binding.mainLunarBox?.visibility = if (isNight) View.VISIBLE else View.GONE
+                    binding.mainLunarBox?.alpha = if (isNight) 1f else 0f
                 }
             }
         } catch (e: Exception) {
@@ -887,6 +889,11 @@ class MainActivity
             realtimeFirst.sky, result.thunder,
             isLarge = true, isNight,  lunar = lunar
         ))
+
+        val lunarClass = LunarShape(result.lunarAge)
+        binding.mainLunarImg?.setImageDrawable(lunarClass.shapeDrawable(this))
+        binding.mainLunarProgress?.text = "${lunarClass.progress()}%"
+        binding.mainLunarShapeText?.text = lunarClass.shapeText(this)
     }
 
     @SuppressLint("SetTextI18n")
@@ -1076,6 +1083,8 @@ class MainActivity
         // 일출/일몰 세팅
         val sbRise = StringBuffer().append(sun?.sunrise).insert(2, ":")
         val sbSet = StringBuffer().append(sun?.sunset).insert(2, ":")
+        val lRise = StringBuffer().append(sun?.moonrise).insert(2, ":")
+        val lSet = StringBuffer().append(sun?.moonset).insert(2, ":")
         sunTomorrow?.let { tom ->
             val sbRiseTom =
                 StringBuffer().append(tom.sunrise).insert(2, ":")
@@ -1085,6 +1094,8 @@ class MainActivity
         }
         binding.mainSunRiseTime.text = sbRise
         binding.mainSunSetTime.text = sbSet
+        binding.mainLunarRiseValue?.text = lRise.trim()
+        binding.mainLunarSetValue?.text = lSet.trim()
     }
 
     @SuppressLint("SetTextI18n")
@@ -1653,7 +1664,7 @@ class MainActivity
             binding.mainWarningBox, binding.nestedSubAirFrame,
             binding.nestedDailyBox, binding.nestedWeeklyBox,
             binding.mainUVBox, binding.mainSunBox,
-            binding.nestedTerms24Box
+            binding.nestedTerms24Box, binding.mainLunarBox
         )
 
         val gridBoxView = listOf(
@@ -1706,7 +1717,7 @@ class MainActivity
         fun changeTextToWhite() {
             changeTextColor(colorWhite, colorSubWhite, true)
             changeBoxViews.forEach {
-                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgressWhiteBox}000000"))
+                it?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgressWhiteBox}000000"))
             }
             gridBoxView.forEach {
                 it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgressWhiteBox}000000"))
@@ -1720,7 +1731,7 @@ class MainActivity
         fun changeTextToBlack() {
             changeTextColor(colorBlack, colorSubBlack, false)
             changeBoxViews.forEach {
-                it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgressBlackBox}FFFFFF"))
+                it?.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgressBlackBox}FFFFFF"))
             }
             gridBoxView.forEach {
                 it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgressBlackBox}FFFFFF"))

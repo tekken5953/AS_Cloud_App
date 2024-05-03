@@ -40,7 +40,7 @@ import app.airsignal.weather.dao.StaticDataObject.LANG_SYS
 import app.airsignal.weather.dao.StaticDataObject.THEME_DARK
 import app.airsignal.weather.dao.StaticDataObject.THEME_LIGHT
 import app.airsignal.weather.databinding.ActivitySettingBinding
-import app.airsignal.weather.db.SharedPreferenceManager
+import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation

@@ -1,4 +1,4 @@
-package app.airsignal.weather.view.widget
+package app.airsignal.weather.location
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
@@ -6,9 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import androidx.core.content.ContextCompat
-import app.airsignal.weather.address.AddressFromRegex
 import app.airsignal.weather.koin.BaseApplication
-import app.airsignal.weather.location.GetLocation
+import app.airsignal.weather.view.widget.BaseWidgetProvider
 import com.google.android.gms.location.*
 import com.google.android.gms.location.GeofencingClient
 

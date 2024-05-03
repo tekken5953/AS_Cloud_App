@@ -240,4 +240,14 @@
     <string name="api_timeout_retry">요청시간이 만료되었습니다. 해당 요청을 재시도합니다</string>
     <string name="no_content">내용이 없습니다</string>
     <string name="require_login">로그인이 필요합니다</string>
+    <string name="lunar_rise">월출</string>
+    <string name="lunar_set">월몰</string>
+    <string name="lunar_sak">삭</string>
+    <string name="lunar_cho">초승달</string>
+    <string name="lunar_sang_d">상현달</string>
+    <string name="lunar_sang_m">상현망</string>
+    <string name="lunar_bo">보름달</string>
+    <string name="lunar_ha_m">하현망</string>
+    <string name="lunar_ha_d">하현달</string>
+    <string name="lunar_g">그믐달</string>
 </resources>

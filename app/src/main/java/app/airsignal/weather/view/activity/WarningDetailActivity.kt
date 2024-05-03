@@ -8,7 +8,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.WarningDetailAdapter
-import app.airsignal.weather.address.AddressFromRegex
+import app.airsignal.weather.location.AddressFromRegex
 import app.airsignal.weather.databinding.ActivityWarningDetailBinding
 import app.airsignal.weather.db.sp.GetAppInfo.getNotificationAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress

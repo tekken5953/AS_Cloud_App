@@ -8,7 +8,6 @@ import android.location.*
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.provider.Settings
-import app.airsignal.weather.address.AddressFromRegex
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetSystemInfo
@@ -72,18 +71,18 @@ class GetLocation(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     fun getForegroundLocation(): Location? {
-        try {
+        return try {
             val locationManager = context.applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager?
             val locationGPS = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             val locationNetwork = locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
-            return if (locationGPS != null && locationNetwork != null) {
+            if (locationGPS != null && locationNetwork != null) {
                 // 두 위치 중 더 정확한 위치를 반환
                 if (locationGPS.accuracy > locationNetwork.accuracy) locationGPS else locationNetwork
             } else locationGPS ?: locationNetwork
         } catch (e: SecurityException) {
             e.printStackTrace()
-            return null
+            null
         }
     }
 

@@ -247,4 +247,14 @@
     <string name="api_timeout_retry">Request time has expired. Retry this request</string>
     <string name="no_content">There is no content</string>
     <string name="require_login">Need to Log in</string>
+    <string name="lunar_rise">Moon rise</string>
+    <string name="lunar_set">Moon set</string>
+    <string name="lunar_sak">New Moon</string>
+    <string name="lunar_cho">Waxing Crescent</string>
+    <string name="lunar_sang_d">First Quarter</string>
+    <string name="lunar_sang_m">Waxing Gibbous</string>
+    <string name="lunar_bo">Full Moon</string>
+    <string name="lunar_ha_m">Waning Gibbous</string>
+    <string name="lunar_ha_d">Last Quarter</string>
+    <string name="lunar_g">Waning Crescent</string>
 </resources>

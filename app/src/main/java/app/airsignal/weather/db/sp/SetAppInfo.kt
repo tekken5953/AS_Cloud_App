@@ -1,7 +1,6 @@
 package app.airsignal.weather.db.sp
 
 import android.content.Context
-import app.airsignal.weather.db.SharedPreferenceManager
 import app.airsignal.weather.db.sp.SpDao.INITIALIZED_LOC_PERMISSION
 import app.airsignal.weather.db.sp.SpDao.INITIALIZED_NOTI_PERMISSION
 import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG

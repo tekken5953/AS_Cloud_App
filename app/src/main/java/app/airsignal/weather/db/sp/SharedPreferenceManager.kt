@@ -1,4 +1,4 @@
-package app.airsignal.weather.db
+package app.airsignal.weather.db.sp
 
 import android.content.Context
 import android.content.SharedPreferences
