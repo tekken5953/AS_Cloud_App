@@ -37,6 +37,7 @@ import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.databinding.ActivityMainBinding
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.GetAppInfo.getIsNight
 import app.airsignal.weather.db.sp.GetAppInfo.getTopicNotification
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
 import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
@@ -203,6 +204,8 @@ class MainActivity
 
                 applyGetDataViewModel()
             }
+
+//            SubFCM().getToken()
 
 //            adViewClass.loadAdView(binding.nestedAdView)  // adView 생성
 
@@ -787,8 +790,8 @@ class MainActivity
             ioThread.launch {
                 reNewTopicInMain(metaAddr)
 
-                                isNight = true
-//                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
+//                                isNight = true
+                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
 
                 withContext(mainDispatcher) {
                     binding.mainGpsFix.clearAnimation()
@@ -868,6 +871,7 @@ class MainActivity
     }
 
     // 결과에서 얻은 데이터로 UI 요소를 업데이트
+    @SuppressLint("SetTextI18n")
     private fun updateUIWithData(result: ApiModel.GetEntireData) {
         currentSun = GetAppInfo.getCurrentSun(result.sun?.sunrise ?: "0600", result.sun?.sunset ?: "1900")
         val lunar = result.lunar?.date ?: -1
@@ -1031,9 +1035,7 @@ class MainActivity
         val pm25 = (air.pm25Value ?: air.pm25Value24 ?: 0.0)
         val pm10 = (air.pm10Value ?: air.pm10Value24 ?: 0.0)
         val pm25Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade("PM2.5", pm25.toDouble()))
-        val pm10Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade("PM10",
-            pm10
-        ))
+        val pm10Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade("PM10", pm10))
 
         binding.mainAirPm10.setOnClickListener(binding.nestedAirHelpPopup)
             .fetchData(ExternalAirView.AirQ.PM10, pm10.toInt())
@@ -1291,22 +1293,26 @@ class MainActivity
 
     private fun setAnimation(animationResource: Int?) {
         val isAnimationEnable = getWeatherAnimEnabled(this)
-        if (isAnimationEnable) {
-            animationResource?.let {
-                binding.mainSkyStarImg.setAnimation(it)
+        animationResource?.let {
+            binding.mainSkyStarImg.setAnimation(it)
+            if (isAnimationEnable) {
                 if (!binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.playAnimation()
-            } ?: run { setEmptyAnimation() }
-        } else setEmptyAnimation()
+            } else {
+                if (binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.clearAnimation()
+            }
+        } ?: run { setEmptyAnimation() }
     }
     private fun setAnimation(animationResource: Int?, speed: Float) {
         val isAnimationEnable = getWeatherAnimEnabled(this)
-        if (isAnimationEnable) {
-            animationResource?.let {
-                binding.mainSkyStarImg.setAnimation(it)
-                binding.mainSkyStarImg.speed = speed
+        animationResource?.let {
+            binding.mainSkyStarImg.setAnimation(it)
+            binding.mainSkyStarImg.speed = speed
+            if (isAnimationEnable) {
                 if (!binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.playAnimation()
-            } ?: run { setEmptyAnimation() }
-        } else setEmptyAnimation()
+            } else {
+                if (binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.clearAnimation()
+            }
+        } ?: run { setEmptyAnimation() }
     }
 
     private fun setEmptyAnimation() {
@@ -1597,11 +1603,11 @@ class MainActivity
     // 자외선 지수에 따른 대처요령 불러오기
     private fun getUvArray(grade: String): Array<String> {
         return when (grade) {
-            "위험" -> resources.getStringArray(R.array.uv_caution)
-            "매우높음" -> resources.getStringArray(R.array.uv_very_high)
-            "높음" -> resources.getStringArray(R.array.uv_high)
-            "보통" -> resources.getStringArray(R.array.uv_normal)
-            "낮음" -> resources.getStringArray(R.array.uv_low)
+            getString(R.string.uv_caution) -> resources.getStringArray(R.array.uv_caution)
+            getString(R.string.uv_very_high) -> resources.getStringArray(R.array.uv_very_high)
+            getString(R.string.uv_high) -> resources.getStringArray(R.array.uv_high)
+            getString(R.string.uv_normal) -> resources.getStringArray(R.array.uv_normal)
+            getString(R.string.uv_low) -> resources.getStringArray(R.array.uv_low)
             else -> resources.getStringArray(R.array.uv_none)
         }
     }

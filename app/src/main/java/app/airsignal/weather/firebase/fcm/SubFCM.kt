@@ -1,6 +1,7 @@
 package app.airsignal.weather.firebase.fcm
 
 import app.airsignal.weather.db.sp.SharedPreferenceManager
+import app.airsignal.weather.util.TimberUtil
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -9,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.*
 
 
@@ -66,15 +68,23 @@ class SubFCM: FirebaseMessagingService() {
 
     // 어드민 계정 토픽
     fun subAdminTopic() {
-        val encodedStream = encodeTopic("admin")
-        subTopic(encodedStream)
+        try {
+            val encodedStream = encodeTopic("admin")
+            subTopic(encodedStream)
+        } catch (e: Exception) {
+            e.stackTraceToString()
+        }
     }
 
     /** 현재 위치 토픽 갱신 **/
     fun renewTopic(old: String, new: String) {
         if (old != new) {
-            val encodedStream = encodeTopic(new)
-            unSubTopic(old).subTopic(encodedStream)
+            try {
+                val encodedStream = encodeTopic(new)
+                unSubTopic(old).subTopic(encodedStream)
+            } catch (e: Exception) {
+                e.stackTraceToString()
+            }
         }
     }
 
@@ -91,15 +101,19 @@ class SubFCM: FirebaseMessagingService() {
     }
 
     /** 현재 토큰정보 불러오기 **/
-    suspend fun getToken(): String? {
-        val token = withContext(Dispatchers.IO) {
-            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    return@OnCompleteListener
-                }
-            }).result
-        }
-        return token
+    fun getToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                TimberUtil().w("testtest", "Fetching FCM registration token failed : ${task.exception}")
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            // Log and toast
+            TimberUtil().i("testtest","FCM Token is $token")
+        })
     }
 
     /** 새로운 토큰 발행 **/

@@ -80,7 +80,7 @@
         android:paddingEnd="24dp"
         android:text="@string/weather"
         android:textColor="@color/theme_text_color"
-        android:textSize="15sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/navMenuWarning"
@@ -96,7 +96,7 @@
         android:visibility="gone"
         android:text="@string/warning_title"
         android:textColor="@color/theme_text_color"
-        android:textSize="15sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/navMenuSetting"
@@ -111,7 +111,7 @@
         android:paddingEnd="24dp"
         android:text="@string/setting_title"
         android:textColor="@color/theme_text_color"
-        android:textSize="15sp" />
+        android:textSize="16sp" />
 
 <!--    <com.google.android.gms.ads.AdView-->
 <!--        android:id="@+id/navMenuAdview"-->

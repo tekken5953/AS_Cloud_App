@@ -115,11 +115,11 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
         val grade = moderate.first
         val progress = moderate.second
         airBinding.listItemNestedAirPb.progress = if (grade == 4) 100 else progress
-        airBinding.listItemNestedAirValue.text = value.toString()
+        airBinding.listItemNestedAirValue.text = if (value != -999.0) value.toString() else context.getString(R.string.error)
         airBinding.listItemNestedAirValue.setTextColor(DataTypeParser.getDataColor(context,grade))
         airBinding.listItemNestedAirGrade.setTextColor(DataTypeParser.getDataColor(context,grade))
         airBinding.listItemNestedAirUnit.setTextColor(DataTypeParser.getDataColor(context,grade))
-        airBinding.listItemNestedAirGrade.text = DataTypeParser.getDataText(context, grade)
+        airBinding.listItemNestedAirGrade.text = if (value != -999.0) DataTypeParser.getDataText(context, grade) else context.getString(R.string.error)
         airBinding.listItemNestedAirPb.progressDrawable = getProgressDrawable(grade)
         return this
     }
@@ -130,11 +130,11 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
         val grade = moderate.first
         val progress = moderate.second
         airBinding.listItemNestedAirPb.progress = if (grade == 4) 100 else progress
-        airBinding.listItemNestedAirValue.text = value.toString()
+        airBinding.listItemNestedAirValue.text = if (value != -999) value.toString() else context.getString(R.string.error)
         airBinding.listItemNestedAirValue.setTextColor(DataTypeParser.getDataColor(context,grade))
         airBinding.listItemNestedAirGrade.setTextColor(DataTypeParser.getDataColor(context,grade))
         airBinding.listItemNestedAirUnit.setTextColor(DataTypeParser.getDataColor(context,grade))
-        airBinding.listItemNestedAirGrade.text = DataTypeParser.getDataText(context, grade)
+        airBinding.listItemNestedAirGrade.text = if (value != -999) DataTypeParser.getDataText(context, grade) else context.getString(R.string.error)
         airBinding.listItemNestedAirPb.progressDrawable = getProgressDrawable(grade)
         return this
     }

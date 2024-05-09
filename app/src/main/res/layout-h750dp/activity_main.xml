@@ -1006,7 +1006,6 @@
                         android:layout_marginStart="12dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="12dp"
-                        android:layout_marginBottom="20dp"
                         android:animateLayoutChanges="true"
                         android:background="@drawable/scrolled_box_bg"
                         android:clickable="false">
@@ -1108,6 +1107,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_marginStart="24dp"
                         android:layout_marginEnd="24dp"
+                        android:layout_marginTop="20dp"
                         android:textColor="@color/sub_gray_color"
                         android:textSize="11sp"
                         android:textStyle="italic" />
