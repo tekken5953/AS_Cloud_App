@@ -759,7 +759,6 @@ class MainActivity
         SetAppInfo.setTopicNotification(this, newAddr)
     }
 
-    @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     fun applyGetDataViewModel() {
         try {
             fetch.observe(this) { entireData ->
@@ -790,8 +789,8 @@ class MainActivity
             ioThread.launch {
                 reNewTopicInMain(metaAddr)
 
-//                                isNight = true
-                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
+                                isNight = true
+//                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
 
                 withContext(mainDispatcher) {
                     binding.mainGpsFix.clearAnimation()
@@ -827,8 +826,8 @@ class MainActivity
 //                 날씨에 따라 배경화면 변경
                     val testSky = getString(R.string.sky_cloudy)
 
-//                    applyWindowBackground(testSky)
-                    applyWindowBackground(skyText)
+                    applyWindowBackground(testSky)
+//                    applyWindowBackground(skyText)
 
                     binding.mainSkyText.text = skyText
 
@@ -843,8 +842,8 @@ class MainActivity
                         AnimationUtils.loadAnimation(this@MainActivity, R.anim.main_sky_img_anim)
                     binding.mainSkyImg.startAnimation(skyImgAnimation)
 
-                    binding.mainLunarBox?.visibility = if (isNight) View.VISIBLE else View.GONE
-                    binding.mainLunarBox?.alpha = if (isNight) 1f else 0f
+                    binding.mainLunarBox.visibility = if (isNight) View.VISIBLE else View.GONE
+                    binding.mainLunarBox.alpha = if (isNight) 1f else 0f
                 }
             }
         } catch (e: Exception) {
@@ -895,9 +894,9 @@ class MainActivity
         ))
 
         val lunarClass = LunarShape(result.lunarAge)
-        binding.mainLunarImg?.setImageDrawable(lunarClass.shapeDrawable(this))
-        binding.mainLunarProgress?.text = "${lunarClass.progress()}%"
-        binding.mainLunarShapeText?.text = lunarClass.shapeText(this)
+        binding.mainLunarImg.setImageDrawable(lunarClass.shapeDrawable(this))
+        binding.mainLunarProgress.text = "${lunarClass.progress()}%"
+        binding.mainLunarShapeText.text = lunarClass.shapeText(this)
     }
 
     @SuppressLint("SetTextI18n")
@@ -922,12 +921,12 @@ class MainActivity
         )
         // 주간 최저 기온
         val taMin = listOf(
-            week.taMin0, week.taMin1, week.taMin2, week.taMin3,
+            result.today?.min, week.taMin1, week.taMin2, week.taMin3,
             week.taMin4, week.taMin5, week.taMin6, week.taMin7
         )
         // 주간 최고 기온
         val taMax = listOf(
-            week.taMax0, week.taMax1, week.taMax2, week.taMax3, week.taMax4,
+            result.today?.max, week.taMax1, week.taMax2, week.taMax3, week.taMax4,
             week.taMax5, week.taMax6, week.taMax7
         )
         // 오전 강수확률
@@ -1216,7 +1215,7 @@ class MainActivity
                 getString(R.string.sky_cloudy) -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy_night)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud_night)
-                    setAnimation(R.raw.ani_main_cloudy)
+                    setAnimation(R.raw.ani_main_cloudy_night,0.6F)
                 }
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
                 getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
@@ -1253,7 +1252,9 @@ class MainActivity
                 getString(R.string.sky_cloudy) -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud)
-                    setAnimation(R.raw.ani_main_cloudy)
+                    setAnimation(R.raw.ani_main_cloudy_day)
+                    binding.mainSkyStarImg.bringToFront()
+                    binding.mainSkyText.bringToFront()
                 }
                 getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
                 getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),

@@ -39,5 +39,8 @@ class LunarShape(age: Float?) {
             }, null)
     }
 
-    fun progress(): Int { return (((29.5 / 2) - moonAge).absoluteValue / 29.5 * 100).roundToInt() }
+    fun progress(): Int {
+        return if (moonAge > 15.5) (200 - ((moonAge - 1.5) / 14 * 100).roundToInt())
+        else ((moonAge - 1.5) / 14 * 100).roundToInt()
+    }
 }

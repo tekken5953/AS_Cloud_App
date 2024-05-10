@@ -150,7 +150,7 @@ object DataTypeParser {
             when (sky) {
                 "맑음" ->
                     if (isNight) R.drawable.w_ico_status
-                    else R.drawable.b_ico_sunny
+                    else R.drawable.b_ico_cloudy
                 "구름많음" ->
                     if (isNight) R.drawable.b_ico_m_ncloudy
                     else R.drawable.b_ico_m_cloudy

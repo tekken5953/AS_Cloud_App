@@ -80,7 +80,7 @@
         style="@style/basicTextView"
         android:letterSpacing="0"
         android:layout_below="@+id/w42Temp"
-        android:layout_marginStart="6dp"
+        android:layout_marginStart="1dp"
         android:layout_alignStart="@id/w42Temp"
         android:textColor="@color/wblack"
         android:textSize="13sp" />
