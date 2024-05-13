@@ -7,10 +7,9 @@ import android.webkit.WebChromeClient
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatDelegate
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.IgnoredKeyFile.privacyPolicyURI
-import app.airsignal.weather.dao.IgnoredKeyFile.termsOfServiceURL
+import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityWebUrlBinding
-import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
+import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.view.dialog.WebViewSetting
 
 class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
@@ -21,7 +20,7 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
         super.onCreate(savedInstanceState)
         initBinding()
 
-        setStatusBar(this)
+        DataTypeParser.setStatusBar(this)
 
         val webView = binding.webUrlWebView
 
@@ -57,8 +56,8 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
 
         val (webUrlTitleText, url) = when (sort) {
             "as-eye" -> "AS-EYE" to "about:blank"
-            "termsOfService" -> getString(R.string.term_of_services) to termsOfServiceURL
-            "dataUsage" -> getString(R.string.data_usages) to privacyPolicyURI
+            "termsOfService" -> getString(R.string.term_of_services) to IgnoredKeyFile.termsOfServiceURL
+            "dataUsage" -> getString(R.string.data_usages) to IgnoredKeyFile.privacyPolicyURI
             "inAppLink" -> "공지사항" to intent.extras!!.getString("redirect",null)
             else -> "" to "about:blank"
         }

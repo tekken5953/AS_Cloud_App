@@ -10,11 +10,9 @@ import app.airsignal.weather.R
 import app.airsignal.weather.adapter.WarningDetailAdapter
 import app.airsignal.weather.location.AddressFromRegex
 import app.airsignal.weather.databinding.ActivityWarningDetailBinding
-import app.airsignal.weather.db.sp.GetAppInfo.getNotificationAddress
-import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
-import app.airsignal.weather.db.sp.GetAppInfo.getWarningFixed
+import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
+import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.viewmodel.GetWarningViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
@@ -31,7 +29,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
         super.onCreate(savedInstanceState)
         initBinding()
 
-        setStatusBar(this)
+        DataTypeParser.setStatusBar(this)
 
         applyWarning()
 
@@ -44,11 +42,11 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
         }
 
         val regexAddress = if (intent.extras?.getBoolean("isMain") == true) {
-            AddressFromRegex(getUserLastAddress(this)).getWarningAddress()
-        } else { getWarningFixed(this) }
+            AddressFromRegex(GetAppInfo.getUserLastAddress(this)).getWarningAddress()
+        } else { GetAppInfo.getWarningFixed(this) }
 
         // 수정 된 주소에 따른 적용
-        val regexAddr = if (regexAddress != "Error") regexAddress else getNotificationAddress(this)
+        val regexAddr = if (regexAddress != "Error") regexAddress else GetAppInfo.getNotificationAddress(this)
 
         binding.warningAddr.selectItemByIndex(parseStringToIndex(regexAddr))
         warningViewModel.loadDataResult(parseRegionToCode(regexAddr))

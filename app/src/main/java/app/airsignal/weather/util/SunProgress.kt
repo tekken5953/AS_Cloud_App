@@ -3,7 +3,6 @@ package app.airsignal.weather.util
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.Color
-import app.airsignal.weather.db.sp.GetAppInfo
 import com.triggertrap.seekarc.SeekArc
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,17 +16,14 @@ class SunProgress(private val seekArc: SeekArc) {
         CoroutineScope(Dispatchers.Main).launch {
             seekArc.apply {
                 this.sweepAngle = 180
-                val isNight = GetAppInfo.getIsNight(currentSun)
-                this.arcColor = Color.parseColor(if (isNight) "#407E5DFF" else "#40FF8A48")
-                this.isClockwise = !isNight
-                this.startAngle = if (isNight) 180 else 90
-                this.arcRotation = if (isNight) 90 else 180
-                this.progressColor = Color.parseColor(if (isNight) "#7E5DFF" else "#FF8A48")
-                val animatorSun = ObjectAnimator.ofInt(seekArc, "progress",
-                    if (isNight) currentSun - 100 else currentSun)
-                animatorSun.duration = 800
-                animatorSun.start()
+                this.arcColor = Color.parseColor("#40FF8A48")
+                this.startAngle = 90
+                this.arcRotation = 180
+                this.progressColor = Color.parseColor("#FF8A48")
             }
+            val animatorSun = ObjectAnimator.ofInt(seekArc, "progress", currentSun)
+            animatorSun.duration = 800
+            animatorSun.start()
         }
     }
 

@@ -11,9 +11,8 @@ import android.provider.Settings
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetSystemInfo
-import app.airsignal.weather.db.sp.SetAppInfo.setNotificationAddress
-import app.airsignal.weather.db.sp.SetAppInfo.setUserLastAddr
-import app.airsignal.weather.db.sp.SpDao.CURRENT_GPS_ID
+import app.airsignal.weather.db.sp.SetAppInfo
+import app.airsignal.weather.db.sp.SpDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,8 +30,8 @@ class GetLocation(private val context: Context) {
             val fullAddr = address[0].getAddressLine(0)
             CoroutineScope(Dispatchers.IO).launch {
                 val notiAddr = AddressFromRegex(fullAddr).getNotificationAddress()
-                setNotificationAddress(appContext, notiAddr)
-                setUserLastAddr(appContext, fullAddr)
+                SetAppInfo.setNotificationAddress(appContext, notiAddr)
+                SetAppInfo.setUserLastAddr(appContext, fullAddr)
             }
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
@@ -52,7 +51,7 @@ class GetLocation(private val context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             val db = GpsRepository(context)
             val model = GpsEntity(
-                name = CURRENT_GPS_ID,
+                name = SpDao.CURRENT_GPS_ID,
                 lat = mLat,
                 lng = mLng,
                 addrKr = mAddr,

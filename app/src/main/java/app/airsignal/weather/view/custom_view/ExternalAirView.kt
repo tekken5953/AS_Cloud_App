@@ -22,13 +22,13 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
     : RelativeLayout(context, attrs) {
     private var airBinding: CustomViewAirqBinding
 
-    enum class AirQ(val title: String,val en: String, val sort: String) {
-        PM2_5(title = "초미세먼지", en = "ultrafine dust", sort = "PM2.5"),
-        PM10(title = "미세먼지", en = "fine dust",sort = "PM10"),
-        NO2(title = "이산화질소", en = "nitrogen dioxide", sort = "NO2"),
-        SO2(title = "아황산가스", en = "sulfur dioxide", sort = "SO2"),
-        CO(title = "일산화탄소", en = "carbon monoxide", sort = "CO"),
-        O3(title = "오존", en = "ozone", sort = "O3")
+    enum class AirQ(val title: String, val sort: String) {
+        PM2_5(title = "초미세먼지",sort = "PM2.5"),
+        PM10(title = "미세먼지",sort = "PM10"),
+        NO2(title = "이산화질소", sort = "NO2"),
+        SO2(title = "아황산가스", sort = "SO2"),
+        CO(title = "일산화탄소", sort = "CO"),
+        O3(title = "오존", sort = "O3")
     }
 
     private data class Range(val min: Double, val max: Double)

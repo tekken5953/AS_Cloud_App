@@ -858,7 +858,7 @@
                             android:layout_above="@+id/mainSunLine"
                             android:layout_marginTop="5dp"
                             android:layout_toStartOf="@+id/mainSunSetLinear"
-                            android:layout_toEndOf="@+id/mainSUnRiseLinear"
+                            android:layout_toEndOf="@+id/mainSunRiseLinear"
                             android:gravity="center"
                             android:orientation="vertical">
 
@@ -884,7 +884,7 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/mainSUnRiseLinear"
+                            android:id="@+id/mainSunRiseLinear"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_above="@+id/mainSunLine"

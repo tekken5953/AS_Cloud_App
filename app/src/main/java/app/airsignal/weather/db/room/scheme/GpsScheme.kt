@@ -17,9 +17,6 @@ interface GpsScheme {
     @Query("SELECT * FROM gps_table ORDER BY name ASC")
     fun findAllWithAsc(): List<GpsEntity>
 
-    @Query("SELECT * FROM gps_table ORDER BY name ASC")
-    suspend fun findAllWithAscWithCoroutine(): List<GpsEntity>
-
     @Query("SELECT * FROM gps_table WHERE name= :name")
     suspend fun findByNameWithCoroutine(name: String) : GpsEntity
 

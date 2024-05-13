@@ -3,19 +3,10 @@ package app.airsignal.weather.login
 import android.app.Activity
 import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPhone
-import app.airsignal.weather.dao.IgnoredKeyFile.naverDefaultClientId
-import app.airsignal.weather.dao.IgnoredKeyFile.naverDefaultClientName
-import app.airsignal.weather.dao.IgnoredKeyFile.naverDefaultClientSecret
-import app.airsignal.weather.dao.IgnoredKeyFile.userEmail
-import app.airsignal.weather.dao.IgnoredKeyFile.userId
-import app.airsignal.weather.dao.IgnoredKeyFile.userProfile
-import app.airsignal.weather.dao.RDBLogcat.LOGIN_NAVER
-import app.airsignal.weather.dao.RDBLogcat.writeErrorNotANR
-import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
-import app.airsignal.weather.dao.RDBLogcat.writeLoginPref
+import app.airsignal.weather.dao.IgnoredKeyFile
+import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.SharedPreferenceManager
-import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.ToastUtils
@@ -38,9 +29,9 @@ class NaverLogin(private val activity: Activity) {
     init {
         NaverIdLoginSDK.initialize(
             activity,
-            naverDefaultClientId,
-            naverDefaultClientSecret,
-            naverDefaultClientName
+            IgnoredKeyFile.naverDefaultClientId,
+            IgnoredKeyFile.naverDefaultClientSecret,
+            IgnoredKeyFile.naverDefaultClientName
         )
     }
 
@@ -60,10 +51,10 @@ class NaverLogin(private val activity: Activity) {
     /** 로그아웃 + 기록 저장 */
     fun logout() {
         NaverIdLoginSDK.logout()
-        writeLoginHistory(
+        RDBLogcat.writeLoginHistory(
             isLogin = false,
-            platform = LOGIN_NAVER,
-            email = getUserEmail(activity),
+            platform = RDBLogcat.LOGIN_NAVER,
+            email = GetAppInfo.getUserEmail(activity),
             isAuto = null,
             isSuccess = true
         )
@@ -86,31 +77,31 @@ class NaverLogin(private val activity: Activity) {
         override fun onSuccess(result: NidProfileResponse) {
             result.profile?.let {
                 SharedPreferenceManager(activity)
-                    .setString(lastLoginPhone, it.mobile.toString())
-                    .setString(userId, it.name.toString())
-                    .setString(userProfile, it.profileImage ?: "")
-                    .setString(userEmail, it.email.toString())
+                    .setString(IgnoredKeyFile.lastLoginPhone, it.mobile.toString())
+                    .setString(IgnoredKeyFile.userId, it.name.toString())
+                    .setString(IgnoredKeyFile.userProfile, it.profileImage ?: "")
+                    .setString(IgnoredKeyFile.userEmail, it.email.toString())
 
-                writeLoginHistory(isLogin = true, platform = LOGIN_NAVER,
+                RDBLogcat.writeLoginHistory(isLogin = true, platform = RDBLogcat.LOGIN_NAVER,
                     email = it.email.toString(), isAuto = false, isSuccess = true)
 
-                writeLoginPref(activity,
-                    platform = LOGIN_NAVER,
+                RDBLogcat.writeLoginPref(activity,
+                    platform = RDBLogcat.LOGIN_NAVER,
                     email = it.email.toString(),
                     phone = it.mobile.toString(),
                     name = it.name.toString(),
                     profile = it.profileImage.toString()
                 )
 
-                SetAppInfo.setUserLoginPlatform(activity, LOGIN_NAVER)
+                SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_NAVER)
                 activity.finish()
             }
         }
 
         override fun onFailure(httpStatus: Int, message: String) {
             toast.showMessage("프로필을 불러오는데 실패했습니다",1)
-            writeLoginHistory(
-                isLogin = true, platform = LOGIN_NAVER, email = getUserEmail(activity),
+            RDBLogcat.writeLoginHistory(
+                isLogin = true, platform = RDBLogcat.LOGIN_NAVER, email = GetAppInfo.getUserEmail(activity),
                 isAuto = false, isSuccess = false
             )
         }
@@ -129,7 +120,7 @@ class NaverLogin(private val activity: Activity) {
         override fun onFailure(httpStatus: Int, message: String) {
             val errorCode = NaverIdLoginSDK.getLastErrorCode().code
             val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
-            writeErrorNotANR(activity,"naver login","error $errorCode $errorDescription")
+            RDBLogcat.writeErrorNotANR(activity,"naver login","error $errorCode $errorDescription")
             toast.showMessage(activity.getString(R.string.require_login),1)
         }
 

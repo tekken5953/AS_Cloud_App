@@ -61,7 +61,6 @@
         <TextView
             android:id="@+id/opacityValue"
             style="@style/basicMediumTextView"
-            android:text="0%"
             android:textColor="@color/theme_text_color"
             android:textSize="18sp"/>
     </TableRow>
@@ -134,7 +133,6 @@
         <TextView
             android:id="@+id/opacityValue2"
             style="@style/basicMediumTextView"
-            android:text="0%"
             android:textColor="@color/theme_text_color"
             android:textSize="18sp"/>
     </TableRow>

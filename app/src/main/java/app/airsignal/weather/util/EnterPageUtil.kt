@@ -2,10 +2,8 @@ package app.airsignal.weather.util
 
 import android.app.Activity
 import android.content.Intent
-import app.airsignal.weather.db.sp.SetAppInfo.setUserLoginPlatform
-import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG
-import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG_COUNT
-import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG_REDIRECT
+import app.airsignal.weather.db.sp.SetAppInfo
+import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.view.activity.LoginActivity
 import app.airsignal.weather.view.activity.MainActivity
@@ -29,18 +27,18 @@ class EnterPageUtil(private val activity: Activity) {
      * @param sort 간편로그인의 분류 ex) "카카오"
      */
     fun toMain(sort: String?, inAppMsg: Array<ApiModel.InAppMsgItem?>?) {
-        sort?.let { setUserLoginPlatform(activity, it) }
+        sort?.let { SetAppInfo.setUserLoginPlatform(activity, it) }
         val intent = Intent(activity, MainActivity::class.java)
         activity.run {
             var count = 0
             inAppMsg?.forEachIndexed { index, data ->
                 data?.let {
                     count++
-                    intent.putExtra("${IN_APP_MSG_REDIRECT}${index}",data.redirect)
-                    intent.putExtra("${IN_APP_MSG}${index}", data.img)
+                    intent.putExtra("${SpDao.IN_APP_MSG_REDIRECT}${index}",data.redirect)
+                    intent.putExtra("${SpDao.IN_APP_MSG}${index}", data.img)
                 }
             }
-            intent.putExtra(IN_APP_MSG_COUNT, count)
+            intent.putExtra(SpDao.IN_APP_MSG_COUNT, count)
 
             this.startActivity(intent)
             this.overridePendingTransition(0,0)

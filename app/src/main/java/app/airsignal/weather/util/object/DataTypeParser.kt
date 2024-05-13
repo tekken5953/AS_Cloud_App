@@ -7,11 +7,11 @@ import android.graphics.drawable.Drawable
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
+import app.airsignal.weather.view.widget.BaseWidgetProvider
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -25,12 +25,6 @@ object DataTypeParser {
         return System.currentTimeMillis()
     }
 
-    fun getAverageTime(time: Long): Int {
-        val currentTime = parseLongToLocalDateTime(time)
-        val dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-        return currentTime.format(dateFormatter).toInt()
-    }
-
     fun getHourCountToTomorrow(): Int {
         val currentHour = parseLongToLocalDateTime(getCurrentTime()).hour
         return 24 - currentHour
@@ -40,14 +34,6 @@ object DataTypeParser {
         @SuppressLint("SimpleDateFormat") val mFormat = SimpleDateFormat(format)
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
-        }
-        return mFormat.format(calendar.time)
-    }
-
-    fun dateTimeString(format: String, date: LocalDateTime?): String {
-        @SuppressLint("SimpleDateFormat") val mFormat = SimpleDateFormat(format)
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = parseLocalDateTimeToLong(date ?: LocalDateTime.now())
         }
         return mFormat.format(calendar.time)
     }
@@ -69,34 +55,6 @@ object DataTypeParser {
         }
 
         return id
-    }
-
-    fun koreaSky(sky: String?): String {
-        val id = when(sky?.lowercase()) {
-            "sunny","Sunny&Cloudy" -> "맑음"
-            "cloudy", -> "흐림"
-            "rainy" -> "비"
-            "snowy" -> "눈"
-            "rainy/snowy" -> "비/눈"
-            else -> sky
-        }
-
-        return id ?: "눈"
-    }
-
-    /** 달 모양 반환 **/
-    private fun applyLunarImg(date: Int): Int {
-        return when (date) {
-            29,30,1 -> R.drawable.moon_sak
-            in 2..5 -> R.drawable.moon_cho
-            in 6..9 -> R.drawable.moon_sang_d
-            in 10..13 -> R.drawable.moon_sang_m
-            in 14..16 -> R.drawable.moon_bo
-            in 17..20 -> R.drawable.moon_ha_d
-            in 21..24-> R.drawable.moon_ha_m
-            in 25..28 -> R.drawable.moon_g
-            else -> R.drawable.moon_bo
-        }
     }
 
     /** 비가 오는지 안오는지 Flag **/
@@ -182,17 +140,16 @@ object DataTypeParser {
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
                 "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
                 "번개,뇌우", "비/번개" -> {
-                    if (sort == "22") R.drawable.w_bg_cloudy else  R.drawable.widget_bg4x2_cloud
+                    if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_cloudy else  R.drawable.widget_bg4x2_cloud
                 }
                 "구름많고 눈", "눈", "흐리고 눈" -> {
-                    if (sort == "22") R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
-                }
-                else -> if (sort == "22") R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
+                    if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow }
+                else -> if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
             }
         } else {
             when (rainType) {
-                "비","소나기" -> if(sort == "22") R.drawable.w_bg_cloudy else R.drawable.widget_bg4x2_cloud
-                else -> if(sort == "22") R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
+                "비","소나기" -> if(sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_cloudy else R.drawable.widget_bg4x2_cloud
+                else -> if(sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
             }
         }
     }

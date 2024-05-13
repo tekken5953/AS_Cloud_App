@@ -2,15 +2,8 @@ package app.airsignal.weather.repository
 
 import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
-import app.airsignal.weather.network.ErrorCode.ERROR_API_PROTOCOL
-import app.airsignal.weather.network.ErrorCode.ERROR_NETWORK
-import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
-import app.airsignal.weather.network.ErrorCode.ERROR_UNKNOWN
+import app.airsignal.weather.network.ErrorCode
 import app.airsignal.weather.network.retrofit.ApiModel
-import app.airsignal.weather.repository.BaseRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,18 +29,18 @@ class GetWarningRepo: BaseRepository() {
                     if (response.isSuccessful)
                         _getWarningResult.postValue(ApiState.Success(responseBody))
                     else
-                        _getWarningResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
+                        _getWarningResult.postValue(ApiState.Error(ErrorCode.ERROR_API_PROTOCOL))
                 } catch (e: Exception) {
-                    _getWarningResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
+                    _getWarningResult.postValue(ApiState.Error(ErrorCode.ERROR_SERVER_CONNECTING))
                 }
             }
 
             override fun onFailure(call: Call<ApiModel.BroadCastWeather>, t: Throwable) {
                 try {
                     t.printStackTrace()
-                    _getWarningResult.postValue(ApiState.Error(ERROR_NETWORK))
+                    _getWarningResult.postValue(ApiState.Error(ErrorCode.ERROR_NETWORK))
                 } catch (e: Exception) {
-                    _getWarningResult.postValue(ApiState.Error(ERROR_UNKNOWN))
+                    _getWarningResult.postValue(ApiState.Error(ErrorCode.ERROR_UNKNOWN))
                 }
             }
         })

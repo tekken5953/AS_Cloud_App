@@ -12,10 +12,8 @@ import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.dao.StaticDataObject.REQUEST_BACKGROUND_LOCATION
-import app.airsignal.weather.dao.StaticDataObject.REQUEST_LOCATION
-import app.airsignal.weather.dao.StaticDataObject.REQUEST_NOTIFICATION
-import app.airsignal.weather.db.sp.GetAppInfo.getInitLocPermission
+import app.airsignal.weather.dao.StaticDataObject
+import app.airsignal.weather.db.sp.GetAppInfo
 
 class RequestPermissionsUtil(private val context: Context) {
 
@@ -54,34 +52,13 @@ class RequestPermissionsUtil(private val context: Context) {
         )
     }
 
-    fun isGrantBle(): Boolean {
-        for (perm in blePermissionArray) {
-            if (ContextCompat.checkSelfPermission(context, perm)
-                != PackageManager.PERMISSION_GRANTED
-            ) return false
-        }
-        return true
-    }
-
-    fun requestBlePermissions() {
-        try{
-            requestPermissions(
-                context as Activity,
-                blePermissionArray,
-                tagRequestPermission
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
     /** 위치정보 권한 요청**/
     fun requestLocation() {
         try{
             requestPermissions(
                 context as Activity,
                 permissionsLocation,
-                REQUEST_LOCATION
+                StaticDataObject.REQUEST_LOCATION
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -98,7 +75,7 @@ class RequestPermissionsUtil(private val context: Context) {
                 requestPermissions(
                     context as Activity,
                     permissionNotification,
-                    REQUEST_NOTIFICATION
+                    StaticDataObject.REQUEST_NOTIFICATION
                 )
             }
         }
@@ -135,7 +112,7 @@ class RequestPermissionsUtil(private val context: Context) {
 
     /** 권한 요청 거부 횟수에 따른 반환 **/
     fun isShouldShowRequestPermissionRationale(activity: Activity, perm: String): Boolean {
-        return when (getInitLocPermission(activity)) {
+        return when (GetAppInfo.getInitLocPermission(activity)) {
             "" -> true
             "Second" -> true
             else -> {
@@ -159,7 +136,7 @@ class RequestPermissionsUtil(private val context: Context) {
             requestPermissions(
                 context as Activity,
                 arrayOf(permissionsLocationBackground),
-                REQUEST_BACKGROUND_LOCATION
+                StaticDataObject.REQUEST_BACKGROUND_LOCATION
             )
         }
     }

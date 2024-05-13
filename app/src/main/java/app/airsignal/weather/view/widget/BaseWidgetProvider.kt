@@ -25,6 +25,8 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         const val REFRESH_BUTTON_CLICKED_42 = "app.airsignal.weather.view.widget.REFRESH_DATA42"
         const val ENTER_APPLICATION_42 = "app.airsignal.weather.view.widget.ENTER_APP42"
 
+        const val WIDGET_42 = "42"
+        const val WIDGET_22 = "22"
     }
 
     override fun onDisabled(context: Context) { super.onDisabled(context) }
@@ -59,10 +61,6 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         return null
     }
 
-    fun checkBackPerm(context: Context): Boolean {
-        return RequestPermissionsUtil(context).isBackgroundRequestLocation()
-    }
-
     fun requestPermissions(context: Context, sort: String, id: Int?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val perm = RequestPermissionsUtil(context)
@@ -85,18 +83,15 @@ open class BaseWidgetProvider: AppWidgetProvider() {
     fun isRefreshable(context: Context, type: String): Boolean {
         val currentTime = getCurrentTime()
         val lastRefresh = when (type) {
-            "42" -> GetAppInfo.getLastRefreshTime42(context)
-            "22" -> GetAppInfo.getLastRefreshTime22(context)
+            WIDGET_42 -> GetAppInfo.getLastRefreshTime42(context)
+            WIDGET_22 -> GetAppInfo.getLastRefreshTime22(context)
             else -> currentTime
         }
         return currentTime - lastRefresh >= 1000 * 60
     }
 
     fun setRefreshTime(context: Context, type: String) {
-        if (type == "42") {
-            SetAppInfo.setLastRefreshTime42(context, getCurrentTime())
-        } else if (type == "22") {
-            SetAppInfo.setLastRefreshTime22(context, getCurrentTime())
-        }
+        if (type == WIDGET_42) SetAppInfo.setLastRefreshTime42(context, getCurrentTime())
+        else if (type == WIDGET_22) SetAppInfo.setLastRefreshTime22(context, getCurrentTime())
     }
 }

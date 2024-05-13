@@ -236,16 +236,6 @@ object RDBLogcat {
         } catch (e: DatabaseException) { e.printStackTrace() }
     }
 
-    fun writeEyeMeasured(context: Context, data: String) {
-        try {
-            default(context)
-                .child("as-eye")
-                .child(getDate())
-                .child(getTime())
-                .setValue(data)
-        } catch (e: DatabaseException) { e.printStackTrace() }
-    }
-
     /** Admob 로드 에러 **/
     fun writeAdError(code: String,errorMsg: String) {
         try {

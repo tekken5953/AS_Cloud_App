@@ -23,22 +23,12 @@ import app.airsignal.weather.R
 import app.airsignal.weather.adapter.AddressListAdapter
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.StaticDataObject
-import app.airsignal.weather.dao.StaticDataObject.LANG_KR
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
-import app.airsignal.weather.db.sp.GetAppInfo
-import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
-import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
-import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
-import app.airsignal.weather.db.sp.GetSystemInfo.getLocale
-import app.airsignal.weather.db.sp.SetAppInfo.setUserLastAddr
-import app.airsignal.weather.db.sp.SetSystemInfo
-import app.airsignal.weather.db.sp.SpDao.CURRENT_GPS_ID
-import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
-import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
+import app.airsignal.weather.db.sp.*
 import app.airsignal.weather.util.KeyboardController
 import app.airsignal.weather.util.OnAdapterItemSingleClick
-import app.airsignal.weather.util.`object`.DataTypeParser.convertAddress
+import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.view.activity.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -68,9 +58,9 @@ class SearchDialog(
             else -> { SetSystemInfo.updateConfiguration(activity, Locale.getDefault()) }
         }
         // 텍스트 폰트 크기 적용
-        when (getUserFontScale(activity)) {
-            TEXT_SCALE_SMALL -> { SetSystemInfo.setTextSizeSmall(activity) }
-            TEXT_SCALE_BIG -> { SetSystemInfo.setTextSizeLarge(activity) }
+        when (GetAppInfo.getUserFontScale(activity)) {
+            SpDao.TEXT_SCALE_SMALL -> { SetSystemInfo.setTextSizeSmall(activity) }
+            SpDao.TEXT_SCALE_BIG -> { SetSystemInfo.setTextSizeLarge(activity) }
             else -> { SetSystemInfo.setTextSizeDefault(activity) }
         }
     }
@@ -114,8 +104,8 @@ class SearchDialog(
             currentAddress.setOnClickListener {
                 this@SearchDialog.dismiss()
                 CoroutineScope(Dispatchers.IO).launch {
-                    val dbFind = db.findByName(CURRENT_GPS_ID)
-                    dbUpdate(dbFind.addrKr,dbFind.addrEn,CURRENT_GPS_ID)
+                    val dbFind = db.findByName(SpDao.CURRENT_GPS_ID)
+                    dbUpdate(dbFind.addrKr,dbFind.addrEn,SpDao.CURRENT_GPS_ID)
 
                     withContext(Dispatchers.Main) {
                         this@SearchDialog.dismiss()
@@ -129,10 +119,10 @@ class SearchDialog(
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
             CoroutineScope(Dispatchers.IO).launch {
-                val lastAddr = getUserLastAddress(activity)
+                val lastAddr = GetAppInfo.getUserLastAddress(activity)
                 GpsRepository(activity).findAll().forEach { entity ->
                     withContext(Dispatchers.Main) {
-                        if (entity.name == CURRENT_GPS_ID) {
+                        if (entity.name == SpDao.CURRENT_GPS_ID) {
                             currentAddress.text = entity.addrKr?.replace(getString(R.string.korea), "") ?: ""
                             if (entity.addrKr == lastAddr) {
                                 currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))
@@ -227,7 +217,7 @@ class SearchDialog(
                     allTextArray.forEach { allList ->
                         val nonSpacing = s.toString().replace(" ", "").lowercase()
                         if (allList.replace(" ", "").lowercase().contains(nonSpacing) ||
-                            convertAddress(allList).replace(" ", "").lowercase()
+                            DataTypeParser.convertAddress(allList).replace(" ", "").lowercase()
                                 .contains(nonSpacing)
                         ) searchItem.add(allList)
                     }
@@ -248,6 +238,7 @@ class SearchDialog(
                 val builder = Dialog(activity)
                 val viewSearched = LayoutInflater.from(activity.applicationContext)
                     .inflate(R.layout.dialog_alert_double_btn, null)
+
                 builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
                 builder.setContentView(viewSearched)
@@ -345,12 +336,12 @@ class SearchDialog(
         )
 
         db.update(model)
-        setUserLastAddr(activity, addrKr!!)
+        SetAppInfo.setUserLastAddr(activity, addrKr!!)
     }
 
     private fun isKorea(): Boolean {
-        val systemLang = getLocale(activity)
-        return getUserLocation(activity) == LANG_KR || systemLang == Locale.KOREA
+        val systemLang = GetSystemInfo.getLocale(activity)
+        return GetAppInfo.getUserLocation(activity) == SpDao.LANG_KR || systemLang == Locale.KOREA
     }
 
     // 리스트 아이템 추가
@@ -391,7 +382,7 @@ class SearchDialog(
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = super.getView(position, convertView, parent) as TextView
-            val fullText = getItem(position)!!
+            val fullText = getItem(position) ?: ""
             val editableText = fullText.lowercase()
 
             val startIndex = editableText.indexOf(editText.text.toString().lowercase())

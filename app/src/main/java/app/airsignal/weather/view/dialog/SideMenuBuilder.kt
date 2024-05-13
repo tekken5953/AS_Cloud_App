@@ -9,12 +9,9 @@ import android.view.*
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
-import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
-import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
-import app.airsignal.weather.db.sp.GetAppInfo.getUserProfileImage
+import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.SetSystemInfo
-import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
-import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
+import app.airsignal.weather.db.sp.SpDao
 import com.bumptech.glide.Glide
 
 /**
@@ -54,11 +51,11 @@ class SideMenuBuilder(private val context: Context) {
     // 로그인 정보 반환
     fun setUserData(profile: ImageView, Id: TextView): SideMenuBuilder {
         Glide.with(context)
-            .load(Uri.parse(getUserProfileImage(context)))
+            .load(Uri.parse(GetAppInfo.getUserProfileImage(context)))
             .error(ResourcesCompat.getDrawable(context.resources,R.mipmap.ic_launcher_round,null))
             .into(profile)
 
-        val email = getUserEmail(context)
+        val email = GetAppInfo.getUserEmail(context)
         Id.text = if(email != "") email else context.getString(R.string.please_login)
 
         return this
@@ -66,9 +63,9 @@ class SideMenuBuilder(private val context: Context) {
 
     // 폰트 크기 반환
     private fun setFontScale(): SideMenuBuilder {
-        when (getUserFontScale(context)) {
-            TEXT_SCALE_SMALL -> SetSystemInfo.setTextSizeSmall(builder.context)
-            TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(builder.context)
+        when (GetAppInfo.getUserFontScale(context)) {
+            SpDao.TEXT_SCALE_SMALL -> SetSystemInfo.setTextSizeSmall(builder.context)
+            SpDao.TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(builder.context)
             else -> SetSystemInfo.setTextSizeDefault(builder.context)
         }
         return this

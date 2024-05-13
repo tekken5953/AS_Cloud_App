@@ -3,24 +3,20 @@ package app.airsignal.weather.view.custom_view
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.sp.GetAppInfo
-import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
 import app.airsignal.weather.db.sp.SetSystemInfo
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_BIG
 import app.airsignal.weather.db.sp.SpDao.TEXT_SCALE_SMALL
 import java.util.*
-import java.util.concurrent.CompletableFuture
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-03-28 오전 11:15
  **/
 
-class ShowDialogClass(private val activity: Activity, isEye: Boolean) {
+class ShowDialogClass(activity: Activity, isEye: Boolean) {
     private var builder: androidx.appcompat.app.AlertDialog.Builder =
         androidx.appcompat.app.AlertDialog.Builder(activity, if (!isEye) R.style.AlertDialog else R.style.FullDialog)
     private lateinit var alertDialog: androidx.appcompat.app.AlertDialog
@@ -31,7 +27,7 @@ class ShowDialogClass(private val activity: Activity, isEye: Boolean) {
 
     init {
         // 폰트 크기 설정
-        when(getUserFontScale(activity)) {
+        when(GetAppInfo.getUserFontScale(activity)) {
             TEXT_SCALE_SMALL -> SetSystemInfo.setTextSizeSmall(activity)
             TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(activity)
             else -> SetSystemInfo.setTextSizeDefault(activity)

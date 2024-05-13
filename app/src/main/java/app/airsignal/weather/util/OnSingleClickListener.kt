@@ -2,8 +2,6 @@ package app.airsignal.weather.util
 
 import android.os.SystemClock
 import android.view.View
-import android.widget.Toast
-import app.airsignal.weather.koin.BaseApplication
 
 abstract class OnSingleClickListener : View.OnClickListener {
     private var mLastClickTime: Long = 0

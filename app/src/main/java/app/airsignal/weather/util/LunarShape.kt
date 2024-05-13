@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
-import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 class LunarShape(age: Float?) {

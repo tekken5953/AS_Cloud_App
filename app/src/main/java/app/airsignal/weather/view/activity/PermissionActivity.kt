@@ -15,20 +15,11 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityPermissionBinding
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.dao.RDBLogcat.writeUserPref
+import app.airsignal.weather.db.sp.*
 import app.airsignal.weather.util.EnterPageUtil
-import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
-import app.airsignal.weather.util.`object`.DataTypeParser.parseLongToLocalDateTime
-import app.airsignal.weather.db.sp.GetAppInfo.getInitNotiPermission
-import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
-import app.airsignal.weather.db.sp.GetSystemInfo.getApplicationVersionCode
-import app.airsignal.weather.db.sp.GetSystemInfo.getApplicationVersionName
-import app.airsignal.weather.db.sp.SetAppInfo.setInitNotiPermission
-import app.airsignal.weather.db.sp.SetAppInfo.setUserNoti
-import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
+import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.view.perm.FirstLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PermissionActivity :
@@ -41,20 +32,20 @@ class PermissionActivity :
         super.onResume()
         if (perm.isLocationPermitted()) {   // 위치 서비스 이용 가능?
             @Suppress("DEPRECATION")
-            val inAppExtraList = intent.getParcelableArrayExtra(IN_APP_MSG)?.map {it as ApiModel.InAppMsgItem?}?.toTypedArray()
+            val inAppExtraList = intent.getParcelableArrayExtra(SpDao.IN_APP_MSG)?.map {it as ApiModel.InAppMsgItem?}?.toTypedArray()
             if (!perm.isNotificationPermitted()) {  // 알림 서비스 이용 가능?
-                val initNotiPermission = getInitNotiPermission(this)
+                val initNotiPermission = GetAppInfo.getInitNotiPermission(this)
                 if (initNotiPermission == "") { // 알림 서비스 권한 호출이 처음?
-                    setInitNotiPermission(this, "Not Init")
+                    SetAppInfo.setInitNotiPermission(this, "Not Init")
                     perm.requestNotification()  // 알림 권한 요청
                 } else {
                     Toast.makeText(this, getString(R.string.noti_always_can), Toast.LENGTH_SHORT).show()
-                    enter.toMain(getUserLoginPlatform(this),inAppExtraList)
+                    enter.toMain(GetAppInfo.getUserLoginPlatform(this),inAppExtraList)
                 }
             } else {
-                setUserNoti(this, IgnoredKeyFile.notiEnable, true)
-                setUserNoti(this, IgnoredKeyFile.notiVibrate, true)
-                enter.toMain(getUserLoginPlatform(this),inAppExtraList)
+                SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, true)
+                SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiVibrate, true)
+                enter.toMain(GetAppInfo.getUserLoginPlatform(this),inAppExtraList)
             }
         }
     }
@@ -64,24 +55,24 @@ class PermissionActivity :
         super.onCreate(savedInstanceState)
         initBinding()
 
-        setStatusBar(this)
+        DataTypeParser.setStatusBar(this)
 
         // 초기설정 로그 저장 - 초기 설치 날짜
-        writeUserPref(
+        RDBLogcat.writeUserPref(
             this, sort = RDBLogcat.USER_PREF_SETUP,
             title = RDBLogcat.USER_PREF_SETUP_INIT,
-            value = "${parseLongToLocalDateTime(getCurrentTime())}"
+            value = "${DataTypeParser.parseLongToLocalDateTime(DataTypeParser.getCurrentTime())}"
         )
 
         // 초기설정 로그 저장 - 디바이스 SDK 버전
-        writeUserPref(
+        RDBLogcat.writeUserPref(
             this, sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
-            value = "${getApplicationVersionName(this)}.${getApplicationVersionCode(this)}"
+            value = "${GetSystemInfo.getApplicationVersionName(this)}.${GetSystemInfo.getApplicationVersionCode(this)}"
         )
 
         // 유저 디바이스 설정 - 디바이스 모델
-        writeUserPref(
+        RDBLogcat.writeUserPref(
             this, sort = RDBLogcat.USER_PREF_DEVICE,
             title = RDBLogcat.USER_PREF_DEVICE_DEVICE_MODEL,
             value = Build.MODEL

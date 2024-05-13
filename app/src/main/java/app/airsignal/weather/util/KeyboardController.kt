@@ -1,7 +1,6 @@
 package app.airsignal.weather.util
 
 import android.content.Context
-import android.os.Handler
 import android.os.Looper
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText

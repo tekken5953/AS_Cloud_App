@@ -1,6 +1,5 @@
 package app.airsignal.weather.firebase.fcm
 
-import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.util.TimberUtil
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -9,15 +8,12 @@ import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.util.*
 
 
 class SubFCM: FirebaseMessagingService() {
 
     enum class Sort(val key: String) {
-        FCM_EYE_NOISE("noise"), FCM_EYE_BRIGHT("bright"), FCM_EYE_GYRO("gyro"),
         FCM_DAILY("daily"), FCM_PATCH("patch"), FCM_EVENT("event")
     }
 
@@ -34,15 +30,6 @@ class SubFCM: FirebaseMessagingService() {
             Sort.FCM_PATCH.key,
             Sort.FCM_DAILY.key-> {
                 NotificationBuilder().sendNotification(applicationContext,message.data)
-            }
-            Sort.FCM_EYE_NOISE.key,
-            Sort.FCM_EYE_BRIGHT.key,
-            Sort.FCM_EYE_GYRO.key -> {
-                message.data["device"]?.let {
-                    if (SharedPreferenceManager(applicationContext).getBoolean(it, false)) {
-                        EyeNotiBuilder(applicationContext).sendNotification(message.data)
-                    }
-                }
             }
         }
     }

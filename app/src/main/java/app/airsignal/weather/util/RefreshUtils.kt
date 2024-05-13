@@ -7,8 +7,6 @@ import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.view.WindowManager
-import app.airsignal.weather.view.activity.BaseActivity
 import com.airbnb.lottie.LottieAnimationView
 import kotlin.system.exitProcess
 

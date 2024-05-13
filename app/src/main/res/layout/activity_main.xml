@@ -189,10 +189,8 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/cd_img_sky"
                 android:scaleType="fitCenter"
-                app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
+                app:layout_constraintTop_toBottomOf="@+id/mainSideMenuIv"
+                app:layout_constraintStart_toStartOf="@+id/mainSideMenuIv"/>
 
             <ImageView
                 android:id="@+id/mainBottomDecoImg"
@@ -218,9 +216,9 @@
                 android:alpha="0"
                 android:lineHeight="25dp"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-                app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-                app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
+                app:layout_constraintEnd_toEndOf="@+id/mainCompareTempTv"
+                app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv"
+                android:layout_marginTop="8dp"/>
 
             <TextView
                 android:id="@+id/mainLiveTempValue"
@@ -860,7 +858,7 @@
                             android:layout_above="@+id/mainSunLine"
                             android:layout_marginTop="5dp"
                             android:layout_toStartOf="@+id/mainSunSetLinear"
-                            android:layout_toEndOf="@+id/mainSUnRiseLinear"
+                            android:layout_toEndOf="@+id/mainSunRiseLinear"
                             android:gravity="center"
                             android:orientation="vertical">
 
@@ -886,7 +884,7 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/mainSUnRiseLinear"
+                            android:id="@+id/mainSunRiseLinear"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_above="@+id/mainSunLine"
