@@ -82,7 +82,6 @@
         android:layout_toEndOf="@+id/changeAddressImg" />
 
     <ImageView
-        android:id="@+id/changeAddressChecked"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_alignParentEnd="true"

@@ -1,16 +1,16 @@
 package app.airsignal.weather.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
-import app.airsignal.weather.db.sp.GetAppInfo.getUserFontScale
+import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.SetSystemInfo
 import com.bumptech.glide.Glide
 
@@ -33,7 +33,7 @@ class WeeklyWeatherAdapter(
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val view: View = inflater.inflate(R.layout.list_item_weekly_weather, parent, false)
-        when(getUserFontScale(context)) {
+        when(GetAppInfo.getUserFontScale(context)) {
             "small" -> { SetSystemInfo.setTextSizeSmall(view.context) }
             "big" -> { SetSystemInfo.setTextSizeLarge(view.context) }
             else -> { SetSystemInfo.setTextSizeDefault(view.context) }
@@ -61,6 +61,7 @@ class WeeklyWeatherAdapter(
         private val minRain: TextView = itemView.findViewById(R.id.weeklyMinRain)
         private val maxRain: TextView = itemView.findViewById(R.id.weeklyMaxRain)
 
+        @SuppressLint("SetTextI18n")
         fun bind(dao: AdapterModel.WeeklyWeatherItem) {
             day.text = dao.day
             date.text = dao.date

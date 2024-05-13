@@ -11,16 +11,15 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/viewGroupLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="22dp">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/loginMainBack"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="11dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
                 android:padding="3dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="12dp"
                 android:contentDescription="@string/cd_icon_back"
                 android:src="@drawable/back_arrow"
                 app:layout_constraintStart_toStartOf="parent"
@@ -48,6 +47,7 @@
                 android:drawableStart="@drawable/ico_login_google"
                 android:fontFamily="@font/spoqa_hansansneo_medium"
                 android:paddingStart="24dp"
+                android:textAllCaps="false"
                 android:paddingEnd="24dp"
                 android:text="@string/login_with_google"
                 android:textColor="#4F4F4F"
@@ -61,6 +61,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
+                android:textAllCaps="false"
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/kakao_login_bg"
                 android:drawableStart="@drawable/ico_login_kakao"
@@ -78,6 +79,7 @@
                 android:layout_height="48dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
+                android:textAllCaps="false"
                 android:layout_marginEnd="24dp"
                 android:background="@drawable/naver_login_bg"
                 android:drawableStart="@drawable/ico_login_naver"

@@ -2,17 +2,8 @@ package app.airsignal.weather.repository
 
 import android.accounts.NetworkErrorException
 import androidx.lifecycle.MutableLiveData
-import app.airsignal.weather.network.ErrorCode.ERROR_API_PROTOCOL
-import app.airsignal.weather.network.ErrorCode.ERROR_GET_DATA
-import app.airsignal.weather.network.ErrorCode.ERROR_NETWORK
-import app.airsignal.weather.network.ErrorCode.ERROR_NULL_POINT
-import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
-import app.airsignal.weather.network.ErrorCode.ERROR_TIMEOUT
-import app.airsignal.weather.network.ErrorCode.ERROR_UNKNOWN
-import app.airsignal.weather.network.NetworkUtils.modifyCurrentHumid
-import app.airsignal.weather.network.NetworkUtils.modifyCurrentRainType
-import app.airsignal.weather.network.NetworkUtils.modifyCurrentTempType
-import app.airsignal.weather.network.NetworkUtils.modifyCurrentWindSpeed
+import app.airsignal.weather.network.ErrorCode
+import app.airsignal.weather.network.NetworkUtils
 import app.airsignal.weather.network.retrofit.ApiModel
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
@@ -45,13 +36,13 @@ class GetWeatherRepo : BaseRepository() {
                                 val responseBody = processData(response.body())
                                 _getDataResult.postValue(ApiState.Success(responseBody))
                             } else {
-                                _getDataResult.postValue(ApiState.Error(ERROR_API_PROTOCOL))
+                                _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_API_PROTOCOL))
                                 call.cancel()
                             }
                         } catch (e: NullPointerException) {
-                            _getDataResult.postValue(ApiState.Error(ERROR_SERVER_CONNECTING))
+                            _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_SERVER_CONNECTING))
                         } catch (e: JsonSyntaxException) {
-                            _getDataResult.postValue(ApiState.Error(ERROR_GET_DATA))
+                            _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_GET_DATA))
                         }
                     }
 
@@ -60,18 +51,18 @@ class GetWeatherRepo : BaseRepository() {
                         t: Throwable
                     ) {
                         try {
-                            _getDataResult.postValue(ApiState.Error(ERROR_GET_DATA))
+                            _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_GET_DATA))
                             call.cancel()
                         } catch (e: Exception) {
                             when (e) {
                                 is SocketTimeoutException ->
-                                    _getDataResult.postValue(ApiState.Error(ERROR_TIMEOUT))
+                                    _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_TIMEOUT))
                                 is NetworkErrorException ->
-                                    _getDataResult.postValue(ApiState.Error(ERROR_NETWORK))
+                                    _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_NETWORK))
                                 is NullPointerException ->
-                                    _getDataResult.postValue(ApiState.Error(ERROR_NULL_POINT))
+                                    _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_NULL_POINT))
                                 else -> {
-                                    _getDataResult.postValue(ApiState.Error(ERROR_UNKNOWN))
+                                    _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_UNKNOWN))
                                 }
                             }
                         }
@@ -83,10 +74,10 @@ class GetWeatherRepo : BaseRepository() {
     private fun processData(rawData: ApiModel.GetEntireData?): ApiModel.GetEntireData {
         try {
             rawData?.let { d ->
-                d.current.rainType = modifyCurrentRainType(d.current.rainType,d.realtime[0].rainType)
-                d.current.temperature = modifyCurrentTempType(d.current.temperature, d.realtime[0].temp)
-                d.current.windSpeed = modifyCurrentWindSpeed(d.current.windSpeed, d.realtime[0].windSpeed)
-                d.current.humidity = modifyCurrentHumid(d.current.humidity, d.realtime[0].humid)
+                d.current.rainType = NetworkUtils.modifyCurrentRainType(d.current.rainType,d.realtime[0].rainType)
+                d.current.temperature = NetworkUtils.modifyCurrentTempType(d.current.temperature, d.realtime[0].temp)
+                d.current.windSpeed = NetworkUtils.modifyCurrentWindSpeed(d.current.windSpeed, d.realtime[0].windSpeed)
+                d.current.humidity = NetworkUtils.modifyCurrentHumid(d.current.humidity, d.realtime[0].humid)
             }
         } catch (e: Exception) {
             e.stackTraceToString()

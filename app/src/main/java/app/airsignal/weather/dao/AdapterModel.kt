@@ -1,8 +1,6 @@
 package app.airsignal.weather.dao
 
 import android.graphics.drawable.Drawable
-import com.google.gson.annotations.SerializedName
-import java.time.LocalDateTime
 
 object AdapterModel {
 
@@ -37,12 +35,5 @@ object AdapterModel {
     data class AddressListItem(
         val kr: String?,
         val en: String?
-    )
-
-    data class NoiseDetailItem(
-        @SerializedName("date")
-        val date: LocalDateTime?,
-        @SerializedName("noise")
-        val noise: Int?
     )
 }

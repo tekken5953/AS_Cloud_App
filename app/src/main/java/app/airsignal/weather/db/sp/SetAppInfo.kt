@@ -1,29 +1,6 @@
 package app.airsignal.weather.db.sp
 
 import android.content.Context
-import app.airsignal.weather.db.SharedPreferenceManager
-import app.airsignal.weather.db.sp.SpDao.INITIALIZED_LOC_PERMISSION
-import app.airsignal.weather.db.sp.SpDao.INITIALIZED_NOTI_PERMISSION
-import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG
-import app.airsignal.weather.db.sp.SpDao.IN_APP_MSG_TIME
-import app.airsignal.weather.db.sp.SpDao.IS_INIT_BACK_LOC_PERMISSION
-import app.airsignal.weather.db.sp.SpDao.IS_PERMED_BACK_LOG
-import app.airsignal.weather.db.sp.SpDao.LAST_REFRESH22
-import app.airsignal.weather.db.sp.SpDao.LAST_REFRESH42
-import app.airsignal.weather.db.sp.SpDao.NOTIFICATION_ADDRESS
-import app.airsignal.weather.db.sp.SpDao.NOTIFICATION_TOPIC_DAILY
-import app.airsignal.weather.db.sp.SpDao.WEATHER_ANIMATION_ENABLE
-import app.airsignal.weather.db.sp.SpDao.WEATHER_BOX_OPACITY
-import app.airsignal.weather.db.sp.SpDao.WEATHER_BOX_OPACITY2
-import app.airsignal.weather.db.sp.SpDao.lastAddress
-import app.airsignal.weather.db.sp.SpDao.lastLoginPhone
-import app.airsignal.weather.db.sp.SpDao.lastLoginPlatform
-import app.airsignal.weather.db.sp.SpDao.userEmail
-import app.airsignal.weather.db.sp.SpDao.userFontScale
-import app.airsignal.weather.db.sp.SpDao.userId
-import app.airsignal.weather.db.sp.SpDao.userLocation
-import app.airsignal.weather.db.sp.SpDao.userProfile
-import app.airsignal.weather.db.sp.SpDao.userTheme
 
 /**
  * @author : Lee Jae Young
@@ -32,15 +9,15 @@ import app.airsignal.weather.db.sp.SpDao.userTheme
 object SetAppInfo {
 
     fun setUserFontScale(context: Context, type: String) {
-        SharedPreferenceManager(context).setString(userFontScale, type)
+        SharedPreferenceManager(context).setString(SpDao.userFontScale, type)
     }
 
     fun setUserLocation(context: Context, location: String) {
-        SharedPreferenceManager(context).setString(userLocation, location)
+        SharedPreferenceManager(context).setString(SpDao.userLocation, location)
     }
 
     fun setUserTheme(context: Context, theme: String) {
-        SharedPreferenceManager(context).setString(userTheme, theme)
+        SharedPreferenceManager(context).setString(SpDao.userTheme, theme)
     }
 
     fun setUserNoti(context: Context, tag: String, boolean: Boolean) {
@@ -48,29 +25,29 @@ object SetAppInfo {
     }
 
     fun setUserLastAddr(context: Context, addr: String) {
-        SharedPreferenceManager(context).setString(lastAddress, addr)
+        SharedPreferenceManager(context).setString(SpDao.lastAddress, addr)
     }
 
     fun setUserEmail(context: Context, email: String) {
-        SharedPreferenceManager(context).setString(userEmail, email)
+        SharedPreferenceManager(context).setString(SpDao.userEmail, email)
     }
 
     fun setUserProfile(context: Context, profile: String) {
-        SharedPreferenceManager(context).setString(userProfile, profile)
+        SharedPreferenceManager(context).setString(SpDao.userProfile, profile)
     }
 
     fun setUserId(context: Context, id: String) {
-        SharedPreferenceManager(context).setString(userId, id)
+        SharedPreferenceManager(context).setString(SpDao.userId, id)
     }
 
     fun removeAllKeys(context: Context) {
         SharedPreferenceManager(context)
             .run {
-                removeKey(userId)
-                removeKey(userProfile)
-                removeKey(lastLoginPhone)
-                removeKey(lastLoginPlatform)
-                removeKey(userEmail)
+                removeKey(SpDao.userId)
+                removeKey(SpDao.userProfile)
+                removeKey(SpDao.lastLoginPhone)
+                removeKey(SpDao.lastLoginPlatform)
+                removeKey(SpDao.userEmail)
             }
     }
 
@@ -79,55 +56,55 @@ object SetAppInfo {
     }
 
     fun setUserLoginPlatform(context: Context, platform: String) {
-        SharedPreferenceManager(context).setString(lastLoginPlatform, platform)
+        SharedPreferenceManager(context).setString(SpDao.lastLoginPlatform, platform)
     }
 
     fun setTopicNotification(context: Context, topic: String) {
-        SharedPreferenceManager(context).setString(NOTIFICATION_TOPIC_DAILY, topic)
+        SharedPreferenceManager(context).setString(SpDao.NOTIFICATION_TOPIC_DAILY, topic)
     }
 
     fun setNotificationAddress(context: Context, addr: String) {
-        SharedPreferenceManager(context).setString(NOTIFICATION_ADDRESS, addr)
+        SharedPreferenceManager(context).setString(SpDao.NOTIFICATION_ADDRESS, addr)
     }
 
     fun setInitLocPermission(context: Context, s: String) {
-        SharedPreferenceManager(context).setString(INITIALIZED_LOC_PERMISSION, s)
+        SharedPreferenceManager(context).setString(SpDao.INITIALIZED_LOC_PERMISSION, s)
     }
 
     fun setInitNotiPermission(context: Context, s: String) {
-        SharedPreferenceManager(context).setString(INITIALIZED_NOTI_PERMISSION, s)
+        SharedPreferenceManager(context).setString(SpDao.INITIALIZED_NOTI_PERMISSION, s)
     }
 
     fun setInitBackLocPermission(context: Context,b: Boolean) {
-        SharedPreferenceManager(context).setBoolean(IS_INIT_BACK_LOC_PERMISSION, b)
+        SharedPreferenceManager(context).setBoolean(SpDao.IS_INIT_BACK_LOC_PERMISSION, b)
     }
 
     fun setPermedBackLog(context: Context,b: Boolean) {
-        SharedPreferenceManager(context).setBoolean(IS_PERMED_BACK_LOG, b)
+        SharedPreferenceManager(context).setBoolean(SpDao.IS_PERMED_BACK_LOG, b)
     }
 
     fun setLastRefreshTime42(context: Context, time: Long) {
-        SharedPreferenceManager(context).setLong(LAST_REFRESH42,time)
+        SharedPreferenceManager(context).setLong(SpDao.LAST_REFRESH42,time)
     }
 
     fun setLastRefreshTime22(context: Context, time: Long) {
-        SharedPreferenceManager(context).setLong(LAST_REFRESH22,time)
+        SharedPreferenceManager(context).setLong(SpDao.LAST_REFRESH22,time)
     }
 
     fun setInAppMsgDenied(context: Context, enabled: Boolean) {
-        SharedPreferenceManager(context).setBoolean(IN_APP_MSG, enabled)
-        SharedPreferenceManager(context).setLong(IN_APP_MSG_TIME, System.currentTimeMillis())
+        SharedPreferenceManager(context).setBoolean(SpDao.IN_APP_MSG, enabled)
+        SharedPreferenceManager(context).setLong(SpDao.IN_APP_MSG_TIME, System.currentTimeMillis())
     }
 
     fun setWeatherAnimEnabled(context: Context, enabled: Boolean) {
-        SharedPreferenceManager(context).setBoolean(WEATHER_ANIMATION_ENABLE, enabled)
+        SharedPreferenceManager(context).setBoolean(SpDao.WEATHER_ANIMATION_ENABLE, enabled)
     }
 
     fun setWeatherBoxOpacity(context: Context, value: Int) {
-        SharedPreferenceManager(context).setInt(WEATHER_BOX_OPACITY, value)
+        SharedPreferenceManager(context).setInt(SpDao.WEATHER_BOX_OPACITY, value)
     }
 
     fun setWeatherBoxOpacity2(context: Context, value: Int) {
-        SharedPreferenceManager(context).setInt(WEATHER_BOX_OPACITY2, value)
+        SharedPreferenceManager(context).setInt(SpDao.WEATHER_BOX_OPACITY2, value)
     }
 }

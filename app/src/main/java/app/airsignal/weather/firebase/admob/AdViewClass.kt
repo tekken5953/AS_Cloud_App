@@ -1,7 +1,7 @@
 package app.airsignal.weather.firebase.admob
 
 import android.app.Activity
-import app.airsignal.weather.dao.IgnoredKeyFile.adMobTestDeviceId
+import app.airsignal.weather.dao.IgnoredKeyFile
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.MobileAds
@@ -21,7 +21,7 @@ class AdViewClass(activity: Activity) {
         MobileAds.initialize(activity)
         adRequest = AdRequest.Builder().build()
         val conf = RequestConfiguration.Builder()
-            .setTestDeviceIds(listOf(adMobTestDeviceId)).build()
+            .setTestDeviceIds(listOf(IgnoredKeyFile.adMobTestDeviceId)).build()
         MobileAds.setRequestConfiguration(conf)
     }
 

@@ -8,13 +8,11 @@ import android.location.*
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.provider.Settings
-import app.airsignal.weather.address.AddressFromRegex
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetSystemInfo
-import app.airsignal.weather.db.sp.SetAppInfo.setNotificationAddress
-import app.airsignal.weather.db.sp.SetAppInfo.setUserLastAddr
-import app.airsignal.weather.db.sp.SpDao.CURRENT_GPS_ID
+import app.airsignal.weather.db.sp.SetAppInfo
+import app.airsignal.weather.db.sp.SpDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,8 +30,8 @@ class GetLocation(private val context: Context) {
             val fullAddr = address[0].getAddressLine(0)
             CoroutineScope(Dispatchers.IO).launch {
                 val notiAddr = AddressFromRegex(fullAddr).getNotificationAddress()
-                setNotificationAddress(appContext, notiAddr)
-                setUserLastAddr(appContext, fullAddr)
+                SetAppInfo.setNotificationAddress(appContext, notiAddr)
+                SetAppInfo.setUserLastAddr(appContext, fullAddr)
             }
             if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
                 address[0].getAddressLine(0)
@@ -53,7 +51,7 @@ class GetLocation(private val context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             val db = GpsRepository(context)
             val model = GpsEntity(
-                name = CURRENT_GPS_ID,
+                name = SpDao.CURRENT_GPS_ID,
                 lat = mLat,
                 lng = mLng,
                 addrKr = mAddr,
@@ -72,18 +70,18 @@ class GetLocation(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     fun getForegroundLocation(): Location? {
-        try {
+        return try {
             val locationManager = context.applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager?
             val locationGPS = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             val locationNetwork = locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
-            return if (locationGPS != null && locationNetwork != null) {
+            if (locationGPS != null && locationNetwork != null) {
                 // 두 위치 중 더 정확한 위치를 반환
                 if (locationGPS.accuracy > locationNetwork.accuracy) locationGPS else locationNetwork
             } else locationGPS ?: locationNetwork
         } catch (e: SecurityException) {
             e.printStackTrace()
-            return null
+            null
         }
     }
 

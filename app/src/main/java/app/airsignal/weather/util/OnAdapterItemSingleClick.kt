@@ -3,17 +3,17 @@ package app.airsignal.weather.util
 import android.os.SystemClock
 import android.view.View
 
-abstract class OnSingleClickListener : View.OnClickListener {
+abstract class OnAdapterItemSingleClick : OnAdapterItemClick.OnAdapterItemClick {
     private var mLastClickTime: Long = 0
 
-    abstract fun onSingleClick(v: View?)
+    abstract fun onSingleClick(v: View?, position: Int)
 
-    override fun onClick(v: View) {
+    override fun onItemClick(v: View, position: Int) {
         val currentClickTime = SystemClock.uptimeMillis()
         val elapsedTime = currentClickTime - mLastClickTime
         mLastClickTime = currentClickTime
         // 중복클릭 아닌 경우
-        if (elapsedTime > MIN_CLICK_INTERVAL) { onSingleClick(v) }
+        if (elapsedTime > MIN_CLICK_INTERVAL) { onSingleClick(v, position) }
 //        else { ToastUtils(BaseApplication.appContext).showMessage("잠시 후에 시도해주세요") }
     }
 

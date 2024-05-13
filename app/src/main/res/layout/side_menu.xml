@@ -80,7 +80,7 @@
         android:paddingEnd="24dp"
         android:text="@string/weather"
         android:textColor="@color/theme_text_color"
-        android:textSize="15sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/navMenuWarning"
@@ -96,10 +96,10 @@
         android:visibility="gone"
         android:text="@string/warning_title"
         android:textColor="@color/theme_text_color"
-        android:textSize="15sp" />
+        android:textSize="16sp" />
 
     <TextView
-        android:id="@+id/navMenuEye"
+        android:id="@+id/navMenuSetting"
         style="@style/basicMediumTextView"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -109,24 +109,9 @@
         android:gravity="start|center_vertical"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
-        android:text="@string/as_eye"
-        android:textColor="@color/theme_text_color"
-        android:textSize="15sp" />
-
-    <TextView
-        android:id="@+id/navMenuSetting"
-        style="@style/basicMediumTextView"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_below="@+id/navMenuEye"
-        android:layout_marginTop="20dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="start|center_vertical"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
         android:text="@string/setting_title"
         android:textColor="@color/theme_text_color"
-        android:textSize="15sp" />
+        android:textSize="16sp" />
 
 <!--    <com.google.android.gms.ads.AdView-->
 <!--        android:id="@+id/navMenuAdview"-->

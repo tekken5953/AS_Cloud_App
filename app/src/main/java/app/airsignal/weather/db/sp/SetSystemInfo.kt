@@ -40,10 +40,4 @@ object SetSystemInfo {
         configuration.setLocale(locale)
         context.createConfigurationContext(configuration)
     }
-
-    /** 화면 터치를 막거나 허용함 **/
-    fun blockTouch(activity: Activity, b: Boolean) {
-        if (b) activity.window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-        else activity.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-    }
 }

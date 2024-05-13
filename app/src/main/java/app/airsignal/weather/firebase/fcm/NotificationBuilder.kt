@@ -18,12 +18,8 @@ import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.sp.GetAppInfo
-import app.airsignal.weather.db.sp.GetAppInfo.getNotificationAddress
-import app.airsignal.weather.db.sp.GetAppInfo.getUserNotiEnable
-import app.airsignal.weather.db.sp.GetAppInfo.getUserNotiVibrate
 import app.airsignal.weather.db.sp.GetSystemInfo
-import app.airsignal.weather.util.`object`.DataTypeParser.applySkyText
-import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgLarge
+import app.airsignal.weather.util.`object`.DataTypeParser
 import kotlin.math.roundToInt
 
 
@@ -51,7 +47,7 @@ class NotificationBuilder {
             val notificationChannel = NotificationChannel(
                 SubFCM.Channel.NOTIFICATION_CHANNEL_ID.value,
                 SubFCM.Channel.NOTIFICATION_CHANNEL_NAME.value,
-                if (getUserNotiVibrate(appContext))
+                if (GetAppInfo.getUserNotiVibrate(appContext))
                     NotificationManager.IMPORTANCE_DEFAULT
                 else NotificationManager.IMPORTANCE_LOW
             ).apply {
@@ -86,8 +82,8 @@ class NotificationBuilder {
                     val thunder = data["thunder"]?.toDouble()
                     val lunar = data["lunar"]?.toInt()
                     setNotiBuilder(
-                        title = "${temp}˚ ${applySkyText(appContext, rainType, sky, thunder)}",
-                        subtext = getNotificationAddress(appContext),
+                        title = "${temp}˚ ${DataTypeParser.applySkyText(appContext, rainType, sky, thunder)}",
+                        subtext = GetAppInfo.getNotificationAddress(appContext),
                         content = "최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
                                 "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚",
                         imgPath = getSkyBitmap(appContext, rainType, sky, thunder, lunar ?: -1)
@@ -103,12 +99,12 @@ class NotificationBuilder {
                 }
             }
 
-            if (getUserNotiEnable(appContext)) {
+            if (GetAppInfo.getUserNotiEnable(appContext)) {
                 notificationManager?.let {
                     it.createNotificationChannel(notificationChannel)
                     it.notify(1, notificationBuilder.build())
                 }
-                RDBLogcat.writeNotificationHistory(appContext,data["sort"].toString(),"${getNotificationAddress(appContext)} $data")
+                RDBLogcat.writeNotificationHistory(appContext,data["sort"].toString(),"${GetAppInfo.getNotificationAddress(appContext)} $data")
             } else {
                 RDBLogcat.writeNotificationHistory(appContext, "체크 해제로 인한 알림 미발송",
                     "${GetAppInfo.getUserLastAddress(appContext)} $data")
@@ -126,8 +122,8 @@ class NotificationBuilder {
         lunar: Int?
     ): Bitmap? {
         return when
-                (val bitmapDrawable = getSkyImgLarge(context,
-                applySkyText(context, rain, sky, thunder),
+                (val bitmapDrawable = DataTypeParser.getSkyImgLarge(context,
+                DataTypeParser.applySkyText(context, rain, sky, thunder),
                 false, lunar ?: -1)) {
             is BitmapDrawable -> { bitmapDrawable.bitmap }
             is VectorDrawable -> { (bitmapDrawable).toBitmap() }

@@ -6,7 +6,6 @@
     android:background="@drawable/loc_perm_bg">
 
     <TextView
-        android:id="@+id/permCautionTitle"
         style="@style/basicMediumTextView"
         android:textColor="@color/theme_text_color"
         android:textSize="20sp"

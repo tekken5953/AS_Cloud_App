@@ -51,24 +51,12 @@
         <item name="android:windowLightStatusBar">true</item>
     </style>
 
-    <style name="CustomCheckBoxLanding">
-        <item name="android:button">@drawable/landing_check_box</item>
-    </style>
-
     <style name="Theme.AirSignal_App.RemoveSplash" parent="Theme.AirSignal_App">
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="ProgressBarHorizontal" parent="android:Widget.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/progress_style</item>
-    </style>
-
-    <style name="CustomCheckBox">
-        <item name="android:button">@drawable/custom_checkbox</item>
-    </style>
-
-    <style name="CustomCheckBoxGroup">
-        <item name="android:button">@drawable/custom_checkbox_group</item>
     </style>
 
     <style name="AlertDialog">
@@ -155,13 +143,4 @@
         <item name="android:layout_weight">0.5</item>
     </style>
 
-    <style name="eyeRadioButton">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/ae_radio_bg</item>
-        <item name="fontFamily">@font/spoqa_hansansneo_medium</item>
-        <item name="autoSizeMaxTextSize">14sp</item>
-        <item name="android:layout_marginStart">6dp</item>
-        <item name="android:textColor">@drawable/checked_radio_text_color</item>
-    </style>
 </resources>

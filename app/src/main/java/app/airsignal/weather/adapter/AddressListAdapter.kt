@@ -19,13 +19,11 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
-import app.airsignal.weather.as_eye.adapter.OnAdapterItemSingleClick
 import app.airsignal.weather.dao.AdapterModel
-import app.airsignal.weather.dao.StaticDataObject.LANG_EN
 import app.airsignal.weather.db.room.repository.GpsRepository
-import app.airsignal.weather.db.sp.GetAppInfo.getUserLastAddress
-import app.airsignal.weather.db.sp.GetAppInfo.getUserLocation
-import app.airsignal.weather.util.OnAdapterItemClick
+import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.SpDao
+import app.airsignal.weather.util.OnAdapterItemSingleClick
 import java.util.*
 
 /**
@@ -62,7 +60,7 @@ class AddressListAdapter(
         holder.bind(mList[position])
 
         applyColorFirstIndex(
-            mList[position].kr == getUserLastAddress(context),
+            mList[position].kr == GetAppInfo.getUserLastAddress(context),
             holder.address,
             holder.gpsImg
         )
@@ -158,6 +156,6 @@ class AddressListAdapter(
 
     fun isEnglish(): Boolean {
         val systemLang = Locale.getDefault().language
-        return getUserLocation(context) == LANG_EN || systemLang == "en"
+        return GetAppInfo.getUserLocation(context) == SpDao.LANG_EN || systemLang == "en"
     }
 }

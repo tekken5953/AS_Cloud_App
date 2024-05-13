@@ -10,14 +10,12 @@ import androidx.core.os.HandlerCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivitySplashBinding
-import app.airsignal.weather.db.SharedPreferenceManager
-import app.airsignal.weather.db.sp.GetAppInfo.getUserLoginPlatform
+import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.db.sp.GetSystemInfo
-import app.airsignal.weather.db.sp.GetSystemInfo.goToPlayStore
-import app.airsignal.weather.db.sp.SpDao.PATCH_SKIP
+import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.location.GetLocation
-import app.airsignal.weather.network.ErrorCode.ERROR_NETWORK
-import app.airsignal.weather.network.ErrorCode.ERROR_SERVER_CONNECTING
+import app.airsignal.weather.network.ErrorCode
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.EnterPageUtil
@@ -41,7 +39,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private val fetch by lazy {appVersionViewModel.fetchData()}
 
     private var isReady = false
-    private var isDone = false
 
     init {
         TimberUtil().getInstance()
@@ -94,27 +91,18 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
     private fun enterPage(inAppMsgList: List<ApiModel.InAppMsgItem?>?) {
-        if (intent?.hasCategory("android.intent.category.APP_MESSAGING") == true) {
-            if (!isDone) {
-                isDone = true
-                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                    EnterPageUtil(this@SplashActivity).toList(R.anim.fade_in)
-                },2000)
-            }
+        if (isReady) {
+            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
+                    EnterPageUtil(this@SplashActivity).toMain(
+                        GetAppInfo.getUserLoginPlatform(this),
+                        inAppMsgList?.toTypedArray())
+                } else { EnterPageUtil(this@SplashActivity).toPermission() }
+            }, 500)
         } else {
-            if (isReady) {
-                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                    if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
-                        EnterPageUtil(this@SplashActivity).toMain(
-                            getUserLoginPlatform(this),
-                            inAppMsgList?.toTypedArray())
-                    } else { EnterPageUtil(this@SplashActivity).toPermission() }
-                }, 500)
-            } else {
-                HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                    enterPage(inAppMsgList)
-                }, 500)
-            }
+            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+                enterPage(inAppMsgList)
+            }, 500)
         }
     }
 
@@ -131,7 +119,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             val versionName = GetSystemInfo.getApplicationVersionName(this)
                             val versionCode = GetSystemInfo.getApplicationVersionCode(this)
                             val fullVersion = "${versionName}.${versionCode}"
-                            val skipThisPatchKey = PATCH_SKIP + "${ver.data.serviceName}.${ver.data.serviceCode}"
+                            val skipThisPatchKey = SpDao.PATCH_SKIP + "${ver.data.serviceName}.${ver.data.serviceCode}"
 
                             // 현재 버전이 최신 버전인 경우
                             if (fullVersion == "${ver.data.serviceName}.${ver.data.serviceCode}") {
@@ -153,7 +141,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                         // 설치 선택 시 스토어 이동
                                         dialog.first.setOnClickListener {
                                             sp.setBoolean(skipThisPatchKey, false)
-                                            goToPlayStore(this@SplashActivity)
+                                            GetSystemInfo.goToPlayStore(this@SplashActivity)
                                         }
                                         // 현재 버전 이용 선택 시 메인 이동
                                         dialog.second.setOnClickListener {
@@ -171,8 +159,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                             getString(R.string.download),
                                             true
                                         ).setOnClickListener {
-                                            sp.setBoolean(PATCH_SKIP, false)
-                                            goToPlayStore(this@SplashActivity)
+                                            sp.setBoolean(SpDao.PATCH_SKIP, false)
+                                            GetSystemInfo.goToPlayStore(this@SplashActivity)
                                         }
                                 }
                             }
@@ -181,13 +169,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                         // 통신 실패
                         is BaseRepository.ApiState.Error -> {
                             when (ver.errorMessage) {
-                                ERROR_NETWORK -> {
+                                ErrorCode.ERROR_NETWORK -> {
                                     if (GetLocation(this).isNetWorkConnected()) {
                                         makeDialog(getString(R.string.unknown_error))
                                     } else { makeDialog(getString(R.string.error_network_connect)) }
                                 }
 
-                                ERROR_SERVER_CONNECTING -> { makeDialog(getString(R.string.error_server_down)) }
+                                ErrorCode.ERROR_SERVER_CONNECTING -> { makeDialog(getString(R.string.error_server_down)) }
 
                                 else -> makeDialog(getString(R.string.unknown_error))
                             }

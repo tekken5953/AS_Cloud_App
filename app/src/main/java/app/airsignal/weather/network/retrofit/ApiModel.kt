@@ -1,7 +1,5 @@
 package app.airsignal.weather.network.retrofit
 
-import android.os.Parcel
-import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 
 class ApiModel {
@@ -34,13 +32,6 @@ class ApiModel {
         val redirect: String
         )
 
-    /**
-     * 메타 데이터 모델
-     * @param address 앱의 테스트 버전 네임
-     * @param address1 앱의 테스트 버전 코드
-     * @param address2 앱 배포 날짜
-     * @param address3 앱의 배포 버전 네임
-     */
     data class MetaData(
         @SerializedName("address")
         val address: String?,
@@ -341,7 +332,9 @@ class ApiModel {
         @SerializedName("term24")
         val term24: String?,
         @SerializedName("lunar")
-        val lunar: LunarDate?
+        val lunar: LunarDate?,
+        @SerializedName("lunAge")
+        val lunarAge: Float?
     )
 
     // 4x2 위젯 - 실시간 정보
@@ -428,56 +421,5 @@ class ApiModel {
         val content: String,
         @SerializedName("href")
         val href: String?
-    )
-
-    data class Owner(
-        @SerializedName("userId")
-        val id: String,
-        @SerializedName("master")
-        val master: Boolean
-    )
-
-    data class Average(
-        @SerializedName("device")
-        val device: String,
-        @SerializedName("date")
-        val date: String,
-        @SerializedName("coValue")
-        val co: Double?,
-        @SerializedName("no2Value")
-        val no2: Double?,
-        @SerializedName("pm10p0Value")
-        val pm10: Double?,
-        @SerializedName("pm2p5Value")
-        val pm2p5: Double?,
-        @SerializedName("pm1p0Value")
-        val pm1p0: Double?,
-        @SerializedName("tempValue")
-        val temp: Double?,
-        @SerializedName("humidValue")
-        val humid: Double?,
-        @SerializedName("co2Value")
-        val co2: Double?,
-        @SerializedName("tvocValue")
-        val tvoc: Double?,
-        @SerializedName("lightValue")
-        val light: Double?,
-        @SerializedName("noiseValue")
-        val noise: Double?,
-        @SerializedName("gyroXValue")
-        val gyroX: Double?,
-        @SerializedName("gyroYValue")
-        val gyroY: Double?,
-        @SerializedName("gyroZValue")
-        val gyroZ: Double?,
-        @SerializedName("count")
-        val count: Double?
-    )
-
-    data class NoiseAvg(
-        @SerializedName("device")
-        val device: String,
-        @SerializedName("noiseValue")
-        val noise: Double?
     )
 }

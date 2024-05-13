@@ -33,6 +33,7 @@ object Term24Class {
         대한("대한(大寒)", "1년 중 소한 다음으로 큰 추위")
     }
 
+    /** 24절기 불러오기 **/
     fun getTerms24Bundle(term24: String?): Bundle? {
         term24?.let {
             val term = Term24.values().find { it.name == term24 }

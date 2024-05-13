@@ -2,17 +2,10 @@ package app.airsignal.weather.login
 
 import android.app.Activity
 import androidx.appcompat.widget.AppCompatButton
-import app.airsignal.weather.dao.IgnoredKeyFile.KAKAO_NATIVE_APP_KEY
-import app.airsignal.weather.dao.IgnoredKeyFile.lastLoginPhone
-import app.airsignal.weather.dao.IgnoredKeyFile.userEmail
-import app.airsignal.weather.dao.IgnoredKeyFile.userId
-import app.airsignal.weather.dao.IgnoredKeyFile.userProfile
+import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO
-import app.airsignal.weather.dao.RDBLogcat.LOGIN_KAKAO_EMAIL
-import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
-import app.airsignal.weather.db.SharedPreferenceManager
-import app.airsignal.weather.db.sp.GetAppInfo.getUserEmail
+import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.ToastUtils
@@ -37,7 +30,7 @@ import kotlinx.coroutines.withContext
 class KakaoLogin(private val activity: Activity) {
 
     init {
-        KakaoSdk.init(activity, KAKAO_NATIVE_APP_KEY)
+        KakaoSdk.init(activity, IgnoredKeyFile.KAKAO_NATIVE_APP_KEY)
     }
 
     /** 카카오톡 설치 확인 후 로그인**/
@@ -70,14 +63,14 @@ class KakaoLogin(private val activity: Activity) {
                     }
                     UserApiClient.instance.me { user, _ ->
                         user?.kakaoAccount?.let { account ->
-                            writeLoginHistory(
-                                isLogin = true, platform = LOGIN_KAKAO, email = account.email ?: "",
+                            RDBLogcat.writeLoginHistory(
+                                isLogin = true, platform = RDBLogcat.LOGIN_KAKAO, email = account.email ?: "",
                                 isAuto = false, isSuccess = true
                             )
                             RDBLogcat.writeLoginPref(
                                 activity,
-                                platform = LOGIN_KAKAO,
-                                email = getUserEmail(activity),
+                                platform = RDBLogcat.LOGIN_KAKAO,
+                                email = GetAppInfo.getUserEmail(activity),
                                 phone = null,
                                 name = account.name,
                                 profile = account.profile?.profileImageUrl
@@ -95,8 +88,8 @@ class KakaoLogin(private val activity: Activity) {
     /** 카카오 이메일 로그인 콜백 **/
     private val mCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
         if (error != null) {
-            writeLoginHistory(
-                isLogin = false, platform = LOGIN_KAKAO_EMAIL, email = getUserEmail(activity),
+            RDBLogcat.writeLoginHistory(
+                isLogin = false, platform = RDBLogcat.LOGIN_KAKAO_EMAIL, email = GetAppInfo.getUserEmail(activity),
                 isAuto = false, isSuccess = false
             )
         } else {
@@ -107,14 +100,14 @@ class KakaoLogin(private val activity: Activity) {
 
             UserApiClient.instance.me { user, _ ->
                 user?.kakaoAccount?.let { account ->
-                    writeLoginHistory(
-                        isLogin = true, platform = LOGIN_KAKAO_EMAIL, email = getUserEmail(activity),
+                    RDBLogcat.writeLoginHistory(
+                        isLogin = true, platform = RDBLogcat.LOGIN_KAKAO_EMAIL, email = GetAppInfo.getUserEmail(activity),
                         isAuto = false, isSuccess = true
                     )
                     RDBLogcat.writeLoginPref(
                         activity,
-                        platform = LOGIN_KAKAO_EMAIL,
-                        email = getUserEmail(activity),
+                        platform = RDBLogcat.LOGIN_KAKAO_EMAIL,
+                        email = GetAppInfo.getUserEmail(activity),
                         phone = account.phoneNumber,
                         name = account.name,
                         profile = account.profile?.profileImageUrl
@@ -177,7 +170,7 @@ class KakaoLogin(private val activity: Activity) {
             saveUserSettings()
 
             withContext(Dispatchers.Main) {
-                SetAppInfo.setUserLoginPlatform(activity, LOGIN_KAKAO)
+                SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_KAKAO)
                 activity.finish()
             }
         }
@@ -187,10 +180,10 @@ class KakaoLogin(private val activity: Activity) {
         UserApiClient.instance.me { user, _ ->
             user?.kakaoAccount?.let { account ->
                 SharedPreferenceManager(activity)
-                    .setString(lastLoginPhone, account.phoneNumber.toString())
-                    .setString(userId, account.profile?.nickname.toString())
-                    .setString(userProfile, account.profile?.profileImageUrl.toString())
-                    .setString(userEmail, account.email.toString())
+                    .setString(IgnoredKeyFile.lastLoginPhone, account.phoneNumber.toString())
+                    .setString(IgnoredKeyFile.userId, account.profile?.nickname.toString())
+                    .setString(IgnoredKeyFile.userProfile, account.profile?.profileImageUrl.toString())
+                    .setString(IgnoredKeyFile.userEmail, account.email.toString())
             }
         }
     }

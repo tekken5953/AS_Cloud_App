@@ -7,11 +7,11 @@ import android.graphics.drawable.Drawable
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
+import app.airsignal.weather.view.widget.BaseWidgetProvider
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -25,12 +25,6 @@ object DataTypeParser {
         return System.currentTimeMillis()
     }
 
-    fun getAverageTime(time: Long): Int {
-        val currentTime = parseLongToLocalDateTime(time)
-        val dateFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-        return currentTime.format(dateFormatter).toInt()
-    }
-
     fun getHourCountToTomorrow(): Int {
         val currentHour = parseLongToLocalDateTime(getCurrentTime()).hour
         return 24 - currentHour
@@ -40,14 +34,6 @@ object DataTypeParser {
         @SuppressLint("SimpleDateFormat") val mFormat = SimpleDateFormat(format)
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
-        }
-        return mFormat.format(calendar.time)
-    }
-
-    fun dateTimeString(format: String, date: LocalDateTime?): String {
-        @SuppressLint("SimpleDateFormat") val mFormat = SimpleDateFormat(format)
-        val calendar = Calendar.getInstance().apply {
-            timeInMillis = parseLocalDateTimeToLong(date ?: LocalDateTime.now())
         }
         return mFormat.format(calendar.time)
     }
@@ -69,34 +55,6 @@ object DataTypeParser {
         }
 
         return id
-    }
-
-    fun koreaSky(sky: String?): String {
-        val id = when(sky?.lowercase()) {
-            "sunny","Sunny&Cloudy" -> "맑음"
-            "cloudy", -> "흐림"
-            "rainy" -> "비"
-            "snowy" -> "눈"
-            "rainy/snowy" -> "비/눈"
-            else -> sky
-        }
-
-        return id ?: "눈"
-    }
-
-    /** 달 모양 반환 **/
-    private fun applyLunarImg(date: Int): Int {
-        return when (date) {
-            29,30,1 -> R.drawable.moon_sak
-            in 2..5 -> R.drawable.moon_cho
-            in 6..9 -> R.drawable.moon_sang_d
-            in 10..13 -> R.drawable.moon_sang_m
-            in 14..16 -> R.drawable.moon_bo
-            in 17..20 -> R.drawable.moon_ha_d
-            in 21..24-> R.drawable.moon_ha_m
-            in 25..28 -> R.drawable.moon_g
-            else -> R.drawable.moon_bo
-        }
     }
 
     /** 비가 오는지 안오는지 Flag **/
@@ -127,16 +85,16 @@ object DataTypeParser {
     /** sky value에 따른 이미지 설정 **/
     fun getSkyImgLarge(context: Context, sky: String?, isNight: Boolean, lunar: Int): Drawable? {
         val id = when(sky) {
-            "맑음" ->
+            context.getString(R.string.sky_sunny) ->
                 if (!isNight) R.drawable.b_ico_sunny
 //                else  applyLunarImg(lunar)
                  else R.drawable.ico_moon_big
-            "구름많음" ->
+            context.getString(R.string.sky_sunny_cloudy) ->
                 if (!isNight)  R.drawable.b_ico_m_cloudy
                 else  R.drawable.b_ico_m_ncloudy
-            "흐림" -> R.drawable.b_ico_cloudy
-            "소나기", "비" -> R.drawable.b_ico_rainy
-            "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.b_ico_snow
+            context.getString(R.string.sky_cloudy) -> R.drawable.b_ico_cloudy
+            context.getString(R.string.sky_shower), context.getString(R.string.sky_rainy) -> R.drawable.b_ico_rainy
+            context.getString(R.string.sky_sunny_cloudy_snowy), "눈", "흐리고 눈" -> R.drawable.b_ico_snow
             "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> R.drawable.b_ico_cloudy_rainy
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
             else -> R.drawable.cancel
@@ -150,7 +108,7 @@ object DataTypeParser {
             when (sky) {
                 "맑음" ->
                     if (isNight) R.drawable.w_ico_status
-                    else R.drawable.b_ico_sunny
+                    else R.drawable.b_ico_cloudy
                 "구름많음" ->
                     if (isNight) R.drawable.b_ico_m_ncloudy
                     else R.drawable.b_ico_m_cloudy
@@ -182,17 +140,16 @@ object DataTypeParser {
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
                 "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
                 "번개,뇌우", "비/번개" -> {
-                    if (sort == "22") R.drawable.w_bg_cloudy else  R.drawable.widget_bg4x2_cloud
+                    if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_cloudy else  R.drawable.widget_bg4x2_cloud
                 }
                 "구름많고 눈", "눈", "흐리고 눈" -> {
-                    if (sort == "22") R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
-                }
-                else -> if (sort == "22") R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
+                    if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow }
+                else -> if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
             }
         } else {
             when (rainType) {
-                "비","소나기" -> if(sort == "22") R.drawable.w_bg_cloudy else R.drawable.widget_bg4x2_cloud
-                else -> if(sort == "22") R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
+                "비","소나기" -> if(sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_cloudy else R.drawable.widget_bg4x2_cloud
+                else -> if(sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
             }
         }
     }
@@ -415,34 +372,6 @@ object DataTypeParser {
 
     private fun getDrawable(context: Context, resId: Int): Drawable? {
         return ResourcesCompat.getDrawable(context.resources, resId, null)
-    }
-
-    fun parseReportTitle(data: String): String {
-        return when(data) {
-            "co2" -> {"CO2(이산화탄소)"}
-            "co" -> {"CO(일산화탄소)"}
-            "pm1p0" -> {"PM1.0(극초미세먼지)"}
-            "pm2p5" -> {"PM2.5(초미세먼지)"}
-            "pm10p0" -> {"PM10(미세먼지)"}
-            "tvoc" -> {"TVOC(총휘발성유기화합물)"}
-            "no2" -> {"NO2(이산화질소)"}
-            "cai" -> {"CAI(통합 대기 환경지수)"}
-            else -> {""}
-        }
-    }
-
-    fun reportCationMsg(data: String): String {
-        return when(data) {
-            "co2" -> {"냉방 온도를 높이거나 난방 온도를 낮춰주세요\n사용하지 않는 콘센트는 빼주세요"}
-            "co" -> {"화재 발생 위험을 점검해주세요"}
-            "pm1p0" -> {"환기 후 물걸레 청소로 낮출 수 있습니다"}
-            "pm2p5" -> {"환기 후 물걸레 청소로 낮출 수 있습니다"}
-            "pm10p0" -> {"환기 후 물걸레 청소로 낮출 수 있습니다"}
-            "tvoc" -> {"환기가 필요합니다"}
-            "no2" -> {"연소 연료에 노출되어 있을 수 있어요"}
-            "cai" -> {"환기가 필요합니다"}
-            else -> {"환기가 필요합니다"}
-        }
     }
 
     fun progressToHex(progress: Int): String {

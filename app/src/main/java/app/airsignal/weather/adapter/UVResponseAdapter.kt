@@ -1,12 +1,11 @@
 package app.airsignal.weather.adapter
 
 import android.content.Context
-import android.content.res.ColorStateList
-import android.view.*
-import android.widget.ImageView
-import android.widget.RelativeLayout
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel

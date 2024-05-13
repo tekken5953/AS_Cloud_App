@@ -24,6 +24,7 @@
         android:layout_toStartOf="@+id/w42Refresh"
         android:layout_marginEnd="3dp"
         android:lines="1"
+        android:gravity="start"
         android:ellipsize="end"
         style="@style/basicTextView"
         android:layout_marginTop="4dp"
@@ -79,13 +80,12 @@
         style="@style/basicTextView"
         android:letterSpacing="0"
         android:layout_below="@+id/w42Temp"
-        android:layout_marginStart="6dp"
+        android:layout_marginStart="1dp"
         android:layout_alignStart="@id/w42Temp"
         android:textColor="@color/wblack"
         android:textSize="13sp" />
 
     <LinearLayout
-        android:id="@+id/w42DailyLinear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/w42Temp"
@@ -189,7 +189,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/w42AirLinear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

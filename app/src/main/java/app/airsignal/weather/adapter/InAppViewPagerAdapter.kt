@@ -10,9 +10,8 @@ import android.view.*
 import android.webkit.WebView
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
-import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.R
-import app.airsignal.weather.as_eye.activity.EyeListActivity
+import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.view.activity.WebURLActivity
 
 class InAppViewPagerAdapter(
@@ -59,25 +58,15 @@ class InAppViewPagerAdapter(
 
             webView.loadUrl(dao.img)
 
-            if (dao.redirect == "eyeList") {
-                webView.setOnTouchListener { _, event ->
-                    if (event.action == MotionEvent.ACTION_UP) {
-                        val intent = Intent(context, EyeListActivity::class.java)
-                        context.startActivity(intent)
-                        true
-                    } else { false }
-                }
-            } else {
-                webView.setOnTouchListener { _, event ->
-                    if (event.action == MotionEvent.ACTION_UP) {
-                        val intent = Intent(context, WebURLActivity::class.java)
-                        intent.putExtra("appBar",false)
-                        intent.putExtra("sort","inAppLink")
-                        intent.putExtra("redirect", dao.redirect)
-                        context.startActivity(intent)
-                        true
-                    } else { false }
-                }
+            webView.setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_UP) {
+                    val intent = Intent(context, WebURLActivity::class.java)
+                    intent.putExtra("appBar",false)
+                    intent.putExtra("sort","inAppLink")
+                    intent.putExtra("redirect", dao.redirect)
+                    context.startActivity(intent)
+                    true
+                } else { false }
             }
         }
     }

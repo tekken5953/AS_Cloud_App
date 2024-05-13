@@ -4,16 +4,9 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.widget.AppCompatButton
-import app.airsignal.weather.dao.IgnoredKeyFile.googleDefaultClientId
+import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.dao.RDBLogcat.LOGIN_FAILED
-import app.airsignal.weather.dao.RDBLogcat.LOGIN_GOOGLE
-import app.airsignal.weather.dao.RDBLogcat.writeLoginHistory
-import app.airsignal.weather.dao.RDBLogcat.writeLoginPref
-import app.airsignal.weather.db.sp.SetAppInfo.setUserEmail
-import app.airsignal.weather.db.sp.SetAppInfo.setUserId
-import app.airsignal.weather.db.sp.SetAppInfo.setUserLoginPlatform
-import app.airsignal.weather.db.sp.SetAppInfo.setUserProfile
+import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
@@ -38,15 +31,6 @@ class GoogleLogin(private val activity: Activity) {
         lastLogin = GoogleSignIn.getLastSignedInAccount(activity)
     }
 
-    private fun getAccessToken(): String? {
-        return try {
-            lastLogin?.idToken
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-
     /** 로그인 진행 + 로그인 버튼 비활성화 **/
     fun login(mBtn: AppCompatButton, result: ActivityResultLauncher<Intent>) {
         try {
@@ -55,14 +39,12 @@ class GoogleLogin(private val activity: Activity) {
             mBtn.alpha = 0.7f
         } catch (e: Exception) {
             e.stackTraceToString()
-            RDBLogcat.writeErrorNotANR(activity, LOGIN_FAILED, e.localizedMessage!!)
+            RDBLogcat.writeErrorNotANR(activity, RDBLogcat.LOGIN_FAILED, e.localizedMessage ?: "")
         }
     }
 
     /** 토큰 유효성 검사 **/
-    fun isValidToken() : Boolean {
-        return lastLogin?.idToken != null
-    }
+    fun isValidToken() : Boolean { return lastLogin?.idToken != null }
 
     /** 로그아웃 진행 + 로그아웃 로그 저장 **/
     fun logout(pb: LottieAnimationView?) {
@@ -74,8 +56,7 @@ class GoogleLogin(private val activity: Activity) {
                 }
             }
             .addOnCanceledListener {
-                ToastUtils(activity)
-                    .showMessage("로그아웃에 실패했습니다",1)
+                ToastUtils(activity).showMessage("로그아웃에 실패했습니다",1)
             }
     }
 
@@ -86,8 +67,7 @@ class GoogleLogin(private val activity: Activity) {
                 handleSignInResult(it,isAuto = true)
             }
             .addOnFailureListener {
-                ToastUtils(activity)
-                    .showMessage("마지막 로그인 세션을 찾을 수 없습니다",1)
+                ToastUtils(activity).showMessage("마지막 로그인 세션을 찾을 수 없습니다",1)
             }
     }
 
@@ -96,7 +76,7 @@ class GoogleLogin(private val activity: Activity) {
      * DEFAULT_SIGN_IN parameter 는 유저의 ID와 기본적인 프로필 정보를 요청하는데 사용**/
     private fun getGoogleSignInOptions(): GoogleSignInOptions {
         return GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(googleDefaultClientId) // 토큰 요청
+            .requestIdToken(IgnoredKeyFile.googleDefaultClientId) // 토큰 요청
             .requestEmail() // email addresses 도 요청함
             .build()
     }
@@ -105,34 +85,34 @@ class GoogleLogin(private val activity: Activity) {
      *
      * TODO 구글로그인은 아직 테스팅 단계라 임시로 파라미터를 설정**/
     private fun saveLoginStatus(email: String, name: String?, profile: String?, isAuto: Boolean) {
-        setUserLoginPlatform(activity, "google")
-        writeLoginHistory(isLogin = true , platform = LOGIN_GOOGLE, email = email, isAuto = isAuto, isSuccess = true)
-        writeLoginPref(activity, platform =  LOGIN_GOOGLE, email = email, phone = null, name = name, profile = profile)
+        SetAppInfo.setUserLoginPlatform(activity, "google")
+        RDBLogcat.writeLoginHistory(isLogin = true , platform = RDBLogcat.LOGIN_GOOGLE, email = email, isAuto = isAuto, isSuccess = true)
+        RDBLogcat.writeLoginPref(activity, platform =  RDBLogcat.LOGIN_GOOGLE, email = email, phone = null, name = name, profile = profile)
     }
 
     /** 사용자 로그아웃 정보를 저장
      *
      * TODO 임시로 번호를 지정해 놓음**/
     private fun saveLogoutStatus() {
-        writeLoginHistory(isLogin = false, platform = LOGIN_GOOGLE, email = lastLogin?.email!!, isAuto = null, isSuccess = true)
+        RDBLogcat.writeLoginHistory(isLogin = false, platform = RDBLogcat.LOGIN_GOOGLE, email = lastLogin?.email ?: "", isAuto = null, isSuccess = true)
     }
 
     /** 로그인 이벤트 성공 **/
     fun handleSignInResult(completedTask: Task<GoogleSignInAccount>, isAuto: Boolean) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
-            val email = account.email!!.lowercase()
+            val email = account.email?.lowercase() ?: ""
             val displayName = account.displayName
             val id = account.id?.lowercase()
             val photo: String = account?.photoUrl.toString()
             val token = account.idToken
 
-            setUserId(activity, displayName.toString())
-            setUserProfile(activity, photo)
-            setUserEmail(activity, email)
+            SetAppInfo.setUserId(activity, displayName.toString())
+            SetAppInfo.setUserProfile(activity, photo)
+            SetAppInfo.setUserEmail(activity, email)
 
             saveLoginStatus(email, displayName, photo, isAuto)
-            setUserLoginPlatform(activity, LOGIN_GOOGLE)
+            SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_GOOGLE)
             activity.finish()
         } catch (e: ApiException) {
             e.printStackTrace()

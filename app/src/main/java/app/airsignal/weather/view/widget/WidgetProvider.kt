@@ -10,13 +10,14 @@ import android.widget.RemoteViews
 import android.widget.Toast
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.location.GeofenceManager
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.airsignal.weather.db.sp.GetAppInfo
 import kotlinx.coroutines.*
 import kotlin.math.roundToInt
 
@@ -59,12 +60,10 @@ open class WidgetProvider : BaseWidgetProvider() {
         if (context != null) {
             if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                 if (intent.action == REFRESH_BUTTON_CLICKED) {
-                    if (isRefreshable(context, "22")) {
-                        if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
-                            requestPermissions(context,"22",appWidgetId)
-                        } else {
-                            processUpdate(context, appWidgetId)
-                        }
+                    if (isRefreshable(context, WIDGET_22)) {
+                        if (!RequestPermissionsUtil(context).isBackgroundRequestLocation())
+                            requestPermissions(context,WIDGET_22,appWidgetId)
+                        else processUpdate(context, appWidgetId)
                     } else {
                         Toast.makeText(
                             context.applicationContext,
@@ -74,9 +73,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                     }
                 }
             } else {
-                appWidgetId?.let {
-                    processUpdate(context,it)
-                }
+                appWidgetId?.let { processUpdate(context,it) }
             }
         }
     }
@@ -84,41 +81,39 @@ open class WidgetProvider : BaseWidgetProvider() {
     fun processUpdate(context: Context, appWidgetId: Int?) {
         appWidgetId?.let {
             CoroutineScope(Dispatchers.Default).launch {
-                if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
-                    requestPermissions(context, "42", appWidgetId)
-                } else {
-                    val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
-                    val refreshBtnIntent = Intent(context, WidgetProvider::class.java).run {
-                        this.action = REFRESH_BUTTON_CLICKED
-                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                    }
-
-                    val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
-                        .run {
-                            this.action = ENTER_APPLICATION
-                            this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            PendingIntent.getActivity(
-                                context,
-                                appWidgetId,
-                                this,
-                                PendingIntent.FLAG_IMMUTABLE
-                            )
+                val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
+                val refreshBtnIntent =
+                    if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                        Intent(context, WidgetPermActivity::class.java).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            putExtra("sort", WIDGET_22)
+                            putExtra("id", appWidgetId)
                         }
+                    } else {
+                        Intent(context, WidgetProvider::class.java).run {
+                            this.action = REFRESH_BUTTON_CLICKED
+                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                        }
+                    }
 
-                    val pendingIntent = PendingIntent.getBroadcast(
-                        context,
-                        appWidgetId,
-                        refreshBtnIntent,
-                        PendingIntent.FLAG_IMMUTABLE
-                    )
-                    views.run {
-                        this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
-                        this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
+                val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
+                    .run {
+                        this.action = ENTER_APPLICATION
+                        this.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        PendingIntent.getActivity(context, appWidgetId, this, PendingIntent.FLAG_IMMUTABLE)
                     }
-                    if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                        fetch(context, views)
-                    }
+
+                val pendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    appWidgetId,
+                    refreshBtnIntent,
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+                views.run {
+                    this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
+                    this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
                 }
+                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) fetch(context, views)
             }
         }
     }
@@ -126,32 +121,27 @@ open class WidgetProvider : BaseWidgetProvider() {
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context, views: RemoteViews) {
         CoroutineScope(Dispatchers.Default).launch {
-            if (checkBackPerm(context)) {
-                try {
-                    val geofenceLocation = GeofenceManager(context).addGeofence()
-                    geofenceLocation?.let {
-                        val lat = geofenceLocation.latitude
-                        val lng = geofenceLocation.longitude
-                        val addr = GeofenceManager(context).getSimpleAddress(lat,lng)
+            try {
+                val geofenceLocation = GeofenceManager(context).addGeofence()
+                geofenceLocation?.let {
+                    val lat = geofenceLocation.latitude
+                    val lng = geofenceLocation.longitude
+                    val addr = GeofenceManager(context).getSimpleAddress(lat, lng)
+                    val data = requestWeather(context, lat, lng, 1)
 
-                        val data = requestWeather(context, lat, lng, 1)
-
-                        withContext(Dispatchers.Main) {
-                            RDBLogcat.writeWidgetHistory(context, "data", "$addr data22 is $data")
-                            delay(500)
-                            updateUI(context, views, data, addr)
-                        }
-                        withContext(Dispatchers.IO) {
-                            BaseWidgetProvider().setRefreshTime(context, "22")
-                        }
-                    } ?: run {
-                        RDBLogcat.writeErrorANR("Error", "location is null")
+                    withContext(Dispatchers.Main) {
+                        RDBLogcat.writeWidgetHistory(context, "data", "$addr data22 is $data")
+                        delay(500)
+                        updateUI(context, views, data, addr)
                     }
-                } catch (e: Exception) {
-                    RDBLogcat.writeErrorANR("Error", "fetch error22 ${e.localizedMessage}")
+                    withContext(Dispatchers.IO) {
+                        BaseWidgetProvider().setRefreshTime(context, WIDGET_22)
+                    }
+                } ?: run {
+                    RDBLogcat.writeErrorANR("Error", "location is null")
                 }
-            } else {
-                requestPermissions(context,"22",null)
+            } catch (e: Exception) {
+                RDBLogcat.writeErrorANR("Error", "fetch error22 ${e.localizedMessage}")
             }
         }
     }
@@ -176,29 +166,20 @@ open class WidgetProvider : BaseWidgetProvider() {
                 views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
                 this.setTextViewText(R.id.widget2x2Time, currentTime)
                 data?.let {
-                    this.setTextViewText(
-                        R.id.widget2x2TempValue, "${it.current.temperature?.roundToInt() ?: 0}˚"
-                    )
+                    this.setTextViewText(R.id.widget2x2TempValue, "${it.current.temperature?.roundToInt() ?: 0}˚")
                     this.setTextViewText(R.id.widget2x2Address, addr ?: "")
                     this.setImageViewResource(
                         R.id.widget2x2SkyImg,
                         getSkyImgWidget(
-                            if (currentIsAfterRealtime(
-                                    it.current.currentTime,
-                                    it.realtime[0].forecast
-                                )
-                            )
+                            if (currentIsAfterRealtime(it.current.currentTime, it.realtime[0].forecast))
                                 it.current.rainType
                             else it.realtime[0].rainType, it.realtime[0].sky, isNight
                         )
                     )
                     val bg = getBackgroundImgWidget(
-                        "22",
-                        rainType = if (currentIsAfterRealtime(
-                                it.current.currentTime,
-                                it.realtime[0].forecast
-                            )
-                        )
+                        WIDGET_22,
+                        rainType =
+                        if (currentIsAfterRealtime(it.current.currentTime, it.realtime[0].forecast))
                             it.current.rainType else it.realtime[0].rainType,
                         sky = it.realtime[0].sky, isNight
                     )

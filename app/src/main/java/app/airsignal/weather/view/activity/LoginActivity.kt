@@ -5,13 +5,13 @@ import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.IgnoredKeyFile.notificationAdmin
+import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityLoginBinding
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
-import app.airsignal.weather.util.`object`.DataTypeParser.setStatusBar
+import app.airsignal.weather.util.`object`.DataTypeParser
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 
 
@@ -27,7 +27,7 @@ class LoginActivity
         super.onCreate(savedInstanceState)
         initBinding()
 
-        setStatusBar(this)
+        DataTypeParser.setStatusBar(this)
 
         // 구글 로그인 버튼 클릭
         binding.googleLoginButton.setOnClickListener {
@@ -60,7 +60,7 @@ class LoginActivity
                     val data = result.data
                     val task = GoogleSignIn.getSignedInAccountFromIntent(data)
 
-                    if (task.result.email == notificationAdmin) SubFCM().subAdminTopic()
+                    if (task.result.email == IgnoredKeyFile.notificationAdmin) SubFCM().subAdminTopic()
 
                     googleLogin.handleSignInResult(task, isAuto = false)
                 }
