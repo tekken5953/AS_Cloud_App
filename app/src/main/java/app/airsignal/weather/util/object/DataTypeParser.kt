@@ -127,16 +127,16 @@ object DataTypeParser {
     /** sky value에 따른 이미지 설정 **/
     fun getSkyImgLarge(context: Context, sky: String?, isNight: Boolean, lunar: Int): Drawable? {
         val id = when(sky) {
-            "맑음" ->
+            context.getString(R.string.sky_sunny) ->
                 if (!isNight) R.drawable.b_ico_sunny
 //                else  applyLunarImg(lunar)
                  else R.drawable.ico_moon_big
-            "구름많음" ->
+            context.getString(R.string.sky_sunny_cloudy) ->
                 if (!isNight)  R.drawable.b_ico_m_cloudy
                 else  R.drawable.b_ico_m_ncloudy
-            "흐림" -> R.drawable.b_ico_cloudy
-            "소나기", "비" -> R.drawable.b_ico_rainy
-            "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.b_ico_snow
+            context.getString(R.string.sky_cloudy) -> R.drawable.b_ico_cloudy
+            context.getString(R.string.sky_shower), context.getString(R.string.sky_rainy) -> R.drawable.b_ico_rainy
+            context.getString(R.string.sky_sunny_cloudy_snowy), "눈", "흐리고 눈" -> R.drawable.b_ico_snow
             "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> R.drawable.b_ico_cloudy_rainy
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
             else -> R.drawable.cancel

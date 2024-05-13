@@ -60,7 +60,6 @@
                 app:motionTarget="@id/mainGpsFix" />
 
 
-
             <KeyAttribute
                 android:alpha="1"
                 app:curveFit="linear"
@@ -208,7 +207,7 @@
             app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv"
             app:layout_constraintBottom_toBottomOf="@+id/mainGpsTitleTv"/>
         <Constraint
-            android:id="@+id/mainSkyStarImg"
+            android:id="@+id/mainSkyLottie"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/cd_img_star"
@@ -223,22 +222,22 @@
             app:layout_constraintBottom_toBottomOf="parent"/>
         <Constraint
             android:id="@+id/mainSkyImg"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_marginBottom="3dp"
-            android:alpha="1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
-            app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="30dp"
+            android:alpha="0"
+            app:layout_constraintTop_toBottomOf="@+id/topBarLinear"
+            app:layout_constraintStart_toStartOf="@+id/topBarLinear"/>
         <Constraint
             android:id="@+id/mainSkyText"
             style="@style/basicMediumTextView"
-            android:textSize="16sp"
             android:alpha="1"
-            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg"/>
+            android:lineHeight="25dp"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/mainCompareTempTv"
+            app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv"
+            android:layout_marginTop="8dp"/>
         <Constraint
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
@@ -445,7 +444,7 @@
             android:layout_height="0dp"
             android:alpha="0" />
         <Constraint
-            android:id="@+id/mainSkyStarImg"
+            android:id="@+id/mainSkyLottie"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:alpha="0"/>
@@ -457,11 +456,12 @@
             app:layout_constraintBottom_toBottomOf="parent"/>
         <Constraint
             android:id="@id/mainSkyImg"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:layout_marginStart="30dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
+            android:alpha="1"
             app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
             app:layout_constraintTop_toTopOf="@id/mainMotionLinear"
             app:layout_constraintBottom_toBottomOf="@id/mainMotionLinear"/>
@@ -469,9 +469,8 @@
             android:id="@+id/mainSkyText"
             android:alpha="0"
             android:layout_height="0.0001dp"
-            app:layout_constraintStart_toStartOf="@+id/mainSkyImg"
-            app:layout_constraintEnd_toEndOf="@+id/mainSkyImg"
-            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg"/>
+            app:layout_constraintEnd_toEndOf="@+id/mainCompareTempTv"
+            app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv"/>
         <Constraint
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
@@ -552,9 +551,10 @@
             app:layout_constraintBottom_toBottomOf="@+id/mainSkyImg"/>
         <Constraint
             android:id="@+id/nested_scrollview"
-            app:layout_constraintTop_toBottomOf="@+id/mainSkyText"
+            app:layout_constraintTop_toBottomOf="@+id/mainSkyImg"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_height="0dp"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"/>
     </ConstraintSet>
 </MotionScene>

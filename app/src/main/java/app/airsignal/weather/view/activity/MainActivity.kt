@@ -789,8 +789,8 @@ class MainActivity
             ioThread.launch {
                 reNewTopicInMain(metaAddr)
 
-                                isNight = true
-//                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
+//                                isNight = true
+                isNight = getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
 
                 withContext(mainDispatcher) {
                     binding.mainGpsFix.clearAnimation()
@@ -823,11 +823,19 @@ class MainActivity
                             )
                         )
                     }
+
+                    val rainTypeText = if (currentIsAfterRealtime(
+                            result.current.currentTime, result.realtime[0].forecast)) {
+                        result.current.rainType
+                    } else result.realtime[0].rainType
+
+
 //                 날씨에 따라 배경화면 변경
                     val testSky = getString(R.string.sky_cloudy)
+                    val testRain = getString(R.string.sky_rainy)
 
-                    applyWindowBackground(testSky)
-//                    applyWindowBackground(skyText)
+                    applyWindowBackground(testSky,testRain)
+//                    applyWindowBackground(sky = skyText, rainType = rainTypeText)
 
                     binding.mainSkyText.text = skyText
 
@@ -1204,84 +1212,108 @@ class MainActivity
     }
 
     // 하늘상태에 따라 윈도우 배경 변경
-    private fun applyWindowBackground(sky: String?) {
+    private fun applyWindowBackground(sky: String?, rainType: String?) {
         if (isNight) {
             when(sky) {
-                getString(R.string.sky_sunny), getString(R.string.sky_sunny_cloudy) -> {
+                getString(R.string.sky_sunny),
+                getString(R.string.sky_snowy),
+                getString(R.string.sky_rainy_snowy),
+                getString(R.string.sky_shower),
+                getString(R.string.sky_rainy),
+                -> {
                     changeBackgroundResource(R.drawable.main_bg_night)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_clear_night)
-                    setAnimation(R.raw.ani_main_night_stars)
+                    setSkyAnimation(R.raw.ani_main_night_stars)
                 }
-                getString(R.string.sky_cloudy) -> {
+                getString(R.string.sky_sunny_cloudy),
+                getString(R.string.sky_sunny_cloudy_snowy),
+                getString(R.string.sky_sunny_cloudy_rainy_snowy),
+                getString(R.string.sky_sunny_cloudy_shower),
+                getString(R.string.sky_sunny_cloudy_rainy)
+                -> {
+                    changeBackgroundResource(R.drawable.main_bg_night)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_clear_night)
+                    setSkyAnimation(R.raw.ani_main_night_stars)
+                }
+                getString(R.string.sky_cloudy),
+                getString(R.string.sky_cloudy_rainy),
+                getString(R.string.sky_cloudy_rainy_snowy),
+                getString(R.string.sky_cloudy_shower),
+                getString(R.string.sky_cloudy_snowy)
+                -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy_night)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud_night)
-                    setAnimation(R.raw.ani_main_cloudy_night,0.6F)
+                    setSkyAnimation(R.raw.ani_main_cloudy_night,0.6F)
                 }
-                getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
-                getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
-                getString(R.string.sky_cloudy_rainy), getString(R.string.sky_sunny_cloudy_rainy),
-                getString(R.string.sky_cloudy_shower), getString(R.string.sky_shower), getString(R.string.sky_rainy), -> {
-                    changeBackgroundResource(R.drawable.main_bg_cloudy_night)
-                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud_night)
-                    setAnimation(R.raw.ani_main_rain)
-                }
-                getString(R.string.sky_snowy), getString(R.string.sky_sunny_cloudy_snowy) -> {
+                else
+                -> {
                     changeBackgroundResource(R.drawable.main_bg_night)
-                    binding.mainBottomDecoImg.colorFilter = setBrightness(0.6f)
-                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
-                    setAnimation(R.raw.ani_main_snow, 0.6F)
-                }
-                getString(R.string.sky_cloudy_snowy) -> {
-                    changeBackgroundResource(R.drawable.main_bg_cloudy_night)
-                    binding.mainBottomDecoImg.colorFilter = setBrightness(0.6f)
-                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
-                    setAnimation(R.raw.ani_main_snow, 0.6F)
-                }
-                else -> {
-                    changeBackgroundResource(R.drawable.main_bg_night)
-                    setAnimation(null)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_clear_night)
+                    setEmptyAnimation(1)
                 }
             }
         } else {
             when(sky) {
-                getString(R.string.sky_sunny), getString(R.string.sky_sunny_cloudy) -> {
+                getString(R.string.sky_sunny),
+                getString(R.string.sky_snowy),
+                getString(R.string.sky_rainy_snowy),
+                getString(R.string.sky_shower),
+                getString(R.string.sky_rainy),
+                -> {
                     changeBackgroundResource(R.drawable.main_bg_clear)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_clear)
-                    setAnimation(R.raw.ani_main_clear_birds)
+                    setSkyAnimation(R.raw.ani_main_clear_birds)
                 }
-                getString(R.string.sky_cloudy) -> {
+                getString(R.string.sky_sunny_cloudy),
+                getString(R.string.sky_sunny_cloudy_snowy),
+                getString(R.string.sky_sunny_cloudy_rainy_snowy),
+                getString(R.string.sky_sunny_cloudy_shower),
+                getString(R.string.sky_sunny_cloudy_rainy)
+                -> {
+                    changeBackgroundResource(R.drawable.main_bg_clear)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_clear)
+                    setSkyAnimation(R.raw.ani_main_clear_birds)
+                }
+                getString(R.string.sky_cloudy),
+                getString(R.string.sky_cloudy_rainy),
+                getString(R.string.sky_cloudy_rainy_snowy),
+                getString(R.string.sky_cloudy_shower),
+                getString(R.string.sky_cloudy_snowy)
+                -> {
                     changeBackgroundResource(R.drawable.main_bg_cloudy)
                     binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud)
-                    setAnimation(R.raw.ani_main_cloudy_day)
-                    binding.mainSkyStarImg.bringToFront()
-                    binding.mainSkyText.bringToFront()
+                    setSkyAnimation(R.raw.ani_main_cloudy_day,0.6F)
                 }
-                getString(R.string.sky_sunny_cloudy_rainy_snowy), getString(R.string.sky_cloudy_rainy_snowy),
-                getString(R.string.sky_rainy_snowy), getString(R.string.sky_sunny_cloudy_shower),
-                getString(R.string.sky_cloudy_rainy), getString(R.string.sky_sunny_cloudy_rainy),
-                getString(R.string.sky_cloudy_shower), getString(R.string.sky_shower), getString(R.string.sky_rainy), -> {
-                    changeBackgroundResource(R.drawable.main_bg_cloudy)
-                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_cloud)
-                    setAnimation(R.raw.ani_main_rain)
-                }
-                getString(R.string.sky_snowy), getString(R.string.sky_sunny_cloudy_snowy) -> {
-                    changeBackgroundResource(R.drawable.main_bg_snow)
-                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
-                    setAnimation(R.raw.ani_main_snow, 0.6F)
-                }
-                getString(R.string.sky_cloudy_snowy) -> {
-                    changeBackgroundResource(R.drawable.main_bg_cloudy)
-                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_snow)
-                    setAnimation(R.raw.ani_main_snow, 0.6F)
-                }
-                else -> {
-                    changeBackgroundResource(R.drawable.main_bg_night)
-                    setAnimation(null)
+                else
+                -> {
+                    changeBackgroundResource(R.drawable.main_bg_clear)
+                    binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_clear)
+                    setEmptyAnimation(1)
                 }
             }
         }
 
-        binding.mainSkyStarImg.invalidate()
+        when(rainType) {
+            getString(R.string.sky_rainy),
+            getString(R.string.sky_sunny_cloudy_rainy),
+            getString(R.string.sky_cloudy_rainy),
+            getString(R.string.sky_shower),
+            getString(R.string.sky_cloudy_shower),
+            getString(R.string.sky_sunny_cloudy_shower)
+            -> { setRainAnimation(R.raw.ani_main_rain) }
+            getString(R.string.sky_rainy_snowy),
+            getString(R.string.sky_cloudy_rainy_snowy),
+            getString(R.string.sky_sunny_cloudy_rainy_snowy)
+            -> { setRainAnimation(R.raw.ani_main_snow, 0.6F) }
+            getString(R.string.sky_snowy),
+            getString(R.string.sky_cloudy_snowy),
+            getString(R.string.sky_sunny_cloudy_snowy)
+            -> { setRainAnimation(R.raw.ani_main_rain) }
+            else -> {setEmptyAnimation(2)}
+        }
+
+        binding.mainSkyLottie.invalidate()
+        binding.mainRainLottie.invalidate()
     }
 
     private fun setBrightness(level: Float): ColorFilter {
@@ -1292,33 +1324,64 @@ class MainActivity
         return ColorMatrixColorFilter(colorMatrix)
     }
 
-    private fun setAnimation(animationResource: Int?) {
+    private fun setSkyAnimation(animationResource: Int?) {
         val isAnimationEnable = getWeatherAnimEnabled(this)
         animationResource?.let {
-            binding.mainSkyStarImg.setAnimation(it)
+            binding.mainSkyLottie.setAnimation(it)
             if (isAnimationEnable) {
-                if (!binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.playAnimation()
+                if (!binding.mainSkyLottie.isAnimating) binding.mainSkyLottie.playAnimation()
             } else {
-                if (binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.clearAnimation()
+                if (binding.mainSkyLottie.isAnimating) binding.mainSkyLottie.clearAnimation()
             }
-        } ?: run { setEmptyAnimation() }
+        } ?: run { setEmptyAnimation(1) }
     }
-    private fun setAnimation(animationResource: Int?, speed: Float) {
+    private fun setSkyAnimation(animationResource: Int?, speed: Float?) {
         val isAnimationEnable = getWeatherAnimEnabled(this)
         animationResource?.let {
-            binding.mainSkyStarImg.setAnimation(it)
-            binding.mainSkyStarImg.speed = speed
+            binding.mainSkyLottie.setAnimation(it)
+            speed?.let {binding.mainSkyLottie.speed = speed}
             if (isAnimationEnable) {
-                if (!binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.playAnimation()
+                if (!binding.mainSkyLottie.isAnimating) binding.mainSkyLottie.playAnimation()
             } else {
-                if (binding.mainSkyStarImg.isAnimating) binding.mainSkyStarImg.clearAnimation()
+                if (binding.mainSkyLottie.isAnimating) binding.mainSkyLottie.clearAnimation()
             }
-        } ?: run { setEmptyAnimation() }
+        } ?: run { setEmptyAnimation(1) }
     }
 
-    private fun setEmptyAnimation() {
+    private fun setRainAnimation(animationResource: Int?) {
+        val isAnimationEnable = getWeatherAnimEnabled(this)
+        animationResource?.let {
+            binding.mainRainLottie.setAnimation(it)
+            if (isAnimationEnable) {
+                if (!binding.mainRainLottie.isAnimating) binding.mainRainLottie.playAnimation()
+            } else {
+                if (binding.mainRainLottie.isAnimating) binding.mainRainLottie.clearAnimation()
+            }
+        } ?: run { setEmptyAnimation(2) }
+    }
+    private fun setRainAnimation(animationResource: Int?, speed: Float?) {
+        val isAnimationEnable = getWeatherAnimEnabled(this)
+        animationResource?.let {
+            binding.mainRainLottie.setAnimation(it)
+            speed?.let {binding.mainRainLottie.speed = speed}
+            if (isAnimationEnable) {
+                if (!binding.mainRainLottie.isAnimating) binding.mainRainLottie.playAnimation()
+            } else {
+                if (binding.mainRainLottie.isAnimating) binding.mainRainLottie.clearAnimation()
+            }
+        } ?: run { setEmptyAnimation(2) }
+    }
+
+    private fun setEmptyAnimation(flag: Int) {
         val emptyJson = "{}"
-        binding.mainSkyStarImg.setAnimationFromJson(emptyJson, "emptyKey")
+        when(flag) {
+            1 -> { binding.mainSkyLottie.setAnimationFromJson(emptyJson, "emptyKey") }
+            2 -> { binding.mainRainLottie.setAnimationFromJson(emptyJson, "emptyKey") }
+            else -> {
+                binding.mainSkyLottie.setAnimationFromJson(emptyJson, "emptyKey")
+                binding.mainRainLottie.setAnimationFromJson(emptyJson, "emptyKey")
+            }
+        }
     }
 
     private fun changeBackgroundResource(id: Int?) {
@@ -1572,7 +1635,7 @@ class MainActivity
         binding.subAirHumid.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.subAirWind.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.subAirRainP.alpha = if (visibility == VISIBLE) 1f else 0f
-        binding.mainSkyStarImg.alpha = if (visibility == VISIBLE) 1f else 0f
+        binding.mainSkyLottie.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainShareIv.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainSkyText.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainErrorRenewBtn.isClickable = visibility == GONE

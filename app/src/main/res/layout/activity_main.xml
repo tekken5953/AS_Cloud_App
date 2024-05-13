@@ -18,6 +18,25 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             tools:showPaths="true">
 
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/mainSkyLottie"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:lottie_cacheComposition="true"
+                android:contentDescription="@string/cd_img_star"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:lottie_loop="true" />
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/mainRainLottie"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:lottie_cacheComposition="true"
+                android:contentDescription="@string/cd_img_star"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:lottie_loop="true" />
+
             <LinearLayout
                 android:id="@+id/mainMotionLinear"
                 android:layout_width="match_parent"
@@ -163,15 +182,6 @@
                 android:translationZ="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/mainErrorTitle" />
-
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/mainSkyStarImg"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/cd_img_star"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:lottie_loop="true" />
 
             <ImageView
                 android:id="@+id/mainSkyImg"

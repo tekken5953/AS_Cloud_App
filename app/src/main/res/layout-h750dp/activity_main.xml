@@ -19,7 +19,16 @@
             tools:showPaths="true">
 
             <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/mainSkyStarImg"
+                android:id="@+id/mainSkyLottie"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:lottie_cacheComposition="true"
+                android:contentDescription="@string/cd_img_star"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:lottie_loop="true" />
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/mainRainLottie"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:lottie_cacheComposition="true"
@@ -180,10 +189,8 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/cd_img_sky"
                 android:scaleType="fitCenter"
-                app:layout_constraintBottom_toTopOf="@+id/mainWarningBox"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr" />
+                app:layout_constraintTop_toBottomOf="@+id/mainSideMenuIv"
+                app:layout_constraintStart_toStartOf="@+id/mainSideMenuIv"/>
 
             <ImageView
                 android:id="@+id/mainBottomDecoImg"
@@ -209,9 +216,9 @@
                 android:alpha="0"
                 android:lineHeight="25dp"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-                app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
-                app:layout_constraintTop_toBottomOf="@+id/mainSkyImg" />
+                app:layout_constraintEnd_toEndOf="@+id/mainCompareTempTv"
+                app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv"
+                android:layout_marginTop="8dp"/>
 
             <TextView
                 android:id="@+id/mainLiveTempValue"
