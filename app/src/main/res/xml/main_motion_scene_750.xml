@@ -8,7 +8,7 @@
         app:duration="500">
         <OnClick
             app:clickAction="transitionToEnd"
-            app:targetId="@id/mainMotionSlideGuide"/>
+            app:targetId="@id/mainMotionSLideImg"/>
     </Transition>
     <Transition
         app:constraintSetEnd="@+id/end"
@@ -25,7 +25,7 @@
 
         <OnClick
             app:clickAction="transitionToEnd"
-            app:targetId="@id/mainMotionSlideGuide"/>
+            app:targetId="@id/mainMotionSLideImg"/>
 
         <KeyFrameSet>
             <KeyAttribute
@@ -164,6 +164,17 @@
                 app:curveFit="linear"
                 app:framePosition="99"
                 app:motionTarget="@id/liveCTr" />
+
+            <KeyAttribute
+                android:alpha="0"
+                app:curveFit="linear"
+                app:framePosition="60"
+                app:motionTarget="@id/mainSkyImg" />
+            <KeyAttribute
+                android:alpha="1"
+                app:curveFit="linear"
+                app:framePosition="99"
+                app:motionTarget="@id/mainSkyImg" />
         </KeyFrameSet>
     </Transition>
 
@@ -250,9 +261,9 @@
             android:id="@+id/nested_subAir_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/mainMotionSlideGuide"
+            app:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg"
             android:layout_marginStart="24dp"
-            android:layout_marginBottom="25dp"
+            android:layout_marginBottom="12dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/scrolled_box_bg"
             android:alpha="1"/>
@@ -262,7 +273,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@+id/nested_subAir_frame"
             android:background="@drawable/main_bottom_content_box_bg"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="6dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:alpha="1"/>
@@ -332,21 +343,14 @@
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL" />
         <Constraint
-            android:id="@+id/mainMotionSlideGuide"
-            style="@style/basicTextView"
-            android:layout_marginBottom="15dp"
-            android:alpha="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
-        <Constraint
             android:id="@+id/mainMotionSLideImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:alpha="1"
-            app:layout_constraintTop_toTopOf="@+id/mainMotionSlideGuide"
-            app:layout_constraintBottom_toBottomOf="@+id/mainMotionSlideGuide"
-            app:layout_constraintStart_toEndOf="@+id/mainMotionSlideGuide" />
+            android:layout_marginBottom="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
         <Constraint
             android:id="@+id/nested_fab"
             android:layout_width="wrap_content"
@@ -413,9 +417,9 @@
             android:id="@+id/nested_subAir_frame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/mainMotionSlideGuide"
+            app:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg"
             android:layout_marginStart="24dp"
-            android:layout_marginBottom="25dp"
+            android:layout_marginBottom="12dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/scrolled_box_bg"
             android:alpha="0"/>
@@ -425,7 +429,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@+id/nested_subAir_frame"
             android:background="@drawable/main_bottom_content_box_bg"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="6dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
             android:alpha="0"/>
@@ -513,20 +517,14 @@
             android:alpha="0"
             app:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL" />
         <Constraint
-            android:id="@+id/mainMotionSlideGuide"
-            android:layout_marginBottom="10dp"
-            android:alpha="0"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
-        <Constraint
             android:id="@+id/mainMotionSLideImg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:alpha="0"
-            app:layout_constraintTop_toTopOf="@+id/mainMotionSlideGuide"
-            app:layout_constraintBottom_toBottomOf="@+id/mainMotionSlideGuide"
-            app:layout_constraintStart_toEndOf="@+id/mainMotionSlideGuide"/>
+            android:layout_marginBottom="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+            app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"/>
         <Constraint
             android:id="@+id/nested_fab"
             android:layout_width="wrap_content"

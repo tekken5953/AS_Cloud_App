@@ -96,10 +96,6 @@ object SetAppInfo {
         SharedPreferenceManager(context).setLong(SpDao.IN_APP_MSG_TIME, System.currentTimeMillis())
     }
 
-    fun setWeatherAnimEnabled(context: Context, enabled: Boolean) {
-        SharedPreferenceManager(context).setBoolean(SpDao.WEATHER_ANIMATION_ENABLE, enabled)
-    }
-
     fun setWeatherBoxOpacity(context: Context, value: Int) {
         SharedPreferenceManager(context).setInt(SpDao.WEATHER_BOX_OPACITY, value)
     }

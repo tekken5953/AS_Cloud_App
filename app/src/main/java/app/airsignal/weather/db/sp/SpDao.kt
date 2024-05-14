@@ -13,7 +13,7 @@ object SpDao {
     const val notiSound = "notification_sound"
     const val lastAddress = "last_address"
     const val userFontScale = "scale"
-    const val NOTIFICATION_ADDRESS = "Notification_address" // 노티피케이션 용 주소
+    const val NOTIFICATION_ADDRESS = "Notification_address"
     const val NOTIFICATION_TOPIC_DAILY = "Notification_Daily"
     const val INITIALIZED_LOC_PERMISSION = "initialized_loc_permission"
     const val INITIALIZED_NOTI_PERMISSION = "initialized_noti_permission"
@@ -34,7 +34,6 @@ object SpDao {
     const val IN_APP_MSG_REDIRECT = "inAppMsgRedirect"
     const val IN_APP_MSG_TIME = "inAppMsgTime"
     const val PATCH_SKIP = "skip_patch"
-    const val WEATHER_ANIMATION_ENABLE = "weather_animation_enabled"
     const val WEATHER_BOX_OPACITY = "weather_box_opacity"
     const val WEATHER_BOX_OPACITY2 = "weather_box_opacity2"
 }

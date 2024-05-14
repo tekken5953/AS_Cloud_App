@@ -17,7 +17,6 @@
         <attr name="customImg" format="reference"/>
         <attr name="customTitle" format="string"/>
         <attr name="customSubText" format="string"/>
-        <attr name="isLeftLine" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="CustomerServiceView">

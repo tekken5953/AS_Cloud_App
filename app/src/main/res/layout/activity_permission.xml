@@ -103,9 +103,10 @@
                     android:id="@+id/permissionItemNotiImg"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginTop="27dp"
                     android:contentDescription="@string/cd_icon_noti"
-                    android:layout_below="@+id/permissionItemUnNasTitle"
+                    android:layout_alignTop="@+id/permissionItemNotiTitle"
+                    android:layout_alignBottom="@+id/permissionItemNotiContent"
+                    android:scaleType="center"
                     android:layout_marginStart="36dp"
                     android:src="@drawable/ico_alarm"/>
 

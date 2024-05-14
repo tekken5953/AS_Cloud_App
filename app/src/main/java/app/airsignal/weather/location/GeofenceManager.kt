@@ -15,7 +15,7 @@ class GeofenceManager(private val context: Context) {
     private val requestId = "request_id_geofence"
 
     private val geofencingClient: GeofencingClient by lazy {
-        LocationServices.getGeofencingClient(BaseApplication.appContext)
+        LocationServices.getGeofencingClient(context)
     }
 
     @SuppressLint("MissingPermission")

@@ -377,7 +377,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="6dp"
                 android:background="@drawable/main_bottom_content_box_bg"
                 android:gravity="center"
                 app:layout_constraintBottom_toTopOf="@+id/nested_subAir_frame">
@@ -395,17 +395,17 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
-                android:layout_marginBottom="25dp"
+                android:layout_marginBottom="12dp"
                 android:background="@drawable/main_bottom_content_box_bg"
                 android:clickable="false"
-                app:layout_constraintBottom_toTopOf="@+id/mainMotionSlideGuide">
+                app:layout_constraintBottom_toTopOf="@+id/mainMotionSLideImg">
 
                 <TableRow
                     android:id="@+id/subAirTr"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:layout_marginBottom="25dp"
+                    android:layout_marginBottom="18dp"
                     android:gravity="center">
 
                     <TextView
@@ -438,8 +438,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/subAirWind"
                     android:layout_toStartOf="@+id/subAirWind"
-                    app:customImg="@drawable/ico_main_humidity"
-                    app:isLeftLine="false" />
+                    app:customImg="@drawable/ico_main_humidity" />
 
                 <app.airsignal.weather.view.custom_view.SubAirView
                     android:id="@+id/subAirWind"
@@ -447,8 +446,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/subAirTr"
                     android:layout_centerHorizontal="true"
-                    app:customImg="@drawable/ico_main_wind"
-                    app:isLeftLine="true" />
+                    app:customImg="@drawable/ico_main_wind" />
 
                 <app.airsignal.weather.view.custom_view.SubAirView
                     android:id="@+id/subAirRainP"
@@ -456,32 +454,19 @@
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/subAirWind"
                     android:layout_toEndOf="@+id/subAirWind"
-                    app:customImg="@drawable/ico_main_rain"
-                    app:isLeftLine="true" />
+                    app:customImg="@drawable/ico_main_rain" />
             </RelativeLayout>
-
-            <TextView
-                android:id="@+id/mainMotionSlideGuide"
-                style="@style/basicTextView"
-                android:layout_marginBottom="15dp"
-                android:contentDescription="@string/cd_text_more"
-                android:textColor="@android:color/transparent"
-                android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
-                app:layout_constraintStart_toStartOf="@+id/mainMotionLinear" />
 
             <ImageView
                 android:id="@+id/mainMotionSLideImg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginBottom="2dp"
                 android:contentDescription="@string/cd_img_more"
                 android:src="@drawable/drop_down_bottom"
-                app:layout_constraintBottom_toBottomOf="@+id/mainMotionSlideGuide"
-                app:layout_constraintStart_toEndOf="@+id/mainMotionSlideGuide"
-                app:layout_constraintTop_toTopOf="@+id/mainMotionSlideGuide"
+                android:layout_marginBottom="12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/mainMotionLinear"
+                app:layout_constraintStart_toStartOf="@+id/mainMotionLinear"
                 app:tint="@android:color/transparent" />
 
             <androidx.core.widget.NestedScrollView

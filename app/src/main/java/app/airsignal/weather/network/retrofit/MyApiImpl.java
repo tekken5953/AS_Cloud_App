@@ -2,6 +2,9 @@ package app.airsignal.weather.network.retrofit;
 
 import androidx.annotation.Nullable;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 import retrofit2.Call;
@@ -9,7 +12,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface MyApiImpl {
-
     @GET("forecast")
         // 전체 데이터 호출
     Call<ApiModel.GetEntireData> getForecast(

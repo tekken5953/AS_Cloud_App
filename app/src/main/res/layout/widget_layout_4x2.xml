@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/w42Background"
-    android:layout_width="280dp"
-    android:layout_height="140dp"
+    android:layout_width="270dp"
+    android:layout_height="130dp"
     android:background="@drawable/widget_bg4x2_sunny"
     android:padding="@dimen/widget_margin">
 

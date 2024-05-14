@@ -130,10 +130,6 @@ object GetAppInfo {
         return SharedPreferenceManager(context).getLong(SpDao.IN_APP_MSG_TIME)
     }
 
-    fun getWeatherAnimEnabled(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(SpDao.WEATHER_ANIMATION_ENABLE, true)
-    }
-
     fun getWeatherBoxOpacity(context: Context): Int {
         return SharedPreferenceManager(context).getInt(SpDao.WEATHER_BOX_OPACITY, 60)
     }

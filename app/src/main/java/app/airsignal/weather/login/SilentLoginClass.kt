@@ -35,7 +35,7 @@ class SilentLoginClass {
             }
             RDBLogcat.LOGIN_NAVER -> {
                 // 네이버 자동 로그인
-                val naverLogin = NaverLogin(activity)
+                val naverLogin = NaverLogin(activity).init()
                 if (naverLogin.getAccessToken() == null) {
                     naverLogin.silentLogin()
                     RDBLogcat.writeLoginHistory(isLogin = true, platform = RDBLogcat.LOGIN_NAVER, email = email,

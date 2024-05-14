@@ -13,13 +13,8 @@ import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
 class BaseApplication : Application() {
-    companion object {
-        lateinit var appContext: Context
-    }
-
     override fun onCreate() {
         super.onCreate()
-        appContext = applicationContext
 
         startKoin {
             androidLogger()

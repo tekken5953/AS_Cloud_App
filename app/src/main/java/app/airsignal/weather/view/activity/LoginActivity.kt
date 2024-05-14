@@ -21,7 +21,7 @@ class LoginActivity
 
     private val googleLogin by lazy { GoogleLogin(this) }   // 구글 로그인
     private val kakaoLogin by lazy { KakaoLogin(this) }     // 카카오 로그인
-    private val naverLogin by lazy { NaverLogin(this) }     // 네이버 로그인
+    private val naverLogin by lazy { NaverLogin(this).init() }     // 네이버 로그인
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

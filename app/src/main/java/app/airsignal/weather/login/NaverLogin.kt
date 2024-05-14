@@ -6,8 +6,8 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.sp.GetAppInfo
-import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.db.sp.SetAppInfo
+import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.util.RefreshUtils
 import app.airsignal.weather.util.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
@@ -24,15 +24,17 @@ import com.navercorp.nid.profile.data.NidProfileResponse
  **/
 
 class NaverLogin(private val activity: Activity) {
-    private val toast = ToastUtils(activity)
+    private val toast by lazy {ToastUtils(activity)}
 
-    init {
+    fun init(): NaverLogin {
         NaverIdLoginSDK.initialize(
             activity,
             IgnoredKeyFile.naverDefaultClientId,
             IgnoredKeyFile.naverDefaultClientSecret,
             IgnoredKeyFile.naverDefaultClientName
         )
+
+        return this
     }
 
     /** 로그인
@@ -146,15 +148,11 @@ class NaverLogin(private val activity: Activity) {
             }
 
             override fun onFailure(httpStatus: Int, message: String) {
-                // 서버에서 토큰 삭제에 실패했어도 클라이언트에 있는 토큰은 삭제되어 로그아웃된 상태입니다.
-                // 클라이언트에 토큰 정보가 없기 때문에 추가로 처리할 수 있는 작업은 없습니다.
                 println(NaverIdLoginSDK.getLastErrorDescription())
                 activity.recreate()
             }
 
             override fun onError(errorCode: Int, message: String) {
-                // 서버에서 토큰 삭제에 실패했어도 클라이언트에 있는 토큰은 삭제되어 로그아웃된 상태입니다.
-                // 클라이언트에 토큰 정보가 없기 때문에 추가로 처리할 수 있는 작업은 없습니다.
                 onFailure(errorCode, message)
                 activity.recreate()
             }

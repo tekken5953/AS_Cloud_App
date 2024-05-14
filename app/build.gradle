@@ -76,7 +76,7 @@ dependencies {
     // Kakao Login
     implementation 'com.kakao.sdk:v2-user:2.10.0'
     // Naver Login - JDK 11 이상
-    implementation 'com.navercorp.nid:oauth:5.4.0'
+    implementation 'com.navercorp.nid:oauth:5.6.0'
 
     // Glide
     implementation("com.github.bumptech.glide:glide:4.11.0")

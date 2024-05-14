@@ -198,19 +198,11 @@
                     app:layout_constraintTop_toBottomOf="@+id/settingDisplayTitle" />
 
                 <app.airsignal.weather.view.custom_view.SettingSystemView
-                    android:id="@+id/settingAnimation"
-                    android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    app:layout="@layout/custom_view_setting_system"
-                    app:layout_constraintTop_toBottomOf="@+id/settingDisplayLine"
-                    app:left="@string/setting_animation" />
-
-                <app.airsignal.weather.view.custom_view.SettingSystemView
                     android:id="@+id/settingOpacityText"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
                     app:layout="@layout/custom_view_setting_system"
-                    app:layout_constraintTop_toBottomOf="@+id/settingAnimation"
+                    app:layout_constraintTop_toBottomOf="@+id/settingDisplayLine"
                     app:left="@string/setting_opacity" />
 
                 <TextView

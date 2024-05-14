@@ -620,7 +620,6 @@ class MainActivity
         binding.mainLicenseText.text = getString(R.string.data_api_license)
         binding.mainSunTomTitle.text = getString(R.string.tomorrow)
         binding.mainSunSetTitle.text = getString(R.string.sunset)
-        binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
 
 //        // adView 닫기 클릭
 //        binding.adViewCancelIv.setOnClickListener {
@@ -788,20 +787,19 @@ class MainActivity
                     val rainTypeText = if (isCurrent) result.current.rainType
                     else result.realtime[0].rainType
 
-
 //                 날씨에 따라 배경화면 변경
                     val testSky = getString(R.string.sky_cloudy_shower)
                     val testRain = getString(R.string.sky_shower)
 
-//                    applyWindowBackground(sky = testSky, rainType = testRain)
-//                    setMountain(sky = testSky, rainType = testRain)
-//                    setSkyLottie(sky = testSky)
-//                    setRainTypeLottie(testRain)
+                    applyWindowBackground(sky = testSky, rainType = testRain)
+                    setMountain(sky = testSky, rainType = testRain)
+                    setSkyLottie(sky = testSky)
+                    setRainTypeLottie(testRain)
 
-                    applyWindowBackground(sky = result.realtime[0].sky, rainType = rainTypeText)
-                    setMountain(sky = result.realtime[0].sky, rainType = rainTypeText)
-                    setSkyLottie(sky = result.realtime[0].sky)
-                    setRainTypeLottie(rainType = rainTypeText)
+//                    applyWindowBackground(sky = result.realtime[0].sky, rainType = rainTypeText)
+//                    setMountain(sky = result.realtime[0].sky, rainType = rainTypeText)
+//                    setSkyLottie(sky = result.realtime[0].sky)
+//                    setRainTypeLottie(rainType = rainTypeText)
 
                     binding.mainSkyText.text = skyText
 
@@ -1279,6 +1277,7 @@ class MainActivity
             else -> { setEmptyAnimation(1) }
         }
 
+        binding.mainSkyLottie.translationZ = -20F
         binding.mainSkyLottie.invalidate()
     }
 
@@ -1302,6 +1301,7 @@ class MainActivity
             else -> { setEmptyAnimation(2) }
         }
 
+        binding.mainRainLottie.translationZ = -10F
         binding.mainRainLottie.invalidate()
     }
 
@@ -1550,10 +1550,6 @@ class MainActivity
                     isInteractionEnabled = false // 모션 레이아웃의 스와이프를 막음
                 }
 
-                binding.mainMotionSlideGuide.apply {
-                    text = getString(R.string.error_guide)
-                    setTextColor(getC(R.color.theme_text_color))
-                }
                 applyBackground(binding.mainWarningBox, null)
                 applyBackground(binding.nestedSubAirFrame, null)
 
@@ -1572,7 +1568,6 @@ class MainActivity
         binding.subAirWind.getTitle().text = getString(R.string.wind)
         binding.subAirRainP.getTitle().text = getString(R.string.rainPer)
         applyBackground(binding.mainWarningBox, R.drawable.report_frame_bg)
-        binding.mainMotionSlideGuide.text = getString(R.string.slide_more)
         binding.mainMinTitle.text = getString(R.string.min)
         binding.mainMaxTitle.text = getString(R.string.max)
         binding.mainShareIv.isEnabled = true
@@ -1782,7 +1777,6 @@ class MainActivity
                 it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgressWhiteBox}000000"))
             }
             binding.mainMotionSLideImg.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
-            binding.mainMotionSlideGuide.setTextColor(getC(R.color.white))
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = window.decorView.systemUiVisibility and SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
         }
@@ -1796,7 +1790,6 @@ class MainActivity
                 it.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgressBlackBox}FFFFFF"))
             }
             binding.mainMotionSLideImg.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
-            binding.mainMotionSlideGuide.setTextColor(getC(R.color.white))
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }

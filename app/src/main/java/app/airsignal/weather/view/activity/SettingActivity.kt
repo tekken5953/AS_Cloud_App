@@ -22,7 +22,6 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
@@ -122,7 +121,7 @@ class SettingActivity
                                 KakaoLogin(this@SettingActivity).disconnectFromKakao(binding.settingPb)
                             }
                             RDBLogcat.LOGIN_NAVER -> {
-                                NaverLogin(this@SettingActivity).disconnectFromNaver(binding.settingPb)
+                                NaverLogin(this@SettingActivity).init().disconnectFromNaver(binding.settingPb)
                             }
                             RDBLogcat.LOGIN_GOOGLE -> {
                                 GoogleLogin(this@SettingActivity).logout(binding.settingPb)
@@ -565,11 +564,6 @@ class SettingActivity
                 .show(notificationView, true,ShowDialogClass.DialogTransition.END_TO_START)
         }
 
-
-        binding.settingAnimation.setOnClickListener {
-            makeWeatherAnimationEnabledDialog()
-        }
-
         binding.settingOpacityText.setOnClickListener {
             makeWeatherBoxOpacityDialog()
         }
@@ -850,30 +844,6 @@ class SettingActivity
         }
     }
 
-    private fun makeWeatherAnimationEnabledDialog() {
-        val animationView: View =
-            LayoutInflater.from(this).inflate(R.layout.dialog_setting_animation, null)
-
-        val switch: SwitchCompat = animationView.findViewById(R.id.aniSettingSwitch)
-
-        switch.isChecked = GetAppInfo.getWeatherAnimEnabled(this)
-
-        switch.setOnCheckedChangeListener { _, isChecked ->
-            ioThread.launch {
-                SetAppInfo.setWeatherAnimEnabled(this@SettingActivity, isChecked)
-
-                withContext(mainDispatcher) {
-                    SnackBarUtils(animationView,getString(R.string.ok_change_setting),
-                    ResourcesCompat.getDrawable(resources,R.drawable.check_small, null))
-                }
-            }
-        }
-
-        ShowDialogClass(this, false)
-            .setBackPressed(animationView.findViewById(R.id.aniBack))
-            .show(animationView, true,ShowDialogClass.DialogTransition.END_TO_START)
-    }
-
     @SuppressLint("SetTextI18n")
     private fun makeWeatherBoxOpacityDialog() {
         val opacityView: View =
@@ -889,7 +859,6 @@ class SettingActivity
         val opacityValue2: TextView = opacityView.findViewById(R.id.opacityValue2)
         val opacityBox2: LinearLayout = opacityView.findViewById(R.id.opacityPreviewContainer2)
         val opacityPreviewText2: TextView = opacityView.findViewById(R.id.opacityPreviewText2)
-
 
         opacityPreviewText.setTextColor(getColor(R.color.main_black))
         opacityPreviewText2.setTextColor(getColor(R.color.white))
@@ -956,9 +925,7 @@ class SettingActivity
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 seekBar?.let {
-                    ioThread.launch {
-                        SetAppInfo.setWeatherBoxOpacity2(this@SettingActivity, it.progress )
-                    }
+                    ioThread.launch { SetAppInfo.setWeatherBoxOpacity2(this@SettingActivity, it.progress ) }
                     ToastUtils(this@SettingActivity).showMessage(getString(R.string.ok_change_setting),1)
                 }
             }
