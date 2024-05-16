@@ -5,6 +5,7 @@ import android.content.Context
 import app.airsignal.weather.location.GetLocation
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.repository.*
+import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.viewmodel.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger

@@ -2,9 +2,6 @@ package app.airsignal.weather.network.retrofit;
 
 import androidx.annotation.Nullable;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 import retrofit2.Call;
@@ -12,30 +9,25 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface MyApiImpl {
-    @GET("forecast")
-        // 전체 데이터 호출
+    @GET("forecast")// 전체 데이터 호출
     Call<ApiModel.GetEntireData> getForecast(
             @Nullable @Query("lat") Double lat,
             @Nullable @Query("lng") Double lng,
             @Nullable @Query("addr") String addr);
 
-    @GET("forecast")
-        // 위젯 데이터 호출
+    @GET("forecast")// 위젯 데이터 호출
     Call<ApiModel.WidgetData> getWidgetForecast(
             @Nullable @Query("lat") Double lat,
             @Nullable @Query("lng") Double lng,
             @Nullable @Query("rcount") Integer count);
 
-    @GET("notice")
-        // 공지사항 호출
+    @GET("notice")// 공지사항 호출
     Call<List<ApiModel.NoticeItem>> getNotice();
 
-    @GET("version")
-        // 앱 버전 호출
+    @GET("version")// 앱 버전 호출
     Call<ApiModel.AppVersion> getVersion();
 
-    @GET("forecast/broadcast")
-        // 기상 특보 데이터 호출
+    @GET("forecast/broadcast")// 기상 특보 데이터 호출
     Call<ApiModel.BroadCastWeather> getBroadCast(
             @Query("code") int code);
 }

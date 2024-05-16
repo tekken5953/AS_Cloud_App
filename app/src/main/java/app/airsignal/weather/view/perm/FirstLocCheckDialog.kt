@@ -17,6 +17,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import app.airsignal.weather.R
 import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.db.sp.SetAppInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -113,14 +114,6 @@ class  FirstLocCheckDialog(
 
     // 바텀 다이얼로그 비율설정
     private fun getBottomSheetDialogDefaultHeight(per: Int): Int {
-        return getWindowHeight() * per / 100
-    }
-
-    // 디바이스 높이 구하기
-    private fun getWindowHeight(): Int {
-        val displayMetrics = DisplayMetrics()
-        @Suppress("DEPRECATION")
-        (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
-        return displayMetrics.heightPixels
+        return GetSystemInfo.getWindowHeight(activity) * per / 100
     }
 }

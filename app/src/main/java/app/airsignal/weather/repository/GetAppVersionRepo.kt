@@ -8,6 +8,7 @@ import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.awaitResponse
 import java.io.IOException
 import java.net.SocketTimeoutException
 

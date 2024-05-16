@@ -7,7 +7,7 @@ import com.orhanobut.logger.Logger
  * @author : Lee Jae Young
  * @since : 2023-03-06 오후 5:10
  **/
-class LoggerUtil {
+object LoggerUtil {
     fun getInstance() : LoggerUtil {
         Logger.addLogAdapter(AndroidLogAdapter())
         return this

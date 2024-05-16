@@ -73,4 +73,12 @@ object GetSystemInfo {
         intent.data = Uri.parse(getPlayStoreURL(activity))
         activity.startActivity(intent)
     }
+
+    // 디바이스 높이 구하기
+    fun getWindowHeight(context: Context): Int {
+        val displayMetrics = DisplayMetrics()
+        @Suppress("DEPRECATION")
+        (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        return displayMetrics.heightPixels
+    }
 }

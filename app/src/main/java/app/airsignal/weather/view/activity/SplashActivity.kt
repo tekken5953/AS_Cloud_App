@@ -38,8 +38,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private var isReady = false
 
     init {
-        TimberUtil().getInstance()
-        LoggerUtil().getInstance()
+        TimberUtil.getInstance()
+        LoggerUtil.getInstance()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

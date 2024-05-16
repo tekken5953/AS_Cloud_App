@@ -113,6 +113,7 @@ class SharedPreferenceManager(context: Context) {
             for (i in 0 until prefs.all.size) {
                 jsonObject.put(prefs.all.keys.toString(), prefs.all.values)
             }
+
             return toMap(jsonObject)
         } catch (e: JSONException) {
             e.printStackTrace()
@@ -122,7 +123,7 @@ class SharedPreferenceManager(context: Context) {
 
     /**키를 제이슨 형태로 변환**/
     @Throws(JSONException::class)
-    fun toMap(`object`: JSONObject): Map<String, Any> {
+    private fun toMap(`object`: JSONObject): Map<String, Any> {
         val map: MutableMap<String, Any> = HashMap()
         val keysItr = `object`.keys()
         while (keysItr.hasNext()) {

@@ -2,7 +2,7 @@ package app.airsignal.weather.util
 
 import timber.log.Timber
 
-class TimberUtil {
+object TimberUtil {
 
     fun getInstance() : TimberUtil {
         Timber.plant(Timber.DebugTree())

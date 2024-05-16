@@ -32,9 +32,7 @@ class SideMenuBuilder(private val context: Context) {
     }
 
     /** 다이얼로그 뷰 소멸 **/
-    fun dismiss() {
-        if (alertDialog.isShowing) alertDialog.dismiss()
-    }
+    fun dismiss() { if (alertDialog.isShowing) alertDialog.dismiss() }
 
     /** 다이얼로그 뷰 갱신 **/
     fun show(v: View, cancelable: Boolean): AlertDialog {

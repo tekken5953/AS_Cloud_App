@@ -91,7 +91,7 @@ class SubFCM: FirebaseMessagingService() {
     fun getToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
             if (!task.isSuccessful) {
-                TimberUtil().w("testtest", "Fetching FCM registration token failed : ${task.exception}")
+                TimberUtil.w("testtest", "Fetching FCM registration token failed : ${task.exception}")
                 return@OnCompleteListener
             }
 
@@ -99,7 +99,7 @@ class SubFCM: FirebaseMessagingService() {
             val token = task.result
 
             // Log and toast
-            TimberUtil().i("testtest","FCM Token is $token")
+            TimberUtil.i("testtest","FCM Token is $token")
         })
     }
 
