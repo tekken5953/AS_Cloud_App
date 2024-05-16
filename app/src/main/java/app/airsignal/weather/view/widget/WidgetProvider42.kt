@@ -10,7 +10,6 @@ import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.location.GeofenceManager
 import app.airsignal.weather.network.retrofit.ApiModel
@@ -44,10 +43,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         for (appWidgetId in appWidgetIds) {
             try { processUpdate(context,appWidgetId) }
             catch (e: Exception) {
-                RDBLogcat.writeErrorANR(
-                    "Error",
-                    "onUpdate error42 ${e.localizedMessage}"
-                )
+                e.stackTraceToString()
             }
         }
     }
@@ -99,7 +95,10 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     refreshBtnIntent,
                     PendingIntent.FLAG_IMMUTABLE
                 )
-                views.run { this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent) }
+                views.run {
+                    this.setOnClickPendingIntent(R.id.w42Background, enterPending)
+                    this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
+                }
                 if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) fetch(context, views)
             }
         }
@@ -115,18 +114,17 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     val lng = geofenceLocation.longitude
                     val addr = GeofenceManager(context).getSimpleAddress(lat, lng)
 
-                    val data = requestWeather(context, lat, lng, 4)
+                    val data = requestWeather(lat, lng, 4)
 
                     withContext(Dispatchers.Main) {
-                        RDBLogcat.writeWidgetHistory(context, "data", "$addr data42 is $data")
                         delay(500)
                         updateUI(context, views, data, addr)
 
                     }
                     withContext(Dispatchers.IO) { BaseWidgetProvider().setRefreshTime(context, WIDGET_42) }
-                } ?: run { RDBLogcat.writeErrorANR("Error", "location is null") }
+                }
             } catch (e: Exception) {
-                RDBLogcat.writeErrorANR("Error", "fetch error42 ${e.localizedMessage}")
+                e.stackTraceToString()
             }
         }
     }
@@ -171,7 +169,6 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     applyColor(context, views, bg)
                     this.setTextViewText(R.id.w42HumidTitle, "습도")
                     this.setTextViewText(R.id.w42Pm10Title, "미세먼지")
-                    this.setTextViewText(R.id.w42Pm25Title, "초미세먼지")
                     this.setTextViewText(
                         R.id.w42MinMaxTemp,
                         "${it.today.min?.roundToInt() ?: -1}˚/${it.today.max?.roundToInt() ?: -1}˚"
@@ -180,10 +177,6 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     this.setTextViewText(
                         R.id.w42Pm10Value,
                         getDataText(context, convertValueToGrade("PM10", it.quality.pm10Value24 ?: 0.0))
-                    )
-                    this.setTextViewText(
-                        R.id.w42Pm25Value,
-                        getDataText(context, convertValueToGrade("PM2.5", it.quality.pm25Value24?.toDouble() ?: 0.0))
                     )
                     for (i in 1..3) {
                         val index = it.realtime[i]
@@ -247,7 +240,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
 
             appWidgetManager.updateAppWidget(componentName, views)
         } catch (e: Exception) {
-            RDBLogcat.writeErrorANR("Error", "updateUI error42 ${e.localizedMessage}")
+            e.stackTraceToString()
         }
     }
 
@@ -266,9 +259,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             R.id.w42HumidTitle,
             R.id.w42HumidValue,
             R.id.w42Pm10Title,
-            R.id.w42Pm10Value,
-            R.id.w42Pm25Title,
-            R.id.w42Pm25Value
+            R.id.w42Pm10Value
         )
         val imgArray = arrayOf(R.id.w42Location, R.id.w42Refresh)
         views.run {

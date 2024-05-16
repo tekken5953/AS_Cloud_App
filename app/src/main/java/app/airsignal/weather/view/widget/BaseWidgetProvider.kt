@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
@@ -29,34 +28,13 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         const val WIDGET_22 = "22"
     }
 
-    override fun onDisabled(context: Context) { super.onDisabled(context) }
-
-    override fun onAppWidgetOptionsChanged(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetId: Int,
-        newOptions: Bundle
-    ) {
-        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-    }
-
-    override fun onRestored(context: Context, oldWidgetIds: IntArray, newWidgetIds: IntArray) {
-        super.onRestored(context, oldWidgetIds, newWidgetIds)
-    }
-
-    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        super.onDeleted(context, appWidgetIds)
-    }
-
-    suspend fun requestWeather(context: Context,lat: Double, lng: Double, rCount: Int): ApiModel.WidgetData? {
+    suspend fun requestWeather(lat: Double, lng: Double, rCount: Int): ApiModel.WidgetData? {
         try {
             return HttpClient.retrofit
                 .getWidgetForecast(lat, lng, rCount)
                 .awaitResponse().body()
         } catch (e: Exception) {
-            RDBLogcat.writeWidgetHistory(
-                context, "error", "weather call error cause ${e.localizedMessage}"
-            )
+            e.stackTraceToString()
         }
         return null
     }

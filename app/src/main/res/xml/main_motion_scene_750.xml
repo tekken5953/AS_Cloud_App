@@ -226,6 +226,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
         <Constraint
+            android:id="@+id/mainRainLottie"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/cd_img_star"
+            android:alpha="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+        <Constraint
             android:id="@+id/mainBottomDecoImg"
             android:alpha="1"
             android:layout_width="match_parent"
@@ -449,6 +457,11 @@
             android:alpha="0" />
         <Constraint
             android:id="@+id/mainSkyLottie"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0"/>
+        <Constraint
+            android:id="@+id/mainRainLottie"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:alpha="0"/>

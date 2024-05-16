@@ -9,7 +9,6 @@ import android.content.Intent
 import android.widget.RemoteViews
 import android.widget.Toast
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.location.GeofenceManager
 import app.airsignal.weather.network.retrofit.ApiModel
@@ -43,10 +42,7 @@ open class WidgetProvider : BaseWidgetProvider() {
             try {
                 processUpdate(context, appWidgetId)
             } catch (e: Exception) {
-                RDBLogcat.writeErrorANR(
-                    "Error",
-                    "onUpdate error ${e.localizedMessage}"
-                )
+                e.stackTraceToString()
             }
         }
     }
@@ -110,8 +106,8 @@ open class WidgetProvider : BaseWidgetProvider() {
                     PendingIntent.FLAG_IMMUTABLE
                 )
                 views.run {
-                    this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
                     this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
+                    this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
                 }
                 if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) fetch(context, views)
             }
@@ -127,21 +123,18 @@ open class WidgetProvider : BaseWidgetProvider() {
                     val lat = geofenceLocation.latitude
                     val lng = geofenceLocation.longitude
                     val addr = GeofenceManager(context).getSimpleAddress(lat, lng)
-                    val data = requestWeather(context, lat, lng, 1)
+                    val data = requestWeather(lat, lng, 1)
 
                     withContext(Dispatchers.Main) {
-                        RDBLogcat.writeWidgetHistory(context, "data", "$addr data22 is $data")
                         delay(500)
                         updateUI(context, views, data, addr)
                     }
                     withContext(Dispatchers.IO) {
                         BaseWidgetProvider().setRefreshTime(context, WIDGET_22)
                     }
-                } ?: run {
-                    RDBLogcat.writeErrorANR("Error", "location is null")
                 }
             } catch (e: Exception) {
-                RDBLogcat.writeErrorANR("Error", "fetch error22 ${e.localizedMessage}")
+                e.stackTraceToString()
             }
         }
     }
@@ -199,7 +192,7 @@ open class WidgetProvider : BaseWidgetProvider() {
 
             appWidgetManager.updateAppWidget(componentName, views)
         } catch (e: Exception) {
-            RDBLogcat.writeErrorANR("Error", "updateUI error ${e.localizedMessage}")
+            e.stackTraceToString()
         }
     }
 

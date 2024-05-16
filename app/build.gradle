@@ -85,9 +85,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.2.0' // 구글지도 라이브러리
     implementation 'com.google.android.gms:play-services-location:21.0.1' // 위치정보 라이브러리
 
-    def koin_android_version = "3.3.2"
     // Koin main features for Android
-    implementation "io.insert-koin:koin-android:$koin_android_version"
+    implementation "io.insert-koin:koin-android:3.3.2"
 
     // SeekArc - Sun Graph
     implementation 'com.github.Triggertrap:SeekArc:v1.1'
@@ -100,8 +99,7 @@ dependencies {
     implementation "com.github.skydoves:powerspinner:1.2.7"
 
     // Lottie
-    def lottieVersion = "5.2.0"
-    implementation "com.airbnb.android:lottie:$lottieVersion"
+    implementation "com.airbnb.android:lottie:5.2.0"
 
     // Firebase Main
     implementation platform('com.google.firebase:firebase-bom:32.2.0')
@@ -123,8 +121,9 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_android_version"
 
     //server
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    def retrofit_version = "2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
     implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
 

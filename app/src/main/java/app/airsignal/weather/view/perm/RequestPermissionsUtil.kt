@@ -11,14 +11,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.core.content.ContextCompat
-import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.sp.GetAppInfo
 
 class RequestPermissionsUtil(private val context: Context) {
 
     private val permissionNetWork = Manifest.permission.INTERNET
-    private val tagRequestPermission = 0x0000001
 
     /** 위치 권한 SDK 버전 29 이상**/
     private val permissionsLocation = arrayOf(
@@ -37,21 +35,6 @@ class RequestPermissionsUtil(private val context: Context) {
         Manifest.permission.POST_NOTIFICATIONS
     )
 
-    private val blePermissionArray = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        arrayOf(
-            Manifest.permission.BLUETOOTH_SCAN,
-            Manifest.permission.BLUETOOTH_CONNECT,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.BLUETOOTH_ADVERTISE
-        )
-    } else {
-        arrayOf(
-            Manifest.permission.BLUETOOTH,
-            Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-    }
-
     /** 위치정보 권한 요청**/
     fun requestLocation() {
         try{
@@ -62,7 +45,6 @@ class RequestPermissionsUtil(private val context: Context) {
             )
         } catch (e: Exception) {
             e.printStackTrace()
-            RDBLogcat.writeErrorANR(Thread.currentThread().toString(),"requestLocation error ${e.stackTraceToString()}")
         }
     }
 

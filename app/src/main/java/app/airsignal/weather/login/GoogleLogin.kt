@@ -39,7 +39,6 @@ class GoogleLogin(private val activity: Activity) {
             mBtn.alpha = 0.7f
         } catch (e: Exception) {
             e.stackTraceToString()
-            RDBLogcat.writeErrorNotANR(activity, RDBLogcat.LOGIN_FAILED, e.localizedMessage ?: "")
         }
     }
 
@@ -50,7 +49,6 @@ class GoogleLogin(private val activity: Activity) {
     fun logout(pb: LottieAnimationView?) {
         client.signOut()
             .addOnCompleteListener {
-                saveLogoutStatus()
                 pb?.let {
                     RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = it)
                 }
@@ -84,17 +82,8 @@ class GoogleLogin(private val activity: Activity) {
     /** 사용자의 로그인 정보를 저장
      *
      * TODO 구글로그인은 아직 테스팅 단계라 임시로 파라미터를 설정**/
-    private fun saveLoginStatus(email: String, name: String?, profile: String?, isAuto: Boolean) {
-        SetAppInfo.setUserLoginPlatform(activity, "google")
-        RDBLogcat.writeLoginHistory(isLogin = true , platform = RDBLogcat.LOGIN_GOOGLE, email = email, isAuto = isAuto, isSuccess = true)
-        RDBLogcat.writeLoginPref(activity, platform =  RDBLogcat.LOGIN_GOOGLE, email = email, phone = null, name = name, profile = profile)
-    }
-
-    /** 사용자 로그아웃 정보를 저장
-     *
-     * TODO 임시로 번호를 지정해 놓음**/
-    private fun saveLogoutStatus() {
-        RDBLogcat.writeLoginHistory(isLogin = false, platform = RDBLogcat.LOGIN_GOOGLE, email = lastLogin?.email ?: "", isAuto = null, isSuccess = true)
+    private fun saveLoginStatus() {
+        SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_GOOGLE)
     }
 
     /** 로그인 이벤트 성공 **/
@@ -111,8 +100,7 @@ class GoogleLogin(private val activity: Activity) {
             SetAppInfo.setUserProfile(activity, photo)
             SetAppInfo.setUserEmail(activity, email)
 
-            saveLoginStatus(email, displayName, photo, isAuto)
-            SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_GOOGLE)
+            saveLoginStatus()
             activity.finish()
         } catch (e: ApiException) {
             e.printStackTrace()

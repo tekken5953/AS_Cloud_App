@@ -34,14 +34,14 @@ class KakaoLogin(private val activity: Activity) {
     }
 
     /** 카카오톡 설치 확인 후 로그인**/
-    fun checkInstallKakaoTalk(btn: AppCompatButton) {
+    fun checkInstallKakaoTalk(btn: AppCompatButton?) {
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(activity)) {
-            btn.alpha = 0.7f
+            btn?.alpha = 0.7f
             // 카카오톡 로그인
             UserApiClient.instance.loginWithKakaoTalk(activity) { token, error ->
                 // 로그인 실패 부분
                 if (error != null) {
-                    btn.alpha = 1f
+                    btn?.alpha = 1f
                     // 사용자가 취소
                     if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled)) {
                         return@loginWithKakaoTalk
@@ -61,22 +61,7 @@ class KakaoLogin(private val activity: Activity) {
                         loginSilenceKakao()
                         enterMainPage()
                     }
-                    UserApiClient.instance.me { user, _ ->
-                        user?.kakaoAccount?.let { account ->
-                            RDBLogcat.writeLoginHistory(
-                                isLogin = true, platform = RDBLogcat.LOGIN_KAKAO, email = account.email ?: "",
-                                isAuto = false, isSuccess = true
-                            )
-                            RDBLogcat.writeLoginPref(
-                                activity,
-                                platform = RDBLogcat.LOGIN_KAKAO,
-                                email = GetAppInfo.getUserEmail(activity),
-                                phone = null,
-                                name = account.name,
-                                profile = account.profile?.profileImageUrl
-                            )
-                        }
-                    }
+                    UserApiClient.instance.me { user, _ -> }
                 }
             }
         } else {
@@ -87,32 +72,14 @@ class KakaoLogin(private val activity: Activity) {
 
     /** 카카오 이메일 로그인 콜백 **/
     private val mCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
-        if (error != null) {
-            RDBLogcat.writeLoginHistory(
-                isLogin = false, platform = RDBLogcat.LOGIN_KAKAO_EMAIL, email = GetAppInfo.getUserEmail(activity),
-                isAuto = false, isSuccess = false
-            )
-        } else {
+        if (error == null) {
             token?.let {
                 loginSilenceKakao()
                 enterMainPage()
             }
 
             UserApiClient.instance.me { user, _ ->
-                user?.kakaoAccount?.let { account ->
-                    RDBLogcat.writeLoginHistory(
-                        isLogin = true, platform = RDBLogcat.LOGIN_KAKAO_EMAIL, email = GetAppInfo.getUserEmail(activity),
-                        isAuto = false, isSuccess = true
-                    )
-                    RDBLogcat.writeLoginPref(
-                        activity,
-                        platform = RDBLogcat.LOGIN_KAKAO_EMAIL,
-                        email = GetAppInfo.getUserEmail(activity),
-                        phone = account.phoneNumber,
-                        name = account.name,
-                        profile = account.profile?.profileImageUrl
-                    )
-                }
+                user?.kakaoAccount
             }
         }
     }

@@ -16,7 +16,6 @@ import android.view.View
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.util.`object`.DataTypeParser
@@ -104,13 +103,9 @@ class NotificationBuilder {
                     it.createNotificationChannel(notificationChannel)
                     it.notify(1, notificationBuilder.build())
                 }
-                RDBLogcat.writeNotificationHistory(appContext,data["sort"].toString(),"${GetAppInfo.getNotificationAddress(appContext)} $data")
-            } else {
-                RDBLogcat.writeNotificationHistory(appContext, "체크 해제로 인한 알림 미발송",
-                    "${GetAppInfo.getUserLastAddress(appContext)} $data")
             }
         } catch (e: Exception) {
-            RDBLogcat.writeErrorANR("FCM Thread",e.localizedMessage!!)
+            e.stackTraceToString()
         }
     }
 

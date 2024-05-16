@@ -28,7 +28,6 @@ import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.IgnoredKeyFile
-import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.databinding.ActivityMainBinding
 import app.airsignal.weather.db.room.repository.GpsRepository
@@ -543,10 +542,7 @@ class MainActivity
         addr?.let { mAddr ->
             loadSavedViewModelData(mAddr)
 
-            val isSearched = true
             val gpsValue = if (GetAppInfo.getUserLocation(this) == StaticDataObject.LANG_EN) enAddr?.trim() else mAddr.trim()
-
-            RDBLogcat.writeGpsHistory(this, isSearched, gpsValue ?: "잘못된 주소", null)
 
             updateAddress(gpsValue)
         }
@@ -758,13 +754,6 @@ class MainActivity
                     showAllViews()
                     updateUIWithData(result)
 
-                    RDBLogcat.writeGpsHistory(
-                        this@MainActivity,
-                        isSearched = false,
-                        gpsValue = metaAddr,
-                        responseData = "${GetAppInfo.getUserLastAddress(this@MainActivity)},${result}"
-                    )
-
                     isDataResponse = true
 
                     // 메인 날씨 텍스트 세팅
@@ -791,15 +780,15 @@ class MainActivity
                     val testSky = getString(R.string.sky_cloudy_shower)
                     val testRain = getString(R.string.sky_shower)
 
-                    applyWindowBackground(sky = testSky, rainType = testRain)
-                    setMountain(sky = testSky, rainType = testRain)
-                    setSkyLottie(sky = testSky)
-                    setRainTypeLottie(testRain)
+//                    applyWindowBackground(sky = testSky, rainType = testRain)
+//                    setMountain(sky = testSky, rainType = testRain)
+//                    setSkyLottie(sky = testSky)
+//                    setRainTypeLottie(testRain)
 
-//                    applyWindowBackground(sky = result.realtime[0].sky, rainType = rainTypeText)
-//                    setMountain(sky = result.realtime[0].sky, rainType = rainTypeText)
-//                    setSkyLottie(sky = result.realtime[0].sky)
-//                    setRainTypeLottie(rainType = rainTypeText)
+                    applyWindowBackground(sky = result.realtime[0].sky, rainType = rainTypeText)
+                    setMountain(sky = result.realtime[0].sky, rainType = rainTypeText)
+                    setSkyLottie(sky = result.realtime[0].sky)
+                    setRainTypeLottie(rainType = rainTypeText)
 
                     binding.mainSkyText.text = skyText
 
@@ -833,8 +822,6 @@ class MainActivity
     private fun handleApiError(errorMessage: String) {
         runOnUiThread {
             hideProgressBar()
-            try { RDBLogcat.writeErrorANR("handleApiError", "handleApiError cause $errorMessage") }
-            catch (e: Exception) { e.printStackTrace() }
             if (GetLocation(this).isNetWorkConnected()) {
                 hideAllViews(error = errorMessage)
             } else if (errorMessage != "text") hideAllViews(error = ErrorCode.ERROR_NETWORK)
@@ -991,10 +978,7 @@ class MainActivity
                     pmRain[it]?.toInt() ?: 0
                 )
             } catch (e: Exception) {
-                RDBLogcat.writeErrorANR(
-                    RDBLogcat.DATA_CALL_ERROR,
-                    "updateWeatherItems is ${e.stackTraceToString()}"
-                )
+                e.stackTraceToString()
             }
         }
     }
@@ -1309,55 +1293,34 @@ class MainActivity
         val colorMatrix = ColorMatrix().apply {
             setScale(level, level, level, 1f)
         }
-
         return ColorMatrixColorFilter(colorMatrix)
     }
 
     private fun setSkyAnimation(animationResource: Int?) {
-        val isAnimationEnable = GetAppInfo.getWeatherAnimEnabled(this)
         animationResource?.let {
             binding.mainSkyLottie.setAnimation(it)
-            if (isAnimationEnable) {
-                if (!binding.mainSkyLottie.isAnimating) binding.mainSkyLottie.playAnimation()
-            } else {
-                if (binding.mainSkyLottie.isAnimating) binding.mainSkyLottie.clearAnimation()
-            }
+            if (!binding.mainSkyLottie.isAnimating) binding.mainSkyLottie.playAnimation()
         } ?: run { setEmptyAnimation(1) }
     }
     private fun setSkyAnimation(animationResource: Int?, speed: Float?) {
-        val isAnimationEnable = GetAppInfo.getWeatherAnimEnabled(this)
         animationResource?.let {
             binding.mainSkyLottie.setAnimation(it)
             speed?.let {binding.mainSkyLottie.speed = speed}
-            if (isAnimationEnable) {
-                if (!binding.mainSkyLottie.isAnimating) binding.mainSkyLottie.playAnimation()
-            } else {
-                if (binding.mainSkyLottie.isAnimating) binding.mainSkyLottie.clearAnimation()
-            }
+            if (!binding.mainSkyLottie.isAnimating) binding.mainSkyLottie.playAnimation()
         } ?: run { setEmptyAnimation(1) }
     }
 
     private fun setRainAnimation(animationResource: Int?) {
-        val isAnimationEnable = GetAppInfo.getWeatherAnimEnabled(this)
         animationResource?.let {
             binding.mainRainLottie.setAnimation(it)
-            if (isAnimationEnable) {
-                if (!binding.mainRainLottie.isAnimating) binding.mainRainLottie.playAnimation()
-            } else {
-                if (binding.mainRainLottie.isAnimating) binding.mainRainLottie.clearAnimation()
-            }
+            if (!binding.mainRainLottie.isAnimating) binding.mainRainLottie.playAnimation()
         } ?: run { setEmptyAnimation(2) }
     }
     private fun setRainAnimation(animationResource: Int?, speed: Float?) {
-        val isAnimationEnable = GetAppInfo.getWeatherAnimEnabled(this)
         animationResource?.let {
             binding.mainRainLottie.setAnimation(it)
             speed?.let {binding.mainRainLottie.speed = speed}
-            if (isAnimationEnable) {
-                if (!binding.mainRainLottie.isAnimating) binding.mainRainLottie.playAnimation()
-            } else {
-                if (binding.mainRainLottie.isAnimating) binding.mainRainLottie.clearAnimation()
-            }
+            if (!binding.mainRainLottie.isAnimating) binding.mainRainLottie.playAnimation()
         } ?: run { setEmptyAnimation(2) }
     }
 
@@ -1436,7 +1399,6 @@ class MainActivity
             ErrorCode.ERROR_GPS_CONNECTED -> getString(R.string.gps_call_error)
             ErrorCode.ERROR_GET_DATA -> getString(R.string.data_call_error)
             else -> {
-                RDBLogcat.writeErrorANR(getString(R.string.unknown_error), "setErrorMessage is $error")
                 getString(R.string.unknown_error)
             }
         }
@@ -1620,6 +1582,7 @@ class MainActivity
         binding.subAirWind.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.subAirRainP.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainSkyLottie.alpha = if (visibility == VISIBLE) 1f else 0f
+        binding.mainRainLottie.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainShareIv.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainSkyText.alpha = if (visibility == VISIBLE) 1f else 0f
         binding.mainErrorRenewBtn.isClickable = visibility == GONE
@@ -1931,7 +1894,6 @@ class MainActivity
     private fun handleLocationFailure(errorMessage: String?) {
         hideProgressBar()
         val msg = errorMessage ?: "errorMsg is NULL"
-        RDBLogcat.writeErrorANR(ErrorCode.ERROR_LOCATION_FAILED, "handleLocationFailure cause $msg")
     }
 
     private fun processAddress(lat: Double, lng: Double, address: String?) {

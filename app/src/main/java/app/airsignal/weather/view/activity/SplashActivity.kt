@@ -3,16 +3,14 @@ package app.airsignal.weather.view.activity
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import androidx.core.os.HandlerCompat
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.databinding.ActivitySplashBinding
 import app.airsignal.weather.db.sp.GetAppInfo
-import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.db.sp.GetSystemInfo
+import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.location.GetLocation
 import app.airsignal.weather.network.ErrorCode
@@ -22,7 +20,6 @@ import app.airsignal.weather.util.EnterPageUtil
 import app.airsignal.weather.util.LoggerUtil
 import app.airsignal.weather.util.TimberUtil
 import app.airsignal.weather.util.ToastUtils
-import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
@@ -62,30 +59,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     appVersionViewModel.loadDataResult()
                 }
             })
-
-            // 유저 디바이스 설정 - 앱 버전
-            RDBLogcat.writeUserPref(
-                this@SplashActivity,
-                sort = RDBLogcat.USER_PREF_DEVICE,
-                title = RDBLogcat.USER_PREF_DEVICE_APP_VERSION,
-                value = "name is ${GetSystemInfo.getApplicationVersionName(this@SplashActivity)} code is ${
-                    GetSystemInfo.getApplicationVersionCode(this@SplashActivity)}"
-            )
-
-            // 유저 디바이스 설정 - SDK 버전
-            RDBLogcat.writeUserPref(
-                this@SplashActivity,
-                sort = RDBLogcat.USER_PREF_DEVICE,
-                title = RDBLogcat.USER_PREF_DEVICE_SDK_VERSION,
-                value = Build.VERSION.SDK_INT
-            )
-
-            // 초기설정 로그 저장 - 마지막 접속 시간
-            RDBLogcat.writeUserPref(
-                this@SplashActivity, sort = RDBLogcat.USER_PREF_SETUP,
-                title = RDBLogcat.USER_PREF_SETUP_LAST_LOGIN,
-                value = "${DataTypeParser.parseLongToLocalDateTime(DataTypeParser.getCurrentTime())}"
-            )
         }
     }
 

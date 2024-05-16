@@ -53,13 +53,6 @@ class NaverLogin(private val activity: Activity) {
     /** 로그아웃 + 기록 저장 */
     fun logout() {
         NaverIdLoginSDK.logout()
-        RDBLogcat.writeLoginHistory(
-            isLogin = false,
-            platform = RDBLogcat.LOGIN_NAVER,
-            email = GetAppInfo.getUserEmail(activity),
-            isAuto = null,
-            isSuccess = true
-        )
         RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = null)
     }
 
@@ -84,17 +77,6 @@ class NaverLogin(private val activity: Activity) {
                     .setString(IgnoredKeyFile.userProfile, it.profileImage ?: "")
                     .setString(IgnoredKeyFile.userEmail, it.email.toString())
 
-                RDBLogcat.writeLoginHistory(isLogin = true, platform = RDBLogcat.LOGIN_NAVER,
-                    email = it.email.toString(), isAuto = false, isSuccess = true)
-
-                RDBLogcat.writeLoginPref(activity,
-                    platform = RDBLogcat.LOGIN_NAVER,
-                    email = it.email.toString(),
-                    phone = it.mobile.toString(),
-                    name = it.name.toString(),
-                    profile = it.profileImage.toString()
-                )
-
                 SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_NAVER)
                 activity.finish()
             }
@@ -102,10 +84,6 @@ class NaverLogin(private val activity: Activity) {
 
         override fun onFailure(httpStatus: Int, message: String) {
             toast.showMessage("프로필을 불러오는데 실패했습니다",1)
-            RDBLogcat.writeLoginHistory(
-                isLogin = true, platform = RDBLogcat.LOGIN_NAVER, email = GetAppInfo.getUserEmail(activity),
-                isAuto = false, isSuccess = false
-            )
         }
 
         override fun onError(errorCode: Int, message: String) { onFailure(errorCode, message) }
@@ -120,9 +98,6 @@ class NaverLogin(private val activity: Activity) {
         }
 
         override fun onFailure(httpStatus: Int, message: String) {
-            val errorCode = NaverIdLoginSDK.getLastErrorCode().code
-            val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
-            RDBLogcat.writeErrorNotANR(activity,"naver login","error $errorCode $errorDescription")
             toast.showMessage(activity.getString(R.string.require_login),1)
         }
 
