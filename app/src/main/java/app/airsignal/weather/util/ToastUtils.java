@@ -42,8 +42,6 @@ public class ToastUtils {
      * 토스트메시지가 보여지고 있으면 취소시킨다
      **/
     private void cancelToast() {
-        if (toast != null) {
-            toast.cancel();
-        }
+        if (toast != null) toast.cancel();
     }
 }

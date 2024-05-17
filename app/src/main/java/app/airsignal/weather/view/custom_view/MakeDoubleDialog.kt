@@ -43,7 +43,5 @@ class MakeDoubleDialog(private val context: Context) {
         }
     }
 
-    fun dismiss() {
-        builder.dismiss()
-    }
+    fun dismiss() = builder.dismiss()
 }

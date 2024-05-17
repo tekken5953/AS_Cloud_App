@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.provider.Settings
 import app.airsignal.weather.db.sp.SharedPreferenceManager
+import app.airsignal.weather.db.sp.SpDao
 import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -62,42 +63,36 @@ object RDBLogcat {
     private val ref = db.getReference("User")
 
     /** 날짜 변환 **/
-    private fun getDate(): String {
-        return millsToString(System.currentTimeMillis(), "yyyy-MM-dd")
-    }
+    private fun getDate(): String =
+        millsToString(System.currentTimeMillis(), "yyyy-MM-dd")
 
     /** 시간 변환 **/
-    private fun getTime(): String {
-        return millsToString(System.currentTimeMillis(), "HH:mm:ss")
-    }
+    private fun getTime(): String =
+        millsToString(System.currentTimeMillis(), "HH:mm:ss")
 
     /** 데이터 포멧에 맞춰서 시간변환 **/
-    private fun millsToString(mills: Long, pattern: String): String {
-        return SimpleDateFormat(pattern, Locale.getDefault()).format(Date(mills))
-    }
+    private fun millsToString(mills: Long, pattern: String): String =
+        SimpleDateFormat(pattern, Locale.getDefault()).format(Date(mills))
 
     /** 로그인 여부 확인 **/
     private fun isLogin(context: Context): String {
         return try {
-            if (SharedPreferenceManager(context).getString("user_email") != "") LOGIN_ON else LOGIN_OFF
+            if (SharedPreferenceManager(context).getString(SpDao.userEmail) != "") LOGIN_ON else LOGIN_OFF
         } catch(e: java.lang.NullPointerException) { LOGIN_OFF }
     }
 
     /** 유니크 아이디 받아오기 - 로그인(이메일) 비로그인(디바이스아이디) **/
     private fun getAndroidIdForLog(context: Context): String {
-        val email = SharedPreferenceManager(context).getString("user_email")
+        val email = SharedPreferenceManager(context).getString(SpDao.userEmail)
         return try {
-            if (email != "")
-                email.replace(".","_")
+            if (email != "") email.replace(".","_")
             else androidID(context)
         } catch (e: NullPointerException) { "" }
     }
 
     /** 아이디까지의 레퍼런스 경로 **/
-    private fun default(context: Context): DatabaseReference {
-        return ref.child(isLogin(context))
-            .child(getAndroidIdForLog(context))
-    }
+    private fun default(context: Context): DatabaseReference =
+        ref.child(isLogin(context)).child(getAndroidIdForLog(context))
 
     /** 유저 설치 정보 **/
     fun <T> writeUserPref(context: Context, sort: String, title: String, value: T?) {

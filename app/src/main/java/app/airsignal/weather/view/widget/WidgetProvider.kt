@@ -68,9 +68,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                         ).show()
                     }
                 }
-            } else {
-                appWidgetId?.let { processUpdate(context,it) }
-            }
+            } else appWidgetId?.let { processUpdate(context,it) }
         }
     }
 
@@ -109,6 +107,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                     this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
                     this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
                 }
+
                 if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) fetch(context, views)
             }
         }
@@ -133,9 +132,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                         BaseWidgetProvider().setRefreshTime(context, WIDGET_22)
                     }
                 }
-            } catch (e: Exception) {
-                e.stackTraceToString()
-            }
+            } catch (e: Exception) { e.stackTraceToString() }
         }
     }
 
@@ -191,9 +188,7 @@ open class WidgetProvider : BaseWidgetProvider() {
             }
 
             appWidgetManager.updateAppWidget(componentName, views)
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
+        } catch (e: Exception) { e.stackTraceToString() }
     }
 
     private fun applyColor(context: Context, views: RemoteViews, bg: Int) {

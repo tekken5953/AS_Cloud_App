@@ -1,9 +1,11 @@
 package app.airsignal.weather.viewmodel
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.repository.GetWarningRepo
+import kotlinx.coroutines.launch
 import java.io.IOException
 
 /**
@@ -14,7 +16,9 @@ class GetWarningViewModel(private val repo: GetWarningRepo): BaseViewModel() {
     private var getResultData: LiveData<BaseRepository.ApiState<ApiModel.BroadCastWeather>>? = null
 
     fun loadDataResult(code: Int) : GetWarningViewModel {
-        repo.loadDataResult(code)
+        viewModelScope.launch {
+            repo.loadDataResult(code)
+        }
         return this
     }
 

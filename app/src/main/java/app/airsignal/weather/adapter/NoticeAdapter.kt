@@ -54,9 +54,7 @@ class NoticeAdapter(private val context: Context, list: ArrayList<ApiModel.Notic
 
             itemView.setOnClickListener {
                 val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    onClickListener.onItemClick(it, position)
-                }
+                if (position != RecyclerView.NO_POSITION) onClickListener.onItemClick(it, position)
             }
         }
     }

@@ -74,26 +74,6 @@
                 android:alpha="1"
                 app:curveFit="linear"
                 app:framePosition="0"
-                app:motionTarget="@id/mainSensTitle" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainSensTitle" />
-            <KeyAttribute
-                android:alpha="1"
-                app:curveFit="linear"
-                app:framePosition="0"
-                app:motionTarget="@id/mainSensValue" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainSensValue" />
-            <KeyAttribute
-                android:alpha="1"
-                app:curveFit="linear"
-                app:framePosition="0"
                 app:motionTarget="@id/mainMinMaxTr" />
             <KeyAttribute
                 android:alpha="0"
@@ -110,26 +90,7 @@
                 app:curveFit="linear"
                 app:framePosition="60"
                 app:motionTarget="@id/mainLiveTempValue" />
-            <KeyAttribute
-                android:alpha="1"
-                app:curveFit="linear"
-                app:framePosition="0"
-                app:motionTarget="@id/mainSensValue" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainSensValue" />
-            <KeyAttribute
-                android:alpha="1"
-                app:curveFit="linear"
-                app:framePosition="0"
-                app:motionTarget="@id/mainSensTitle" />
-            <KeyAttribute
-                android:alpha="0"
-                app:curveFit="linear"
-                app:framePosition="60"
-                app:motionTarget="@id/mainSensTitle" />
+
             <KeyAttribute
                 android:alpha="1"
                 app:curveFit="linear"
@@ -197,22 +158,16 @@
         <Constraint
             android:id="@+id/mainGpsTitleTv"
             style="@style/basicTextView"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="30dp"
             android:alpha="1"
-            android:lineHeight="22dp"
-            android:maxEms="10"
-            android:fontFamily="@font/spoqa_hansansneo_regular"
-            android:gravity="start"
-            android:textColor="@color/black"
-            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/topBarLinear" />
         <Constraint
             android:id="@+id/mainGpsFix"
-            android:layout_width="27dp"
-            android:layout_height="27dp"
-            android:layout_marginStart="6dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="4dp"
             android:alpha="1"
             app:layout_constraintStart_toEndOf="@+id/mainGpsTitleTv"
             app:layout_constraintTop_toTopOf="@+id/mainGpsTitleTv"
@@ -252,18 +207,15 @@
             android:id="@+id/mainSkyText"
             style="@style/basicMediumTextView"
             android:alpha="1"
-            android:lineHeight="25dp"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@+id/mainCompareTempTv"
-            app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr"/>
         <Constraint
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
-            android:layout_marginTop="12dp"
-            android:lineHeight="52dp"
-            android:textSize="72sp"
-            app:layout_constraintStart_toStartOf="@+id/mainGpsTitleTv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv" />
         <Constraint
             android:id="@+id/nested_subAir_frame"
@@ -291,45 +243,24 @@
             android:paddingTop="5dp"
             android:text="˚"
             android:alpha="1"
-            android:textSize="57sp"
             app:layout_constraintTop_toTopOf="@+id/mainLiveTempValue"
             app:layout_constraintStart_toEndOf="@id/mainLiveTempValue" />
         <Constraint
             android:id="@+id/mainCompareTempTv"
             style="@style/basicMediumTextView"
-            android:layout_marginTop="8dp"
-            android:textSize="16sp"
             android:alpha="1"
-            app:layout_constraintTop_toBottomOf="@id/mainSensTitle"
-            app:layout_constraintEnd_toEndOf="@id/mainSensValue"/>
-        <Constraint
-            android:id="@+id/mainSensTitle"
-            style="@style/basicMediumTextView"
-            android:textSize="16sp"
-            android:alpha="1"
-            android:text="체감온도"
-            android:layout_marginEnd="13dp"
-            app:layout_constraintEnd_toStartOf="@+id/mainSensValue"
-            app:layout_constraintTop_toTopOf="@+id/mainSensValue"
-            app:layout_constraintBottom_toBottomOf="@+id/mainSensValue"/>
-        <Constraint
-            android:id="@+id/mainSensValue"
-            style="@style/basicMediumTextView"
-            android:textSize="16sp"
-            android:alpha="1"
-            app:layout_constraintEnd_toEndOf="@+id/mainMotionLayout"
-            app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv"
-            android:layout_marginTop="27dp"
-            android:layout_marginEnd="24dp"/>
+            android:layout_marginBottom="15dp"
+            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toEndOf="@+id/mainLiveTempUnit"/>
         <Constraint
             android:id="@+id/mainMinMaxTr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center"
             android:alpha="1"
             app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"
-            app:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
         <Constraint
             android:id="@+id/mainPmBoxTL"
             android:layout_width="match_parent"
@@ -339,7 +270,6 @@
             android:layout_marginEnd="50dp"
             android:alpha="1"
             android:background="@drawable/pm_motion_box_bg"
-            android:gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/mainNotiMsgTv" />
         <Constraint
             android:layout_width="match_parent"
@@ -348,7 +278,6 @@
             android:layout_marginTop="22dp"
             android:layout_marginEnd="50dp"
             android:alpha="1"
-            android:gravity="center"
             app:layout_constraintTop_toBottomOf="@+id/mainPmBoxTL" />
         <Constraint
             android:id="@+id/mainMotionSLideImg"
@@ -374,7 +303,6 @@
             android:id="@+id/liveCTr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:alpha="0"
             app:layout_constraintStart_toEndOf="@+id/mainLiveTempValue"
             app:layout_constraintTop_toTopOf="@id/mainLiveTempValue"
@@ -384,14 +312,9 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="-25dp"
-            android:clipToPadding="false"
-            android:orientation="vertical"
-            android:overScrollMode="never"
-            android:scrollbars="none"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/mainMotionLinear"/>
     </ConstraintSet>
-
 
 
 
@@ -417,10 +340,7 @@
         <Constraint
             android:id="@+id/mainGpsTitleTv"
             style="@style/basicTextView"
-            android:alpha="0"
-            android:fontFamily="@font/spoqa_hansansneo_regular"
-            android:gravity="start"
-            android:textSize="18sp"/>
+            android:alpha="0"/>
         <Constraint
             android:id="@+id/nested_subAir_frame"
             android:layout_width="match_parent"
@@ -446,10 +366,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center"
             android:alpha="0"
-            app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"
-            app:layout_constraintStart_toStartOf="@+id/mainLiveTempValue"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
         <Constraint
             android:id="@+id/mainGpsFix"
             android:layout_width="0dp"
@@ -484,10 +403,12 @@
             app:layout_constraintBottom_toBottomOf="@id/mainMotionLinear"/>
         <Constraint
             android:id="@+id/mainSkyText"
+            style="@style/basicMediumTextView"
             android:alpha="0"
-            android:layout_height="0.0001dp"
-            app:layout_constraintEnd_toEndOf="@+id/mainCompareTempTv"
-            app:layout_constraintTop_toBottomOf="@+id/mainCompareTempTv"/>
+            android:layout_marginTop="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mainMinMaxTr"/>
         <Constraint
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
@@ -499,19 +420,10 @@
         <Constraint
             android:id="@+id/mainCompareTempTv"
             style="@style/basicMediumTextView"
-            android:layout_marginTop="8dp"
             android:alpha="0"
-            app:layout_constraintTop_toBottomOf="@id/mainSensTitle"
-            app:layout_constraintEnd_toEndOf="@id/mainSensValue"
-            android:textSize="16sp" />
-        <Constraint
-            android:id="@+id/mainSensTitle"
-            style="@style/basicTextView"
-            android:alpha="0"/>
-        <Constraint
-            android:id="@+id/mainSensValue"
-            style="@style/basicMediumTextView"
-            android:alpha="0"/>
+            android:layout_marginBottom="15dp"
+            app:layout_constraintBottom_toBottomOf="@+id/mainLiveTempValue"
+            app:layout_constraintStart_toEndOf="@+id/mainLiveTempUnit" />
         <Constraint
             android:id="@+id/mainPmBoxTL"
             android:layout_width="match_parent"
@@ -554,7 +466,6 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:alpha="1"
-            android:gravity="center"
             android:layout_marginStart="10dp"
             app:layout_constraintStart_toEndOf="@+id/mainSkyImg"
             app:layout_constraintEnd_toEndOf="parent"

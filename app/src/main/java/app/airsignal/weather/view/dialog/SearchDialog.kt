@@ -18,6 +18,7 @@ import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.AddressListAdapter
@@ -33,6 +34,8 @@ import app.airsignal.weather.view.activity.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.shape.CutCornerTreatment
+import com.google.android.material.shape.ShapeAppearanceModel
 import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -207,7 +210,7 @@ class SearchDialog(
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                if (s!!.isNotEmpty()) {
+                if (s != null && s.isNotEmpty()) {
                     searchItem.clear()
                     editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
                         0, 0, R.drawable.ico_search_x, 0
@@ -287,7 +290,7 @@ class SearchDialog(
                             else R.array.address_korean)
 
                         addrArray.forEachIndexed { index, s ->
-                            if(s == searchItem[position]) {
+                            if (s == searchItem[position]) {
                                 model.addrEn = resources.getStringArray(R.array.address_english)[index]
                                 model.addrKr = resources.getStringArray(R.array.address_korean)[index]
                             }
@@ -336,7 +339,7 @@ class SearchDialog(
         )
 
         db.update(model)
-        SetAppInfo.setUserLastAddr(activity, addrKr!!)
+        SetAppInfo.setUserLastAddr(activity, addrKr ?: "")
     }
 
     private fun isKorea(): Boolean {
@@ -347,8 +350,8 @@ class SearchDialog(
     // 리스트 아이템 추가
     private fun addCurrentItem(addrKr: String?, addrEn: String?): SearchDialog {
         val item = AdapterModel.AddressListItem(
-            addrKr!!.replace("null", ""),
-            addrEn!!.replace("null", "")
+            addrKr?.replace("null", ""),
+            addrEn?.replace("null", "")
         )
         currentList.add(item)
         return this
@@ -372,7 +375,7 @@ class SearchDialog(
     private fun getWindowHeight(): Int {
         val displayMetrics = DisplayMetrics()
         @Suppress("DEPRECATION")
-        (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        (context as Activity?)?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         return displayMetrics.heightPixels
     }
 

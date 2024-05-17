@@ -43,9 +43,7 @@ class RequestPermissionsUtil(private val context: Context) {
                 permissionsLocation,
                 StaticDataObject.REQUEST_LOCATION
             )
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        } catch (e: Exception) { e.printStackTrace() }
     }
 
     /** 알림 권한 요청 **/
@@ -66,9 +64,8 @@ class RequestPermissionsUtil(private val context: Context) {
     /**위치권한 허용 여부 검사**/
     fun isLocationPermitted(): Boolean {
         for (perm in permissionsLocation) {
-            if (ContextCompat.checkSelfPermission(context, perm)
-                != PackageManager.PERMISSION_GRANTED
-            ) return false
+            if (ContextCompat.checkSelfPermission(context, perm) != PackageManager.PERMISSION_GRANTED)
+                return false
         }
         return true
     }
@@ -81,16 +78,13 @@ class RequestPermissionsUtil(private val context: Context) {
                     context, perm) == PackageManager.PERMISSION_GRANTED
             }
         } else return true
+
         return true
     }
 
     /** 인터넷 허용 여부 검사 **/
-    fun isNetworkPermitted(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            context,
-            permissionNetWork
-        ) == PackageManager.PERMISSION_GRANTED
-    }
+    fun isNetworkPermitted(): Boolean =
+        ContextCompat.checkSelfPermission(context, permissionNetWork) == PackageManager.PERMISSION_GRANTED
 
     /** 권한 요청 거부 횟수에 따른 반환 **/
     fun isShouldShowRequestPermissionRationale(activity: Activity, perm: String): Boolean {
@@ -109,7 +103,7 @@ class RequestPermissionsUtil(private val context: Context) {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ContextCompat.checkSelfPermission(context, permissionsLocationBackground) ==
                     PackageManager.PERMISSION_GRANTED
-        } else { true }
+        } else true
     }
 
     /** 백그라운드에서 위치 접근 권한 요청 **/

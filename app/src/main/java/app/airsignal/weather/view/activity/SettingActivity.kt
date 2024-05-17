@@ -300,7 +300,6 @@ class SettingActivity
 
             ioThread.launch {
                 HttpClient.retrofit.notice.enqueue(object : Callback<List<ApiModel.NoticeItem>> {
-                        @SuppressLint("NotifyDataSetChanged")
                         override fun onResponse(
                             call: Call<List<ApiModel.NoticeItem>>,
                             response: Response<List<ApiModel.NoticeItem>>
@@ -793,7 +792,7 @@ class SettingActivity
     }
 
     // 메인 액티비티로 이동
-    private fun goMain() { finish() }
+    private fun goMain() = finish()
 
     // 라디오 버튼 DrawableEnd Tint 변경
     @SuppressLint("UseCompatTextViewDrawableApis")

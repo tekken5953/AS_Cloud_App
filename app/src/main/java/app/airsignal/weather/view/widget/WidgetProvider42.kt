@@ -42,9 +42,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     ) {
         for (appWidgetId in appWidgetIds) {
             try { processUpdate(context,appWidgetId) }
-            catch (e: Exception) {
-                e.stackTraceToString()
-            }
+            catch (e: Exception) { e.stackTraceToString() }
         }
     }
 
@@ -99,6 +97,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     this.setOnClickPendingIntent(R.id.w42Background, enterPending)
                     this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
                 }
+
                 if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) fetch(context, views)
             }
         }
@@ -119,13 +118,10 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     withContext(Dispatchers.Main) {
                         delay(500)
                         updateUI(context, views, data, addr)
-
                     }
                     withContext(Dispatchers.IO) { BaseWidgetProvider().setRefreshTime(context, WIDGET_42) }
                 }
-            } catch (e: Exception) {
-                e.stackTraceToString()
-            }
+            } catch (e: Exception) { e.stackTraceToString() }
         }
     }
 
@@ -239,9 +235,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             }
 
             appWidgetManager.updateAppWidget(componentName, views)
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
+        } catch (e: Exception) { e.stackTraceToString() }
     }
 
     private fun applyColor(context: Context, views: RemoteViews, bg: Int) {

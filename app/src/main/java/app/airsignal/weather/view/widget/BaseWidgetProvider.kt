@@ -33,9 +33,8 @@ open class BaseWidgetProvider: AppWidgetProvider() {
             return HttpClient.retrofit
                 .getWidgetForecast(lat, lng, rCount)
                 .awaitResponse().body()
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
+        } catch (e: Exception) { e.stackTraceToString() }
+
         return null
     }
 

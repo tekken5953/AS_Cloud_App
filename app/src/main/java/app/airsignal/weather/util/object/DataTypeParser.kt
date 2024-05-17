@@ -21,27 +21,24 @@ import kotlin.math.roundToInt
  **/
 object DataTypeParser {
     /** 현재시간 불러오기 **/
-    fun getCurrentTime(): Long {
-        return System.currentTimeMillis()
-    }
+    fun getCurrentTime(): Long = System.currentTimeMillis()
 
-    fun getHourCountToTomorrow(): Int {
-        val currentHour = parseLongToLocalDateTime(getCurrentTime()).hour
-        return 24 - currentHour
-    }
+    fun getHourCountToTomorrow(): Int = 24 - parseLongToLocalDateTime(getCurrentTime()).hour
 
     fun currentDateTimeString(format: String): String {
         @SuppressLint("SimpleDateFormat") val mFormat = SimpleDateFormat(format)
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
         }
+
         return mFormat.format(calendar.time)
     }
 
     /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트 **/
     fun applySkyText(context: Context, rain: String?, sky: String?, thunder: Double?): String {
         return if (rain != "없음") if ((thunder == null) || (thunder < 0.2))  rain ?: "없음" else  context.getString(R.string.thunder_sunny)
-         else if ((thunder == null) || (thunder < 0.2)) sky ?: "맑음" else  context.getString(R.string.thunder_rainy)
+        else if ((thunder == null) || (thunder < 0.2)) sky ?: "맑음"
+        else  context.getString(R.string.thunder_rainy)
     }
 
     fun translateSkyText(sky: String): String {
@@ -58,7 +55,7 @@ object DataTypeParser {
     }
 
     /** 비가 오는지 안오는지 Flag **/
-    fun isRainyDay(rainType: String?): Boolean { return rainType != "없음" }
+    fun isRainyDay(rainType: String?): Boolean = rainType != "없음"
 
     /** 어제 날씨와 오늘 날씨의 비교 값 반환 **/
     fun getComparedTemp(yesterday: Double?, today: Double?): Double? {
@@ -87,8 +84,7 @@ object DataTypeParser {
         val id = when(sky) {
             context.getString(R.string.sky_sunny) ->
                 if (!isNight) R.drawable.b_ico_sunny
-//                else  applyLunarImg(lunar)
-                 else R.drawable.ico_moon_big
+                else R.drawable.ico_moon_big
             context.getString(R.string.sky_sunny_cloudy) ->
                 if (!isNight)  R.drawable.b_ico_m_cloudy
                 else  R.drawable.b_ico_m_ncloudy
@@ -230,9 +226,7 @@ object DataTypeParser {
     }
 
     /** 지정 자릿수에서 반올림 **/
-    fun parseDoubleToDecimal(double: Double, digit: Int): String {
-        return String.format("%.${digit}f", double)
-    }
+    fun parseDoubleToDecimal(double: Double, digit: Int): String = String.format("%.${digit}f", double)
 
     /** 요일 변환 **/
     fun parseDayOfWeekToKorean(context: Context, dayOfWeek: Int): String {
@@ -357,10 +351,10 @@ object DataTypeParser {
     fun dateAppendZero(dateTime: LocalDateTime): String {
         return if (dateTime.monthValue / 10 == 0)
             if (dateTime.dayOfMonth / 10 == 0) "0${dateTime.monthValue}.0${dateTime.dayOfMonth}"
-             else "0${dateTime.monthValue}.${dateTime.dayOfMonth}"
+            else "0${dateTime.monthValue}.${dateTime.dayOfMonth}"
          else {
             if (dateTime.dayOfMonth / 10 == 0) "${dateTime.monthValue}.0${dateTime.dayOfMonth}"
-             else "${dateTime.monthValue}.${dateTime.dayOfMonth}"
+            else "${dateTime.monthValue}.${dateTime.dayOfMonth}"
         }
     }
 
@@ -370,11 +364,10 @@ object DataTypeParser {
         return -1 // 문자가 없는 경우 -1을 반환
     }
 
-    private fun getDrawable(context: Context, resId: Int): Drawable? {
-        return ResourcesCompat.getDrawable(context.resources, resId, null)
-    }
+    private fun getDrawable(context: Context, resId: Int): Drawable? =
+        ResourcesCompat.getDrawable(context.resources, resId, null)
 
-    fun progressToHex(progress: Int): String {
-        return if (progress == 0) "00" else if (progress == 100) "" else if (progress < 10) "0${progress}" else progress.toString()
-    }
+    fun progressToHex(progress: Int): String =
+        if (progress == 0) "00" else if (progress == 100) "" else if (progress < 10) "0${progress}" else progress.toString()
+
 }

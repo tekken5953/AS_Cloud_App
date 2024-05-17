@@ -26,6 +26,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="15dp"
+        android:imeOptions="actionSearch"
         android:layout_toEndOf="@+id/searchBack"
         android:background="@drawable/search_bg"
         android:fontFamily="@font/spoqa_hansansneo_regular"

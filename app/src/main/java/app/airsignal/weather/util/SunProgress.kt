@@ -28,5 +28,5 @@ class SunProgress(private val seekArc: SeekArc) {
     }
 
     /** 일출/일몰 그래프 터치 막기 **/
-    fun disableTouch() { seekArc.setOnTouchListener { _, _ -> true } }
+    fun disableTouch() = seekArc.setOnTouchListener { _, _ -> true }
 }
