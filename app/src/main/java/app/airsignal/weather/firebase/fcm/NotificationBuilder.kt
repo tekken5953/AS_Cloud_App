@@ -120,13 +120,11 @@ class NotificationBuilder {
                 (val bitmapDrawable = DataTypeParser.getSkyImgLarge(context,
                 DataTypeParser.applySkyText(context, rain, sky, thunder),
                 false, lunar ?: -1)) {
-            is BitmapDrawable -> { bitmapDrawable.bitmap }
-            is VectorDrawable -> { (bitmapDrawable).toBitmap() }
-            else -> { null }
+            is BitmapDrawable -> bitmapDrawable.bitmap
+            is VectorDrawable -> (bitmapDrawable).toBitmap()
+            else -> null
         }
     }
 
-    private fun parseStringToDoubleToInt(s: String): Int {
-        return s.toDouble().roundToInt()
-    }
+    private fun parseStringToDoubleToInt(s: String): Int = s.toDouble().roundToInt()
 }

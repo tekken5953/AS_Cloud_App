@@ -30,10 +30,8 @@ class GetAppVersionRepo: BaseRepository() {
                     val responseBody = response.body()
                     responseBody?.let {
                         if (response.isSuccessful) {
-                            CoroutineScope(Dispatchers.Main).launch {
-                                withContext(Dispatchers.Default) {
-                                    _getAppVersionResult.postValue(ApiState.Success(responseBody))
-                                }
+                            CoroutineScope(Dispatchers.Default).launch {
+                                _getAppVersionResult.postValue(ApiState.Success(responseBody))
                             }
                         } else _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_API_PROTOCOL))
                     } ?: run {

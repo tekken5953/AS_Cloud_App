@@ -60,6 +60,7 @@ import java.io.IOException
 import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 @SuppressLint("InflateParams", "MissingPermission","SetTextI18n")
@@ -757,8 +758,8 @@ class MainActivity
                     else result.realtime[0].rainType
 
 //                 날씨에 따라 배경화면 변경
-                    val testSky = getString(R.string.sky_cloudy_shower)
-                    val testRain = getString(R.string.sky_shower)
+                    val testSky = getString(R.string.sky_sunny_cloudy)
+                    val testRain = getString(R.string.sky_rain_nonthing)
 
 //                    applyWindowBackground(sky = testSky, rainType = testRain)
 //                    setMountain(sky = testSky, rainType = testRain)
@@ -897,19 +898,19 @@ class MainActivity
                     currentIsAfterRealtime(current.currentTime, dailyIndex.forecast)
                 val skyImg = DataTypeParser.applySkyImg(
                     this, if (isAfterRealtime) current.rainType else dailyIndex.rainType,
-                    if (isAfterRealtime) dailyIndex.sky else dailyIndex.sky, thunder,
+                    dailyIndex.sky, thunder,
                     isLarge = false, isNight, lunar = lunar
                 )
                 val temperature =
                     if (isAfterRealtime) "${current.temperature.roundToInt()}˚" else "${dailyIndex.temp.roundToInt()}˚"
                 val rainType = if (isAfterRealtime) current.rainType else dailyIndex.rainType
-                val rainP = if (isAfterRealtime) dailyIndex.rainP ?: 0.0 else dailyIndex.rainP
+                val rainP =  dailyIndex.rainP ?: 0.0
 
                 addDailyWeatherItem(
                     "${forecastToday.hour}${getString(R.string.hour)}",
                     skyImg,
                     temperature,
-                    dailyIndex.forecast!!,
+                    dailyIndex.forecast ?: "",
                     DataTypeParser.isRainyDay(rainType),
                     rainP
                 )
@@ -957,9 +958,7 @@ class MainActivity
                     amRain[it]?.toInt() ?: 0,
                     pmRain[it]?.toInt() ?: 0
                 )
-            } catch (e: Exception) {
-                e.stackTraceToString()
-            }
+            } catch (e: Exception) { e.stackTraceToString() }
         }
     }
 
@@ -996,12 +995,10 @@ class MainActivity
         uv?.let {
             it.flag?.let { mFlag ->
                 it.value?.let {
-                    if (mFlag != "null") {
-                        binding.mainUVBox.visibility = VISIBLE
-                        applyUvResponseItem(mFlag)   // 자외선 단계별 대응요령 추가
-                        DataTypeParser.applyUvColor(this, mFlag, binding.mainUvValue) // UV 범주 색상 변경
-                        binding.mainUvValue.text = DataTypeParser.translateUV(this, mFlag)
-                    }
+                    binding.mainUVBox.visibility = VISIBLE
+                    applyUvResponseItem(mFlag)   // 자외선 단계별 대응요령 추가
+                    DataTypeParser.applyUvColor(this, mFlag, binding.mainUvValue) // UV 범주 색상 변경
+                    binding.mainUvValue.text = DataTypeParser.translateUV(this, mFlag)
                 } ?: run { binding.mainUVBox.visibility = GONE }
             } ?: run { binding.mainUVBox.visibility = GONE }
         } ?: run { binding.mainUVBox.visibility = GONE }
@@ -1101,9 +1098,9 @@ class MainActivity
             warningList.clear()
         }
 
-        if (GetAppInfo.getUserLocation(this) == StaticDataObject.LANG_EN) {
+        if (GetAppInfo.getUserLocation(this) == StaticDataObject.LANG_EN)
             binding.mainWarningBox.setBackgroundColor(getColor(android.R.color.transparent))
-        } else {
+        else {
             // 기상특보 세팅
             summary?.let { sList ->
                 val filteredList = sList.map { summary ->
@@ -1138,9 +1135,7 @@ class MainActivity
         when(rainType) {
             getString(R.string.sky_snowy),
             getString(R.string.sky_sunny_cloudy_snowy),
-            getString(R.string.sky_cloudy_snowy) -> {
-                changeBackgroundResource(R.drawable.main_bg_snow)
-            }
+            getString(R.string.sky_cloudy_snowy) -> { changeBackgroundResource(R.drawable.main_bg_snow) }
             else -> {
                 when(sky) {
                     getString(R.string.sky_sunny),
@@ -1228,13 +1223,13 @@ class MainActivity
             getString(R.string.sky_sunny_cloudy_shower),
             getString(R.string.sky_sunny_cloudy_rainy),
             getString(R.string.sky_sunny_cloudy_rainy_snowy) -> {
-                setSkyAnimation(if (isNight) R.raw.ani_main_night_stars else R.raw.ani_main_clear_birds)
+                setSkyAnimation(if (isNight) R.raw.ani_main_sunny_cloudy_night else R.raw.ani_main_sunny_cloudy_day)
             }
             getString(R.string.sky_cloudy),
             getString(R.string.sky_cloudy_rainy),
             getString(R.string.sky_cloudy_rainy_snowy),
             getString(R.string.sky_cloudy_shower) -> {
-                setSkyAnimation(if (isNight) R.raw.ani_main_cloudy_night else R.raw.ani_main_cloudy_day, 0.6F)
+                setSkyAnimation(if (isNight) R.raw.ani_main_cloudy_night else R.raw.ani_main_cloudy_day)
             }
             else -> { setEmptyAnimation(1) }
         }
@@ -1259,7 +1254,7 @@ class MainActivity
             getString(R.string.sky_snowy),
             getString(R.string.sky_cloudy_snowy),
             getString(R.string.sky_sunny_cloudy_snowy)
-            -> { setRainAnimation(R.raw.ani_main_snow,0.6F) }
+            -> { setRainAnimation(R.raw.ani_main_snow) }
             else -> { setEmptyAnimation(2) }
         }
 
@@ -1276,24 +1271,10 @@ class MainActivity
             if (!binding.mainSkyLottie.isAnimating) binding.mainSkyLottie.playAnimation()
         } ?: run { setEmptyAnimation(1) }
     }
-    private fun setSkyAnimation(animationResource: Int?, speed: Float?) {
-        animationResource?.let {
-            binding.mainSkyLottie.setAnimation(it)
-            speed?.let {binding.mainSkyLottie.speed = speed}
-            if (!binding.mainSkyLottie.isAnimating) binding.mainSkyLottie.playAnimation()
-        } ?: run { setEmptyAnimation(1) }
-    }
 
     private fun setRainAnimation(animationResource: Int?) {
         animationResource?.let {
             binding.mainRainLottie.setAnimation(it)
-            if (!binding.mainRainLottie.isAnimating) binding.mainRainLottie.playAnimation()
-        } ?: run { setEmptyAnimation(2) }
-    }
-    private fun setRainAnimation(animationResource: Int?, speed: Float?) {
-        animationResource?.let {
-            binding.mainRainLottie.setAnimation(it)
-            speed?.let {binding.mainRainLottie.speed = speed}
             if (!binding.mainRainLottie.isAnimating) binding.mainRainLottie.playAnimation()
         } ?: run { setEmptyAnimation(2) }
     }
@@ -1347,7 +1328,7 @@ class MainActivity
         val compared = DataTypeParser.getComparedTemp(y, t)
         compared?.let {
             val subTitle = if (compared < 0) "↓" else if (compared == 0.0) "=" else "↑"
-            tv.text = "${subTitle}${compared}˚"
+            tv.text = "${subTitle}${compared.absoluteValue}˚"
         } ?: run {
             tv.visibility = GONE
             tv.text = ""
@@ -1355,9 +1336,11 @@ class MainActivity
     }
 
     // 에러 코드에 따라 에러 메시지 설정
-    private fun setErrorMessage(error: String): String {
-        return when (error) {
-            ErrorCode.ERROR_API_PROTOCOL, ErrorCode.ERROR_SERVER_CONNECTING, ErrorCode.ERROR_NULL_DATA -> getString(R.string.api_call_error)
+    private fun setErrorMessage(error: String): String =
+        when (error) {
+            ErrorCode.ERROR_API_PROTOCOL, ErrorCode.ERROR_SERVER_CONNECTING, ErrorCode.ERROR_NULL_DATA -> getString(
+                R.string.api_call_error
+            )
             ErrorCode.ERROR_NOT_SERVICED_LOCATION -> getString(R.string.not_serviced_location_error)
             ErrorCode.ERROR_TIMEOUT -> getString(R.string.timeout_error)
             ErrorCode.ERROR_NETWORK -> getString(R.string.network_error)
@@ -1366,7 +1349,6 @@ class MainActivity
             ErrorCode.ERROR_GET_DATA -> getString(R.string.data_call_error)
             else -> getString(R.string.unknown_error)
         }
-    }
 
     // 에러 버튼에 클릭 리스너 설정
     private fun setOnClickListenerForErrorButton(error: String) {
@@ -1821,7 +1803,7 @@ class MainActivity
                             ToastUtils(this@MainActivity).showMessage(getString(R.string.error_not_service_locale))
                             loadSavedViewModelData("서울특별시")
                         }
-                    }
+                    } else hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
                 } catch (e: NullPointerException) {
                     hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
                 }

@@ -65,7 +65,7 @@ class AirQView(context: Context, attrs: AttributeSet?)
 
     // 데이터 적용
     @SuppressLint("SetTextI18n")
-    fun fetchData(explain: String, graph: Drawable, unit: String, name: String): AirQView {
+    fun fetchData(explain: String, graph: Drawable?, unit: String, name: String): AirQView {
         airBinding.airQExplainText.text = explain
         airBinding.airQName.text = "${unit}(${name})"
         airBinding.airQGraphIv.setImageDrawable(graph)

@@ -134,8 +134,8 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         try {
             isSuccess = true
             val currentTime = DataTypeParser.currentDateTimeString("HH:mm")
-            val sunrise = data?.sun?.sunrise ?: "0000"
-            val sunset = data?.sun?.sunset ?: "0000"
+            val sunrise = data?.sun?.sunrise ?: "0600"
+            val sunset = data?.sun?.sunset ?: "1800"
             val isNight = GetAppInfo.getIsNight(sunrise, sunset)
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val componentName =
@@ -253,7 +253,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             R.id.w42HumidTitle,
             R.id.w42HumidValue,
             R.id.w42Pm10Title,
-            R.id.w42Pm10Value
+            R.id.w42Pm10Value,
         )
         val imgArray = arrayOf(R.id.w42Location, R.id.w42Refresh)
         views.run {
@@ -261,12 +261,10 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 this.setInt(
                     it, "setColorFilter", context.applicationContext.getColor(
                         when (bg) {
-                            R.drawable.widget_bg4x2_sunny, R.drawable.widget_bg4x2_snow -> {
-                                R.color.wblack
-                            }
-                            R.drawable.widget_bg4x2_night, R.drawable.widget_bg4x2_cloud -> {
-                                R.color.white
-                            }
+                            R.drawable.widget_bg4x2_sunny,
+                            R.drawable.widget_bg4x2_snow -> { R.color.wblack }
+                            R.drawable.widget_bg4x2_night,
+                            R.drawable.widget_bg4x2_cloud -> { R.color.white }
                             else -> android.R.color.transparent
                         }
                     )

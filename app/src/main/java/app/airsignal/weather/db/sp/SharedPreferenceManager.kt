@@ -58,41 +58,20 @@ class SharedPreferenceManager(context: Context) {
     }
 
     /**String 값 호출**/
-    fun getString(key: String): String {
-        return prefs.getString(
-            key,
-            DEFAULT_VALUE_STRING
-        ) ?: ""
-    }
+    fun getString(key: String): String = prefs.getString(key, DEFAULT_VALUE_STRING) ?: ""
 
     /**Boolean 값 호출**/
-    fun getBoolean(key: String, default: Boolean): Boolean {
-        return prefs.getBoolean(
-            key,
-            default
-        )
-    }
+    fun getBoolean(key: String, default: Boolean): Boolean = prefs.getBoolean(key, default)
+
 
     /**Integer 값 호출**/
-    fun getInt(key: String, defaultValue: Int): Int {
-        return prefs.getInt(key, defaultValue)
-    }
+    fun getInt(key: String, defaultValue: Int): Int = prefs.getInt(key, defaultValue)
 
     /**Long 값 호출**/
-    fun getLong(key: String): Long {
-        return prefs.getLong(
-            key,
-            DEFAULT_VALUE_LONG
-        )
-    }
+    fun getLong(key: String): Long = prefs.getLong(key, DEFAULT_VALUE_LONG)
 
     /**Float 값 호출**/
-    fun getFloat(key: String): Float {
-        return prefs.getFloat(
-            key,
-            DEFAULT_VALUE_FLOAT
-        )
-    }
+    fun getFloat(key: String): Float = prefs.getFloat(key, DEFAULT_VALUE_FLOAT)
 
     /**키 값 삭제**/
     fun removeKey(key: String) {

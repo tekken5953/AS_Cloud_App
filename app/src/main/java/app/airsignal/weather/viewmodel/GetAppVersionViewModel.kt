@@ -16,9 +16,8 @@ class GetAppVersionViewModel(private val repo: GetAppVersionRepo): BaseViewModel
     private var getResultData: LiveData<BaseRepository.ApiState<ApiModel.AppVersion>>? = null
 
     fun loadDataResult() : GetAppVersionViewModel {
-        viewModelScope.launch {
-            repo.loadDataResult()
-        }
+        viewModelScope.launch { repo.loadDataResult() }
+
         return this
     }
 

@@ -46,32 +46,23 @@ class SubFCM: FirebaseMessagingService() {
 
     /** 토픽 구독 해제 **/
     private fun unSubTopic(topic: String): SubFCM {
-        val encodedStream = encodeTopic(topic)
         CoroutineScope(Dispatchers.Default).launch {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(encodedStream)
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(encodeTopic(topic))
         }
         return this
     }
 
     // 어드민 계정 토픽
     fun subAdminTopic() {
-        try {
-            val encodedStream = encodeTopic("admin")
-            subTopic(encodedStream)
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
+        try { subTopic(encodeTopic("admin")) }
+        catch (e: Exception) { e.stackTraceToString() }
     }
 
     /** 현재 위치 토픽 갱신 **/
     fun renewTopic(old: String, new: String) {
         if (old != new) {
-            try {
-                val encodedStream = encodeTopic(new)
-                unSubTopic(old).subTopic(encodedStream)
-            } catch (e: Exception) {
-                e.stackTraceToString()
-            }
+            try { unSubTopic(old).subTopic(encodeTopic(new)) }
+            catch (e: Exception) { e.stackTraceToString() }
         }
     }
 
@@ -81,31 +72,23 @@ class SubFCM: FirebaseMessagingService() {
      * @param topic
      * @return Encoded Topic
      */
-    private fun encodeTopic(topic: String): String {
-        val encoder: Base64.Encoder = Base64.getEncoder()
-        return encoder.encodeToString(topic.toByteArray())
+    private fun encodeTopic(topic: String): String =
+        Base64.getEncoder().encodeToString(topic.toByteArray())
             .replace("=", "").replace("+", "")
-    }
 
     /** 현재 토큰정보 불러오기 **/
     fun getToken() {
         FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                TimberUtil.w("testtest", "Fetching FCM registration token failed : ${task.exception}")
-                return@OnCompleteListener
-            }
-
-            // Get new FCM registration token
-            val token = task.result
+            if (!task.isSuccessful) { return@OnCompleteListener }
 
             // Log and toast
-            TimberUtil.i("testtest","FCM Token is $token")
+            TimberUtil.i("testtest","FCM Token is ${task.result}")
         })
     }
 
     /** 새로운 토큰 발행 **/
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        println(token)
+        TimberUtil.i("testtest","FCM New Token is $token")
     }
 }

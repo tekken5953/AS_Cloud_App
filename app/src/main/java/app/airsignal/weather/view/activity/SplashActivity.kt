@@ -33,8 +33,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override val resID: Int get() = R.layout.activity_splash
 
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
-    private val fetch by lazy {appVersionViewModel.fetchData()}
-
+    private val fetch by lazy { appVersionViewModel.fetchData() }
     private var isReady = false
 
     init {
@@ -143,9 +142,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                         is BaseRepository.ApiState.Error -> {
                             when (ver.errorMessage) {
                                 ErrorCode.ERROR_NETWORK -> {
-                                    if (GetLocation(this).isNetWorkConnected()) {
+                                    if (GetLocation(this).isNetWorkConnected())
                                         makeDialog(getString(R.string.unknown_error))
-                                    } else { makeDialog(getString(R.string.error_network_connect)) }
+                                    else
+                                        makeDialog(getString(R.string.error_network_connect))
                                 }
 
                                 ErrorCode.ERROR_SERVER_CONNECTING -> { makeDialog(getString(R.string.error_server_down)) }

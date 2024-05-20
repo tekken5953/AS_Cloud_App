@@ -41,9 +41,10 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             if (binding.warningAddr.isShowing) binding.warningAddr.dismiss()
         }
 
-        val regexAddress = if (intent.extras?.getBoolean("isMain") == true) {
-            AddressFromRegex(GetAppInfo.getUserLastAddress(this)).getWarningAddress()
-        } else { GetAppInfo.getWarningFixed(this) }
+        val regexAddress =
+            if (intent.extras?.getBoolean("isMain") == true)
+                AddressFromRegex(GetAppInfo.getUserLastAddress(this)).getWarningAddress()
+            else GetAppInfo.getWarningFixed(this)
 
         // 수정 된 주소에 따른 적용
         val regexAddr = if (regexAddress != "Error") regexAddress else GetAppInfo.getNotificationAddress(this)

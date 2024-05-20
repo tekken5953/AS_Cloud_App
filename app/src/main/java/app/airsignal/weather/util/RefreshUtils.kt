@@ -13,7 +13,6 @@ import kotlin.system.exitProcess
 class RefreshUtils(private val context: Context) {
 
     /** 액티비티 갱신 **/
-    @Suppress("DEPRECATION")
     fun refreshActivity() {
         (context as Activity).let {
             it.finish() //인텐트 종료
@@ -26,11 +25,9 @@ class RefreshUtils(private val context: Context) {
 
     /** sec 초 이후에 액티비티 갱신 **/
     fun refreshActivityAfterSecond(sec: Int, pbLayout: LottieAnimationView?) {
-        pbLayout?.let {
-            it.visibility = View.VISIBLE
-        }
+        pbLayout?.let { it.visibility = View.VISIBLE }
         Handler(Looper.getMainLooper()).postDelayed ({
-           this.refreshActivity()
+            this.refreshActivity()
             pbLayout?.let { it.visibility = View.GONE }
         }, sec * 1000L)
     }
@@ -40,7 +37,7 @@ class RefreshUtils(private val context: Context) {
         val packageName: String = context.packageName
         val packageManager: PackageManager = context.packageManager
         val intent = packageManager.getLaunchIntentForPackage(packageName)
-        val componentName = intent!!.component
+        val componentName = intent?.component
         val mainIntent = Intent.makeRestartActivityTask(componentName)
         context.startActivity(mainIntent)
         exitProcess(0)

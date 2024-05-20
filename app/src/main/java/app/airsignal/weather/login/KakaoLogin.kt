@@ -29,9 +29,7 @@ import kotlinx.coroutines.withContext
 
 class KakaoLogin(private val activity: Activity) {
 
-    init {
-        KakaoSdk.init(activity, IgnoredKeyFile.KAKAO_NATIVE_APP_KEY)
-    }
+    init { KakaoSdk.init(activity, IgnoredKeyFile.KAKAO_NATIVE_APP_KEY) }
 
     /** 카카오톡 설치 확인 후 로그인**/
     fun checkInstallKakaoTalk(btn: AppCompatButton?) {
@@ -48,7 +46,6 @@ class KakaoLogin(private val activity: Activity) {
                     }
                     // 다른 오류
                     else {
-                        println(error.localizedMessage)
                         UserApiClient.instance.loginWithKakaoAccount(
                             activity,
                             callback = mCallback
@@ -64,10 +61,9 @@ class KakaoLogin(private val activity: Activity) {
                     UserApiClient.instance.me { user, _ -> }
                 }
             }
-        } else {
-            // 카카오 이메일 로그인
-            UserApiClient.instance.loginWithKakaoAccount(activity, callback = mCallback)
         }
+        // 카카오 이메일 로그인
+        else UserApiClient.instance.loginWithKakaoAccount(activity, callback = mCallback)
     }
 
     /** 카카오 이메일 로그인 콜백 **/
@@ -78,9 +74,7 @@ class KakaoLogin(private val activity: Activity) {
                 enterMainPage()
             }
 
-            UserApiClient.instance.me { user, _ ->
-                user?.kakaoAccount
-            }
+            UserApiClient.instance.me { user, _ -> user?.kakaoAccount }
         }
     }
 
@@ -128,9 +122,7 @@ class KakaoLogin(private val activity: Activity) {
 //            token
 //        }
 //    }
-    private fun loginSilenceKakao(): OAuthToken? {
-        return TokenManagerProvider.instance.manager.getToken()
-    }
+    private fun loginSilenceKakao(): OAuthToken? = TokenManagerProvider.instance.manager.getToken()
 
     private fun enterMainPage() {
         CoroutineScope(Dispatchers.IO).launch {

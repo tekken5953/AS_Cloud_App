@@ -252,4 +252,5 @@
     <string name="lunar_ha_m">하현망</string>
     <string name="lunar_ha_d">하현달</string>
     <string name="lunar_g">그믐달</string>
+    <string name="sky_rain_nonthing">없음</string>
 </resources>

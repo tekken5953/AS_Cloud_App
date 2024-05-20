@@ -65,32 +65,32 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
                             context.getString(R.string.pm2_5_full) -> {
                                 popupHelp.fetchData(
                                 modifyDataSort(context, context.getString(R.string.pm2_5_full)),
-                                modifyDataGraph(context, context.getString(R.string.pm2_5_full))!!,
+                                modifyDataGraph(context, context.getString(R.string.pm2_5_full)),
                                 AirQ.PM2_5.sort, context.getString(R.string.pm2_5_full)) }
                             context.getString(R.string.pm10_full) -> {
                                 popupHelp.fetchData(
                                     modifyDataSort(context, context.getString(R.string.pm10_full)),
-                                    modifyDataGraph(context, context.getString(R.string.pm10_full))!!,
+                                    modifyDataGraph(context, context.getString(R.string.pm10_full)),
                                     AirQ.PM10.sort, context.getString(R.string.pm10_full)) }
                             context.getString(R.string.no2_full) -> {
                                 popupHelp.fetchData(
                                     modifyDataSort(context, context.getString(R.string.no2_full)),
-                                    modifyDataGraph(context, context.getString(R.string.no2_full))!!,
+                                    modifyDataGraph(context, context.getString(R.string.no2_full)),
                                     AirQ.NO2.sort, context.getString(R.string.no2_full))}
                             context.getString(R.string.so2_full) -> {
                                 popupHelp.fetchData(
                                     modifyDataSort(context, context.getString(R.string.so2_full)),
-                                    modifyDataGraph(context, context.getString(R.string.so2_full))!!,
+                                    modifyDataGraph(context, context.getString(R.string.so2_full)),
                                     AirQ.SO2.sort, context.getString(R.string.so2_full)) }
                             context.getString(R.string.o3_full) -> {
                                 popupHelp.fetchData(
                                     modifyDataSort(context, context.getString(R.string.o3_full)),
-                                    modifyDataGraph(context, context.getString(R.string.o3_full))!!,
+                                    modifyDataGraph(context, context.getString(R.string.o3_full)),
                                     AirQ.O3.sort, context.getString(R.string.o3_full)) }
                             context.getString(R.string.co_full) -> {
                                 popupHelp.fetchData(
                                     modifyDataSort(context, context.getString(R.string.co_full)),
-                                    modifyDataGraph(context, context.getString(R.string.co_full))!!,
+                                    modifyDataGraph(context, context.getString(R.string.co_full)),
                                     AirQ.CO.sort, context.getString(R.string.co_full)) }
                         }
                         startAnimation(fadeIn)
