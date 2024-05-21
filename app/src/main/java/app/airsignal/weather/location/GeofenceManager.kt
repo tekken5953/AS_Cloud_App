@@ -6,10 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import androidx.core.content.ContextCompat
-import app.airsignal.weather.koin.BaseApplication
 import app.airsignal.weather.view.widget.BaseWidgetProvider
 import com.google.android.gms.location.*
-import com.google.android.gms.location.GeofencingClient
 
 class GeofenceManager(private val context: Context) {
     private val requestId = "request_id_geofence"

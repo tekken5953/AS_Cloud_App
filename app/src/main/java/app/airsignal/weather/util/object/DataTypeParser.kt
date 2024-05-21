@@ -26,7 +26,7 @@ object DataTypeParser {
     fun getHourCountToTomorrow(): Int = 24 - parseLongToLocalDateTime(getCurrentTime()).hour
 
     fun currentDateTimeString(format: String): String {
-        @SuppressLint("SimpleDateFormat") val mFormat = SimpleDateFormat(format)
+        val mFormat = SimpleDateFormat(format, Locale.getDefault())
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
         }
@@ -41,8 +41,8 @@ object DataTypeParser {
         else  context.getString(R.string.thunder_rainy)
     }
 
-    fun translateSkyText(sky: String): String {
-        val id = when (sky) {
+    fun translateSkyText(sky: String): String =
+        when (sky) {
             "맑음" -> "clear"
             "구름많음", "흐림" -> "cloudy"
             "소나기", "비", "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> "rainy"
@@ -50,9 +50,6 @@ object DataTypeParser {
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> "rainy/snowy"
             else -> ""
         }
-
-        return id
-    }
 
     /** 비가 오는지 안오는지 Flag **/
     fun isRainyDay(rainType: String?): Boolean = rainType != "없음"
@@ -211,7 +208,7 @@ object DataTypeParser {
         )
 
         return colorMap[grade]?.let { ResourcesCompat.getColor(context.resources, it, null) }
-            ?:  ResourcesCompat.getColor(context.resources, R.color.main_gray_color, null)
+            ?: ResourcesCompat.getColor(context.resources, R.color.main_gray_color, null)
     }
 
     /** 등급에 따른 텍스트 변환 **/
@@ -259,7 +256,6 @@ object DataTypeParser {
             "위험" to Pair(R.drawable.uv_caution_bg,R.color.uv_caution)
         )
 
-
         flagMap[flag]?.let {
             textView.setBackgroundResource(it.first)
             textView.setTextColor(context.getColor(it.second))
@@ -267,7 +263,6 @@ object DataTypeParser {
     }
 
     /** 상태 바 설정 **/
-    @Suppress("DEPRECATION")
     fun setStatusBar(activity: Activity) {
         activity.window.apply {
             statusBarColor = activity.getColor(R.color.theme_view_color)
@@ -369,5 +364,4 @@ object DataTypeParser {
 
     fun progressToHex(progress: Int): String =
         if (progress == 0) "00" else if (progress == 100) "" else if (progress < 10) "0${progress}" else progress.toString()
-
 }

@@ -6,6 +6,10 @@ import java.util.*
 
 @Suppress("EnumEntryName")
 object Term24Class {
+    const val TERMS_TITLE = "title"
+    const val TERMS_DATE = "date"
+    const val TERMS_EXPLAIN = "explain"
+
     enum class Term24(val title: String, val explain: String) {
         입춘("입춘(立春)", "봄의 시작"),
         우수("우수(雨水)", "눈이 녹기 시작하는 날"),
@@ -45,9 +49,9 @@ object Term24Class {
     /** 24절기 번들 필드 추가 **/
     private fun putBundle(term: Term24): Bundle {
         return Bundle().apply {
-            putString("title", term.title)
-            putString("date", getTermDate())
-            putString("explain", term.explain)
+            putString(TERMS_TITLE, term.title)
+            putString(TERMS_DATE, getTermDate())
+            putString(TERMS_EXPLAIN, term.explain)
         }
     }
 

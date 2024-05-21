@@ -48,7 +48,6 @@
     <string name="uv_high">High</string>
     <string name="uv_very_high">Extra High</string>
     <string name="uv_caution">Dangerous</string>
-    <string name="slide_more">More View</string>
 
     <string name="sky_sunny">Sunny</string>
     <string name="sky_sunny_cloudy">Sunny&amp;Cloudy</string>
@@ -169,8 +168,6 @@
     <string name="loc_caution_title">Location permissions are necessary</string>
     <string name="loc_caution_explain">Measure the location of the current device and place it at that location Used to retrieve real-time weather information based on</string>
     <string name="update">Update</string>
-    <string name="max">Max</string>
-    <string name="min">Min</string>
     <string name="warning_title">Weather report</string>
     <string name="renew_data">Re call data</string>
     <string name="enable_gps">Activate GPS</string>
@@ -180,7 +177,6 @@
     <string name="cd_icon_plus">Add</string>
     <string name="cd_icon_gps_fix">Renew current location</string>
     <string name="cd_img_more">More View Icon</string>
-    <string name="cd_text_more">More View Text</string>
     <string name="cd_img_location">Address</string>
     <string name="cd_icon_up">Scroll to top</string>
     <string name="cd_icon_side_menu">Menu</string>
@@ -192,7 +188,6 @@
     <string name="cd_icon_location">Location Permission</string>
     <string name="cd_icon_noti">Notification Permission</string>
     <string name="cd_login_platform">Profile image</string>
-    <string name="cd_check">Check icon</string>
     <string name="cd_icon_location_shadow">Location Permission Shadow</string>
     <string name="cd_list_item">List item</string>
     <string name="agree_user_data">I agree with AirSignal\'s privacy policy</string>
@@ -216,7 +211,6 @@
     <string name="first_perm_tr4">You can stop collecting and using location from app settings or system location permissions.</string>
     <string name="choose_region">Select a region</string>
     <string name="naver_disconnect">Disconnect from Naver</string>
-    <string name="error_guide">if the problem persists.Please contact \'play@airsignal.kr\'</string>
     <string name="exclamation_mark">Exclamation mark</string>
     <string name="last_location_call_msg">Address calls failed and call up the last address.</string>
     <string name="widget_4x2_description">Airsignal 4x2</string>
@@ -236,9 +230,7 @@
     <string name="address_error">Error Address</string>
     <string name="ok_change_setting">Settings have been changed</string>
     <string name="settings_initialized">Settings have been initialized</string>
-    <string name="setting_animation">Animation</string>
     <string name="setting_opacity">Opacity</string>
-    <string name="setting_animation_weather">Weather background</string>
     <string name="opacity_black">Text black</string>
     <string name="opacity_white">Text white</string>
     <string name="display">Display</string>

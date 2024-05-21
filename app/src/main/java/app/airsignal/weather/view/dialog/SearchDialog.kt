@@ -18,7 +18,6 @@ import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.AddressListAdapter
@@ -34,8 +33,6 @@ import app.airsignal.weather.view.activity.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.shape.CutCornerTreatment
-import com.google.android.material.shape.ShapeAppearanceModel
 import kotlinx.coroutines.*
 import java.util.*
 import java.util.concurrent.CompletableFuture

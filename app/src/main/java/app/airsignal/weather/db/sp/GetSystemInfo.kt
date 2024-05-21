@@ -1,16 +1,13 @@
 package app.airsignal.weather.db.sp
 
 import android.app.Activity
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.util.DisplayMetrics
-import android.view.WindowManager
 import androidx.core.content.pm.PackageInfoCompat
-import com.kakao.sdk.common.util.Utility
 import java.util.*
 
 /**
@@ -21,8 +18,7 @@ object GetSystemInfo {
 
     /** 현재 테마가 다크인가**/
     fun isThemeNight(context: Context): Boolean {
-        val nightModeFlag =
-            context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val nightModeFlag = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         return nightModeFlag == Configuration.UI_MODE_NIGHT_YES
     }
 
@@ -63,9 +59,7 @@ object GetSystemInfo {
     }
 
     // 플레이 스토어 주소 반환
-    fun getPlayStoreURL(context: Context): String {
-        return "market://details?id=${context.packageName}"
-    }
+    fun getPlayStoreURL(context: Context): String = "market://details?id=${context.packageName}"
 
     /** 플레이 스토어로 이동 **/
     fun goToPlayStore(activity: Activity) {
@@ -78,7 +72,7 @@ object GetSystemInfo {
     fun getWindowHeight(context: Context): Int {
         val displayMetrics = DisplayMetrics()
         @Suppress("DEPRECATION")
-        (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        (context as Activity?)?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         return displayMetrics.heightPixels
     }
 }

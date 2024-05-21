@@ -14,7 +14,7 @@ import java.util.*
 class SubFCM: FirebaseMessagingService() {
 
     enum class Sort(val key: String) {
-        FCM_DAILY("daily"), FCM_PATCH("patch"), FCM_EVENT("event")
+        FCM_DAILY("daily"), FCM_PATCH("patch"), FCM_EVENT("event"), FCM_ADMIN("admin")
     }
 
     enum class Channel(val value: String) {
@@ -54,7 +54,7 @@ class SubFCM: FirebaseMessagingService() {
 
     // 어드민 계정 토픽
     fun subAdminTopic() {
-        try { subTopic(encodeTopic("admin")) }
+        try { subTopic(encodeTopic(Sort.FCM_ADMIN.key)) }
         catch (e: Exception) { e.stackTraceToString() }
     }
 

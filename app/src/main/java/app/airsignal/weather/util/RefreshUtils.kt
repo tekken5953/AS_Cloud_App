@@ -13,7 +13,7 @@ import kotlin.system.exitProcess
 class RefreshUtils(private val context: Context) {
 
     /** 액티비티 갱신 **/
-    fun refreshActivity() {
+    private fun refreshActivity() {
         (context as Activity).let {
             it.finish() //인텐트 종료
             it.overridePendingTransition(0, 0) //인텐트 효과 없애기

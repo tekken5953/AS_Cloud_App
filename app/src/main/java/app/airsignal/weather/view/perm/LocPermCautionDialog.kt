@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.os.*
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,25 +39,19 @@ class LocPermCautionDialog(
         return inflater.inflate(R.layout.dialog_loc_perm_caution, container, false)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val okBtn = view.findViewById<AppCompatButton>(R.id.permCautionBtn)
         val locIcon = view.findViewById<ImageView>(R.id.permCautionImg)
         val locShadow = view.findViewById<ImageView>(R.id.permCautionImgShadow)
 
         // 권한 재요청 아이콘 애니메이션 적용
         locIcon.animation =
-            AnimationUtils.loadAnimation(context,R.anim.loc_perm_caution_icon_anim)
-                .apply {
-                    start() }
+            AnimationUtils.loadAnimation(context,R.anim.loc_perm_caution_icon_anim).apply { start() }
 
         // 권한 재요청 그림자 애니메이션 적용
         locShadow.animation =
-            AnimationUtils.loadAnimation(context,R.anim.loc_perm_caution_shadow_anim)
-                .apply {
-                    start() }
+            AnimationUtils.loadAnimation(context,R.anim.loc_perm_caution_shadow_anim).apply { start() }
 
         // 확인 버튼 클릭
         okBtn.setOnClickListener {

@@ -3,9 +3,6 @@ package app.airsignal.weather.view.widget
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import com.google.android.material.shape.CornerTreatment
-import com.google.android.material.shape.CutCornerTreatment
-import com.google.android.material.shape.ShapeAppearanceModel
 
 class WidgetPermActivity : AppCompatActivity() {
     private val perm by lazy {RequestPermissionsUtil(this)}

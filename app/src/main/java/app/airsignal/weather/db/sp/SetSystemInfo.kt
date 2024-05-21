@@ -1,8 +1,6 @@
 package app.airsignal.weather.db.sp
 
-import android.app.Activity
 import android.content.Context
-import android.view.WindowManager
 import java.util.*
 
 /**

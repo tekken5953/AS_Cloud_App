@@ -1,6 +1,5 @@
 package app.airsignal.weather.view.activity
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebChromeClient
@@ -15,7 +14,6 @@ import app.airsignal.weather.view.dialog.WebViewSetting
 class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
     override val resID: Int get() = R.layout.activity_web_url
 
-    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
@@ -49,7 +47,7 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             webViewClient = WebViewClient()
         }
 
-        if (intent.extras!!.getBoolean("appBar")) binding.webUrlLinear.visibility = View.VISIBLE
+        if (intent.extras?.getBoolean("appBar") == true) binding.webUrlLinear.visibility = View.VISIBLE
         else binding.webUrlLinear.visibility = View.GONE
 
         val sort = intent.extras?.getString("sort")

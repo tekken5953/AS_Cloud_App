@@ -142,7 +142,7 @@ class SettingActivity
             }
 
             if (binding.settingLogOut.text == getString(R.string.login_title)) {
-                EnterPageUtil(this).toLogin("login")
+                EnterPageUtil(this).toLogin(EnterPageUtil.ENTER_FROM_LOGIN)
                 return@setOnClickListener
             }
         }

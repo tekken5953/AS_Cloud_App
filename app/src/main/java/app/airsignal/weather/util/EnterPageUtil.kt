@@ -21,6 +21,11 @@ import kotlin.system.exitProcess
 @Suppress("DEPRECATION")
 class EnterPageUtil(private val activity: Activity) {
 
+    companion object {
+        const val ENTER_FROM_MAIN = "main"
+        const val ENTER_FROM_LOGIN = "login"
+    }
+
     /**
      * 메인 페이지로 이동한다
      *

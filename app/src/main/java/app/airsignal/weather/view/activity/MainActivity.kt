@@ -202,7 +202,7 @@ class MainActivity
             binding.mainGpsFix.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
                     mVib()
-                    v!!.startAnimation(rotateAnim)
+                    v?.startAnimation(rotateAnim)
                     getDataSingleTime(isCurrent = true)
                 }
             })
@@ -434,7 +434,8 @@ class MainActivity
                 override fun onSingleClick(v: View?) {
                     if (GetAppInfo.getUserLoginPlatform(this@MainActivity) == "") {
                         closeMenuAndCallback {
-                            EnterPageUtil(this@MainActivity).toLogin("main")
+                            val enter = EnterPageUtil(this@MainActivity)
+                            enter.toLogin(EnterPageUtil.ENTER_FROM_MAIN)
                         }
                     }
                 }
@@ -485,15 +486,9 @@ class MainActivity
     // 시간별 날씨 색션 컬러 변경
     private fun setSectionTextColor(t1: TextView, t2: TextView, t3: TextView) {
         val isWhite = dailyWeatherAdapter.getIsWhite()
-        t1.typeface = Typeface.createFromAsset(
-            assets, if (isWhite) "spoqa_hansansneo_bold.ttf" else "spoqa_hansansneo_medium.ttf"
-        )
-        t2.typeface = Typeface.createFromAsset(
-            assets, if (isWhite) "spoqa_hansansneo_regular.ttf" else "spoqa_hansansneo_regular.ttf"
-        )
-        t3.typeface = Typeface.createFromAsset(
-            assets, if (isWhite) "spoqa_hansansneo_regular.ttf" else "spoqa_hansansneo_regular.ttf"
-        )
+        t1.typeface = if (isWhite) TypeFaceObject.getBold(this) else TypeFaceObject.getMedium(this)
+        t2.typeface = TypeFaceObject.getRegular(this)
+        t3.typeface = TypeFaceObject.getRegular(this)
         t1.setTextColor(getColor(if (isWhite) R.color.white else R.color.main_blue_color))
         t2.setTextColor(getColor(if (isWhite) R.color.sub_white else R.color.sub_black))
         t3.setTextColor(getColor(if (isWhite) R.color.sub_white else R.color.sub_black))
@@ -559,8 +554,6 @@ class MainActivity
     // 프로그래스 숨기기
     private fun hideProgressBar() = setProgressVisibility(false)
 
-
-    @SuppressLint("NotifyDataSetChanged")
     private fun initializing() {
         val displayMetrics = DisplayMetrics()
         @Suppress("DEPRECATION") windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -645,22 +638,18 @@ class MainActivity
                 // 현재 스크롤 위치 확인
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 when (sectionList.size) {
-                    1 -> {
-                        setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection)
-                    }
+                    1 -> setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection)
                     2 -> {
                         when (layoutManager.findFirstVisibleItemPosition()) {
-                            sectionList[0] -> { setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection) }
-                            sectionList[1] -> { setSectionTextColor(tomorrowSection, todaySection, afterTomorrowSection) }
-                            else -> {}
+                            sectionList[0] -> setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection)
+                            sectionList[1] -> setSectionTextColor(tomorrowSection, todaySection, afterTomorrowSection)
                         }
                     }
                     3 -> {
                         when (layoutManager.findFirstVisibleItemPosition()) {
-                            sectionList[0] -> { setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection) }
-                            sectionList[1] -> { setSectionTextColor(tomorrowSection, todaySection, afterTomorrowSection) }
-                            sectionList[2] -> { setSectionTextColor(afterTomorrowSection, todaySection, tomorrowSection) }
-                            else -> {}
+                            sectionList[0] -> setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection)
+                            sectionList[1] -> setSectionTextColor(tomorrowSection, todaySection, afterTomorrowSection)
+                            sectionList[2] -> setSectionTextColor(afterTomorrowSection, todaySection, tomorrowSection)
                         }
                     }
                     else -> {}
@@ -725,8 +714,8 @@ class MainActivity
             ioThread.launch {
                 reNewTopicInMain(metaAddr)
 
-//                                isNight = true
-                isNight = GetAppInfo.getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
+                                isNight = true
+//                isNight = GetAppInfo.getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
 
                 withContext(mainDispatcher) {
                     binding.mainGpsFix.clearAnimation()
@@ -759,25 +748,25 @@ class MainActivity
 
 //                 날씨에 따라 배경화면 변경
                     val testSky = getString(R.string.sky_sunny_cloudy)
-                    val testRain = getString(R.string.sky_rain_nonthing)
+                    val testRain = getString(R.string.sky_rain_nothing)
 
-//                    applyWindowBackground(sky = testSky, rainType = testRain)
-//                    setMountain(sky = testSky, rainType = testRain)
-//                    setSkyLottie(sky = testSky)
-//                    setRainTypeLottie(testRain)
+                    applyWindowBackground(sky = testSky, rainType = testRain)
+                    setMountain(sky = testSky, rainType = testRain)
+                    setSkyLottie(sky = testSky)
+                    setRainTypeLottie(testRain)
 
-                    applyWindowBackground(sky = result.realtime[0].sky, rainType = rainTypeText)
-                    setMountain(sky = result.realtime[0].sky, rainType = rainTypeText)
-                    setSkyLottie(sky = result.realtime[0].sky)
-                    setRainTypeLottie(rainType = rainTypeText)
+//                    applyWindowBackground(sky = result.realtime[0].sky, rainType = rainTypeText)
+//                    setMountain(sky = result.realtime[0].sky, rainType = rainTypeText)
+//                    setSkyLottie(sky = result.realtime[0].sky)
+//                    setRainTypeLottie(rainType = rainTypeText)
 
                     binding.mainSkyText.text = skyText
 
                     hideProgressBar()
 
                     if (!isInAppMsgShow) {
-                        ioThread.launch { startInAppMsg() }
                         isInAppMsgShow = true
+                        ioThread.launch { startInAppMsg() }
                     }
 
                     val skyImgAnimation =
@@ -803,9 +792,8 @@ class MainActivity
     private fun handleApiError(errorMessage: String) {
         runOnUiThread {
             hideProgressBar()
-            if (GetLocation(this).isNetWorkConnected()) {
-                hideAllViews(error = errorMessage)
-            }
+            if (GetLocation(this).isNetWorkConnected()) hideAllViews(error = errorMessage)
+
             if (errorMessage != "text") hideAllViews(error = ErrorCode.ERROR_NETWORK)
         }
     }
@@ -951,8 +939,8 @@ class MainActivity
                 addWeeklyWeatherItem(
                     date,
                     DataTypeParser.dateAppendZero(formedDate),
-                    DataTypeParser.getSkyImgSmall(this, wfMin[it], false)!!,
-                    DataTypeParser.getSkyImgSmall(this, wfMax[it], true)!!,
+                    DataTypeParser.getSkyImgSmall(this, wfMin[it], false),
+                    DataTypeParser.getSkyImgSmall(this, wfMax[it], true),
                     "${(taMin[it] ?: 0.0).roundToInt()}˚",
                     "${(taMax[it] ?: 0.0).roundToInt()}˚",
                     amRain[it]?.toInt() ?: 0,
@@ -965,8 +953,8 @@ class MainActivity
     private fun updateAirQualityData(air: ApiModel.AirQualityData) {
         val pm25 = (air.pm25Value ?: air.pm25Value24 ?: 0.0)
         val pm10 = (air.pm10Value ?: air.pm10Value24 ?: 0.0)
-        val pm25Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade("PM2.5", pm25.toDouble()))
-        val pm10Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade("PM10", pm10))
+        val pm25Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade(ExternalAirView.AirQ.PM2_5.sort, pm25.toDouble()))
+        val pm10Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade(ExternalAirView.AirQ.PM10.sort, pm10))
 
         binding.mainAirPm10.setOnClickListener(binding.nestedAirHelpPopup)
             .fetchData(ExternalAirView.AirQ.PM10, pm10.toInt())
@@ -984,9 +972,9 @@ class MainActivity
         binding.subAirPM25.text = "${getString(R.string.pm2_5_full)}   $pm25Grade"
         binding.subAirPM10.text = "${getString(R.string.pm10_full)}   $pm10Grade"
         changeStrokeColor(binding.subAirPM25, DataTypeParser.getDataColor(this,
-            DataTypeParser.convertValueToGrade("PM2.5", pm25.toDouble())))
+            DataTypeParser.convertValueToGrade(ExternalAirView.AirQ.PM2_5.sort, pm25.toDouble())))
         changeStrokeColor(binding.subAirPM10, DataTypeParser.getDataColor(this,
-            DataTypeParser.convertValueToGrade("PM10", pm10)))
+            DataTypeParser.convertValueToGrade(ExternalAirView.AirQ.PM10.sort, pm10)))
     }
 
     private fun updateUVData(uv: ApiModel.UV?) {
@@ -1123,9 +1111,9 @@ class MainActivity
             val bundle = Term24Class.getTerms24Bundle(term)
             bundle?.let { b ->
                 binding.nestedTerms24Box.visibility = VISIBLE
-                binding.mainTermsTitle.text = b.getString("title")
-                binding.mainTermsDate.text = b.getString("date")
-                binding.mainTermsExplain.text = b.getString("explain")
+                binding.mainTermsTitle.text = b.getString(Term24Class.TERMS_TITLE)
+                binding.mainTermsDate.text = b.getString(Term24Class.TERMS_DATE)
+                binding.mainTermsExplain.text = b.getString(Term24Class.TERMS_EXPLAIN)
             } ?: run { binding.nestedTerms24Box.visibility = GONE }
         } ?: run { binding.nestedTerms24Box.visibility = GONE }
     }
@@ -1135,7 +1123,7 @@ class MainActivity
         when(rainType) {
             getString(R.string.sky_snowy),
             getString(R.string.sky_sunny_cloudy_snowy),
-            getString(R.string.sky_cloudy_snowy) -> { changeBackgroundResource(R.drawable.main_bg_snow) }
+            getString(R.string.sky_cloudy_snowy) -> changeBackgroundResource(R.drawable.main_bg_snow)
             else -> {
                 when(sky) {
                     getString(R.string.sky_sunny),
@@ -1145,23 +1133,18 @@ class MainActivity
                     getString(R.string.sky_rainy_snowy),
                     getString(R.string.sky_sunny_cloudy_shower),
                     getString(R.string.sky_sunny_cloudy_rainy),
-                    getString(R.string.sky_sunny_cloudy_rainy_snowy) -> {
-                        changeBackgroundResource(if (isNight) R.drawable.main_bg_night else R.drawable.main_bg_clear)
-                    }
+                    getString(R.string.sky_sunny_cloudy_rainy_snowy) -> changeBackgroundResource(if (isNight) R.drawable.main_bg_night else R.drawable.main_bg_clear)
+
                     getString(R.string.sky_cloudy),
                     getString(R.string.sky_cloudy_rainy),
                     getString(R.string.sky_cloudy_rainy_snowy),
-                    getString(R.string.sky_cloudy_shower) -> {
-                        changeBackgroundResource(if (isNight) R.drawable.main_bg_cloudy_night else R.drawable.main_bg_cloudy)
-                    }
+                    getString(R.string.sky_cloudy_shower) -> changeBackgroundResource(if (isNight) R.drawable.main_bg_cloudy_night else R.drawable.main_bg_cloudy)
+
                     getString(R.string.sky_snowy),
                     getString(R.string.sky_sunny_cloudy_snowy),
-                    getString(R.string.sky_cloudy_snowy) -> {
-                        changeBackgroundResource(R.drawable.main_bg_snow)
-                    }
-                    else -> {
-                        changeBackgroundResource(if (isNight) R.drawable.main_bg_night else R.drawable.main_bg_clear)
-                    }
+                    getString(R.string.sky_cloudy_snowy) -> changeBackgroundResource(R.drawable.main_bg_snow)
+
+                    else -> changeBackgroundResource(if (isNight) R.drawable.main_bg_night else R.drawable.main_bg_clear)
                 }
             }
         }
@@ -1184,28 +1167,26 @@ class MainActivity
                     getString(R.string.sky_rainy_snowy),
                     getString(R.string.sky_sunny_cloudy_shower),
                     getString(R.string.sky_sunny_cloudy_rainy),
-                    getString(R.string.sky_sunny_cloudy_rainy_snowy) -> {
+                    getString(R.string.sky_sunny_cloudy_rainy_snowy) ->
                         if (isNight) binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_clear_night)
                         else binding.mainBottomDecoImg.setImageResource(R.drawable.bg_mt_clear)
-                    }
+
                     getString(R.string.sky_cloudy),
                     getString(R.string.sky_cloudy_rainy),
                     getString(R.string.sky_cloudy_rainy_snowy),
-                    getString(R.string.sky_cloudy_shower) -> {
+                    getString(R.string.sky_cloudy_shower) ->
                         binding.mainBottomDecoImg.setImageResource(
                             if (isNight) R.drawable.bg_mt_cloud_night else R.drawable.bg_mt_cloud
                         )
-                    }
+
                     getString(R.string.sky_snowy),
                     getString(R.string.sky_sunny_cloudy_snowy),
-                    getString(R.string.sky_cloudy_snowy) -> {
-                        changeBackgroundResource(R.drawable.main_bg_snow)
-                    }
-                    else -> {
+                    getString(R.string.sky_cloudy_snowy) -> changeBackgroundResource(R.drawable.main_bg_snow)
+
+                    else ->
                         binding.mainBottomDecoImg.setImageResource(
                             if (isNight) R.drawable.bg_mt_clear_night else R.drawable.bg_mt_clear
                         )
-                    }
                 }
             }
         }
@@ -1216,22 +1197,19 @@ class MainActivity
             getString(R.string.sky_sunny),
             getString(R.string.sky_rainy),
             getString(R.string.sky_shower),
-            getString(R.string.sky_rainy_snowy) -> {
-                setSkyAnimation(if (isNight) R.raw.ani_main_night_stars else R.raw.ani_main_clear_birds)
-            }
+            getString(R.string.sky_rainy_snowy) -> setSkyAnimation(if (isNight) R.raw.ani_main_night_stars else R.raw.ani_main_clear_birds)
+
             getString(R.string.sky_sunny_cloudy),
             getString(R.string.sky_sunny_cloudy_shower),
             getString(R.string.sky_sunny_cloudy_rainy),
-            getString(R.string.sky_sunny_cloudy_rainy_snowy) -> {
-                setSkyAnimation(if (isNight) R.raw.ani_main_sunny_cloudy_night else R.raw.ani_main_sunny_cloudy_day)
-            }
+            getString(R.string.sky_sunny_cloudy_rainy_snowy) -> setSkyAnimation(if (isNight) R.raw.ani_main_sunny_cloudy_night else R.raw.ani_main_sunny_cloudy_day)
+
             getString(R.string.sky_cloudy),
             getString(R.string.sky_cloudy_rainy),
             getString(R.string.sky_cloudy_rainy_snowy),
-            getString(R.string.sky_cloudy_shower) -> {
-                setSkyAnimation(if (isNight) R.raw.ani_main_cloudy_night else R.raw.ani_main_cloudy_day)
-            }
-            else -> { setEmptyAnimation(1) }
+            getString(R.string.sky_cloudy_shower) -> setSkyAnimation(if (isNight) R.raw.ani_main_cloudy_night else R.raw.ani_main_cloudy_day)
+
+            else -> setEmptyAnimation(1)
         }
 
         binding.mainSkyLottie.translationZ = -20F
@@ -1246,16 +1224,18 @@ class MainActivity
             getString(R.string.sky_shower),
             getString(R.string.sky_cloudy_shower),
             getString(R.string.sky_sunny_cloudy_shower)
-            -> { setRainAnimation(R.raw.ani_main_rain) }
+            -> setRainAnimation(R.raw.ani_main_rain)
+
             getString(R.string.sky_rainy_snowy),
             getString(R.string.sky_cloudy_rainy_snowy),
             getString(R.string.sky_sunny_cloudy_rainy_snowy)
-            -> { setRainAnimation(R.raw.ani_main_rain) }
+            -> setRainAnimation(R.raw.ani_main_rain)
+
             getString(R.string.sky_snowy),
             getString(R.string.sky_cloudy_snowy),
             getString(R.string.sky_sunny_cloudy_snowy)
-            -> { setRainAnimation(R.raw.ani_main_snow) }
-            else -> { setEmptyAnimation(2) }
+            -> setRainAnimation(R.raw.ani_main_snow)
+            else -> setEmptyAnimation(2)
         }
 
         binding.mainRainLottie.translationZ = -10F
@@ -1282,8 +1262,8 @@ class MainActivity
     private fun setEmptyAnimation(flag: Int) {
         val emptyJson = "{}"
         when(flag) {
-            1 -> { binding.mainSkyLottie.setAnimationFromJson(emptyJson, "emptyKey") }
-            2 -> { binding.mainRainLottie.setAnimationFromJson(emptyJson, "emptyKey") }
+            1 -> binding.mainSkyLottie.setAnimationFromJson(emptyJson, "emptyKey")
+            2 -> binding.mainRainLottie.setAnimationFromJson(emptyJson, "emptyKey")
             else -> {
                 binding.mainSkyLottie.setAnimationFromJson(emptyJson, "emptyKey")
                 binding.mainRainLottie.setAnimationFromJson(emptyJson, "emptyKey")
@@ -1315,8 +1295,8 @@ class MainActivity
 
     // 시간별 날씨 리사이클러뷰 아이템 추가
     private fun addWeeklyWeatherItem(
-        day: String, date: String, minImg: Drawable,
-        maxImg: Drawable, minText: String, maxText: String,minRain: Int, maxRain: Int
+        day: String, date: String, minImg: Drawable?,
+        maxImg: Drawable?, minText: String, maxText: String,minRain: Int, maxRain: Int
     ) {
         val item = AdapterModel.WeeklyWeatherItem(day, date, minImg, maxImg, minText, maxText,minRain,maxRain)
 
@@ -1853,9 +1833,7 @@ class MainActivity
 
     // 뷰 백그라운드 적용
     private fun <T> applyBackground(view: T, res: Int?) {
-        res?.let { (view as View).background = getR(it) } ?: apply {
-            (view as View).background = null
-        }
+        res?.let { (view as View).background = getR(it) } ?: apply { (view as View).background = null }
     }
 
     fun recreateMainActivity(addrKr: String?, addrEn: String?) = addrKr?.let { loadSavedAddr(addrKr, addrEn) }

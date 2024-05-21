@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
-import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,7 +43,6 @@ class  FirstLocCheckDialog(
         return inflater.inflate(R.layout.dialog_first_perm, container, false)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

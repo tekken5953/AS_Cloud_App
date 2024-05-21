@@ -1,17 +1,15 @@
 package app.airsignal.weather.view.widget
 
-import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
+import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
-import app.airsignal.weather.db.sp.GetAppInfo
-import app.airsignal.weather.db.sp.SetAppInfo
 import retrofit2.awaitResponse
 import java.time.LocalDateTime
 

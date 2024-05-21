@@ -5,7 +5,6 @@ import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.util.RefreshUtils

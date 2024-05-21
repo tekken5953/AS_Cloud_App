@@ -4,11 +4,12 @@ import android.accounts.NetworkErrorException
 import androidx.lifecycle.MutableLiveData
 import app.airsignal.weather.network.ErrorCode
 import app.airsignal.weather.network.retrofit.ApiModel
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.awaitResponse
 import java.io.IOException
 import java.net.SocketTimeoutException
 
