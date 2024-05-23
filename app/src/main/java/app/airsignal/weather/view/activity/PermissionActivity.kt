@@ -28,24 +28,27 @@ class PermissionActivity :
 
     override fun onResume() {
         super.onResume()
-        if (perm.isLocationPermitted()) {   // 위치 서비스 이용 가능?
-            @Suppress("DEPRECATION")
-            val inAppExtraList = intent.getParcelableArrayExtra(SpDao.IN_APP_MSG)?.map {it as ApiModel.InAppMsgItem?}?.toTypedArray()
-            if (!perm.isNotificationPermitted()) {  // 알림 서비스 이용 가능?
-                val initNotiPermission = GetAppInfo.getInitNotiPermission(this)
-                if (initNotiPermission == "") { // 알림 서비스 권한 호출이 처음?
-                    SetAppInfo.setInitNotiPermission(this, "Not Init")
-                    perm.requestNotification()  // 알림 권한 요청
-                } else {
-                    Toast.makeText(this, getString(R.string.noti_always_can), Toast.LENGTH_SHORT).show()
-                    enter.toMain(GetAppInfo.getUserLoginPlatform(this),inAppExtraList)
-                }
-            } else {
-                SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, true)
-                SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiVibrate, true)
-                enter.toMain(GetAppInfo.getUserLoginPlatform(this),inAppExtraList)
-            }
+        if (!perm.isLocationPermitted()) return // 위치 서비스 이용 가능?
+        @Suppress("DEPRECATION")
+        val inAppExtraList =
+            intent.getParcelableArrayExtra(SpDao.IN_APP_MSG)?.map { it as ApiModel.InAppMsgItem? }
+                ?.toTypedArray()
+
+        if (perm.isNotificationPermitted()) {
+            SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, true)
+            SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiVibrate, true)
+            enter.toMain(GetAppInfo.getUserLoginPlatform(this), inAppExtraList)
+            return
         }
+
+        if (GetAppInfo.getInitNotiPermission(this) != "") {
+            Toast.makeText(this, getString(R.string.noti_always_can), Toast.LENGTH_SHORT).show()
+            enter.toMain(GetAppInfo.getUserLoginPlatform(this), inAppExtraList)
+            return
+        }
+
+        SetAppInfo.setInitNotiPermission(this, "Not Init")
+        perm.requestNotification()  // 알림 권한 요청
     }
 
     @SuppressLint("SuspiciousIndentation")

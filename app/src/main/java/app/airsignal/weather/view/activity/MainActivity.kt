@@ -145,8 +145,8 @@ class MainActivity
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
-        try {
             super.onCreate(savedInstanceState)
+        kotlin.runCatching {
             initBinding()
             if (savedInstanceState == null) {
                 showProgressBar()
@@ -265,14 +265,14 @@ class MainActivity
                     }, 500)
                 }
             }
-        } catch (e: androidx.fragment.app.Fragment.InstantiationException) {
-            RefreshUtils(this).refreshApplication()
-        }
+        }.onFailure { exception ->
+            if (exception == InstantiationException())
+                RefreshUtils(this).refreshApplication() }
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private suspend fun startInAppMsg() {
-        try {
+        kotlin.runCatching {
             inAppList.clear()
 
             val inAppExtraSize = intent.extras?.getInt(SpDao.IN_APP_MSG_COUNT)
@@ -299,9 +299,7 @@ class MainActivity
 
                 runOnUiThread { inAppMsgDialog() }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        }.exceptionOrNull()?.stackTraceToString()
     }
 
     private suspend fun isTimeToDialog(long: Long): Boolean = withContext(ioDispatcher) {
@@ -401,7 +399,7 @@ class MainActivity
 
     // 햄버거 메뉴 세팅
     private fun addSideMenu() {
-        try {
+        kotlin.runCatching {
             val cancel = sideMenuView.findViewById<ImageView>(R.id.headerCancel)
             val profile = sideMenuView.findViewById<ImageView>(R.id.navHeaderProfileImg)
             val id = sideMenuView.findViewById<TextView>(R.id.navHeaderUserId)
@@ -453,9 +451,7 @@ class MainActivity
                     }
                 }
             })
-        } catch (e: NullPointerException) {
-            e.printStackTrace()
-        }
+        }.onFailure { exception ->  if (exception == NullPointerException()) exception.printStackTrace()}
     }
 
     private fun closeMenuAndCallback(callback: () -> Unit) {
@@ -685,7 +681,7 @@ class MainActivity
     }
 
     private fun applyGetDataViewModel() {
-        try {
+        kotlin.runCatching {
             fetch.observe(this) { entireData ->
                 entireData?.let { eData ->
                     binding.mainSwipeLayout.isRefreshing = false
@@ -700,21 +696,23 @@ class MainActivity
                     if (!isDataResponse) hideAllViews(error = ErrorCode.ERROR_NULL_DATA)
                 }
             }
-        } catch (e: IOException) {
-            binding.mainSwipeLayout.isRefreshing = false
-            handleApiError(ErrorCode.ERROR_API_PROTOCOL)
-            hideProgressBar()
+        }.onFailure { exception ->
+            if (exception == IOException()) {
+                binding.mainSwipeLayout.isRefreshing = false
+                handleApiError(ErrorCode.ERROR_API_PROTOCOL)
+                hideProgressBar()
+            }
         }
     }
 
     // API 통신이 성공일 때 처리
     private fun handleApiSuccess(result: ApiModel.GetEntireData) {
-        try {
+        kotlin.runCatching {
             val metaAddr = result.meta.address ?: getString(R.string.address_error)
             ioThread.launch {
                 reNewTopicInMain(metaAddr)
 
-                                isNight = true
+                isNight = true
 //                isNight = GetAppInfo.getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
 
                 withContext(mainDispatcher) {
@@ -777,9 +775,8 @@ class MainActivity
                     binding.mainLunarBox.alpha = if (isNight) 1f else 0f
                 }
             }
-        } catch (e: Exception) {
-            handleApiError(e.localizedMessage ?: e.stackTraceToString())
-        }
+        }.onFailure { exception ->
+            handleApiError(exception.localizedMessage ?: exception.stackTraceToString()) }
     }
 
     private fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean {
@@ -926,7 +923,7 @@ class MainActivity
 
         // 주간별 날씨 아이템 추가
         repeat(7) {
-            try {
+            kotlin.runCatching {
                 val formedDate = dateNow.plusDays(it.toLong())
                 val date: String = when (it) {
                     0 -> getString(R.string.today_main)
@@ -946,7 +943,7 @@ class MainActivity
                     amRain[it]?.toInt() ?: 0,
                     pmRain[it]?.toInt() ?: 0
                 )
-            } catch (e: Exception) { e.stackTraceToString() }
+            }.exceptionOrNull()?.stackTraceToString()
         }
     }
 
@@ -1050,7 +1047,7 @@ class MainActivity
         // 체감 온도 업데이트
         binding.mainSensTitle.text = getString(R.string.sens_temp)
 
-        val sensibleTemp = try {
+        kotlin.runCatching {
             DataTypeParser.parseDoubleToDecimal(
                 SensibleTempFormula().getSensibleTemp(
                     ta = current.temperature,
@@ -1058,18 +1055,21 @@ class MainActivity
                     v = currentWindSpeed
                 ), digit = 1
             )
-        } catch (e: Exception) {
-            DataTypeParser.parseDoubleToDecimal(
-                SensibleTempFormula().getSensibleTemp(
-                    ta = real0.temp,
-                    rh = currentHumidity,
-                    v = currentWindSpeed
-                ), digit = 1
-            )
-        }
-
-        binding.mainSensValue.text = "$sensibleTemp˚"
-        binding.mainSensValueC.text = "$sensibleTemp˚"
+        }.fold(
+            onSuccess = {
+                binding.mainSensValue.text = "$it˚"
+                binding.mainSensValueC.text = "$it˚"
+            },
+            onFailure = {
+                DataTypeParser.parseDoubleToDecimal(
+                    SensibleTempFormula().getSensibleTemp(
+                        ta = real0.temp,
+                        rh = currentHumidity,
+                        v = currentWindSpeed
+                    ), digit = 1
+                )
+            }
+        )
     }
 
     // 주소 업데이트 후 적용
@@ -1197,7 +1197,7 @@ class MainActivity
             getString(R.string.sky_sunny),
             getString(R.string.sky_rainy),
             getString(R.string.sky_shower),
-            getString(R.string.sky_rainy_snowy) -> setSkyAnimation(if (isNight) R.raw.ani_main_night_stars else R.raw.ani_main_clear_birds)
+            getString(R.string.sky_rainy_snowy) -> setSkyAnimation(if (isNight) R.raw.ani_main_night_stars else R.raw.ani_main_clear_day)
 
             getString(R.string.sky_sunny_cloudy),
             getString(R.string.sky_sunny_cloudy_shower),
@@ -1745,7 +1745,7 @@ class MainActivity
                     processAddress(lat, lng, addr)
                 } else {
                     ToastUtils(this).showMessage(getString(R.string.error_not_service_locale))
-                    loadSavedViewModelData("서울특별시")
+                    loadSavedViewModelData(getString(R.string.seoul_si))
                 }
             } ?: run {
                 hideProgressBar()
@@ -1765,32 +1765,35 @@ class MainActivity
     }
 
     private fun callSavedLoc() {
-        try {
+        kotlin.runCatching {
             ioThread.launch {
-                try {
-                    val db = GpsRepository(this@MainActivity).findByName(SpDao.CURRENT_GPS_ID)
-                    val lat = db.lat
-                    val lng = db.lng
-                    if (lat != null && lng != null) {
-                        val mLat = lat.toDouble()
-                        val mLng = lat.toDouble()
-                        val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
-                        if (isKorea(mLat, mLng)) {
-                            ToastUtils(this@MainActivity)
-                                .showMessage(getString(R.string.last_location_call_msg), 1)
-                            processAddress(mLat, mLng, addr)
-                        } else {
-                            ToastUtils(this@MainActivity).showMessage(getString(R.string.error_not_service_locale))
-                            loadSavedViewModelData("서울특별시")
-                        }
-                    } else hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
-                } catch (e: NullPointerException) {
+                val db = GpsRepository(this@MainActivity).findByName(SpDao.CURRENT_GPS_ID)
+                val lat = db.lat
+                val lng = db.lng
+                if (lat != null && lng != null) {
+                    val mLat = lat.toDouble()
+                    val mLng = lat.toDouble()
+                    val addr = GetLocation(this@MainActivity).getAddress(mLat, mLng)
+                    if (isKorea(mLat, mLng)) {
+                        ToastUtils(this@MainActivity)
+                            .showMessage(getString(R.string.last_location_call_msg), 1)
+                        processAddress(mLat, mLng, addr)
+                    } else {
+                        ToastUtils(this@MainActivity).showMessage(getString(R.string.error_not_service_locale))
+                        loadSavedViewModelData(getString(R.string.seoul_si))
+                    }
+                } else hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
+            }
+        }.onFailure { exception ->
+            when(exception) {
+                NullPointerException() -> {
+                    hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
+                }
+                NumberFormatException() -> {
+                    handleLocationFailure()
                     hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
                 }
             }
-        } catch (e: NumberFormatException) {
-            handleLocationFailure()
-            hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
         }
     }
 

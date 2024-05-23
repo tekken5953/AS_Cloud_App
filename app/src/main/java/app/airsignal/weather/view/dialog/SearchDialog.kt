@@ -53,15 +53,15 @@ class SearchDialog(
 
     init {
         when (GetAppInfo.getUserLocation(activity)) {
-            StaticDataObject.LANG_KR -> { SetSystemInfo.updateConfiguration(activity, Locale.KOREA) }
-            StaticDataObject.LANG_EN -> { SetSystemInfo.updateConfiguration(activity, Locale.ENGLISH) }
-            else -> { SetSystemInfo.updateConfiguration(activity, Locale.getDefault()) }
+            StaticDataObject.LANG_KR -> SetSystemInfo.updateConfiguration(activity, Locale.KOREA)
+            StaticDataObject.LANG_EN -> SetSystemInfo.updateConfiguration(activity, Locale.ENGLISH)
+            else -> SetSystemInfo.updateConfiguration(activity, Locale.getDefault())
         }
         // 텍스트 폰트 크기 적용
         when (GetAppInfo.getUserFontScale(activity)) {
-            SpDao.TEXT_SCALE_SMALL -> { SetSystemInfo.setTextSizeSmall(activity) }
-            SpDao.TEXT_SCALE_BIG -> { SetSystemInfo.setTextSizeLarge(activity) }
-            else -> { SetSystemInfo.setTextSizeDefault(activity) }
+            SpDao.TEXT_SCALE_SMALL -> SetSystemInfo.setTextSizeSmall(activity)
+            SpDao.TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(activity)
+            else -> SetSystemInfo.setTextSizeDefault(activity)
         }
     }
 
@@ -387,16 +387,15 @@ class SearchDialog(
 
             val startIndex = editableText.indexOf(editText.text.toString().lowercase())
 
-            if (startIndex != -1) {
-                val coloredText = android.text.SpannableString(getItem(position))
-                coloredText.setSpan(
-                    ForegroundColorSpan(activity.getColor(R.color.main_blue_color)),
-                    startIndex,
-                    startIndex + editText.text.toString().length,
-                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                )
-                view.text = coloredText
-            } else  view.text = fullText
+            val coloredText = android.text.SpannableString(getItem(position))
+            coloredText.setSpan(
+                ForegroundColorSpan(activity.getColor(R.color.main_blue_color)),
+                startIndex,
+                startIndex + editText.text.toString().length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+
+            view.text = if (startIndex != -1) coloredText else fullText
 
             return view
         }

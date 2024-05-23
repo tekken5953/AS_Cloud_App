@@ -85,14 +85,9 @@ class LocPermCautionDialog(
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
         val behavior = BottomSheetBehavior.from(bottomSheet)
         val layoutParams = bottomSheet.layoutParams
-        layoutParams.height = getBottomSheetDialogDefaultHeight(ratio)
+        layoutParams.height = GetSystemInfo.getBottomSheetDialogDefaultHeight(activity,ratio)
         bottomSheet.layoutParams = layoutParams
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
         bottomSheet.background = ResourcesCompat.getDrawable(resources, R.drawable.loc_perm_bg,null)
-    }
-
-    // 바텀 다이얼로그 비율설정
-    private fun getBottomSheetDialogDefaultHeight(per: Int): Int {
-        return GetSystemInfo.getWindowHeight(activity) * per / 100
     }
 }

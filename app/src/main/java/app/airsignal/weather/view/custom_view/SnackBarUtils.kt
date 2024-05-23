@@ -70,5 +70,5 @@ class SnackBarUtils(view: View, private val message: String, private val drawabl
     }
 
     /** 진동 발생 **/
-    private fun vibrate() { VibrateUtil(context).make(100) }
+    private fun vibrate() = VibrateUtil(context).make(100)
 }

@@ -62,36 +62,36 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
                     popupHelp.apply {
                         bringToFront()
                         when(airBinding.listItemNestedAirTitle.text.toString()) {
-                            context.getString(R.string.pm2_5_full) -> {
+                            context.getString(R.string.pm2_5_full) ->
                                 popupHelp.fetchData(
                                 modifyDataSort(context, context.getString(R.string.pm2_5_full)),
                                 modifyDataGraph(context, context.getString(R.string.pm2_5_full)),
-                                AirQ.PM2_5.sort, context.getString(R.string.pm2_5_full)) }
-                            context.getString(R.string.pm10_full) -> {
+                                AirQ.PM2_5.sort, context.getString(R.string.pm2_5_full))
+                            context.getString(R.string.pm10_full) ->
                                 popupHelp.fetchData(
                                     modifyDataSort(context, context.getString(R.string.pm10_full)),
                                     modifyDataGraph(context, context.getString(R.string.pm10_full)),
-                                    AirQ.PM10.sort, context.getString(R.string.pm10_full)) }
-                            context.getString(R.string.no2_full) -> {
+                                    AirQ.PM10.sort, context.getString(R.string.pm10_full))
+                            context.getString(R.string.no2_full) ->
                                 popupHelp.fetchData(
                                     modifyDataSort(context, context.getString(R.string.no2_full)),
                                     modifyDataGraph(context, context.getString(R.string.no2_full)),
-                                    AirQ.NO2.sort, context.getString(R.string.no2_full))}
-                            context.getString(R.string.so2_full) -> {
+                                    AirQ.NO2.sort, context.getString(R.string.no2_full))
+                            context.getString(R.string.so2_full) ->
                                 popupHelp.fetchData(
                                     modifyDataSort(context, context.getString(R.string.so2_full)),
                                     modifyDataGraph(context, context.getString(R.string.so2_full)),
-                                    AirQ.SO2.sort, context.getString(R.string.so2_full)) }
-                            context.getString(R.string.o3_full) -> {
+                                    AirQ.SO2.sort, context.getString(R.string.so2_full))
+                            context.getString(R.string.o3_full) ->
                                 popupHelp.fetchData(
                                     modifyDataSort(context, context.getString(R.string.o3_full)),
                                     modifyDataGraph(context, context.getString(R.string.o3_full)),
-                                    AirQ.O3.sort, context.getString(R.string.o3_full)) }
-                            context.getString(R.string.co_full) -> {
+                                    AirQ.O3.sort, context.getString(R.string.o3_full))
+                            context.getString(R.string.co_full) ->
                                 popupHelp.fetchData(
                                     modifyDataSort(context, context.getString(R.string.co_full)),
                                     modifyDataGraph(context, context.getString(R.string.co_full)),
-                                    AirQ.CO.sort, context.getString(R.string.co_full)) }
+                                    AirQ.CO.sort, context.getString(R.string.co_full))
                         }
                         startAnimation(fadeIn)
                         alpha = 1f
@@ -147,23 +147,23 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
 
     private fun translateTitle(title: String): String {
         return when(title) {
-            AirQ.PM2_5.title -> {context.getString(R.string.pm2_5_full)}
-            AirQ.PM10.title -> {context.getString(R.string.pm10_full)}
-            AirQ.NO2.title -> {context.getString(R.string.no2_full)}
-            AirQ.O3.title -> {context.getString(R.string.o3_full)}
-            AirQ.SO2.title -> {context.getString(R.string.so2_full)}
-            AirQ.CO.title -> {context.getString(R.string.co_full)}
-            else -> {""}
+            AirQ.PM2_5.title -> context.getString(R.string.pm2_5_full)
+            AirQ.PM10.title -> context.getString(R.string.pm10_full)
+            AirQ.NO2.title -> context.getString(R.string.no2_full)
+            AirQ.O3.title -> context.getString(R.string.o3_full)
+            AirQ.SO2.title -> context.getString(R.string.so2_full)
+            AirQ.CO.title -> context.getString(R.string.co_full)
+            else -> ""
         }
     }
 
     private fun getProgressDrawable(grade: Int): Drawable? {
         return ResourcesCompat.getDrawable(context.resources,when(grade) {
-            1 -> { R.drawable.airq_good_pb }
-            2 -> { R.drawable.airq_normal_pb }
-            3 -> { R.drawable.airq_bad_pb }
-            4 -> { R.drawable.airq_verybad_pb }
-            else -> { R.drawable.airq_good_pb }
+            1 -> R.drawable.airq_good_pb
+            2 -> R.drawable.airq_normal_pb
+            3 -> R.drawable.airq_bad_pb
+            4 -> R.drawable.airq_verybad_pb
+            else -> R.drawable.airq_good_pb
         }, null)
     }
 

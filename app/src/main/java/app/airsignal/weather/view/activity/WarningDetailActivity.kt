@@ -65,7 +65,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
 
     // 앱 버전 뷰모델 데이터 호출
     private fun applyWarning() {
-        try {
+        kotlin.runCatching {
             warningViewModel.fetchData().observe(this) { result ->
                 warningList.clear()
                 result?.let { warning ->
@@ -84,7 +84,9 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
                     }
                 } ?: run { showNoResult() }
             }
-        } catch (e: IOException) { showNoResult() }
+        }.onFailure { exception ->
+            if (exception == IOException()) showNoResult()
+        }
     }
 
     @SuppressLint("SetTextI18n")

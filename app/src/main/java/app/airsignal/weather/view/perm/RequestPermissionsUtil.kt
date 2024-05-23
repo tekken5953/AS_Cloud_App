@@ -37,13 +37,13 @@ class RequestPermissionsUtil(private val context: Context) {
 
     /** 위치정보 권한 요청**/
     fun requestLocation() {
-        try{
+        kotlin.runCatching {
             requestPermissions(
                 context as Activity,
                 permissionsLocation,
                 StaticDataObject.REQUEST_LOCATION
             )
-        } catch (e: Exception) { e.printStackTrace() }
+        }.exceptionOrNull()?.stackTraceToString()
     }
 
     /** 알림 권한 요청 **/
@@ -51,13 +51,12 @@ class RequestPermissionsUtil(private val context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ActivityCompat.checkSelfPermission(context, permissionNotification[0])
                 != PackageManager.PERMISSION_GRANTED
-            ) {
+            )
                 requestPermissions(
                     context as Activity,
                     permissionNotification,
                     StaticDataObject.REQUEST_NOTIFICATION
                 )
-            }
         }
     }
 
@@ -67,6 +66,7 @@ class RequestPermissionsUtil(private val context: Context) {
             if (ContextCompat.checkSelfPermission(context, perm) != PackageManager.PERMISSION_GRANTED)
                 return false
         }
+
         return true
     }
 
@@ -74,10 +74,10 @@ class RequestPermissionsUtil(private val context: Context) {
     fun isNotificationPermitted(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             for (perm in permissionNotification) {
-                return ContextCompat.checkSelfPermission(
-                    context, perm) == PackageManager.PERMISSION_GRANTED
+                return ContextCompat.checkSelfPermission(context, perm) ==
+                        PackageManager.PERMISSION_GRANTED
             }
-        } else return true
+        }
 
         return true
     }

@@ -33,8 +33,12 @@ class MakeDoubleDialog(private val context: Context) {
 
             title.text = if (titleString is SpannableStringBuilder) titleString else titleString.toString()
             apply.text = applyString
-            apply.backgroundTintList = try {  ColorStateList.valueOf(context.getColor(applyColor))
-            } catch (e: NotFoundException) { ColorStateList.valueOf(context.getColor(R.color.main_blue_color)) }
+            apply.backgroundTintList = runCatching {
+                ColorStateList.valueOf(context.getColor(applyColor))
+            }.getOrElse {
+                ColorStateList.valueOf(context.getColor(R.color.main_blue_color))
+            }
+
             cancel.text = cancelString
             cancel.setOnClickListener { this.dismiss() }
 

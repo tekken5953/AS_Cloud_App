@@ -27,19 +27,18 @@ open class BaseWidgetProvider: AppWidgetProvider() {
     }
 
     suspend fun requestWeather(lat: Double, lng: Double, rCount: Int): ApiModel.WidgetData? {
-        try {
+        kotlin.runCatching {
             return HttpClient.retrofit
                 .getWidgetForecast(lat, lng, rCount)
                 .awaitResponse().body()
-        } catch (e: Exception) { e.stackTraceToString() }
+        }.exceptionOrNull()?.stackTraceToString()
 
         return null
     }
 
     fun requestPermissions(context: Context, sort: String, id: Int?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val perm = RequestPermissionsUtil(context)
-            if (!perm.isBackgroundRequestLocation()) {
+            if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
                 val intent = Intent(context, WidgetPermActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                 intent.putExtra("sort",sort)

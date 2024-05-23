@@ -127,8 +127,10 @@ object DataTypeParser {
         return if (rainType == "없음" || rainType == null) {
             when (sky) {
                 "맑음", "구름많음" -> {
-                    if (sort == "22") if (isNight) R.drawable.w_bg_night else R.drawable.w_bg_sunny
-                    else if (isNight) R.drawable.widget_bg4x2_night else R.drawable.widget_bg4x2_sunny
+                    if (sort == BaseWidgetProvider.WIDGET_22) if (isNight) R.drawable.w_bg_night else R.drawable.w_bg_sunny
+                    else {
+                        if (isNight) R.drawable.widget_bg4x2_night else R.drawable.widget_bg4x2_sunny
+                    }
                 }
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
                 "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
@@ -136,7 +138,8 @@ object DataTypeParser {
                     if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_cloudy else  R.drawable.widget_bg4x2_cloud
                 }
                 "구름많고 눈", "눈", "흐리고 눈" -> {
-                    if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow }
+                    if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
+                }
                 else -> if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
             }
         } else {
@@ -344,13 +347,13 @@ object DataTypeParser {
 
     /** 날짜가 한자리일 때 앞에 0 붙이기 **/
     fun dateAppendZero(dateTime: LocalDateTime): String {
-        return if (dateTime.monthValue / 10 == 0)
-            if (dateTime.dayOfMonth / 10 == 0) "0${dateTime.monthValue}.0${dateTime.dayOfMonth}"
-            else "0${dateTime.monthValue}.${dateTime.dayOfMonth}"
-         else {
-            if (dateTime.dayOfMonth / 10 == 0) "${dateTime.monthValue}.0${dateTime.dayOfMonth}"
-            else "${dateTime.monthValue}.${dateTime.dayOfMonth}"
-        }
+        val month = if (dateTime.monthValue / 10 == 0) "0${dateTime.monthValue}.0${dateTime.dayOfMonth}"
+        else "${dateTime.monthValue}"
+
+        val day = if (dateTime.dayOfMonth / 10 == 0) "0${dateTime.dayOfMonth}"
+        else "${dateTime.dayOfMonth}"
+
+        return "$month.$day"
     }
 
     /** 문자열에서 해당 문자의 인덱스 반환 **/

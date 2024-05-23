@@ -242,4 +242,5 @@
     <string name="lunar_ha_d">하현달</string>
     <string name="lunar_g">그믐달</string>
     <string name="sky_rain_nothing" translatable="false">없음</string>
+    <string name="seoul_si">서울특별시</string>
 </resources>

@@ -88,10 +88,8 @@ class BackLocCheckDialog(
                     RequestPermissionsUtil(activity).requestBackgroundLocation()
                     activity.recreate()
                 } else {
-                    val intent =
-                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    val uri: Uri =
-                        Uri.fromParts("package", activity.packageName, null)
+                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                    val uri: Uri = Uri.fromParts("package", activity.packageName, null)
                     intent.data = uri
                     startActivity(intent)
                 }
@@ -102,8 +100,7 @@ class BackLocCheckDialog(
             subTitle.visibility = View.GONE
             apply.apply {
                 val isPermedBackLoc = GetAppInfo.isPermedBackLoc(activity)
-                this.text = if (isPermedBackLoc) getString(R.string.undo_active)
-                else getString(R.string.do_active)
+                this.text = if (isPermedBackLoc) getString(R.string.undo_active) else getString(R.string.do_active)
                 this.backgroundTintList =
                     ColorStateList.valueOf(
                         activity.getColor(
@@ -118,9 +115,7 @@ class BackLocCheckDialog(
                 }
             }
         }
-        cancel.setOnClickListener {
-            dismiss()
-        }
+        cancel.setOnClickListener { dismiss() }
     }
 
     // 다이얼로그 생성
@@ -147,15 +142,9 @@ class BackLocCheckDialog(
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
         val behavior = BottomSheetBehavior.from(bottomSheet)
         val layoutParams = bottomSheet.layoutParams
-        layoutParams.height = getBottomSheetDialogDefaultHeight(ratio)
+        layoutParams.height = GetSystemInfo.getBottomSheetDialogDefaultHeight(activity,ratio)
         bottomSheet.layoutParams = layoutParams
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        bottomSheet.background =
-            ResourcesCompat.getDrawable(resources, R.drawable.loc_perm_bg, null)
-    }
-
-    // 바텀 다이얼로그 비율설정
-    private fun getBottomSheetDialogDefaultHeight(per: Int): Int {
-        return GetSystemInfo.getWindowHeight(activity) * per / 100
+        bottomSheet.background = ResourcesCompat.getDrawable(resources, R.drawable.loc_perm_bg, null)
     }
 }

@@ -41,8 +41,9 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         for (appWidgetId in appWidgetIds) {
-            try { processUpdate(context,appWidgetId) }
-            catch (e: Exception) { e.stackTraceToString() }
+            kotlin.runCatching {
+                processUpdate(context,appWidgetId)
+            }.exceptionOrNull()?.stackTraceToString()
         }
     }
 
@@ -52,14 +53,15 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
         )
-        if (context != null) {
-            if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                if (intent.action == REFRESH_BUTTON_CLICKED_42) {
-                    if (isRefreshable(context,WIDGET_42)) processUpdate(context,appWidgetId)
-                    else Toast.makeText(context.applicationContext, "갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
-                }
-            } else appWidgetId?.let { processUpdate(context,it) }
-        }
+        if (context == null) return
+
+        if (appWidgetId == null || appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) return
+        else processUpdate(context, appWidgetId)
+
+        if (intent.action != REFRESH_BUTTON_CLICKED_42) return
+
+        if (isRefreshable(context,WIDGET_42)) processUpdate(context,appWidgetId)
+        else Toast.makeText(context.applicationContext, "갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
     }
 
     fun processUpdate(context: Context, appWidgetId: Int?) {
@@ -262,9 +264,9 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     it, "setColorFilter", context.applicationContext.getColor(
                         when (bg) {
                             R.drawable.widget_bg4x2_sunny,
-                            R.drawable.widget_bg4x2_snow -> { R.color.wblack }
+                            R.drawable.widget_bg4x2_snow -> R.color.wblack
                             R.drawable.widget_bg4x2_night,
-                            R.drawable.widget_bg4x2_cloud -> { R.color.white }
+                            R.drawable.widget_bg4x2_cloud -> R.color.white
                             else -> android.R.color.transparent
                         }
                     )
@@ -275,8 +277,8 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 this.setTextColor(
                     it, context.applicationContext.getColor(
                         when (bg) {
-                            R.drawable.widget_bg4x2_sunny, R.drawable.widget_bg4x2_snow -> { R.color.wblack }
-                            R.drawable.widget_bg4x2_night, R.drawable.widget_bg4x2_cloud -> { R.color.white }
+                            R.drawable.widget_bg4x2_sunny, R.drawable.widget_bg4x2_snow -> R.color.wblack
+                            R.drawable.widget_bg4x2_night, R.drawable.widget_bg4x2_cloud -> R.color.white
                             else -> android.R.color.transparent
                         }
                     )

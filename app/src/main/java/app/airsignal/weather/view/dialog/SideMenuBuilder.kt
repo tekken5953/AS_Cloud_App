@@ -83,9 +83,7 @@ class SideMenuBuilder(private val context: Context) {
     }
 
     // 바텀 다이얼로그 세로 비율 설정
-    private fun getBottomSheetDialogDefaultWidth(per: Int): Int {
-        return getWindowWidth() * per / 100
-    }
+    private fun getBottomSheetDialogDefaultWidth(per: Int): Int = getWindowWidth() * per / 100
 
     // 디바이스 넓이 구하기
     private fun getWindowWidth(): Int {

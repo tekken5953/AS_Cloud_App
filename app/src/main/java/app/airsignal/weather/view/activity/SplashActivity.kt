@@ -80,7 +80,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     // 앱 버전 뷰모델 데이터 호출
     private fun applyAppVersionData() {
-        try {
+        kotlin.runCatching {
             fetch.observe(this) { result ->
                 result?.let { ver ->
                     when (ver) {
@@ -158,7 +158,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     }
                 }
             }
-        } catch (e: IOException) { makeDialog(getString(R.string.fail_to_get_app_version)) }
+        }.onFailure { exception ->
+            if (exception == IOException())  makeDialog(getString(R.string.fail_to_get_app_version)) }
     }
 
     // 다이얼로그 생성

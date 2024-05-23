@@ -65,8 +65,8 @@ class LoginActivity
                     googleLogin.handleSignInResult(task, isAuto = false)
                 }
                 // 로그인 취소 됨
-                RESULT_CANCELED -> { binding.googleLoginButton.alpha = 1f }
-                else -> { binding.googleLoginButton.alpha = 1f }
+                RESULT_CANCELED -> binding.googleLoginButton.alpha = 1f
+                else -> binding.googleLoginButton.alpha = 1f
             }
         }
 }

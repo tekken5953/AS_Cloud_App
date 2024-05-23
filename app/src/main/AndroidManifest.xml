@@ -132,7 +132,7 @@
         </service>
 
         <receiver
-            android:name=".view.widget.WidgetProvider"
+            android:name=".view.widget.WidgetProvider22"
             android:directBootAware="true"
             android:enabled="true"
             android:exported="false"

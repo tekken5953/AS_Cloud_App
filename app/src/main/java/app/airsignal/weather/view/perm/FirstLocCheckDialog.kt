@@ -52,8 +52,7 @@ class  FirstLocCheckDialog(
         apply.setOnClickListener {
             if (!perm.isLocationPermitted()) {  // 위치 권한 허용?
                 if (perm.isShouldShowRequestPermissionRationale(
-                        activity,
-                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                        activity, android.Manifest.permission.ACCESS_FINE_LOCATION
                     )   // 권한 거부가 2번 이하?
                 ) {
                     when (GetAppInfo.getInitLocPermission(activity)) { // 위치 권한 요청이 처음?
@@ -61,9 +60,7 @@ class  FirstLocCheckDialog(
                             SetAppInfo.setInitLocPermission(activity, "Second")
                             perm.requestLocation()
                         }
-                        "Second" -> {
-                            LocPermCautionDialog(activity, fm, BottomSheetDialogFragment().tag).show()
-                        }
+                        "Second" -> LocPermCautionDialog(activity, fm, BottomSheetDialogFragment().tag).show()
                     }
                 } else {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
@@ -72,11 +69,10 @@ class  FirstLocCheckDialog(
                     startActivity(intent)
                 }
             }
+
             dismiss()
         }
-        cancel.setOnClickListener {
-            dismiss()
-        }
+        cancel.setOnClickListener { dismiss() }
     }
 
     // 다이얼로그 생성
@@ -95,7 +91,7 @@ class  FirstLocCheckDialog(
     }
 
     // 레이아웃 노출
-    fun show() { FirstLocCheckDialog(activity, fm, tagId).showNow(fm, tagId) }
+    fun show() = FirstLocCheckDialog(activity, fm, tagId).showNow(fm, tagId)
 
     // 바텀 다이얼로그 세팅
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog, ratio: Int) {
@@ -103,15 +99,10 @@ class  FirstLocCheckDialog(
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
         val behavior = BottomSheetBehavior.from(bottomSheet)
         val layoutParams = bottomSheet.layoutParams
-        layoutParams.height = getBottomSheetDialogDefaultHeight(ratio)
+        layoutParams.height = GetSystemInfo.getBottomSheetDialogDefaultHeight(activity,ratio)
         bottomSheet.layoutParams = layoutParams
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
         bottomSheet.background =
             ResourcesCompat.getDrawable(resources, R.drawable.loc_perm_bg, null)
-    }
-
-    // 바텀 다이얼로그 비율설정
-    private fun getBottomSheetDialogDefaultHeight(per: Int): Int {
-        return GetSystemInfo.getWindowHeight(activity) * per / 100
     }
 }

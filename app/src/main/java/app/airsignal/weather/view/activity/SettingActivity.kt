@@ -304,9 +304,9 @@ class SettingActivity
                             call: Call<List<ApiModel.NoticeItem>>,
                             response: Response<List<ApiModel.NoticeItem>>
                         ) {
-                            try {
-                                val list = response.body()!!
-                                list.forEachIndexed { i, item ->
+                            kotlin.runCatching {
+                                val list = response.body()
+                                list?.forEachIndexed { i, item ->
                                     val createdTime =  LocalDateTime.parse(item.created)
                                     val modifiedTime =  LocalDateTime.parse(item.modified)
                                     addNoticeItem(
@@ -319,14 +319,10 @@ class SettingActivity
                                     noticeAdapter.notifyItemInserted(i)
                                 }
 
-                                if (list.isEmpty()) {
-                                    nullText.visibility = View.VISIBLE
-                                } else {
-                                    nullText.visibility = View.GONE
-                                }
-                            } catch(e: Exception) {
+                                nullText.visibility = if (list != null && list.isEmpty()) View.VISIBLE else View.GONE
+                            }.onFailure { exception ->
                                 nullText.visibility = View.VISIBLE
-                                e.printStackTrace()
+                                exception.printStackTrace()
                             }
                         }
 
@@ -595,19 +591,20 @@ class SettingActivity
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
             if (textView.text.contains(getString(R.string.always_allowed))) {
-                try {
+                kotlin.runCatching {
                     span.setSpan(
                         ForegroundColorSpan(getColor(R.color.main_blue_color)),
                         DataTypeParser.findCharacterIndex(textView.text as String, '\n'),
                         DataTypeParser.findCharacterIndex(textView.text as String, '을'),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                } catch (e: IndexOutOfBoundsException) { e.printStackTrace() }
+                }.onFailure { exception ->
+                    if (exception == IndexOutOfBoundsException()) exception.stackTraceToString()
+                }
             }
 
-            if (textView.text == getString(R.string.allowed) || textView.text == getString(R.string.background_location_active)) {
+            if (textView.text == getString(R.string.allowed) || textView.text == getString(R.string.background_location_active))
                 textView.setTextColor(getColor(R.color.main_blue_color))
-            }
         }
 
         textView.text = span
@@ -617,9 +614,9 @@ class SettingActivity
     private fun applyDeviceTheme() {
         // 설정 페이지 테마 항목이름 바꾸기
         when (GetAppInfo.getUserTheme(this)) {
-            StaticDataObject.THEME_DARK -> { binding.settingSystemTheme.fetchData(getString(R.string.theme_dark)) }
-            StaticDataObject.THEME_LIGHT -> { binding.settingSystemTheme.fetchData(getString(R.string.theme_light)) }
-            else -> { binding.settingSystemTheme.fetchData(getString(R.string.theme_system)) }
+            StaticDataObject.THEME_DARK -> binding.settingSystemTheme.fetchData(getString(R.string.theme_dark))
+            StaticDataObject.THEME_LIGHT -> binding.settingSystemTheme.fetchData(getString(R.string.theme_light))
+            else -> binding.settingSystemTheme.fetchData(getString(R.string.theme_system))
         }
     }
 
@@ -639,7 +636,7 @@ class SettingActivity
         val appInfoDataUsage: TextView = viewAppInfo.findViewById(R.id.appInfoDataUsage)
 
 
-        try {
+        kotlin.runCatching {
             // 뷰모델 데이터 호출
             appVersionViewModel.fetchData().observe(this) { result ->
                 result?.let { ver ->
@@ -675,12 +672,13 @@ class SettingActivity
                     }
                 }
             }
-        } catch (e: IOException) {
-            Toast.makeText(
-                this@SettingActivity,
-                getString(R.string.fail_to_get_version),
-                Toast.LENGTH_SHORT
-            ).show()
+        }.onFailure { exception ->
+            if (exception == IOException())
+                Toast.makeText(
+                    this@SettingActivity,
+                    getString(R.string.fail_to_get_version),
+                    Toast.LENGTH_SHORT
+                ).show()
         }
 
         // 새로운 버전 다운로드 실행
@@ -753,9 +751,9 @@ class SettingActivity
     private fun applyUserLanguage() {
         // 설정 페이지 언어 항목이름 바꾸기
         when (GetAppInfo.getUserLocation(this)) {
-            SpDao.LANG_EN -> { binding.settingSystemLang.fetchData(getString(R.string.english)) }
-            SpDao.LANG_KR -> { binding.settingSystemLang.fetchData(getString(R.string.korean)) }
-            else -> { binding.settingSystemLang.fetchData(getString(R.string.system_lang)) }
+            SpDao.LANG_EN -> binding.settingSystemLang.fetchData(getString(R.string.english))
+            SpDao.LANG_KR -> binding.settingSystemLang.fetchData(getString(R.string.korean))
+            else -> binding.settingSystemLang.fetchData(getString(R.string.system_lang))
         }
     }
 
@@ -763,8 +761,8 @@ class SettingActivity
     private fun applyFontScale() {
         // 설정 페이지 폰트크기 항목이름 바꾸기
         when (GetAppInfo.getUserFontScale(this)) {
-            SpDao.TEXT_SCALE_SMALL -> { binding.settingSystemFont.fetchData(getString(R.string.font_small)) }
-            SpDao.TEXT_SCALE_BIG -> { binding.settingSystemFont.fetchData(getString(R.string.font_large)) }
+            SpDao.TEXT_SCALE_SMALL -> binding.settingSystemFont.fetchData(getString(R.string.font_small))
+            SpDao.TEXT_SCALE_BIG -> binding.settingSystemFont.fetchData(getString(R.string.font_large))
             else -> binding.settingSystemFont.fetchData(getString(R.string.font_normal))
         }
     }
@@ -780,11 +778,11 @@ class SettingActivity
 
             Glide.with(this).load(
                 when(lastLogin) {
-                    RDBLogcat.LOGIN_GOOGLE -> { R.drawable.google_icon }
-                    RDBLogcat.LOGIN_KAKAO -> { R.drawable.kakao_icon }
-                    RDBLogcat.LOGIN_NAVER -> { R.drawable.naver_icon }
-                    RDBLogcat.LOGIN_PHONE -> { R.drawable.phone_icon }
-                    else -> { R.drawable.user }
+                    RDBLogcat.LOGIN_GOOGLE -> R.drawable.google_icon
+                    RDBLogcat.LOGIN_KAKAO -> R.drawable.kakao_icon
+                    RDBLogcat.LOGIN_NAVER -> R.drawable.naver_icon
+                    RDBLogcat.LOGIN_PHONE -> R.drawable.phone_icon
+                    else -> R.drawable.user
             }).into(binding.settingUserIcon)
         },500)
 
@@ -906,7 +904,9 @@ class SettingActivity
                 seekBar?.let {
                     ioThread.launch {
                         SetAppInfo.setWeatherBoxOpacity(this@SettingActivity, it.progress)
-                        ToastUtils(this@SettingActivity).showMessage(getString(R.string.ok_change_setting),1)
+                        withContext(mainDispatcher) {
+                            ToastUtils(this@SettingActivity).showMessage(getString(R.string.ok_change_setting),1)
+                        }
                     }
                 }
             }
@@ -939,14 +939,15 @@ class SettingActivity
     @SuppressLint("InflateParams")
     private fun saveConfigChangeRestart() {
         val builder = Dialog(this)
-        val view = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_alert_single_btn, null)
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_alert_single_btn, null)
+
         builder.apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(view)
             setCancelable(false)
         }
+
         builder.create()
 
         val title = view.findViewById<TextView>(R.id.alertSingleTitle)

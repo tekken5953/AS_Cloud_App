@@ -25,7 +25,7 @@ import kotlin.math.roundToInt
  * @author : Lee Jae Young
  * @since : 2023-07-04 오후 4:27
  **/
-open class WidgetProvider : BaseWidgetProvider() {
+open class WidgetProvider22 : BaseWidgetProvider() {
     private var isSuccess = false
 
     override fun onEnabled(context: Context) {
@@ -39,11 +39,9 @@ open class WidgetProvider : BaseWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         for (appWidgetId in appWidgetIds) {
-            try {
+            kotlin.runCatching {
                 processUpdate(context, appWidgetId)
-            } catch (e: Exception) {
-                e.stackTraceToString()
-            }
+            }.exceptionOrNull()?.stackTraceToString()
         }
     }
 
@@ -53,23 +51,25 @@ open class WidgetProvider : BaseWidgetProvider() {
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
         )
-        if (context != null) {
-            if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                if (intent.action == REFRESH_BUTTON_CLICKED) {
-                    if (isRefreshable(context, WIDGET_22)) {
-                        if (!RequestPermissionsUtil(context).isBackgroundRequestLocation())
-                            requestPermissions(context,WIDGET_22,appWidgetId)
-                        else processUpdate(context, appWidgetId)
-                    } else {
-                        Toast.makeText(
-                            context.applicationContext,
-                            "갱신은 1분 주기로 가능합니다",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            } else appWidgetId?.let { processUpdate(context,it) }
+
+        if (context == null) return
+
+        if (appWidgetId == null || appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) return
+        else  processUpdate(context, appWidgetId)
+
+        if (intent.action != REFRESH_BUTTON_CLICKED) return
+
+        if (!isRefreshable(context, WIDGET_22)) {
+            Toast.makeText(context.applicationContext,
+                "갱신은 1분 주기로 가능합니다",
+                Toast.LENGTH_SHORT).show()
+            return
         }
+
+        if (RequestPermissionsUtil(context).isBackgroundRequestLocation())
+            processUpdate(context, appWidgetId)
+        else requestPermissions(context,WIDGET_22, appWidgetId)
+
     }
 
     fun processUpdate(context: Context, appWidgetId: Int?) {
@@ -77,16 +77,16 @@ open class WidgetProvider : BaseWidgetProvider() {
             CoroutineScope(Dispatchers.Default).launch {
                 val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
                 val refreshBtnIntent =
-                    if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                    if (RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                        Intent(context, WidgetProvider22::class.java).run {
+                            this.action = REFRESH_BUTTON_CLICKED
+                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                        }
+                    } else {
                         Intent(context, WidgetPermActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             putExtra("sort", WIDGET_22)
                             putExtra("id", appWidgetId)
-                        }
-                    } else {
-                        Intent(context, WidgetProvider::class.java).run {
-                            this.action = REFRESH_BUTTON_CLICKED
-                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                         }
                     }
 
@@ -116,7 +116,7 @@ open class WidgetProvider : BaseWidgetProvider() {
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context, views: RemoteViews) {
         CoroutineScope(Dispatchers.Default).launch {
-            try {
+            kotlin.runCatching {
                 val geofenceLocation = GeofenceManager(context).addGeofence()
                 geofenceLocation?.let {
                     val lat = geofenceLocation.latitude
@@ -132,7 +132,7 @@ open class WidgetProvider : BaseWidgetProvider() {
                         BaseWidgetProvider().setRefreshTime(context, WIDGET_22)
                     }
                 }
-            } catch (e: Exception) { e.stackTraceToString() }
+            }.exceptionOrNull()?.stackTraceToString()
         }
     }
 
@@ -142,44 +142,44 @@ open class WidgetProvider : BaseWidgetProvider() {
         data: ApiModel.WidgetData?,
         addr: String?
     ) {
-        try {
+        kotlin.runCatching {
             isSuccess = true
             val currentTime = DataTypeParser.currentDateTimeString("HH:mm")
-            val sunrise = data?.sun?.sunrise ?: "0000"
-            val sunset = data?.sun?.sunset ?: "0000"
+            val sunrise = data?.sun?.sunrise ?: "0600"
+            val sunset = data?.sun?.sunset ?: "1800"
             val isNight = GetAppInfo.getIsNight(sunrise, sunset)
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            val componentName =
-                ComponentName(context, this@WidgetProvider.javaClass)
+            val componentName = ComponentName(context, this@WidgetProvider22.javaClass)
 
             views.run {
                 views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
                 this.setTextViewText(R.id.widget2x2Time, currentTime)
                 data?.let {
-                    this.setTextViewText(R.id.widget2x2TempValue, "${it.current.temperature?.roundToInt() ?: 0}˚")
+                    this.setTextViewText(
+                        R.id.widget2x2TempValue,"${it.current.temperature?.roundToInt() ?: 0}˚"
+                    )
                     this.setTextViewText(R.id.widget2x2Address, addr ?: "")
                     this.setImageViewResource(
                         R.id.widget2x2SkyImg,
                         getSkyImgWidget(
                             if (currentIsAfterRealtime(it.current.currentTime, it.realtime[0].forecast))
                                 it.current.rainType
-                            else it.realtime[0].rainType, it.realtime[0].sky, isNight
+                            else it.realtime[0].rainType,
+                            it.realtime[0].sky, isNight
                         )
                     )
                     val bg = getBackgroundImgWidget(
-                        WIDGET_22,
-                        rainType =
+                        WIDGET_22, rainType =
                         if (currentIsAfterRealtime(it.current.currentTime, it.realtime[0].forecast))
-                            it.current.rainType else it.realtime[0].rainType,
+                            it.current.rainType
+                        else it.realtime[0].rainType,
                         sky = it.realtime[0].sky, isNight
                     )
                     this.setTextViewText(R.id.widget2x2Pm25Title, "미세먼지")
                     this.setTextViewText(
                         R.id.widget2x2Pm25Value, DataTypeParser.getDataText(
                             context, DataTypeParser.convertValueToGrade(
-                                "PM2.5",
-                                it.quality.pm25Value24?.toDouble() ?: 0.0
-                            )
+                                "PM2.5", it.quality.pm25Value24?.toDouble() ?: 0.0)
                         )
                     )
                     setInt(R.id.widget2x2Background, "setBackgroundResource", bg)
@@ -188,7 +188,7 @@ open class WidgetProvider : BaseWidgetProvider() {
             }
 
             appWidgetManager.updateAppWidget(componentName, views)
-        } catch (e: Exception) { e.stackTraceToString() }
+        }.exceptionOrNull()?.stackTraceToString()
     }
 
     private fun applyColor(context: Context, views: RemoteViews, bg: Int) {
@@ -202,12 +202,8 @@ open class WidgetProvider : BaseWidgetProvider() {
                 this.setInt(
                     it, "setColorFilter", context.applicationContext.getColor(
                         when (bg) {
-                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> {
-                                R.color.wblack
-                            }
-                            R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> {
-                                R.color.white
-                            }
+                            R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> R.color.wblack
+                            R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> R.color.white
                             else -> android.R.color.transparent
                         }
                     )

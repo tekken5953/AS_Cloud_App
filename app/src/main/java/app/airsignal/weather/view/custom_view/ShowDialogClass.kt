@@ -34,9 +34,9 @@ class ShowDialogClass(activity: Activity, isEye: Boolean) {
         }
 
         when (GetAppInfo.getUserLocation(activity)) {
-            StaticDataObject.LANG_KR -> { SetSystemInfo.updateConfiguration(activity, Locale.KOREA) }
-            StaticDataObject.LANG_EN -> { SetSystemInfo.updateConfiguration(activity, Locale.ENGLISH) }
-            else -> { SetSystemInfo.updateConfiguration(activity, Locale.getDefault()) }
+            StaticDataObject.LANG_KR -> SetSystemInfo.updateConfiguration(activity, Locale.KOREA)
+            StaticDataObject.LANG_EN -> SetSystemInfo.updateConfiguration(activity, Locale.ENGLISH)
+            else -> SetSystemInfo.updateConfiguration(activity, Locale.getDefault())
         }
     }
 
@@ -57,10 +57,10 @@ class ShowDialogClass(activity: Activity, isEye: Boolean) {
             alertDialog = builder.create()
             transition?.let {
                 alertDialog.window?.attributes?.windowAnimations = when(it) {
-                    DialogTransition.END_TO_START -> { R.style.AlertDialogEndToStartAnimation }
-                    DialogTransition.START_TO_END -> { R.style.AlertDialogStartToEndAnimation }
-                    DialogTransition.TOP_TO_BOTTOM -> { R.style.AlertDialogTopToBottomAnimation }
-                    DialogTransition.BOTTOM_TO_TOP -> { R.style.AlertDialogBottomToTopAnimation }
+                    DialogTransition.END_TO_START -> R.style.AlertDialogEndToStartAnimation
+                    DialogTransition.START_TO_END -> R.style.AlertDialogStartToEndAnimation
+                    DialogTransition.TOP_TO_BOTTOM -> R.style.AlertDialogTopToBottomAnimation
+                    DialogTransition.BOTTOM_TO_TOP -> R.style.AlertDialogBottomToTopAnimation
                 }
             }
 

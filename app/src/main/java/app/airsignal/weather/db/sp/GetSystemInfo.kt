@@ -75,4 +75,8 @@ object GetSystemInfo {
         (context as Activity?)?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         return displayMetrics.heightPixels
     }
+
+    // 다이얼로그 비율설정
+    fun getBottomSheetDialogDefaultHeight(context: Context, per: Int): Int =
+        getWindowHeight(context) * per / 100
 }
