@@ -712,8 +712,8 @@ class MainActivity
             ioThread.launch {
                 reNewTopicInMain(metaAddr)
 
-                isNight = true
-//                isNight = GetAppInfo.getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
+//                isNight = true
+                isNight = GetAppInfo.getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
 
                 withContext(mainDispatcher) {
                     binding.mainGpsFix.clearAnimation()
@@ -745,7 +745,7 @@ class MainActivity
                     else result.realtime[0].rainType
 
 //                 날씨에 따라 배경화면 변경
-                    val testSky = getString(R.string.sky_sunny_cloudy)
+                    val testSky = getString(R.string.sky_cloudy)
                     val testRain = getString(R.string.sky_rain_nothing)
 
                     applyWindowBackground(sky = testSky, rainType = testRain)

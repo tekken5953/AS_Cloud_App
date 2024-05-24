@@ -313,17 +313,14 @@ object DataTypeParser {
 
     /** LocalDateTime을 Long으로 파싱 **/
     fun parseLocalDateTimeToLong(localDateTime: LocalDateTime): Long {
-        return try {
+        return kotlin.runCatching {
             localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        } catch (e: NullPointerException) {
-            LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        }
+        }.getOrElse { LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() }
     }
 
     /** Long을 LocalDateTime으로 파싱 **/
-    fun parseLongToLocalDateTime(long: Long): LocalDateTime {
-        return LocalDateTime.ofInstant(Instant.ofEpochMilli(long), ZoneId.systemDefault())
-    }
+    fun parseLongToLocalDateTime(long: Long): LocalDateTime =
+        LocalDateTime.ofInstant(Instant.ofEpochMilli(long), ZoneId.systemDefault())
 
     /** 공기질 데이터 등급변환 **/
     fun convertValueToGrade(s: String, v: Double): Int {
@@ -351,7 +348,7 @@ object DataTypeParser {
         else "${dateTime.monthValue}"
 
         val day = if (dateTime.dayOfMonth / 10 == 0) "0${dateTime.dayOfMonth}"
-        else "${dateTime.dayOfMonth}"
+        else dateTime.dayOfMonth
 
         return "$month.$day"
     }

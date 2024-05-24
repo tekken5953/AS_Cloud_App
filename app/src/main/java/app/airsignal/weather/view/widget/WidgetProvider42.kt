@@ -55,13 +55,28 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         )
         if (context == null) return
 
-        if (appWidgetId == null || appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) return
-        else processUpdate(context, appWidgetId)
+        if (intent == null) return
 
-        if (intent.action != REFRESH_BUTTON_CLICKED_42) return
+        if (appWidgetId == null) return
 
-        if (isRefreshable(context,WIDGET_42)) processUpdate(context,appWidgetId)
-        else Toast.makeText(context.applicationContext, "갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
+        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) return
+
+        if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
+            processUpdate(context, appWidgetId)
+            return
+        }
+
+        if (!isRefreshable(context, WIDGET_42)) {
+            Toast.makeText(context.applicationContext,
+                "갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (intent.action == REFRESH_BUTTON_CLICKED) {
+            if (RequestPermissionsUtil(context).isBackgroundRequestLocation())
+                processUpdate(context, appWidgetId)
+            else requestPermissions(context, WIDGET_42, appWidgetId)
+        }
     }
 
     fun processUpdate(context: Context, appWidgetId: Int?) {
