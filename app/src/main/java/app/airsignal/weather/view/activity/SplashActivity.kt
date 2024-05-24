@@ -63,19 +63,18 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
     private fun enterPage(inAppMsgList: List<ApiModel.InAppMsgItem?>?) {
-        if (isReady) {
+        if (isReady)
             HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted()) {
+                if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted())
                     EnterPageUtil(this@SplashActivity).toMain(
                         GetAppInfo.getUserLoginPlatform(this),
                         inAppMsgList?.toTypedArray())
-                } else { EnterPageUtil(this@SplashActivity).toPermission() }
+                else EnterPageUtil(this@SplashActivity).toPermission()
             }, 500)
-        } else {
+        else
             HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
                 enterPage(inAppMsgList)
             }, 500)
-        }
     }
 
     // 앱 버전 뷰모델 데이터 호출
@@ -163,9 +162,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     }
 
     // 다이얼로그 생성
-    private fun makeDialog(s: String) {
+    private fun makeDialog(s: String) =
         MakeSingleDialog(this).makeDialog(
-            s, R.color.theme_alert_double_apply_color, getString(R.string.ok), false
-        )
-    }
+            s, R.color.theme_alert_double_apply_color, getString(R.string.ok), false)
 }

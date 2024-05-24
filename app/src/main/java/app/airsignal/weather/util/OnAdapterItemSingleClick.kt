@@ -3,7 +3,7 @@ package app.airsignal.weather.util
 import android.os.SystemClock
 import android.view.View
 
-abstract class OnAdapterItemSingleClick : OnAdapterItemClick.OnAdapterItemClick {
+abstract class OnAdapterItemSingleClick : OnAdapterItemClick {
     private var mLastClickTime: Long = 0
     private val minClickInterval: Long = 1000
 

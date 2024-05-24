@@ -748,15 +748,15 @@ class MainActivity
                     val testSky = getString(R.string.sky_cloudy)
                     val testRain = getString(R.string.sky_rain_nothing)
 
-                    applyWindowBackground(sky = testSky, rainType = testRain)
-                    setMountain(sky = testSky, rainType = testRain)
-                    setSkyLottie(sky = testSky)
-                    setRainTypeLottie(testRain)
+//                    applyWindowBackground(sky = testSky, rainType = testRain)
+//                    setMountain(sky = testSky, rainType = testRain)
+//                    setSkyLottie(sky = testSky)
+//                    setRainTypeLottie(testRain)
 
-//                    applyWindowBackground(sky = result.realtime[0].sky, rainType = rainTypeText)
-//                    setMountain(sky = result.realtime[0].sky, rainType = rainTypeText)
-//                    setSkyLottie(sky = result.realtime[0].sky)
-//                    setRainTypeLottie(rainType = rainTypeText)
+                    applyWindowBackground(sky = result.realtime[0].sky, rainType = rainTypeText)
+                    setMountain(sky = result.realtime[0].sky, rainType = rainTypeText)
+                    setSkyLottie(sky = result.realtime[0].sky)
+                    setRainTypeLottie(rainType = rainTypeText)
 
                     binding.mainSkyText.text = skyText
 

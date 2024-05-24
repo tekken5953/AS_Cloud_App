@@ -35,12 +35,12 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
 
         binding.webUrlTop.setOnClickListener { webView.pageUp(true) }
 
-        // 웹뷰 세팅
-        WebViewSetting().apply(webView)
-
         binding.webUrlWebView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
             binding.webUrlTop.visibility = if (scrollY == 0) View.GONE else View.VISIBLE
         }
+
+        // 웹뷰 세팅
+        WebViewSetting().apply(webView)
 
         webView.apply {
             webChromeClient = WebChromeClient()

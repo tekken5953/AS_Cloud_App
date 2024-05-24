@@ -1,6 +1,5 @@
 package app.airsignal.weather.view.custom_view
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -12,7 +11,6 @@ import app.airsignal.weather.databinding.CustomViewSettingSystemBinding
  * @author : Lee Jae Young
  * @since : 2023-07-03 오전 10:57
  **/
-@SuppressLint("Recycle", "CustomViewStyleable")
 class SettingSystemView(context: Context, attrs: AttributeSet?)
     : LinearLayout(context, attrs) {
     private var systemBinding: CustomViewSettingSystemBinding

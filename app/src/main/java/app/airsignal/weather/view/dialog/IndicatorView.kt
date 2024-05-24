@@ -29,12 +29,15 @@ class IndicatorView(private val context: Context, private val listSize: Int) {
                 }
             })
 
-            indicatorView.imageTintList = color
+            indicatorView.apply {
+                this.imageTintList = color
+                this.layoutParams = params
+                this.setImageResource(R.drawable.indicator_empty) // 선택되지 않은 원 이미지
+                this.scaleType = ImageView.ScaleType.FIT_XY
+            }
             params.setMargins(10, 0, 10, 0)
-            indicatorView.layoutParams = params
-            indicatorView.setImageResource(R.drawable.indicator_empty) // 선택되지 않은 원 이미지
-            indicatorView.scaleType = ImageView.ScaleType.FIT_XY
             container.addView(indicatorView)
+
             indicatorView
         }
         updateIndicators(viewPager.currentItem)

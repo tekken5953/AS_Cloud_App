@@ -41,9 +41,8 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         for (appWidgetId in appWidgetIds) {
-            kotlin.runCatching {
-                processUpdate(context,appWidgetId)
-            }.exceptionOrNull()?.stackTraceToString()
+            kotlin.runCatching { processUpdate(context,appWidgetId) }
+                .exceptionOrNull()?.stackTraceToString()
         }
     }
 
@@ -84,17 +83,17 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             CoroutineScope(Dispatchers.Default).launch {
                 val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
                 val refreshBtnIntent =
-                    if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                    if (!RequestPermissionsUtil(context).isBackgroundRequestLocation())
                         Intent(context, WidgetPermActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             putExtra("sort",WIDGET_42)
                             putExtra("id",appWidgetId)
                         }
-                    } else {
+                    else
                         Intent(context, WidgetProvider42::class.java).run {
                             this.action = REFRESH_BUTTON_CLICKED_42
                             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                    }
+
                 }
 
                 val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
@@ -123,7 +122,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context, views: RemoteViews) {
         CoroutineScope(Dispatchers.Default).launch {
-            try {
+            kotlin.runCatching {
                 val geofenceLocation = GeofenceManager(context).addGeofence()
                 geofenceLocation?.let {
                     val lat = geofenceLocation.latitude
@@ -136,9 +135,10 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                         delay(500)
                         updateUI(context, views, data, addr)
                     }
+
                     withContext(Dispatchers.IO) { BaseWidgetProvider().setRefreshTime(context, WIDGET_42) }
                 }
-            } catch (e: Exception) { e.stackTraceToString() }
+            }.exceptionOrNull()?.stackTraceToString()
         }
     }
 
@@ -148,7 +148,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         data: ApiModel.WidgetData?,
         addr: String?
     ) {
-        try {
+        kotlin.runCatching {
             isSuccess = true
             val currentTime = DataTypeParser.currentDateTimeString("HH:mm")
             val sunrise = data?.sun?.sunrise ?: "0600"
@@ -252,7 +252,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             }
 
             appWidgetManager.updateAppWidget(componentName, views)
-        } catch (e: Exception) { e.stackTraceToString() }
+        }.exceptionOrNull()?.stackTraceToString()
     }
 
     private fun applyColor(context: Context, views: RemoteViews, bg: Int) {
