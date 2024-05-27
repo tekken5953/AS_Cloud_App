@@ -114,7 +114,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
                 }
 
-                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID)  {
+                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                     fetch(context, views)
                     VibrateUtil(context).make(10)
                 }
@@ -131,15 +131,14 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     val lat = geofenceLocation.latitude
                     val lng = geofenceLocation.longitude
                     val addr = GeofenceManager(context).getSimpleAddress(lat, lng)
-
                     val data = requestWeather(lat, lng, 4)
+
+                    withContext(Dispatchers.IO) { BaseWidgetProvider().setRefreshTime(context, WIDGET_42) }
 
                     withContext(Dispatchers.Main) {
                         delay(500)
                         updateUI(context, views, data, addr)
                     }
-
-                    withContext(Dispatchers.IO) { BaseWidgetProvider().setRefreshTime(context, WIDGET_42) }
                 }
             }.exceptionOrNull()?.stackTraceToString()
         }
@@ -158,8 +157,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             val sunset = data?.sun?.sunset ?: "1800"
             val isNight = GetAppInfo.getIsNight(sunrise, sunset)
             val appWidgetManager = AppWidgetManager.getInstance(context)
-            val componentName =
-                ComponentName(context, this@WidgetProvider42.javaClass)
+            val componentName = ComponentName(context, this@WidgetProvider42.javaClass)
 
             views.run {
                 views.setImageViewResource(R.id.w42Refresh, R.drawable.w_btn_refresh42)
@@ -273,7 +271,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             R.id.w42HumidTitle,
             R.id.w42HumidValue,
             R.id.w42Pm10Title,
-            R.id.w42Pm10Value,
+            R.id.w42Pm10Value
         )
         val imgArray = arrayOf(R.id.w42Location, R.id.w42Refresh)
         views.run {

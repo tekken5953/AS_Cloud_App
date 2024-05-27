@@ -31,7 +31,7 @@ class GetWeatherRepo : BaseRepository() {
                         call: Call<ApiModel.GetEntireData>,
                         response: Response<ApiModel.GetEntireData>
                     ) {
-                        try {
+                        kotlin.runCatching {
                             if (response.isSuccessful) {
                                 val responseBody = processData(response.body())
                                 _getDataResult.postValue(ApiState.Success(responseBody))
@@ -39,10 +39,11 @@ class GetWeatherRepo : BaseRepository() {
                                 _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_API_PROTOCOL))
                                 call.cancel()
                             }
-                        } catch (e: NullPointerException) {
-                            _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_SERVER_CONNECTING))
-                        } catch (e: JsonSyntaxException) {
-                            _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_GET_DATA))
+                        }.onFailure { exception ->
+                            when(exception) {
+                                is NullPointerException -> _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_SERVER_CONNECTING))
+                                is JsonSyntaxException -> _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_GET_DATA))
+                            }
                         }
                     }
 
@@ -50,20 +51,17 @@ class GetWeatherRepo : BaseRepository() {
                         call: Call<ApiModel.GetEntireData>,
                         t: Throwable
                     ) {
-                        try {
+                        kotlin.runCatching {
                             _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_GET_DATA))
                             call.cancel()
-                        } catch (e: Exception) {
-                            when (e) {
+                        }.onFailure { exception ->
+                            when (exception) {
                                 is SocketTimeoutException ->
                                     _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_TIMEOUT))
                                 is NetworkErrorException ->
                                     _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_NETWORK))
                                 is NullPointerException ->
                                     _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_NULL_POINT))
-                                else -> {
-                                    _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_UNKNOWN))
-                                }
                             }
                         }
                     }
@@ -72,16 +70,14 @@ class GetWeatherRepo : BaseRepository() {
     }
 
     private fun processData(rawData: ApiModel.GetEntireData?): ApiModel.GetEntireData {
-        try {
+        kotlin.runCatching {
             rawData?.let { d ->
                 d.current.rainType = NetworkUtils.modifyCurrentRainType(d.current.rainType,d.realtime[0].rainType)
                 d.current.temperature = NetworkUtils.modifyCurrentTempType(d.current.temperature, d.realtime[0].temp)
                 d.current.windSpeed = NetworkUtils.modifyCurrentWindSpeed(d.current.windSpeed, d.realtime[0].windSpeed)
                 d.current.humidity = NetworkUtils.modifyCurrentHumid(d.current.humidity, d.realtime[0].humid)
             }
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
+        }.exceptionOrNull()?.stackTraceToString()
 
         return rawData ?: throw NullPointerException()
     }

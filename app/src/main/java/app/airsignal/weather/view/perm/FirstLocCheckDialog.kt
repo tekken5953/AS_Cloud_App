@@ -52,8 +52,7 @@ class  FirstLocCheckDialog(
         apply.setOnClickListener {
             if (!perm.isLocationPermitted()) {  // 위치 권한 허용?
                 if (perm.isShouldShowRequestPermissionRationale(
-                        activity, android.Manifest.permission.ACCESS_FINE_LOCATION
-                    )   // 권한 거부가 2번 이하?
+                        activity, android.Manifest.permission.ACCESS_FINE_LOCATION)   // 권한 거부가 2번 이하?
                 ) {
                     when (GetAppInfo.getInitLocPermission(activity)) { // 위치 권한 요청이 처음?
                         "" -> {

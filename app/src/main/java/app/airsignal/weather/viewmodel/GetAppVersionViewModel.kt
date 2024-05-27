@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.repository.GetAppVersionRepo
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 
 /**
@@ -17,12 +19,15 @@ class GetAppVersionViewModel(private val repo: GetAppVersionRepo): BaseViewModel
 
     fun loadDataResult() : GetAppVersionViewModel {
         viewModelScope.launch { repo.loadDataResult() }
-
         return this
     }
 
     fun fetchData(): LiveData<BaseRepository.ApiState<ApiModel.AppVersion>> {
-        getResultData = repo._getAppVersionResult
+        viewModelScope.launch {
+            val result = withContext(Dispatchers.IO) { repo._getAppVersionResult }
+            getResultData = result
+        }
+
         return getResultData ?: throw IOException()
     }
 }

@@ -27,7 +27,7 @@ class GetAppVersionRepo: BaseRepository() {
                 call: Call<ApiModel.AppVersion>,
                 response: Response<ApiModel.AppVersion>
             ) {
-                try {
+                kotlin.runCatching {
                     val responseBody = response.body()
                     responseBody?.let {
                         if (response.isSuccessful) {
@@ -35,28 +35,21 @@ class GetAppVersionRepo: BaseRepository() {
                                 _getAppVersionResult.postValue(ApiState.Success(responseBody))
                             }
                         } else _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_API_PROTOCOL))
-                    } ?: run {
-                        _getAppVersionResult.postValue(ApiState.Error("RESPONSE_IS_NULL"))
-                    }
-                } catch (e: IOException) {
-                    _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_SERVER_CONNECTING))
+                    } ?: run { _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_NULL_RESPONSE)) }
+                }.onFailure { exception ->
+                    if (exception is IOException) _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_SERVER_CONNECTING))
                 }
             }
 
             override fun onFailure(call: Call<ApiModel.AppVersion>, t: Throwable) {
-                try {
+                kotlin.runCatching {
                     _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_NETWORK))
-                } catch (e: Exception) {
-                    when (e) {
-                        is SocketTimeoutException ->
-                            _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_TIMEOUT))
-                        is NetworkErrorException ->
-                            _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_NETWORK))
-                        is NullPointerException ->
-                            _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_NULL_POINT))
-                        else -> {
-                            _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_UNKNOWN))
-                        }
+                }.onFailure { exception ->
+                    when (exception) {
+                        is SocketTimeoutException -> _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_TIMEOUT))
+                        is NetworkErrorException -> _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_NETWORK))
+                        is NullPointerException -> _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_NULL_POINT))
+                        else -> _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_UNKNOWN))
                     }
                 }
             }

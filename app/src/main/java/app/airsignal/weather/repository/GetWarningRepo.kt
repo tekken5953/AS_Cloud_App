@@ -25,21 +25,20 @@ class GetWarningRepo: BaseRepository() {
             ) {
                 val responseBody = response.body()!!
 
-                try {
+                kotlin.runCatching {
                     if (response.isSuccessful)
                         _getWarningResult.postValue(ApiState.Success(responseBody))
                     else
                         _getWarningResult.postValue(ApiState.Error(ErrorCode.ERROR_API_PROTOCOL))
-                } catch (e: Exception) {
+                }.onFailure {
                     _getWarningResult.postValue(ApiState.Error(ErrorCode.ERROR_SERVER_CONNECTING))
                 }
             }
 
             override fun onFailure(call: Call<ApiModel.BroadCastWeather>, t: Throwable) {
-                try {
-                    t.printStackTrace()
+                kotlin.runCatching {
                     _getWarningResult.postValue(ApiState.Error(ErrorCode.ERROR_NETWORK))
-                } catch (e: Exception) {
+                }.onFailure {
                     _getWarningResult.postValue(ApiState.Error(ErrorCode.ERROR_UNKNOWN))
                 }
             }

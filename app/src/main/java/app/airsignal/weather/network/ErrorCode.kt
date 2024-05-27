@@ -12,4 +12,5 @@ object ErrorCode {
     const val ERROR_GET_DATA = "IndexOutOfBoundsException"
     const val ERROR_UNKNOWN = "Unknown Error"
     const val ERROR_NULL_POINT = "Null Point Error"
+    const val ERROR_NULL_RESPONSE = "RESPONSE_IS_NULL"
 }

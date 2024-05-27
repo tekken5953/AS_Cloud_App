@@ -76,10 +76,13 @@ class SettingActivity
     override fun onResume() {
         super.onResume()
 
-        applyDeviceTheme()
-        applyUserEmail()
-        applyUserLanguage()
-        applyFontScale()
+        run {
+            applyDeviceTheme()
+            applyUserEmail()
+            applyUserLanguage()
+            applyFontScale()
+        }
+
         lastLogin = applyLastLogin()
     }
 
@@ -126,8 +129,8 @@ class SettingActivity
                             RDBLogcat.LOGIN_GOOGLE -> {
                                 GoogleLogin(this@SettingActivity).logout(binding.settingPb)
                             }
-                            else -> {}
                         }
+
                         delay(100)
 
                         SetAppInfo.removeAllKeys(this@SettingActivity)
@@ -391,9 +394,9 @@ class SettingActivity
 
             // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크
             when (GetAppInfo.getUserFontScale(this)) {
-                SpDao.TEXT_SCALE_SMALL -> { rg.check(small.id) }
-                SpDao.TEXT_SCALE_BIG -> { rg.check(big.id) }
-                else -> { rg.check(default.id) }
+                SpDao.TEXT_SCALE_SMALL -> rg.check(small.id)
+                SpDao.TEXT_SCALE_BIG -> rg.check(big.id)
+                else -> rg.check(default.id)
             }
 
             // 설정 변경시
@@ -451,9 +454,12 @@ class SettingActivity
             val notiLine3: View = notificationView.findViewById(R.id.notificationLine3)
             val notiPerm = RequestPermissionsUtil(this)
 
-            if (VERSION.SDK_INT >= 33) {
-                SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, notiPerm.isNotificationPermitted())
-            }
+            if (VERSION.SDK_INT >= 33)
+                SetAppInfo.setUserNoti(
+                    this,
+                    IgnoredKeyFile.notiEnable,
+                    notiPerm.isNotificationPermitted())
+
 
             // 알림 미허용시 다른 아이템 숨김
             fun setVisibility(isChecked: Boolean) {
@@ -480,11 +486,8 @@ class SettingActivity
                         // 백그라운드 허용 여부
                         isBackAllow = RequestPermissionsUtil(this).isBackgroundRequestLocation()
                         notiBackTitle.text = getString(R.string.perm_self_msg)
-                        if (isBackAllow) {
-                            notiBackContent.text = getString(R.string.allowed)
-                        } else {
-                            notiBackContent.text = getString(R.string.do_allow)
-                        }
+                        if (isBackAllow) notiBackContent.text = getString(R.string.allowed)
+                        else notiBackContent.text = getString(R.string.do_allow)
                     }
                     // 29 이하
                     else {
@@ -499,14 +502,12 @@ class SettingActivity
                     notiBackTr.setOnClickListener {
                         if (notiBackContent.text.toString() == getString(R.string.do_allow) ||
                             notiBackContent.text.toString() == getString(R.string.background_location_not_active) ||
-                            notiBackContent.text.toString() == getString(R.string.background_location_active)
-                        ) {
+                            notiBackContent.text.toString() == getString(R.string.background_location_active))
                             BackLocCheckDialog(
                                 this,
                                 supportFragmentManager,
                                 BottomSheetDialogFragment().tag
                             ).show()
-                        }
                     }
                 } else notiBackTr.visibility = View.GONE
             }
@@ -570,8 +571,8 @@ class SettingActivity
         val alertOff = ContextCompat.getDrawable(this, R.drawable.alert_off)!!
         alertOn.setTint(getColor(R.color.theme_view_color))
         alertOff.setTint(getColor(R.color.theme_view_color))
-        if (isAllow) { if (!isInit) { SnackBarUtils.make(view, getString(R.string.allowed_noti), alertOn).show() } }
-        else { if (!isInit) { SnackBarUtils.make(view, getString(R.string.denied_noti), alertOff).show() } }
+        if (isAllow) { if (!isInit) SnackBarUtils.make(view, getString(R.string.allowed_noti), alertOn).show()}
+        else { if (!isInit) SnackBarUtils.make(view, getString(R.string.denied_noti), alertOff).show() }
     }
 
     // 알림 텍스트 색상 설정
@@ -664,8 +665,7 @@ class SettingActivity
                             Toast.makeText(
                                 this@SettingActivity,
                                 getString(R.string.fail_to_get_version),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                                Toast.LENGTH_SHORT).show()
                         }
 
                         else -> {}
@@ -677,8 +677,7 @@ class SettingActivity
                 Toast.makeText(
                     this@SettingActivity,
                     getString(R.string.fail_to_get_version),
-                    Toast.LENGTH_SHORT
-                ).show()
+                    Toast.LENGTH_SHORT).show()
         }
 
         // 새로운 버전 다운로드 실행
@@ -748,24 +747,22 @@ class SettingActivity
     }
 
     // 유저 언어 설정 적용
-    private fun applyUserLanguage() {
+    private fun applyUserLanguage() =
         // 설정 페이지 언어 항목이름 바꾸기
         when (GetAppInfo.getUserLocation(this)) {
             SpDao.LANG_EN -> binding.settingSystemLang.fetchData(getString(R.string.english))
             SpDao.LANG_KR -> binding.settingSystemLang.fetchData(getString(R.string.korean))
             else -> binding.settingSystemLang.fetchData(getString(R.string.system_lang))
         }
-    }
 
     // 유저 폰트 크기 설정 적용
-    private fun applyFontScale() {
+    private fun applyFontScale() =
         // 설정 페이지 폰트크기 항목이름 바꾸기
         when (GetAppInfo.getUserFontScale(this)) {
             SpDao.TEXT_SCALE_SMALL -> binding.settingSystemFont.fetchData(getString(R.string.font_small))
             SpDao.TEXT_SCALE_BIG -> binding.settingSystemFont.fetchData(getString(R.string.font_large))
             else -> binding.settingSystemFont.fetchData(getString(R.string.font_normal))
         }
-    }
 
     // 마지막 로그인 플랫폼 종류
     private fun applyLastLogin(): String {
@@ -968,10 +965,7 @@ class SettingActivity
         title: String,
         content: String,
         href: String?
-    ) {
-        val item = ApiModel.NoticeItem(id,category,created, modified, title, content,href)
-        noticeItem.add(item)
-    }
+    ) = noticeItem.add(ApiModel.NoticeItem(id,category,created, modified, title, content,href))
 
     @Deprecated("Deprecated in Java")
     @Suppress("DEPRECATION")
