@@ -12,6 +12,7 @@ import app.airsignal.weather.R
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.location.GeofenceManager
 import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.util.VibrateUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
 import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
@@ -115,7 +116,10 @@ open class WidgetProvider22 : BaseWidgetProvider() {
                     this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
                 }
 
-                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) fetch(context, views)
+                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                    fetch(context, views)
+                    VibrateUtil(context).make(10)
+                }
             }
         }
     }

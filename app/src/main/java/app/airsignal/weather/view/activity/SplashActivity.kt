@@ -68,7 +68,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted())
                     EnterPageUtil(this@SplashActivity).toMain(
                         GetAppInfo.getUserLoginPlatform(this),
-                        inAppMsgList?.toTypedArray())
+                        inAppMsgList?.toTypedArray()
+                    )
                 else EnterPageUtil(this@SplashActivity).toPermission()
             }, 500)
         else
@@ -90,7 +91,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             val versionName = GetSystemInfo.getApplicationVersionName(this)
                             val versionCode = GetSystemInfo.getApplicationVersionCode(this)
                             val fullVersion = "${versionName}.${versionCode}"
-                            val skipThisPatchKey = SpDao.PATCH_SKIP + "${ver.data.serviceName}.${ver.data.serviceCode}"
+                            val skipThisPatchKey =
+                                SpDao.PATCH_SKIP + "${ver.data.serviceName}.${ver.data.serviceCode}"
 
                             // 현재 버전이 최신 버전인 경우
                             if (fullVersion == "${ver.data.serviceName}.${ver.data.serviceCode}") {
@@ -107,7 +109,9 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                         val dialog = MakeDoubleDialog(this)
                                             .make(
                                                 getString(R.string.exist_last_version),
-                                                getString(R.string.download), getString(R.string.use_current_version), R.color.main_blue_color
+                                                getString(R.string.download),
+                                                getString(R.string.use_current_version),
+                                                R.color.main_blue_color
                                             )
                                         // 설치 선택 시 스토어 이동
                                         dialog.first.setOnClickListener {
@@ -147,7 +151,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                                         makeDialog(getString(R.string.error_network_connect))
                                 }
 
-                                ErrorCode.ERROR_SERVER_CONNECTING -> { makeDialog(getString(R.string.error_server_down)) }
+                                ErrorCode.ERROR_SERVER_CONNECTING -> makeDialog(getString(R.string.error_server_down))
 
                                 else -> makeDialog(getString(R.string.unknown_error))
                             }
@@ -158,11 +162,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 }
             }
         }.onFailure { exception ->
-            if (exception == IOException())  makeDialog(getString(R.string.fail_to_get_app_version)) }
+            if (exception == IOException()) makeDialog(getString(R.string.fail_to_get_app_version))
+        }
     }
 
     // 다이얼로그 생성
     private fun makeDialog(s: String) =
         MakeSingleDialog(this).makeDialog(
-            s, R.color.theme_alert_double_apply_color, getString(R.string.ok), false)
+            s, R.color.theme_alert_double_apply_color, getString(R.string.ok), false
+        )
 }

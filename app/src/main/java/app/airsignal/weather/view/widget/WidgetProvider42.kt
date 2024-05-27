@@ -13,6 +13,7 @@ import app.airsignal.weather.R
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.location.GeofenceManager
 import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.util.VibrateUtil
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
 import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
@@ -71,7 +72,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             return
         }
 
-        if (intent.action == REFRESH_BUTTON_CLICKED) {
+        if (intent.action == REFRESH_BUTTON_CLICKED_42) {
             if (RequestPermissionsUtil(context).isBackgroundRequestLocation())
                 processUpdate(context, appWidgetId)
             else requestPermissions(context, WIDGET_42, appWidgetId)
@@ -93,7 +94,6 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                         Intent(context, WidgetProvider42::class.java).run {
                             this.action = REFRESH_BUTTON_CLICKED_42
                             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-
                 }
 
                 val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
@@ -114,7 +114,10 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
                 }
 
-                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) fetch(context, views)
+                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID)  {
+                    fetch(context, views)
+                    VibrateUtil(context).make(10)
+                }
             }
         }
     }

@@ -344,7 +344,7 @@ object DataTypeParser {
 
     /** 날짜가 한자리일 때 앞에 0 붙이기 **/
     fun dateAppendZero(dateTime: LocalDateTime): String {
-        val month = if (dateTime.monthValue / 10 == 0) "0${dateTime.monthValue}.0${dateTime.dayOfMonth}"
+        val month = if (dateTime.monthValue / 10 == 0) "0${dateTime.monthValue}"
         else "${dateTime.monthValue}"
 
         val day = if (dateTime.dayOfMonth / 10 == 0) "0${dateTime.dayOfMonth}"
