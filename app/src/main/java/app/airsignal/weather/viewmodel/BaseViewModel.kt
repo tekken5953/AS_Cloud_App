@@ -8,7 +8,6 @@ open class BaseViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-
         job?.let { if (!it.isCancelled) it.cancel() }
     }
 

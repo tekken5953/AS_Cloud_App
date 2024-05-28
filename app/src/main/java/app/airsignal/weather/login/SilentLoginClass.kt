@@ -15,9 +15,7 @@ class SilentLoginClass {
             RDBLogcat.LOGIN_GOOGLE -> {
                 // 구글 자동 로그인
                 val googleLogin = GoogleLogin(activity)
-                if (!googleLogin.isValidToken()) {
-                    googleLogin.checkSilenceLogin()
-                }
+                if (!googleLogin.isValidToken()) googleLogin.checkSilenceLogin()
             }
             RDBLogcat.LOGIN_KAKAO -> {
                 // 카카오 자동 로그인
@@ -26,9 +24,7 @@ class SilentLoginClass {
             RDBLogcat.LOGIN_NAVER -> {
                 // 네이버 자동 로그인
                 val naverLogin = NaverLogin(activity).init()
-                if (naverLogin.getAccessToken() == null) {
-                    naverLogin.silentLogin()
-                }
+                if (naverLogin.getAccessToken() == null) naverLogin.silentLogin()
             }
         }
     }

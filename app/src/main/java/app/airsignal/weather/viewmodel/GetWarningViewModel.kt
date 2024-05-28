@@ -25,10 +25,8 @@ class GetWarningViewModel(private val repo: GetWarningRepo): BaseViewModel() {
 
     fun fetchData(): LiveData<BaseRepository.ApiState<ApiModel.BroadCastWeather>> {
         viewModelScope.launch {
-            val result = withContext(Dispatchers.IO) { repo._getWarningResult }
-            getResultData = result
+            getResultData = withContext(Dispatchers.IO) { repo._getWarningResult }
         }
-
         return getResultData ?: throw IOException()
     }
 }

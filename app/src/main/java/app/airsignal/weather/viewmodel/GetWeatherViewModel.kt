@@ -29,10 +29,8 @@ class GetWeatherViewModel(private val repo: GetWeatherRepo) : BaseViewModel() {
     // LiveData 에 MutableLiveData 값 적용 후 View 에 전달
     fun fetchData(): LiveData<BaseRepository.ApiState<ApiModel.GetEntireData>?> {
         viewModelScope.launch {
-            val result = withContext(Dispatchers.IO) { repo._getDataResult }
-            getDataResultData = result
+            getDataResultData = withContext(Dispatchers.IO) { repo._getDataResult }
         }
-
         return getDataResultData ?: throw IOException()
     }
 }

@@ -15,8 +15,7 @@ import app.airsignal.weather.databinding.CustomViewSubAirBinding
  * @author : Lee Jae Young
  * @since : 2023-07-18 오전 9:11
  **/
-class SubAirView(context: Context, attrs: AttributeSet?)
-    : RelativeLayout(context, attrs) {
+class SubAirView(context: Context, attrs: AttributeSet?) : RelativeLayout(context, attrs) {
     private var subAirBinding: CustomViewSubAirBinding
 
     init {
@@ -25,10 +24,9 @@ class SubAirView(context: Context, attrs: AttributeSet?)
     }
 
     // 타이틀 반환
-    fun getTitle(): TextView { return subAirBinding.customSubAirTitle }
-
+    fun getTitle(): TextView = subAirBinding.customSubAirTitle
     // 값 데이터 반환
-    fun getValue(): TextView { return subAirBinding.customSubAirValue }
+    fun getValue(): TextView = subAirBinding.customSubAirValue
 
     // 방위에 따른 아이콘 적용
     @SuppressLint("UseCompatTextViewDrawableApis")
@@ -60,14 +58,12 @@ class SubAirView(context: Context, attrs: AttributeSet?)
     }
 
     // 이미지 적용
-    private fun drawable(int: Int?): Drawable? {
-        return int?.let {ResourcesCompat.getDrawable(resources, int, null)}
-    }
+    private fun drawable(int: Int?): Drawable? =
+        int?.let {ResourcesCompat.getDrawable(resources, int, null)}
 
     fun fetchData(value: String, img: Int, vector: String?): SubAirView {
         subAirBinding.customSubAirValue.text = value
-        subAirBinding.customSubAirImg.setImageDrawable(
-            ResourcesCompat.getDrawable(resources,img,null))
+        subAirBinding.customSubAirImg.setImageDrawable(ResourcesCompat.getDrawable(resources,img,null))
         applyVector(vector = vector)
 
         return this
