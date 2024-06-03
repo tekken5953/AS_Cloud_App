@@ -13,11 +13,13 @@ import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
 import app.airsignal.weather.util.`object`.DataTypeParser
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import org.koin.android.ext.android.inject
 
 
 class LoginActivity
     : BaseActivity<ActivityLoginBinding>() {
     override val resID: Int get() = R.layout.activity_login
+    private val subFCM: SubFCM by inject()
 
     private val googleLogin by lazy { GoogleLogin(this) }   // 구글 로그인
     private val kakaoLogin by lazy { KakaoLogin(this) }     // 카카오 로그인
@@ -60,7 +62,7 @@ class LoginActivity
                     val data = result.data
                     val task = GoogleSignIn.getSignedInAccountFromIntent(data)
 
-                    if (task.result.email == IgnoredKeyFile.notificationAdmin) SubFCM().subAdminTopic()
+                    if (task.result.email == IgnoredKeyFile.notificationAdmin) subFCM.subAdminTopic()
 
                     googleLogin.handleSignInResult(task, isAuto = false)
                 }

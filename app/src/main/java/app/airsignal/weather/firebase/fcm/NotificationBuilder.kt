@@ -16,13 +16,15 @@ import android.view.View
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
+import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.util.`object`.DataTypeParser
+import org.koin.core.component.KoinComponent
 import kotlin.math.roundToInt
 
 
-class NotificationBuilder {
+class NotificationBuilder: KoinComponent {
     lateinit var intent: Intent
 
     fun sendNotification(context: Context, data: Map<String,String>) {
@@ -31,7 +33,7 @@ class NotificationBuilder {
             val notificationManager =
                 appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
 
-            if (data["sort"] == SubFCM.Sort.FCM_PATCH.key) {
+            if (data["sort"] == StaticDataObject.FcmSort.FCM_PATCH.key) {
                 intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse(GetSystemInfo.getPlayStoreURL(appContext))
             } else {
@@ -43,19 +45,19 @@ class NotificationBuilder {
             val pendingIntent =
                 PendingIntent.getActivity(appContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
             val sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            val notificationChannel = NotificationChannel(
-                SubFCM.Channel.NOTIFICATION_CHANNEL_ID.value,
-                SubFCM.Channel.NOTIFICATION_CHANNEL_NAME.value,
+            val notificationFcmChannel = NotificationChannel(
+                StaticDataObject.FcmChannel.NOTIFICATION_CHANNEL_ID.value,
+                StaticDataObject.FcmChannel.NOTIFICATION_CHANNEL_NAME.value,
                 if (GetAppInfo.getUserNotiVibrate(appContext))
                     NotificationManager.IMPORTANCE_DEFAULT
                 else NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = SubFCM.Channel.NOTIFICATION_CHANNEL_DESCRIPTION.value
+                description = StaticDataObject.FcmChannel.NOTIFICATION_CHANNEL_DESCRIPTION.value
                 lockscreenVisibility = View.VISIBLE
                 setSound(sound, AudioAttributes.Builder().build())
             }
 
-            val notificationBuilder = NotificationCompat.Builder(appContext, SubFCM.Channel.NOTIFICATION_CHANNEL_ID.value)
+            val notificationBuilder = NotificationCompat.Builder(appContext, StaticDataObject.FcmChannel.NOTIFICATION_CHANNEL_ID.value)
 
             fun setNotiBuilder(
                 title: String, subtext: String?, content: String, imgPath: Bitmap?
@@ -74,7 +76,7 @@ class NotificationBuilder {
             }
 
             when (data["sort"]) {
-                SubFCM.Sort.FCM_DAILY.key -> {
+                StaticDataObject.FcmSort.FCM_DAILY.key -> {
                     val temp = parseStringToDoubleToInt(data["temp"].toString())
                     val rainType = data["rainType"]
                     val sky = data["sky"]
@@ -88,11 +90,11 @@ class NotificationBuilder {
                         imgPath = getSkyBitmap(appContext, rainType, sky, thunder, lunar ?: -1)
                     )
                 }
-                SubFCM.Sort.FCM_PATCH.key -> {
+                StaticDataObject.FcmSort.FCM_PATCH.key -> {
                     val payload = data["payload"] ?: "새로운 업데이트가 준비되었어요"
                     setNotiBuilder(title = "에어시그널", subtext = null, content = payload, null)
                 }
-                SubFCM.Sort.FCM_EVENT.key -> {
+                StaticDataObject.FcmSort.FCM_EVENT.key -> {
                     val payload = data["payload"] ?: "눌러서 이벤트를 확인하세요"
                     setNotiBuilder(title = "에어시그널", subtext = null, content = payload, null)
                 }
@@ -100,7 +102,7 @@ class NotificationBuilder {
 
             if (GetAppInfo.getUserNotiEnable(appContext)) {
                 notificationManager?.let {
-                    it.createNotificationChannel(notificationChannel)
+                    it.createNotificationChannel(notificationFcmChannel)
                     it.notify(1, notificationBuilder.build())
                 }
             }

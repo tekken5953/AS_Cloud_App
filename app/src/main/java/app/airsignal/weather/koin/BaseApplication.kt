@@ -2,6 +2,7 @@ package app.airsignal.weather.koin
 
 import android.app.Application
 import android.content.Context
+import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.location.GetLocation
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.repository.GetAppVersionRepo
@@ -14,6 +15,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
+import org.koin.core.logger.Level
 import org.koin.dsl.module
 
 class BaseApplication : Application() {
@@ -21,7 +23,7 @@ class BaseApplication : Application() {
         super.onCreate()
 
         startKoin {
-            androidLogger()
+            androidLogger(level = Level.DEBUG)
             androidContext(this@BaseApplication)
             modules(listOf(myModule))
         }
@@ -34,9 +36,10 @@ class BaseApplication : Application() {
         single<Context> { applicationContext }
         single { GetLocation(applicationContext) }
         single { HttpClient }
-        single { GetWeatherRepo() }
-        single { GetAppVersionRepo() }
-        single { GetWarningRepo() }
+        factory { GetWeatherRepo() }
+        factory { GetAppVersionRepo() }
+        factory { GetWarningRepo() }
+        factory { SubFCM() }
         viewModel { GetAppVersionViewModel(get()) }
         viewModel { GetWeatherViewModel(get()) }
         viewModel { GetWarningViewModel(get()) }

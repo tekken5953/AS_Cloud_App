@@ -74,7 +74,7 @@ class MainActivity
         const val NOT_SHOWING_LOADING_FLOAT = 0f
     }
 
-    private val fcm by lazy { SubFCM() }
+    private val fcm: SubFCM by inject()
 
     private var isNight = false
     private var isBackPressed = false
@@ -152,8 +152,8 @@ class MainActivity
             initBinding()
             if (savedInstanceState == null) {
                 showProgressBar()
-                fcm.subTopic(SubFCM.Sort.FCM_PATCH.key)
-                fcm.subTopic(SubFCM.Sort.FCM_DAILY.key)
+                fcm.subTopic(StaticDataObject.FcmSort.FCM_PATCH.key)
+                fcm.subTopic(StaticDataObject.FcmSort.FCM_DAILY.key)
                 changeBackgroundResource(null)
                 window.statusBarColor = getColor(R.color.theme_view_color)
                 window.navigationBarColor = getColor(R.color.theme_view_color)

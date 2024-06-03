@@ -1,5 +1,6 @@
 package app.airsignal.weather.firebase.fcm
 
+import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.util.TimberUtil
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -12,23 +13,12 @@ import java.util.*
 
 
 class SubFCM: FirebaseMessagingService() {
-
-    enum class Sort(val key: String) {
-        FCM_DAILY("daily"), FCM_PATCH("patch"), FCM_EVENT("event"), FCM_ADMIN("admin")
-    }
-
-    enum class Channel(val value: String) {
-        NOTIFICATION_CHANNEL_ID("500"),             // FCM 채널 ID
-        NOTIFICATION_CHANNEL_NAME("AIRSIGNAL"),     // FCM 채널 NAME
-        NOTIFICATION_CHANNEL_DESCRIPTION("Channel description")
-    }
-
     /** 메시지 받았을 때 **/
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         when(message.data["sort"]) {
-            Sort.FCM_PATCH.key,
-            Sort.FCM_DAILY.key-> {
+            StaticDataObject.FcmSort.FCM_PATCH.key,
+            StaticDataObject.FcmSort.FCM_DAILY.key-> {
                 NotificationBuilder().sendNotification(applicationContext,message.data)
             }
         }
@@ -54,7 +44,7 @@ class SubFCM: FirebaseMessagingService() {
 
     // 어드민 계정 토픽
     fun subAdminTopic() {
-        try { subTopic(encodeTopic(Sort.FCM_ADMIN.key)) }
+        try { subTopic(encodeTopic(StaticDataObject.FcmSort.FCM_ADMIN.key)) }
         catch (e: Exception) { e.stackTraceToString() }
     }
 
