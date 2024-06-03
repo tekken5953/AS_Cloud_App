@@ -23,9 +23,8 @@ class GetAppVersionViewModel(private val repo: GetAppVersionRepo): BaseViewModel
     }
 
     fun fetchData(): LiveData<BaseRepository.ApiState<ApiModel.AppVersion>> {
-        viewModelScope.launch {
-            getResultData = withContext(Dispatchers.IO) { repo._getAppVersionResult }
-        }
+        getResultData = repo._getAppVersionResult
+
         return getResultData ?: throw IOException()
     }
 }

@@ -24,8 +24,8 @@ import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.IOException
 import java.util.*
 
 @SuppressLint("CustomSplashScreen")
@@ -33,6 +33,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override val resID: Int get() = R.layout.activity_splash
 
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
+    private val locationClass: GetLocation by inject()
+
     private val fetch by lazy { appVersionViewModel.fetchData() }
     private var isReady = false
 
@@ -97,47 +99,51 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             // 현재 버전이 최신 버전인 경우
                             if (fullVersion == "${ver.data.serviceName}.${ver.data.serviceCode}") {
                                 enterPage(inAppArray)   // 메인 페이지로 이동
-                            } else { // 현재 버전이 최신 버전이 아닌 경우
-                                val array = ArrayList<String>()
-                                ver.data.test.forEach { array.add("${it.name}.${it.code}") }
+                                return@observe
+                            }
+                            // 현재 버전이 최신 버전이 아닌 경우
+                            val array = ArrayList<String>()
+                            ver.data.test.forEach { array.add("${it.name}.${it.code}") }
 
-                                // 테스트 버전에 현재 버전이 포함되는 경우
-                                if (array.contains(fullVersion)) {
-                                    // 스킵이 설정되어 있지 않은 경우
-                                    if (!sp.getBoolean(skipThisPatchKey, false)) {
-                                        // 최신 버전 설치와 현재 버전 사용 선택 다이얼로그 노출
-                                        val dialog = MakeDoubleDialog(this)
-                                            .make(
-                                                getString(R.string.exist_last_version),
-                                                getString(R.string.download),
-                                                getString(R.string.use_current_version),
-                                                R.color.main_blue_color
-                                            )
-                                        // 설치 선택 시 스토어 이동
-                                        dialog.first.setOnClickListener {
-                                            sp.setBoolean(skipThisPatchKey, false)
-                                            GetSystemInfo.goToPlayStore(this@SplashActivity)
-                                        }
-                                        // 현재 버전 이용 선택 시 메인 이동
-                                        dialog.second.setOnClickListener {
-                                            sp.setBoolean(skipThisPatchKey, true)
-                                            ToastUtils(this@SplashActivity).showMessage(getString(R.string.patch_store_notice))
-                                            enterPage(inAppArray)
-                                        }
-                                    } else enterPage(inAppArray)  // 스킵이 설정되어 있는 경우 메인 이동
-                                } else {
-                                    // 모든 허용 버전에 해당되지 않은 경우
-                                    MakeSingleDialog(this)
-                                        .makeDialog(
-                                            getString(R.string.not_latest_go_to_store),
-                                            R.color.main_blue_color,
-                                            getString(R.string.download),
-                                            true
-                                        ).setOnClickListener {
-                                            sp.setBoolean(SpDao.PATCH_SKIP, false)
-                                            GetSystemInfo.goToPlayStore(this@SplashActivity)
-                                        }
-                                }
+                            if (!array.contains(fullVersion)) {
+                                // 모든 허용 버전에 해당되지 않은 경우
+                                MakeSingleDialog(this)
+                                    .makeDialog(
+                                        getString(R.string.not_latest_go_to_store),
+                                        R.color.main_blue_color,
+                                        getString(R.string.download),
+                                        true
+                                    ).setOnClickListener {
+                                        sp.setBoolean(SpDao.PATCH_SKIP, false)
+                                        GetSystemInfo.goToPlayStore(this@SplashActivity)
+                                    }
+
+                                return@observe
+                            }
+
+                            if (sp.getBoolean(skipThisPatchKey, false)) {
+                                enterPage(inAppArray)  // 스킵이 설정되어 있는 경우 메인 이동
+                                return@observe
+                            }
+
+                            // 최신 버전 설치와 현재 버전 사용 선택 다이얼로그 노출
+                            val dialog = MakeDoubleDialog(this)
+                                .make(
+                                    getString(R.string.exist_last_version),
+                                    getString(R.string.download),
+                                    getString(R.string.use_current_version),
+                                    R.color.main_blue_color
+                                )
+                            // 설치 선택 시 스토어 이동
+                            dialog.first.setOnClickListener {
+                                sp.setBoolean(skipThisPatchKey, false)
+                                GetSystemInfo.goToPlayStore(this@SplashActivity)
+                            }
+                            // 현재 버전 이용 선택 시 메인 이동
+                            dialog.second.setOnClickListener {
+                                sp.setBoolean(skipThisPatchKey, true)
+                                ToastUtils(this@SplashActivity).showMessage(getString(R.string.patch_store_notice))
+                                enterPage(inAppArray)
                             }
                         }
 
@@ -145,14 +151,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                         is BaseRepository.ApiState.Error -> {
                             when (ver.errorMessage) {
                                 ErrorCode.ERROR_NETWORK -> {
-                                    if (GetLocation(this).isNetWorkConnected())
+                                    if (locationClass.isNetWorkConnected())
                                         makeDialog(getString(R.string.unknown_error))
-                                    else
-                                        makeDialog(getString(R.string.error_network_connect))
+                                    else makeDialog(getString(R.string.error_network_connect))
                                 }
-
                                 ErrorCode.ERROR_SERVER_CONNECTING -> makeDialog(getString(R.string.error_server_down))
-
                                 else -> makeDialog(getString(R.string.unknown_error))
                             }
                         }
@@ -161,14 +164,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     }
                 }
             }
-        }.onFailure { exception ->
-            if (exception == IOException()) makeDialog(getString(R.string.fail_to_get_app_version))
-        }
+        }.onFailure { makeDialog(getString(R.string.fail_to_get_app_version)) }
     }
 
     // 다이얼로그 생성
     private fun makeDialog(s: String) =
         MakeSingleDialog(this).makeDialog(
-            s, R.color.theme_alert_double_apply_color, getString(R.string.ok), false
-        )
+            s, R.color.theme_alert_double_apply_color, getString(R.string.ok), false)
 }

@@ -10,10 +10,12 @@ import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.network.retrofit.HttpClient
 import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import retrofit2.awaitResponse
 import java.time.LocalDateTime
 
-open class BaseWidgetProvider: AppWidgetProvider() {
+open class BaseWidgetProvider: AppWidgetProvider(), KoinComponent {
 
     companion object {
         const val REFRESH_BUTTON_CLICKED = "app.airsignal.weather.view.widget.REFRESH_DATA"
@@ -26,9 +28,11 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         const val WIDGET_22 = "22"
     }
 
+    private val httpClient: HttpClient by inject()
+
     suspend fun requestWeather(lat: Double, lng: Double, rCount: Int): ApiModel.WidgetData? {
         kotlin.runCatching {
-            return HttpClient.retrofit
+            return httpClient.retrofit
                 .getWidgetForecast(lat, lng, rCount)
                 .awaitResponse().body()
         }.exceptionOrNull()?.stackTraceToString()

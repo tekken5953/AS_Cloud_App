@@ -28,6 +28,5 @@ class CustomerServiceView(context: Context, attrs: AttributeSet?)
     }
 
     fun fetchData(img: Int) =
-        customerBinding.customCustomerImg.setImageDrawable(
-            ResourcesCompat.getDrawable(resources, img, null))
+        customerBinding.customCustomerImg.setImageDrawable(ResourcesCompat.getDrawable(resources, img, null))
 }

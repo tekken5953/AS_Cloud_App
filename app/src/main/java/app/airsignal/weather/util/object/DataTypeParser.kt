@@ -101,7 +101,7 @@ object DataTypeParser {
             when (sky) {
                 "맑음" ->
                     if (isNight) R.drawable.w_ico_status
-                    else R.drawable.b_ico_cloudy
+                    else R.drawable.b_ico_sunny
                 "구름많음" ->
                     if (isNight) R.drawable.b_ico_m_ncloudy
                     else R.drawable.b_ico_m_cloudy
@@ -191,15 +191,14 @@ object DataTypeParser {
         isLarge: Boolean,
         isNight: Boolean?,
         lunar: Int
-    ): Drawable? {
-        return if (rain != "없음" && (thunder == null || thunder < 0.2)) {
+    ): Drawable? =
+        if (rain != "없음" && (thunder == null || thunder < 0.2)) {
             if (isLarge) getRainTypeLarge(context, rain) ?: getDrawable(context, R.drawable.cancel)
             else getRainTypeSmall(context, rain) ?: getDrawable(context, R.drawable.cancel)
         } else if (rain == "없음" && (thunder == null || thunder < 0.2)) {
             if (isLarge) getSkyImgLarge(context, sky, isNight ?: false, lunar)
             else getSkyImgSmall(context, sky, isNight ?: false)
         } else getDrawable(context, R.drawable.b_ico_cloudy_th)
-    }
 
     /** 등급에 따른 색상 변환 **/
     fun getDataColor(context: Context, grade: Int): Int {
@@ -215,15 +214,14 @@ object DataTypeParser {
     }
 
     /** 등급에 따른 텍스트 변환 **/
-    fun getDataText(context: Context, grade: Int): String {
-        return when (grade) {
+    fun getDataText(context: Context, grade: Int): String =
+        when (grade) {
             1 -> context.getString(R.string.good)
             2 -> context.getString(R.string.normal)
             3 -> context.getString(R.string.bad)
             4 -> context.getString(R.string.worst)
             else -> context.getString(R.string.error)
         }
-    }
 
     /** 지정 자릿수에서 반올림 **/
     fun parseDoubleToDecimal(double: Double, digit: Int): String = String.format("%.${digit}f", double)
@@ -244,10 +242,9 @@ object DataTypeParser {
     }
 
     /** 주소 포멧팅 **/
-    fun convertAddress(addr: String): String {
-        return addr.replace("특별시", "시").replace("광역시", "시")
+    fun convertAddress(addr: String): String =
+        addr.replace("특별시", "시").replace("광역시", "시")
             .replace("특별자치도", "도")
-    }
 
     /** UV 범주 색상 적용 **/
     fun applyUvColor(context: Context, flag: String, textView: TextView) {
@@ -312,11 +309,10 @@ object DataTypeParser {
     }
 
     /** LocalDateTime을 Long으로 파싱 **/
-    fun parseLocalDateTimeToLong(localDateTime: LocalDateTime): Long {
-        return kotlin.runCatching {
+    fun parseLocalDateTimeToLong(localDateTime: LocalDateTime): Long =
+        kotlin.runCatching {
             localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         }.getOrElse { LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() }
-    }
 
     /** Long을 LocalDateTime으로 파싱 **/
     fun parseLongToLocalDateTime(long: Long): LocalDateTime =
@@ -363,5 +359,10 @@ object DataTypeParser {
         ResourcesCompat.getDrawable(context.resources, resId, null)
 
     fun progressToHex(progress: Int): String =
-        if (progress == 0) "00" else if (progress == 100) "" else if (progress < 10) "0${progress}" else progress.toString()
+        when(progress) {
+            0 -> "00"
+            100 -> ""
+            in Int.MIN_VALUE..10 -> "0${progress}"
+            else -> progress.toString()
+        }
 }

@@ -24,18 +24,16 @@ class GetWeatherRepo : BaseRepository() {
         MutableLiveData<ApiState<ApiModel.GetEntireData>?>()
 
     fun loadDataResult(lat: Double?, lng: Double?, addr: String?) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             _getDataResult.postValue(ApiState.Loading)
             impl.getForecast(lat, lng, addr).enqueue(object : Callback<ApiModel.GetEntireData> {
                     override fun onResponse(
                         call: Call<ApiModel.GetEntireData>,
-                        response: Response<ApiModel.GetEntireData>
-                    ) {
+                        response: Response<ApiModel.GetEntireData>) {
                         kotlin.runCatching {
-                            if (response.isSuccessful) {
-                                val responseBody = processData(response.body())
-                                _getDataResult.postValue(ApiState.Success(responseBody))
-                            } else {
+                            if (response.isSuccessful)
+                                _getDataResult.postValue(ApiState.Success(processData(response.body())))
+                            else {
                                 _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_API_PROTOCOL))
                                 call.cancel()
                             }
@@ -49,8 +47,7 @@ class GetWeatherRepo : BaseRepository() {
 
                     override fun onFailure(
                         call: Call<ApiModel.GetEntireData>,
-                        t: Throwable
-                    ) {
+                        t: Throwable) {
                         kotlin.runCatching {
                             _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_GET_DATA))
                             call.cancel()

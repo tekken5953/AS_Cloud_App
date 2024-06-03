@@ -14,6 +14,8 @@ import app.airsignal.weather.view.dialog.WebViewSetting
 class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
     override val resID: Int get() = R.layout.activity_web_url
 
+    private val blankURL = "about:blank"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
@@ -53,15 +55,16 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
         val sort = intent.extras?.getString("sort")
 
         val (webUrlTitleText, url) = when (sort) {
-            "as-eye" -> "AS-EYE" to "about:blank"
+            "as-eye" -> "AS-EYE" to blankURL
             "termsOfService" -> getString(R.string.term_of_services) to IgnoredKeyFile.termsOfServiceURL
             "dataUsage" -> getString(R.string.data_usages) to IgnoredKeyFile.privacyPolicyURI
-            "inAppLink" -> "공지사항" to intent.extras!!.getString("redirect",null)
-            else -> "" to "about:blank"
+            "inAppLink" -> "공지사항" to intent.extras?.getString("redirect",null)
+            else -> "" to blankURL
         }
 
         binding.webUrlTitle.text = webUrlTitleText
 
-        webView.loadUrl(url) // 페이지 로딩
+        url?.let {webView.loadUrl(it)} ?: run {webView.loadUrl(blankURL)} // 페이지 로딩
+
     }
 }

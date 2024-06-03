@@ -32,7 +32,7 @@ class BaseApplication : Application() {
     /* viewModel : 뷰모델 의존성 제거 객체 생성 */
     private val myModule = module {
         single<Context> { applicationContext }
-        single { GetLocation(get()) }
+        single { GetLocation(applicationContext) }
         single { HttpClient }
         single { GetWeatherRepo() }
         single { GetAppVersionRepo() }

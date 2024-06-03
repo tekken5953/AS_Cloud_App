@@ -50,6 +50,7 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -72,6 +73,8 @@ class SettingActivity
     private val mainDispatcher by lazy { Dispatchers.Main }
 
     private var lastLogin = ""
+
+    private val httpClient by inject<HttpClient>()
 
     override fun onResume() {
         super.onResume()
@@ -120,15 +123,12 @@ class SettingActivity
                     builder.dismiss()
                     ioThread.launch {
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
-                            RDBLogcat.LOGIN_KAKAO -> {
+                            RDBLogcat.LOGIN_KAKAO ->
                                 KakaoLogin(this@SettingActivity).disconnectFromKakao(binding.settingPb)
-                            }
-                            RDBLogcat.LOGIN_NAVER -> {
+                            RDBLogcat.LOGIN_NAVER ->
                                 NaverLogin(this@SettingActivity).init().disconnectFromNaver(binding.settingPb)
-                            }
-                            RDBLogcat.LOGIN_GOOGLE -> {
+                            RDBLogcat.LOGIN_GOOGLE ->
                                 GoogleLogin(this@SettingActivity).logout(binding.settingPb)
-                            }
                         }
 
                         delay(100)
@@ -149,6 +149,16 @@ class SettingActivity
                 return@setOnClickListener
             }
         }
+
+//        binding.appLink.setOnClickListener {
+//            kotlin.runCatching {
+//                val linkPackageName = "app.airsignal.eye.dashboard.list"
+//                val newIntent = Intent(linkPackageName)
+//                startActivity(newIntent)
+//            }.onFailure {
+//                ToastUtils(this).showMessage("앱을 열 수 없습니다")
+//            }
+//        }
 
         // 테마 설정 클릭
         binding.settingSystemTheme.setOnClickListener {
@@ -218,7 +228,6 @@ class SettingActivity
 
         // 언어 설정 클릭
         binding.settingSystemLang.setOnClickListener {
-            // 뷰 레이아웃 생성
             val langView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_change_language, null)
             val systemLang: RadioButton = langView.findViewById(R.id.systemLangRb)
@@ -302,11 +311,10 @@ class SettingActivity
             noticeItem.clear()
 
             ioThread.launch {
-                HttpClient.retrofit.notice.enqueue(object : Callback<List<ApiModel.NoticeItem>> {
+                httpClient.retrofit.notice.enqueue(object : Callback<List<ApiModel.NoticeItem>> {
                         override fun onResponse(
                             call: Call<List<ApiModel.NoticeItem>>,
-                            response: Response<List<ApiModel.NoticeItem>>
-                        ) {
+                            response: Response<List<ApiModel.NoticeItem>>) {
                             kotlin.runCatching {
                                 val list = response.body()
                                 list?.forEachIndexed { i, item ->
@@ -460,7 +468,6 @@ class SettingActivity
                     IgnoredKeyFile.notiEnable,
                     notiPerm.isNotificationPermitted())
 
-
             // 알림 미허용시 다른 아이템 숨김
             fun setVisibility(isChecked: Boolean) {
                 if (isChecked) {
@@ -478,38 +485,42 @@ class SettingActivity
 
             // 백그라운드 요청에 따른 적용
             fun applyBack(isChecked: Boolean) {
-                if (isChecked) {
-                    SetAppInfo.setInitBackLocPermission(this,true)
-                    notiBackTr.visibility = View.VISIBLE
-                    // 29 이상
-                    if (VERSION.SDK_INT >= 29) {
-                        // 백그라운드 허용 여부
-                        isBackAllow = RequestPermissionsUtil(this).isBackgroundRequestLocation()
-                        notiBackTitle.text = getString(R.string.perm_self_msg)
-                        if (isBackAllow) notiBackContent.text = getString(R.string.allowed)
-                        else notiBackContent.text = getString(R.string.do_allow)
-                    }
-                    // 29 이하
-                    else {
-                        notiBackTitle.text = getString(R.string.perm_back_setting)
-                        if (GetAppInfo.isPermedBackLoc(this)) notiBackContent.text = getString(R.string.background_location_active)
-                        else notiBackContent.text = getString(R.string.background_location_not_active)
-                    }
+                if (!isChecked) {
+                    notiBackTr.visibility = View.GONE
+                    return
+                }
 
-                    setNightAlertsSpan(notiBackTitle)
-                    setNightAlertsSpan(notiBackContent)
 
-                    notiBackTr.setOnClickListener {
-                        if (notiBackContent.text.toString() == getString(R.string.do_allow) ||
-                            notiBackContent.text.toString() == getString(R.string.background_location_not_active) ||
-                            notiBackContent.text.toString() == getString(R.string.background_location_active))
-                            BackLocCheckDialog(
-                                this,
-                                supportFragmentManager,
-                                BottomSheetDialogFragment().tag
-                            ).show()
-                    }
-                } else notiBackTr.visibility = View.GONE
+                SetAppInfo.setInitBackLocPermission(this,true)
+                notiBackTr.visibility = View.VISIBLE
+                // 29 이상
+                if (VERSION.SDK_INT >= 29) {
+                    // 백그라운드 허용 여부
+                    isBackAllow = RequestPermissionsUtil(this).isBackgroundRequestLocation()
+                    notiBackTitle.text = getString(R.string.perm_self_msg)
+                    if (isBackAllow) notiBackContent.text = getString(R.string.allowed)
+                    else notiBackContent.text = getString(R.string.do_allow)
+                }
+                // 29 이하
+                else {
+                    notiBackTitle.text = getString(R.string.perm_back_setting)
+                    if (GetAppInfo.isPermedBackLoc(this)) notiBackContent.text = getString(R.string.background_location_active)
+                    else notiBackContent.text = getString(R.string.background_location_not_active)
+                }
+
+                setNightAlertsSpan(notiBackTitle)
+                setNightAlertsSpan(notiBackContent)
+
+                notiBackTr.setOnClickListener {
+                    if (notiBackContent.text.toString() == getString(R.string.do_allow) ||
+                        notiBackContent.text.toString() == getString(R.string.background_location_not_active) ||
+                        notiBackContent.text.toString() == getString(R.string.background_location_active))
+                        BackLocCheckDialog(
+                            this,
+                            supportFragmentManager,
+                            BottomSheetDialogFragment().tag
+                        ).show()
+                }
             }
 
             setNightAlertsSpan(notiSettingTitle)
@@ -523,26 +534,32 @@ class SettingActivity
 
             // 알림 설정 스위치 변화
             notiSettingSwitch.setOnCheckedChangeListener { _, isChecked ->
-                if (VERSION.SDK_INT >= 33) {
-                    if (isChecked) {
-                        if (notiPerm.isNotificationPermitted()) {
-                            SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, true)
-                            showSnackBar(notificationView, true)
-                            setVisibility(true)
-                            applyBack(true)
-                        } else notiPerm.requestNotification()
-                    } else {
-                        SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, false)
-                        showSnackBar(notificationView, false)
-                        setVisibility(false)
-                        applyBack(false)
-                    }
-                } else {
+                if (VERSION.SDK_INT < 33) {
                     SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, isChecked)
                     showSnackBar(notificationView, isChecked)
                     setVisibility(isChecked)
                     applyBack(isChecked)
+
+                    return@setOnCheckedChangeListener
                 }
+
+                if (!isChecked) {
+                    SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, false)
+                    showSnackBar(notificationView, false)
+                    setVisibility(false)
+                    applyBack(false)
+                    return@setOnCheckedChangeListener
+                }
+
+                if (!notiPerm.isNotificationPermitted()) {
+                    notiPerm.requestNotification()
+                    return@setOnCheckedChangeListener
+                }
+
+                SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, true)
+                showSnackBar(notificationView, true)
+                setVisibility(true)
+                applyBack(true)
             }
             // 진동 설정 스위치 변화
             notiVibrateSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -770,8 +787,8 @@ class SettingActivity
 
         // 로그인 플랫폼 아이콘 설정
         HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-            if (lastLogin != "") { binding.settingLogOut.text = getString(R.string.setting_logout) }
-            else { binding.settingLogOut.text = getString(R.string.login_title) }
+            if (lastLogin != "") binding.settingLogOut.text = getString(R.string.setting_logout)
+            else binding.settingLogOut.text = getString(R.string.login_title)
 
             Glide.with(this).load(
                 when(lastLogin) {
