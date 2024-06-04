@@ -50,12 +50,12 @@ object RDBLogcat {
     /** 안드로이드 ID(Unique) 반환 **/
     @SuppressLint("HardwareIds")
     private fun androidID(context: Context): String {
-        return try {
+        return kotlin.runCatching {
             Settings.Secure.getString(
                 context.applicationContext.contentResolver,
                 Settings.Secure.ANDROID_ID
             )
-        } catch (e: java.lang.NullPointerException) { "" }
+        }.getOrElse { "" }
     }
 
     /** 유저 로그 레퍼런스 **/
@@ -64,7 +64,7 @@ object RDBLogcat {
 
     /** 날짜 변환 **/
     private fun getDate(): String =
-        millsToString(System.currentTimeMillis(), "yyyy-MM-dd")
+        millsToString(System.currentTimeMillis(), " yyyy-MM-dd")
 
     /** 시간 변환 **/
     private fun getTime(): String =
@@ -76,18 +76,18 @@ object RDBLogcat {
 
     /** 로그인 여부 확인 **/
     private fun isLogin(context: Context): String {
-        return try {
+        return kotlin.runCatching {
             if (SharedPreferenceManager(context).getString(SpDao.userEmail) != "") LOGIN_ON else LOGIN_OFF
-        } catch(e: java.lang.NullPointerException) { LOGIN_OFF }
+        }.getOrElse { LOGIN_OFF }
     }
 
     /** 유니크 아이디 받아오기 - 로그인(이메일) 비로그인(디바이스아이디) **/
     private fun getAndroidIdForLog(context: Context): String {
         val email = SharedPreferenceManager(context).getString(SpDao.userEmail)
-        return try {
+        return kotlin.runCatching {
             if (email != "") email.replace(".","_")
             else androidID(context)
-        } catch (e: NullPointerException) { "" }
+        }.getOrElse { "" }
     }
 
     /** 아이디까지의 레퍼런스 경로 **/
@@ -97,11 +97,10 @@ object RDBLogcat {
     /** 유저 설치 정보 **/
     fun <T> writeUserPref(context: Context, sort: String, title: String, value: T?) {
         try{
-            val userRef = default(context)
-                .child(sort)
-                .child(title)
+            val userRef = default(context).child(sort).child(title)
             if (sort == USER_PREF_SETUP_INIT) {
-                if (!userRef.get().isSuccessful) userRef.setValue(modify(value.toString()))
+                if (userRef.get().isSuccessful) userRef.setValue(modify(value.toString()))
+                else userRef.setValue("Write User Pref Error")
             } else if (sort == USER_PREF_SETUP_COUNT)
                 userRef.setValue(userRef.get().result.value.toString().toInt() + 1)
             else userRef.setValue(modify(value.toString()))

@@ -66,7 +66,6 @@ class SettingActivity
 
     private val noticeItem = arrayListOf<ApiModel.NoticeItem>()
     private var isInit = true
-    private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
     private var isBackAllow = false
 
     private val ioThread by lazy {CoroutineScope(Dispatchers.IO)}
@@ -74,6 +73,7 @@ class SettingActivity
 
     private var lastLogin = ""
 
+    private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
     private val httpClient by inject<HttpClient>()
 
     override fun onResume() {
@@ -96,7 +96,7 @@ class SettingActivity
         initBinding()
         DataTypeParser.setStatusBar(this)
 
-        if (isInit) { isInit = false }
+        if (isInit) isInit = false
 
         // 뒤로가기 버튼 클릭
         binding.settingBack.setOnClickListener { goMain() }
@@ -105,8 +105,7 @@ class SettingActivity
         binding.settingLogOut.setOnClickListener {
             if (binding.settingLogOut.text == getString(R.string.setting_logout)) {
                 val builder = Dialog(this)
-                val view = LayoutInflater.from(this)
-                    .inflate(R.layout.dialog_alert_double_btn, null)
+                val view = LayoutInflater.from(this).inflate(R.layout.dialog_alert_double_btn, null)
                 builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
                 builder.setContentView(view)
@@ -368,12 +367,11 @@ class SettingActivity
                         if (item.content != "") {
                             loadUrl("${item.href}${item.id}")
                             detailNoContent.apply { visibility = View.GONE }
-                        } else {
+                        } else
                             detailNoContent.apply {
                                 visibility = View.VISIBLE
                                 bringToFront()
                             }
-                        }
                     }
                     ShowDialogClass(this@SettingActivity, false)
                         .setBackPressed(detailView.findViewById(R.id.detailBack))
@@ -442,20 +440,15 @@ class SettingActivity
         // 알림 클릭
         binding.settingNotificationText.setOnClickListener {
             val notificationView: View =
-                LayoutInflater.from(this).inflate(
-                    R.layout.dialog_notification_setting,
-                    null
-                )
+                LayoutInflater.from(this).inflate(R.layout.dialog_notification_setting, null)
 
             val notiVibrateTr: TableRow = notificationView.findViewById(R.id.notiVibrateView)
             val notiSoundTr: TableRow = notificationView.findViewById(R.id.notiSoundView)
             val notiBackTr: TableRow = notificationView.findViewById(R.id.notiBackView)
             val notiSettingTitle: TextView = notificationView.findViewById(R.id.notiSettingTitle)
             val notiBackTitle: TextView = notificationView.findViewById(R.id.notiBackTitle)
-            val notiSettingSwitch: SwitchCompat =
-                notificationView.findViewById(R.id.notiSettingSwitch)
-            val notiVibrateSwitch: SwitchCompat =
-                notificationView.findViewById(R.id.notiVibrateSwitch)
+            val notiSettingSwitch: SwitchCompat = notificationView.findViewById(R.id.notiSettingSwitch)
+            val notiVibrateSwitch: SwitchCompat = notificationView.findViewById(R.id.notiVibrateSwitch)
             val notiBackContent: TextView = notificationView.findViewById(R.id.notiBackContent)
             val notiSoundSwitch: SwitchCompat = notificationView.findViewById(R.id.notiSoundSwitch)
             val notiLine2: View = notificationView.findViewById(R.id.notificationLine2)
@@ -463,10 +456,7 @@ class SettingActivity
             val notiPerm = RequestPermissionsUtil(this)
 
             if (VERSION.SDK_INT >= 33)
-                SetAppInfo.setUserNoti(
-                    this,
-                    IgnoredKeyFile.notiEnable,
-                    notiPerm.isNotificationPermitted())
+                SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, notiPerm.isNotificationPermitted())
 
             // 알림 미허용시 다른 아이템 숨김
             fun setVisibility(isChecked: Boolean) {
@@ -604,10 +594,7 @@ class SettingActivity
             )
             // 크기변경
             span.setSpan(
-                AbsoluteSizeSpan(37),
-                it.length, span.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+                AbsoluteSizeSpan(37), it.length, span.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             if (textView.text.contains(getString(R.string.always_allowed))) {
                 kotlin.runCatching {
                     span.setSpan(
@@ -628,15 +615,13 @@ class SettingActivity
         textView.text = span
     }
 
-    // 테마 적용
-    private fun applyDeviceTheme() {
-        // 설정 페이지 테마 항목이름 바꾸기
+    // 설정 페이지 테마 항목이름 바꾸기
+    private fun applyDeviceTheme() =
         when (GetAppInfo.getUserTheme(this)) {
             StaticDataObject.THEME_DARK -> binding.settingSystemTheme.fetchData(getString(R.string.theme_dark))
             StaticDataObject.THEME_LIGHT -> binding.settingSystemTheme.fetchData(getString(R.string.theme_light))
             else -> binding.settingSystemTheme.fetchData(getString(R.string.theme_system))
         }
-    }
 
     // 앱 버전 불러오기
     @SuppressLint("SetTextI18n", "InflateParams")
@@ -671,8 +656,7 @@ class SettingActivity
                                 appInfoDownBtn.visibility = View.GONE
                                 appInfoVersionValue.visibility = View.VISIBLE
                             } else {
-                                appInfoIsRecent.text =
-                                    getString(R.string.not_latest_version)
+                                appInfoIsRecent.text = getString(R.string.not_latest_version)
                                 appInfoIsRecent.setTextColor(getColor(R.color.main_blue_color))
                                 appInfoDownBtn.visibility = View.VISIBLE
                                 appInfoVersionValue.visibility = View.GONE
@@ -731,8 +715,7 @@ class SettingActivity
                 .inflate(R.layout.dialog_customer_service, null)
 
             val customerCall: CustomerServiceView = customerView.findViewById(R.id.customerCall)
-            val customerHomePage: CustomerServiceView =
-                customerView.findViewById(R.id.customerHomePage)
+            val customerHomePage: CustomerServiceView = customerView.findViewById(R.id.customerHomePage)
             val customerEmail: CustomerServiceView = customerView.findViewById(R.id.customerEmail)
 
             customerCall.fetchData(R.drawable.ico_cs_phone)

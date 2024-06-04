@@ -227,7 +227,6 @@
     <string name="use_current_version">Use this version</string>
     <string name="exist_last_version">We have the latest version</string>
     <string name="fail_to_get_app_version">Fail to get app version</string>
-    <string name="address_error">Error Address</string>
     <string name="ok_change_setting">Settings have been changed</string>
     <string name="settings_initialized">Settings have been initialized</string>
     <string name="setting_opacity">Opacity</string>

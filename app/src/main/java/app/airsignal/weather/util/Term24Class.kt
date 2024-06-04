@@ -39,11 +39,10 @@ object Term24Class {
 
     /** 24절기 불러오기 **/
     fun getTerms24Bundle(term24: String?): Bundle? {
-        term24?.let {
+        return term24?.let {
             val term = Term24.values().find { it.name == term24 }
-            return term?.let { putBundle(it) }
+            term?.let { putBundle(it) }
         }
-        return null
     }
 
     /** 24절기 번들 필드 추가 **/

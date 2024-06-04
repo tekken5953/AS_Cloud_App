@@ -5,9 +5,7 @@ import androidx.lifecycle.viewModelScope
 import app.airsignal.weather.network.retrofit.ApiModel
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.repository.GetAppVersionRepo
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.IOException
 
 /**

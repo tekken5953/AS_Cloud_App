@@ -28,17 +28,17 @@ class GetAppVersionRepo: BaseRepository() {
                 override fun onResponse(
                     call: Call<ApiModel.AppVersion>,
                     response: Response<ApiModel.AppVersion>) {
-                    kotlin.runCatching {
-                        val responseBody = response.body()
-                        responseBody?.let {
-                            if (response.isSuccessful) {
-                                CoroutineScope(Dispatchers.Default).launch {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        kotlin.runCatching {
+                            val responseBody = response.body()
+                            responseBody?.let {
+                                if (response.isSuccessful)
                                     _getAppVersionResult.postValue(ApiState.Success(responseBody))
-                                }
-                            } else _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_API_PROTOCOL))
-                        } ?: run { _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_NULL_RESPONSE)) }
-                    }.onFailure { exception ->
-                        if (exception is IOException) _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_SERVER_CONNECTING))
+                                else _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_API_PROTOCOL))
+                            } ?: run { _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_NULL_RESPONSE)) }
+                        }.onFailure { exception ->
+                            if (exception is IOException) _getAppVersionResult.postValue(ApiState.Error(ErrorCode.ERROR_SERVER_CONNECTING))
+                        }
                     }
                 }
 

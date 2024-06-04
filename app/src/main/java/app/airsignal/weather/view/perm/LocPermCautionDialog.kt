@@ -1,14 +1,13 @@
 package app.airsignal.weather.view.perm
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
-import android.os.*
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.*
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
@@ -18,7 +17,6 @@ import app.airsignal.weather.db.sp.SetAppInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.*
 
 
 /**

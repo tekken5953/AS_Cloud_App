@@ -1,6 +1,5 @@
 package app.airsignal.weather.repository
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.MutableLiveData
 import app.airsignal.weather.network.ErrorCode
 import app.airsignal.weather.network.retrofit.ApiModel

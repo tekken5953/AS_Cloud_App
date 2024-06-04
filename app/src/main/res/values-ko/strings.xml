@@ -220,7 +220,6 @@
     <string name="use_current_version">현재 버전 이용</string>
     <string name="exist_last_version">최신 버전이 있습니다</string>
     <string name="fail_to_get_app_version">앱 버전을 불러올 수 없습니다.</string>
-    <string name="address_error">주소 호출 에러</string>
     <string name="ok_change_setting">설정이 변경되었습니다</string>
     <string name="settings_initialized">설정이 초기화되었습니다</string>
     <string name="setting_opacity">창 투명도 설정</string>

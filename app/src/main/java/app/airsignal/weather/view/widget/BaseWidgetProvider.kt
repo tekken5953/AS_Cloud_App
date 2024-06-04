@@ -31,25 +31,23 @@ open class BaseWidgetProvider: AppWidgetProvider(), KoinComponent {
     private val httpClient: HttpClient by inject()
 
     suspend fun requestWeather(lat: Double, lng: Double, rCount: Int): ApiModel.WidgetData? {
-        kotlin.runCatching {
-            return httpClient.retrofit
+        return kotlin.runCatching {
+            httpClient.retrofit
                 .getWidgetForecast(lat, lng, rCount)
                 .awaitResponse().body()
-        }.exceptionOrNull()?.stackTraceToString()
-
-        return null
+        }.getOrNull()
     }
 
     fun requestPermissions(context: Context, sort: String, id: Int?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
-                val intent = Intent(context, WidgetPermActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                intent.putExtra("sort",sort)
-                intent.putExtra("id",id)
-                context.startActivity(intent)
-            }
-        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
+
+        if (RequestPermissionsUtil(context).isBackgroundRequestLocation()) return
+
+        val intent = Intent(context, WidgetPermActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        intent.putExtra("sort",sort)
+        intent.putExtra("id",id)
+        context.startActivity(intent)
     }
 
     fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean {

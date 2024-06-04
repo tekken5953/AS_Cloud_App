@@ -103,7 +103,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             }
                             // 현재 버전이 최신 버전이 아닌 경우
                             val array = ArrayList<String>()
-                            ver.data.test.forEach { array.add("${it.name}.${it.code}") }
+                            ver.data.testVersion?.forEach { array.add("${it.name}.${it.code}") }
 
                             if (!array.contains(fullVersion)) {
                                 // 모든 허용 버전에 해당되지 않은 경우

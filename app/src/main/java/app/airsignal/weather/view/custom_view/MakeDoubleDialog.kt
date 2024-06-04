@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.res.ColorStateList
-import android.content.res.Resources.NotFoundException
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.Window

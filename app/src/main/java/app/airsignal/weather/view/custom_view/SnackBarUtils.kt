@@ -32,8 +32,7 @@ class SnackBarUtils(view: View, private val message: String, private val drawabl
     private val snackBarLayout by lazy { snackBar.view as Snackbar.SnackbarLayout }
     private val snackBarBinding =
         DataBindingUtil.inflate(LayoutInflater.from(context),
-            R.layout.custom_view_snackbar, null, false)
-                as CustomViewSnackbarBinding
+            R.layout.custom_view_snackbar, null, false) as CustomViewSnackbarBinding
 
     /** 뷰 세팅 **/
     private fun initView() = with(snackBarLayout) {

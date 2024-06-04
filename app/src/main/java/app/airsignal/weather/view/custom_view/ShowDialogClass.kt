@@ -17,7 +17,7 @@ import java.util.*
  **/
 
 class ShowDialogClass(activity: Activity, isEye: Boolean) {
-    private var builder: androidx.appcompat.app.AlertDialog.Builder =
+    private var builder =
         androidx.appcompat.app.AlertDialog.Builder(activity, if (!isEye) R.style.AlertDialog else R.style.FullDialog)
     private lateinit var alertDialog: androidx.appcompat.app.AlertDialog
 

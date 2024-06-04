@@ -12,12 +12,12 @@ class ApiModel {
         @SerializedName("releaseDate")
         val date: String,
         @SerializedName("test")
-        val test: List<Test>,
+        val testVersion: List<TestVersion>?,
         @SerializedName("inAppMsg")
         val inAppMsg: List<InAppMsgItem?>?
     )
 
-    data class Test(
+    data class TestVersion(
         @SerializedName("name")
         val name: String,
         @SerializedName("code")
@@ -29,8 +29,7 @@ class ApiModel {
         @SerializedName("img")
         val img: String,
         @SerializedName("redirect")
-        val redirect: String
-        )
+        val redirect: String)
 
     data class MetaData(
         @SerializedName("address")

@@ -1,6 +1,5 @@
 package app.airsignal.weather.view.activity
 
-import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
@@ -8,15 +7,14 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.TextViewCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.WarningDetailAdapter
-import app.airsignal.weather.location.AddressFromRegex
 import app.airsignal.weather.databinding.ActivityWarningDetailBinding
 import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.location.AddressFromRegex
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.util.`object`.DataTypeParser
 import app.airsignal.weather.viewmodel.GetWarningViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
-import java.util.*
 
 class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     override val resID: Int get() = R.layout.activity_warning_detail

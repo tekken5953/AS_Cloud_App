@@ -710,9 +710,9 @@ class MainActivity
     // API 통신이 성공일 때 처리
     private fun handleApiSuccess(result: ApiModel.GetEntireData) {
         kotlin.runCatching {
-            val metaAddr = result.meta.address ?: getString(R.string.address_error)
+            val metaAddr = result.meta.address
             ioThread.launch {
-                reNewTopicInMain(metaAddr)
+                metaAddr?.let {reNewTopicInMain(it)}
 
 //                isNight = true
                 isNight = GetAppInfo.getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
@@ -729,19 +729,16 @@ class MainActivity
                     // 메인 날씨 텍스트 세팅
                     val isCurrent = currentIsAfterRealtime(
                         result.current.currentTime, result.realtime[0].forecast)
-                    val skyText = if (isCurrent) {
-                        DataTypeParser.translateSky(
+                    val skyText =
+                        if (isCurrent) DataTypeParser.translateSky(
                             this@MainActivity, DataTypeParser.applySkyText(this@MainActivity,
                                 result.current.rainType, result.realtime[0].sky, result.thunder)
                         )
-                    } else {
-                        DataTypeParser.translateSky(
-                            this@MainActivity, DataTypeParser.applySkyText(this@MainActivity,
-                                result.realtime[0].rainType,
-                                result.realtime[0].sky, result.thunder
+                        else DataTypeParser.translateSky(
+                                this@MainActivity, DataTypeParser.applySkyText(this@MainActivity,
+                                    result.realtime[0].rainType,
+                                    result.realtime[0].sky, result.thunder)
                             )
-                        )
-                    }
 
                     val rainTypeText = if (isCurrent) result.current.rainType
                     else result.realtime[0].rainType
@@ -778,7 +775,8 @@ class MainActivity
                 }
             }
         }.onFailure { exception ->
-            handleApiError(exception.localizedMessage ?: exception.stackTraceToString()) }
+            handleApiError(exception.localizedMessage ?: exception.stackTraceToString())
+        }
     }
 
     private fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean {
@@ -979,22 +977,21 @@ class MainActivity
     private fun updateUVData(uv: ApiModel.UV?) {
         // 자외선 데이터 업데이트
         // UV 값이 없으면 카드 없앰
-        uv?.let {
-            it.flag?.let { mFlag ->
-                it.value?.let {
-                    binding.mainUVBox.visibility = VISIBLE
-                    applyUvResponseItem(mFlag)   // 자외선 단계별 대응요령 추가
-                    DataTypeParser.applyUvColor(this, mFlag, binding.mainUvValue) // UV 범주 색상 변경
-                    binding.mainUvValue.text = DataTypeParser.translateUV(this, mFlag)
-                } ?: run { binding.mainUVBox.visibility = GONE }
-            } ?: run { binding.mainUVBox.visibility = GONE }
-        } ?: run { binding.mainUVBox.visibility = GONE }
+        if (uv?.flag == null || uv.value == null) {
+            binding.mainUVBox.visibility = GONE
+            return
+        }
+
+        if (binding.mainUVBox.visibility != VISIBLE) binding.mainUVBox.visibility = VISIBLE
+
+        applyUvResponseItem(uv.flag)   // 자외선 단계별 대응요령 추가
+        DataTypeParser.applyUvColor(this, uv.flag, binding.mainUvValue) // UV 범주 색상 변경
+        binding.mainUvValue.text = DataTypeParser.translateUV(this, uv.flag)
     }
 
     private fun updateSunTimes(
         sun: ApiModel.SunData?,
-        sunTomorrow: ApiModel.SunTomorrow?
-    ) {
+        sunTomorrow: ApiModel.SunTomorrow?) {
         // 일출 및 일몰 시간 업데이트
         sunPb.animate(currentSun)
 
@@ -1019,8 +1016,7 @@ class MainActivity
     private fun updateCurrentTemperature(
         yesterdayTemp: ApiModel.YesterdayTemp,
         current: ApiModel.Current,
-        realtime: List<ApiModel.RealTimeData>
-    ) {
+        realtime: List<ApiModel.RealTimeData>) {
         // 현재 온도 적용
         val real0 = realtime[0]
         val currentTemperature = current.temperature.toString()

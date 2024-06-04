@@ -23,7 +23,7 @@ class GeofenceManager(private val context: Context): KoinComponent {
     @SuppressLint("MissingPermission")
     fun addGeofence(): Location? {
         val location = locationClass.getForegroundLocation()
-        location?.let {
+        return location?.let {
             val geofence = Geofence.Builder()
                 .setRequestId(requestId)
                 .setCircularRegion(location.latitude, location.longitude, 100f)
@@ -48,7 +48,6 @@ class GeofenceManager(private val context: Context): KoinComponent {
 
             return location
         }
-        return null
     }
 
     private fun removeGeofence() {

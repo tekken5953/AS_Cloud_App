@@ -1,6 +1,5 @@
 package app.airsignal.weather.util.`object`
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -26,19 +25,18 @@ object DataTypeParser {
     fun getHourCountToTomorrow(): Int = 24 - parseLongToLocalDateTime(getCurrentTime()).hour
 
     fun currentDateTimeString(format: String): String {
-        val mFormat = SimpleDateFormat(format, Locale.getDefault())
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
         }
 
-        return mFormat.format(calendar.time)
+        return SimpleDateFormat(format, Locale.getDefault()).format(calendar.time)
     }
 
     /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트 **/
     fun applySkyText(context: Context, rain: String?, sky: String?, thunder: Double?): String {
-        return if (rain != "없음") if ((thunder == null) || (thunder < 0.2))  rain ?: "없음" else  context.getString(R.string.thunder_sunny)
-        else if ((thunder == null) || (thunder < 0.2)) sky ?: "맑음"
-        else  context.getString(R.string.thunder_rainy)
+        if (rain == null || rain == "없음")
+            return if ((thunder == null) || (thunder < 0.2)) sky ?: "맑음" else context.getString(R.string.thunder_rainy)
+        return if ((thunder == null) || (thunder < 0.2)) rain else context.getString(R.string.thunder_sunny)
     }
 
     fun translateSkyText(sky: String): String =
@@ -80,11 +78,11 @@ object DataTypeParser {
     fun getSkyImgLarge(context: Context, sky: String?, isNight: Boolean, lunar: Int): Drawable? {
         val id = when(sky) {
             context.getString(R.string.sky_sunny) ->
-                if (!isNight) R.drawable.b_ico_sunny
-                else R.drawable.ico_moon_big
+                if (isNight) R.drawable.ico_moon_big
+                else R.drawable.b_ico_sunny
             context.getString(R.string.sky_sunny_cloudy) ->
-                if (!isNight)  R.drawable.b_ico_m_cloudy
-                else  R.drawable.b_ico_m_ncloudy
+                if (isNight)  R.drawable.b_ico_m_ncloudy
+                else  R.drawable.b_ico_m_cloudy
             context.getString(R.string.sky_cloudy) -> R.drawable.b_ico_cloudy
             context.getString(R.string.sky_shower), context.getString(R.string.sky_rainy) -> R.drawable.b_ico_rainy
             context.getString(R.string.sky_sunny_cloudy_snowy), "눈", "흐리고 눈" -> R.drawable.b_ico_snow
@@ -126,20 +124,15 @@ object DataTypeParser {
     fun getBackgroundImgWidget(sort: String, rainType: String?, sky: String?, isNight: Boolean): Int {
         return if (rainType == "없음" || rainType == null) {
             when (sky) {
-                "맑음", "구름많음" -> {
+                "맑음", "구름많음" ->
                     if (sort == BaseWidgetProvider.WIDGET_22) if (isNight) R.drawable.w_bg_night else R.drawable.w_bg_sunny
-                    else {
-                        if (isNight) R.drawable.widget_bg4x2_night else R.drawable.widget_bg4x2_sunny
-                    }
-                }
+                    else if (isNight) R.drawable.widget_bg4x2_night else R.drawable.widget_bg4x2_sunny
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈", "구름많고 소나기",
                 "흐리고 비", "구름많고 비", "흐리고 소나기", "소나기", "비", "흐림",
-                "번개,뇌우", "비/번개" -> {
+                "번개,뇌우", "비/번개" ->
                     if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_cloudy else  R.drawable.widget_bg4x2_cloud
-                }
-                "구름많고 눈", "눈", "흐리고 눈" -> {
+                "구름많고 눈", "눈", "흐리고 눈" ->
                     if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
-                }
                 else -> if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
             }
         } else {
@@ -166,11 +159,11 @@ object DataTypeParser {
     fun getSkyImgSmall(context: Context, sky: String?, isNight: Boolean): Drawable? {
         val id = when(sky) {
             "맑음" ->
-                if (!isNight) R.drawable.b_ico_sunny
-                else  R.drawable.sm_good_n
+                if (isNight) R.drawable.sm_good_n
+                else  R.drawable.b_ico_sunny
             "구름많음" ->
-                if (!isNight)  R.drawable.b_ico_m_cloudy
-                else  R.drawable.b_ico_m_ncloudy
+                if (isNight)  R.drawable.b_ico_m_ncloudy
+                else  R.drawable.b_ico_m_cloudy
             "흐림" -> R.drawable.b_ico_cloudy
             "소나기", "비" -> R.drawable.b_ico_rainy
             "구름많고 눈", "눈", "흐리고 눈" -> R.drawable.sm_snow

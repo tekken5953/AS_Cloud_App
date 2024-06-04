@@ -4,10 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.content.pm.PackageManager.PackageInfoFlags
 import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
 import android.util.DisplayMetrics
 import androidx.core.content.pm.PackageInfoCompat
 import java.util.*
@@ -35,27 +33,23 @@ object GetSystemInfo {
 
     /** 현재 앱 버전 반환 **/
     fun getApplicationVersionName(context: Context): String {
-        kotlin.runCatching {
+        return kotlin.runCatching {
             val packageManager = context.packageManager
             @Suppress("DEPRECATION")
             val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
-            return packageInfo.versionName
-        }.exceptionOrNull()?.stackTraceToString()
-
-        return ""
+            packageInfo.versionName
+        }.getOrElse { "" }
     }
 
     /** 현재 앱 버전 반환 **/
     fun getApplicationVersionCode(context: Context): String {
-        kotlin.runCatching {
+        return kotlin.runCatching {
             val packageManager = context.packageManager
             @Suppress("DEPRECATION")
             val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
             val appVersionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
-            return appVersionCode.toString()
-        }.exceptionOrNull()?.stackTraceToString()
-
-        return ""
+            appVersionCode.toString()
+        }.getOrElse { "" }
     }
 
     // 플레이 스토어 주소 반환
@@ -79,13 +73,4 @@ object GetSystemInfo {
     // 다이얼로그 비율설정
     fun getBottomSheetDialogDefaultHeight(context: Context, per: Int): Int =
         getWindowHeight(context) * per / 100
-
-    fun isAppInstalled(activity: Activity, packageName: String): Boolean {
-        return try {
-            activity.packageManager.getPackageInfo(packageName, 0)
-            true
-        } catch (e: PackageManager.NameNotFoundException) {
-            false
-        }
-    }
 }

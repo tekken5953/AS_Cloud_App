@@ -43,7 +43,6 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     ) {
         for (appWidgetId in appWidgetIds) {
             kotlin.runCatching { processUpdate(context,appWidgetId) }
-                .exceptionOrNull()?.stackTraceToString()
         }
     }
 
@@ -67,8 +66,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         }
 
         if (!isRefreshable(context, WIDGET_42)) {
-            Toast.makeText(context.applicationContext,
-                "갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context.applicationContext,"갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -84,18 +82,16 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             CoroutineScope(Dispatchers.Default).launch {
                 val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
                 val refreshBtnIntent =
-                    if (!RequestPermissionsUtil(context).isBackgroundRequestLocation())
+                    if (RequestPermissionsUtil(context).isBackgroundRequestLocation())
+                        Intent(context, WidgetProvider42::class.java).run {
+                            this.action = REFRESH_BUTTON_CLICKED_42
+                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)}
+                    else
                         Intent(context, WidgetPermActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             putExtra("sort",WIDGET_42)
                             putExtra("id",appWidgetId)
                         }
-                    else
-                        Intent(context, WidgetProvider42::class.java).run {
-                            this.action = REFRESH_BUTTON_CLICKED_42
-                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                }
-
                 val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
                     .run {
                         this.action = ENTER_APPLICATION_42
@@ -277,7 +273,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         views.run {
             imgArray.forEach {
                 this.setInt(
-                    it, "setColorFilter", context.applicationContext.getColor(
+                    it,"setColorFilter", context.applicationContext.getColor(
                         when (bg) {
                             R.drawable.widget_bg4x2_sunny,
                             R.drawable.widget_bg4x2_snow -> R.color.wblack

@@ -145,8 +145,8 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
         airBinding.listItemNestedAirHelp.imageTintList = ColorStateList.valueOf(color)
     }
 
-    private fun translateTitle(title: String): String {
-        return when(title) {
+    private fun translateTitle(title: String): String =
+        when(title) {
             AirQ.PM2_5.title -> context.getString(R.string.pm2_5_full)
             AirQ.PM10.title -> context.getString(R.string.pm10_full)
             AirQ.NO2.title -> context.getString(R.string.no2_full)
@@ -155,17 +155,15 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
             AirQ.CO.title -> context.getString(R.string.co_full)
             else -> ""
         }
-    }
 
-    private fun getProgressDrawable(grade: Int): Drawable? {
-        return ResourcesCompat.getDrawable(context.resources,when(grade) {
+    private fun getProgressDrawable(grade: Int): Drawable? =
+        ResourcesCompat.getDrawable(context.resources,when(grade) {
             1 -> R.drawable.airq_good_pb
             2 -> R.drawable.airq_normal_pb
             3 -> R.drawable.airq_bad_pb
             4 -> R.drawable.airq_verybad_pb
             else -> R.drawable.airq_good_pb
         }, null)
-    }
 
     private fun getModerate(sort: AirQ, value: Double): Pair<Int, Int> {
         fun calculateGrade(value: Double, ranges: List<Range>): Grade {
