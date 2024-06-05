@@ -32,7 +32,7 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
         else window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 
         binding.webUrlBackIv.setOnClickListener {
-            if (!webView.canGoBack()) finish() else webView.goBack()
+            if (webView.canGoBack()) webView.goBack() else finish()
         }
 
         binding.webUrlTop.setOnClickListener { webView.pageUp(true) }

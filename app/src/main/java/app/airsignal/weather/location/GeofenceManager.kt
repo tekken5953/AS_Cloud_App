@@ -21,7 +21,7 @@ class GeofenceManager(private val context: Context): KoinComponent {
     private val locationClass: GetLocation by inject()
 
     @SuppressLint("MissingPermission")
-    fun addGeofence(): Location? {
+    suspend fun addGeofence(): Location? {
         val location = locationClass.getForegroundLocation()
         return location?.let {
             val geofence = Geofence.Builder()

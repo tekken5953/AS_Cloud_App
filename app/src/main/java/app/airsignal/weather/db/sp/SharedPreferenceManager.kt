@@ -18,9 +18,8 @@ class SharedPreferenceManager(context: Context) {
     @Suppress("PrivatePropertyName") private val DEFAULT_VALUE_LONG = -1L
     @Suppress("PrivatePropertyName") private val DEFAULT_VALUE_FLOAT = -1f
 
-    private val prefs: SharedPreferences =
-        context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-    private val editor: SharedPreferences.Editor = prefs.edit()
+    private val prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+    private val editor = prefs.edit()
 
     /**String 값 저장 **/
     fun setString(key: String, value: String) : SharedPreferenceManager {
@@ -88,16 +87,13 @@ class SharedPreferenceManager(context: Context) {
     /** 키쌍 리스트 구하기**/
     fun getAllList(): Map<String, Any>? {
         val jsonObject = JSONObject()
-        try {
+        return kotlin.runCatching {
             for (i in 0 until prefs.all.size) {
                 jsonObject.put(prefs.all.keys.toString(), prefs.all.values)
             }
 
-            return toMap(jsonObject)
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-        return null
+            toMap(jsonObject)
+        }.getOrNull()
     }
 
     /**키를 제이슨 형태로 변환**/

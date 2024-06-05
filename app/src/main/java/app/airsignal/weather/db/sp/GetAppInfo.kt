@@ -1,6 +1,10 @@
 package app.airsignal.weather.db.sp
 
 import android.content.Context
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -9,6 +13,7 @@ import java.util.*
  * @since : 2023-06-12 오후 2:19
  **/
 object GetAppInfo {
+
     fun getUserTheme(context: Context): String {
         return SharedPreferenceManager(context).getString(SpDao.userTheme)
     }

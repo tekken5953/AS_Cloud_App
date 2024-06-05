@@ -16,6 +16,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 /**
  * @author : Lee Jae Young
@@ -62,7 +65,7 @@ class GoogleLogin(private val activity: Activity) {
     fun checkSilenceLogin() {
         client.silentSignIn()
             .addOnCompleteListener {
-                handleSignInResult(it,isAuto = true)
+                handleSignInResult(it)
             }
             .addOnFailureListener {
                 ToastUtils(activity).showMessage("마지막 로그인 세션을 찾을 수 없습니다",1)
@@ -87,7 +90,7 @@ class GoogleLogin(private val activity: Activity) {
     }
 
     /** 로그인 이벤트 성공 **/
-    fun handleSignInResult(completedTask: Task<GoogleSignInAccount>, isAuto: Boolean) {
+    fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
             val email = account.email?.lowercase() ?: ""
@@ -96,9 +99,11 @@ class GoogleLogin(private val activity: Activity) {
             val photo: String = account?.photoUrl.toString()
             val token = account.idToken
 
-            SetAppInfo.setUserId(activity, displayName.toString())
-            SetAppInfo.setUserProfile(activity, photo)
-            SetAppInfo.setUserEmail(activity, email)
+            CoroutineScope(Dispatchers.IO).launch {
+                SetAppInfo.setUserId(activity, displayName.toString())
+                SetAppInfo.setUserProfile(activity, photo)
+                SetAppInfo.setUserEmail(activity, email)
+            }
 
             saveLoginStatus()
             activity.finish()

@@ -82,7 +82,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     // 앱 버전 뷰모델 데이터 호출
     private fun applyWarning() {
         kotlin.runCatching {
-            warningViewModel.fetchData().observe(this) { result ->
+            warningViewModel.getResultData.observe(this) { result ->
                 warningList.clear()
                 result?.let { warning ->
                     when (warning) {

@@ -13,15 +13,11 @@ import java.io.IOException
  * @since : 2023-07-14 오전 9:05
  **/
 class GetWarningViewModel(private val repo: GetWarningRepo): BaseViewModel() {
-    private var getResultData: LiveData<BaseRepository.ApiState<ApiModel.BroadCastWeather>>? = null
+    val getResultData: LiveData<BaseRepository.ApiState<ApiModel.BroadCastWeather>>
+    get() = repo._getWarningResult
 
     fun loadDataResult(code: Int) : GetWarningViewModel {
         viewModelScope.launch { repo.loadDataResult(code) }
         return this
-    }
-
-    fun fetchData(): LiveData<BaseRepository.ApiState<ApiModel.BroadCastWeather>> {
-        getResultData = repo._getWarningResult
-        return getResultData ?: throw IOException()
     }
 }

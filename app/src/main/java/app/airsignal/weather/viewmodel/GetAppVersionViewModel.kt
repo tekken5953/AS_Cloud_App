@@ -13,16 +13,11 @@ import java.io.IOException
  * @since : 2023-07-14 오전 9:05
  **/
 class GetAppVersionViewModel(private val repo: GetAppVersionRepo): BaseViewModel() {
-    private var getResultData: LiveData<BaseRepository.ApiState<ApiModel.AppVersion>>? = null
+    val getResultData: LiveData<BaseRepository.ApiState<ApiModel.AppVersion>>
+    get() = repo._getAppVersionResult
 
     fun loadDataResult() : GetAppVersionViewModel {
         viewModelScope.launch { repo.loadDataResult() }
         return this
-    }
-
-    fun fetchData(): LiveData<BaseRepository.ApiState<ApiModel.AppVersion>> {
-        getResultData = repo._getAppVersionResult
-
-        return getResultData ?: throw IOException()
     }
 }

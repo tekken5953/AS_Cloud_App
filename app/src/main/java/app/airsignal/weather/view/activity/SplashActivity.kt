@@ -35,7 +35,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
     private val locationClass: GetLocation by inject()
 
-    private val fetch by lazy { appVersionViewModel.fetchData() }
+    private val fetch by lazy { appVersionViewModel.getResultData }
     private var isReady = false
 
     init {

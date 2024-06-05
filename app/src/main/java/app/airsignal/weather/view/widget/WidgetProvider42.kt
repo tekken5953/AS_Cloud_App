@@ -144,8 +144,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         context: Context,
         views: RemoteViews,
         data: ApiModel.WidgetData?,
-        addr: String?
-    ) {
+        addr: String?) {
         kotlin.runCatching {
             isSuccess = true
             val currentTime = DataTypeParser.currentDateTimeString("HH:mm")

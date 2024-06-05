@@ -17,40 +17,36 @@ import java.util.*
 object GetSystemInfo {
 
     /** 현재 테마가 다크인가**/
-    fun isThemeNight(context: Context): Boolean {
-        val nightModeFlag = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return nightModeFlag == Configuration.UI_MODE_NIGHT_YES
-    }
+    fun isThemeNight(context: Context): Boolean =
+        context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK ==
+                Configuration.UI_MODE_NIGHT_YES
 
     /** 현재 설정된 국가를 반환 **/
-    fun getLocale(context: Context): Locale {
-        return when (GetAppInfo.getUserLocation(context)) {
+    fun getLocale(context: Context): Locale =
+        when (GetAppInfo.getUserLocation(context)) {
             SpDao.LANG_KR -> Locale.KOREA
             SpDao.LANG_EN -> Locale.ENGLISH
             else -> Locale.getDefault()
         }
-    }
 
     /** 현재 앱 버전 반환 **/
-    fun getApplicationVersionName(context: Context): String {
-        return kotlin.runCatching {
+    fun getApplicationVersionName(context: Context): String =
+        kotlin.runCatching {
             val packageManager = context.packageManager
             @Suppress("DEPRECATION")
             val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
             packageInfo.versionName
         }.getOrElse { "" }
-    }
 
     /** 현재 앱 버전 반환 **/
-    fun getApplicationVersionCode(context: Context): String {
-        return kotlin.runCatching {
+    fun getApplicationVersionCode(context: Context): String =
+        kotlin.runCatching {
             val packageManager = context.packageManager
             @Suppress("DEPRECATION")
             val packageInfo = packageManager.getPackageInfo(context.packageName, 0)
             val appVersionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
             appVersionCode.toString()
         }.getOrElse { "" }
-    }
 
     // 플레이 스토어 주소 반환
     fun getPlayStoreURL(context: Context): String = "market://details?id=${context.packageName}"

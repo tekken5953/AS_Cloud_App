@@ -54,8 +54,7 @@ class LoginActivity
     // 구글로그인 startActivityResult 변수
     private var startActivityResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
+            ActivityResultContracts.StartActivityForResult()) { result ->
             when (result.resultCode) {
                 // 로그인 성공 함
                 RESULT_OK -> {
@@ -64,7 +63,7 @@ class LoginActivity
 
                     if (task.result.email == IgnoredKeyFile.notificationAdmin) subFCM.subAdminTopic()
 
-                    googleLogin.handleSignInResult(task, isAuto = false)
+                    googleLogin.handleSignInResult(task)
                 }
                 // 로그인 취소 됨
                 RESULT_CANCELED -> binding.googleLoginButton.alpha = 1f

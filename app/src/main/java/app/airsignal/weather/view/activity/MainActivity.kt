@@ -116,7 +116,7 @@ class MainActivity
 
     private var isInAppMsgShow = false
 
-    private val fetch by lazy { getDataViewModel.fetchData() }
+    private val fetch by lazy { getDataViewModel.getDataResultData }
 
     private val ioThread by lazy { CoroutineScope(Dispatchers.IO) }
     private val ioDispatcher by lazy { Dispatchers.IO }

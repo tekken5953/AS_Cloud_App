@@ -641,7 +641,7 @@ class SettingActivity
 
         kotlin.runCatching {
             // 뷰모델 데이터 호출
-            appVersionViewModel.fetchData().observe(this) { result ->
+            appVersionViewModel.getResultData.observe(this) { result ->
                 result?.let { ver ->
                     when (ver) {
                         is BaseRepository.ApiState.Success -> {

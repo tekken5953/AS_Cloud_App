@@ -16,6 +16,7 @@ import app.airsignal.weather.db.sp.SpDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class GetLocation(private val context: Context) {
@@ -69,19 +70,18 @@ class GetLocation(private val context: Context) {
     }
 
     @SuppressLint("MissingPermission")
-    fun getForegroundLocation(): Location? {
-        return try {
-            val locationManager = context.applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager?
-            val locationGPS = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            val locationNetwork = locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+    suspend fun getForegroundLocation(): Location? {
+        return withContext(Dispatchers.IO) {
+            kotlin.runCatching {
+                val locationManager = context.applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager?
+                val locationGPS = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                val locationNetwork = locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
-            if (locationGPS != null && locationNetwork != null) {
-                // 두 위치 중 더 정확한 위치를 반환
-                if (locationGPS.accuracy > locationNetwork.accuracy) locationGPS else locationNetwork
-            } else locationGPS ?: locationNetwork
-        } catch (e: SecurityException) {
-            e.printStackTrace()
-            null
+                if (locationGPS != null && locationNetwork != null) {
+                    // 두 위치 중 더 정확한 위치를 반환
+                    if (locationGPS.accuracy > locationNetwork.accuracy) locationGPS else locationNetwork
+                } else locationGPS ?: locationNetwork
+            }.getOrNull()
         }
     }
 
