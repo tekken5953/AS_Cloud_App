@@ -2,11 +2,10 @@ package app.airsignal.weather.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.repository.GetWarningRepo
 import kotlinx.coroutines.launch
-import java.io.IOException
 
 /**
  * @author : Lee Jae Young

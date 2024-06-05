@@ -58,13 +58,13 @@ class DailyWeatherAdapter(
                 }
             }
 
-            holder.rain.visibility = if(mList[position].isRain) View.VISIBLE else View.INVISIBLE
+            holder.rain.visibility = if (mList[position].isRain) View.VISIBLE else View.INVISIBLE
         }
     }
 
-    fun getDateSectionList(): ArrayList<Int> { return dateSection }
+    fun getDateSectionList(): ArrayList<Int> = dateSection
 
-    fun getIsWhite(): Boolean { return isWhite }
+    fun getIsWhite(): Boolean = isWhite
 
     fun setIsWhite(b: Boolean) { isWhite = b }
 
@@ -81,7 +81,7 @@ class DailyWeatherAdapter(
             value.text = dao.value
             rain.text = "${dao.rainP?.toInt()}%"
 
-            val applyColor = context.getColor(if(isWhite)R.color.white else R.color.main_black)
+            val applyColor = context.getColor(if (isWhite) R.color.white else R.color.main_black)
             time.setTextColor(applyColor)
             value.setTextColor(applyColor)
         }

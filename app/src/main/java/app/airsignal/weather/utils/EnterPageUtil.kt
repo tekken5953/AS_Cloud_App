@@ -1,10 +1,10 @@
-package app.airsignal.weather.util
+package app.airsignal.weather.utils
 
 import android.app.Activity
 import android.content.Intent
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SpDao
-import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.view.activity.LoginActivity
 import app.airsignal.weather.view.activity.MainActivity
 import app.airsignal.weather.view.activity.PermissionActivity

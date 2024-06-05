@@ -13,13 +13,13 @@ import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.location.GetLocation
-import app.airsignal.weather.network.ErrorCode
-import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.api.ErrorCode
+import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.EnterPageUtil
-import app.airsignal.weather.util.LoggerUtil
-import app.airsignal.weather.util.TimberUtil
-import app.airsignal.weather.util.ToastUtils
+import app.airsignal.weather.utils.EnterPageUtil
+import app.airsignal.weather.utils.LoggerUtil
+import app.airsignal.weather.utils.TimberUtil
+import app.airsignal.weather.utils.ToastUtils
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog
 import app.airsignal.weather.view.custom_view.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
@@ -73,11 +73,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                         inAppMsgList?.toTypedArray()
                     )
                 else EnterPageUtil(this@SplashActivity).toPermission()
-            }, 500)
+            },500)
         else
             HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
                 enterPage(inAppMsgList)
-            }, 500)
+            },500)
     }
 
     // 앱 버전 뷰모델 데이터 호출

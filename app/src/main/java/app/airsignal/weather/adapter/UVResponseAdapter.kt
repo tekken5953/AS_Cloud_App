@@ -35,9 +35,11 @@ class UVResponseAdapter(private val context: Context, list: ArrayList<AdapterMod
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(mList[position])
 
-        holder.text.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() { holder.text.viewTreeObserver.removeOnGlobalLayoutListener(this) }
-        })
+//        holder.text.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+//            override fun onGlobalLayout() {
+//                holder.text.viewTreeObserver.removeOnGlobalLayoutListener(this)
+//            }
+//        })
     }
 
     fun setIsWhite(b: Boolean) { isWhite = b }

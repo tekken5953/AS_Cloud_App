@@ -1,7 +1,7 @@
 package app.airsignal.weather.repository
 
-import app.airsignal.weather.network.retrofit.HttpClient
-import app.airsignal.weather.network.retrofit.MyApiImpl
+import app.airsignal.weather.api.retrofit.HttpClient
+import app.airsignal.weather.api.retrofit.MyApiImpl
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 

@@ -6,9 +6,9 @@ import android.content.Intent
 import android.os.Build
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.SetAppInfo
-import app.airsignal.weather.network.retrofit.ApiModel
-import app.airsignal.weather.network.retrofit.HttpClient
-import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
+import app.airsignal.weather.api.retrofit.ApiModel
+import app.airsignal.weather.api.retrofit.HttpClient
+import app.airsignal.weather.utils.`object`.DataTypeParser.getCurrentTime
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

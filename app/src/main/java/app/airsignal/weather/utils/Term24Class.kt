@@ -1,4 +1,4 @@
-package app.airsignal.weather.util
+package app.airsignal.weather.utils
 
 import android.os.Bundle
 import java.text.SimpleDateFormat
@@ -38,26 +38,21 @@ object Term24Class {
     }
 
     /** 24절기 불러오기 **/
-    fun getTerms24Bundle(term24: String?): Bundle? {
-        return term24?.let {
+    fun getTerms24Bundle(term24: String?): Bundle? =
+        term24?.let {
             val term = Term24.values().find { it.name == term24 }
             term?.let { putBundle(it) }
         }
-    }
 
     /** 24절기 번들 필드 추가 **/
-    private fun putBundle(term: Term24): Bundle {
-        return Bundle().apply {
+    private fun putBundle(term: Term24): Bundle =
+        Bundle().apply {
             putString(TERMS_TITLE, term.title)
             putString(TERMS_DATE, getTermDate())
             putString(TERMS_EXPLAIN, term.explain)
         }
-    }
 
     /** 24절기 날짜 반환 **/
-    private fun getTermDate(): String {
-        val mFormat = SimpleDateFormat("MM월 dd일", Locale.KOREA)
-        val calendar = Calendar.getInstance()
-        return mFormat.format(calendar.time)
-    }
+    private fun getTermDate(): String =
+        SimpleDateFormat("MM월 dd일", Locale.KOREA).format(Calendar.getInstance().time)
 }

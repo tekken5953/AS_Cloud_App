@@ -47,14 +47,14 @@ class SideMenuBuilder(private val context: Context) {
     }
 
     // 로그인 정보 반환
-    fun setUserData(profile: ImageView, Id: TextView): SideMenuBuilder {
+    fun setUserData(profile: ImageView, id: TextView): SideMenuBuilder {
         Glide.with(context)
             .load(Uri.parse(GetAppInfo.getUserProfileImage(context)))
             .error(ResourcesCompat.getDrawable(context.resources,R.mipmap.ic_launcher_round,null))
             .into(profile)
 
         val email = GetAppInfo.getUserEmail(context)
-        Id.text = if(email != "") email else context.getString(R.string.please_login)
+        id.text = if(email != "") email else context.getString(R.string.please_login)
 
         return this
     }
@@ -71,15 +71,15 @@ class SideMenuBuilder(private val context: Context) {
 
     // 바텀 다이얼로그 가로 비율 설정
     private fun attributeDialog() {
-        val params: WindowManager.LayoutParams = alertDialog.window!!.attributes
-
-        params.apply {
-            width = getBottomSheetDialogDefaultWidth(75)
-            gravity = Gravity.START
+        val params: WindowManager.LayoutParams? = alertDialog.window?.attributes
+        params?.let {
+            it.width = getBottomSheetDialogDefaultWidth(75)
+            it.gravity = Gravity.START
             // 열기&닫기 시 애니메이션 설정
-            windowAnimations = R.style.DialogAnimationMenuAnim
+            it.windowAnimations = R.style.DialogAnimationMenuAnim
         }
-        alertDialog.window!!.attributes = params
+
+        alertDialog.window?.attributes = params
     }
 
     // 바텀 다이얼로그 세로 비율 설정
@@ -90,7 +90,7 @@ class SideMenuBuilder(private val context: Context) {
         // 디바이스의 width 를 구한다
         val displayMetrics = DisplayMetrics()
         @Suppress("DEPRECATION")
-        (context as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
+        if (context is Activity) context.windowManager.defaultDisplay.getMetrics(displayMetrics)
         return displayMetrics.widthPixels
     }
 }

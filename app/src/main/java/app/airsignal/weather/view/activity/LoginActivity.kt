@@ -11,7 +11,7 @@ import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
-import app.airsignal.weather.util.`object`.DataTypeParser
+import app.airsignal.weather.utils.`object`.DataTypeParser
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import org.koin.android.ext.android.inject
 

@@ -26,9 +26,9 @@ import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.*
-import app.airsignal.weather.util.KeyboardController
-import app.airsignal.weather.util.OnAdapterItemSingleClick
-import app.airsignal.weather.util.`object`.DataTypeParser
+import app.airsignal.weather.utils.KeyboardController
+import app.airsignal.weather.utils.OnAdapterItemSingleClick
+import app.airsignal.weather.utils.`object`.DataTypeParser
 import app.airsignal.weather.view.activity.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -57,7 +57,6 @@ class SearchDialog(
             StaticDataObject.LANG_EN -> SetSystemInfo.updateConfiguration(activity, Locale.ENGLISH)
             else -> SetSystemInfo.updateConfiguration(activity, Locale.getDefault())
         }
-        // 텍스트 폰트 크기 적용
         when (GetAppInfo.getUserFontScale(activity)) {
             SpDao.TEXT_SCALE_SMALL -> SetSystemInfo.setTextSizeSmall(activity)
             SpDao.TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(activity)
@@ -283,8 +282,7 @@ class SearchDialog(
                         )
 
                         val addrArray =  resources.getStringArray(
-                            if (!isKorea()) R.array.address_english
-                            else R.array.address_korean)
+                            if (isKorea()) R.array.address_korean else R.array.address_english)
 
                         addrArray.forEachIndexed { index, s ->
                             if (s == searchItem[position]) {

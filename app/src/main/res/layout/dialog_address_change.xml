@@ -121,5 +121,5 @@
         android:overScrollMode="never"
         android:clipToPadding="false"
         tools:listitem="@layout/list_item_address_list"
-        app:layoutManager=".util.LinearLayoutManagerWrapper"/>
+        app:layoutManager=".utils.LinearLayoutManagerWrapper"/>
 </RelativeLayout>

@@ -11,8 +11,8 @@ import android.widget.RelativeLayout
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.CustomViewAirqBinding
-import app.airsignal.weather.util.OnSingleClickListener
-import app.airsignal.weather.util.`object`.DataTypeParser
+import app.airsignal.weather.utils.OnSingleClickListener
+import app.airsignal.weather.utils.`object`.DataTypeParser
 
 /**
  * @author : Lee Jae Young

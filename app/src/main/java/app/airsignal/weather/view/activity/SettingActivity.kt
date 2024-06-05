@@ -34,11 +34,11 @@ import app.airsignal.weather.db.sp.*
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
-import app.airsignal.weather.network.retrofit.ApiModel
-import app.airsignal.weather.network.retrofit.HttpClient
+import app.airsignal.weather.api.retrofit.ApiModel
+import app.airsignal.weather.api.retrofit.HttpClient
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.*
-import app.airsignal.weather.util.`object`.DataTypeParser
+import app.airsignal.weather.utils.*
+import app.airsignal.weather.utils.`object`.DataTypeParser
 import app.airsignal.weather.view.custom_view.CustomerServiceView
 import app.airsignal.weather.view.custom_view.ShowDialogClass
 import app.airsignal.weather.view.custom_view.SnackBarUtils
@@ -480,7 +480,6 @@ class SettingActivity
                     return
                 }
 
-
                 SetAppInfo.setInitBackLocPermission(this,true)
                 notiBackTr.visibility = View.VISIBLE
                 // 29 이상
@@ -490,9 +489,7 @@ class SettingActivity
                     notiBackTitle.text = getString(R.string.perm_self_msg)
                     if (isBackAllow) notiBackContent.text = getString(R.string.allowed)
                     else notiBackContent.text = getString(R.string.do_allow)
-                }
-                // 29 이하
-                else {
+                } else {  // 29 이하
                     notiBackTitle.text = getString(R.string.perm_back_setting)
                     if (GetAppInfo.isPermedBackLoc(this)) notiBackContent.text = getString(R.string.background_location_active)
                     else notiBackContent.text = getString(R.string.background_location_not_active)

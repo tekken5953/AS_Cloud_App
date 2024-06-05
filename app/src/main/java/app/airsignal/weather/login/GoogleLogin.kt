@@ -7,8 +7,8 @@ import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.sp.SetAppInfo
-import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.ToastUtils
+import app.airsignal.weather.utils.RefreshUtils
+import app.airsignal.weather.utils.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount

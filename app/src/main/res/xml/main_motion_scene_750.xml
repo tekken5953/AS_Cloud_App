@@ -23,10 +23,6 @@
             app:touchAnchorId="@id/nested_scrollview"
             app:touchAnchorSide="top" />
 
-        <OnClick
-            app:clickAction="transitionToEnd"
-            app:targetId="@id/mainMotionSLideImg"/>
-
         <KeyFrameSet>
             <KeyAttribute
                 android:alpha="1"
@@ -214,6 +210,7 @@
         <Constraint
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
+            android:layout_marginTop="6dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/mainGpsTitleTv" />
@@ -258,6 +255,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:alpha="1"
+            android:layout_marginTop="6dp"
             app:layout_constraintTop_toBottomOf="@+id/mainLiveTempValue"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -365,6 +363,7 @@
             android:id="@+id/mainMinMaxTr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
             android:orientation="horizontal"
             android:alpha="0"
             app:layout_constraintStart_toStartOf="parent"
@@ -412,6 +411,7 @@
         <Constraint
             android:id="@+id/mainLiveTempValue"
             style="@style/basicMediumTextView"
+            android:layout_marginTop="6dp"
             android:alpha="0" />
         <Constraint
             android:id="@+id/mainLiveTempUnit"

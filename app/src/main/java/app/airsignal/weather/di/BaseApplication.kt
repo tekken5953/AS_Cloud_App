@@ -1,10 +1,10 @@
-package app.airsignal.weather.koin
+package app.airsignal.weather.di
 
 import android.app.Application
 import android.content.Context
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.location.GetLocation
-import app.airsignal.weather.network.retrofit.HttpClient
+import app.airsignal.weather.api.retrofit.HttpClient
 import app.airsignal.weather.repository.GetAppVersionRepo
 import app.airsignal.weather.repository.GetWarningRepo
 import app.airsignal.weather.repository.GetWeatherRepo

@@ -1,4 +1,4 @@
-package app.airsignal.weather.util.`object`
+package app.airsignal.weather.utils.`object`
 
 import android.app.Activity
 import android.content.Context

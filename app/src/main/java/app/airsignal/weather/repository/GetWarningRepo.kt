@@ -1,8 +1,8 @@
 package app.airsignal.weather.repository
 
 import androidx.lifecycle.MutableLiveData
-import app.airsignal.weather.network.ErrorCode
-import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.api.ErrorCode
+import app.airsignal.weather.api.retrofit.ApiModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

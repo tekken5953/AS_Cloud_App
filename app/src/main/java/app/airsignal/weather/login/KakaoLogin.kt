@@ -6,8 +6,8 @@ import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SharedPreferenceManager
-import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.ToastUtils
+import app.airsignal.weather.utils.RefreshUtils
+import app.airsignal.weather.utils.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.kakao.sdk.auth.AuthApiClient
 import com.kakao.sdk.auth.TokenManagerProvider

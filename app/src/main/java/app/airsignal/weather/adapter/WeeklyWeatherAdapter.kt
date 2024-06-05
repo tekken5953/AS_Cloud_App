@@ -34,9 +34,9 @@ class WeeklyWeatherAdapter(
 
         val view: View = inflater.inflate(R.layout.list_item_weekly_weather, parent, false)
         when(GetAppInfo.getUserFontScale(context)) {
-            "small" -> { SetSystemInfo.setTextSizeSmall(view.context) }
-            "big" -> { SetSystemInfo.setTextSizeLarge(view.context) }
-            else -> { SetSystemInfo.setTextSizeDefault(view.context) }
+            "small" -> SetSystemInfo.setTextSizeSmall(view.context)
+            "big" -> SetSystemInfo.setTextSizeLarge(view.context)
+            else -> SetSystemInfo.setTextSizeDefault(view.context)
         }
         Thread.sleep(100)
         return ViewHolder(view)
@@ -70,8 +70,8 @@ class WeeklyWeatherAdapter(
             minText.text = dao.minText
             maxText.text = dao.maxText
 
-            val applyColor = context.getColor(if(isWhite)R.color.white else R.color.main_black)
-            val applySubColor = context.getColor(if(isWhite)R.color.sub_white else R.color.sub_black)
+            val applyColor = context.getColor(if (isWhite) R.color.white else R.color.main_black)
+            val applySubColor = context.getColor(if (isWhite) R.color.sub_white else R.color.sub_black)
 
             minRain.text = "${dao.minRain}%"
             maxRain.text = "${dao.maxRain}%"
@@ -80,9 +80,6 @@ class WeeklyWeatherAdapter(
             minRain.setTextColor(applySubColor)
             maxRain.compoundDrawablesRelative[0]?.mutate()?.setTint(applySubColor)
             minRain.compoundDrawablesRelative[0]?.mutate()?.setTint(applySubColor)
-
-//            if (dao.minRain >= 60) minRain.visibility = View.VISIBLE else View.GONE
-//            if (dao.maxRain >= 60) maxRain.visibility = View.VISIBLE else View.GONE
 
             day.setTextColor(applyColor)
             date.setTextColor(applySubColor)

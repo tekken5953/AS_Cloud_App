@@ -34,9 +34,7 @@ class MakeDoubleDialog(private val context: Context) {
             apply.text = applyString
             apply.backgroundTintList = runCatching {
                 ColorStateList.valueOf(context.getColor(applyColor))
-            }.getOrElse {
-                ColorStateList.valueOf(context.getColor(R.color.main_blue_color))
-            }
+            }.getOrElse { ColorStateList.valueOf(context.getColor(R.color.main_blue_color)) }
 
             cancel.text = cancelString
             cancel.setOnClickListener { this.dismiss() }

@@ -39,12 +39,12 @@ import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.location.AddressFromRegex
 import app.airsignal.weather.location.GetLocation
 import app.airsignal.weather.login.SilentLoginClass
-import app.airsignal.weather.network.ErrorCode
-import app.airsignal.weather.network.NetworkUtils
-import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.api.ErrorCode
+import app.airsignal.weather.api.NetworkUtils
+import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.*
-import app.airsignal.weather.util.`object`.DataTypeParser
+import app.airsignal.weather.utils.*
+import app.airsignal.weather.utils.`object`.DataTypeParser
 import app.airsignal.weather.view.*
 import app.airsignal.weather.view.custom_view.ExternalAirView
 import app.airsignal.weather.view.custom_view.MakeDoubleDialog

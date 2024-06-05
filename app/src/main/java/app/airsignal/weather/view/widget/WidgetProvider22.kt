@@ -11,11 +11,11 @@ import android.widget.Toast
 import app.airsignal.weather.R
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.location.GeofenceManager
-import app.airsignal.weather.network.retrofit.ApiModel
-import app.airsignal.weather.util.VibrateUtil
-import app.airsignal.weather.util.`object`.DataTypeParser
-import app.airsignal.weather.util.`object`.DataTypeParser.getBackgroundImgWidget
-import app.airsignal.weather.util.`object`.DataTypeParser.getSkyImgWidget
+import app.airsignal.weather.api.retrofit.ApiModel
+import app.airsignal.weather.utils.VibrateUtil
+import app.airsignal.weather.utils.`object`.DataTypeParser
+import app.airsignal.weather.utils.`object`.DataTypeParser.getBackgroundImgWidget
+import app.airsignal.weather.utils.`object`.DataTypeParser.getSkyImgWidget
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import kotlinx.coroutines.*

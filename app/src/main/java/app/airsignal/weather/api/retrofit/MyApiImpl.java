@@ -1,4 +1,4 @@
-package app.airsignal.weather.network.retrofit;
+package app.airsignal.weather.api.retrofit;
 
 import androidx.annotation.Nullable;
 

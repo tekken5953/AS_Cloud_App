@@ -1,7 +1,7 @@
 package app.airsignal.weather.firebase.fcm
 
 import app.airsignal.weather.dao.StaticDataObject
-import app.airsignal.weather.util.TimberUtil
+import app.airsignal.weather.utils.TimberUtil
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService

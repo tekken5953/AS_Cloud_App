@@ -1,6 +1,6 @@
-package app.airsignal.weather.network.retrofit
+package app.airsignal.weather.api.retrofit
 
-import app.airsignal.weather.network.NetworkIgnored.hostingServerURL
+import app.airsignal.weather.api.NetworkIgnored.hostingServerURL
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import okhttp3.ConnectionPool

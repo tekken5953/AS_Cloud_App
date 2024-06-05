@@ -1,4 +1,4 @@
-package app.airsignal.weather.network.retrofit
+package app.airsignal.weather.api.retrofit
 
 import com.google.gson.annotations.SerializedName
 
@@ -341,9 +341,9 @@ class ApiModel {
         @SerializedName("forecast")
         val currentTime: String,
         @SerializedName("rainType")
-        val rainType: String?,
+        var rainType: String?,
         @SerializedName("temperature")
-        val temperature: Double?,
+        var temperature: Double?,
         @SerializedName("humidity")
         var humidity: Double
     )

@@ -1,4 +1,4 @@
-package app.airsignal.weather.util
+package app.airsignal.weather.utils
 
 import java.time.LocalDateTime
 import kotlin.math.atan
