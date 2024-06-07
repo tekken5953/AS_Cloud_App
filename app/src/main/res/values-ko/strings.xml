@@ -75,7 +75,7 @@
     <string name="essential_perm">필수 권한</string>
     <string name="noti_perm">알림 권한</string>
     <string name="noti_perm_explain">·날씨 및 미세먼지 정보 알림 제공\n·이벤트 및 업데이트에 관련된 정보 제공</string>
-    <string name="perm_notice">권한을 허용하지 않아도 이용은 가능하지만 일부 서비스가 제한 될 수 있습니다.</string>
+    <string name="perm_notice">권한을 허용하지 않아도 이용은 가능하지만 일부 서비스가 제한 될 수 있습니다</string>
     <string name="perm_title">앱 사용을 위해\n 접근 권한을 허용해주세요</string>
     <string name="not_serviced_location_error">서비스 가능한 지역이 아닙니다\n버튼을 클릭하여 새 주소를 등록하세요</string>
     <string name="airq_question_pm2p5">PM2.5는1000분의 2.5mm보다 작은 먼지로, 머리카락 직경(약 60㎛)의 1/20~1/30 크기보다 작은 입자이다. 미세먼지는 공기 중 고체상태와 액체상태의 입자의 혼합물로 배출되며 화학반응 또는 자연적으로 생성된다. PM2.5는 입자가 미세하여 코 점막을 통해 걸러지지 않고 흡입시 폐포까지 직접 침투하여 천식이나 폐질환의 유병률과 조기사망률을 증가시킨다. 또한 미세먼지는 시정을 악화시키고, 식물의 잎 표면에 침적되어 신진대사를 방해하며, 건축물이나 유적물 및 동상 등에 퇴적되어 부식을 일으킨다.</string>
@@ -137,23 +137,23 @@
     <string name="worst">매우나쁨</string>
     <string name="error">에러</string>
     <string name="perm_self_msg"><![CDATA[실시간 위치 권한 설정\n앱이 동작중이 아닐 때도 위치를 갱신합니다]]></string>
-    <string name="noti_always_can"><![CDATA[알림은 앱 설정 -> 알림 항목에서 언제든 허용하실 수 있습니다.]]></string>
+    <string name="noti_always_can"><![CDATA[알림은 앱 설정 -> 알림 항목에서 언제든 허용하실 수 있습니다]]></string>
     <string name="noti_setting_enable">알림 설정\n날씨 알림 및 이벤트 정보 제공</string>
     <string name="vibrate_setting">진동 설정</string>
     <string name="noti_sound_setting">소리 설정</string>
-    <string name="notification_explain_text">기본 알림은 하루 총 2회 순차적으로 발송됩니다.\n(오전은 07시 이후, 오후는 18시 이후)\n\n실시간 위치 권한이 허용되지 않은 경우\n마지막으로 앱에 접속한 위치로 알림이 발송됩니다.</string>
+    <string name="notification_explain_text">기본 알림은 하루 총 2회 순차적으로 발송됩니다.\n(오전은 07시 이후, 오후는 18시 이후)\n\n실시간 위치 권한이 허용되지 않은 경우\n마지막으로 앱에 접속한 위치로 알림이 발송됩니다</string>
     <string name="allowed">허용됨</string>
     <string name="perm_back_setting">실시간 위치 사용\n앱이 동작중이 아닐 때도 위치를 갱신합니다</string>
     <string name="do_allow">허용하기</string>
     <string name="always_allowed">항상 허용</string>
     <string name="error_not_service_locale">서비스 가능 지역이 아니라 기본 주소로 불러옵니다</string>
-    <string name="error_server_down">현재 서버가 점검중입니다.</string>
+    <string name="error_server_down">현재 서버가 점검중입니다</string>
     <string name="error_network_connect">인터넷 연결 상태를 확인 후 재실행 해주세요</string>
     <string name="download">다운로드</string>
     <string name="customer_call_title">에어시그널 고객센터</string>
     <string name="email">이메일</string>
     <string name="home_page">홈페이지</string>
-    <string name="data_api_license">위 화면에서 보여지는 데이터는 에어코리아, 기상청, 한국천문연구원에서 제공받아 사용됩니다.</string>
+    <string name="data_api_license">위 화면에서 보여지는 데이터는 에어코리아, 기상청, 한국천문연구원에서 제공받아 사용됩니다</string>
     <string name="phone_airsignal">070–4912–9321</string>
     <string name="no_result_notice">공지사항이 없습니다</string>
     <string name="loc_caution_title">위치 권한은 꼭 필요해요</string>
@@ -183,7 +183,7 @@
     <string name="cd_list_item">리스트 항목</string>
 
 
-    <string name="agree_user_data">에어시그널의 개인정보 처리방침에 동의합니다.</string>
+    <string name="agree_user_data">에어시그널의 개인정보 처리방침에 동의합니다</string>
     <string name="background_location_active">사용중</string>
     <string name="background_location_not_active">사용하기</string>
     <string name="do_active">사용하기</string>
@@ -191,20 +191,20 @@
     <string name="back_perm_down_title">실시간 위치 사용</string>
     <string name="back_perm_up_title">실시간 위치 권한 설정</string>
     <string name="nav_back_perm">권한 > 위치 > 항상 허용</string>
-    <string name="back_perm_1">앱이 동작중이 아닐 때도 위치를 갱신하여 정확한 알림을 받을 수 있습니다.</string>
-    <string name="back_perm_2">이 설정은 애플리케이션 위치 권한에서 언제든 변경 할 수 있습니다.</string>
-    <string name="back_perm_3">백그라운드 위치 정보는 알림 서비스 이외에 사용되지 않습니다.</string>
+    <string name="back_perm_1">앱이 동작중이 아닐 때도 위치를 갱신하여 정확한 알림을 받을 수 있습니다</string>
+    <string name="back_perm_2">이 설정은 애플리케이션 위치 권한에서 언제든 변경 할 수 있습니다</string>
+    <string name="back_perm_3">백그라운드 위치 정보는 알림 서비스 이외에 사용되지 않습니다</string>
     <string name="back_perm_subtitle"><![CDATA[권한 > 위치 > 항상 허용을 체크해주세요]]></string>
     <string name="agree">동의</string>
     <string name="first_perm_title">현재 위치정보 사용 동의</string>
     <string name="first_perm_tr1">현재 위치의 날씨 정보를 제공하기 위해 위치 정보를 수집하여 사용합니다.</string>
-    <string name="first_perm_tr2">보다 정확한 위치의 알림을 발신하기 위해 앱을 사용하지 않을 때도 위치 정보가 정기적으로 처리됩니다.</string>
-    <string name="first_perm_tr3">앱 사용을 위해 \'동의\' 버튼을 눌러 위치 정보 처리에 동의해주세요.</string>
-    <string name="first_perm_tr4">날씨 앱 설정 혹은 앱 위치 권한에서 위치 정보 수집 및 사용을 중지할 수 있습니다.</string>
+    <string name="first_perm_tr2">보다 정확한 위치의 알림을 발신하기 위해 앱을 사용하지 않을 때도 위치 정보가 정기적으로 처리됩니다</string>
+    <string name="first_perm_tr3">앱 사용을 위해 \'동의\' 버튼을 눌러 위치 정보 처리에 동의해주세요</string>
+    <string name="first_perm_tr4">날씨 앱 설정 혹은 앱 위치 권한에서 위치 정보 수집 및 사용을 중지할 수 있습니다</string>
     <string name="choose_region">지역을 선택하세요</string>
     <string name="naver_disconnect">네이버 로그인 서비스와의 연동을 해제하였습니다</string>
     <string name="exclamation_mark">느낌표</string>
-    <string name="last_location_call_msg">주소 호출에 실패하여 마지막 주소를 불러옵니다.</string>
+    <string name="last_location_call_msg">주소 호출에 실패하여 마지막 주소를 불러옵니다</string>
     <string name="widget_4x2_description">에어시그널 4x2</string>
     <string name="cd_icon_address">주소</string>
     <string name="cd_refresh">갱신</string>
@@ -227,7 +227,7 @@
     <string name="opacity_white">하얀색 글씨 일 때</string>
     <string name="display">디스플레이</string>
     <string name="reset">초기화</string>
-    <string name="fail_to_get_notice">공지사항을 불러오는데 실패했습니다.</string>
+    <string name="fail_to_get_notice">공지사항을 불러오는데 실패했습니다</string>
     <string name="no_content">내용이 없습니다</string>
     <string name="require_login">로그인이 필요합니다</string>
     <string name="lunar_rise">월출</string>
@@ -241,4 +241,6 @@
     <string name="lunar_ha_d">하현달</string>
     <string name="lunar_g">그믐달</string>
     <string name="sun_rise_set">일출/일몰</string>
+    <string name="no_entire_summary">현재 전국의 기상특보가 없습니다</string>
+    <string name="no_region_summary">현재 지역의 기상 특보가 없습니다\n전국으로 검색하시겠습니까?</string>
 </resources>

@@ -65,19 +65,21 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     // 권한이 허용되었으면 메인 페이지로 바로 이동, 아니면 권한 요청 페이지로 이동
     private fun enterPage(inAppMsgList: List<ApiModel.InAppMsgItem?>?) {
-        if (isReady)
-            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted())
-                    EnterPageUtil(this@SplashActivity).toMain(
-                        GetAppInfo.getUserLoginPlatform(this),
-                        inAppMsgList?.toTypedArray()
-                    )
-                else EnterPageUtil(this@SplashActivity).toPermission()
-            },500)
-        else
+        if (!isReady) {
             HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
                 enterPage(inAppMsgList)
             },500)
+            return
+        }
+
+        HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+            if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted())
+                EnterPageUtil(this@SplashActivity).toMain(
+                    GetAppInfo.getUserLoginPlatform(this),
+                    inAppMsgList?.toTypedArray()
+                )
+            else EnterPageUtil(this@SplashActivity).toPermission()
+        },500)
     }
 
     // 앱 버전 뷰모델 데이터 호출
@@ -152,8 +154,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                         is BaseRepository.ApiState.Error -> {
                             when (ver.errorMessage) {
                                 ErrorCode.ERROR_NETWORK -> {
-                                    if (locationClass.isNetWorkConnected())
-                                        makeDialog(getString(R.string.unknown_error))
+                                    if (locationClass.isNetWorkConnected()) makeDialog(getString(R.string.unknown_error))
                                     else makeDialog(getString(R.string.error_network_connect))
                                 }
                                 ErrorCode.ERROR_SERVER_CONNECTING -> makeDialog(getString(R.string.error_server_down))

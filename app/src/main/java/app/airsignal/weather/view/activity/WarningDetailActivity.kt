@@ -1,5 +1,6 @@
 package app.airsignal.weather.view.activity
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
@@ -14,6 +15,7 @@ import app.airsignal.weather.location.AddressFromRegex
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.utils.DataTypeParser
 import app.airsignal.weather.viewmodel.GetWarningViewModel
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.time.format.DateTimeFormatter
@@ -22,6 +24,9 @@ import kotlin.collections.ArrayList
 
 class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     override val resID: Int get() = R.layout.activity_warning_detail
+
+    private val context: Context by inject()
+    private val isKorea get() = GetSystemInfo.getLocale(context) == Locale.KOREA
 
     private enum class CityCode(val code: Int, val title: String, val titleShort: String) {
         ENTIRE(109, "전국", "전국"),
@@ -67,8 +72,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             else GetAppInfo.getWarningFixed(this)
 
         // 수정 된 주소에 따른 적용
-        val regexAddr =
-            if (regexAddress != "Error") regexAddress else GetAppInfo.getNotificationAddress(this)
+        val regexAddr = if (regexAddress != "Error") regexAddress else GetAppInfo.getNotificationAddress(this)
 
         binding.warningAddr.selectItemByIndex(parseStringToIndex(regexAddr))
         warningViewModel.loadDataResult(parseRegionToCode(regexAddr))
@@ -86,8 +90,9 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     // 앱 버전 뷰모델 데이터 호출
     private fun applyWarning() {
         kotlin.runCatching {
+            warningList.clear()
+
             warningViewModel.getResultData.observe(this) { result ->
-                warningList.clear()
                 result?.let { warning ->
                     when (warning) {
                         is BaseRepository.ApiState.Success ->
@@ -96,8 +101,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
                                     hideNoResult()
 
                                     binding.warningTime.text =
-                                        if (GetSystemInfo.getLocale(this) == Locale.KOREA)
-                                            "${warning.data.time?.format(DateTimeFormatter.ofPattern("HH : mm"))} 기준"
+                                        if (isKorea) "${warning.data.time?.format(DateTimeFormatter.ofPattern("HH : mm"))} 기준"
                                         else "${warning.data.time?.format(DateTimeFormatter.ofPattern("HH : mm"))} KST"
 
                                     warningList.addAll(content.map { it.replace("○", "").trim() })
@@ -116,8 +120,8 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
         val isNationwide = binding.warningAddr.text.toString() == CityCode.ENTIRE.title
 
         binding.warningNoResult.run {
-            this.text = if (isNationwide) "현재 전국의 기상특보가 없습니다."
-            else "현재 지역의 기상 특보가 없습니다.\n전국으로 검색하시겠습니까?"
+            this.text = if (isNationwide) context.getString(R.string.no_entire_summary)
+            else context.getString(R.string.no_region_summary)
 
             this.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 null, null,
@@ -130,8 +134,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             if (!isNationwide) this.bringToFront()
 
             TextViewCompat.setCompoundDrawableTintList(
-                this,
-                ColorStateList.valueOf(getColor(R.color.theme_text_color))
+                this, ColorStateList.valueOf(getColor(R.color.theme_text_color))
             )
 
             binding.warningNoResult.visibility = View.VISIBLE

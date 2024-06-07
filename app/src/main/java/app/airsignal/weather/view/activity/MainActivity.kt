@@ -157,7 +157,7 @@ class MainActivity
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState)
         kotlin.runCatching {
             initBinding()
             if (savedInstanceState == null) {
@@ -536,23 +536,19 @@ class MainActivity
     }
 
     private fun setProgressVisibility(show: Boolean) {
-        if (show) {
-            if (!isProgressed) {
-                isProgressed = true
-                binding.mainLoadingView.visibility = VISIBLE
-                binding.mainLoadingView.alpha = SHOWING_LOADING_FLOAT
-                binding.mainLoadingView.bringToFront()
-                binding.mainMotionLayout.isInteractionEnabled = false
-                binding.mainMotionLayout.isEnabled = false
-            }
-        } else {
-            if (binding.mainLoadingView.alpha == SHOWING_LOADING_FLOAT) {
-                binding.mainLoadingView.visibility = GONE
-                binding.mainLoadingView.alpha = NOT_SHOWING_LOADING_FLOAT
-                binding.mainMotionLayout.isInteractionEnabled = true
-                binding.mainMotionLayout.isEnabled = true
-                binding.mainGpsFix.clearAnimation()
-            }
+        if (show && !isProgressed) {
+            isProgressed = true
+            binding.mainLoadingView.visibility = VISIBLE
+            binding.mainLoadingView.alpha = SHOWING_LOADING_FLOAT
+            binding.mainLoadingView.bringToFront()
+            binding.mainMotionLayout.isInteractionEnabled = false
+            binding.mainMotionLayout.isEnabled = false
+        } else if (!show && binding.mainLoadingView.alpha == SHOWING_LOADING_FLOAT) {
+            binding.mainLoadingView.visibility = GONE
+            binding.mainLoadingView.alpha = NOT_SHOWING_LOADING_FLOAT
+            binding.mainMotionLayout.isInteractionEnabled = true
+            binding.mainMotionLayout.isEnabled = true
+            binding.mainGpsFix.clearAnimation()
         }
     }
 
@@ -968,13 +964,13 @@ class MainActivity
         binding.mainAirPm2p5.setOnClickListener(binding.nestedAirHelpPopup)
             .fetchData(ExternalAirView.AirQ.PM2_5, pm25.toInt())
         binding.mainAirCo.setOnClickListener(binding.nestedAirHelpPopup)
-            .fetchData(ExternalAirView.AirQ.CO, air.coValue ?: 0.0)
+            .fetchData(ExternalAirView.AirQ.CO,air.coValue ?: 0.0)
         binding.mainAirNo2.setOnClickListener(binding.nestedAirHelpPopup)
-            .fetchData(ExternalAirView.AirQ.NO2, air.no2Value ?: 0.0)
+            .fetchData(ExternalAirView.AirQ.NO2,air.no2Value ?: 0.0)
         binding.mainAirSo2.setOnClickListener(binding.nestedAirHelpPopup)
-            .fetchData(ExternalAirView.AirQ.SO2, air.so2Value ?: 0.0)
+            .fetchData(ExternalAirView.AirQ.SO2,air.so2Value ?: 0.0)
         binding.mainAirO3.setOnClickListener(binding.nestedAirHelpPopup)
-            .fetchData(ExternalAirView.AirQ.O3, air.o3Value ?: 0.0)
+            .fetchData(ExternalAirView.AirQ.O3,air.o3Value ?: 0.0)
 
         binding.subAirPM25.text = "${getString(R.string.pm2_5_full)}   $pm25Grade"
         binding.subAirPM10.text = "${getString(R.string.pm10_full)}   $pm10Grade"
@@ -1720,8 +1716,7 @@ class MainActivity
             location?.let { loc ->
                 val lat = loc.latitude
                 val lng = loc.longitude
-                if (isKorea(lat, lng))
-                    processAddress(lat, lng, locationClass.getAddress(lat, lng))
+                if (isKorea(lat, lng)) processAddress(lat, lng, locationClass.getAddress(lat, lng))
                 else {
                     ToastUtils(this).showMessage(getString(R.string.error_not_service_locale))
                     loadSavedViewModelData(getString(R.string.seoul_si))
@@ -1750,8 +1745,7 @@ class MainActivity
                 val lat = db.lat
                 val lng = db.lng
 
-                if (lat == null || lng == null)
-                    hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
+                if (lat == null || lng == null) hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
                 else {
                     if (isKorea(lat, lng)) {
                         ToastUtils(this@MainActivity)
@@ -1775,13 +1769,13 @@ class MainActivity
         }
     }
 
-    private fun requestLocationWithNetworkProvider() {
+    private fun requestLocationWithNetworkProvider() =
         CoroutineScope(backgroundDispatcher).launch {
-            val lm = getSystemService(LOCATION_SERVICE) as LocationManager
-            val location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-            location?.let { loc -> loadCurrentViewModelData(loc.latitude, loc.longitude, null) }
+            (getSystemService(LOCATION_SERVICE) as LocationManager)
+                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER)?.let {
+                        loc -> loadCurrentViewModelData(loc.latitude, loc.longitude, null)
+                }
         }
-    }
 
     private fun processAddress(lat: Double, lng: Double, address: String?) {
         address?.let { addr ->
