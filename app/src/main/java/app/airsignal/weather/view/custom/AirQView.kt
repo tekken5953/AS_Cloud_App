@@ -20,8 +20,7 @@ class AirQView(context: Context, attrs: AttributeSet?)
     private var airBinding: CustomViewMainAirBinding
 
     init {
-        val inflater = LayoutInflater.from(context)
-        airBinding = CustomViewMainAirBinding.inflate(inflater, this, true)
+        airBinding = CustomViewMainAirBinding.inflate(LayoutInflater.from(context),this,true)
 
         attrs?.let { set ->
             val typedArray = context.obtainStyledAttributes(set, R.styleable.AirQView)
@@ -30,9 +29,8 @@ class AirQView(context: Context, attrs: AttributeSet?)
 
         // 취소 버튼 클릭 시 다이얼로그 사라짐
         airBinding.airQCancel.setOnClickListener {
-            val fadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out)
             this.apply {
-                startAnimation(fadeOut)
+                startAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_out))
                 alpha = 0f
             }
         }
@@ -52,7 +50,7 @@ class AirQView(context: Context, attrs: AttributeSet?)
 
     // 외부 공기질 목록에 따른 그래프 반환
     fun modifyDataGraph(context: Context, name: String): Drawable? =
-        ResourcesCompat.getDrawable(context.resources,when(name) {
+        ResourcesCompat.getDrawable(context.resources, when(name) {
             context.getString(R.string.pm2_5_full) -> R.drawable.graph_pm25
             context.getString(R.string.pm10_full) -> R.drawable.graph_pm10
             context.getString(R.string.o3_full) -> R.drawable.graph_03

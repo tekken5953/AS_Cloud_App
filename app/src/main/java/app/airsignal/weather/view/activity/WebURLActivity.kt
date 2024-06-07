@@ -9,7 +9,7 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityWebUrlBinding
 import app.airsignal.weather.utils.DataTypeParser
-import app.airsignal.weather.view.dialog.WebViewSetting
+import app.airsignal.weather.utils.view.WebViewSetting
 
 class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
     override val resID: Int get() = R.layout.activity_web_url
@@ -49,12 +49,11 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
             webViewClient = WebViewClient()
         }
 
-        if (intent.extras?.getBoolean("appBar") == true) binding.webUrlLinear.visibility = View.VISIBLE
+        if (intent.extras?.getBoolean("appBar") == true)
+            binding.webUrlLinear.visibility = View.VISIBLE
         else binding.webUrlLinear.visibility = View.GONE
 
-        val sort = intent.extras?.getString("sort")
-
-        val (webUrlTitleText, url) = when (sort) {
+        val (webUrlTitleText, url) = when (intent.extras?.getString("sort")) {
             "as-eye" -> "AS-EYE" to blankURL
             "termsOfService" -> getString(R.string.term_of_services) to IgnoredKeyFile.termsOfServiceURL
             "dataUsage" -> getString(R.string.data_usages) to IgnoredKeyFile.privacyPolicyURI
@@ -65,6 +64,5 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
         binding.webUrlTitle.text = webUrlTitleText
 
         url?.let {webView.loadUrl(it)} ?: run {webView.loadUrl(blankURL)} // 페이지 로딩
-
     }
 }

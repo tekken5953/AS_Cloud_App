@@ -9,12 +9,16 @@ import app.airsignal.weather.R
 import app.airsignal.weather.adapter.WarningDetailAdapter
 import app.airsignal.weather.databinding.ActivityWarningDetailBinding
 import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.location.AddressFromRegex
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.utils.DataTypeParser
 import app.airsignal.weather.viewmodel.GetWarningViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
+import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     override val resID: Int get() = R.layout.activity_warning_detail
@@ -86,34 +90,32 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
                 warningList.clear()
                 result?.let { warning ->
                     when (warning) {
-                        is BaseRepository.ApiState.Success -> {
+                        is BaseRepository.ApiState.Success ->
                             warning.data.content?.let { content ->
                                 if (content.isNotEmpty()) {
                                     hideNoResult()
+
+                                    binding.warningTime.text =
+                                        if (GetSystemInfo.getLocale(this) == Locale.KOREA)
+                                            "${warning.data.time?.format(DateTimeFormatter.ofPattern("HH : mm"))} 기준"
+                                        else "${warning.data.time?.format(DateTimeFormatter.ofPattern("HH : mm"))} KST"
+
                                     warningList.addAll(content.map { it.replace("○", "").trim() })
                                     warningAdapter.notifyItemRangeInserted(0, warningList.size)
                                 } else showNoResult()
                             } ?: showNoResult()
-                        }
-                        is BaseRepository.ApiState.Error -> {
-                            showNoResult()
-                        }
-                        is BaseRepository.ApiState.Loading -> {
-                            binding.warningPb.visibility = View.VISIBLE
-                        }
+                        is BaseRepository.ApiState.Error -> showNoResult()
+                        is BaseRepository.ApiState.Loading -> binding.warningPb.visibility = View.VISIBLE
                     }
                 } ?: run { showNoResult() }
             }
-        }.onFailure { exception ->
-            if (exception == IOException()) showNoResult()
-        }
+        }.onFailure { exception -> if (exception == IOException()) showNoResult() }
     }
 
     private fun showNoResult() {
-        val noResultTextView = binding.warningNoResult
         val isNationwide = binding.warningAddr.text.toString() == CityCode.ENTIRE.title
 
-        noResultTextView.run {
+        binding.warningNoResult.run {
             this.text = if (isNationwide) "현재 전국의 기상특보가 없습니다."
             else "현재 지역의 기상 특보가 없습니다.\n전국으로 검색하시겠습니까?"
 

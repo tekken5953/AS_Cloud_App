@@ -30,8 +30,6 @@ class NotificationBuilder: KoinComponent {
     fun sendNotification(context: Context, data: Map<String,String>) {
         try {
             val appContext = context.applicationContext
-            val notificationManager =
-                appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
 
             if (data["sort"] == StaticDataObject.FcmSort.FCM_PATCH.key) {
                 intent = Intent(Intent.ACTION_VIEW)
@@ -60,8 +58,7 @@ class NotificationBuilder: KoinComponent {
             val notificationBuilder = NotificationCompat.Builder(appContext, StaticDataObject.FcmChannel.NOTIFICATION_CHANNEL_ID.value)
 
             fun setNotiBuilder(
-                title: String, subtext: String?, content: String, imgPath: Bitmap?
-            ) {
+                title: String, subtext: String?, content: String, imgPath: Bitmap?) {
                 notificationBuilder
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setAutoCancel(true)
@@ -91,20 +88,28 @@ class NotificationBuilder: KoinComponent {
                     )
                 }
                 StaticDataObject.FcmSort.FCM_PATCH.key -> {
-                    val payload = data["payload"] ?: "새로운 업데이트가 준비되었어요"
-                    setNotiBuilder(title = "에어시그널", subtext = null, content = payload, null)
+                    setNotiBuilder(
+                        title = "에어시그널",
+                        subtext = null,
+                        content = data["payload"] ?: "새로운 업데이트가 준비되었어요",
+                        null
+                    )
                 }
                 StaticDataObject.FcmSort.FCM_EVENT.key -> {
-                    val payload = data["payload"] ?: "눌러서 이벤트를 확인하세요"
-                    setNotiBuilder(title = "에어시그널", subtext = null, content = payload, null)
+                    setNotiBuilder(
+                        title = "에어시그널",
+                        subtext = null,
+                        content = data["payload"] ?: "눌러서 이벤트를 확인하세요",
+                        null)
                 }
             }
 
             if (GetAppInfo.getUserNotiEnable(appContext)) {
-                notificationManager?.let {
-                    it.createNotificationChannel(notificationFcmChannel)
-                    it.notify(1, notificationBuilder.build())
-                }
+                (appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+                    .let {
+                        it.createNotificationChannel(notificationFcmChannel)
+                        it.notify(1, notificationBuilder.build())
+                    }
             }
         } catch (e: Exception) {
             e.stackTraceToString()
@@ -117,16 +122,14 @@ class NotificationBuilder: KoinComponent {
         sky: String?,
         thunder: Double?,
         lunar: Int?
-    ): Bitmap? {
-        return when
-                (val bitmapDrawable = DataTypeParser.getSkyImgLarge(context,
-                DataTypeParser.applySkyText(context, rain, sky, thunder),
-                false, lunar ?: -1)) {
+    ): Bitmap? =
+        when (val bitmapDrawable = DataTypeParser.getSkyImgLarge(context,
+            DataTypeParser.applySkyText(context, rain, sky, thunder),
+            false, lunar ?: -1)) {
             is BitmapDrawable -> bitmapDrawable.bitmap
             is VectorDrawable -> (bitmapDrawable).toBitmap()
             else -> null
         }
-    }
 
     private fun parseStringToDoubleToInt(s: String): Int = s.toDouble().roundToInt()
 }

@@ -29,6 +29,7 @@ class PermissionActivity :
     override fun onResume() {
         super.onResume()
         if (!perm.isLocationPermitted()) return // 위치 서비스 이용 가능?
+
         @Suppress("DEPRECATION")
         val inAppExtraList =
             intent.getParcelableArrayExtra(SpDao.IN_APP_MSG)?.map { it as ApiModel.InAppMsgItem? }
@@ -82,8 +83,8 @@ class PermissionActivity :
                 startActivity(intent)
         }
 
+        // 개인정보 처리방침 체크 박스
         binding.permissionUserDataCheckBox.setOnCheckedChangeListener { _, isChecked ->
-            // 개인정보 처리방침 체크 박스
             binding.permissionOkBtn.isEnabled = isChecked
         }
 

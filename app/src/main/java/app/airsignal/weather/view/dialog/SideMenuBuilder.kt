@@ -37,7 +37,7 @@ class SideMenuBuilder(private val context: Context) {
     /** 다이얼로그 뷰 갱신 **/
     fun show(v: View, cancelable: Boolean): AlertDialog {
         v.let {
-            if(v.parent != null) (v.parent as ViewGroup).removeView(v)
+            if (v.parent != null) (v.parent as ViewGroup).removeView(v)
             builder.setView(v).setCancelable(cancelable)
             alertDialog = builder.create()
             attributeDialog()

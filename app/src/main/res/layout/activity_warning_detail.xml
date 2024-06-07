@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -28,6 +29,7 @@
                 app:tint="@color/theme_text_color" />
 
             <TextView
+                android:id="@+id/warningTitle"
                 style="@style/basicMediumTextView"
                 android:layout_centerInParent="true"
                 android:text="@string/warning_title"
@@ -40,8 +42,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:src="@drawable/ico_warning"
             android:contentDescription="@string/exclamation_mark"
+            android:src="@drawable/ico_warning"
             app:layout_constraintBottom_toBottomOf="@+id/warningAddr"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/warningAddr" />
@@ -88,46 +90,55 @@
             app:layout_constraintTop_toBottomOf="@+id/warningAddr" />
 
         <TextView
+            android:id="@+id/warningTime"
+            style="@style/basicTextView"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="16dp"
+            android:textColor="@color/sub_gray_color"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/warningLine"
+            app:layout_constraintTop_toBottomOf="@+id/warningLine" />
+
+        <TextView
             android:id="@+id/warningNoResult"
             style="@style/basicMediumTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="10dp"
-            android:lineHeight="20dp"
             android:gravity="center"
+            android:lineHeight="20dp"
             android:text="@string/no_result_search_report"
             android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/warningLine"
+            app:drawableEndCompat="@drawable/search"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:drawableEndCompat="@drawable/search" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/warningLine" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/warningPb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:lottie_rawRes="@raw/ani_loading_circle"
+            app:layout_constraintTop_toTopOf="parent"
             app:lottie_autoPlay="true"
-            app:lottie_loop="true"/>
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/ani_loading_circle" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/warningListView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="16dp"
             android:orientation="vertical"
             app:layoutManager=".utils.controller.LinearLayoutManagerWrapper"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/warningLine"
+            app:layout_constraintTop_toBottomOf="@+id/warningTime"
             tools:listitem="@layout/list_item_warning_detail" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

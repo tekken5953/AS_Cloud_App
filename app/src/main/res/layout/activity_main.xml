@@ -1015,6 +1015,7 @@
                                 <TextView
                                     android:id="@+id/mainLunarShapeText"
                                     style="@style/basicMediumTextView"
+                                    android:layout_width="0dp"
                                     android:layout_weight="0.5"
                                     android:gravity="start"
                                     android:textColor="@color/white"
@@ -1023,6 +1024,7 @@
                                 <TextView
                                     android:id="@+id/mainLunarProgress"
                                     style="@style/basicMediumTextView"
+                                    android:layout_width="0dp"
                                     android:layout_weight="0.5"
                                     android:gravity="end"
                                     android:textColor="@color/white"
@@ -1038,6 +1040,7 @@
                                 <TextView
                                     android:id="@+id/mainLunarRiseTitle"
                                     style="@style/basicMediumTextView"
+                                    android:layout_width="0dp"
                                     android:layout_weight="0.5"
                                     android:gravity="start"
                                     android:text="@string/lunar_rise"
@@ -1047,6 +1050,7 @@
                                 <TextView
                                     android:id="@+id/mainLunarRiseValue"
                                     style="@style/basicMediumTextView"
+                                    android:layout_width="0dp"
                                     android:layout_weight="0.5"
                                     android:gravity="end"
                                     android:textColor="@color/white"
@@ -1060,6 +1064,7 @@
                                 <TextView
                                     android:id="@+id/mainLunarSetTitle"
                                     style="@style/basicMediumTextView"
+                                    android:layout_width="0dp"
                                     android:layout_weight="0.5"
                                     android:gravity="start"
                                     android:text="@string/lunar_set"
@@ -1069,13 +1074,13 @@
                                 <TextView
                                     android:id="@+id/mainLunarSetValue"
                                     style="@style/basicMediumTextView"
+                                    android:layout_width="0dp"
                                     android:layout_weight="0.5"
                                     android:gravity="end"
                                     android:textColor="@color/white"
                                     android:textSize="16sp" />
                             </TableRow>
                         </LinearLayout>
-
                     </RelativeLayout>
 
                     <TextView

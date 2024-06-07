@@ -1,4 +1,4 @@
-package app.airsignal.weather.view.dialog
+package app.airsignal.weather.utils.view
 
 import android.annotation.SuppressLint
 import android.webkit.WebSettings

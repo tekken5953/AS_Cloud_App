@@ -87,7 +87,7 @@ class BackLocCheckDialog(
                     activity.recreate()
                 } else {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                    val uri: Uri = Uri.fromParts("package", activity.packageName, null)
+                    val uri: Uri = Uri.fromParts("package", activity.packageName,null)
                     intent.data = uri
                     startActivity(intent)
                 }

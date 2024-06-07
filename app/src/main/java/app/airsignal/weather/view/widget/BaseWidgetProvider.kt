@@ -30,13 +30,12 @@ open class BaseWidgetProvider: AppWidgetProvider(), KoinComponent {
 
     private val httpClient: HttpClient by inject()
 
-    suspend fun requestWeather(lat: Double, lng: Double, rCount: Int): ApiModel.WidgetData? {
-        return kotlin.runCatching {
+    suspend fun requestWeather(lat: Double, lng: Double, rCount: Int): ApiModel.WidgetData? =
+        kotlin.runCatching {
             httpClient.retrofit
                 .getWidgetForecast(lat, lng, rCount)
                 .awaitResponse().body()
         }.getOrNull()
-    }
 
     fun requestPermissions(context: Context, sort: String, id: Int?) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
@@ -51,9 +50,7 @@ open class BaseWidgetProvider: AppWidgetProvider(), KoinComponent {
     }
 
     fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean {
-        val timeFormed = LocalDateTime.parse(currentTime)
-        val realtimeFormed = LocalDateTime.parse(realTime)
-        return realtimeFormed?.let { timeFormed.isAfter(it) } ?: true
+        return LocalDateTime.parse(realTime)?.let {LocalDateTime.parse(currentTime).isAfter(it)} ?: true
     }
 
     fun isRefreshable(context: Context, type: String): Boolean {

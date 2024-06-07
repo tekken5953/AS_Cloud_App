@@ -46,7 +46,7 @@ import app.airsignal.weather.utils.view.RefreshUtils
 import app.airsignal.weather.view.custom.CustomerServiceView
 import app.airsignal.weather.view.custom.ShowDialogClass
 import app.airsignal.weather.view.custom.SnackBarUtils
-import app.airsignal.weather.view.dialog.WebViewSetting
+import app.airsignal.weather.utils.view.WebViewSetting
 import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
@@ -172,10 +172,9 @@ class SettingActivity
             val lightTheme: RadioButton = themeView.findViewById(R.id.themeLightRB)
             val darkTheme: RadioButton = themeView.findViewById(R.id.themeDarkRB)
             val radioGroup: RadioGroup = themeView.findViewById(R.id.changeThemeRadioGroup)
-            val cancel: ImageView = themeView.findViewById(R.id.changeThemeBack)
 
             ShowDialogClass(this, false)
-                .setBackPressed(cancel)
+                .setBackPressed(themeView.findViewById(R.id.changeThemeBack))
                 .show(themeView, true, ShowDialogClass.DialogTransition.END_TO_START)
 
             // 현재 저장된 테마에 따라서 라디오버튼 체크
@@ -396,9 +395,7 @@ class SettingActivity
             val back = scaleView.findViewById<ImageView>(R.id.changeScaleBack)
             val rg = scaleView.findViewById<RadioGroup>(R.id.changeScaleRadioGroup)
 
-            val fontDialog = ShowDialogClass(this, false)
-
-            fontDialog
+            ShowDialogClass(this, false)
                 .setBackPressed(back)
                 .show(scaleView, true,ShowDialogClass.DialogTransition.END_TO_START)
 
@@ -586,8 +583,7 @@ class SettingActivity
     // 알림 텍스트 색상 설정
     private fun setNightAlertsSpan(textView: TextView) {
         val span = SpannableStringBuilder(textView.text)
-        val formatText = textView.text.split(System.lineSeparator())
-        formatText.forEach {
+        textView.text.split(System.lineSeparator()).forEach {
             span.setSpan(
                 ForegroundColorSpan(getColor(R.color.theme_sub_color)),
                 it.length, span.length,
@@ -638,7 +634,6 @@ class SettingActivity
         val appInfoCustomerService: TextView =
             viewAppInfo.findViewById(R.id.appInfoCustomerService)
         val appInfoDataUsage: TextView = viewAppInfo.findViewById(R.id.appInfoDataUsage)
-
 
         kotlin.runCatching {
             // 뷰모델 데이터 호출
@@ -808,15 +803,15 @@ class SettingActivity
         radioButton: RadioButton,
         cancel: ImageView
     ) {
-        if (GetAppInfo.getUserLocation(this) != lang) { // 현재 설정된 언어인지 필터링
-            cancel.isEnabled = false
-            ioThread.launch {
-                SetAppInfo.setUserLocation(this@SettingActivity, lang)  // 다른 언어라면 db 값 변경
-                withContext(mainDispatcher) {
-                    radioGroup.check(radioButton.id) // 라디오 버튼 체크
-                    delay(100)
-                    saveConfigChangeRestart() // 언어 설정 변경 후 어플리케이션 재시작
-                }
+        if (GetAppInfo.getUserLocation(this) == lang) return // 현재 설정된 언어인지 필터링
+
+        cancel.isEnabled = false
+        ioThread.launch {
+            SetAppInfo.setUserLocation(this@SettingActivity, lang)  // 다른 언어라면 db 값 변경
+            withContext(mainDispatcher) {
+                radioGroup.check(radioButton.id) // 라디오 버튼 체크
+                delay(100)
+                saveConfigChangeRestart() // 언어 설정 변경 후 어플리케이션 재시작
             }
         }
     }
@@ -826,8 +821,7 @@ class SettingActivity
         dbData: String,
         radioGroup: RadioGroup,
         radioButton: RadioButton
-    ) {
-        // DB에 바뀐 정보 저장
+    ) = // DB에 바뀐 정보 저장
         ioThread.launch {
             SetAppInfo.setUserTheme(this@SettingActivity, dbData)
 
@@ -837,7 +831,6 @@ class SettingActivity
                 saveConfigChangeRestart()
             }
         }
-    }
 
     @SuppressLint("SetTextI18n")
     private fun makeWeatherBoxOpacityDialog() {

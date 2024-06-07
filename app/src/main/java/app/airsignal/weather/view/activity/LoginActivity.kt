@@ -58,8 +58,7 @@ class LoginActivity
             when (result.resultCode) {
                 // 로그인 성공 함
                 RESULT_OK -> {
-                    val data = result.data
-                    val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
 
                     if (task.result.email == IgnoredKeyFile.notificationAdmin) subFCM.subAdminTopic()
 

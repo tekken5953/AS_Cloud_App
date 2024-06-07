@@ -16,8 +16,6 @@ import app.airsignal.weather.db.sp.GetAppInfo
 
 class RequestPermissionsUtil(private val context: Context) {
 
-    private val permissionNetWork = Manifest.permission.INTERNET
-
     /** 위치 권한 SDK 버전 29 이상**/
     private val permissionsLocation = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
@@ -84,7 +82,7 @@ class RequestPermissionsUtil(private val context: Context) {
 
     /** 인터넷 허용 여부 검사 **/
     fun isNetworkPermitted(): Boolean =
-        ContextCompat.checkSelfPermission(context, permissionNetWork) == PackageManager.PERMISSION_GRANTED
+        ContextCompat.checkSelfPermission(context, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
 
     /** 권한 요청 거부 횟수에 따른 반환 **/
     fun isShouldShowRequestPermissionRationale(activity: Activity, perm: String): Boolean {
@@ -108,12 +106,11 @@ class RequestPermissionsUtil(private val context: Context) {
 
     /** 백그라운드에서 위치 접근 권한 요청 **/
     fun requestBackgroundLocation() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
             requestPermissions(
                 context as Activity,
                 arrayOf(permissionsLocationBackground),
                 StaticDataObject.REQUEST_BACKGROUND_LOCATION
             )
-        }
     }
 }

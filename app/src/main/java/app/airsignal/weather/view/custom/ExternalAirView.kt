@@ -35,8 +35,7 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
     private data class Grade(val grade: Int, val percentage: Int)
 
     init {
-        val inflater = LayoutInflater.from(context)
-        airBinding = CustomViewAirqBinding.inflate(inflater, this, true)
+        airBinding = CustomViewAirqBinding.inflate(LayoutInflater.from(context),this,true)
 
         attrs?.let { set ->
             val typedArray = context.obtainStyledAttributes(set, R.styleable.ExternalAirView)
@@ -113,8 +112,7 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
     fun fetchData(sort: AirQ, value: Double): ExternalAirView {
         val moderate = getModerate(sort, value)
         val grade = moderate.first
-        val progress = moderate.second
-        airBinding.listItemNestedAirPb.progress = if (grade == 4) 100 else progress
+        airBinding.listItemNestedAirPb.progress = if (grade == 4) 100 else moderate.second
         airBinding.listItemNestedAirValue.text = if (value != -999.0) value.toString() else context.getString(R.string.error)
         airBinding.listItemNestedAirValue.setTextColor(DataTypeParser.getDataColor(context,grade))
         airBinding.listItemNestedAirGrade.setTextColor(DataTypeParser.getDataColor(context,grade))
@@ -128,8 +126,7 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
     fun fetchData(sort: AirQ, value: Int): ExternalAirView {
         val moderate = getModerate(sort, value.toDouble())
         val grade = moderate.first
-        val progress = moderate.second
-        airBinding.listItemNestedAirPb.progress = if (grade == 4) 100 else progress
+        airBinding.listItemNestedAirPb.progress = if (grade == 4) 100 else moderate.second
         airBinding.listItemNestedAirValue.text = if (value != -999) value.toString() else context.getString(R.string.error)
         airBinding.listItemNestedAirValue.setTextColor(DataTypeParser.getDataColor(context,grade))
         airBinding.listItemNestedAirGrade.setTextColor(DataTypeParser.getDataColor(context,grade))
@@ -169,8 +166,7 @@ class ExternalAirView(context: Context, attrs: AttributeSet?)
         fun calculateGrade(value: Double, ranges: List<Range>): Grade {
             ranges.forEachIndexed { index, range ->
                 if (value in range.min..range.max) {
-                    val percentage = ((value - range.min) / (range.max - range.min) * 100).toInt()
-                    return Grade(index + 1, percentage)
+                    return Grade(index + 1, ((value - range.min) / (range.max - range.min) * 100).toInt())
                 }
             }
             return Grade(0, 0)

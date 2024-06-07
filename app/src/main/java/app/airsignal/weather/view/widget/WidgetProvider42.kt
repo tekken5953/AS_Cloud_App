@@ -126,14 +126,14 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 geofenceLocation?.let {
                     val lat = geofenceLocation.latitude
                     val lng = geofenceLocation.longitude
-                    val addr = GeofenceManager(context).getSimpleAddress(lat, lng)
-                    val data = requestWeather(lat, lng, 4)
 
                     withContext(Dispatchers.IO) { BaseWidgetProvider().setRefreshTime(context, WIDGET_42) }
 
                     withContext(Dispatchers.Main) {
                         delay(500)
-                        updateUI(context, views, data, addr)
+                        updateUI(context, views,
+                            requestWeather(lat, lng, 4),
+                            GeofenceManager(context).getSimpleAddress(lat, lng))
                     }
                 }
             }.exceptionOrNull()?.stackTraceToString()
@@ -147,16 +147,11 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         addr: String?) {
         kotlin.runCatching {
             isSuccess = true
-            val currentTime = DataTypeParser.currentDateTimeString("HH:mm")
-            val sunrise = data?.sun?.sunrise ?: "0600"
-            val sunset = data?.sun?.sunset ?: "1800"
-            val isNight = GetAppInfo.getIsNight(sunrise, sunset)
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val componentName = ComponentName(context, this@WidgetProvider42.javaClass)
+            val isNight = GetAppInfo.getIsNight(data?.sun?.sunrise ?: "0600",data?.sun?.sunset ?: "1800")
 
             views.run {
                 views.setImageViewResource(R.id.w42Refresh, R.drawable.w_btn_refresh42)
-                this.setTextViewText(R.id.w42Time, currentTime)
+                this.setTextViewText(R.id.w42Time, DataTypeParser.currentDateTimeString("HH:mm"))
                 data?.let {
                     this.setTextViewText(R.id.w42Temp, "${it.current.temperature?.roundToInt() ?: 0}˚")
                     this.setTextViewText(R.id.w42Address, addr ?: "")
@@ -247,7 +242,8 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 }
             }
 
-            appWidgetManager.updateAppWidget(componentName, views)
+            AppWidgetManager.getInstance(context)
+                .updateAppWidget(ComponentName(context, this@WidgetProvider42.javaClass), views)
         }.exceptionOrNull()?.stackTraceToString()
     }
 
@@ -268,7 +264,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             R.id.w42Pm10Title,
             R.id.w42Pm10Value
         )
-        val imgArray = arrayOf(R.id.w42Location, R.id.w42Refresh)
+        val imgArray = arrayOf (R.id.w42Location, R.id.w42Refresh)
         views.run {
             imgArray.forEach {
                 this.setInt(

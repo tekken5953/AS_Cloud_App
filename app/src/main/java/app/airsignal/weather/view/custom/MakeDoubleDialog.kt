@@ -17,8 +17,7 @@ class MakeDoubleDialog(private val context: Context) {
     @SuppressLint("InflateParams")
     fun make(titleString: Any, applyString: String, cancelString: String, applyColor: Int)
             : Pair<AppCompatButton, AppCompatButton> {
-        val view = LayoutInflater.from(context)
-            .inflate(R.layout.dialog_alert_double_btn, null)
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_alert_double_btn, null)
         builder.apply {
             this.window?.setBackgroundDrawableResource(R.drawable.dialog_bg)
             this.requestWindowFeature(Window.FEATURE_NO_TITLE)

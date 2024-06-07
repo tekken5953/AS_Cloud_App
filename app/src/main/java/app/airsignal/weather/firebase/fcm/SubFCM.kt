@@ -18,41 +18,44 @@ class SubFCM: FirebaseMessagingService() {
         super.onMessageReceived(message)
         when(message.data["sort"]) {
             StaticDataObject.FcmSort.FCM_PATCH.key,
-            StaticDataObject.FcmSort.FCM_DAILY.key-> {
+            StaticDataObject.FcmSort.FCM_DAILY.key->
                 NotificationBuilder().sendNotification(applicationContext,message.data)
-            }
         }
     }
 
     /** 토픽 구독 설정 **/
     fun subTopic(topic: String): SubFCM {
-        try {
+        kotlin.runCatching {
             CoroutineScope(Dispatchers.Default).launch {
                 FirebaseMessaging.getInstance().subscribeToTopic(topic)
             }
-        } catch (e: Exception) { e.printStackTrace() }
+        }.exceptionOrNull()?.stackTraceToString()
         return this
     }
 
     /** 토픽 구독 해제 **/
     private fun unSubTopic(topic: String): SubFCM {
-        CoroutineScope(Dispatchers.Default).launch {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(encodeTopic(topic))
-        }
+        kotlin.runCatching {
+            CoroutineScope(Dispatchers.Default).launch {
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(encodeTopic(topic))
+            }
+        }.exceptionOrNull()?.stackTraceToString()
         return this
     }
 
     // 어드민 계정 토픽
     fun subAdminTopic() {
-        try { subTopic(encodeTopic(StaticDataObject.FcmSort.FCM_ADMIN.key)) }
-        catch (e: Exception) { e.stackTraceToString() }
+        kotlin.runCatching {
+            subTopic(encodeTopic(StaticDataObject.FcmSort.FCM_ADMIN.key))
+        }.exceptionOrNull()?.stackTraceToString()
     }
 
     /** 현재 위치 토픽 갱신 **/
     fun renewTopic(old: String, new: String) {
         if (old != new) {
-            try { unSubTopic(old).subTopic(encodeTopic(new)) }
-            catch (e: Exception) { e.stackTraceToString() }
+            kotlin.runCatching {
+                unSubTopic(old).subTopic(encodeTopic(new))
+            }.exceptionOrNull()?.stackTraceToString()
         }
     }
 

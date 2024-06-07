@@ -16,8 +16,7 @@ class SettingSystemView(context: Context, attrs: AttributeSet?)
     private var systemBinding: CustomViewSettingSystemBinding
 
     init {
-        val inflater = LayoutInflater.from(context)
-        systemBinding = CustomViewSettingSystemBinding.inflate(inflater, this, true)
+        systemBinding = CustomViewSettingSystemBinding.inflate(LayoutInflater.from(context),this,true)
 
         attrs?.let { set ->
             val typedArray = context.obtainStyledAttributes(set, R.styleable.SettingSystemView)

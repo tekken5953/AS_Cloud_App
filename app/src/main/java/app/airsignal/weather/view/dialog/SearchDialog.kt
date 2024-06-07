@@ -118,12 +118,11 @@ class SearchDialog(
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
             CoroutineScope(Dispatchers.IO).launch {
-                val lastAddr = GetAppInfo.getUserLastAddress(activity)
                 GpsRepository(activity).findAll().forEach { entity ->
                     withContext(Dispatchers.Main) {
                         if (entity.name == SpDao.CURRENT_GPS_ID) {
                             currentAddress.text = entity.addrKr?.replace(getString(R.string.korea), "") ?: ""
-                            if (entity.addrKr == lastAddr) {
+                            if (entity.addrKr == GetAppInfo.getUserLastAddress(activity)) {
                                 currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))
                                 currentGpsImg.imageTintList =
                                     ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
@@ -189,14 +188,14 @@ class SearchDialog(
         listView.adapter = adapter
 
         editText.setOnTouchListener { _, motionEvent ->
-            try {
+            kotlin.runCatching {
                 if (motionEvent.action == MotionEvent.ACTION_UP &&
                     motionEvent.rawX >= editText.right - editText.compoundDrawablesRelative[2].bounds.width()
                 ) {
                     editText.text.clear()
                     return@setOnTouchListener true
                 }
-            } catch (e: java.lang.NullPointerException) { e.printStackTrace() }
+            }.exceptionOrNull()?.stackTraceToString()
 
             false
         }
@@ -247,8 +246,7 @@ class SearchDialog(
                 val apply = viewSearched.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
                 val title = viewSearched.findViewById<TextView>(R.id.alertDoubleTitle)
 
-                val span =
-                    if (resources.configuration.locales[0] == Locale.KOREA)
+                val span = if (resources.configuration.locales[0] == Locale.KOREA)
                     SpannableStringBuilder("${searchItem[position]}을(를)\n추가하시겠습니까?")
                     else SpannableStringBuilder("Add ${searchItem[position]}?")
 
@@ -265,9 +263,8 @@ class SearchDialog(
 
                 title.text = span
                 apply.text = activity.getString(R.string.add)
-                apply.backgroundTintList = ColorStateList.valueOf(
-                    activity.getColor(R.color.main_blue_color)
-                )
+                apply.backgroundTintList =
+                    ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
                 cancel.text = activity.getString(R.string.cancel)
 
                 apply.setOnClickListener {
@@ -281,7 +278,7 @@ class SearchDialog(
                             addrKr = null
                         )
 
-                        val addrArray =  resources.getStringArray(
+                        val addrArray = resources.getStringArray(
                             if (isKorea()) R.array.address_korean else R.array.address_english)
 
                         addrArray.forEachIndexed { index, s ->
@@ -290,6 +287,7 @@ class SearchDialog(
                                 model.addrKr = resources.getStringArray(R.array.address_korean)[index]
                             }
                         }
+
                         db.insert(model)
                         dbUpdate(model.addrKr,model.addrEn,model.name)
 
@@ -322,7 +320,7 @@ class SearchDialog(
     }
 
     // 레이아웃 노출
-    fun show(layoutId: Int) { SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId) }
+    fun show(layoutId: Int) = SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId)
 
     private fun dbUpdate(addrKr: String?, addrEn: String?, name: String) {
         val model = GpsEntity(
@@ -337,10 +335,9 @@ class SearchDialog(
         SetAppInfo.setUserLastAddr(activity, addrKr ?: "")
     }
 
-    private fun isKorea(): Boolean {
-        val systemLang = GetSystemInfo.getLocale(activity)
-        return GetAppInfo.getUserLocation(activity) == SpDao.LANG_KR || systemLang == Locale.KOREA
-    }
+    private fun isKorea(): Boolean =
+         GetAppInfo.getUserLocation(activity) == SpDao.LANG_KR ||
+                GetSystemInfo.getLocale(activity) == Locale.KOREA
 
     // 리스트 아이템 추가
     private fun addCurrentItem(addrKr: String?, addrEn: String?): SearchDialog {
@@ -356,15 +353,11 @@ class SearchDialog(
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog, ratio: Int) {
         val bottomSheet =
             bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
-        val behavior = BottomSheetBehavior.from(bottomSheet)
         val layoutParams = bottomSheet.layoutParams
-        layoutParams.height = getBottomSheetDialogDefaultHeight(ratio)
+        layoutParams.height = getWindowHeight() * ratio / 100
         bottomSheet.layoutParams = layoutParams
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        BottomSheetBehavior.from(bottomSheet).state = BottomSheetBehavior.STATE_EXPANDED
     }
-
-    // 바텀 다이얼로그 비율설정
-    private fun getBottomSheetDialogDefaultHeight(per: Int): Int { return getWindowHeight() * per / 100 }
 
     // 디바이스 높이 구하기
     private fun getWindowHeight(): Int {
@@ -381,9 +374,8 @@ class SearchDialog(
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view = super.getView(position, convertView, parent) as TextView
             val fullText = getItem(position) ?: ""
-            val editableText = fullText.lowercase()
 
-            val startIndex = editableText.indexOf(editText.text.toString().lowercase())
+            val startIndex = fullText.lowercase().indexOf(editText.text.toString().lowercase())
 
             val coloredText = android.text.SpannableString(getItem(position))
             coloredText.setSpan(

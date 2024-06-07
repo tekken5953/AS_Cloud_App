@@ -68,8 +68,7 @@ open class WidgetProvider22 : BaseWidgetProvider() {
 
         if (!isRefreshable(context, WIDGET_22)) {
             Toast.makeText(context.applicationContext,
-                "갱신은 1분 주기로 가능합니다",
-                Toast.LENGTH_SHORT).show()
+                "갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -85,18 +84,17 @@ open class WidgetProvider22 : BaseWidgetProvider() {
             CoroutineScope(Dispatchers.Default).launch {
                 val views = RemoteViews(context.packageName, R.layout.widget_layout_2x2)
                 val refreshBtnIntent =
-                    if (RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                    if (RequestPermissionsUtil(context).isBackgroundRequestLocation())
                         Intent(context, WidgetProvider22::class.java).run {
                             this.action = REFRESH_BUTTON_CLICKED
                             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                         }
-                    } else {
+                    else
                         Intent(context, WidgetPermActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             putExtra("sort", WIDGET_22)
                             putExtra("id", appWidgetId)
                         }
-                    }
 
                 val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
                     .run {
@@ -111,6 +109,7 @@ open class WidgetProvider22 : BaseWidgetProvider() {
                     refreshBtnIntent,
                     PendingIntent.FLAG_IMMUTABLE
                 )
+
                 views.run {
                     this.setOnClickPendingIntent(R.id.widget2x2Background, enterPending)
                     this.setOnClickPendingIntent(R.id.widget2x2Refresh, pendingIntent)
@@ -155,16 +154,11 @@ open class WidgetProvider22 : BaseWidgetProvider() {
     ) {
         kotlin.runCatching {
             isSuccess = true
-            val currentTime = DataTypeParser.currentDateTimeString("HH:mm")
-            val sunrise = data?.sun?.sunrise ?: "0600"
-            val sunset = data?.sun?.sunset ?: "1800"
-            val isNight = GetAppInfo.getIsNight(sunrise, sunset)
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val componentName = ComponentName(context, this@WidgetProvider22.javaClass)
+            val isNight = GetAppInfo.getIsNight(data?.sun?.sunrise ?: "0600",data?.sun?.sunset ?: "1800")
 
             views.run {
                 views.setImageViewResource(R.id.widget2x2Refresh, R.drawable.w_btn_refresh)
-                this.setTextViewText(R.id.widget2x2Time, currentTime)
+                this.setTextViewText(R.id.widget2x2Time, DataTypeParser.currentDateTimeString("HH:mm"))
                 data?.let {
                     this.setTextViewText(
                         R.id.widget2x2TempValue,"${it.current.temperature?.roundToInt() ?: 0}˚"
@@ -198,7 +192,8 @@ open class WidgetProvider22 : BaseWidgetProvider() {
                 }
             }
 
-            appWidgetManager.updateAppWidget(componentName, views)
+            AppWidgetManager.getInstance(context)
+                .updateAppWidget(ComponentName(context, this@WidgetProvider22.javaClass), views)
         }.exceptionOrNull()?.stackTraceToString()
     }
 
@@ -211,7 +206,7 @@ open class WidgetProvider22 : BaseWidgetProvider() {
         views.run {
             imgArray.forEach {
                 this.setInt(
-                    it, "setColorFilter", context.applicationContext.getColor(
+                    it,"setColorFilter", context.applicationContext.getColor(
                         when (bg) {
                             R.drawable.w_bg_sunny, R.drawable.w_bg_snow -> R.color.wblack
                             R.drawable.w_bg_night, R.drawable.w_bg_cloudy -> R.color.white

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
+import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 class LunarShape(age: Float?) {
@@ -37,6 +38,6 @@ class LunarShape(age: Float?) {
             }, null)
 
     fun progress(): Int =
-        if (moonAge > 15.5) (200 - ((moonAge - 1.5) / 14 * 100).roundToInt())
-        else ((moonAge - 1.5) / 14 * 100).roundToInt()
+        if (moonAge > 15.5) (200 - ((moonAge - 1.5) / 14 * 100).roundToInt()).absoluteValue
+        else ((moonAge - 1.5) / 14 * 100).roundToInt().absoluteValue
 }
