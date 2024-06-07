@@ -1,4 +1,4 @@
-package app.airsignal.weather.utils
+package app.airsignal.weather.utils.view
 
 import android.app.Activity
 import android.content.Context

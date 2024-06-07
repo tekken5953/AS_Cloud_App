@@ -16,12 +16,12 @@ import app.airsignal.weather.location.GetLocation
 import app.airsignal.weather.api.ErrorCode
 import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.utils.EnterPageUtil
-import app.airsignal.weather.utils.LoggerUtil
-import app.airsignal.weather.utils.TimberUtil
-import app.airsignal.weather.utils.ToastUtils
-import app.airsignal.weather.view.custom_view.MakeDoubleDialog
-import app.airsignal.weather.view.custom_view.MakeSingleDialog
+import app.airsignal.weather.utils.view.EnterPageUtil
+import app.airsignal.weather.utils.plain.LoggerUtil
+import app.airsignal.weather.utils.plain.TimberUtil
+import app.airsignal.weather.utils.plain.ToastUtils
+import app.airsignal.weather.view.custom.MakeDoubleDialog
+import app.airsignal.weather.view.custom.MakeSingleDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
 import org.koin.android.ext.android.inject
@@ -142,7 +142,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             // 현재 버전 이용 선택 시 메인 이동
                             dialog.second.setOnClickListener {
                                 sp.setBoolean(skipThisPatchKey, true)
-                                ToastUtils(this@SplashActivity).showMessage(getString(R.string.patch_store_notice))
+                                ToastUtils(this@SplashActivity)
+                                    .showMessage(getString(R.string.patch_store_notice))
                                 enterPage(inAppArray)
                             }
                         }

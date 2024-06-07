@@ -1,12 +1,12 @@
 package app.airsignal.weather.view.perm
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
 import android.provider.Settings
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -14,7 +14,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
@@ -25,7 +25,6 @@ import app.airsignal.weather.db.sp.SetAppInfo
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.coroutines.*
 
 
 /**
@@ -46,7 +45,6 @@ class BackLocCheckDialog(
         return inflater.inflate(R.layout.dialog_background_permission, container, false)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -134,7 +132,7 @@ class BackLocCheckDialog(
     }
 
     // 레이아웃 노출
-    fun show() { BackLocCheckDialog(activity, fm, tagId).showNow(fm, tagId) }
+    fun show() = BackLocCheckDialog(activity, fm, tagId).showNow(fm, tagId)
 
     // 바텀 다이얼로그 세팅
     private fun setupRatio(bottomSheetDialog: BottomSheetDialog, ratio: Int) {

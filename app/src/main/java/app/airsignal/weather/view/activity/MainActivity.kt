@@ -42,12 +42,21 @@ import app.airsignal.weather.login.SilentLoginClass
 import app.airsignal.weather.api.ErrorCode
 import app.airsignal.weather.api.NetworkUtils
 import app.airsignal.weather.api.retrofit.ApiModel
+import app.airsignal.weather.utils.controller.OnSingleClickListener
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.utils.*
-import app.airsignal.weather.utils.`object`.DataTypeParser
+import app.airsignal.weather.utils.DataTypeParser
+import app.airsignal.weather.utils.plain.LunarShape
+import app.airsignal.weather.utils.plain.SensibleTempFormula
+import app.airsignal.weather.utils.plain.Term24Class
+import app.airsignal.weather.utils.TypeFaceObject
+import app.airsignal.weather.utils.plain.ToastUtils
+import app.airsignal.weather.utils.view.EnterPageUtil
+import app.airsignal.weather.utils.view.RefreshUtils
+import app.airsignal.weather.utils.view.SunProgress
 import app.airsignal.weather.view.*
-import app.airsignal.weather.view.custom_view.ExternalAirView
-import app.airsignal.weather.view.custom_view.MakeDoubleDialog
+import app.airsignal.weather.view.custom.ExternalAirView
+import app.airsignal.weather.view.custom.MakeDoubleDialog
 import app.airsignal.weather.view.dialog.*
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetWeatherViewModel
@@ -582,6 +591,7 @@ class MainActivity
         binding.dailySectionToday.text = getString(R.string.daily_today)
         binding.dailySectionTomorrow.text = getString(R.string.daily_tomorrow)
         binding.mainDailyWeatherTitle.text = getString(R.string.daily_weather)
+        binding.mainSunTitle.text = getString(R.string.sun_rise_set)
         binding.mainMinMaxTitleC.text = getString(R.string.min_max)
         binding.mainSensTitleC.text = getString(R.string.sens_temp)
         binding.mainLiveTempTitleC.text = getString(R.string.live_temp)
@@ -661,7 +671,8 @@ class MainActivity
     override fun onBackPressed() {
         // 뒤로가기 한번 클릭 시 토스트
         if (!isBackPressed) {
-            ToastUtils(this).showMessage(getString(R.string.back_press), 2)
+            ToastUtils(this)
+                .showMessage(getString(R.string.back_press), 2)
             isBackPressed = true
         }
         // 2초안에 한번 더 클릭 시 종료
@@ -811,7 +822,8 @@ class MainActivity
         updateTerm24(result.term24)
 
         // 메인 날씨 아이콘 세팅
-        binding.mainSkyImg.setImageDrawable(DataTypeParser.applySkyImg(
+        binding.mainSkyImg.setImageDrawable(
+            DataTypeParser.applySkyImg(
             this,
             if (isAfterRealtime) result.current.rainType else realtimeFirst.rainType,
             realtimeFirst.sky, result.thunder,
@@ -929,7 +941,8 @@ class MainActivity
                     0 -> getString(R.string.today_main)
                     1 -> getString(R.string.tomorrow_week)
                     else ->
-                        "${DataTypeParser.parseDayOfWeekToKorean(this, 
+                        "${
+                            DataTypeParser.parseDayOfWeekToKorean(this, 
                             dateNow.dayOfWeek.value + it)}${getString(R.string.date)}"
                 }
 
@@ -950,8 +963,10 @@ class MainActivity
     private fun updateAirQualityData(air: ApiModel.AirQualityData) {
         val pm25 = (air.pm25Value ?: air.pm25Value24 ?: 0.0)
         val pm10 = (air.pm10Value ?: air.pm10Value24 ?: 0.0)
-        val pm25Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade(ExternalAirView.AirQ.PM2_5.sort, pm25.toDouble()))
-        val pm10Grade = DataTypeParser.getDataText(this,DataTypeParser.convertValueToGrade(ExternalAirView.AirQ.PM10.sort, pm10))
+        val pm25Grade = DataTypeParser.getDataText(this,
+            DataTypeParser.convertValueToGrade(ExternalAirView.AirQ.PM2_5.sort, pm25.toDouble()))
+        val pm10Grade = DataTypeParser.getDataText(this,
+            DataTypeParser.convertValueToGrade(ExternalAirView.AirQ.PM10.sort, pm10))
 
         binding.mainAirPm10.setOnClickListener(binding.nestedAirHelpPopup)
             .fetchData(ExternalAirView.AirQ.PM10, pm10.toInt())
@@ -1563,6 +1578,7 @@ class MainActivity
             binding.mainMinMaxTitleC,
             binding.mainMinMaxValueC,
             binding.mainDailyWeatherTitle,
+            binding.mainSunTitle,
             binding.mainWeeklyWeatherTitle,
             binding.mainSunRiseTitle,
             binding.mainSunSetTitle,
@@ -1717,10 +1733,9 @@ class MainActivity
             location?.let { loc ->
                 val lat = loc.latitude
                 val lng = loc.longitude
-                if (isKorea(lat, lng)) {
-                    val addr = locationClass.getAddress(lat, lng)
-                    processAddress(lat, lng, addr)
-                } else {
+                if (isKorea(lat, lng))
+                    processAddress(lat, lng, locationClass.getAddress(lat, lng))
+                else {
                     ToastUtils(this).showMessage(getString(R.string.error_not_service_locale))
                     loadSavedViewModelData(getString(R.string.seoul_si))
                 }
@@ -1750,13 +1765,13 @@ class MainActivity
                 if (lat != null && lng != null) {
                     val mLat = lat.toDouble()
                     val mLng = lng.toDouble()
-                    val addr = locationClass.getAddress(mLat, mLng)
                     if (isKorea(mLat, mLng)) {
                         ToastUtils(this@MainActivity)
                             .showMessage(getString(R.string.last_location_call_msg), 1)
-                        processAddress(mLat, mLng, addr)
+                        processAddress(mLat, mLng, locationClass.getAddress(mLat, mLng))
                     } else {
-                        ToastUtils(this@MainActivity).showMessage(getString(R.string.error_not_service_locale))
+                        ToastUtils(this@MainActivity)
+                            .showMessage(getString(R.string.error_not_service_locale))
                         loadSavedViewModelData(getString(R.string.seoul_si))
                     }
                 } else hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
@@ -1764,7 +1779,6 @@ class MainActivity
         }.onFailure { exception ->
             when(exception) {
                 NullPointerException() -> hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
-
                 NumberFormatException() -> {
                     handleLocationFailure()
                     hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
@@ -1786,10 +1800,8 @@ class MainActivity
     private fun processAddress(lat: Double, lng: Double, address: String?) {
         address?.let { addr ->
             // 주소 정보를 저장하고 업데이트
-            ioThread.launch {
-                SetAppInfo.setUserLastAddr(this@MainActivity, addr)
-                updateCurrentAddress(lat, lng, addr)
-            }
+            SetAppInfo.setUserLastAddr(this@MainActivity, addr)
+            updateCurrentAddress(lat, lng, addr)
 
             // 주소 문자열에서 불필요한 부분을 제거
             val cleanedAddr = addr

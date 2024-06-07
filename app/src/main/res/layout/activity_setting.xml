@@ -152,7 +152,7 @@
                     android:background="@color/theme_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingThemeTitle" />
 
-                <app.airsignal.weather.view.custom_view.SettingSystemView
+                <app.airsignal.weather.view.custom.SettingSystemView
                     android:id="@+id/settingSystemTheme"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
@@ -160,7 +160,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/settingLine2"
                     app:left="@string/setting_theme_left" />
 
-                <app.airsignal.weather.view.custom_view.SettingSystemView
+                <app.airsignal.weather.view.custom.SettingSystemView
                     android:id="@+id/settingSystemLang"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
@@ -168,7 +168,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/settingSystemTheme"
                     app:left="@string/setting_lang" />
 
-                <app.airsignal.weather.view.custom_view.SettingSystemView
+                <app.airsignal.weather.view.custom.SettingSystemView
                     android:id="@+id/settingSystemFont"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
@@ -197,7 +197,7 @@
                     android:background="@color/theme_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingDisplayTitle" />
 
-                <app.airsignal.weather.view.custom_view.SettingSystemView
+                <app.airsignal.weather.view.custom.SettingSystemView
                     android:id="@+id/settingOpacityText"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
@@ -226,7 +226,7 @@
                     android:background="@color/theme_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingNotiTitle" />
 
-                <app.airsignal.weather.view.custom_view.SettingSystemView
+                <app.airsignal.weather.view.custom.SettingSystemView
                     android:id="@+id/settingNotificationText"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
@@ -255,7 +255,7 @@
                     android:background="@color/theme_line_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingCustomerTitle" />
 
-                <app.airsignal.weather.view.custom_view.SettingSystemView
+                <app.airsignal.weather.view.custom.SettingSystemView
                     android:id="@+id/settingNotice"
                     style="@style/settingSingleTextView"
                     android:layout_width="match_parent"
@@ -264,7 +264,7 @@
                     android:textColor="@color/theme_text_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingLine4" />
 
-                <app.airsignal.weather.view.custom_view.SettingSystemView
+                <app.airsignal.weather.view.custom.SettingSystemView
                     android:id="@+id/settingAppInfo"
                     style="@style/settingSingleTextView"
                     android:layout_width="match_parent"

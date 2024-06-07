@@ -1,4 +1,4 @@
-package app.airsignal.weather.utils
+package app.airsignal.weather.utils.view
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
@@ -8,7 +8,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@SuppressLint("ClickableViewAccessibility")
 class SunProgress(private val seekArc: SeekArc) {
 
     /** 일출/일몰 그래프 애니메이션 발동 **/
@@ -28,5 +27,6 @@ class SunProgress(private val seekArc: SeekArc) {
     }
 
     /** 일출/일몰 그래프 터치 막기 **/
+    @SuppressLint("ClickableViewAccessibility")
     fun disableTouch() = seekArc.setOnTouchListener { _, _ -> true }
 }

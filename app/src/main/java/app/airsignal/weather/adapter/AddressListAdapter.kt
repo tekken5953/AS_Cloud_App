@@ -23,7 +23,7 @@ import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.SpDao
-import app.airsignal.weather.utils.OnAdapterItemSingleClick
+import app.airsignal.weather.utils.controller.OnAdapterItemSingleClick
 import java.util.*
 
 /**

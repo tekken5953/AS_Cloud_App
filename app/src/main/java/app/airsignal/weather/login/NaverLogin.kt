@@ -7,8 +7,8 @@ import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SharedPreferenceManager
-import app.airsignal.weather.utils.RefreshUtils
-import app.airsignal.weather.utils.ToastUtils
+import app.airsignal.weather.utils.view.RefreshUtils
+import app.airsignal.weather.utils.plain.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
@@ -23,7 +23,11 @@ import com.navercorp.nid.profile.data.NidProfileResponse
  **/
 
 class NaverLogin(private val activity: Activity) {
-    private val toast by lazy {ToastUtils(activity)}
+    private val toast by lazy {
+        ToastUtils(
+            activity
+        )
+    }
 
     fun init(): NaverLogin {
         NaverIdLoginSDK.initialize(

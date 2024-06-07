@@ -1,4 +1,4 @@
-package app.airsignal.weather.adapter
+package app.airsignal.weather.utils.controller
 
 import androidx.recyclerview.widget.DiffUtil
 

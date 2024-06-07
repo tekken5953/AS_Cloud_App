@@ -1,4 +1,4 @@
-package app.airsignal.weather.utils.`object`
+package app.airsignal.weather.utils
 
 import android.app.Activity
 import android.content.Context
@@ -71,7 +71,7 @@ object DataTypeParser {
             "비/눈" to R.drawable.b_ico_rainy_snow,
             "소나기" to R.drawable.b_ico_rainy
         )
-        return rainMap[rain]?.let{ getDrawable(context,it)} ?: getDrawable(context,R.drawable.cancel)
+        return rainMap[rain]?.let{ getDrawable(context,it) } ?: getDrawable(context,R.drawable.cancel)
     }
 
     /** sky value에 따른 이미지 설정 **/

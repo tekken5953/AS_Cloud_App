@@ -36,12 +36,16 @@ import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
 import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.api.retrofit.HttpClient
+import app.airsignal.weather.utils.controller.OnAdapterItemSingleClick
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.utils.*
-import app.airsignal.weather.utils.`object`.DataTypeParser
-import app.airsignal.weather.view.custom_view.CustomerServiceView
-import app.airsignal.weather.view.custom_view.ShowDialogClass
-import app.airsignal.weather.view.custom_view.SnackBarUtils
+import app.airsignal.weather.utils.DataTypeParser
+import app.airsignal.weather.utils.plain.ToastUtils
+import app.airsignal.weather.utils.view.EnterPageUtil
+import app.airsignal.weather.utils.view.RefreshUtils
+import app.airsignal.weather.view.custom.CustomerServiceView
+import app.airsignal.weather.view.custom.ShowDialogClass
+import app.airsignal.weather.view.custom.SnackBarUtils
 import app.airsignal.weather.view.dialog.WebViewSetting
 import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
@@ -866,7 +870,8 @@ class SettingActivity
         opacityBox2.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress2}000000"))
 
         opacityRollback.setOnClickListener {
-            ToastUtils(this@SettingActivity).showMessage(getString(R.string.settings_initialized),1)
+            ToastUtils(this@SettingActivity)
+                .showMessage(getString(R.string.settings_initialized),1)
 
             ioThread.launch {
                 if (seekBar.progress != 80) SetAppInfo.setWeatherBoxOpacity(this@SettingActivity, 80)
@@ -899,7 +904,8 @@ class SettingActivity
                     ioThread.launch {
                         SetAppInfo.setWeatherBoxOpacity(this@SettingActivity, it.progress)
                         withContext(mainDispatcher) {
-                            ToastUtils(this@SettingActivity).showMessage(getString(R.string.ok_change_setting),1)
+                            ToastUtils(this@SettingActivity)
+                                .showMessage(getString(R.string.ok_change_setting),1)
                         }
                     }
                 }
@@ -919,7 +925,8 @@ class SettingActivity
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 seekBar?.let {
                     ioThread.launch { SetAppInfo.setWeatherBoxOpacity2(this@SettingActivity, it.progress ) }
-                    ToastUtils(this@SettingActivity).showMessage(getString(R.string.ok_change_setting),1)
+                    ToastUtils(this@SettingActivity)
+                        .showMessage(getString(R.string.ok_change_setting),1)
                 }
             }
         })

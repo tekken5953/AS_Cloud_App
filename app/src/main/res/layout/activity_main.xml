@@ -414,7 +414,7 @@
                         android:textSize="16sp" />
                 </TableRow>
 
-                <app.airsignal.weather.view.custom_view.SubAirView
+                <app.airsignal.weather.view.custom.SubAirView
                     android:id="@+id/subAirHumid"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -422,7 +422,7 @@
                     android:layout_toStartOf="@+id/subAirWind"
                     app:customImg="@drawable/ico_main_humidity" />
 
-                <app.airsignal.weather.view.custom_view.SubAirView
+                <app.airsignal.weather.view.custom.SubAirView
                     android:id="@+id/subAirWind"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -430,7 +430,7 @@
                     android:layout_centerHorizontal="true"
                     app:customImg="@drawable/ico_main_wind" />
 
-                <app.airsignal.weather.view.custom_view.SubAirView
+                <app.airsignal.weather.view.custom.SubAirView
                     android:id="@+id/subAirRainP"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -470,7 +470,7 @@
                     android:background="@android:color/transparent"
                     android:paddingBottom="55dp">
 
-                    <app.airsignal.weather.view.custom_view.AirQView
+                    <app.airsignal.weather.view.custom.AirQView
                         android:id="@+id/nested_air_help_popup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -495,12 +495,10 @@
                         <TextView
                             android:id="@+id/mainDailyWeatherTitle"
                             style="@style/basicMediumTextView"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginTop="24dp"
-                            android:drawablePadding="5dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
                             android:textColor="@color/theme_text_color"
-                            android:textSize="18sp"
-                            app:drawableStartCompat="@drawable/ico_time" />
+                            android:textSize="16sp" />
 
                         <TableRow
                             android:id="@+id/mainDailyWeatherSectionTR"
@@ -544,7 +542,7 @@
                             android:overScrollMode="never"
                             android:paddingStart="13dp"
                             android:paddingEnd="15dp"
-                            app:layoutManager=".utils.LinearLayoutManagerWrapper"
+                            app:layoutManager=".utils.controller.LinearLayoutManagerWrapper"
                             tools:listitem="@layout/list_item_daily_weather" />
                     </RelativeLayout>
 
@@ -599,12 +597,10 @@
                         <TextView
                             android:id="@+id/mainWeeklyWeatherTitle"
                             style="@style/basicMediumTextView"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginTop="24dp"
-                            android:drawablePadding="5dp"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
                             android:textColor="@color/theme_text_color"
-                            android:textSize="18sp"
-                            app:drawableStartCompat="@drawable/ico_weekly" />
+                            android:textSize="16sp" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/mainWeeklyWeatherRv"
@@ -616,7 +612,7 @@
                             android:clipToPadding="false"
                             android:orientation="vertical"
                             android:overScrollMode="never"
-                            app:layoutManager=".utils.LinearLayoutManagerWrapper"
+                            app:layoutManager=".utils.controller.LinearLayoutManagerWrapper"
                             tools:listitem="@layout/list_item_weekly_weather" />
                     </RelativeLayout>
 
@@ -675,7 +671,7 @@
                             android:columnCount="2"
                             android:orientation="horizontal">
 
-                            <app.airsignal.weather.view.custom_view.ExternalAirView
+                            <app.airsignal.weather.view.custom.ExternalAirView
                                 android:id="@+id/mainAirPm10"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -688,7 +684,7 @@
                                 app:airTitle="미세먼지"
                                 app:airUnit="㎛/㎥" />
 
-                            <app.airsignal.weather.view.custom_view.ExternalAirView
+                            <app.airsignal.weather.view.custom.ExternalAirView
                                 android:id="@+id/mainAirPm2p5"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -701,7 +697,7 @@
                                 app:airTitle="초미세먼지"
                                 app:airUnit="㎛/㎥" />
 
-                            <app.airsignal.weather.view.custom_view.ExternalAirView
+                            <app.airsignal.weather.view.custom.ExternalAirView
                                 android:id="@+id/mainAirCo"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -714,7 +710,7 @@
                                 app:airTitle="일산화탄소"
                                 app:airUnit="ppm" />
 
-                            <app.airsignal.weather.view.custom_view.ExternalAirView
+                            <app.airsignal.weather.view.custom.ExternalAirView
                                 android:id="@+id/mainAirNo2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -727,7 +723,7 @@
                                 app:airTitle="이산화질소"
                                 app:airUnit="ppm" />
 
-                            <app.airsignal.weather.view.custom_view.ExternalAirView
+                            <app.airsignal.weather.view.custom.ExternalAirView
                                 android:id="@+id/mainAirSo2"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -740,7 +736,7 @@
                                 app:airTitle="아황산가스"
                                 app:airUnit="ppm" />
 
-                            <app.airsignal.weather.view.custom_view.ExternalAirView
+                            <app.airsignal.weather.view.custom.ExternalAirView
                                 android:id="@+id/mainAirO3"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -773,7 +769,7 @@
                             android:layout_marginStart="16dp"
                             android:layout_marginTop="16dp"
                             android:textColor="@color/theme_text_color"
-                            android:textSize="18sp" />
+                            android:textSize="16sp" />
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/mainUvCollapseRv"
@@ -789,7 +785,7 @@
                             android:nestedScrollingEnabled="false"
                             android:overScrollMode="never"
                             android:scrollbars="none"
-                            app:layoutManager=".utils.LinearLayoutManagerWrapper"
+                            app:layoutManager=".utils.controller.LinearLayoutManagerWrapper"
                             tools:listitem="@layout/list_item_uv_collapsed" />
 
                         <TextView
@@ -818,12 +814,20 @@
                         android:layout_marginEnd="12dp"
                         android:background="@drawable/scrolled_box_bg">
 
+                        <TextView
+                            android:id="@+id/mainSunTitle"
+                            style="@style/basicMediumTextView"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:textColor="@color/theme_text_color"
+                            android:textSize="16sp" />
+
                         <LinearLayout
                             android:id="@+id/mainSunSeekLinear"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_above="@+id/mainSunLine"
-                            android:layout_marginTop="5dp"
+                            android:layout_marginTop="20dp"
                             android:layout_toStartOf="@+id/mainSunSetLinear"
                             android:layout_toEndOf="@+id/mainSunRiseLinear"
                             android:gravity="center"
@@ -864,14 +868,14 @@
                                 android:id="@+id/mainSunRiseImg"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="6dp"
+                                android:layout_marginBottom="4dp"
                                 android:contentDescription="@string/cd_img_sun_rise"
                                 android:src="@drawable/ico_sun" />
 
                             <TextView
                                 android:id="@+id/mainSunRiseTitle"
                                 style="@style/basicTextView"
-                                android:layout_marginBottom="6dp"
+                                android:layout_marginBottom="4dp"
                                 android:ellipsize="end"
                                 android:lines="1"
                                 android:textColor="@color/theme_text_color"
@@ -882,7 +886,7 @@
                                 style="@style/basicMediumTextView"
                                 android:layout_width="55dp"
                                 android:layout_marginStart="3dp"
-                                android:layout_marginBottom="12dp"
+                                android:layout_marginBottom="10dp"
                                 android:autoSizeMaxTextSize="18sp"
                                 android:autoSizeMinTextSize="14sp"
                                 android:autoSizeTextType="uniform"
@@ -906,14 +910,14 @@
                                 android:id="@+id/mainSunSetImg"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginBottom="6dp"
+                                android:layout_marginBottom="4dp"
                                 android:contentDescription="@string/cd_img_sun_set"
                                 android:src="@drawable/ico_moon" />
 
                             <TextView
                                 android:id="@+id/mainSunSetTitle"
                                 style="@style/basicTextView"
-                                android:layout_marginBottom="6dp"
+                                android:layout_marginBottom="4dp"
                                 android:ellipsize="end"
                                 android:lines="1"
                                 android:textColor="@color/theme_text_color"
@@ -924,7 +928,7 @@
                                 style="@style/basicMediumTextView"
                                 android:layout_width="55dp"
                                 android:layout_marginStart="3dp"
-                                android:layout_marginBottom="12dp"
+                                android:layout_marginBottom="10dp"
                                 android:autoSizeMaxTextSize="18sp"
                                 android:autoSizeMinTextSize="14sp"
                                 android:autoSizeTextType="uniform"
@@ -949,7 +953,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentBottom="true"
-                            android:layout_marginBottom="20dp"
+                            android:layout_marginBottom="16dp"
                             android:gravity="center">
 
                             <TextView

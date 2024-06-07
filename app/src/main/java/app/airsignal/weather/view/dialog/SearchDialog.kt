@@ -26,9 +26,9 @@ import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.*
-import app.airsignal.weather.utils.KeyboardController
-import app.airsignal.weather.utils.OnAdapterItemSingleClick
-import app.airsignal.weather.utils.`object`.DataTypeParser
+import app.airsignal.weather.utils.controller.KeyboardController
+import app.airsignal.weather.utils.controller.OnAdapterItemSingleClick
+import app.airsignal.weather.utils.DataTypeParser
 import app.airsignal.weather.view.activity.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog

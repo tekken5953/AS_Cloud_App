@@ -18,13 +18,13 @@ import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
 import org.koin.dsl.module
 
-class BaseApplication : Application() {
+class WeatherApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
         startKoin {
             androidLogger(level = Level.DEBUG)
-            androidContext(this@BaseApplication)
+            androidContext(this@WeatherApp)
             modules(listOf(myModule))
         }
     }

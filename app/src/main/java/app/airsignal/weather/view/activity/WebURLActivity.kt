@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityWebUrlBinding
-import app.airsignal.weather.utils.`object`.DataTypeParser
+import app.airsignal.weather.utils.DataTypeParser
 import app.airsignal.weather.view.dialog.WebViewSetting
 
 class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {

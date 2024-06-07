@@ -247,4 +247,5 @@
     <string name="lunar_ha_m">Waning Gibbous</string>
     <string name="lunar_ha_d">Last Quarter</string>
     <string name="lunar_g">Waning Crescent</string>
+    <string name="sun_rise_set">Sun</string>
 </resources>

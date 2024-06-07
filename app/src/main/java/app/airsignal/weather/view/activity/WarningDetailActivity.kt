@@ -11,7 +11,7 @@ import app.airsignal.weather.databinding.ActivityWarningDetailBinding
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.location.AddressFromRegex
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.utils.`object`.DataTypeParser
+import app.airsignal.weather.utils.DataTypeParser
 import app.airsignal.weather.viewmodel.GetWarningViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException

@@ -14,8 +14,8 @@ import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityPermissionBinding
 import app.airsignal.weather.db.sp.*
 import app.airsignal.weather.api.retrofit.ApiModel
-import app.airsignal.weather.utils.EnterPageUtil
-import app.airsignal.weather.utils.`object`.DataTypeParser
+import app.airsignal.weather.utils.view.EnterPageUtil
+import app.airsignal.weather.utils.DataTypeParser
 import app.airsignal.weather.view.perm.FirstLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -24,7 +24,7 @@ class PermissionActivity :
     BaseActivity<ActivityPermissionBinding>() {
     override val resID: Int get() = R.layout.activity_permission
     private val perm = RequestPermissionsUtil(this)
-    private val enter by lazy {EnterPageUtil(this)}
+    private val enter by lazy { EnterPageUtil(this) }
 
     override fun onResume() {
         super.onResume()

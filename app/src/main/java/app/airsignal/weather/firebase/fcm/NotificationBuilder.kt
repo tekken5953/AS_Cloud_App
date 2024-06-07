@@ -19,7 +19,7 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetSystemInfo
-import app.airsignal.weather.utils.`object`.DataTypeParser
+import app.airsignal.weather.utils.DataTypeParser
 import org.koin.core.component.KoinComponent
 import kotlin.math.roundToInt
 

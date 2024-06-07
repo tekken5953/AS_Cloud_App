@@ -23,20 +23,16 @@ object HttpClient {
         readTimeout(8, TimeUnit.SECONDS)
         writeTimeout(8, TimeUnit.SECONDS)
         addInterceptor { chain ->
-            try {
-                val request = chain.request().newBuilder()
-                    .addHeader("Connection", "close")
-                    .addHeader("Platform", "android")
-                    .build()
-                chain.proceed(request)
-            } catch (e: SocketTimeoutException) {
-                chain.proceed(chain.request())
-                throw e
-            }
-            catch (e: ConnectionPoolTimeoutException) {
-                chain.proceed(chain.request())
-                throw e
-            }
+            chain.proceed(
+                kotlin.runCatching {
+                    val request = chain.request().newBuilder()
+                        .addHeader("Connection", "close")
+                        .addHeader("Platform", "android")
+                        .build()
+
+                    request
+                }.getOrElse { chain.request() }
+            )
         }.build()
     }
 

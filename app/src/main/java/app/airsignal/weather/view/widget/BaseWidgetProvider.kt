@@ -8,7 +8,7 @@ import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.api.retrofit.HttpClient
-import app.airsignal.weather.utils.`object`.DataTypeParser.getCurrentTime
+import app.airsignal.weather.utils.DataTypeParser.getCurrentTime
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

@@ -14,9 +14,9 @@ import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.location.GeofenceManager
 import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.utils.VibrateUtil
-import app.airsignal.weather.utils.`object`.DataTypeParser
-import app.airsignal.weather.utils.`object`.DataTypeParser.convertValueToGrade
-import app.airsignal.weather.utils.`object`.DataTypeParser.getDataText
+import app.airsignal.weather.utils.DataTypeParser
+import app.airsignal.weather.utils.DataTypeParser.convertValueToGrade
+import app.airsignal.weather.utils.DataTypeParser.getDataText
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import kotlinx.coroutines.*

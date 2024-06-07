@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
+import app.airsignal.weather.utils.controller.ItemDiffCallback
 import app.airsignal.weather.dao.AdapterModel
 import com.bumptech.glide.Glide
 import java.time.LocalDateTime

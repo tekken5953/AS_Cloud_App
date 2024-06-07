@@ -1,4 +1,4 @@
-package app.airsignal.weather.view.custom_view
+package app.airsignal.weather.view.custom
 
 import android.app.Activity
 import android.view.View

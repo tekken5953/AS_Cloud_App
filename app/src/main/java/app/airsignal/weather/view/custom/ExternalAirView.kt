@@ -1,4 +1,4 @@
-package app.airsignal.weather.view.custom_view
+package app.airsignal.weather.view.custom
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -11,8 +11,8 @@ import android.widget.RelativeLayout
 import androidx.core.content.res.ResourcesCompat
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.CustomViewAirqBinding
-import app.airsignal.weather.utils.OnSingleClickListener
-import app.airsignal.weather.utils.`object`.DataTypeParser
+import app.airsignal.weather.utils.controller.OnSingleClickListener
+import app.airsignal.weather.utils.DataTypeParser
 
 /**
  * @author : Lee Jae Young

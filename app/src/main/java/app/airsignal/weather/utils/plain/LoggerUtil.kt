@@ -1,4 +1,4 @@
-package app.airsignal.weather.utils
+package app.airsignal.weather.utils.plain
 
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
