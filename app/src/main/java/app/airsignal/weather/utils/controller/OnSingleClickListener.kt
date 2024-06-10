@@ -17,9 +17,4 @@ abstract class OnSingleClickListener : View.OnClickListener {
         if (elapsedTime > minClickInterval) onSingleClick(v)
 //        else { ToastUtils(BaseApplication.appContext).showMessage("잠시 후에 시도해주세요") }
     }
-
-    companion object {
-        // 중복 클릭 방지 시간 설정 ( 해당 시간 이후에 다시 클릭 가능 )
-
-    }
 }

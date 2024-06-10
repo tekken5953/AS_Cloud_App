@@ -26,9 +26,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-        debug {
-            debuggable false
-        }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
@@ -62,9 +59,22 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
+
+    // Unit Testing
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    testImplementation 'org.mockito:mockito-core:3.11.2'
+    testImplementation 'org.mockito.kotlin:mockito-kotlin:4.0.0'
+    testImplementation 'androidx.test:core:1.4.0'
+    testImplementation 'androidx.test.ext:junit:1.1.3'
+    testImplementation 'androidx.test:runner:1.4.0'
+
+    // Android Instrumentation Testing
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+    // Koin 의존성
+    testImplementation "io.insert-koin:koin-test:3.2.0"
+    testImplementation "io.insert-koin:koin-test-junit4:3.2.0"
 
     apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 
@@ -119,6 +129,7 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_android_version"
     kapt "androidx.room:room-compiler:$room_android_version"
     implementation "androidx.room:room-ktx:$room_android_version"
+    testImplementation "androidx.room:room-testing:$room_android_version"
 
     //server
     def retrofit_version = "2.9.0"

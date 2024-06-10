@@ -42,7 +42,6 @@ import app.airsignal.weather.login.SilentLoginClass
 import app.airsignal.weather.api.ErrorCode
 import app.airsignal.weather.api.NetworkUtils
 import app.airsignal.weather.api.retrofit.ApiModel
-import app.airsignal.weather.firebase.admob.AdViewClass
 import app.airsignal.weather.utils.controller.OnSingleClickListener
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.utils.*
@@ -719,9 +718,10 @@ class MainActivity
         kotlin.runCatching {
             val metaAddr = result.meta.address
             ioThread.launch {
-                metaAddr?.let {reNewTopicInMain(it)}
+                metaAddr?.let { reNewTopicInMain(it) }
 
                 isNight = true
+                isDataResponse = true
 //                isNight = GetAppInfo.getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
 
                 withContext(mainDispatcher) {
@@ -731,38 +731,33 @@ class MainActivity
                     showAllViews()
                     updateUIWithData(result)
 
-                    isDataResponse = true
-
                     // 메인 날씨 텍스트 세팅
                     val isCurrent = currentIsAfterRealtime(
                         result.current.currentTime, result.realtime[0].forecast)
-                    val skyText =
-                        if (isCurrent) DataTypeParser.translateSky(
+                    val skyText = DataTypeParser.translateSky(
                             this@MainActivity, DataTypeParser.applySkyText(this@MainActivity,
-                                result.current.rainType, result.realtime[0].sky, result.thunder)
-                        )
-                        else DataTypeParser.translateSky(
-                                this@MainActivity, DataTypeParser.applySkyText(this@MainActivity,
-                                    result.realtime[0].rainType,
-                                    result.realtime[0].sky, result.thunder)
+                                if (isCurrent) result.current.rainType else result.realtime[0].rainType,
+                                if (isCurrent) result.realtime[0].sky else result.realtime[0].sky,
+                                result.thunder)
                         )
 
-                    val rainTypeText = if (isCurrent) result.current.rainType
-                    else result.realtime[0].rainType
+                    val rainTypeText =
+                        if (isCurrent) result.current.rainType
+                        else result.realtime[0].rainType
 
 //                 날씨에 따라 배경화면 변경
-                    val testSky = getString(R.string.sky_cloudy)
+                    val testSky = getString(R.string.sky_sunny)
                     val testRain = getString(R.string.sky_rain_nothing)
 
-//                    applyWindowBackground(sky = testSky, rainType = testRain)
-//                    setMountain(sky = testSky, rainType = testRain)
-//                    setSkyLottie(sky = testSky)
-//                    setRainTypeLottie(testRain)
+                    applyWindowBackground(sky = testSky, rainType = testRain)
+                    setMountain(sky = testSky, rainType = testRain)
+                    setSkyLottie(sky = testSky)
+                    setRainTypeLottie(testRain)
 
-                    applyWindowBackground(sky = result.realtime[0].sky, rainType = rainTypeText)
-                    setMountain(sky = result.realtime[0].sky, rainType = rainTypeText)
-                    setSkyLottie(sky = result.realtime[0].sky)
-                    setRainTypeLottie(rainType = rainTypeText)
+//                    applyWindowBackground(sky = result.realtime[0].sky, rainType = rainTypeText)
+//                    setMountain(sky = result.realtime[0].sky, rainType = rainTypeText)
+//                    setSkyLottie(sky = result.realtime[0].sky)
+//                    setRainTypeLottie(rainType = rainTypeText)
 
                     binding.mainSkyText.text = skyText
 
@@ -772,10 +767,6 @@ class MainActivity
                         isInAppMsgShow = true
                         ioThread.launch { startInAppMsg() }
                     }
-
-                    val skyImgAnimation =
-                        AnimationUtils.loadAnimation(this@MainActivity, R.anim.main_sky_img_anim)
-                    binding.mainSkyImg.startAnimation(skyImgAnimation)
 
                     binding.mainLunarBox.visibility = if (isNight) VISIBLE else GONE
                     binding.mainLunarBox.alpha = if (isNight) 1f else 0f
@@ -822,8 +813,7 @@ class MainActivity
             if (currentIsAfterRealtime(result.current.currentTime, realtimeFirst.forecast))
                 result.current.rainType else realtimeFirst.rainType,
             realtimeFirst.sky, result.thunder,
-            isLarge = true, isNight,  lunar = lunar
-        ))
+            isLarge = true, isNight,  lunar = lunar))
 
         val lunarClass = LunarShape(result.lunarAge)
         binding.mainLunarImg.setImageDrawable(lunarClass.shapeDrawable(this))
@@ -1050,7 +1040,8 @@ class MainActivity
                 SensibleTempFormula().getSensibleTemp(
                     ta = current.temperature,
                     rh = currentHumidity,
-                    v = currentWindSpeed
+                    v = currentWindSpeed,
+                    SensibleTempFormula().getCurrentSeason()
                 ), digit = 1
             )
         }.fold(
@@ -1063,7 +1054,8 @@ class MainActivity
                     SensibleTempFormula().getSensibleTemp(
                         ta = real0.temp,
                         rh = currentHumidity,
-                        v = currentWindSpeed
+                        v = currentWindSpeed,
+                        SensibleTempFormula().getCurrentSeason()
                     ), digit = 1
                 )
             }
@@ -1194,7 +1186,7 @@ class MainActivity
             getString(R.string.sky_sunny),
             getString(R.string.sky_rainy),
             getString(R.string.sky_shower),
-            getString(R.string.sky_rainy_snowy) -> setSkyAnimation(if (isNight) R.raw.ani_main_night_stars else R.raw.ani_main_clear_day)
+            getString(R.string.sky_rainy_snowy) -> setSkyAnimation(if (isNight) R.raw.ani_main_sunny_night else R.raw.ani_main_clear_day)
 
             getString(R.string.sky_sunny_cloudy),
             getString(R.string.sky_sunny_cloudy_shower),
@@ -1245,14 +1237,14 @@ class MainActivity
     private fun setSkyAnimation(animationResource: Int?) {
         animationResource?.let {
             binding.mainSkyLottie.setAnimation(it)
-            if (!binding.mainSkyLottie.isAnimating) binding.mainSkyLottie.playAnimation()
+            binding.mainSkyLottie.playAnimation()
         } ?: run { setEmptyAnimation(1) }
     }
 
     private fun setRainAnimation(animationResource: Int?) {
         animationResource?.let {
-            binding.mainRainLottie.setAnimation(it)
-            if (!binding.mainRainLottie.isAnimating) binding.mainRainLottie.playAnimation()
+            binding.mainSkyLottie.setAnimation(it)
+            binding.mainSkyLottie.playAnimation()
         } ?: run { setEmptyAnimation(2) }
     }
 

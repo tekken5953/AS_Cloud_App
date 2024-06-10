@@ -33,11 +33,12 @@ object DataTypeParser {
     }
 
     /** 강수형태가 없으면 하늘상태 있으면 강수형태 - 텍스트 **/
-    fun applySkyText(context: Context, rain: String?, sky: String?, thunder: Double?): String {
-        if (rain == null || rain == "없음")
-            return if ((thunder == null) || (thunder < 0.2)) sky ?: "맑음" else context.getString(R.string.thunder_rainy)
-        return if ((thunder == null) || (thunder < 0.2)) rain else context.getString(R.string.thunder_sunny)
-    }
+    fun applySkyText(context: Context, rain: String?, sky: String?, thunder: Double?): String =
+        when {
+            rain == null || rain == "없음" -> sky ?: "맑음"
+            thunder == null || thunder < 0.2 -> rain
+            else -> context.getString(R.string.thunder_rainy)
+        }
 
     fun translateSkyText(sky: String): String =
         when (sky) {

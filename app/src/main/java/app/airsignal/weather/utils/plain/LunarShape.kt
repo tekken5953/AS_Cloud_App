@@ -8,7 +8,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 class LunarShape(age: Float?) {
-    private val moonAge = age ?: 0.0F
+    var moonAge = age ?: 0.0F
 
     fun shapeText(context: Context): String =
         when {
