@@ -76,6 +76,7 @@ internal class GpsDatabaseTest {
             gpsDao.updateCurrentGPS(testGpsEntity)
 
 
+
             assertEquals(replacedName, testGpsEntity.name)
         }
     }
