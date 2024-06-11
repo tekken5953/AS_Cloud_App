@@ -11,9 +11,9 @@ object KeyboardController {
     fun onKeyboardUp(context: Context, et: EditText) {
         val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
+            inputMethodManager.showSoftInput(et,1)
             et.requestFocus()
-            inputMethodManager.showSoftInput(et,InputMethodManager.SHOW_IMPLICIT)
-        },100)
+        },300)
     }
 
     // 키보드 내리기

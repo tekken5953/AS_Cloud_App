@@ -720,10 +720,10 @@ class MainActivity
             ioThread.launch {
                 metaAddr?.let { reNewTopicInMain(it) }
 
-                isNight = true
-                isDataResponse = true
-//                isNight = GetAppInfo.getIsNight(result.sun?.sunrise ?: "0000", result.sun?.sunset ?: "0000")
+//                isNight = true
+                isNight = GetAppInfo.getIsNight(result.sun?.sunrise ?: "0000",result.sun?.sunset ?: "0000")
 
+                isDataResponse = true
                 withContext(mainDispatcher) {
                     binding.mainGpsFix.clearAnimation()
                     binding.mainDailyWeatherRv.scrollToPosition(0)
@@ -746,7 +746,7 @@ class MainActivity
                         else result.realtime[0].rainType
 
 //                 날씨에 따라 배경화면 변경
-                    val testSky = getString(R.string.sky_sunny)
+                    val testSky = getString(R.string.sky_sunny_cloudy)
                     val testRain = getString(R.string.sky_rain_nothing)
 
                     applyWindowBackground(sky = testSky, rainType = testRain)
@@ -794,7 +794,7 @@ class MainActivity
 
     // 결과에서 얻은 데이터로 UI 요소를 업데이트
     private fun updateUIWithData(result: ApiModel.GetEntireData) {
-        currentSun = GetAppInfo.getCurrentSun(result.sun?.sunrise ?: "0600", result.sun?.sunset ?: "1900")
+        currentSun = GetAppInfo.getCurrentSun(result.sun?.sunrise ?: "0600",result.sun?.sunset ?: "1900")
         val lunar = result.lunar?.date ?: -1
         val realtimeFirst = result.realtime[0]
 
@@ -1795,9 +1795,8 @@ class MainActivity
     private fun getR(id: Int): Drawable? = ResourcesCompat.getDrawable(resources, id, null)
 
     // 뷰 백그라운드 적용
-    private fun <T> applyBackground(view: T, res: Int?) {
+    private fun <T> applyBackground(view: T, res: Int?) =
         res?.let { (view as View).background = getR(it) } ?: apply { (view as View).background = null }
-    }
 
     private fun handleLocationFailure() = hideProgressBar()
 

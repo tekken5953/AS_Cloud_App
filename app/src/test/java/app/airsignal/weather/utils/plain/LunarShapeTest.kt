@@ -24,6 +24,7 @@ internal class LunarShapeTest {
     @Before
     fun setUp() {
         MockitoAnnotations.openMocks(this)
+
         `when`(mockContext.resources).thenReturn(mock(Resources::class.java))
 
         `when`(mockContext.getString(R.string.lunar_sak)).thenReturn("New Moon")

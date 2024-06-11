@@ -250,4 +250,5 @@
     <string name="sun_rise_set">Sun</string>
     <string name="no_entire_summary">There are currently no weather warnings\nin the country</string>
     <string name="no_region_summary">there is no local weather warning\nDo you want to search nationwide?</string>
+    <string name="lunar_progress_title">밝은면</string>
 </resources>

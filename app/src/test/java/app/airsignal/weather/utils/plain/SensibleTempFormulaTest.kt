@@ -1,6 +1,5 @@
 package app.airsignal.weather.utils.plain
 
-import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import kotlin.test.assertEquals
@@ -20,8 +19,8 @@ internal class SensibleTempFormulaTest {
     fun getSensibleTemp() {
         // Given
         val sensibleTempClass = SensibleTempFormula().getSensibleTemp(testTemp,testRh,testV,testMonth)
-
         val expectedResult = 26.046853158182305
+
         assertEquals(expectedResult, sensibleTempClass)
     }
 }

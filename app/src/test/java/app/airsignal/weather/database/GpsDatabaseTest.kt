@@ -69,14 +69,11 @@ internal class GpsDatabaseTest {
 
             val getName = gpsDao.findByNameWithCoroutine(previousName)
 
-
             assertEquals(previousName, getName.name)
 
             testGpsEntity.name = replacedName
 
             gpsDao.updateCurrentGPS(testGpsEntity)
-
-
 
             assertEquals(replacedName, testGpsEntity.name)
         }

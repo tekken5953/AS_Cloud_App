@@ -82,12 +82,12 @@ object GetAppInfo {
     
     /** HH:mm 포맷의 시간을 분으로 변환 **/
     private fun parseTimeToMinutes(time: String): Int {
-        return try {
+        return kotlin.runCatching {
             val timeSplit = time.replace(" ","")
             val hour = timeSplit.substring(0, 2).toInt()
             val minutes = timeSplit.substring(2, 4).toInt()
             hour * 60 + minutes
-        } catch (e: java.lang.NumberFormatException) { 1 }
+        }.getOrElse { 1 }
     }
 
     fun getIsNight(sunrise: String, sunset: String): Boolean {
