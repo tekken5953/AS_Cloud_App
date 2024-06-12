@@ -244,4 +244,5 @@
     <string name="no_entire_summary">현재 전국의 기상특보가 없습니다</string>
     <string name="no_region_summary">현재 지역의 기상 특보가 없습니다\n전국으로 검색하시겠습니까?</string>
     <string name="lunar_progress_title">밝은면</string>
+    <string name="wave">파고</string>
 </resources>

@@ -5,9 +5,11 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.marginTop
 import app.airsignal.weather.R
 import app.airsignal.weather.databinding.CustomViewSubAirBinding
 
@@ -32,7 +34,12 @@ class SubAirView(context: Context, attrs: AttributeSet?) : RelativeLayout(contex
     @SuppressLint("UseCompatTextViewDrawableApis")
     private fun applyVector(vector: String?) {
         vector?.let { v ->
-            subAirBinding.customSubAirValue.setPadding(0,0,15,0)
+            val params = LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT).apply {
+                addRule(RelativeLayout.BELOW, R.id.customSubAirImg)
+                addRule(RelativeLayout.CENTER_IN_PARENT)
+                setMargins(0,0,8,0)
+            }
+            subAirBinding.customSubAirValue.layoutParams = params
             subAirBinding.customSubAirValue.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 drawable(when(v) {
                     "북" -> R.drawable.ico_wind_n
@@ -64,7 +71,7 @@ class SubAirView(context: Context, attrs: AttributeSet?) : RelativeLayout(contex
     fun fetchData(value: String, img: Int, vector: String?): SubAirView {
         subAirBinding.customSubAirValue.text = value
         subAirBinding.customSubAirImg.setImageDrawable(ResourcesCompat.getDrawable(resources,img,null))
-        applyVector(vector = vector)
+        if (vector != null) applyVector(vector = vector)
 
         return this
     }

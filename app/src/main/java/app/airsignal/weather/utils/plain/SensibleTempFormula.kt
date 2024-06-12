@@ -1,6 +1,5 @@
 package app.airsignal.weather.utils.plain
 
-import timber.log.Timber
 import java.time.LocalDateTime
 import kotlin.math.atan
 import kotlin.math.pow
@@ -20,7 +19,6 @@ class SensibleTempFormula {
      * @return 체감온도
      */
     fun getSensibleTemp(ta: Double, rh: Double, v: Double, month: Int) : Double {
-        Timber.tag("testtest").d("getSensibleTemp : ${if (getCurrentSeason() in 5..9) getInSummer(ta, rh) else getInWinter(ta, v)}")
         return if (month in 5..9) getInSummer(ta, rh) else getInWinter(ta, v)
     }
 
@@ -32,7 +30,6 @@ class SensibleTempFormula {
      */
     private fun getInSummer(ta: Double, rh: Double) : Double {
         val tw = getTw(ta, rh)
-        Timber.tag("testtest").d("getInSummer : ${-0.2442 + (0.55399 * tw) + (0.45535 * ta) - (0.0022 * tw.pow(2.0)) + (0.00278 * tw * ta) + 3.0}")
         return -0.2442 + (0.55399 * tw) + (0.45535 * ta) - (0.0022 * tw.pow(2.0)) + (0.00278 * tw * ta) + 3.0
     }
 

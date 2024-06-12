@@ -16,33 +16,28 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 object HttpClient {
-    private val clientBuilder: OkHttpClient.Builder = OkHttpClient.Builder().apply {
-        retryOnConnectionFailure(retryOnConnectionFailure = false)
-        connectionPool(ConnectionPool())
-        connectTimeout(8, TimeUnit.SECONDS)
-        readTimeout(8, TimeUnit.SECONDS)
-        writeTimeout(8, TimeUnit.SECONDS)
-        addInterceptor { chain ->
-            chain.proceed(
-                kotlin.runCatching {
-                    val request = chain.request().newBuilder()
-                        .addHeader("Connection", "close")
-                        .addHeader("Platform", "android")
-                        .build()
+    private val clientBuilder: OkHttpClient.Builder =
+        OkHttpClient.Builder().apply {
+            retryOnConnectionFailure(retryOnConnectionFailure = false)
+            connectionPool(ConnectionPool())
+            connectTimeout(8, TimeUnit.SECONDS)
+            readTimeout(8, TimeUnit.SECONDS)
+            writeTimeout(8, TimeUnit.SECONDS)
+            addInterceptor { chain ->
+                chain.proceed(
+                    kotlin.runCatching {
+                        val request = chain.request().newBuilder()
+                            .addHeader("Connection", "close")
+                            .addHeader("Platform", "android")
+                            .build()
 
-                    request
-                }.getOrElse { chain.request() }
-            )
-        }.build()
+                        request
+                    }.getOrElse { chain.request() }
+                )
+            }.build()
     }
 
-    private val gson =
-        GsonBuilder()
-            .setLenient()
-            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-            .setPrettyPrinting()
-            .serializeNulls()
-            .create()
+    private val gson = getRawGsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
 
     val retrofit: MyApiImpl =
         Retrofit.Builder()
@@ -53,10 +48,7 @@ object HttpClient {
             .create(MyApiImpl::class.java)
 
     private fun gsonConverterFactory(): GsonConverterFactory? {
-        val gson = GsonBuilder()
-            .setLenient()
-            .setPrettyPrinting()
-            .serializeNulls()
+        val gson = getRawGsonBuilder()
             .registerTypeAdapter(LocalDateTime::class.java,
                 JsonDeserializer { json, _, _ ->
                     LocalDateTime.parse(
@@ -82,4 +74,10 @@ object HttpClient {
 
         return GsonConverterFactory.create(gson)
     }
+
+    private fun getRawGsonBuilder(): GsonBuilder =
+        GsonBuilder()
+            .setLenient()
+            .setPrettyPrinting()
+            .serializeNulls()
 }

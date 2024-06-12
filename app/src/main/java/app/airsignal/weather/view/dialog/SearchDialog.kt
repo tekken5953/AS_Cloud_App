@@ -174,8 +174,6 @@ class SearchDialog(
             val listView: ListView = view.findViewById(R.id.searchAddressListView)
 
             searchEditListener(listView, searchView, noResult)
-
-            KeyboardController.onKeyboardUp(requireContext(), searchView)
         }
     }
 
@@ -188,6 +186,8 @@ class SearchDialog(
             if (isKorea()) resources.getStringArray(R.array.address_korean)
             else resources.getStringArray(R.array.address_english)
         val adapter = CustomArrayAdapter(editText, dataList = searchItem)
+
+        KeyboardController.onKeyboardUp(requireContext(), editText)
         listView.adapter = adapter
 
         editText.setOnTouchListener { _, motionEvent ->

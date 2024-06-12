@@ -46,11 +46,8 @@ import app.airsignal.weather.utils.controller.OnSingleClickListener
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.utils.*
 import app.airsignal.weather.utils.DataTypeParser
-import app.airsignal.weather.utils.plain.LunarShape
-import app.airsignal.weather.utils.plain.SensibleTempFormula
-import app.airsignal.weather.utils.plain.Term24Class
 import app.airsignal.weather.utils.TypeFaceObject
-import app.airsignal.weather.utils.plain.ToastUtils
+import app.airsignal.weather.utils.plain.*
 import app.airsignal.weather.utils.view.EnterPageUtil
 import app.airsignal.weather.utils.view.RefreshUtils
 import app.airsignal.weather.utils.view.SunProgress
@@ -806,6 +803,15 @@ class MainActivity
         updateWeatherWarnings(result.summary)
         updateTerm24(result.term24)
 
+        val wave = result.realtime[0].wave
+        TimberUtil.d("testtest","wave is $wave")
+        if (wave != null && wave != 0.0) {
+            binding.subAirWave.fetchData("${DataTypeParser.parseDoubleToDecimal(wave,1)}M",R.drawable.ico_main_wind,null)
+            binding.subAirWave.visibility = View.VISIBLE
+        } else {
+            binding.subAirWave.visibility = View.GONE
+        }
+
         // 메인 날씨 아이콘 세팅
         binding.mainSkyImg.setImageDrawable(
             DataTypeParser.applySkyImg(
@@ -1017,6 +1023,10 @@ class MainActivity
         binding.mainLiveTempValue.text = currentTemperature
         binding.mainLiveTempUnit.text = "˚"
         binding.mainLiveTempValueC.text = "$currentTemperature˚"
+
+        if (real0.wave == null || real0.wave == 0.0) binding.mainSubAirTr.setPadding(150,0,150,0)
+        else binding.mainSubAirTr.setPadding(40,0,40,0)
+
 
         // 서브 날씨(습도,바람,강수확률) 적용
         binding.subAirHumid.fetchData(
@@ -1436,6 +1446,7 @@ class MainActivity
         binding.subAirHumid.getTitle().text = getString(R.string.humidity)
         binding.subAirWind.getTitle().text = getString(R.string.wind)
         binding.subAirRainP.getTitle().text = getString(R.string.rainPer)
+        binding.subAirWave.getTitle().text = getString(R.string.wave)
         applyBackground(binding.mainWarningBox, R.drawable.report_frame_bg)
         binding.mainShareIv.isEnabled = true
 
@@ -1544,9 +1555,11 @@ class MainActivity
             binding.subAirWind.getTitle(),
             binding.subAirRainP.getTitle(),
             binding.subAirHumid.getTitle(),
+            binding.subAirWave.getTitle(),
             binding.subAirWind.getValue(),
             binding.subAirRainP.getValue(),
             binding.subAirHumid.getValue(),
+            binding.subAirWave.getValue(),
             binding.mainLiveTempValueC,
             binding.mainSensTitleC,
             binding.mainSensValueC,

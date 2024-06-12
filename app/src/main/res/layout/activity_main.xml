@@ -143,8 +143,8 @@
                 android:id="@+id/mainGpsTitleTv"
                 style="@style/basicTextView"
                 android:layout_marginTop="30dp"
-                android:gravity="start"
                 android:maxEms="10"
+                android:gravity="center"
                 android:textColor="@android:color/transparent"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -415,29 +415,42 @@
                         android:textSize="16sp" />
                 </TableRow>
 
-                <app.airsignal.weather.view.custom.SubAirView
-                    android:id="@+id/subAirHumid"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/subAirWind"
-                    android:layout_toStartOf="@+id/subAirWind"
-                    app:customImg="@drawable/ico_main_humidity" />
-
-                <app.airsignal.weather.view.custom.SubAirView
-                    android:id="@+id/subAirWind"
+                <TableRow
+                    android:id="@+id/mainSubAirTr"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/subAirTr"
-                    android:layout_centerHorizontal="true"
-                    app:customImg="@drawable/ico_main_wind" />
+                    android:layout_centerInParent="true"
+                    android:gravity="center">
+                    <app.airsignal.weather.view.custom.SubAirView
+                        android:id="@+id/subAirHumid"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        app:customImg="@drawable/ico_main_humidity" />
 
-                <app.airsignal.weather.view.custom.SubAirView
-                    android:id="@+id/subAirRainP"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/subAirWind"
-                    android:layout_toEndOf="@+id/subAirWind"
-                    app:customImg="@drawable/ico_main_rain" />
+                    <app.airsignal.weather.view.custom.SubAirView
+                        android:id="@+id/subAirWind"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        app:customImg="@drawable/ico_main_wind" />
+
+                    <app.airsignal.weather.view.custom.SubAirView
+                        android:id="@+id/subAirRainP"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.25"
+                        app:customImg="@drawable/ico_main_rain" />
+                    <app.airsignal.weather.view.custom.SubAirView
+                        android:id="@+id/subAirWave"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_gravity="top|center_horizontal"
+                        android:layout_weight="0.25"
+                        app:customImg="@drawable/ico_main_rain" />
+                </TableRow>
             </RelativeLayout>
 
             <ImageView
