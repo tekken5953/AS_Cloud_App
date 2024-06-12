@@ -46,7 +46,6 @@ object SetAppInfo {
                 removeKey(SpDao.userEmail)
             }}
 
-
     fun removeSingleKey(context: Context, key: String) =
         ioThread.launch { SharedPreferenceManager(context).removeKey(key) }
 

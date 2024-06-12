@@ -3,6 +3,8 @@ package app.airsignal.weather.utils.controller
 import android.app.Activity
 import android.view.View
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatDelegate
+import app.airsignal.weather.R
 
 class ScreenController(private val activity: Activity) {
     // 화면 터치를 허용/거부 합니다
@@ -27,5 +29,20 @@ class ScreenController(private val activity: Activity) {
     @Suppress("DEPRECATION")
     fun basicMode() {
         activity.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+    }
+
+    fun changeSystemUiVisibility() {
+        @Suppress("DEPRECATION")
+        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
+            activity.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        else activity.window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    }
+
+    /** 상태 바 설정 **/
+    fun setStatusBar() {
+        activity.window.apply {
+            statusBarColor = activity.getColor(R.color.theme_view_color)
+            navigationBarColor = activity.getColor(android.R.color.transparent)
+        }
     }
 }

@@ -1,6 +1,5 @@
 package app.airsignal.weather.utils
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.widget.TextView
@@ -253,14 +252,6 @@ object DataTypeParser {
         flagMap[flag]?.let {
             textView.setBackgroundResource(it.first)
             textView.setTextColor(context.getColor(it.second))
-        }
-    }
-
-    /** 상태 바 설정 **/
-    fun setStatusBar(activity: Activity) {
-        activity.window.apply {
-            statusBarColor = activity.getColor(R.color.theme_view_color)
-            navigationBarColor = activity.getColor(android.R.color.transparent)
         }
     }
     

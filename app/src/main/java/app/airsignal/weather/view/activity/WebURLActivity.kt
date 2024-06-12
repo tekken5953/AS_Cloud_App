@@ -9,6 +9,7 @@ import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityWebUrlBinding
 import app.airsignal.weather.utils.DataTypeParser
+import app.airsignal.weather.utils.controller.ScreenController
 import app.airsignal.weather.utils.view.WebViewSetting
 
 class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
@@ -20,16 +21,13 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
         super.onCreate(savedInstanceState)
         initBinding()
 
-        DataTypeParser.setStatusBar(this)
+        ScreenController(this).setStatusBar()
 
         val webView = binding.webUrlWebView
 
         window.statusBarColor = getColor(R.color.theme_view_color)
 
-        @Suppress("DEPRECATION")
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        else window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        ScreenController(this).changeSystemUiVisibility()
 
         binding.webUrlBackIv.setOnClickListener {
             if (webView.canGoBack()) webView.goBack() else finish()

@@ -12,6 +12,7 @@ import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
 import app.airsignal.weather.utils.DataTypeParser
+import app.airsignal.weather.utils.controller.ScreenController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import org.koin.android.ext.android.inject
 
@@ -29,7 +30,7 @@ class LoginActivity
         super.onCreate(savedInstanceState)
         initBinding()
 
-        DataTypeParser.setStatusBar(this)
+        ScreenController(this).setStatusBar()
 
         // 구글 로그인 버튼 클릭
         binding.googleLoginButton.setOnClickListener {
@@ -59,7 +60,6 @@ class LoginActivity
                 // 로그인 성공 함
                 RESULT_OK -> {
                     val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-
                     if (task.result.email == IgnoredKeyFile.notificationAdmin) subFCM.subAdminTopic()
 
                     googleLogin.handleSignInResult(task)

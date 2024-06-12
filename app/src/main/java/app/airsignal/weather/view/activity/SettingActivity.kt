@@ -40,6 +40,7 @@ import app.airsignal.weather.utils.controller.OnAdapterItemSingleClick
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.utils.*
 import app.airsignal.weather.utils.DataTypeParser
+import app.airsignal.weather.utils.controller.ScreenController
 import app.airsignal.weather.utils.plain.ToastUtils
 import app.airsignal.weather.utils.view.EnterPageUtil
 import app.airsignal.weather.utils.view.RefreshUtils
@@ -98,7 +99,7 @@ class SettingActivity
         super.onCreate(savedInstanceState)
 
         initBinding()
-        DataTypeParser.setStatusBar(this)
+        ScreenController(this).setStatusBar()
 
         if (isInit) isInit = false
 

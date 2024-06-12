@@ -14,6 +14,7 @@ import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.location.AddressFromRegex
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.utils.DataTypeParser
+import app.airsignal.weather.utils.controller.ScreenController
 import app.airsignal.weather.viewmodel.GetWarningViewModel
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -52,7 +53,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
         super.onCreate(savedInstanceState)
         initBinding()
 
-        DataTypeParser.setStatusBar(this)
+        ScreenController(this).setStatusBar()
 
         applyWarning()
 

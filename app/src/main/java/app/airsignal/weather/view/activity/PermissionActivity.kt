@@ -16,6 +16,7 @@ import app.airsignal.weather.db.sp.*
 import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.utils.view.EnterPageUtil
 import app.airsignal.weather.utils.DataTypeParser
+import app.airsignal.weather.utils.controller.ScreenController
 import app.airsignal.weather.view.perm.FirstLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -57,7 +58,7 @@ class PermissionActivity :
         super.onCreate(savedInstanceState)
         initBinding()
 
-        DataTypeParser.setStatusBar(this)
+        ScreenController(this).setStatusBar()
 
         binding.permissionUserDataNotice.linksClickable = true
         binding.permissionUserDataNotice.movementMethod = LinkMovementMethod.getInstance()

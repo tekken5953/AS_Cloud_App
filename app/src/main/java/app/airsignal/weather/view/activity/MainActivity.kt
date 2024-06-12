@@ -394,14 +394,11 @@ class MainActivity
     private fun applyRefreshScroll() {
         binding.mainMotionLayout.setTransitionListener(object : MotionLayout.TransitionListener {
             override fun onTransitionStarted(motionLayout: MotionLayout, startId: Int, endId: Int) {}
-
             override fun onTransitionChange(motionLayout: MotionLayout, startId: Int, endId: Int, progress: Float) {}
-
+            override fun onTransitionTrigger(motionLayout: MotionLayout, triggerId: Int, positive: Boolean, progress: Float) {}
             override fun onTransitionCompleted(motionLayout: MotionLayout, currentId: Int) {
                 binding.mainSwipeLayout.isEnabled = motionLayout.currentState == R.id.start
             }
-
-            override fun onTransitionTrigger(motionLayout: MotionLayout, triggerId: Int, positive: Boolean, progress: Float) {}
         })
     }
 
@@ -446,11 +443,13 @@ class MainActivity
                     }
                 }
             })
+
             weather.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
                     sideMenuBuilder.dismiss()
                 }
             })
+
             setting.setOnClickListener(object : OnSingleClickListener() {
                 override fun onSingleClick(v: View?) {
                     closeMenuAndCallback {
@@ -743,18 +742,18 @@ class MainActivity
                         else result.realtime[0].rainType
 
 //                 날씨에 따라 배경화면 변경
-                    val testSky = getString(R.string.sky_sunny_cloudy)
+                    val testSky = getString(R.string.sky_sunny)
                     val testRain = getString(R.string.sky_rain_nothing)
 
-                    applyWindowBackground(sky = testSky, rainType = testRain)
-                    setMountain(sky = testSky, rainType = testRain)
-                    setSkyLottie(sky = testSky)
-                    setRainTypeLottie(testRain)
+//                    applyWindowBackground(sky = testSky, rainType = testRain)
+//                    setMountain(sky = testSky, rainType = testRain)
+//                    setSkyLottie(sky = testSky)
+//                    setRainTypeLottie(testRain)
 
-//                    applyWindowBackground(sky = result.realtime[0].sky, rainType = rainTypeText)
-//                    setMountain(sky = result.realtime[0].sky, rainType = rainTypeText)
-//                    setSkyLottie(sky = result.realtime[0].sky)
-//                    setRainTypeLottie(rainType = rainTypeText)
+                    applyWindowBackground(sky = result.realtime[0].sky, rainType = rainTypeText)
+                    setMountain(sky = result.realtime[0].sky, rainType = rainTypeText)
+                    setSkyLottie(sky = result.realtime[0].sky)
+                    setRainTypeLottie(rainType = rainTypeText)
 
                     binding.mainSkyText.text = skyText
 
@@ -806,7 +805,9 @@ class MainActivity
         val wave = result.realtime[0].wave
         TimberUtil.d("testtest","wave is $wave")
         if (wave != null && wave != 0.0) {
-            binding.subAirWave.fetchData("${DataTypeParser.parseDoubleToDecimal(wave,1)}M",R.drawable.ico_main_wind,null)
+            binding.subAirWave.fetchData(
+                "${DataTypeParser.parseDoubleToDecimal(wave,1)}M",
+                R.drawable.ico_main_wave,null)
             binding.subAirWave.visibility = View.VISIBLE
         } else {
             binding.subAirWave.visibility = View.GONE
@@ -1027,7 +1028,6 @@ class MainActivity
         if (real0.wave == null || real0.wave == 0.0) binding.mainSubAirTr.setPadding(150,0,150,0)
         else binding.mainSubAirTr.setPadding(40,0,40,0)
 
-
         // 서브 날씨(습도,바람,강수확률) 적용
         binding.subAirHumid.fetchData(
             "${currentHumidity.roundToInt()}%", R.drawable.ico_main_humidity, null
@@ -1124,28 +1124,27 @@ class MainActivity
                 getString(R.string.sky_snowy),
                 getString(R.string.sky_sunny_cloudy_snowy),
                 getString(R.string.sky_cloudy_snowy) -> R.drawable.main_bg_snow
-                else ->
-                    when(sky) {
-                        getString(R.string.sky_sunny),
-                        getString(R.string.sky_sunny_cloudy),
-                        getString(R.string.sky_rainy),
-                        getString(R.string.sky_shower),
-                        getString(R.string.sky_rainy_snowy),
-                        getString(R.string.sky_sunny_cloudy_shower),
-                        getString(R.string.sky_sunny_cloudy_rainy),
-                        getString(R.string.sky_sunny_cloudy_rainy_snowy) -> if (isNight) R.drawable.main_bg_night else R.drawable.main_bg_clear
+                else -> when(sky) {
+                    getString(R.string.sky_sunny),
+                    getString(R.string.sky_sunny_cloudy),
+                    getString(R.string.sky_rainy),
+                    getString(R.string.sky_shower),
+                    getString(R.string.sky_rainy_snowy),
+                    getString(R.string.sky_sunny_cloudy_shower),
+                    getString(R.string.sky_sunny_cloudy_rainy),
+                    getString(R.string.sky_sunny_cloudy_rainy_snowy) -> if (isNight) R.drawable.main_bg_night else R.drawable.main_bg_clear
 
-                        getString(R.string.sky_cloudy),
-                        getString(R.string.sky_cloudy_rainy),
-                        getString(R.string.sky_cloudy_rainy_snowy),
-                        getString(R.string.sky_cloudy_shower) -> if (isNight) R.drawable.main_bg_cloudy_night else R.drawable.main_bg_cloudy
+                    getString(R.string.sky_cloudy),
+                    getString(R.string.sky_cloudy_rainy),
+                    getString(R.string.sky_cloudy_rainy_snowy),
+                    getString(R.string.sky_cloudy_shower) -> if (isNight) R.drawable.main_bg_cloudy_night else R.drawable.main_bg_cloudy
 
-                        getString(R.string.sky_snowy),
-                        getString(R.string.sky_sunny_cloudy_snowy),
-                        getString(R.string.sky_cloudy_snowy) -> R.drawable.main_bg_snow
+                    getString(R.string.sky_snowy),
+                    getString(R.string.sky_sunny_cloudy_snowy),
+                    getString(R.string.sky_cloudy_snowy) -> R.drawable.main_bg_snow
 
-                        else -> if (isNight) R.drawable.main_bg_night else R.drawable.main_bg_clear
-                    }
+                    else -> if (isNight) R.drawable.main_bg_night else R.drawable.main_bg_clear
+                }
             }
         )
     }
@@ -1196,7 +1195,7 @@ class MainActivity
             getString(R.string.sky_sunny),
             getString(R.string.sky_rainy),
             getString(R.string.sky_shower),
-            getString(R.string.sky_rainy_snowy) -> setSkyAnimation(if (isNight) R.raw.ani_main_sunny_night else R.raw.ani_main_clear_day)
+            getString(R.string.sky_rainy_snowy) -> setSkyAnimation(if (isNight) R.raw.ani_main_sunny_night else R.raw.ani_main_sunny_day)
 
             getString(R.string.sky_sunny_cloudy),
             getString(R.string.sky_sunny_cloudy_shower),

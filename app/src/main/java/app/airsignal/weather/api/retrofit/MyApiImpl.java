@@ -4,30 +4,31 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
+import app.airsignal.weather.api.NetworkIgnored;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface MyApiImpl {
-    @GET("forecast") // 전체 데이터 호출
+    @GET(NetworkIgnored.weatherPoint) // 전체 데이터 호출
     Call<ApiModel.GetEntireData> getForecast(
-            @Nullable @Query("lat") Double lat,
-            @Nullable @Query("lng") Double lng,
-            @Nullable @Query("addr") String addr);
+            @Nullable @Query(NetworkIgnored.weatherParamLeft) Double lat,
+            @Nullable @Query(NetworkIgnored.weatherParamCenter) Double lng,
+            @Nullable @Query(NetworkIgnored.weatherParamRight) String addr);
 
-    @GET("forecast") // 위젯 데이터 호출
+    @GET(NetworkIgnored.weatherPoint) // 위젯 데이터 호출
     Call<ApiModel.WidgetData> getWidgetForecast(
-            @Nullable @Query("lat") Double lat,
-            @Nullable @Query("lng") Double lng,
-            @Nullable @Query("rcount") Integer count);
+            @Nullable @Query(NetworkIgnored.weatherParamLeft) Double lat,
+            @Nullable @Query(NetworkIgnored.weatherParamCenter) Double lng,
+            @Nullable @Query(NetworkIgnored.weatherParamElse) Integer count);
 
-    @GET("notice") // 공지사항 호출
+    @GET(NetworkIgnored.notiPoint) // 공지사항 호출
     Call<List<ApiModel.NoticeItem>> getNotice();
 
-    @GET("version") // 앱 버전 호출
+    @GET(NetworkIgnored.splashPoint) // 앱 버전 호출
     Call<ApiModel.AppVersion> getVersion();
 
-    @GET("forecast/broadcast") // 기상 특보 데이터 호출
+    @GET(NetworkIgnored.warningPoint) // 기상 특보 데이터 호출
     Call<ApiModel.BroadCastWeather> getBroadCast(
-            @Query("code") int code);
+            @Query(NetworkIgnored.warningParam) int code);
 }
