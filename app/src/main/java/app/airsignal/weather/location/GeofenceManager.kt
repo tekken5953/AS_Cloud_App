@@ -10,6 +10,7 @@ import app.airsignal.weather.view.widget.BaseWidgetProvider
 import com.google.android.gms.location.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import javax.inject.Singleton
 
 class GeofenceManager(private val context: Context): KoinComponent {
     private val requestId = "request_id_geofence"

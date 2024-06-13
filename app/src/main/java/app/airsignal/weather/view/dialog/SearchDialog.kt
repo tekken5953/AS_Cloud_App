@@ -44,8 +44,7 @@ import java.util.concurrent.CompletableFuture
  **/
 class SearchDialog(
     mActivity: Context,
-    lId: Int, private val fm: FragmentManager, private val tagId: String?,
-) : BottomSheetDialogFragment() {
+    lId: Int, private val fm: FragmentManager, private val tagId: String?) : BottomSheetDialogFragment() {
     private val activity = mActivity
     private val layoutId = lId
     val currentList = ArrayList<AdapterModel.AddressListItem>()
@@ -98,7 +97,6 @@ class SearchDialog(
                 if (!currentAdapter.getCheckBoxVisible())
                     currentAdapter.updateCheckBoxVisible(true)
                 else currentAdapter.updateCheckBoxVisible(false)
-
             }
 
             // 현재 주소 클릭 시 현재 주소로 데이터 호출
@@ -164,16 +162,16 @@ class SearchDialog(
         }
         // 주소 등록 다이얼로그 생성
         else {
-            val searchView: EditText = view.findViewById(R.id.searchAddressView)
             val searchBack: ImageView = view.findViewById(R.id.searchBack)
-            val noResult: TextView = view.findViewById(R.id.searchAddressNoResult)
             searchBack.setOnClickListener {
                 CompletableFuture.supplyAsync { this@SearchDialog.dismiss() }.thenAccept { show(0) }
             }
 
-            val listView: ListView = view.findViewById(R.id.searchAddressListView)
-
-            searchEditListener(listView, searchView, noResult)
+            searchEditListener(
+                view.findViewById(R.id.searchAddressListView),
+                view.findViewById(R.id.searchAddressView),
+                view.findViewById(R.id.searchAddressNoResult)
+            )
         }
     }
 
@@ -191,14 +189,14 @@ class SearchDialog(
         listView.adapter = adapter
 
         editText.setOnTouchListener { _, motionEvent ->
-            try {
+            kotlin.runCatching {
                 if (motionEvent.action == MotionEvent.ACTION_UP &&
                     motionEvent.rawX >= editText.right - editText.compoundDrawablesRelative[2].bounds.width()
                 ) {
                     editText.text.clear()
                     return@setOnTouchListener true
                 }
-            } catch (e: java.lang.NullPointerException) { e.printStackTrace() }
+            }.exceptionOrNull()?.stackTraceToString()
 
             false
         }

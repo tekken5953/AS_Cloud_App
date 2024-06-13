@@ -18,9 +18,8 @@ class SensibleTempFormula {
      * @param v 10분 평균 풍속
      * @return 체감온도
      */
-    fun getSensibleTemp(ta: Double, rh: Double, v: Double, month: Int) : Double {
-        return if (month in 5..9) getInSummer(ta, rh) else getInWinter(ta, v)
-    }
+    fun getSensibleTemp(ta: Double, rh: Double, v: Double, month: Int) : Double =
+        if (month in 5..9) getInSummer(ta, rh) else getInWinter(ta, v)
 
     /**
      * 여름철 체감온도 (5월 ~ 9월)
@@ -39,9 +38,8 @@ class SensibleTempFormula {
      * @param ta 기온
      * @param v 10분 평균 풍속
      */
-    private fun getInWinter(ta: Double, v: Double) : Double {
-        return 13.12 + (0.6215 * ta) - (11.37 * v.pow(0.16)) + (0.3965 * v.pow(0.16) * ta)
-    }
+    private fun getInWinter(ta: Double, v: Double) : Double =
+        13.12 + (0.6215 * ta) - (11.37 * v.pow(0.16)) + (0.3965 * v.pow(0.16) * ta)
 
     /**
      * 습구온도 계산공식
@@ -49,11 +47,10 @@ class SensibleTempFormula {
      * @param ta 온도
      * @param rh 상대습도
      */
-    private fun getTw(ta: Double, rh: Double) : Double {
-        return ta * atan(0.151977 * (rh + 8.313659).pow(0.5)) +
+    private fun getTw(ta: Double, rh: Double) : Double =
+        ta * atan(0.151977 * (rh + 8.313659).pow(0.5)) +
                 atan(ta+rh) - atan(rh-1.67633) +
                 (0.00391838 * rh.pow(1.5) * atan(0.023101 * rh)) - 4.686035
-    }
 
     /** 현재 월수 출력 **/
     fun getCurrentSeason() : Int = LocalDateTime.now().monthValue

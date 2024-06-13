@@ -252,4 +252,6 @@
     <string name="no_region_summary">there is no local weather warning\nDo you want to search nationwide?</string>
     <string name="lunar_progress_title">Bright</string>
     <string name="wave">wave</string>
+    <string name="widget_perm_denied">Please change the permission to \'Allow at all times\' and reinstall it</string>
+    <string name="widget_not_refreshable">Data refresh is possible every 1 minute</string>
 </resources>

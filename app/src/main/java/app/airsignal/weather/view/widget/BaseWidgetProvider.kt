@@ -4,10 +4,10 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import app.airsignal.weather.db.sp.GetAppInfo
-import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.api.retrofit.HttpClient
+import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.utils.DataTypeParser.getCurrentTime
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import org.koin.core.component.KoinComponent
@@ -42,16 +42,16 @@ open class BaseWidgetProvider: AppWidgetProvider(), KoinComponent {
 
         if (RequestPermissionsUtil(context).isBackgroundRequestLocation()) return
 
-        val intent = Intent(context, WidgetPermActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        intent.putExtra("sort",sort)
-        intent.putExtra("id",id)
+        val intent = Intent(context, WidgetPermActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            putExtra("sort",sort)
+            putExtra("id",id)
+        }
         context.startActivity(intent)
     }
 
-    fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean {
-        return LocalDateTime.parse(realTime)?.let {LocalDateTime.parse(currentTime).isAfter(it)} ?: true
-    }
+    fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean =
+        LocalDateTime.parse(realTime)?.let {LocalDateTime.parse(currentTime).isAfter(it)} ?: true
 
     fun isRefreshable(context: Context, type: String): Boolean {
         val currentTime = getCurrentTime()

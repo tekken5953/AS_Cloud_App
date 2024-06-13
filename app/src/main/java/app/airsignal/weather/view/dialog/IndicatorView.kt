@@ -50,9 +50,8 @@ class IndicatorView(private val context: Context, private val listSize: Int) {
                 if (i == position) 120 else 35
             )
             animator.addUpdateListener { valueAnimator ->
-                val value = valueAnimator.animatedValue as Int
                 val params = indicators[i].layoutParams
-                params.width = value
+                params.width = (valueAnimator.animatedValue as Int)
                 indicators[i].layoutParams = params
             }
 

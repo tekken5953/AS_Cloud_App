@@ -17,7 +17,7 @@
         android:layout_marginEnd="4dp"
         android:contentDescription="@string/cd_icon_refresh_data"
         android:src="@drawable/w_btn_refresh"
-        app:tint="@color/white" />
+        app:tint="@color/main_black" />
 
     <TextView
         android:id="@+id/widget2x2Time"
@@ -27,7 +27,7 @@
         android:layout_marginEnd="2dp"
         android:layout_toStartOf="@+id/widget2x2Refresh"
         android:letterSpacing="-0.04"
-        android:textColor="@color/white"
+        android:textColor="@color/main_black"
         android:textSize="12sp" />
 
     <ImageView
@@ -39,7 +39,7 @@
         android:layout_marginStart="4dp"
         android:contentDescription="@string/cd_icon_address"
         android:src="@drawable/w_ico_location"
-        app:tint="@color/white" />
+        app:tint="@color/main_black" />
 
     <TextView
         android:id="@+id/widget2x2Address"
@@ -51,7 +51,7 @@
         android:ellipsize="start"
         android:gravity="start"
         android:lines="1"
-        android:textColor="@color/white"
+        android:textColor="@color/main_black"
         android:textSize="13sp" />
 
     <TextView
@@ -62,7 +62,7 @@
         android:layout_marginTop="15dp"
         android:fontFamily="@font/spoqa_hansansneo_medium"
         android:letterSpacing="-0.04"
-        android:textColor="@color/white"
+        android:textColor="@color/main_black"
         android:textSize="32sp" />
 
     <ImageView
@@ -84,7 +84,7 @@
         android:layout_marginBottom="6dp"
         android:alpha="0.8"
         android:gravity="bottom"
-        android:textColor="@color/white"
+        android:textColor="@color/main_black"
         android:textSize="13sp" />
 
     <TextView
@@ -95,6 +95,6 @@
         android:layout_marginStart="4dp"
         android:layout_toEndOf="@+id/widget2x2Pm25Title"
         android:gravity="bottom"
-        android:textColor="@color/white"
+        android:textColor="@color/main_black"
         android:textSize="13sp" />
 </RelativeLayout>

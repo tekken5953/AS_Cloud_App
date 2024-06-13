@@ -78,10 +78,11 @@ class PermissionActivity :
 
         binding.permissionUserDataNotice.setOnClickListener {
             // 개인정보 처리방침 열림
-            val intent = Intent(this@PermissionActivity, WebURLActivity::class.java)
-                intent.putExtra("sort","dataUsage")
-                intent.putExtra("appBar",true)
-                startActivity(intent)
+            val intent = Intent(this@PermissionActivity, WebURLActivity::class.java).apply {
+                putExtra("sort","dataUsage")
+                putExtra("appBar",true)
+            }
+            startActivity(intent)
         }
 
         // 개인정보 처리방침 체크 박스

@@ -5,7 +5,7 @@
     android:id="@+id/w42Background"
     android:layout_width="260dp"
     android:layout_height="130dp"
-    android:background="@drawable/widget_bg4x2_sunny"
+    android:background="@drawable/widget_bg4x2_snow"
     android:padding="@dimen/widget_margin">
 
     <ImageView

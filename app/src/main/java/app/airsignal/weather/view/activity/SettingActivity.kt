@@ -692,17 +692,19 @@ class SettingActivity
 
         // 이용약관 클릭
         appInfoTermsService.setOnClickListener {
-            val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
-            intent.putExtra("sort", "termsOfService")
-            intent.putExtra("appBar",true)
+            val intent = Intent(this@SettingActivity, WebURLActivity::class.java).apply {
+                putExtra("sort", "termsOfService")
+                putExtra("appBar",true)
+            }
             startActivity(intent)
         }
 
         // 개인 정보 처리 방침 클릭
         appInfoDataUsage.setOnClickListener {
-            val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
-            intent.putExtra("sort", "dataUsage")
-            intent.putExtra("appBar",true)
+            val intent = Intent(this@SettingActivity, WebURLActivity::class.java).apply {
+                putExtra("sort", "dataUsage")
+                putExtra("appBar",true)
+            }
             startActivity(intent)
         }
 

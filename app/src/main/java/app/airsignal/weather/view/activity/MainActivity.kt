@@ -425,8 +425,7 @@ class MainActivity
                 warning.setOnClickListener(object : OnSingleClickListener() {
                     override fun onSingleClick(v: View?) {
                         closeMenuAndCallback {
-                            val intent =
-                                Intent(this@MainActivity, WarningDetailActivity::class.java)
+                            val intent = Intent(this@MainActivity, WarningDetailActivity::class.java)
                             startActivity(intent)
                         }
                     }

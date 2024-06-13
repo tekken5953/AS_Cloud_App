@@ -7,16 +7,16 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
+import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.location.GeofenceManager
-import app.airsignal.weather.api.retrofit.ApiModel
-import app.airsignal.weather.utils.VibrateUtil
 import app.airsignal.weather.utils.DataTypeParser
 import app.airsignal.weather.utils.DataTypeParser.convertValueToGrade
 import app.airsignal.weather.utils.DataTypeParser.getDataText
+import app.airsignal.weather.utils.VibrateUtil
+import app.airsignal.weather.utils.plain.ToastUtils
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import kotlinx.coroutines.*
@@ -66,7 +66,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         }
 
         if (!isRefreshable(context, WIDGET_42)) {
-            Toast.makeText(context.applicationContext,"갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
+            ToastUtils(context).showMessage(context.getString(R.string.widget_not_refreshable))
             return
         }
 
