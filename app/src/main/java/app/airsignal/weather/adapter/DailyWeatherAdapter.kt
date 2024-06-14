@@ -53,11 +53,9 @@ class DailyWeatherAdapter(
         holder.bind(mList[position]).apply {
             if (position == 0 ||
                 LocalDateTime.parse(mList[position - 1].date).toLocalDate()
-                    .compareTo(LocalDateTime.parse(mList[position].date).toLocalDate()) != 0) {
-                if (!dateSection.contains(position)) {
-                    dateSection.add(position)
-                }
-            }
+                    .compareTo(LocalDateTime.parse(mList[position].date).toLocalDate()) != 0)
+                if (!dateSection.contains(position)) dateSection.add(position)
+
 
             holder.rain.visibility = if (mList[position].isRain) View.VISIBLE else View.INVISIBLE
         }

@@ -29,7 +29,7 @@ class GpsRepository(private val context: Context) {
         return@withContext getInstance(context).gpsRepository().findAll()
     }
 
-    suspend fun findByName(name: String): GpsEntity = withContext(Dispatchers.IO) {
+    suspend fun findByName(name: String): GpsEntity? = withContext(Dispatchers.IO) {
         return@withContext getInstance(context).gpsRepository().findByNameWithCoroutine(name)
     }
 

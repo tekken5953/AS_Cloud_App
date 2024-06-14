@@ -13,4 +13,11 @@ object NetworkIgnored {
     const val weatherParamRight = "addr"
     const val weatherParamElse = "rcount"
     const val warningParam = "code"
+
+    const val headerConnection = "close"
+    const val headerPlatform = "android"
+
+    const val connectTimeout = 8L
+    const val readTimeout = 8L
+    const val writeTimeout = 8L
 }

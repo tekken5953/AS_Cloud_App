@@ -1745,20 +1745,22 @@ class MainActivity
         kotlin.runCatching {
             ioThread.launch {
                 val db = GpsRepository(this@MainActivity).findByName(SpDao.CURRENT_GPS_ID)
-                val lat = db.lat
-                val lng = db.lng
+                val lat = db?.lat
+                val lng = db?.lng
 
-                if (lat == null || lng == null) hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
-                else {
+                if (lat == null || lng == null) {
+                    ToastUtils(this@MainActivity)
+                        .showMessage(getString(R.string.error_not_service_locale))
+                    loadSavedViewModelData(getString(R.string.seoul_si))
+                } else {
                     if (isKorea(lat, lng)) {
-                        ToastUtils(this@MainActivity)
-                            .showMessage(getString(R.string.last_location_call_msg), 1)
-                        processAddress(lat, lng, locationClass.getAddress(lat, lng))
-                    } else {
-                        ToastUtils(this@MainActivity)
-                            .showMessage(getString(R.string.error_not_service_locale))
-                        loadSavedViewModelData(getString(R.string.seoul_si))
-                    }
+                        val getAddr = locationClass.getAddress(lat, lng)
+                        if (getAddr != "") {
+                            ToastUtils(this@MainActivity)
+                                .showMessage(getString(R.string.last_location_call_msg), 1)
+                            processAddress(lat, lng, getAddr)
+                        } else hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
+                    } else loadSavedViewModelData(getString(R.string.seoul_si))
                 }
             }
         }.onFailure { exception ->

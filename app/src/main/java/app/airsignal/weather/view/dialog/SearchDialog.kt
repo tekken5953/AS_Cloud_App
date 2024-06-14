@@ -104,12 +104,12 @@ class SearchDialog(
                 this@SearchDialog.dismiss()
                 CoroutineScope(Dispatchers.IO).launch {
                     val dbFind = db.findByName(SpDao.CURRENT_GPS_ID)
-                    dbUpdate(dbFind.addrKr,dbFind.addrEn,SpDao.CURRENT_GPS_ID)
+                    dbUpdate(dbFind?.addrKr,dbFind?.addrEn,SpDao.CURRENT_GPS_ID)
 
                     withContext(Dispatchers.Main) {
                         this@SearchDialog.dismiss()
                         delay(300)
-                        if (activity is MainActivity) activity.recreateMainActivity(dbFind.addrKr,dbFind.addrEn)
+                        if (activity is MainActivity) activity.recreateMainActivity(dbFind?.addrKr,dbFind?.addrEn)
                     }
                 }
             }
@@ -209,23 +209,20 @@ class SearchDialog(
                 if (s != null && s.isNotEmpty()) {
                     searchItem.clear()
                     editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        0, 0, R.drawable.ico_search_x, 0
-                    )
+                        0, 0, R.drawable.ico_search_x, 0)
                     noResult.visibility = View.GONE
 
                     allTextArray.forEach { allList ->
                         val nonSpacing = s.toString().replace(" ", "").lowercase()
                         if (allList.replace(" ", "").lowercase().contains(nonSpacing) ||
-                            DataTypeParser.convertAddress(allList).replace(" ", "").lowercase()
-                                .contains(nonSpacing)
-                        ) searchItem.add(allList)
+                            DataTypeParser.convertAddress(allList).replace(" ", "")
+                                .lowercase().contains(nonSpacing)) searchItem.add(allList)
                     }
                 } else {
                     noResult.visibility = View.VISIBLE
                     searchItem.clear()
                     editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        0, 0, android.R.color.transparent, 0
-                    )
+                        0, 0, android.R.color.transparent, 0)
                 }
                 adapter.notifyDataSetChanged()
             }
@@ -246,9 +243,7 @@ class SearchDialog(
                 val cancel = viewSearched.findViewById<AppCompatButton>(R.id.alertDoubleCancelBtn)
                 val apply = viewSearched.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
                 val title = viewSearched.findViewById<TextView>(R.id.alertDoubleTitle)
-
-                val span =
-                    if (resources.configuration.locales[0] == Locale.KOREA)
+                val span = if (resources.configuration.locales[0] == Locale.KOREA)
                     SpannableStringBuilder("${searchItem[position]}을(를)\n추가하시겠습니까?")
                     else SpannableStringBuilder("Add ${searchItem[position]}?")
 
@@ -278,8 +273,7 @@ class SearchDialog(
                             lat = null,
                             lng = null,
                             addrEn = null,
-                            addrKr = null
-                        )
+                            addrKr = null)
 
                         val addrArray =  resources.getStringArray(
                             if (!isKorea()) R.array.address_english
@@ -292,12 +286,12 @@ class SearchDialog(
                             }
                         }
                         db.insert(model)
-                        dbUpdate(model.addrKr,model.addrEn,model.name)
+                        dbUpdate(model.addrKr, model.addrEn, model.name)
 
                         withContext(Dispatchers.Main) {
                             this@SearchDialog.dismiss()
                             delay(300)
-                            if (activity is MainActivity) activity.recreateMainActivity(model.addrKr,model.addrEn)
+                            if (activity is MainActivity) activity.recreateMainActivity(model.addrKr, model.addrEn)
                         }
                     }
                 }
@@ -323,7 +317,7 @@ class SearchDialog(
     }
 
     // 레이아웃 노출
-    fun show(layoutId: Int) { SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId) }
+    fun show(layoutId: Int) = SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId)
 
     private fun dbUpdate(addrKr: String?, addrEn: String?, name: String) {
         val model = GpsEntity(
@@ -338,10 +332,9 @@ class SearchDialog(
         SetAppInfo.setUserLastAddr(activity, addrKr ?: "")
     }
 
-    private fun isKorea(): Boolean {
-        val systemLang = GetSystemInfo.getLocale(activity)
-        return GetAppInfo.getUserLocation(activity) == SpDao.LANG_KR || systemLang == Locale.KOREA
-    }
+    private fun isKorea(): Boolean =
+        GetAppInfo.getUserLocation(activity) == SpDao.LANG_KR ||
+                GetSystemInfo.getLocale(activity) == Locale.KOREA
 
     // 리스트 아이템 추가
     private fun addCurrentItem(addrKr: String?, addrEn: String?): SearchDialog {
@@ -365,7 +358,7 @@ class SearchDialog(
     }
 
     // 바텀 다이얼로그 비율설정
-    private fun getBottomSheetDialogDefaultHeight(per: Int): Int { return getWindowHeight() * per / 100 }
+    private fun getBottomSheetDialogDefaultHeight(per: Int): Int = getWindowHeight() * per / 100
 
     // 디바이스 높이 구하기
     private fun getWindowHeight(): Int {

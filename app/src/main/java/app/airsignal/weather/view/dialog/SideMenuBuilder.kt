@@ -54,7 +54,7 @@ class SideMenuBuilder(private val context: Context) {
             .into(profile)
 
         val email = GetAppInfo.getUserEmail(context)
-        id.text = if(email != "") email else context.getString(R.string.please_login)
+        id.text = if (email != "") email else context.getString(R.string.please_login)
 
         return this
     }
@@ -75,8 +75,7 @@ class SideMenuBuilder(private val context: Context) {
         params?.let {
             it.width = getBottomSheetDialogDefaultWidth(75)
             it.gravity = Gravity.START
-            // 열기&닫기 시 애니메이션 설정
-            it.windowAnimations = R.style.DialogAnimationMenuAnim
+            it.windowAnimations = R.style.DialogAnimationMenuAnim // 열기 & 닫기 시 애니메이션 설정
         }
 
         alertDialog.window?.attributes = params
@@ -87,8 +86,7 @@ class SideMenuBuilder(private val context: Context) {
 
     // 디바이스 넓이 구하기
     private fun getWindowWidth(): Int {
-        // 디바이스의 width 를 구한다
-        val displayMetrics = DisplayMetrics()
+        val displayMetrics = DisplayMetrics()   // 디바이스의 width 를 구한다
         @Suppress("DEPRECATION")
         if (context is Activity) context.windowManager.defaultDisplay.getMetrics(displayMetrics)
         return displayMetrics.widthPixels

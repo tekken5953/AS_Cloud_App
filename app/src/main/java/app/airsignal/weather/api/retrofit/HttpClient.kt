@@ -1,5 +1,6 @@
 package app.airsignal.weather.api.retrofit
 
+import app.airsignal.weather.api.NetworkIgnored
 import app.airsignal.weather.api.NetworkIgnored.hostingServerURL
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
@@ -20,18 +21,16 @@ object HttpClient {
         OkHttpClient.Builder().apply {
             retryOnConnectionFailure(retryOnConnectionFailure = false)
             connectionPool(ConnectionPool())
-            connectTimeout(8, TimeUnit.SECONDS)
-            readTimeout(8, TimeUnit.SECONDS)
-            writeTimeout(8, TimeUnit.SECONDS)
+            connectTimeout(NetworkIgnored.connectTimeout, TimeUnit.SECONDS)
+            readTimeout(NetworkIgnored.readTimeout, TimeUnit.SECONDS)
+            writeTimeout(NetworkIgnored.writeTimeout, TimeUnit.SECONDS)
             addInterceptor { chain ->
                 chain.proceed(
                     kotlin.runCatching {
-                        val request = chain.request().newBuilder()
-                            .addHeader("Connection", "close")
-                            .addHeader("Platform", "android")
+                        chain.request().newBuilder()
+                            .addHeader("Connection", NetworkIgnored.headerConnection)
+                            .addHeader("Platform", NetworkIgnored.headerPlatform)
                             .build()
-
-                        request
                     }.getOrElse { chain.request() }
                 )
             }.build()
