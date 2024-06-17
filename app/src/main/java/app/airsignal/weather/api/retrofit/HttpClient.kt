@@ -6,10 +6,8 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
-import org.apache.http.conn.ConnectionPoolTimeoutException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.net.SocketTimeoutException
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime

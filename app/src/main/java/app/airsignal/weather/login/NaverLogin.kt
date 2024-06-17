@@ -1,6 +1,5 @@
 package app.airsignal.weather.login
 
-import android.accounts.AuthenticatorException
 import android.app.Activity
 import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.R
@@ -9,10 +8,9 @@ import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.utils.plain.TimberUtil
-import app.airsignal.weather.utils.view.RefreshUtils
 import app.airsignal.weather.utils.plain.ToastUtils
+import app.airsignal.weather.utils.view.RefreshUtils
 import app.airsignal.weather.view.activity.LoginActivity
-import app.airsignal.weather.view.activity.MainActivity
 import com.airbnb.lottie.LottieAnimationView
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin

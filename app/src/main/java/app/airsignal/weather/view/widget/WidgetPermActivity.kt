@@ -1,6 +1,5 @@
 package app.airsignal.weather.view.widget
 
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import app.airsignal.weather.R
 import app.airsignal.weather.utils.plain.ToastUtils

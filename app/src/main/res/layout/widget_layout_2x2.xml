@@ -22,13 +22,14 @@
     <TextView
         android:id="@+id/widget2x2Time"
         style="@style/basicTextView"
-        android:layout_alignTop="@+id/widget2x2Address"
-        android:layout_alignBottom="@+id/widget2x2Address"
         android:layout_marginEnd="2dp"
-        android:layout_toStartOf="@+id/widget2x2Refresh"
+        android:layout_alignEnd="@+id/widget2x2Refresh"
+        android:gravity="bottom|end"
+        android:layout_alignBottom="@+id/widget2x2Pm25Value"
+        android:layout_alignTop="@+id/widget2x2Pm25Value"
         android:letterSpacing="-0.04"
         android:textColor="@color/main_black"
-        android:textSize="12sp" />
+        android:textSize="13sp" />
 
     <ImageView
         android:id="@+id/widget2x2LocIv"
@@ -59,9 +60,9 @@
         style="@style/basicMediumTextView"
         android:layout_below="@+id/widget2x2Address"
         android:layout_alignStart="@+id/widget2x2LocIv"
-        android:layout_marginTop="15dp"
         android:fontFamily="@font/spoqa_hansansneo_medium"
         android:letterSpacing="-0.04"
+        android:layout_marginTop="15dp"
         android:textColor="@color/main_black"
         android:textSize="32sp" />
 

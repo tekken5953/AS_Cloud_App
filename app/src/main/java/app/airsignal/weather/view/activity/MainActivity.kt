@@ -26,6 +26,9 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.viewpager2.widget.ViewPager2
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.*
+import app.airsignal.weather.api.ErrorCode
+import app.airsignal.weather.api.NetworkUtils
+import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.StaticDataObject
@@ -39,15 +42,9 @@ import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.location.AddressFromRegex
 import app.airsignal.weather.location.GetLocation
 import app.airsignal.weather.login.SilentLoginClass
-import app.airsignal.weather.api.ErrorCode
-import app.airsignal.weather.api.NetworkUtils
-import app.airsignal.weather.api.retrofit.ApiModel
-import app.airsignal.weather.login.NaverLogin
-import app.airsignal.weather.utils.controller.OnSingleClickListener
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.utils.*
-import app.airsignal.weather.utils.DataTypeParser
-import app.airsignal.weather.utils.TypeFaceObject
+import app.airsignal.weather.utils.controller.OnSingleClickListener
 import app.airsignal.weather.utils.plain.*
 import app.airsignal.weather.utils.view.EnterPageUtil
 import app.airsignal.weather.utils.view.RefreshUtils
@@ -552,7 +549,7 @@ class MainActivity
 
         // 자동 로그인
         CoroutineScope(Dispatchers.IO).launch {
-            SilentLoginClass().login(this@MainActivity)
+            SilentLoginClass(this@MainActivity).login()
         }
         //AdMob 초기화
 //        AdViewClass(this).loadAdView(sideMenuView.findViewById(R.id.navMenuAdview))

@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebViewClient
-import androidx.appcompat.app.AppCompatDelegate
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.databinding.ActivityWebUrlBinding
-import app.airsignal.weather.utils.DataTypeParser
 import app.airsignal.weather.utils.controller.ScreenController
 import app.airsignal.weather.utils.view.WebViewSetting
 

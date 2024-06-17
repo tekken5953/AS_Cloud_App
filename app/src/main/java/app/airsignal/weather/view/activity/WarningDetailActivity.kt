@@ -13,7 +13,6 @@ import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.location.AddressFromRegex
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.utils.DataTypeParser
 import app.airsignal.weather.utils.controller.ScreenController
 import app.airsignal.weather.viewmodel.GetWarningViewModel
 import org.koin.android.ext.android.inject
@@ -21,7 +20,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.ArrayList
 
 class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     override val resID: Int get() = R.layout.activity_warning_detail
