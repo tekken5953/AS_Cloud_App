@@ -20,8 +20,7 @@ import java.net.SocketTimeoutException
  **/
 class GetWeatherRepo : BaseRepository() {
     // 날씨 호출 Response Body : Map
-    var _getDataResult =
-        MutableLiveData<ApiState<ApiModel.GetEntireData>?>()
+    var _getDataResult = MutableLiveData<ApiState<ApiModel.GetEntireData>?>()
 
     fun loadDataResult(lat: Double?, lng: Double?, addr: String?) {
         CoroutineScope(Dispatchers.Default).launch {
@@ -46,8 +45,7 @@ class GetWeatherRepo : BaseRepository() {
                     }
 
                     override fun onFailure(
-                        call: Call<ApiModel.GetEntireData>,
-                        t: Throwable) {
+                        call: Call<ApiModel.GetEntireData>, t: Throwable) {
                         kotlin.runCatching {
                             _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_GET_DATA))
                             call.cancel()

@@ -57,7 +57,7 @@ internal class GpsDatabaseTest {
 
             val expectedName = "test name"
 
-            assertEquals(expectedName, retrievedUser.name)
+            assertEquals(expectedName, retrievedUser?.name)
         }
     }
 
@@ -69,7 +69,7 @@ internal class GpsDatabaseTest {
 
             val getName = gpsDao.findByNameWithCoroutine(previousName)
 
-            assertEquals(previousName, getName.name)
+            assertEquals(previousName, getName?.name)
 
             testGpsEntity.name = replacedName
 
@@ -87,13 +87,13 @@ internal class GpsDatabaseTest {
 
             val getDao = gpsDao.findByNameWithCoroutine(previousName)
 
-            assertEquals(previousName, getDao.name)
+            assertEquals(previousName, getDao?.name)
 
             gpsDao.deleteFromAddrWithCoroutine(deletedKrName)
 
             val deletedDao = gpsDao.findByNameWithCoroutine(previousName)
 
-            assertNotEquals(previousName, deletedDao.name)
+            assertNotEquals(previousName, deletedDao?.name)
         }
     }
 }

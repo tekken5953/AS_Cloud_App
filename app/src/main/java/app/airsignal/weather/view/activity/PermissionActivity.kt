@@ -17,6 +17,7 @@ import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.utils.view.EnterPageUtil
 import app.airsignal.weather.utils.DataTypeParser
 import app.airsignal.weather.utils.controller.ScreenController
+import app.airsignal.weather.utils.plain.ToastUtils
 import app.airsignal.weather.view.perm.FirstLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -33,7 +34,8 @@ class PermissionActivity :
 
         @Suppress("DEPRECATION")
         val inAppExtraList =
-            intent.getParcelableArrayExtra(SpDao.IN_APP_MSG)?.map { it as ApiModel.InAppMsgItem? }
+            intent.getParcelableArrayExtra(SpDao.IN_APP_MSG)
+                ?.map { it as ApiModel.InAppMsgItem? }
                 ?.toTypedArray()
 
         if (perm.isNotificationPermitted()) {
@@ -44,7 +46,7 @@ class PermissionActivity :
         }
 
         if (GetAppInfo.getInitNotiPermission(this) != "") {
-            Toast.makeText(this, getString(R.string.noti_always_can), Toast.LENGTH_SHORT).show()
+            ToastUtils(this).showMessage(getString(R.string.noti_always_can))
             enter.toMain(GetAppInfo.getUserLoginPlatform(this), inAppExtraList)
             return
         }
@@ -92,7 +94,7 @@ class PermissionActivity :
 
         // 권한 허용 버튼 클릭
         binding.permissionOkBtn.setOnClickListener {
-            FirstLocCheckDialog(this, supportFragmentManager, BottomSheetDialogFragment().tag).show()
+            FirstLocCheckDialog(this,supportFragmentManager,BottomSheetDialogFragment().tag).show()
         }
     }
 

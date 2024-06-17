@@ -29,8 +29,7 @@ class GetWarningRepo: BaseRepository() {
                     kotlin.runCatching {
                         if (response.isSuccessful)
                             responseBody?.let {_getWarningResult.postValue(ApiState.Success(responseBody))}
-                        else
-                            _getWarningResult.postValue(ApiState.Error(ErrorCode.ERROR_API_PROTOCOL))
+                        else _getWarningResult.postValue(ApiState.Error(ErrorCode.ERROR_API_PROTOCOL))
                     }.onFailure {
                         _getWarningResult.postValue(ApiState.Error(ErrorCode.ERROR_SERVER_CONNECTING))
                     }

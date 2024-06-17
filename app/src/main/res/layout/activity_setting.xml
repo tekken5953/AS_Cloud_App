@@ -126,15 +126,25 @@
                         android:layout_alignParentEnd="true"
                         android:layout_gravity="end"
                         android:padding="5dp"
-                        android:text="@string/setting_logout"
+                        android:text="@string/login_title"
                         android:textColor="@color/red"
                         android:textSize="16sp" />
                 </RelativeLayout>
 
+<!--                <TextView-->
+<!--                    android:id="@+id/settingResetAccount"-->
+<!--                    style="@style/basicTextView"-->
+<!--                    android:text="등록 계정 초기화"-->
+<!--                    android:textSize="14sp"-->
+<!--                    android:textColor="@color/red"-->
+<!--                    android:layout_marginTop="12dp"-->
+<!--                    app:layout_constraintStart_toStartOf="@+id/settingUserTr"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/settingUserTr"/>-->
+
                 <TextView
                     android:id="@+id/settingThemeTitle"
                     style="@style/basicTextView"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="25dp"
                     android:fontFamily="@font/spoqa_hansansneo_bold"
                     android:text="@string/system"
                     android:textColor="@color/theme_sub_color"

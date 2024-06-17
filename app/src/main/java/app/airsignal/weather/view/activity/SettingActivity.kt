@@ -106,6 +106,22 @@ class SettingActivity
         // 뒤로가기 버튼 클릭
         binding.settingBack.setOnClickListener { goMain() }
 
+//        binding.settingResetAccount.setOnClickListener {
+//            val builder = MakeDoubleDialog(this)
+//            val dialog = builder.make(
+//                "등록된 모든 계정이 초기화됩니다", "초기화", getString(R.string.cancel), R.color.red
+//            )
+//
+//            dialog.first.setOnClickListener {
+//                CoroutineScope(Dispatchers.IO).launch {
+//
+//                }
+//            }
+//            dialog.second.setOnClickListener {
+//                builder.dismiss()
+//            }
+//        }
+
         // 로그아웃 버튼 클릭
         binding.settingLogOut.setOnClickListener {
             if (binding.settingLogOut.text == getString(R.string.setting_logout)) {
@@ -128,9 +144,9 @@ class SettingActivity
                     ioThread.launch {
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
                             RDBLogcat.LOGIN_KAKAO ->
-                                KakaoLogin(this@SettingActivity).disconnectFromKakao(binding.settingPb)
+                                KakaoLogin(this@SettingActivity).logout(binding.settingPb)
                             RDBLogcat.LOGIN_NAVER ->
-                                NaverLogin(this@SettingActivity).init().disconnectFromNaver(binding.settingPb)
+                                NaverLogin(this@SettingActivity).init().logout(binding.settingPb)
                             RDBLogcat.LOGIN_GOOGLE ->
                                 GoogleLogin(this@SettingActivity).logout(binding.settingPb)
                         }

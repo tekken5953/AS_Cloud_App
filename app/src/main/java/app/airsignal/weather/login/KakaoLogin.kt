@@ -16,10 +16,7 @@ import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 /**
  * @author : Lee Jae Young
@@ -40,24 +37,18 @@ class KakaoLogin(private val activity: Activity) {
                 if (error != null) {
                     btn?.alpha = 1f
                     // 사용자가 취소
-                    if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled)) {
+                    if ((error is ClientError) && (error.reason == ClientErrorCause.Cancelled))
                         return@loginWithKakaoTalk
-                    }
                     // 다른 오류
-                    else {
-                        UserApiClient.instance.loginWithKakaoAccount(
-                            activity,
-                            callback = mCallback
-                        )
-                    }
+                    else UserApiClient.instance.loginWithKakaoAccount(activity, callback = mCallback)
                 }
                 else {
+                    UserApiClient.instance.me { _, _ -> }
                     // 로그인 성공 부분
                     token?.let {
                         loginSilenceKakao()
                         enterMainPage()
                     }
-                    UserApiClient.instance.me { user, _ -> }
                 }
             }
         }
@@ -77,9 +68,7 @@ class KakaoLogin(private val activity: Activity) {
         }
     }
 
-    fun getAccessToken() : Boolean {
-        return AuthApiClient.instance.hasToken()
-    }
+    fun getAccessToken() : Boolean = AuthApiClient.instance.hasToken()
 
 //    /** 자동 로그인 **/
 //    private fun isValidToken(): String? {
@@ -94,7 +83,7 @@ class KakaoLogin(private val activity: Activity) {
 //                        logger.e(TAG_L,"기타 에러 발생 : $error") //기타 에러
 //                        "error"
 //                    }
-//                } else info.toString()//토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
+//                } else info.toString() //토큰 유효성 체크 성공(필요 시 토큰 갱신됨)
 //            }
 //            return token
 //        } else {
@@ -126,9 +115,9 @@ class KakaoLogin(private val activity: Activity) {
     private fun enterMainPage() {
         CoroutineScope(Dispatchers.IO).launch {
             saveUserSettings()
-
+            SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_KAKAO)
             withContext(Dispatchers.Main) {
-                SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_KAKAO)
+                delay(500)
                 activity.finish()
             }
         }
@@ -151,26 +140,22 @@ class KakaoLogin(private val activity: Activity) {
 
     /** 카카오 로그아웃 + 기록 **/
     fun logout(pb: LottieAnimationView?) {
-        try {
+        kotlin.runCatching {
             UserApiClient.instance.logout { error ->
-                if (error != null) {
-                    ToastUtils(activity)
-                        .showMessage("로그아웃에 실패했습니다",1)
-                } else {
-                    RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = pb)
+                if (error != null) ToastUtils(activity).showMessage("로그아웃에 실패했습니다",1)
+                else {
+                    activity.runOnUiThread {
+                        RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = pb)
+                    }
                 }
             }
-        } catch (e: UninitializedPropertyAccessException) {
-            e.printStackTrace()
-        }
+        }.exceptionOrNull()?.stackTraceToString()
     }
 
     /** 클라이언트와 완전히 연결 끊기 **/
     fun disconnectFromKakao(pb: LottieAnimationView?) {
         UserApiClient.instance.unlink {
-            pb?.let {
-                RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = it)
-            }
+            pb?.let { RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = it) }
         }
     }
 }

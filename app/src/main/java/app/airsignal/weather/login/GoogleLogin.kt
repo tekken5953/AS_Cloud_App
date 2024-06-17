@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * @author : Lee Jae Young
@@ -36,64 +37,57 @@ class GoogleLogin(private val activity: Activity) {
 
     /** 로그인 진행 + 로그인 버튼 비활성화 **/
     fun login(mBtn: AppCompatButton, result: ActivityResultLauncher<Intent>) {
-        try {
+        kotlin.runCatching {
             val signInIntent: Intent = client.signInIntent
             result.launch(signInIntent)
             mBtn.alpha = 0.7f
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
+        }.exceptionOrNull()?.stackTraceToString()
     }
 
     /** 토큰 유효성 검사 **/
-    fun isValidToken() : Boolean { return lastLogin?.idToken != null }
+    fun isValidToken(): Boolean = lastLogin?.idToken != null
 
     /** 로그아웃 진행 + 로그아웃 로그 저장 **/
     fun logout(pb: LottieAnimationView?) {
         client.signOut()
             .addOnCompleteListener {
                 pb?.let {
-                    RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = it)
+                    activity.runOnUiThread {
+                        RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = it)
+                    }
                 }
             }
             .addOnCanceledListener {
-                ToastUtils(activity)
-                    .showMessage("로그아웃에 실패했습니다",1)
+                ToastUtils(activity).showMessage("로그아웃에 실패했습니다",1)
             }
     }
 
     /** 자동 로그인 **/
     fun checkSilenceLogin() {
         client.silentSignIn()
-            .addOnCompleteListener {
-                handleSignInResult(it)
-            }
+            .addOnCompleteListener { handleSignInResult(it) }
             .addOnFailureListener {
-                ToastUtils(activity)
-                    .showMessage("마지막 로그인 세션을 찾을 수 없습니다",1)
+                ToastUtils(activity).showMessage("마지막 로그인 세션을 찾을 수 없습니다",1)
             }
     }
 
     /** 앱에 필요한 사용자 데이터를 요청하도록 로그인 옵션을 설정
      *
      * DEFAULT_SIGN_IN parameter 는 유저의 ID와 기본적인 프로필 정보를 요청하는데 사용**/
-    private fun getGoogleSignInOptions(): GoogleSignInOptions {
-        return GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+    private fun getGoogleSignInOptions(): GoogleSignInOptions =
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(IgnoredKeyFile.googleDefaultClientId) // 토큰 요청
             .requestEmail() // email addresses 도 요청함
             .build()
-    }
 
     /** 사용자의 로그인 정보를 저장
      *
      * TODO 구글로그인은 아직 테스팅 단계라 임시로 파라미터를 설정**/
-    private fun saveLoginStatus() {
-        SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_GOOGLE)
-    }
+    private fun saveLoginStatus() = SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_GOOGLE)
 
     /** 로그인 이벤트 성공 **/
     fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
-        try {
+        kotlin.runCatching {
             val account = completedTask.getResult(ApiException::class.java)
             val email = account.email?.lowercase() ?: ""
             val displayName = account.displayName
@@ -105,12 +99,12 @@ class GoogleLogin(private val activity: Activity) {
                 SetAppInfo.setUserId(activity, displayName.toString())
                 SetAppInfo.setUserProfile(activity, photo)
                 SetAppInfo.setUserEmail(activity, email)
-            }
 
-            saveLoginStatus()
-            activity.finish()
-        } catch (e: ApiException) {
-            e.printStackTrace()
-        }
+                withContext(Dispatchers.Main) {
+                    saveLoginStatus()
+                    activity.finish()
+                }
+            }
+        }.exceptionOrNull()?.stackTraceToString()
     }
 }

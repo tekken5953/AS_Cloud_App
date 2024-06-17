@@ -10,7 +10,7 @@ import app.airsignal.weather.db.sp.GetAppInfo
  **/
 class SilentLoginClass {
     /** 플랫폼 별 자동로그인 **/
-    fun login(activity: Activity) {
+    suspend fun login(activity: Activity) {
         when (GetAppInfo.getUserLoginPlatform(activity)) {
             RDBLogcat.LOGIN_GOOGLE -> {
                 // 구글 자동 로그인
@@ -18,13 +18,14 @@ class SilentLoginClass {
                 if (!googleLogin.isValidToken()) googleLogin.checkSilenceLogin()
             }
             RDBLogcat.LOGIN_KAKAO -> {
-                // 카카오 자동 로그인
-                KakaoLogin(activity).checkInstallKakaoTalk(null)
+                KakaoLogin(activity).checkInstallKakaoTalk(null) // 카카오 자동 로그인
             }
+
             RDBLogcat.LOGIN_NAVER -> {
                 // 네이버 자동 로그인
                 val naverLogin = NaverLogin(activity).init()
-                if (naverLogin.getAccessToken() == null) naverLogin.silentLogin()
+                if (naverLogin.getAccessToken() != null) naverLogin.silentLogin()
+                else naverLogin.refreshToken()
             }
         }
     }

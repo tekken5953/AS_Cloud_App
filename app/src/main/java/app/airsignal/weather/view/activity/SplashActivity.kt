@@ -163,6 +163,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                         }
                         // 통신 중
                         is BaseRepository.ApiState.Loading -> {}
+                        else -> {}
                     }
                 }
             }
