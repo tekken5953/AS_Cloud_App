@@ -71,6 +71,10 @@ class GoogleLogin(private val activity: Activity) {
             }
     }
 
+    fun revokeAccess() {
+        client.revokeAccess()
+    }
+
     /** 앱에 필요한 사용자 데이터를 요청하도록 로그인 옵션을 설정
      *
      * DEFAULT_SIGN_IN parameter 는 유저의 ID와 기본적인 프로필 정보를 요청하는데 사용**/

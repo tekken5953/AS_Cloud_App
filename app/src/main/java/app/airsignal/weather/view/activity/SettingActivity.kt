@@ -57,6 +57,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -80,6 +81,10 @@ class SettingActivity
 
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
     private val httpClient by inject<HttpClient>()
+
+    private val googleLogin: GoogleLogin by inject { parametersOf(this) }  // 구글 로그인
+    private val kakaoLogin: KakaoLogin by inject { parametersOf(this) }   // 카카오 로그인
+    private val naverLogin: NaverLogin by inject { parametersOf(this) }  // 네이버 로그인
 
     override fun onResume() {
         super.onResume()
@@ -143,12 +148,9 @@ class SettingActivity
                     builder.dismiss()
                     ioThread.launch {
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
-                            RDBLogcat.LOGIN_KAKAO ->
-                                KakaoLogin(this@SettingActivity).logout(binding.settingPb)
-                            RDBLogcat.LOGIN_NAVER ->
-                                NaverLogin(this@SettingActivity).init().logout(binding.settingPb)
-                            RDBLogcat.LOGIN_GOOGLE ->
-                                GoogleLogin(this@SettingActivity).logout(binding.settingPb)
+                            RDBLogcat.LOGIN_KAKAO -> kakaoLogin.logout(binding.settingPb)
+                            RDBLogcat.LOGIN_NAVER -> naverLogin.init().logout(binding.settingPb)
+                            RDBLogcat.LOGIN_GOOGLE -> googleLogin.logout(binding.settingPb)
                         }
 
                         delay(100)

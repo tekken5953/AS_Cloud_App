@@ -27,7 +27,7 @@ class WeatherApp : Application() {
         super.onCreate()
 
         startKoin {
-            androidLogger(level = Level.DEBUG)
+            androidLogger(level = Level.INFO)
             androidContext(this@WeatherApp)
             modules(listOf(baseModule,repositoryModule,viewModelModule,loginModule))
         }
