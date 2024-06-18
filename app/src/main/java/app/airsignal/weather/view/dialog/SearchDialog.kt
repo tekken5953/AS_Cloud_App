@@ -3,6 +3,7 @@ package app.airsignal.weather.view.dialog
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -26,9 +27,9 @@ import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.room.model.GpsEntity
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.*
-import app.airsignal.weather.util.KeyboardController
-import app.airsignal.weather.util.OnAdapterItemSingleClick
-import app.airsignal.weather.util.`object`.DataTypeParser
+import app.airsignal.weather.utils.DataTypeParser
+import app.airsignal.weather.utils.controller.KeyboardController
+import app.airsignal.weather.utils.controller.OnAdapterItemSingleClick
 import app.airsignal.weather.view.activity.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -42,9 +43,8 @@ import java.util.concurrent.CompletableFuture
  * @since : 2023-04-11 오전 11:53
  **/
 class SearchDialog(
-    mActivity: Activity,
-    lId: Int, private val fm: FragmentManager, private val tagId: String?,
-) : BottomSheetDialogFragment() {
+    mActivity: Context,
+    lId: Int, private val fm: FragmentManager, private val tagId: String?) : BottomSheetDialogFragment() {
     private val activity = mActivity
     private val layoutId = lId
     val currentList = ArrayList<AdapterModel.AddressListItem>()
@@ -53,15 +53,15 @@ class SearchDialog(
 
     init {
         when (GetAppInfo.getUserLocation(activity)) {
-            StaticDataObject.LANG_KR -> { SetSystemInfo.updateConfiguration(activity, Locale.KOREA) }
-            StaticDataObject.LANG_EN -> { SetSystemInfo.updateConfiguration(activity, Locale.ENGLISH) }
-            else -> { SetSystemInfo.updateConfiguration(activity, Locale.getDefault()) }
+            StaticDataObject.LANG_KR -> SetSystemInfo.updateConfiguration(activity, Locale.KOREA)
+            StaticDataObject.LANG_EN -> SetSystemInfo.updateConfiguration(activity, Locale.ENGLISH)
+            else -> SetSystemInfo.updateConfiguration(activity, Locale.getDefault())
         }
         // 텍스트 폰트 크기 적용
         when (GetAppInfo.getUserFontScale(activity)) {
-            SpDao.TEXT_SCALE_SMALL -> { SetSystemInfo.setTextSizeSmall(activity) }
-            SpDao.TEXT_SCALE_BIG -> { SetSystemInfo.setTextSizeLarge(activity) }
-            else -> { SetSystemInfo.setTextSizeDefault(activity) }
+            SpDao.TEXT_SCALE_SMALL -> SetSystemInfo.setTextSizeSmall(activity)
+            SpDao.TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(activity)
+            else -> SetSystemInfo.setTextSizeDefault(activity)
         }
     }
 
@@ -97,7 +97,6 @@ class SearchDialog(
                 if (!currentAdapter.getCheckBoxVisible())
                     currentAdapter.updateCheckBoxVisible(true)
                 else currentAdapter.updateCheckBoxVisible(false)
-
             }
 
             // 현재 주소 클릭 시 현재 주소로 데이터 호출
@@ -105,12 +104,12 @@ class SearchDialog(
                 this@SearchDialog.dismiss()
                 CoroutineScope(Dispatchers.IO).launch {
                     val dbFind = db.findByName(SpDao.CURRENT_GPS_ID)
-                    dbUpdate(dbFind.addrKr,dbFind.addrEn,SpDao.CURRENT_GPS_ID)
+                    dbUpdate(dbFind?.addrKr,dbFind?.addrEn,SpDao.CURRENT_GPS_ID)
 
                     withContext(Dispatchers.Main) {
                         this@SearchDialog.dismiss()
                         delay(300)
-                        if (activity is MainActivity) activity.recreateMainActivity(dbFind.addrKr,dbFind.addrEn)
+                        if (activity is MainActivity) activity.recreateMainActivity(dbFind?.addrKr,dbFind?.addrEn)
                     }
                 }
             }
@@ -163,18 +162,16 @@ class SearchDialog(
         }
         // 주소 등록 다이얼로그 생성
         else {
-            val searchView: EditText = view.findViewById(R.id.searchAddressView)
             val searchBack: ImageView = view.findViewById(R.id.searchBack)
-            val noResult: TextView = view.findViewById(R.id.searchAddressNoResult)
             searchBack.setOnClickListener {
                 CompletableFuture.supplyAsync { this@SearchDialog.dismiss() }.thenAccept { show(0) }
             }
 
-            val listView: ListView = view.findViewById(R.id.searchAddressListView)
-
-            searchEditListener(listView, searchView, noResult)
-
-            KeyboardController.onKeyboardUp(requireContext(), searchView)
+            searchEditListener(
+                view.findViewById(R.id.searchAddressListView),
+                view.findViewById(R.id.searchAddressView),
+                view.findViewById(R.id.searchAddressNoResult)
+            )
         }
     }
 
@@ -187,17 +184,19 @@ class SearchDialog(
             if (isKorea()) resources.getStringArray(R.array.address_korean)
             else resources.getStringArray(R.array.address_english)
         val adapter = CustomArrayAdapter(editText, dataList = searchItem)
+
+        KeyboardController.onKeyboardUp(requireContext(), editText)
         listView.adapter = adapter
 
         editText.setOnTouchListener { _, motionEvent ->
-            try {
+            kotlin.runCatching {
                 if (motionEvent.action == MotionEvent.ACTION_UP &&
                     motionEvent.rawX >= editText.right - editText.compoundDrawablesRelative[2].bounds.width()
                 ) {
                     editText.text.clear()
                     return@setOnTouchListener true
                 }
-            } catch (e: java.lang.NullPointerException) { e.printStackTrace() }
+            }.exceptionOrNull()?.stackTraceToString()
 
             false
         }
@@ -207,26 +206,23 @@ class SearchDialog(
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                if (s!!.isNotEmpty()) {
+                if (s != null && s.isNotEmpty()) {
                     searchItem.clear()
                     editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        0, 0, R.drawable.ico_search_x, 0
-                    )
+                        0, 0, R.drawable.ico_search_x, 0)
                     noResult.visibility = View.GONE
 
                     allTextArray.forEach { allList ->
                         val nonSpacing = s.toString().replace(" ", "").lowercase()
                         if (allList.replace(" ", "").lowercase().contains(nonSpacing) ||
-                            DataTypeParser.convertAddress(allList).replace(" ", "").lowercase()
-                                .contains(nonSpacing)
-                        ) searchItem.add(allList)
+                            DataTypeParser.convertAddress(allList).replace(" ", "")
+                                .lowercase().contains(nonSpacing)) searchItem.add(allList)
                     }
                 } else {
                     noResult.visibility = View.VISIBLE
                     searchItem.clear()
                     editText.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                        0, 0, android.R.color.transparent, 0
-                    )
+                        0, 0, android.R.color.transparent, 0)
                 }
                 adapter.notifyDataSetChanged()
             }
@@ -247,9 +243,7 @@ class SearchDialog(
                 val cancel = viewSearched.findViewById<AppCompatButton>(R.id.alertDoubleCancelBtn)
                 val apply = viewSearched.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
                 val title = viewSearched.findViewById<TextView>(R.id.alertDoubleTitle)
-
-                val span =
-                    if (resources.configuration.locales[0] == Locale.KOREA)
+                val span = if (resources.configuration.locales[0] == Locale.KOREA)
                     SpannableStringBuilder("${searchItem[position]}을(를)\n추가하시겠습니까?")
                     else SpannableStringBuilder("Add ${searchItem[position]}?")
 
@@ -279,26 +273,25 @@ class SearchDialog(
                             lat = null,
                             lng = null,
                             addrEn = null,
-                            addrKr = null
-                        )
+                            addrKr = null)
 
                         val addrArray =  resources.getStringArray(
                             if (!isKorea()) R.array.address_english
                             else R.array.address_korean)
 
                         addrArray.forEachIndexed { index, s ->
-                            if(s == searchItem[position]) {
+                            if (s == searchItem[position]) {
                                 model.addrEn = resources.getStringArray(R.array.address_english)[index]
                                 model.addrKr = resources.getStringArray(R.array.address_korean)[index]
                             }
                         }
                         db.insert(model)
-                        dbUpdate(model.addrKr,model.addrEn,model.name)
+                        dbUpdate(model.addrKr, model.addrEn, model.name)
 
                         withContext(Dispatchers.Main) {
                             this@SearchDialog.dismiss()
                             delay(300)
-                            if (activity is MainActivity) activity.recreateMainActivity(model.addrKr,model.addrEn)
+                            if (activity is MainActivity) activity.recreateMainActivity(model.addrKr, model.addrEn)
                         }
                     }
                 }
@@ -324,7 +317,7 @@ class SearchDialog(
     }
 
     // 레이아웃 노출
-    fun show(layoutId: Int) { SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId) }
+    fun show(layoutId: Int) = SearchDialog(activity, layoutId, fm, tagId).showNow(fm, tagId)
 
     private fun dbUpdate(addrKr: String?, addrEn: String?, name: String) {
         val model = GpsEntity(
@@ -336,19 +329,18 @@ class SearchDialog(
         )
 
         db.update(model)
-        SetAppInfo.setUserLastAddr(activity, addrKr!!)
+        SetAppInfo.setUserLastAddr(activity, addrKr ?: "")
     }
 
-    private fun isKorea(): Boolean {
-        val systemLang = GetSystemInfo.getLocale(activity)
-        return GetAppInfo.getUserLocation(activity) == SpDao.LANG_KR || systemLang == Locale.KOREA
-    }
+    private fun isKorea(): Boolean =
+        GetAppInfo.getUserLocation(activity) == SpDao.LANG_KR ||
+                GetSystemInfo.getLocale(activity) == Locale.KOREA
 
     // 리스트 아이템 추가
     private fun addCurrentItem(addrKr: String?, addrEn: String?): SearchDialog {
         val item = AdapterModel.AddressListItem(
-            addrKr!!.replace("null", ""),
-            addrEn!!.replace("null", "")
+            addrKr?.replace("null", ""),
+            addrEn?.replace("null", "")
         )
         currentList.add(item)
         return this
@@ -366,13 +358,13 @@ class SearchDialog(
     }
 
     // 바텀 다이얼로그 비율설정
-    private fun getBottomSheetDialogDefaultHeight(per: Int): Int { return getWindowHeight() * per / 100 }
+    private fun getBottomSheetDialogDefaultHeight(per: Int): Int = getWindowHeight() * per / 100
 
     // 디바이스 높이 구하기
     private fun getWindowHeight(): Int {
         val displayMetrics = DisplayMetrics()
         @Suppress("DEPRECATION")
-        (context as Activity?)!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
+        (context as Activity?)?.windowManager?.defaultDisplay?.getMetrics(displayMetrics)
         return displayMetrics.heightPixels
     }
 
@@ -387,7 +379,7 @@ class SearchDialog(
 
             val startIndex = editableText.indexOf(editText.text.toString().lowercase())
 
-            if (startIndex != -1) {
+            view.text = if (startIndex >= 0 && startIndex <= fullText.lastIndex) {
                 val coloredText = android.text.SpannableString(getItem(position))
                 coloredText.setSpan(
                     ForegroundColorSpan(activity.getColor(R.color.main_blue_color)),
@@ -395,8 +387,9 @@ class SearchDialog(
                     startIndex + editText.text.toString().length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
-                view.text = coloredText
-            } else  view.text = fullText
+
+                coloredText
+            } else fullText
 
             return view
         }

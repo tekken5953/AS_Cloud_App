@@ -1,7 +1,6 @@
 package app.airsignal.weather.db.sp
 
 import android.content.Context
-import android.content.SharedPreferences
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -18,9 +17,8 @@ class SharedPreferenceManager(context: Context) {
     @Suppress("PrivatePropertyName") private val DEFAULT_VALUE_LONG = -1L
     @Suppress("PrivatePropertyName") private val DEFAULT_VALUE_FLOAT = -1f
 
-    private val prefs: SharedPreferences =
-        context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
-    private val editor: SharedPreferences.Editor = prefs.edit()
+    private val prefs = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
+    private val editor = prefs.edit()
 
     /**String 값 저장 **/
     fun setString(key: String, value: String) : SharedPreferenceManager {
@@ -58,41 +56,20 @@ class SharedPreferenceManager(context: Context) {
     }
 
     /**String 값 호출**/
-    fun getString(key: String): String {
-        return prefs.getString(
-            key,
-            DEFAULT_VALUE_STRING
-        ) ?: ""
-    }
+    fun getString(key: String): String = prefs.getString(key, DEFAULT_VALUE_STRING) ?: ""
 
     /**Boolean 값 호출**/
-    fun getBoolean(key: String, default: Boolean): Boolean {
-        return prefs.getBoolean(
-            key,
-            default
-        )
-    }
+    fun getBoolean(key: String, default: Boolean): Boolean = prefs.getBoolean(key, default)
+
 
     /**Integer 값 호출**/
-    fun getInt(key: String, defaultValue: Int): Int {
-        return prefs.getInt(key, defaultValue)
-    }
+    fun getInt(key: String, defaultValue: Int): Int = prefs.getInt(key, defaultValue)
 
     /**Long 값 호출**/
-    fun getLong(key: String): Long {
-        return prefs.getLong(
-            key,
-            DEFAULT_VALUE_LONG
-        )
-    }
+    fun getLong(key: String): Long = prefs.getLong(key, DEFAULT_VALUE_LONG)
 
     /**Float 값 호출**/
-    fun getFloat(key: String): Float {
-        return prefs.getFloat(
-            key,
-            DEFAULT_VALUE_FLOAT
-        )
-    }
+    fun getFloat(key: String): Float = prefs.getFloat(key, DEFAULT_VALUE_FLOAT)
 
     /**키 값 삭제**/
     fun removeKey(key: String) {
@@ -109,20 +86,18 @@ class SharedPreferenceManager(context: Context) {
     /** 키쌍 리스트 구하기**/
     fun getAllList(): Map<String, Any>? {
         val jsonObject = JSONObject()
-        try {
+        return kotlin.runCatching {
             for (i in 0 until prefs.all.size) {
                 jsonObject.put(prefs.all.keys.toString(), prefs.all.values)
             }
-            return toMap(jsonObject)
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-        return null
+
+            toMap(jsonObject)
+        }.getOrNull()
     }
 
     /**키를 제이슨 형태로 변환**/
     @Throws(JSONException::class)
-    fun toMap(`object`: JSONObject): Map<String, Any> {
+    private fun toMap(`object`: JSONObject): Map<String, Any> {
         val map: MutableMap<String, Any> = HashMap()
         val keysItr = `object`.keys()
         while (keysItr.hasNext()) {

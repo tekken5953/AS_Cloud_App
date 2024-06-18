@@ -23,7 +23,7 @@ import app.airsignal.weather.dao.AdapterModel
 import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.SpDao
-import app.airsignal.weather.util.OnAdapterItemSingleClick
+import app.airsignal.weather.utils.controller.OnAdapterItemSingleClick
 import java.util.*
 
 /**
@@ -32,8 +32,7 @@ import java.util.*
  **/
 class AddressListAdapter(
     private val context: Context,
-    list: ArrayList<AdapterModel.AddressListItem>
-) :
+    list: ArrayList<AdapterModel.AddressListItem>) :
     RecyclerView.Adapter<AddressListAdapter.ViewHolder>() {
     private val mList = list
     private var visible = false
@@ -73,9 +72,10 @@ class AddressListAdapter(
 
         @SuppressLint("InflateParams")
         fun bind(dao: AdapterModel.AddressListItem) {
-            address.text = if (isEnglish()) dao.en else dao.kr
-            delete.animate().alpha(if(visible)1f else 0f).duration = 500
-            delete.visibility = if(visible)View.VISIBLE else View.GONE
+            val isEnglish = isEnglish()
+            address.text = if (isEnglish) dao.en else dao.kr
+            delete.animate().alpha(if (visible) 1f else 0f).duration = 500
+            delete.visibility = if (visible) View.VISIBLE else View.GONE
 
             delete.setOnClickListener {
                 val builder = Dialog(context)
@@ -95,17 +95,14 @@ class AddressListAdapter(
                     cancel.text = context.getString(R.string.cancel)
 
                     val span = SpannableStringBuilder(
-                        if(isEnglish())"Delete ${address.text}?"
+                        if (isEnglish) "Delete ${address.text}?"
                         else "${address.text}을(를)\n삭제하시겠습니까?")
 
                     span.setSpan(
-                        ForegroundColorSpan(
-                            ResourcesCompat.getColor(
-                                context.resources,
-                                R.color.theme_alert_double_apply_color, null
-                            )
-                        ), if(isEnglish())7 else 0,
-                        if(isEnglish())7 + address.text.length else address.text.length,
+                        ForegroundColorSpan(ResourcesCompat.getColor(
+                            context.resources, R.color.theme_alert_double_apply_color, null)),
+                        if(isEnglish) 7 else 0,
+                        if(isEnglish) 7 + address.text.length else address.text.length,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
 
@@ -126,8 +123,8 @@ class AddressListAdapter(
             itemView.setOnClickListener {
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    try { onClickListener.onItemClick(it, position) }
-                    catch (e: UninitializedPropertyAccessException) { e.printStackTrace() }
+                    kotlin.runCatching { onClickListener.onItemClick(it, position) }
+                        .exceptionOrNull()?.stackTraceToString()
                 }
             }
         }
@@ -136,10 +133,9 @@ class AddressListAdapter(
     // 첫번째 인덱스 색상 변경
     private fun applyColorFirstIndex(isChecked: Boolean, textView: TextView, imgView: ImageView) {
         textView.setTextColor(context.getColor(
-            if(isChecked) R.color.main_blue_color else R.color.theme_text_color))
-        imgView.imageTintList =
-            ColorStateList.valueOf(context.getColor(
-                if(isChecked) R.color.main_blue_color else R.color.theme_text_color))
+            if (isChecked) R.color.main_blue_color else R.color.theme_text_color))
+        imgView.imageTintList = ColorStateList.valueOf(context.getColor(
+            if (isChecked) R.color.main_blue_color else R.color.theme_text_color))
     }
 
     // 삭제버튼 보이기/숨기기
@@ -150,12 +146,8 @@ class AddressListAdapter(
     }
 
     // 삭제버튼 현재 상태 불러오기
-    fun getCheckBoxVisible(): Boolean {
-        return visible
-    }
+    fun getCheckBoxVisible(): Boolean = visible
 
-    fun isEnglish(): Boolean {
-        val systemLang = Locale.getDefault().language
-        return GetAppInfo.getUserLocation(context) == SpDao.LANG_EN || systemLang == "en"
-    }
+    fun isEnglish(): Boolean =
+        GetAppInfo.getUserLocation(context) == SpDao.LANG_EN || Locale.getDefault().language == "en"
 }

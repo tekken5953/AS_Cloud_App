@@ -84,11 +84,9 @@ app/src/main/java/app/airsignal/weather/dao/IgnoredKeyFile.kt
 app/src/main/res/values/ignored_key.xml
 app/src/main/res/values/address_english.xml
 app/src/main/res/values/address_korean.xml
-app/src/main/java/app/airsignal/weather/db/db/sp/SpDao.kt
-app/src/main/java/app/airsignal/weather/network/NetworkIgnored.kt
+app/src/main/java/app/airsignal/weather/db/sp/SpDao.kt
+app/src/main/java/app/airsignal/weather/api/NetworkIgnored.kt
 app/google-services.json
 airsignal_key_store1.jks
-
-
 
 

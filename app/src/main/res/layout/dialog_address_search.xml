@@ -26,6 +26,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="15dp"
+        android:imeOptions="actionSearch"
         android:layout_toEndOf="@+id/searchBack"
         android:background="@drawable/search_bg"
         android:fontFamily="@font/spoqa_hansansneo_regular"
@@ -36,7 +37,10 @@
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:textColor="@color/theme_text_color"
-        android:textSize="14sp"/>
+        android:textSize="14sp"
+        android:drawablePadding="5dp"
+        app:drawableStartCompat="@drawable/search"
+        app:drawableTint="@color/main_gray_color" />
 
     <TextView
         android:id="@+id/searchAddressNoResult"
@@ -45,9 +49,10 @@
         android:layout_height="match_parent"
         android:visibility="visible"
         android:text="@string/no_result"
-        android:textSize="17sp"
+        android:textSize="16sp"
         android:textColor="@color/theme_text_color"
         android:layout_below="@+id/searchAddressView"/>
+
     <ListView
         android:id="@+id/searchAddressListView"
         android:layout_width="match_parent"

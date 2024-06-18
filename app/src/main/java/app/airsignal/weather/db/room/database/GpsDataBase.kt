@@ -15,19 +15,13 @@ abstract class GpsDataBase : RoomDatabase() {
         private const val dbName = "room-gps"
         private var INSTANCE: GpsDataBase? = null
 
-        fun getInstance(context: Context): GpsDataBase {
-            return INSTANCE ?: synchronized(this) {
-                INSTANCE ?: buildDatabase(context).also { INSTANCE = it }
-            }
-        }
+        fun getInstance(context: Context): GpsDataBase =
+            INSTANCE ?: synchronized(this) { INSTANCE ?: buildDatabase(context).also { INSTANCE = it } }
 
-        private fun buildDatabase(context: Context): GpsDataBase {
-            return Room.databaseBuilder(
+        private fun buildDatabase(context: Context): GpsDataBase =
+            Room.databaseBuilder(
                 context.applicationContext,
                 GpsDataBase::class.java, dbName
-            )
-                .fallbackToDestructiveMigration()
-                .build()
-        }
+            ).fallbackToDestructiveMigration().build()
     }
 }

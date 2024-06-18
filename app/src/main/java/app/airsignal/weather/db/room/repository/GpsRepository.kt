@@ -13,7 +13,6 @@ import kotlinx.coroutines.withContext
  * @since : 2023-04-11 오후 5:34
  **/
 class GpsRepository(private val context: Context) {
-
     fun update(model: GpsEntity) {
         CoroutineScope(Dispatchers.IO).launch {
             getInstance(context).gpsRepository().updateCurrentGPS(model)
@@ -30,7 +29,7 @@ class GpsRepository(private val context: Context) {
         return@withContext getInstance(context).gpsRepository().findAll()
     }
 
-    suspend fun findByName(name: String): GpsEntity = withContext(Dispatchers.IO) {
+    suspend fun findByName(name: String): GpsEntity? = withContext(Dispatchers.IO) {
         return@withContext getInstance(context).gpsRepository().findByNameWithCoroutine(name)
     }
 

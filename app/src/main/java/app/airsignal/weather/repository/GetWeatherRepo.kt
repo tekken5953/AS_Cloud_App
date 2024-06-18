@@ -2,9 +2,9 @@ package app.airsignal.weather.repository
 
 import android.accounts.NetworkErrorException
 import androidx.lifecycle.MutableLiveData
-import app.airsignal.weather.network.ErrorCode
-import app.airsignal.weather.network.NetworkUtils
-import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.api.ErrorCode
+import app.airsignal.weather.api.NetworkUtils
+import app.airsignal.weather.api.retrofit.ApiModel
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,50 +20,43 @@ import java.net.SocketTimeoutException
  **/
 class GetWeatherRepo : BaseRepository() {
     // 날씨 호출 Response Body : Map
-    var _getDataResult =
-        MutableLiveData<ApiState<ApiModel.GetEntireData>?>()
+    var _getDataResult = MutableLiveData<ApiState<ApiModel.GetEntireData>?>()
 
     fun loadDataResult(lat: Double?, lng: Double?, addr: String?) {
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             _getDataResult.postValue(ApiState.Loading)
             impl.getForecast(lat, lng, addr).enqueue(object : Callback<ApiModel.GetEntireData> {
                     override fun onResponse(
                         call: Call<ApiModel.GetEntireData>,
-                        response: Response<ApiModel.GetEntireData>
-                    ) {
-                        try {
-                            if (response.isSuccessful) {
-                                val responseBody = processData(response.body())
-                                _getDataResult.postValue(ApiState.Success(responseBody))
-                            } else {
+                        response: Response<ApiModel.GetEntireData>) {
+                        kotlin.runCatching {
+                            if (response.isSuccessful)
+                                _getDataResult.postValue(ApiState.Success(processData(response.body())))
+                            else {
                                 _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_API_PROTOCOL))
                                 call.cancel()
                             }
-                        } catch (e: NullPointerException) {
-                            _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_SERVER_CONNECTING))
-                        } catch (e: JsonSyntaxException) {
-                            _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_GET_DATA))
+                        }.onFailure { exception ->
+                            when(exception) {
+                                is NullPointerException -> _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_SERVER_CONNECTING))
+                                is JsonSyntaxException -> _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_GET_DATA))
+                            }
                         }
                     }
 
                     override fun onFailure(
-                        call: Call<ApiModel.GetEntireData>,
-                        t: Throwable
-                    ) {
-                        try {
+                        call: Call<ApiModel.GetEntireData>, t: Throwable) {
+                        kotlin.runCatching {
                             _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_GET_DATA))
                             call.cancel()
-                        } catch (e: Exception) {
-                            when (e) {
+                        }.onFailure { exception ->
+                            when (exception) {
                                 is SocketTimeoutException ->
                                     _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_TIMEOUT))
                                 is NetworkErrorException ->
                                     _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_NETWORK))
                                 is NullPointerException ->
                                     _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_NULL_POINT))
-                                else -> {
-                                    _getDataResult.postValue(ApiState.Error(ErrorCode.ERROR_UNKNOWN))
-                                }
                             }
                         }
                     }
@@ -72,16 +65,14 @@ class GetWeatherRepo : BaseRepository() {
     }
 
     private fun processData(rawData: ApiModel.GetEntireData?): ApiModel.GetEntireData {
-        try {
+        kotlin.runCatching {
             rawData?.let { d ->
                 d.current.rainType = NetworkUtils.modifyCurrentRainType(d.current.rainType,d.realtime[0].rainType)
                 d.current.temperature = NetworkUtils.modifyCurrentTempType(d.current.temperature, d.realtime[0].temp)
                 d.current.windSpeed = NetworkUtils.modifyCurrentWindSpeed(d.current.windSpeed, d.realtime[0].windSpeed)
                 d.current.humidity = NetworkUtils.modifyCurrentHumid(d.current.humidity, d.realtime[0].humid)
             }
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
+        }.exceptionOrNull()?.stackTraceToString()
 
         return rawData ?: throw NullPointerException()
     }

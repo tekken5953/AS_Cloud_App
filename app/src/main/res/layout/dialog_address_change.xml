@@ -81,18 +81,6 @@
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@+id/changeAddressImg" />
 
-    <ImageView
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/changeAddressText"
-        android:layout_alignBottom="@+id/changeAddressText"
-        android:layout_marginEnd="24dp"
-        android:src="@drawable/check_small"
-        android:visibility="gone"
-        android:contentDescription="@string/cd_check"
-        app:tint="@color/theme_text_color" />
-
     <TextView
         android:id="@+id/changeAddressSearchedTitle"
         style="@style/basicTextView"
@@ -133,6 +121,5 @@
         android:overScrollMode="never"
         android:clipToPadding="false"
         tools:listitem="@layout/list_item_address_list"
-        app:layoutManager=".util.LinearLayoutManagerWrapper"/>
-
+        app:layoutManager=".utils.controller.LinearLayoutManagerWrapper"/>
 </RelativeLayout>

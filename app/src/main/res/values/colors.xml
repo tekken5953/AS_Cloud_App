@@ -33,8 +33,6 @@
     <color name="sub_gray_color">#7C7C7C</color>
     <color name="sub_white">#BFCEE3</color>
 
-    <color name="ae_bg_color">#F6F6F6</color>
-
     <color name="ripple_white">#B4cccccc</color>
     <color name="cancel_color">#7C7C7C</color>
 
@@ -45,7 +43,4 @@
     <color name="theme_text_color">#4F4F4F</color>
     <color name="theme_sub_color">#7C7C7C</color>
     <color name="theme_line_color">#EBEBEB</color>
-
-    <color name="min_temp_main_color">#2E65D4</color>
-    <color name="min_temp_cloud_color">#00C2FF</color>
 </resources>

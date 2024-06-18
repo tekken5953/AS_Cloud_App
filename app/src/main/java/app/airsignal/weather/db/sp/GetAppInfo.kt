@@ -9,6 +9,7 @@ import java.util.*
  * @since : 2023-06-12 오후 2:19
  **/
 object GetAppInfo {
+
     fun getUserTheme(context: Context): String {
         return SharedPreferenceManager(context).getString(SpDao.userTheme)
     }
@@ -77,12 +78,12 @@ object GetAppInfo {
     
     /** HH:mm 포맷의 시간을 분으로 변환 **/
     private fun parseTimeToMinutes(time: String): Int {
-        return try {
+        return kotlin.runCatching {
             val timeSplit = time.replace(" ","")
             val hour = timeSplit.substring(0, 2).toInt()
             val minutes = timeSplit.substring(2, 4).toInt()
             hour * 60 + minutes
-        } catch (e: java.lang.NumberFormatException) { 1 }
+        }.getOrElse { 1 }
     }
 
     fun getIsNight(sunrise: String, sunset: String): Boolean {
@@ -128,10 +129,6 @@ object GetAppInfo {
 
     fun getInAppMsgTime(context: Context): Long {
         return SharedPreferenceManager(context).getLong(SpDao.IN_APP_MSG_TIME)
-    }
-
-    fun getWeatherAnimEnabled(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(SpDao.WEATHER_ANIMATION_ENABLE, true)
     }
 
     fun getWeatherBoxOpacity(context: Context): Int {

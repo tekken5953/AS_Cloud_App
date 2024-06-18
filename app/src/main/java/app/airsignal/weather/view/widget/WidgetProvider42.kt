@@ -7,16 +7,16 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import app.airsignal.weather.R
-import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.location.GeofenceManager
-import app.airsignal.weather.network.retrofit.ApiModel
-import app.airsignal.weather.util.`object`.DataTypeParser
-import app.airsignal.weather.util.`object`.DataTypeParser.convertValueToGrade
-import app.airsignal.weather.util.`object`.DataTypeParser.getDataText
+import app.airsignal.weather.utils.DataTypeParser
+import app.airsignal.weather.utils.DataTypeParser.convertValueToGrade
+import app.airsignal.weather.utils.DataTypeParser.getDataText
+import app.airsignal.weather.utils.VibrateUtil
+import app.airsignal.weather.utils.plain.ToastUtils
 import app.airsignal.weather.view.activity.SplashActivity
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import kotlinx.coroutines.*
@@ -42,13 +42,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         for (appWidgetId in appWidgetIds) {
-            try { processUpdate(context,appWidgetId) }
-            catch (e: Exception) {
-                RDBLogcat.writeErrorANR(
-                    "Error",
-                    "onUpdate error42 ${e.localizedMessage}"
-                )
-            }
+            kotlin.runCatching { processUpdate(context,appWidgetId) }
         }
     }
 
@@ -58,13 +52,28 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
         )
-        if (context != null) {
-            if (appWidgetId != null && appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                if (intent.action == REFRESH_BUTTON_CLICKED_42) {
-                    if (isRefreshable(context,WIDGET_42)) processUpdate(context,appWidgetId)
-                    else Toast.makeText(context.applicationContext, "갱신은 1분 주기로 가능합니다", Toast.LENGTH_SHORT).show()
-                }
-            } else appWidgetId?.let { processUpdate(context,it) }
+        if (context == null) return
+
+        if (intent == null) return
+
+        if (appWidgetId == null) return
+
+        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) return
+
+        if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
+            processUpdate(context, appWidgetId)
+            return
+        }
+
+        if (!isRefreshable(context, WIDGET_42)) {
+            ToastUtils(context).showMessage(context.getString(R.string.widget_not_refreshable))
+            return
+        }
+
+        if (intent.action == REFRESH_BUTTON_CLICKED_42) {
+            if (RequestPermissionsUtil(context).isBackgroundRequestLocation())
+                processUpdate(context, appWidgetId)
+            else requestPermissions(context, WIDGET_42, appWidgetId)
         }
     }
 
@@ -73,19 +82,16 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             CoroutineScope(Dispatchers.Default).launch {
                 val views = RemoteViews(context.packageName, R.layout.widget_layout_4x2)
                 val refreshBtnIntent =
-                    if (!RequestPermissionsUtil(context).isBackgroundRequestLocation()) {
+                    if (RequestPermissionsUtil(context).isBackgroundRequestLocation())
+                        Intent(context, WidgetProvider42::class.java).run {
+                            this.action = REFRESH_BUTTON_CLICKED_42
+                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)}
+                    else
                         Intent(context, WidgetPermActivity::class.java).apply {
                             flags = Intent.FLAG_ACTIVITY_NEW_TASK
                             putExtra("sort",WIDGET_42)
                             putExtra("id",appWidgetId)
                         }
-                    } else {
-                        Intent(context, WidgetProvider42::class.java).run {
-                            this.action = REFRESH_BUTTON_CLICKED_42
-                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                    }
-                }
-
                 val enterPending: PendingIntent = Intent(context, SplashActivity::class.java)
                     .run {
                         this.action = ENTER_APPLICATION_42
@@ -99,8 +105,15 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     refreshBtnIntent,
                     PendingIntent.FLAG_IMMUTABLE
                 )
-                views.run { this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent) }
-                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) fetch(context, views)
+                views.run {
+                    this.setOnClickPendingIntent(R.id.w42Background, enterPending)
+                    this.setOnClickPendingIntent(R.id.w42Refresh, pendingIntent)
+                }
+
+                if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                    fetch(context, views)
+                    VibrateUtil(context).make(10)
+                }
             }
         }
     }
@@ -108,26 +121,22 @@ open class WidgetProvider42 : BaseWidgetProvider() {
     @SuppressLint("MissingPermission")
     private fun fetch(context: Context, views: RemoteViews) {
         CoroutineScope(Dispatchers.Default).launch {
-            try {
+            kotlin.runCatching {
                 val geofenceLocation = GeofenceManager(context).addGeofence()
                 geofenceLocation?.let {
                     val lat = geofenceLocation.latitude
                     val lng = geofenceLocation.longitude
-                    val addr = GeofenceManager(context).getSimpleAddress(lat, lng)
 
-                    val data = requestWeather(context, lat, lng, 4)
+                    withContext(Dispatchers.IO) { BaseWidgetProvider().setRefreshTime(context, WIDGET_42) }
 
                     withContext(Dispatchers.Main) {
-                        RDBLogcat.writeWidgetHistory(context, "data", "$addr data42 is $data")
                         delay(500)
-                        updateUI(context, views, data, addr)
-
+                        updateUI(context, views,
+                            requestWeather(lat, lng, 4),
+                            GeofenceManager(context).getSimpleAddress(lat, lng))
                     }
-                    withContext(Dispatchers.IO) { BaseWidgetProvider().setRefreshTime(context, WIDGET_42) }
-                } ?: run { RDBLogcat.writeErrorANR("Error", "location is null") }
-            } catch (e: Exception) {
-                RDBLogcat.writeErrorANR("Error", "fetch error42 ${e.localizedMessage}")
-            }
+                }
+            }.exceptionOrNull()?.stackTraceToString()
         }
     }
 
@@ -135,21 +144,14 @@ open class WidgetProvider42 : BaseWidgetProvider() {
         context: Context,
         views: RemoteViews,
         data: ApiModel.WidgetData?,
-        addr: String?
-    ) {
-        try {
+        addr: String?) {
+        kotlin.runCatching {
             isSuccess = true
-            val currentTime = DataTypeParser.currentDateTimeString("HH:mm")
-            val sunrise = data?.sun?.sunrise ?: "0000"
-            val sunset = data?.sun?.sunset ?: "0000"
-            val isNight = GetAppInfo.getIsNight(sunrise, sunset)
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val componentName =
-                ComponentName(context, this@WidgetProvider42.javaClass)
+            val isNight = GetAppInfo.getIsNight(data?.sun?.sunrise ?: "0600",data?.sun?.sunset ?: "1800")
 
             views.run {
                 views.setImageViewResource(R.id.w42Refresh, R.drawable.w_btn_refresh42)
-                this.setTextViewText(R.id.w42Time, currentTime)
+                this.setTextViewText(R.id.w42Time, DataTypeParser.currentDateTimeString("HH:mm"))
                 data?.let {
                     this.setTextViewText(R.id.w42Temp, "${it.current.temperature?.roundToInt() ?: 0}˚")
                     this.setTextViewText(R.id.w42Address, addr ?: "")
@@ -171,7 +173,6 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     applyColor(context, views, bg)
                     this.setTextViewText(R.id.w42HumidTitle, "습도")
                     this.setTextViewText(R.id.w42Pm10Title, "미세먼지")
-                    this.setTextViewText(R.id.w42Pm25Title, "초미세먼지")
                     this.setTextViewText(
                         R.id.w42MinMaxTemp,
                         "${it.today.min?.roundToInt() ?: -1}˚/${it.today.max?.roundToInt() ?: -1}˚"
@@ -180,10 +181,6 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     this.setTextViewText(
                         R.id.w42Pm10Value,
                         getDataText(context, convertValueToGrade("PM10", it.quality.pm10Value24 ?: 0.0))
-                    )
-                    this.setTextViewText(
-                        R.id.w42Pm25Value,
-                        getDataText(context, convertValueToGrade("PM2.5", it.quality.pm25Value24?.toDouble() ?: 0.0))
                     )
                     for (i in 1..3) {
                         val index = it.realtime[i]
@@ -245,10 +242,9 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 }
             }
 
-            appWidgetManager.updateAppWidget(componentName, views)
-        } catch (e: Exception) {
-            RDBLogcat.writeErrorANR("Error", "updateUI error42 ${e.localizedMessage}")
-        }
+            AppWidgetManager.getInstance(context)
+                .updateAppWidget(ComponentName(context, this@WidgetProvider42.javaClass), views)
+        }.exceptionOrNull()?.stackTraceToString()
     }
 
     private fun applyColor(context: Context, views: RemoteViews, bg: Int) {
@@ -266,22 +262,18 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             R.id.w42HumidTitle,
             R.id.w42HumidValue,
             R.id.w42Pm10Title,
-            R.id.w42Pm10Value,
-            R.id.w42Pm25Title,
-            R.id.w42Pm25Value
+            R.id.w42Pm10Value
         )
-        val imgArray = arrayOf(R.id.w42Location, R.id.w42Refresh)
+        val imgArray = arrayOf (R.id.w42Location, R.id.w42Refresh)
         views.run {
             imgArray.forEach {
                 this.setInt(
-                    it, "setColorFilter", context.applicationContext.getColor(
+                    it,"setColorFilter", context.applicationContext.getColor(
                         when (bg) {
-                            R.drawable.widget_bg4x2_sunny, R.drawable.widget_bg4x2_snow -> {
-                                R.color.wblack
-                            }
-                            R.drawable.widget_bg4x2_night, R.drawable.widget_bg4x2_cloud -> {
-                                R.color.white
-                            }
+                            R.drawable.widget_bg4x2_sunny,
+                            R.drawable.widget_bg4x2_snow -> R.color.wblack
+                            R.drawable.widget_bg4x2_night,
+                            R.drawable.widget_bg4x2_cloud -> R.color.white
                             else -> android.R.color.transparent
                         }
                     )
@@ -292,8 +284,8 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                 this.setTextColor(
                     it, context.applicationContext.getColor(
                         when (bg) {
-                            R.drawable.widget_bg4x2_sunny, R.drawable.widget_bg4x2_snow -> { R.color.wblack }
-                            R.drawable.widget_bg4x2_night, R.drawable.widget_bg4x2_cloud -> { R.color.white }
+                            R.drawable.widget_bg4x2_sunny, R.drawable.widget_bg4x2_snow -> R.color.wblack
+                            R.drawable.widget_bg4x2_night, R.drawable.widget_bg4x2_cloud -> R.color.white
                             else -> android.R.color.transparent
                         }
                     )

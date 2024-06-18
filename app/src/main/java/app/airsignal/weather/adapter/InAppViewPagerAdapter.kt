@@ -11,7 +11,7 @@ import android.webkit.WebView
 import android.widget.LinearLayout
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
-import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.view.activity.WebURLActivity
 
 class InAppViewPagerAdapter(
@@ -22,8 +22,7 @@ class InAppViewPagerAdapter(
     private val mList = list
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
-    ): InAppViewPagerAdapter.ViewHolder {
+        viewType: Int): InAppViewPagerAdapter.ViewHolder {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val view: View = inflater.inflate(R.layout.view_pager_item_in_app, parent, false)
@@ -48,9 +47,8 @@ class InAppViewPagerAdapter(
                         outline?.setRect(0, 0, view?.width ?: 0, view?.height ?: 0)
                     }
                 }
-            } else {
-                linear.clipToOutline = true
-            }
+            } else linear.clipToOutline = true
+
 
             webView.settings.apply {
                 useWideViewPort = true // 화면 맞추기
@@ -66,7 +64,7 @@ class InAppViewPagerAdapter(
                     intent.putExtra("redirect", dao.redirect)
                     context.startActivity(intent)
                     true
-                } else { false }
+                } else false
             }
         }
     }

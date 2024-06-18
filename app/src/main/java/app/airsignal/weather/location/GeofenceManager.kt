@@ -6,22 +6,24 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import androidx.core.content.ContextCompat
-import app.airsignal.weather.koin.BaseApplication
 import app.airsignal.weather.view.widget.BaseWidgetProvider
 import com.google.android.gms.location.*
-import com.google.android.gms.location.GeofencingClient
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class GeofenceManager(private val context: Context) {
+class GeofenceManager(private val context: Context): KoinComponent {
     private val requestId = "request_id_geofence"
 
     private val geofencingClient: GeofencingClient by lazy {
-        LocationServices.getGeofencingClient(BaseApplication.appContext)
+        LocationServices.getGeofencingClient(context)
     }
 
+    private val locationClass: GetLocation by inject()
+
     @SuppressLint("MissingPermission")
-    fun addGeofence(): Location? {
-        val location = GetLocation(context).getForegroundLocation()
-        location?.let {
+    suspend fun addGeofence(): Location? {
+        val location = locationClass.getForegroundLocation()
+        return location?.let {
             val geofence = Geofence.Builder()
                 .setRequestId(requestId)
                 .setCircularRegion(location.latitude, location.longitude, 100f)
@@ -46,7 +48,6 @@ class GeofenceManager(private val context: Context) {
 
             return location
         }
-        return null
     }
 
     private fun removeGeofence() {
@@ -54,7 +55,7 @@ class GeofenceManager(private val context: Context) {
     }
 
     fun getSimpleAddress(lat: Double, lng: Double): String {
-        val addr = GetLocation(context).getAddress(lat, lng)
+        val addr = locationClass.getAddress(lat, lng)
         return getWidgetAddress(addr)
     }
 

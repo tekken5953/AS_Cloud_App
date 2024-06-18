@@ -16,6 +16,7 @@ import app.airsignal.weather.db.sp.SpDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class GetLocation(private val context: Context) {
@@ -47,8 +48,7 @@ class GetLocation(private val context: Context) {
         mLat: Double,
         mLng: Double,
         mAddr: String?
-    ) {
-        CoroutineScope(Dispatchers.IO).launch {
+    ) = CoroutineScope(Dispatchers.IO).launch {
             val db = GpsRepository(context)
             val model = GpsEntity(
                 name = SpDao.CURRENT_GPS_ID,
@@ -61,27 +61,23 @@ class GetLocation(private val context: Context) {
             if (gpsDbIsEmpty(db)) db.insert(model)
             else db.update(model)
         }
-    }
 
     // DB가 비어있는지 확인
-    private suspend fun gpsDbIsEmpty(db: GpsRepository): Boolean {
-        return db.findAll().isEmpty()
-    }
+    private suspend fun gpsDbIsEmpty(db: GpsRepository): Boolean = db.findAll().isEmpty()
 
     @SuppressLint("MissingPermission")
-    fun getForegroundLocation(): Location? {
-        return try {
-            val locationManager = context.applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager?
-            val locationGPS = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            val locationNetwork = locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+    suspend fun getForegroundLocation(): Location? {
+        return withContext(Dispatchers.IO) {
+            kotlin.runCatching {
+                val locationManager = context.applicationContext.getSystemService(LOCATION_SERVICE) as LocationManager?
+                val locationGPS = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                val locationNetwork = locationManager?.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
 
-            if (locationGPS != null && locationNetwork != null) {
-                // 두 위치 중 더 정확한 위치를 반환
-                if (locationGPS.accuracy > locationNetwork.accuracy) locationGPS else locationNetwork
-            } else locationGPS ?: locationNetwork
-        } catch (e: SecurityException) {
-            e.printStackTrace()
-            null
+                if (locationGPS != null && locationNetwork != null)
+                    // 두 위치 중 더 정확한 위치를 반환
+                    if (locationGPS.accuracy > locationNetwork.accuracy) locationGPS else locationNetwork
+                else locationGPS ?: locationNetwork
+            }.getOrNull()
         }
     }
 

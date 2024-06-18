@@ -5,17 +5,22 @@ import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.db.sp.GetAppInfo
-import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.db.sp.SetAppInfo
-import app.airsignal.weather.util.RefreshUtils
-import app.airsignal.weather.util.ToastUtils
+import app.airsignal.weather.db.sp.SharedPreferenceManager
+import app.airsignal.weather.utils.plain.TimberUtil
+import app.airsignal.weather.utils.plain.ToastUtils
+import app.airsignal.weather.utils.view.RefreshUtils
+import app.airsignal.weather.view.activity.LoginActivity
 import com.airbnb.lottie.LottieAnimationView
 import com.navercorp.nid.NaverIdLoginSDK
 import com.navercorp.nid.oauth.NidOAuthLogin
 import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.navercorp.nid.profile.NidProfileCallback
 import com.navercorp.nid.profile.data.NidProfileResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -24,15 +29,17 @@ import com.navercorp.nid.profile.data.NidProfileResponse
  **/
 
 class NaverLogin(private val activity: Activity) {
-    private val toast = ToastUtils(activity)
+    private val toast by lazy { ToastUtils(activity) }
 
-    init {
+    fun init(): NaverLogin {
         NaverIdLoginSDK.initialize(
             activity,
             IgnoredKeyFile.naverDefaultClientId,
             IgnoredKeyFile.naverDefaultClientSecret,
             IgnoredKeyFile.naverDefaultClientName
         )
+
+        return this
     }
 
     /** 로그인
@@ -45,65 +52,59 @@ class NaverLogin(private val activity: Activity) {
     }
 
     fun silentLogin() {
-        NaverIdLoginSDK.authenticate(activity, oauthLoginCallback)
+        kotlin.runCatching {
+            NaverIdLoginSDK.authenticate(activity, oauthLoginCallback)
+        }.exceptionOrNull()?.stackTraceToString()
     }
 
     /** 로그아웃 + 기록 저장 */
-    fun logout() {
+    fun logout(pb: LottieAnimationView?) {
         NaverIdLoginSDK.logout()
-        RDBLogcat.writeLoginHistory(
-            isLogin = false,
-            platform = RDBLogcat.LOGIN_NAVER,
-            email = GetAppInfo.getUserEmail(activity),
-            isAuto = null,
-            isSuccess = true
-        )
-        RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = null)
+        pb?.let {
+            activity.runOnUiThread {
+                RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = it)
+            }
+        }
     }
 
     /** 엑세스 토큰 불러오기
      *
      * @return String?
      * **/
-    fun getAccessToken(): String? {
-        return NaverIdLoginSDK.getAccessToken()
-    }
+    fun getAccessToken(): String? = NaverIdLoginSDK.getAccessToken()
 
     /** 엑세스 토큰 리프래시 **/
-    suspend fun refreshToken() { NidOAuthLogin().refreshToken() }
+    suspend fun refreshToken() {
+        CoroutineScope(Dispatchers.Default).launch {
+            val refreshResult = NidOAuthLogin().refreshToken()
+            if (refreshResult) NaverIdLoginSDK.authenticate(activity, oauthLoginCallback)
+            else ToastUtils(activity).showMessage("로그인에 실패했습니다")
+
+            TimberUtil.d("testtest","refresh token result is $refreshResult")
+        }
+    }
 
     // 프로필 콜벡 메서드
     val profileCallback = object : NidProfileCallback<NidProfileResponse> {
         override fun onSuccess(result: NidProfileResponse) {
             result.profile?.let {
-                SharedPreferenceManager(activity)
-                    .setString(IgnoredKeyFile.lastLoginPhone, it.mobile.toString())
-                    .setString(IgnoredKeyFile.userId, it.name.toString())
-                    .setString(IgnoredKeyFile.userProfile, it.profileImage ?: "")
-                    .setString(IgnoredKeyFile.userEmail, it.email.toString())
+                CoroutineScope(Dispatchers.IO).launch {
+                    SharedPreferenceManager(activity)
+                        .setString(IgnoredKeyFile.lastLoginPhone, it.mobile.toString())
+                        .setString(IgnoredKeyFile.userId, it.name.toString())
+                        .setString(IgnoredKeyFile.userProfile, it.profileImage ?: "")
+                        .setString(IgnoredKeyFile.userEmail, it.email.toString())
+                    SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_NAVER)
 
-                RDBLogcat.writeLoginHistory(isLogin = true, platform = RDBLogcat.LOGIN_NAVER,
-                    email = it.email.toString(), isAuto = false, isSuccess = true)
-
-                RDBLogcat.writeLoginPref(activity,
-                    platform = RDBLogcat.LOGIN_NAVER,
-                    email = it.email.toString(),
-                    phone = it.mobile.toString(),
-                    name = it.name.toString(),
-                    profile = it.profileImage.toString()
-                )
-
-                SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_NAVER)
-                activity.finish()
+                    withContext(Dispatchers.Main) {
+                        if (activity is LoginActivity) activity.finish()
+                    }
+                }
             }
         }
 
         override fun onFailure(httpStatus: Int, message: String) {
             toast.showMessage("프로필을 불러오는데 실패했습니다",1)
-            RDBLogcat.writeLoginHistory(
-                isLogin = true, platform = RDBLogcat.LOGIN_NAVER, email = GetAppInfo.getUserEmail(activity),
-                isAuto = false, isSuccess = false
-            )
         }
 
         override fun onError(errorCode: Int, message: String) { onFailure(errorCode, message) }
@@ -118,21 +119,17 @@ class NaverLogin(private val activity: Activity) {
         }
 
         override fun onFailure(httpStatus: Int, message: String) {
-            val errorCode = NaverIdLoginSDK.getLastErrorCode().code
-            val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
-            RDBLogcat.writeErrorNotANR(activity,"naver login","error $errorCode $errorDescription")
             toast.showMessage(activity.getString(R.string.require_login),1)
         }
 
         override fun onError(errorCode: Int, message: String) {
             onFailure(errorCode, message)
+            TimberUtil.d("testtest","naver login error : ${errorCode}/${message}")
         }
     }
 
     /** 로그인 세션 유지 확인 **/
-    fun isLogin() : Boolean {
-        return NidOAuthLogin().callProfileApi(profileCallback).isCompleted
-    }
+    fun isLogin() : Boolean = NidOAuthLogin().callProfileApi(profileCallback).isCompleted
 
     /** 네이버 클라이언트와 연동 해제 **/
     fun disconnectFromNaver(pb: LottieAnimationView?) {
@@ -146,15 +143,11 @@ class NaverLogin(private val activity: Activity) {
             }
 
             override fun onFailure(httpStatus: Int, message: String) {
-                // 서버에서 토큰 삭제에 실패했어도 클라이언트에 있는 토큰은 삭제되어 로그아웃된 상태입니다.
-                // 클라이언트에 토큰 정보가 없기 때문에 추가로 처리할 수 있는 작업은 없습니다.
                 println(NaverIdLoginSDK.getLastErrorDescription())
                 activity.recreate()
             }
 
             override fun onError(errorCode: Int, message: String) {
-                // 서버에서 토큰 삭제에 실패했어도 클라이언트에 있는 토큰은 삭제되어 로그아웃된 상태입니다.
-                // 클라이언트에 토큰 정보가 없기 때문에 추가로 처리할 수 있는 작업은 없습니다.
                 onFailure(errorCode, message)
                 activity.recreate()
             }

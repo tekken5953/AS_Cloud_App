@@ -19,7 +19,7 @@
     <string name="korean">한국어</string>
     <string name="system_lang">System Language</string>
     <string name="weather">Weather</string>
-    <string name="save_change">Settings have been saved successfully.\nRestart the app</string>
+    <string name="save_change">Settings have been saved successfully\nRestart the app</string>
     <string name="ok">OK</string>
     <string name="theme_system">System Theme</string>
     <string name="mon">Mon</string>
@@ -48,7 +48,6 @@
     <string name="uv_high">High</string>
     <string name="uv_very_high">Extra High</string>
     <string name="uv_caution">Dangerous</string>
-    <string name="slide_more">More View</string>
 
     <string name="sky_sunny">Sunny</string>
     <string name="sky_sunny_cloudy">Sunny&amp;Cloudy</string>
@@ -146,12 +145,12 @@
     <string name="bad">Bad</string>
     <string name="worst">Very Bad</string>
     <string name="error">Error</string>
-    <string name="perm_self_msg"><![CDATA[Permission is Denied\nAccess the location when the app is not in use.]]></string>
+    <string name="perm_self_msg"><![CDATA[Permission is Denied\nAccess the location when the app is not in use]]></string>
     <string name="noti_always_can"><![CDATA[Notification always can agree in App Settings -> Notification]]></string>
     <string name="noti_setting_enable">Notification settings\nProvides weather notifications and event information</string>
     <string name="vibrate_setting">Vibration Settings</string>
     <string name="noti_sound_setting">Sound Settings</string>
-    <string name="notification_explain_text">Default notifications are sent twice a day in total.\n(After 07:00KST in the morning, after 18:00KST in the afternoon)\n\nIf Live Location permissions are not allowed\nA notification will be sent to the location where you last accessed the app.</string>
+    <string name="notification_explain_text">Default notifications are sent twice a day in total.\n(After 07:00KST in the morning, after 18:00KST in the afternoon)\n\nIf Live Location permissions are not allowed\nA notification will be sent to the location where you last accessed the app</string>
     <string name="allowed">Allowed</string>
     <string name="perm_back_setting">Set real-time location permissions</string>
     <string name="do_allow">Allow</string>
@@ -163,14 +162,12 @@
     <string name="customer_call_title">Call</string>
     <string name="email">Email</string>
     <string name="home_page">Website</string>
-    <string name="data_api_license">The data shown on the screen above is provided and used by Air Korea, the Korea Meteorological Administration, and the Korea Astronomy and Space Science Institute.</string>
+    <string name="data_api_license">The data shown on the screen above is provided and used by Air Korea, the Korea Meteorological Administration, and the Korea Astronomy and Space Science Institute</string>
     <string name="phone_airsignal">+8270–4912–9321</string>
     <string name="no_result_notice">No result for Notice</string>
     <string name="loc_caution_title">Location permissions are necessary</string>
     <string name="loc_caution_explain">Measure the location of the current device and place it at that location Used to retrieve real-time weather information based on</string>
     <string name="update">Update</string>
-    <string name="max">Max</string>
-    <string name="min">Min</string>
     <string name="warning_title">Weather report</string>
     <string name="renew_data">Re call data</string>
     <string name="enable_gps">Activate GPS</string>
@@ -180,7 +177,6 @@
     <string name="cd_icon_plus">Add</string>
     <string name="cd_icon_gps_fix">Renew current location</string>
     <string name="cd_img_more">More View Icon</string>
-    <string name="cd_text_more">More View Text</string>
     <string name="cd_img_location">Address</string>
     <string name="cd_icon_up">Scroll to top</string>
     <string name="cd_icon_side_menu">Menu</string>
@@ -192,7 +188,6 @@
     <string name="cd_icon_location">Location Permission</string>
     <string name="cd_icon_noti">Notification Permission</string>
     <string name="cd_login_platform">Profile image</string>
-    <string name="cd_check">Check icon</string>
     <string name="cd_icon_location_shadow">Location Permission Shadow</string>
     <string name="cd_list_item">List item</string>
     <string name="agree_user_data">I agree with AirSignal\'s privacy policy</string>
@@ -204,19 +199,18 @@
     <string name="back_perm_down_title">Use real-time location</string>
     <string name="back_perm_up_title">Set background\nlocation Permission</string>
     <string name="nav_back_perm">Permissions > Locations > Always Allow</string>
-    <string name="back_perm_1">You can update your location to receive accurate notifications even when the app is not working.</string>
+    <string name="back_perm_1">You can update your location to receive accurate notifications even when the app is not working</string>
     <string name="back_perm_2">You can change this setting at any time under Application Location Permission.</string>
     <string name="back_perm_3">Background location information is not used except for the notification service</string>
     <string name="back_perm_subtitle"><![CDATA[Please check Permissions > Locations > Always Allow]]></string>
     <string name="agree">Agree</string>
     <string name="first_perm_title">Agree to use user location</string>
     <string name="first_perm_tr1">Collect and use location to provide weather data.</string>
-    <string name="first_perm_tr2">Location is processed even when the app is not in use to send more accurate weather notifications.</string>
-    <string name="first_perm_tr3">Please accept the location processing by pressing the \'agree\' button to use the app.</string>
-    <string name="first_perm_tr4">You can stop collecting and using location from app settings or system location permissions.</string>
+    <string name="first_perm_tr2">Location is processed even when the app is not in use to send more accurate weather notifications</string>
+    <string name="first_perm_tr3">Please accept the location processing by pressing the \'agree\' button to use the app</string>
+    <string name="first_perm_tr4">You can stop collecting and using location from app settings or system location permissions</string>
     <string name="choose_region">Select a region</string>
     <string name="naver_disconnect">Disconnect from Naver</string>
-    <string name="error_guide">if the problem persists.Please contact \'play@airsignal.kr\'</string>
     <string name="exclamation_mark">Exclamation mark</string>
     <string name="last_location_call_msg">Address calls failed and call up the last address.</string>
     <string name="widget_4x2_description">Airsignal 4x2</string>
@@ -233,12 +227,9 @@
     <string name="use_current_version">Use this version</string>
     <string name="exist_last_version">We have the latest version</string>
     <string name="fail_to_get_app_version">Fail to get app version</string>
-    <string name="address_error">Error Address</string>
     <string name="ok_change_setting">Settings have been changed</string>
     <string name="settings_initialized">Settings have been initialized</string>
-    <string name="setting_animation">Animation</string>
     <string name="setting_opacity">Opacity</string>
-    <string name="setting_animation_weather">Weather background</string>
     <string name="opacity_black">Text black</string>
     <string name="opacity_white">Text white</string>
     <string name="display">Display</string>
@@ -256,4 +247,11 @@
     <string name="lunar_ha_m">Waning Gibbous</string>
     <string name="lunar_ha_d">Last Quarter</string>
     <string name="lunar_g">Waning Crescent</string>
+    <string name="sun_rise_set">Sun</string>
+    <string name="no_entire_summary">There are currently no weather warnings\nin the country</string>
+    <string name="no_region_summary">there is no local weather warning\nDo you want to search nationwide?</string>
+    <string name="lunar_progress_title">Bright</string>
+    <string name="wave">wave</string>
+    <string name="widget_perm_denied">Please change the permission to \'Allow at all times\' and reinstall it</string>
+    <string name="widget_not_refreshable">Data refresh is possible every 1 minute</string>
 </resources>

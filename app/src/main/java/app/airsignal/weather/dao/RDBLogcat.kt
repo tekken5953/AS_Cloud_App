@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.provider.Settings
 import app.airsignal.weather.db.sp.SharedPreferenceManager
+import app.airsignal.weather.db.sp.SpDao
 import com.google.firebase.database.DatabaseException
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -21,14 +22,9 @@ object RDBLogcat {
     private const val LOGIN_ON = "로그인"
     private const val LOGIN_OFF = "비로그인"
     private const val SIGN_OUT = "로그아웃"
-    const val USER_PREF_SETUP = "설치"
-    const val USER_PREF_DEVICE = "디바이스"
-    const val USER_PREF_SETUP_INIT = "초기 설치"
-    const val USER_PREF_SETUP_LAST_LOGIN = "마지막 접속 시간"
+    private const val USER_PREF_SETUP_INIT = "초기 설치"
     private const val USER_PREF_SETUP_COUNT = "총 설치 횟수"
-    const val USER_PREF_DEVICE_APP_VERSION = "앱 버전"
-    const val USER_PREF_DEVICE_DEVICE_MODEL = "디바이스 모델"
-    const val USER_PREF_DEVICE_SDK_VERSION = "SDK 버전"
+    private const val USER_PREF_DEVICE_SDK_VERSION = "SDK 버전"
     private const val LOGIN_PREF = "정보"
     private const val LOGIN_PREF_EMAIL = "이메일"
     private const val LOGIN_PREF_PHONE = "핸드폰"
@@ -46,23 +42,20 @@ object RDBLogcat {
     const val LOGIN_GOOGLE = "구글"
     const val LOGIN_KAKAO = "카카오"
     const val LOGIN_PHONE = "phone"
-    const val LOGIN_KAKAO_EMAIL = "카카오 이메일"
     const val LOGIN_NAVER = "네이버"
     private const val NOTIFICATION_HISTORY = "알림"
     private const val ERROR_HISTORY = "에러"
     private const val ERROR_ANR = "ANR 에러"
-    const val LOGIN_FAILED = "로그인 시도 실패"
-    const val DATA_CALL_ERROR = "데이터 호출 실패"
 
     /** 안드로이드 ID(Unique) 반환 **/
     @SuppressLint("HardwareIds")
     private fun androidID(context: Context): String {
-        return try {
+        return kotlin.runCatching {
             Settings.Secure.getString(
                 context.applicationContext.contentResolver,
                 Settings.Secure.ANDROID_ID
             )
-        } catch (e: java.lang.NullPointerException) { "" }
+        }.getOrElse { "" }
     }
 
     /** 유저 로그 레퍼런스 **/
@@ -70,51 +63,44 @@ object RDBLogcat {
     private val ref = db.getReference("User")
 
     /** 날짜 변환 **/
-    private fun getDate(): String {
-        return millsToString(System.currentTimeMillis(), "yyyy-MM-dd")
-    }
+    private fun getDate(): String =
+        millsToString(System.currentTimeMillis(), " yyyy-MM-dd")
 
     /** 시간 변환 **/
-    private fun getTime(): String {
-        return millsToString(System.currentTimeMillis(), "HH:mm:ss")
-    }
+    private fun getTime(): String =
+        millsToString(System.currentTimeMillis(), "HH:mm:ss")
 
     /** 데이터 포멧에 맞춰서 시간변환 **/
-    private fun millsToString(mills: Long, pattern: String): String {
-        return SimpleDateFormat(pattern, Locale.getDefault()).format(Date(mills))
-    }
+    private fun millsToString(mills: Long, pattern: String): String =
+        SimpleDateFormat(pattern, Locale.getDefault()).format(Date(mills))
 
     /** 로그인 여부 확인 **/
     private fun isLogin(context: Context): String {
-        return try {
-            if (SharedPreferenceManager(context).getString("user_email") != "") LOGIN_ON else LOGIN_OFF
-        } catch(e: java.lang.NullPointerException) { LOGIN_OFF }
+        return kotlin.runCatching {
+            if (SharedPreferenceManager(context).getString(SpDao.userEmail) != "") LOGIN_ON else LOGIN_OFF
+        }.getOrElse { LOGIN_OFF }
     }
 
     /** 유니크 아이디 받아오기 - 로그인(이메일) 비로그인(디바이스아이디) **/
     private fun getAndroidIdForLog(context: Context): String {
-        val email = SharedPreferenceManager(context).getString("user_email")
-        return try {
-            if (email != "")
-                email.replace(".","_")
+        val email = SharedPreferenceManager(context).getString(SpDao.userEmail)
+        return kotlin.runCatching {
+            if (email != "") email.replace(".","_")
             else androidID(context)
-        } catch (e: NullPointerException) { "" }
+        }.getOrElse { "" }
     }
 
     /** 아이디까지의 레퍼런스 경로 **/
-    private fun default(context: Context): DatabaseReference {
-        return ref.child(isLogin(context))
-            .child(getAndroidIdForLog(context))
-    }
+    private fun default(context: Context): DatabaseReference =
+        ref.child(isLogin(context)).child(getAndroidIdForLog(context))
 
     /** 유저 설치 정보 **/
     fun <T> writeUserPref(context: Context, sort: String, title: String, value: T?) {
         try{
-            val userRef = default(context)
-                .child(sort)
-                .child(title)
+            val userRef = default(context).child(sort).child(title)
             if (sort == USER_PREF_SETUP_INIT) {
-                if (!userRef.get().isSuccessful) userRef.setValue(modify(value.toString()))
+                if (userRef.get().isSuccessful) userRef.setValue(modify(value.toString()))
+                else userRef.setValue("Write User Pref Error")
             } else if (sort == USER_PREF_SETUP_COUNT)
                 userRef.setValue(userRef.get().result.value.toString().toInt() + 1)
             else userRef.setValue(modify(value.toString()))

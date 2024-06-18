@@ -18,7 +18,7 @@ interface GpsScheme {
     fun findAllWithAsc(): List<GpsEntity>
 
     @Query("SELECT * FROM gps_table WHERE name= :name")
-    suspend fun findByNameWithCoroutine(name: String) : GpsEntity
+    suspend fun findByNameWithCoroutine(name: String) : GpsEntity?
 
     @Query("DELETE FROM gps_table WHERE addrKr= :addrKr")
     suspend fun deleteFromAddrWithCoroutine(addrKr: String)

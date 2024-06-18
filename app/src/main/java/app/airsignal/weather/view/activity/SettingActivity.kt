@@ -22,7 +22,6 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
@@ -35,15 +34,20 @@ import app.airsignal.weather.db.sp.*
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
-import app.airsignal.weather.network.retrofit.ApiModel
-import app.airsignal.weather.network.retrofit.HttpClient
+import app.airsignal.weather.api.retrofit.ApiModel
+import app.airsignal.weather.api.retrofit.HttpClient
+import app.airsignal.weather.utils.controller.OnAdapterItemSingleClick
 import app.airsignal.weather.repository.BaseRepository
-import app.airsignal.weather.util.*
-import app.airsignal.weather.util.`object`.DataTypeParser
-import app.airsignal.weather.view.custom_view.CustomerServiceView
-import app.airsignal.weather.view.custom_view.ShowDialogClass
-import app.airsignal.weather.view.custom_view.SnackBarUtils
-import app.airsignal.weather.view.dialog.WebViewSetting
+import app.airsignal.weather.utils.*
+import app.airsignal.weather.utils.DataTypeParser
+import app.airsignal.weather.utils.controller.ScreenController
+import app.airsignal.weather.utils.plain.ToastUtils
+import app.airsignal.weather.utils.view.EnterPageUtil
+import app.airsignal.weather.utils.view.RefreshUtils
+import app.airsignal.weather.view.custom.CustomerServiceView
+import app.airsignal.weather.view.custom.ShowDialogClass
+import app.airsignal.weather.view.custom.SnackBarUtils
+import app.airsignal.weather.utils.view.WebViewSetting
 import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
@@ -51,7 +55,9 @@ import com.bumptech.glide.Glide
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -66,7 +72,6 @@ class SettingActivity
 
     private val noticeItem = arrayListOf<ApiModel.NoticeItem>()
     private var isInit = true
-    private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
     private var isBackAllow = false
 
     private val ioThread by lazy {CoroutineScope(Dispatchers.IO)}
@@ -74,13 +79,23 @@ class SettingActivity
 
     private var lastLogin = ""
 
+    private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
+    private val httpClient by inject<HttpClient>()
+
+    private val googleLogin: GoogleLogin by inject { parametersOf(this) }  // 구글 로그인
+    private val kakaoLogin: KakaoLogin by inject { parametersOf(this) }   // 카카오 로그인
+    private val naverLogin: NaverLogin by inject { parametersOf(this) }  // 네이버 로그인
+
     override fun onResume() {
         super.onResume()
 
-        applyDeviceTheme()
-        applyUserEmail()
-        applyUserLanguage()
-        applyFontScale()
+        run {
+            applyDeviceTheme()
+            applyUserEmail()
+            applyUserLanguage()
+            applyFontScale()
+        }
+
         lastLogin = applyLastLogin()
     }
 
@@ -89,19 +104,34 @@ class SettingActivity
         super.onCreate(savedInstanceState)
 
         initBinding()
-        DataTypeParser.setStatusBar(this)
+        ScreenController(this).setStatusBar()
 
-        if (isInit) { isInit = false }
+        if (isInit) isInit = false
 
         // 뒤로가기 버튼 클릭
         binding.settingBack.setOnClickListener { goMain() }
+
+//        binding.settingResetAccount.setOnClickListener {
+//            val builder = MakeDoubleDialog(this)
+//            val dialog = builder.make(
+//                "등록된 모든 계정이 초기화됩니다", "초기화", getString(R.string.cancel), R.color.red
+//            )
+//
+//            dialog.first.setOnClickListener {
+//                CoroutineScope(Dispatchers.IO).launch {
+//
+//                }
+//            }
+//            dialog.second.setOnClickListener {
+//                builder.dismiss()
+//            }
+//        }
 
         // 로그아웃 버튼 클릭
         binding.settingLogOut.setOnClickListener {
             if (binding.settingLogOut.text == getString(R.string.setting_logout)) {
                 val builder = Dialog(this)
-                val view = LayoutInflater.from(this)
-                    .inflate(R.layout.dialog_alert_double_btn, null)
+                val view = LayoutInflater.from(this).inflate(R.layout.dialog_alert_double_btn, null)
                 builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
                 builder.setContentView(view)
@@ -118,17 +148,11 @@ class SettingActivity
                     builder.dismiss()
                     ioThread.launch {
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
-                            RDBLogcat.LOGIN_KAKAO -> {
-                                KakaoLogin(this@SettingActivity).disconnectFromKakao(binding.settingPb)
-                            }
-                            RDBLogcat.LOGIN_NAVER -> {
-                                NaverLogin(this@SettingActivity).disconnectFromNaver(binding.settingPb)
-                            }
-                            RDBLogcat.LOGIN_GOOGLE -> {
-                                GoogleLogin(this@SettingActivity).logout(binding.settingPb)
-                            }
-                            else -> {}
+                            RDBLogcat.LOGIN_KAKAO -> kakaoLogin.logout(binding.settingPb)
+                            RDBLogcat.LOGIN_NAVER -> naverLogin.init().logout(binding.settingPb)
+                            RDBLogcat.LOGIN_GOOGLE -> googleLogin.logout(binding.settingPb)
                         }
+
                         delay(100)
 
                         SetAppInfo.removeAllKeys(this@SettingActivity)
@@ -143,10 +167,20 @@ class SettingActivity
             }
 
             if (binding.settingLogOut.text == getString(R.string.login_title)) {
-                EnterPageUtil(this).toLogin("login")
+                EnterPageUtil(this).toLogin(EnterPageUtil.ENTER_FROM_LOGIN)
                 return@setOnClickListener
             }
         }
+
+//        binding.appLink.setOnClickListener {
+//            kotlin.runCatching {
+//                val linkPackageName = "app.airsignal.eye.dashboard.list"
+//                val newIntent = Intent(linkPackageName)
+//                startActivity(newIntent)
+//            }.onFailure {
+//                ToastUtils(this).showMessage("앱을 열 수 없습니다")
+//            }
+//        }
 
         // 테마 설정 클릭
         binding.settingSystemTheme.setOnClickListener {
@@ -157,10 +191,9 @@ class SettingActivity
             val lightTheme: RadioButton = themeView.findViewById(R.id.themeLightRB)
             val darkTheme: RadioButton = themeView.findViewById(R.id.themeDarkRB)
             val radioGroup: RadioGroup = themeView.findViewById(R.id.changeThemeRadioGroup)
-            val cancel: ImageView = themeView.findViewById(R.id.changeThemeBack)
 
             ShowDialogClass(this, false)
-                .setBackPressed(cancel)
+                .setBackPressed(themeView.findViewById(R.id.changeThemeBack))
                 .show(themeView, true, ShowDialogClass.DialogTransition.END_TO_START)
 
             // 현재 저장된 테마에 따라서 라디오버튼 체크
@@ -216,7 +249,6 @@ class SettingActivity
 
         // 언어 설정 클릭
         binding.settingSystemLang.setOnClickListener {
-            // 뷰 레이아웃 생성
             val langView: View =
                 LayoutInflater.from(this).inflate(R.layout.dialog_change_language, null)
             val systemLang: RadioButton = langView.findViewById(R.id.systemLangRb)
@@ -300,15 +332,13 @@ class SettingActivity
             noticeItem.clear()
 
             ioThread.launch {
-                HttpClient.retrofit.notice.enqueue(object : Callback<List<ApiModel.NoticeItem>> {
-                        @SuppressLint("NotifyDataSetChanged")
+                httpClient.retrofit.notice.enqueue(object : Callback<List<ApiModel.NoticeItem>> {
                         override fun onResponse(
                             call: Call<List<ApiModel.NoticeItem>>,
-                            response: Response<List<ApiModel.NoticeItem>>
-                        ) {
-                            try {
-                                val list = response.body()!!
-                                list.forEachIndexed { i, item ->
+                            response: Response<List<ApiModel.NoticeItem>>) {
+                            kotlin.runCatching {
+                                val list = response.body()
+                                list?.forEachIndexed { i, item ->
                                     val createdTime =  LocalDateTime.parse(item.created)
                                     val modifiedTime =  LocalDateTime.parse(item.modified)
                                     addNoticeItem(
@@ -321,14 +351,10 @@ class SettingActivity
                                     noticeAdapter.notifyItemInserted(i)
                                 }
 
-                                if (list.isEmpty()) {
-                                    nullText.visibility = View.VISIBLE
-                                } else {
-                                    nullText.visibility = View.GONE
-                                }
-                            } catch(e: Exception) {
+                                nullText.visibility = if (list != null && list.isEmpty()) View.VISIBLE else View.GONE
+                            }.onFailure { exception ->
                                 nullText.visibility = View.VISIBLE
-                                e.printStackTrace()
+                                exception.printStackTrace()
                             }
                         }
 
@@ -363,12 +389,11 @@ class SettingActivity
                         if (item.content != "") {
                             loadUrl("${item.href}${item.id}")
                             detailNoContent.apply { visibility = View.GONE }
-                        } else {
+                        } else
                             detailNoContent.apply {
                                 visibility = View.VISIBLE
                                 bringToFront()
                             }
-                        }
                     }
                     ShowDialogClass(this@SettingActivity, false)
                         .setBackPressed(detailView.findViewById(R.id.detailBack))
@@ -389,17 +414,15 @@ class SettingActivity
             val back = scaleView.findViewById<ImageView>(R.id.changeScaleBack)
             val rg = scaleView.findViewById<RadioGroup>(R.id.changeScaleRadioGroup)
 
-            val fontDialog = ShowDialogClass(this, false)
-
-            fontDialog
+            ShowDialogClass(this, false)
                 .setBackPressed(back)
                 .show(scaleView, true,ShowDialogClass.DialogTransition.END_TO_START)
 
             // 현재 저장된 텍스트 크기에 따라서 라디오버튼 체크
             when (GetAppInfo.getUserFontScale(this)) {
-                SpDao.TEXT_SCALE_SMALL -> { rg.check(small.id) }
-                SpDao.TEXT_SCALE_BIG -> { rg.check(big.id) }
-                else -> { rg.check(default.id) }
+                SpDao.TEXT_SCALE_SMALL -> rg.check(small.id)
+                SpDao.TEXT_SCALE_BIG -> rg.check(big.id)
+                else -> rg.check(default.id)
             }
 
             // 설정 변경시
@@ -437,29 +460,23 @@ class SettingActivity
         // 알림 클릭
         binding.settingNotificationText.setOnClickListener {
             val notificationView: View =
-                LayoutInflater.from(this).inflate(
-                    R.layout.dialog_notification_setting,
-                    null
-                )
+                LayoutInflater.from(this).inflate(R.layout.dialog_notification_setting, null)
 
             val notiVibrateTr: TableRow = notificationView.findViewById(R.id.notiVibrateView)
             val notiSoundTr: TableRow = notificationView.findViewById(R.id.notiSoundView)
             val notiBackTr: TableRow = notificationView.findViewById(R.id.notiBackView)
             val notiSettingTitle: TextView = notificationView.findViewById(R.id.notiSettingTitle)
             val notiBackTitle: TextView = notificationView.findViewById(R.id.notiBackTitle)
-            val notiSettingSwitch: SwitchCompat =
-                notificationView.findViewById(R.id.notiSettingSwitch)
-            val notiVibrateSwitch: SwitchCompat =
-                notificationView.findViewById(R.id.notiVibrateSwitch)
+            val notiSettingSwitch: SwitchCompat = notificationView.findViewById(R.id.notiSettingSwitch)
+            val notiVibrateSwitch: SwitchCompat = notificationView.findViewById(R.id.notiVibrateSwitch)
             val notiBackContent: TextView = notificationView.findViewById(R.id.notiBackContent)
             val notiSoundSwitch: SwitchCompat = notificationView.findViewById(R.id.notiSoundSwitch)
             val notiLine2: View = notificationView.findViewById(R.id.notificationLine2)
             val notiLine3: View = notificationView.findViewById(R.id.notificationLine3)
             val notiPerm = RequestPermissionsUtil(this)
 
-            if (VERSION.SDK_INT >= 33) {
+            if (VERSION.SDK_INT >= 33)
                 SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, notiPerm.isNotificationPermitted())
-            }
 
             // 알림 미허용시 다른 아이템 숨김
             fun setVisibility(isChecked: Boolean) {
@@ -478,43 +495,39 @@ class SettingActivity
 
             // 백그라운드 요청에 따른 적용
             fun applyBack(isChecked: Boolean) {
-                if (isChecked) {
-                    SetAppInfo.setInitBackLocPermission(this,true)
-                    notiBackTr.visibility = View.VISIBLE
-                    // 29 이상
-                    if (VERSION.SDK_INT >= 29) {
-                        // 백그라운드 허용 여부
-                        isBackAllow = RequestPermissionsUtil(this).isBackgroundRequestLocation()
-                        notiBackTitle.text = getString(R.string.perm_self_msg)
-                        if (isBackAllow) {
-                            notiBackContent.text = getString(R.string.allowed)
-                        } else {
-                            notiBackContent.text = getString(R.string.do_allow)
-                        }
-                    }
-                    // 29 이하
-                    else {
-                        notiBackTitle.text = getString(R.string.perm_back_setting)
-                        if (GetAppInfo.isPermedBackLoc(this)) notiBackContent.text = getString(R.string.background_location_active)
-                        else notiBackContent.text = getString(R.string.background_location_not_active)
-                    }
+                if (!isChecked) {
+                    notiBackTr.visibility = View.GONE
+                    return
+                }
 
-                    setNightAlertsSpan(notiBackTitle)
-                    setNightAlertsSpan(notiBackContent)
+                SetAppInfo.setInitBackLocPermission(this,true)
+                notiBackTr.visibility = View.VISIBLE
+                // 29 이상
+                if (VERSION.SDK_INT >= 29) {
+                    // 백그라운드 허용 여부
+                    isBackAllow = RequestPermissionsUtil(this).isBackgroundRequestLocation()
+                    notiBackTitle.text = getString(R.string.perm_self_msg)
+                    if (isBackAllow) notiBackContent.text = getString(R.string.allowed)
+                    else notiBackContent.text = getString(R.string.do_allow)
+                } else {  // 29 이하
+                    notiBackTitle.text = getString(R.string.perm_back_setting)
+                    if (GetAppInfo.isPermedBackLoc(this)) notiBackContent.text = getString(R.string.background_location_active)
+                    else notiBackContent.text = getString(R.string.background_location_not_active)
+                }
 
-                    notiBackTr.setOnClickListener {
-                        if (notiBackContent.text.toString() == getString(R.string.do_allow) ||
-                            notiBackContent.text.toString() == getString(R.string.background_location_not_active) ||
-                            notiBackContent.text.toString() == getString(R.string.background_location_active)
-                        ) {
-                            BackLocCheckDialog(
-                                this,
-                                supportFragmentManager,
-                                BottomSheetDialogFragment().tag
-                            ).show()
-                        }
-                    }
-                } else notiBackTr.visibility = View.GONE
+                setNightAlertsSpan(notiBackTitle)
+                setNightAlertsSpan(notiBackContent)
+
+                notiBackTr.setOnClickListener {
+                    if (notiBackContent.text.toString() == getString(R.string.do_allow) ||
+                        notiBackContent.text.toString() == getString(R.string.background_location_not_active) ||
+                        notiBackContent.text.toString() == getString(R.string.background_location_active))
+                        BackLocCheckDialog(
+                            this,
+                            supportFragmentManager,
+                            BottomSheetDialogFragment().tag
+                        ).show()
+                }
             }
 
             setNightAlertsSpan(notiSettingTitle)
@@ -528,26 +541,32 @@ class SettingActivity
 
             // 알림 설정 스위치 변화
             notiSettingSwitch.setOnCheckedChangeListener { _, isChecked ->
-                if (VERSION.SDK_INT >= 33) {
-                    if (isChecked) {
-                        if (notiPerm.isNotificationPermitted()) {
-                            SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, true)
-                            showSnackBar(notificationView, true)
-                            setVisibility(true)
-                            applyBack(true)
-                        } else notiPerm.requestNotification()
-                    } else {
-                        SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, false)
-                        showSnackBar(notificationView, false)
-                        setVisibility(false)
-                        applyBack(false)
-                    }
-                } else {
+                if (VERSION.SDK_INT < 33) {
                     SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, isChecked)
                     showSnackBar(notificationView, isChecked)
                     setVisibility(isChecked)
                     applyBack(isChecked)
+
+                    return@setOnCheckedChangeListener
                 }
+
+                if (!isChecked) {
+                    SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, false)
+                    showSnackBar(notificationView, false)
+                    setVisibility(false)
+                    applyBack(false)
+                    return@setOnCheckedChangeListener
+                }
+
+                if (!notiPerm.isNotificationPermitted()) {
+                    notiPerm.requestNotification()
+                    return@setOnCheckedChangeListener
+                }
+
+                SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, true)
+                showSnackBar(notificationView, true)
+                setVisibility(true)
+                applyBack(true)
             }
             // 진동 설정 스위치 변화
             notiVibrateSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -565,11 +584,6 @@ class SettingActivity
                 .show(notificationView, true,ShowDialogClass.DialogTransition.END_TO_START)
         }
 
-
-        binding.settingAnimation.setOnClickListener {
-            makeWeatherAnimationEnabledDialog()
-        }
-
         binding.settingOpacityText.setOnClickListener {
             makeWeatherBoxOpacityDialog()
         }
@@ -581,15 +595,14 @@ class SettingActivity
         val alertOff = ContextCompat.getDrawable(this, R.drawable.alert_off)!!
         alertOn.setTint(getColor(R.color.theme_view_color))
         alertOff.setTint(getColor(R.color.theme_view_color))
-        if (isAllow) { if (!isInit) { SnackBarUtils.make(view, getString(R.string.allowed_noti), alertOn).show() } }
-        else { if (!isInit) { SnackBarUtils.make(view, getString(R.string.denied_noti), alertOff).show() } }
+        if (isAllow) { if (!isInit) SnackBarUtils.make(view, getString(R.string.allowed_noti), alertOn).show()}
+        else { if (!isInit) SnackBarUtils.make(view, getString(R.string.denied_noti), alertOff).show() }
     }
 
     // 알림 텍스트 색상 설정
     private fun setNightAlertsSpan(textView: TextView) {
         val span = SpannableStringBuilder(textView.text)
-        val formatText = textView.text.split(System.lineSeparator())
-        formatText.forEach {
+        textView.text.split(System.lineSeparator()).forEach {
             span.setSpan(
                 ForegroundColorSpan(getColor(R.color.theme_sub_color)),
                 it.length, span.length,
@@ -597,38 +610,34 @@ class SettingActivity
             )
             // 크기변경
             span.setSpan(
-                AbsoluteSizeSpan(37),
-                it.length, span.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
+                AbsoluteSizeSpan(37), it.length, span.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             if (textView.text.contains(getString(R.string.always_allowed))) {
-                try {
+                kotlin.runCatching {
                     span.setSpan(
                         ForegroundColorSpan(getColor(R.color.main_blue_color)),
                         DataTypeParser.findCharacterIndex(textView.text as String, '\n'),
                         DataTypeParser.findCharacterIndex(textView.text as String, '을'),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
-                } catch (e: IndexOutOfBoundsException) { e.printStackTrace() }
+                }.onFailure { exception ->
+                    if (exception == IndexOutOfBoundsException()) exception.stackTraceToString()
+                }
             }
 
-            if (textView.text == getString(R.string.allowed) || textView.text == getString(R.string.background_location_active)) {
+            if (textView.text == getString(R.string.allowed) || textView.text == getString(R.string.background_location_active))
                 textView.setTextColor(getColor(R.color.main_blue_color))
-            }
         }
 
         textView.text = span
     }
 
-    // 테마 적용
-    private fun applyDeviceTheme() {
-        // 설정 페이지 테마 항목이름 바꾸기
+    // 설정 페이지 테마 항목이름 바꾸기
+    private fun applyDeviceTheme() =
         when (GetAppInfo.getUserTheme(this)) {
-            StaticDataObject.THEME_DARK -> { binding.settingSystemTheme.fetchData(getString(R.string.theme_dark)) }
-            StaticDataObject.THEME_LIGHT -> { binding.settingSystemTheme.fetchData(getString(R.string.theme_light)) }
-            else -> { binding.settingSystemTheme.fetchData(getString(R.string.theme_system)) }
+            StaticDataObject.THEME_DARK -> binding.settingSystemTheme.fetchData(getString(R.string.theme_dark))
+            StaticDataObject.THEME_LIGHT -> binding.settingSystemTheme.fetchData(getString(R.string.theme_light))
+            else -> binding.settingSystemTheme.fetchData(getString(R.string.theme_system))
         }
-    }
 
     // 앱 버전 불러오기
     @SuppressLint("SetTextI18n", "InflateParams")
@@ -645,10 +654,9 @@ class SettingActivity
             viewAppInfo.findViewById(R.id.appInfoCustomerService)
         val appInfoDataUsage: TextView = viewAppInfo.findViewById(R.id.appInfoDataUsage)
 
-
-        try {
+        kotlin.runCatching {
             // 뷰모델 데이터 호출
-            appVersionViewModel.fetchData().observe(this) { result ->
+            appVersionViewModel.getResultData.observe(this) { result ->
                 result?.let { ver ->
                     when (ver) {
                         is BaseRepository.ApiState.Success -> {
@@ -663,8 +671,7 @@ class SettingActivity
                                 appInfoDownBtn.visibility = View.GONE
                                 appInfoVersionValue.visibility = View.VISIBLE
                             } else {
-                                appInfoIsRecent.text =
-                                    getString(R.string.not_latest_version)
+                                appInfoIsRecent.text = getString(R.string.not_latest_version)
                                 appInfoIsRecent.setTextColor(getColor(R.color.main_blue_color))
                                 appInfoDownBtn.visibility = View.VISIBLE
                                 appInfoVersionValue.visibility = View.GONE
@@ -674,20 +681,19 @@ class SettingActivity
                             Toast.makeText(
                                 this@SettingActivity,
                                 getString(R.string.fail_to_get_version),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                                Toast.LENGTH_SHORT).show()
                         }
 
                         else -> {}
                     }
                 }
             }
-        } catch (e: IOException) {
-            Toast.makeText(
-                this@SettingActivity,
-                getString(R.string.fail_to_get_version),
-                Toast.LENGTH_SHORT
-            ).show()
+        }.onFailure { exception ->
+            if (exception == IOException())
+                Toast.makeText(
+                    this@SettingActivity,
+                    getString(R.string.fail_to_get_version),
+                    Toast.LENGTH_SHORT).show()
         }
 
         // 새로운 버전 다운로드 실행
@@ -704,17 +710,19 @@ class SettingActivity
 
         // 이용약관 클릭
         appInfoTermsService.setOnClickListener {
-            val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
-            intent.putExtra("sort", "termsOfService")
-            intent.putExtra("appBar",true)
+            val intent = Intent(this@SettingActivity, WebURLActivity::class.java).apply {
+                putExtra("sort", "termsOfService")
+                putExtra("appBar",true)
+            }
             startActivity(intent)
         }
 
         // 개인 정보 처리 방침 클릭
         appInfoDataUsage.setOnClickListener {
-            val intent = Intent(this@SettingActivity, WebURLActivity::class.java)
-            intent.putExtra("sort", "dataUsage")
-            intent.putExtra("appBar",true)
+            val intent = Intent(this@SettingActivity, WebURLActivity::class.java).apply {
+                putExtra("sort", "dataUsage")
+                putExtra("appBar",true)
+            }
             startActivity(intent)
         }
 
@@ -724,8 +732,7 @@ class SettingActivity
                 .inflate(R.layout.dialog_customer_service, null)
 
             val customerCall: CustomerServiceView = customerView.findViewById(R.id.customerCall)
-            val customerHomePage: CustomerServiceView =
-                customerView.findViewById(R.id.customerHomePage)
+            val customerHomePage: CustomerServiceView = customerView.findViewById(R.id.customerHomePage)
             val customerEmail: CustomerServiceView = customerView.findViewById(R.id.customerEmail)
 
             customerCall.fetchData(R.drawable.ico_cs_phone)
@@ -757,24 +764,22 @@ class SettingActivity
     }
 
     // 유저 언어 설정 적용
-    private fun applyUserLanguage() {
+    private fun applyUserLanguage() =
         // 설정 페이지 언어 항목이름 바꾸기
         when (GetAppInfo.getUserLocation(this)) {
-            SpDao.LANG_EN -> { binding.settingSystemLang.fetchData(getString(R.string.english)) }
-            SpDao.LANG_KR -> { binding.settingSystemLang.fetchData(getString(R.string.korean)) }
-            else -> { binding.settingSystemLang.fetchData(getString(R.string.system_lang)) }
+            SpDao.LANG_EN -> binding.settingSystemLang.fetchData(getString(R.string.english))
+            SpDao.LANG_KR -> binding.settingSystemLang.fetchData(getString(R.string.korean))
+            else -> binding.settingSystemLang.fetchData(getString(R.string.system_lang))
         }
-    }
 
     // 유저 폰트 크기 설정 적용
-    private fun applyFontScale() {
+    private fun applyFontScale() =
         // 설정 페이지 폰트크기 항목이름 바꾸기
         when (GetAppInfo.getUserFontScale(this)) {
-            SpDao.TEXT_SCALE_SMALL -> { binding.settingSystemFont.fetchData(getString(R.string.font_small)) }
-            SpDao.TEXT_SCALE_BIG -> { binding.settingSystemFont.fetchData(getString(R.string.font_large)) }
+            SpDao.TEXT_SCALE_SMALL -> binding.settingSystemFont.fetchData(getString(R.string.font_small))
+            SpDao.TEXT_SCALE_BIG -> binding.settingSystemFont.fetchData(getString(R.string.font_large))
             else -> binding.settingSystemFont.fetchData(getString(R.string.font_normal))
         }
-    }
 
     // 마지막 로그인 플랫폼 종류
     private fun applyLastLogin(): String {
@@ -782,16 +787,16 @@ class SettingActivity
 
         // 로그인 플랫폼 아이콘 설정
         HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-            if (lastLogin != "") { binding.settingLogOut.text = getString(R.string.setting_logout) }
-            else { binding.settingLogOut.text = getString(R.string.login_title) }
+            if (lastLogin != "") binding.settingLogOut.text = getString(R.string.setting_logout)
+            else binding.settingLogOut.text = getString(R.string.login_title)
 
             Glide.with(this).load(
                 when(lastLogin) {
-                    RDBLogcat.LOGIN_GOOGLE -> { R.drawable.google_icon }
-                    RDBLogcat.LOGIN_KAKAO -> { R.drawable.kakao_icon }
-                    RDBLogcat.LOGIN_NAVER -> { R.drawable.naver_icon }
-                    RDBLogcat.LOGIN_PHONE -> { R.drawable.phone_icon }
-                    else -> { R.drawable.user }
+                    RDBLogcat.LOGIN_GOOGLE -> R.drawable.google_icon
+                    RDBLogcat.LOGIN_KAKAO -> R.drawable.kakao_icon
+                    RDBLogcat.LOGIN_NAVER -> R.drawable.naver_icon
+                    RDBLogcat.LOGIN_PHONE -> R.drawable.phone_icon
+                    else -> R.drawable.user
             }).into(binding.settingUserIcon)
         },500)
 
@@ -799,7 +804,7 @@ class SettingActivity
     }
 
     // 메인 액티비티로 이동
-    private fun goMain() { finish() }
+    private fun goMain() = finish()
 
     // 라디오 버튼 DrawableEnd Tint 변경
     @SuppressLint("UseCompatTextViewDrawableApis")
@@ -819,15 +824,15 @@ class SettingActivity
         radioButton: RadioButton,
         cancel: ImageView
     ) {
-        if (GetAppInfo.getUserLocation(this) != lang) { // 현재 설정된 언어인지 필터링
-            cancel.isEnabled = false
-            ioThread.launch {
-                SetAppInfo.setUserLocation(this@SettingActivity, lang)  // 다른 언어라면 db 값 변경
-                withContext(mainDispatcher) {
-                    radioGroup.check(radioButton.id) // 라디오 버튼 체크
-                    delay(100)
-                    saveConfigChangeRestart() // 언어 설정 변경 후 어플리케이션 재시작
-                }
+        if (GetAppInfo.getUserLocation(this) == lang) return // 현재 설정된 언어인지 필터링
+
+        cancel.isEnabled = false
+        ioThread.launch {
+            SetAppInfo.setUserLocation(this@SettingActivity, lang)  // 다른 언어라면 db 값 변경
+            withContext(mainDispatcher) {
+                radioGroup.check(radioButton.id) // 라디오 버튼 체크
+                delay(100)
+                saveConfigChangeRestart() // 언어 설정 변경 후 어플리케이션 재시작
             }
         }
     }
@@ -837,8 +842,7 @@ class SettingActivity
         dbData: String,
         radioGroup: RadioGroup,
         radioButton: RadioButton
-    ) {
-        // DB에 바뀐 정보 저장
+    ) = // DB에 바뀐 정보 저장
         ioThread.launch {
             SetAppInfo.setUserTheme(this@SettingActivity, dbData)
 
@@ -848,31 +852,6 @@ class SettingActivity
                 saveConfigChangeRestart()
             }
         }
-    }
-
-    private fun makeWeatherAnimationEnabledDialog() {
-        val animationView: View =
-            LayoutInflater.from(this).inflate(R.layout.dialog_setting_animation, null)
-
-        val switch: SwitchCompat = animationView.findViewById(R.id.aniSettingSwitch)
-
-        switch.isChecked = GetAppInfo.getWeatherAnimEnabled(this)
-
-        switch.setOnCheckedChangeListener { _, isChecked ->
-            ioThread.launch {
-                SetAppInfo.setWeatherAnimEnabled(this@SettingActivity, isChecked)
-
-                withContext(mainDispatcher) {
-                    SnackBarUtils(animationView,getString(R.string.ok_change_setting),
-                    ResourcesCompat.getDrawable(resources,R.drawable.check_small, null))
-                }
-            }
-        }
-
-        ShowDialogClass(this, false)
-            .setBackPressed(animationView.findViewById(R.id.aniBack))
-            .show(animationView, true,ShowDialogClass.DialogTransition.END_TO_START)
-    }
 
     @SuppressLint("SetTextI18n")
     private fun makeWeatherBoxOpacityDialog() {
@@ -890,7 +869,6 @@ class SettingActivity
         val opacityBox2: LinearLayout = opacityView.findViewById(R.id.opacityPreviewContainer2)
         val opacityPreviewText2: TextView = opacityView.findViewById(R.id.opacityPreviewText2)
 
-
         opacityPreviewText.setTextColor(getColor(R.color.main_black))
         opacityPreviewText2.setTextColor(getColor(R.color.white))
 
@@ -906,7 +884,8 @@ class SettingActivity
         opacityBox2.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress2}000000"))
 
         opacityRollback.setOnClickListener {
-            ToastUtils(this@SettingActivity).showMessage(getString(R.string.settings_initialized),1)
+            ToastUtils(this@SettingActivity)
+                .showMessage(getString(R.string.settings_initialized),1)
 
             ioThread.launch {
                 if (seekBar.progress != 80) SetAppInfo.setWeatherBoxOpacity(this@SettingActivity, 80)
@@ -938,7 +917,10 @@ class SettingActivity
                 seekBar?.let {
                     ioThread.launch {
                         SetAppInfo.setWeatherBoxOpacity(this@SettingActivity, it.progress)
-                        ToastUtils(this@SettingActivity).showMessage(getString(R.string.ok_change_setting),1)
+                        withContext(mainDispatcher) {
+                            ToastUtils(this@SettingActivity)
+                                .showMessage(getString(R.string.ok_change_setting),1)
+                        }
                     }
                 }
             }
@@ -956,10 +938,9 @@ class SettingActivity
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 seekBar?.let {
-                    ioThread.launch {
-                        SetAppInfo.setWeatherBoxOpacity2(this@SettingActivity, it.progress )
-                    }
-                    ToastUtils(this@SettingActivity).showMessage(getString(R.string.ok_change_setting),1)
+                    ioThread.launch { SetAppInfo.setWeatherBoxOpacity2(this@SettingActivity, it.progress ) }
+                    ToastUtils(this@SettingActivity)
+                        .showMessage(getString(R.string.ok_change_setting),1)
                 }
             }
         })
@@ -973,14 +954,15 @@ class SettingActivity
     @SuppressLint("InflateParams")
     private fun saveConfigChangeRestart() {
         val builder = Dialog(this)
-        val view = LayoutInflater.from(this)
-            .inflate(R.layout.dialog_alert_single_btn, null)
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_alert_single_btn, null)
+
         builder.apply {
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(view)
             setCancelable(false)
         }
+
         builder.create()
 
         val title = view.findViewById<TextView>(R.id.alertSingleTitle)
@@ -1001,10 +983,7 @@ class SettingActivity
         title: String,
         content: String,
         href: String?
-    ) {
-        val item = ApiModel.NoticeItem(id,category,created, modified, title, content,href)
-        noticeItem.add(item)
-    }
+    ) = noticeItem.add(ApiModel.NoticeItem(id,category,created, modified, title, content,href))
 
     @Deprecated("Deprecated in Java")
     @Suppress("DEPRECATION")

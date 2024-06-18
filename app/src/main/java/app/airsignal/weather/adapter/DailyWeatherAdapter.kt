@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
+import app.airsignal.weather.utils.controller.ItemDiffCallback
 import app.airsignal.weather.dao.AdapterModel
 import com.bumptech.glide.Glide
 import java.time.LocalDateTime
@@ -20,8 +21,7 @@ import java.time.LocalDateTime
  **/
 class DailyWeatherAdapter(
     private val context: Context,
-    list: ArrayList<AdapterModel.DailyWeatherItem>,
-) :
+    list: ArrayList<AdapterModel.DailyWeatherItem>, ) :
     RecyclerView.Adapter<DailyWeatherAdapter.ViewHolder>() {
     private var mList = list
     private val dateSection = ArrayList<Int>()
@@ -38,9 +38,7 @@ class DailyWeatherAdapter(
     }
 
     fun submitList(newItems: ArrayList<AdapterModel.DailyWeatherItem>) {
-        val diffCallback = ItemDiffCallback(mList, newItems)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-
+        val diffResult = DiffUtil.calculateDiff(ItemDiffCallback(mList, newItems))
         mList = newItems
         diffResult.dispatchUpdatesTo(this)
     }
@@ -50,21 +48,17 @@ class DailyWeatherAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.setIsRecyclable(true)
         holder.bind(mList[position]).apply {
-            if (position == 0 ||
-                LocalDateTime.parse(mList[position - 1].date).toLocalDate()
-                    .compareTo(LocalDateTime.parse(mList[position].date).toLocalDate()) != 0) {
-                if (!dateSection.contains(position)) {
-                    dateSection.add(position)
-                }
-            }
+            if (position == 0 || LocalDateTime.parse(mList[position - 1].date).toLocalDate()
+                    .compareTo(LocalDateTime.parse(mList[position].date).toLocalDate()) != 0)
+                if (!dateSection.contains(position)) dateSection.add(position)
 
-            holder.rain.visibility = if(mList[position].isRain) View.VISIBLE else View.INVISIBLE
+            holder.rain.visibility = if (mList[position].isRain) View.VISIBLE else View.INVISIBLE
         }
     }
 
-    fun getDateSectionList(): ArrayList<Int> { return dateSection }
+    fun getDateSectionList(): ArrayList<Int> = dateSection
 
-    fun getIsWhite(): Boolean { return isWhite }
+    fun getIsWhite(): Boolean = isWhite
 
     fun setIsWhite(b: Boolean) { isWhite = b }
 
@@ -77,11 +71,11 @@ class DailyWeatherAdapter(
         @SuppressLint("SetTextI18n")
         fun bind(dao: AdapterModel.DailyWeatherItem) {
             time.text = dao.time
-            Glide.with(context).load(dao.img).into(image)
             value.text = dao.value
             rain.text = "${dao.rainP?.toInt()}%"
+            Glide.with(context).load(dao.img).into(image)
 
-            val applyColor = context.getColor(if(isWhite)R.color.white else R.color.main_black)
+            val applyColor = context.getColor(if (isWhite) R.color.white else R.color.main_black)
             time.setTextColor(applyColor)
             value.setTextColor(applyColor)
         }

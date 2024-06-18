@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <data/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.activity.WebURLActivity">
@@ -27,19 +26,19 @@
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/back_arrow"
                 app:tint="@color/theme_text_color"
-                android:layout_marginStart="24dp"/>
+                android:layout_marginStart="20dp"/>
 
             <TextView
                 android:id="@+id/webUrlTitle"
-                android:layout_width="match_parent"
                 style="@style/basicMediumTextView"
-                android:textSize="20sp"
-                android:textColor="@color/theme_text_color"
+                android:layout_width="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="28dp"
+                android:layout_marginEnd="24dp"
                 android:gravity="start"
                 android:letterSpacing="0"
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="24dp"
-                android:layout_gravity="center_vertical"/>
+                android:textColor="@color/theme_text_color"
+                android:textSize="20sp" />
         </LinearLayout>
 
         <WebView
@@ -66,7 +65,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="50dp"/>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

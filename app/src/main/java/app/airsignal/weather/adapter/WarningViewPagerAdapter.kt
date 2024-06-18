@@ -21,8 +21,7 @@ class WarningViewPagerAdapter(
     private val context: Activity,
     list: ArrayList<String>,
     private val viewPager2: ViewPager2
-) :
-    RecyclerView.Adapter<WarningViewPagerAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<WarningViewPagerAdapter.ViewHolder>() {
     private val mList = list
     private var textColor: Int = Color.WHITE
 
@@ -51,20 +50,19 @@ class WarningViewPagerAdapter(
             textView.text = dao
             textView.setTextColor(textColor)
 
-            viewPager2.visibility = if(mList.size == 0) View.GONE else View.VISIBLE
+            viewPager2.visibility = if (mList.size == 0) View.GONE else View.VISIBLE
 
             itemView.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
-                    try {
+                    kotlin.runCatching {
                         if (mList.size != 0) {
-                            val intent = Intent(context, WarningDetailActivity::class.java)
-                            intent.putExtra("warning", mList)
-                            intent.putExtra("isMain", true)
+                            val intent = Intent(context, WarningDetailActivity::class.java).apply {
+                                putExtra("warning", mList)
+                                putExtra("isMain", true)
+                            }
                             context.startActivity(intent)
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    }.exceptionOrNull()?.stackTraceToString()
                 }
             }
         }

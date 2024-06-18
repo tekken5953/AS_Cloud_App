@@ -1,7 +1,8 @@
 package app.airsignal.weather.view.widget
 
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import app.airsignal.weather.R
+import app.airsignal.weather.utils.plain.ToastUtils
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 
 class WidgetPermActivity : AppCompatActivity() {
@@ -11,13 +12,14 @@ class WidgetPermActivity : AppCompatActivity() {
         super.onResume()
         if (!perm.isBackgroundRequestLocation()) {
             perm.requestBackgroundLocation()
-            Toast.makeText(this, "권한을 항상 허용으로 변경 뒤 재설치 해주세요", Toast.LENGTH_SHORT).show()
+            ToastUtils(this).showMessage(getString(R.string.widget_perm_denied))
         } else {
             val id = intent.extras?.getInt("id")
             when(intent.extras?.getString("sort")) {
-                BaseWidgetProvider.WIDGET_22 -> WidgetProvider().processUpdate(this, id)
+                BaseWidgetProvider.WIDGET_22 -> WidgetProvider22().processUpdate(this, id)
                 BaseWidgetProvider.WIDGET_42 -> WidgetProvider42().processUpdate(this, id)
             }
+
             finish()
         }
     }

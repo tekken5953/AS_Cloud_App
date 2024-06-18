@@ -15,8 +15,7 @@ import app.airsignal.weather.R
  **/
 class WarningDetailAdapter(
     private val context: Activity,
-    list: ArrayList<String>,
-) :
+    list: ArrayList<String>, ) :
     RecyclerView.Adapter<WarningDetailAdapter.ViewHolder>() {
     private val mList = list
 

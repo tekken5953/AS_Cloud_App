@@ -11,23 +11,26 @@ import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
-import app.airsignal.weather.util.`object`.DataTypeParser
+import app.airsignal.weather.utils.controller.ScreenController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import org.koin.android.ext.android.inject
+import org.koin.core.parameter.parametersOf
 
 
 class LoginActivity
     : BaseActivity<ActivityLoginBinding>() {
     override val resID: Int get() = R.layout.activity_login
+    private val subFCM: SubFCM by inject()
 
-    private val googleLogin by lazy { GoogleLogin(this) }   // 구글 로그인
-    private val kakaoLogin by lazy { KakaoLogin(this) }     // 카카오 로그인
-    private val naverLogin by lazy { NaverLogin(this) }     // 네이버 로그인
+    private val googleLogin: GoogleLogin by inject { parametersOf(this) }  // 구글 로그인
+    private val kakaoLogin: KakaoLogin by inject { parametersOf(this) }   // 카카오 로그인
+    private val naverLogin: NaverLogin by inject { parametersOf(this) }  // 네이버 로그인
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
 
-        DataTypeParser.setStatusBar(this)
+        ScreenController(this).setStatusBar()
 
         // 구글 로그인 버튼 클릭
         binding.googleLoginButton.setOnClickListener {
@@ -42,7 +45,7 @@ class LoginActivity
         // 네이버 로그인 버튼 클릭
         binding.naverLoginButton.setOnClickListener {
             binding.naverLoginButton.alpha = 0.7f
-            naverLogin.login(binding.naverLoginButton)
+            naverLogin.init().login(binding.naverLoginButton)
         }
 
         // 뒤로가기 버튼 클릭
@@ -52,21 +55,18 @@ class LoginActivity
     // 구글로그인 startActivityResult 변수
     private var startActivityResult: ActivityResultLauncher<Intent> =
         registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()
-        ) { result ->
+            ActivityResultContracts.StartActivityForResult()) { result ->
             when (result.resultCode) {
                 // 로그인 성공 함
                 RESULT_OK -> {
-                    val data = result.data
-                    val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                    val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                    if (task.result.email == IgnoredKeyFile.notificationAdmin) subFCM.subAdminTopic()
 
-                    if (task.result.email == IgnoredKeyFile.notificationAdmin) SubFCM().subAdminTopic()
-
-                    googleLogin.handleSignInResult(task, isAuto = false)
+                    googleLogin.handleSignInResult(task)
                 }
                 // 로그인 취소 됨
-                RESULT_CANCELED -> { binding.googleLoginButton.alpha = 1f }
-                else -> { binding.googleLoginButton.alpha = 1f }
+                RESULT_CANCELED -> binding.googleLoginButton.alpha = 1f
+                else -> binding.googleLoginButton.alpha = 1f
             }
         }
 }

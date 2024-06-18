@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import app.airsignal.weather.network.retrofit.ApiModel
+import app.airsignal.weather.api.retrofit.ApiModel
 import app.airsignal.weather.R
-import app.airsignal.weather.util.OnAdapterItemSingleClick
+import app.airsignal.weather.utils.controller.OnAdapterItemSingleClick
 
 /**
  * @author : Lee Jae Young
@@ -50,13 +50,12 @@ class NoticeAdapter(private val context: Context, list: ArrayList<ApiModel.Notic
             title.text = dao.title
             category.text = dao.category
 
-            if (bindingAdapterPosition == 0) date.setTextColor(context.getColor(R.color.main_blue_color))
+            val position = bindingAdapterPosition
+
+            if (position == 0) date.setTextColor(context.getColor(R.color.main_blue_color))
 
             itemView.setOnClickListener {
-                val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    onClickListener.onItemClick(it, position)
-                }
+                if (position != RecyclerView.NO_POSITION) onClickListener.onItemClick(it, position)
             }
         }
     }

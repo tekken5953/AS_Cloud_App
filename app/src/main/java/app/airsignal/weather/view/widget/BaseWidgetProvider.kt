@@ -1,22 +1,21 @@
 package app.airsignal.weather.view.widget
 
-import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
-import app.airsignal.weather.dao.RDBLogcat
-import app.airsignal.weather.network.retrofit.ApiModel
-import app.airsignal.weather.network.retrofit.HttpClient
-import app.airsignal.weather.util.`object`.DataTypeParser.getCurrentTime
-import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import app.airsignal.weather.api.retrofit.ApiModel
+import app.airsignal.weather.api.retrofit.HttpClient
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.SetAppInfo
+import app.airsignal.weather.utils.DataTypeParser.getCurrentTime
+import app.airsignal.weather.view.perm.RequestPermissionsUtil
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import retrofit2.awaitResponse
 import java.time.LocalDateTime
 
-open class BaseWidgetProvider: AppWidgetProvider() {
+open class BaseWidgetProvider: AppWidgetProvider(), KoinComponent {
 
     companion object {
         const val REFRESH_BUTTON_CLICKED = "app.airsignal.weather.view.widget.REFRESH_DATA"
@@ -29,56 +28,30 @@ open class BaseWidgetProvider: AppWidgetProvider() {
         const val WIDGET_22 = "22"
     }
 
-    override fun onDisabled(context: Context) { super.onDisabled(context) }
+    private val httpClient: HttpClient by inject()
 
-    override fun onAppWidgetOptionsChanged(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetId: Int,
-        newOptions: Bundle
-    ) {
-        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-    }
-
-    override fun onRestored(context: Context, oldWidgetIds: IntArray, newWidgetIds: IntArray) {
-        super.onRestored(context, oldWidgetIds, newWidgetIds)
-    }
-
-    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
-        super.onDeleted(context, appWidgetIds)
-    }
-
-    suspend fun requestWeather(context: Context,lat: Double, lng: Double, rCount: Int): ApiModel.WidgetData? {
-        try {
-            return HttpClient.retrofit
+    suspend fun requestWeather(lat: Double, lng: Double, rCount: Int): ApiModel.WidgetData? =
+        kotlin.runCatching {
+            httpClient.retrofit
                 .getWidgetForecast(lat, lng, rCount)
                 .awaitResponse().body()
-        } catch (e: Exception) {
-            RDBLogcat.writeWidgetHistory(
-                context, "error", "weather call error cause ${e.localizedMessage}"
-            )
-        }
-        return null
-    }
+        }.getOrNull()
 
     fun requestPermissions(context: Context, sort: String, id: Int?) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val perm = RequestPermissionsUtil(context)
-            if (!perm.isBackgroundRequestLocation()) {
-                val intent = Intent(context, WidgetPermActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                intent.putExtra("sort",sort)
-                intent.putExtra("id",id)
-                context.startActivity(intent)
-            }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
+
+        if (RequestPermissionsUtil(context).isBackgroundRequestLocation()) return
+
+        val intent = Intent(context, WidgetPermActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            putExtra("sort",sort)
+            putExtra("id",id)
         }
+        context.startActivity(intent)
     }
 
-    fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean {
-        val timeFormed = LocalDateTime.parse(currentTime)
-        val realtimeFormed = LocalDateTime.parse(realTime)
-        return realtimeFormed?.let { timeFormed.isAfter(it) } ?: true
-    }
+    fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean =
+        LocalDateTime.parse(realTime)?.let {LocalDateTime.parse(currentTime).isAfter(it)} ?: true
 
     fun isRefreshable(context: Context, type: String): Boolean {
         val currentTime = getCurrentTime()
