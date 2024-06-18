@@ -56,9 +56,10 @@ class WarningViewPagerAdapter(
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                     kotlin.runCatching {
                         if (mList.size != 0) {
-                            val intent = Intent(context, WarningDetailActivity::class.java)
-                            intent.putExtra("warning", mList)
-                            intent.putExtra("isMain", true)
+                            val intent = Intent(context, WarningDetailActivity::class.java).apply {
+                                putExtra("warning", mList)
+                                putExtra("isMain", true)
+                            }
                             context.startActivity(intent)
                         }
                     }.exceptionOrNull()?.stackTraceToString()
