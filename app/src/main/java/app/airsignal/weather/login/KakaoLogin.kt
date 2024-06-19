@@ -17,13 +17,17 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.*
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-03-09 오전 11:29
  **/
 
-class KakaoLogin(private val activity: Activity) {
+class KakaoLogin(private val activity: Activity): KoinComponent {
+
+    private val toast: ToastUtils by inject()
 
     init { KakaoSdk.init(activity, IgnoredKeyFile.KAKAO_NATIVE_APP_KEY) }
 
@@ -142,7 +146,7 @@ class KakaoLogin(private val activity: Activity) {
     fun logout(pb: LottieAnimationView?) {
         kotlin.runCatching {
             UserApiClient.instance.logout { error ->
-                if (error != null) ToastUtils(activity).showMessage("로그아웃에 실패했습니다",1)
+                if (error != null) toast.showMessage("로그아웃에 실패했습니다",1)
                 else {
                     activity.runOnUiThread {
                         RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = pb)

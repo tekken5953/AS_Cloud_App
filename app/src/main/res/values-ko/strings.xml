@@ -247,4 +247,5 @@
     <string name="wave">파고</string>
     <string name="widget_perm_denied">권한을 항상 허용으로 변경 뒤 재설치 해주세요</string>
     <string name="widget_not_refreshable">갱신은 1분 주기로 가능합니다</string>
+    <string name="keep_login_history">로그인 기록 유지하기</string>
 </resources>

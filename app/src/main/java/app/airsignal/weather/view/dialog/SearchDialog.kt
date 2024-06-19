@@ -118,12 +118,11 @@ class SearchDialog(
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
             CoroutineScope(Dispatchers.IO).launch {
-                val lastAddr = GetAppInfo.getUserLastAddress(activity)
                 GpsRepository(activity).findAll().forEach { entity ->
                     withContext(Dispatchers.Main) {
                         if (entity.name == SpDao.CURRENT_GPS_ID) {
                             currentAddress.text = entity.addrKr?.replace(getString(R.string.korea), "") ?: ""
-                            if (entity.addrKr == lastAddr) {
+                            if (entity.addrKr == GetAppInfo.getUserLastAddress(activity)) {
                                 currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))
                                 currentGpsImg.imageTintList =
                                     ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
@@ -376,7 +375,6 @@ class SearchDialog(
             val view = super.getView(position, convertView, parent) as TextView
             val fullText = getItem(position) ?: ""
             val editableText = fullText.lowercase()
-
             val startIndex = editableText.indexOf(editText.text.toString().lowercase())
 
             view.text = if (startIndex >= 0 && startIndex <= fullText.lastIndex) {

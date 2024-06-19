@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="312dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_bg">
+
+    <TextView
+        android:id="@+id/logoutTitle"
+        style="@style/basicMediumTextView"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="53dp"
+        android:lineHeight="24dp"
+        android:textSize="17sp"/>
+
+    <CheckBox
+        android:id="@+id/logoutCheckBox"
+        style="@style/basicMediumTextView"
+        android:text="@string/keep_login_history"
+        android:checked="true"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/logoutTitle"
+        android:layout_centerHorizontal="true"
+        android:textSize="14sp"
+        android:buttonTint="@color/theme_text_color"/>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logoutTitle"
+        android:layout_marginTop="73dp"
+        android:gravity="center"
+        android:layout_marginBottom="16dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/logoutCancelBtn"
+            android:layout_width="134dp"
+            android:layout_height="50dp"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:background="@drawable/double_btn_cancel_bg"
+            android:textSize="16sp"
+            android:elevation="0dp"
+            android:translationZ="0dp"
+            android:textAllCaps="false"
+            android:gravity="center"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:textColor="@color/white"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/logoutApplyBtn"
+            android:layout_width="134dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/double_btn_apply_bg"
+            android:elevation="0dp"
+            android:fontFamily="@font/spoqa_hansansneo_medium"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:translationZ="0dp" />
+    </TableRow>
+
+</RelativeLayout>
