@@ -254,4 +254,5 @@
     <string name="wave">wave</string>
     <string name="widget_perm_denied">Please change the permission to \'Allow at all times\' and reinstall it</string>
     <string name="widget_not_refreshable">Data refresh is possible every 1 minute</string>
+    <string name="keep_login_history">Keep login history</string>
 </resources>

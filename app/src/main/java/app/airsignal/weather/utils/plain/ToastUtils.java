@@ -24,7 +24,7 @@ public class ToastUtils {
     public void showMessage(final String message, final long duration) {
         mHandler.post(() -> {
             cancelToast();
-            toast = Toast.makeText(mContext, message, Toast.LENGTH_LONG);
+            toast = Toast.makeText(mContext, message, Toast.LENGTH_SHORT);
             toast.show();
             mHandler.postDelayed(this::cancelToast, duration * 1000L);
         });

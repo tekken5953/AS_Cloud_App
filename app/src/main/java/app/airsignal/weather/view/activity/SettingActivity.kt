@@ -26,6 +26,8 @@ import androidx.core.os.HandlerCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.adapter.NoticeAdapter
+import app.airsignal.weather.api.retrofit.ApiModel
+import app.airsignal.weather.api.retrofit.HttpClient
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.dao.StaticDataObject
@@ -34,20 +36,17 @@ import app.airsignal.weather.db.sp.*
 import app.airsignal.weather.login.GoogleLogin
 import app.airsignal.weather.login.KakaoLogin
 import app.airsignal.weather.login.NaverLogin
-import app.airsignal.weather.api.retrofit.ApiModel
-import app.airsignal.weather.api.retrofit.HttpClient
-import app.airsignal.weather.utils.controller.OnAdapterItemSingleClick
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.utils.*
-import app.airsignal.weather.utils.DataTypeParser
+import app.airsignal.weather.utils.controller.OnAdapterItemSingleClick
 import app.airsignal.weather.utils.controller.ScreenController
 import app.airsignal.weather.utils.plain.ToastUtils
 import app.airsignal.weather.utils.view.EnterPageUtil
 import app.airsignal.weather.utils.view.RefreshUtils
+import app.airsignal.weather.utils.view.WebViewSetting
 import app.airsignal.weather.view.custom.CustomerServiceView
 import app.airsignal.weather.view.custom.ShowDialogClass
 import app.airsignal.weather.view.custom.SnackBarUtils
-import app.airsignal.weather.utils.view.WebViewSetting
 import app.airsignal.weather.view.perm.BackLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
@@ -74,13 +73,14 @@ class SettingActivity
     private var isInit = true
     private var isBackAllow = false
 
-    private val ioThread by lazy {CoroutineScope(Dispatchers.IO)}
+    private val ioThread by lazy { CoroutineScope(Dispatchers.IO) }
     private val mainDispatcher by lazy { Dispatchers.Main }
 
     private var lastLogin = ""
 
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
     private val httpClient by inject<HttpClient>()
+    private val toast: ToastUtils by inject()
 
     private val googleLogin: GoogleLogin by inject { parametersOf(this) }  // 구글 로그인
     private val kakaoLogin: KakaoLogin by inject { parametersOf(this) }   // 카카오 로그인
@@ -131,15 +131,16 @@ class SettingActivity
         binding.settingLogOut.setOnClickListener {
             if (binding.settingLogOut.text == getString(R.string.setting_logout)) {
                 val builder = Dialog(this)
-                val view = LayoutInflater.from(this).inflate(R.layout.dialog_alert_double_btn, null)
+                val view = LayoutInflater.from(this).inflate(R.layout.dialog_logout_confirm, null)
                 builder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
                 builder.setContentView(view)
                 builder.create()
 
-                val cancel = view.findViewById<AppCompatButton>(R.id.alertDoubleCancelBtn)
-                val apply = view.findViewById<AppCompatButton>(R.id.alertDoubleApplyBtn)
-                val title = view.findViewById<TextView>(R.id.alertDoubleTitle)
+                val cancel = view.findViewById<AppCompatButton>(R.id.logoutCancelBtn)
+                val apply = view.findViewById<AppCompatButton>(R.id.logoutApplyBtn)
+                val title = view.findViewById<TextView>(R.id.logoutTitle)
+                val check = view.findViewById<CheckBox>(R.id.logoutCheckBox)
                 title.text = getString(R.string.want_logout)
                 cancel.text = getString(R.string.cancel)
                 apply.text = getString(R.string.setting_logout)
@@ -148,14 +149,25 @@ class SettingActivity
                     builder.dismiss()
                     ioThread.launch {
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
-                            RDBLogcat.LOGIN_KAKAO -> kakaoLogin.logout(binding.settingPb)
-                            RDBLogcat.LOGIN_NAVER -> naverLogin.init().logout(binding.settingPb)
-                            RDBLogcat.LOGIN_GOOGLE -> googleLogin.logout(binding.settingPb)
+                            RDBLogcat.LOGIN_KAKAO -> {
+                                if (check.isChecked) kakaoLogin.logout(binding.settingPb)
+                                else kakaoLogin.disconnectFromKakao(binding.settingPb)
+                            }
+                            RDBLogcat.LOGIN_NAVER -> {
+                                val naver = naverLogin.init()
+                                if (check.isChecked) naver.logout(binding.settingPb)
+                                else naver.disconnectFromNaver(binding.settingPb)
+                            }
+                            RDBLogcat.LOGIN_GOOGLE -> {
+                                if (check.isChecked) googleLogin.logout(binding.settingPb)
+                                else googleLogin.revokeAccess(binding.settingPb)
+                            }
                         }
 
-                        delay(100)
-
-                        SetAppInfo.removeAllKeys(this@SettingActivity)
+                        withContext(Dispatchers.IO) {
+                            delay(100)
+                            SetAppInfo.removeAllKeys(this@SettingActivity)
+                        }
                     }
                 }
 
@@ -360,11 +372,9 @@ class SettingActivity
 
                         override fun onFailure(
                             call: Call<List<ApiModel.NoticeItem>>,
-                            t: Throwable
-                        ) {
+                            t: Throwable) {
                             nullText.visibility = View.VISIBLE
-                            Toast.makeText(this@SettingActivity,
-                                getString(R.string.fail_to_get_notice), Toast.LENGTH_SHORT).show()
+                            toast.showMessage(getString(R.string.fail_to_get_notice))
 
                             t.printStackTrace()
                         }
@@ -678,10 +688,7 @@ class SettingActivity
                             }
                         }
                         is BaseRepository.ApiState.Error -> {
-                            Toast.makeText(
-                                this@SettingActivity,
-                                getString(R.string.fail_to_get_version),
-                                Toast.LENGTH_SHORT).show()
+                            toast.showMessage( getString(R.string.fail_to_get_version))
                         }
 
                         else -> {}
@@ -690,10 +697,7 @@ class SettingActivity
             }
         }.onFailure { exception ->
             if (exception == IOException())
-                Toast.makeText(
-                    this@SettingActivity,
-                    getString(R.string.fail_to_get_version),
-                    Toast.LENGTH_SHORT).show()
+                toast.showMessage(getString(R.string.fail_to_get_version))
         }
 
         // 새로운 버전 다운로드 실행
@@ -798,7 +802,7 @@ class SettingActivity
                     RDBLogcat.LOGIN_PHONE -> R.drawable.phone_icon
                     else -> R.drawable.user
             }).into(binding.settingUserIcon)
-        },500)
+        },250)
 
         return lastLogin
     }
@@ -884,8 +888,7 @@ class SettingActivity
         opacityBox2.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${transSavedProgress2}000000"))
 
         opacityRollback.setOnClickListener {
-            ToastUtils(this@SettingActivity)
-                .showMessage(getString(R.string.settings_initialized),1)
+            toast.showMessage(getString(R.string.settings_initialized),1)
 
             ioThread.launch {
                 if (seekBar.progress != 80) SetAppInfo.setWeatherBoxOpacity(this@SettingActivity, 80)
@@ -918,8 +921,7 @@ class SettingActivity
                     ioThread.launch {
                         SetAppInfo.setWeatherBoxOpacity(this@SettingActivity, it.progress)
                         withContext(mainDispatcher) {
-                            ToastUtils(this@SettingActivity)
-                                .showMessage(getString(R.string.ok_change_setting),1)
+                           toast.showMessage(getString(R.string.ok_change_setting),1)
                         }
                     }
                 }
@@ -939,8 +941,7 @@ class SettingActivity
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 seekBar?.let {
                     ioThread.launch { SetAppInfo.setWeatherBoxOpacity2(this@SettingActivity, it.progress ) }
-                    ToastUtils(this@SettingActivity)
-                        .showMessage(getString(R.string.ok_change_setting),1)
+                    toast.showMessage(getString(R.string.ok_change_setting),1)
                 }
             }
         })

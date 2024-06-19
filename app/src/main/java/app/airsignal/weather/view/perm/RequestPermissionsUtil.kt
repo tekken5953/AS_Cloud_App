@@ -46,16 +46,16 @@ class RequestPermissionsUtil(private val context: Context) {
 
     /** 알림 권한 요청 **/
     fun requestNotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ActivityCompat.checkSelfPermission(context, permissionNotification[0])
-                != PackageManager.PERMISSION_GRANTED
-            )
-                requestPermissions(
-                    context as Activity,
-                    permissionNotification,
-                    StaticDataObject.REQUEST_NOTIFICATION
-                )
-        }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+
+        if (ActivityCompat.checkSelfPermission(context,
+                permissionNotification[0]) != PackageManager.PERMISSION_GRANTED) return
+
+        requestPermissions(
+            context as Activity,
+            permissionNotification,
+            StaticDataObject.REQUEST_NOTIFICATION
+        )
     }
 
     /**위치권한 허용 여부 검사**/
@@ -70,11 +70,11 @@ class RequestPermissionsUtil(private val context: Context) {
 
     /**알림권한 허용 여부 검사**/
     fun isNotificationPermitted(): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            for (perm in permissionNotification) {
-                return ContextCompat.checkSelfPermission(context, perm) ==
-                        PackageManager.PERMISSION_GRANTED
-            }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
+
+        for (perm in permissionNotification) {
+            return ContextCompat.checkSelfPermission(context, perm) ==
+                    PackageManager.PERMISSION_GRANTED
         }
 
         return true
@@ -85,8 +85,8 @@ class RequestPermissionsUtil(private val context: Context) {
         ContextCompat.checkSelfPermission(context, Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
 
     /** 권한 요청 거부 횟수에 따른 반환 **/
-    fun isShouldShowRequestPermissionRationale(activity: Activity, perm: String): Boolean {
-        return when (GetAppInfo.getInitLocPermission(activity)) {
+    fun isShouldShowRequestPermissionRationale(activity: Activity, perm: String): Boolean =
+        when (GetAppInfo.getInitLocPermission(activity)) {
             "" -> true
             "Second" -> true
             else -> {
@@ -94,23 +94,22 @@ class RequestPermissionsUtil(private val context: Context) {
                 false
             }
         }
-    }
 
     /** 백그라운드에서 위치 접근 권한 허용 여부 검사 **/
-    fun isBackgroundRequestLocation(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    fun isBackgroundRequestLocation(): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ContextCompat.checkSelfPermission(context, permissionsLocationBackground) ==
                     PackageManager.PERMISSION_GRANTED
         } else true
-    }
 
     /** 백그라운드에서 위치 접근 권한 요청 **/
     fun requestBackgroundLocation() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
-            requestPermissions(
-                context as Activity,
-                arrayOf(permissionsLocationBackground),
-                StaticDataObject.REQUEST_BACKGROUND_LOCATION
-            )
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
+
+        requestPermissions(
+            context as Activity,
+            arrayOf(permissionsLocationBackground),
+            StaticDataObject.REQUEST_BACKGROUND_LOCATION
+        )
     }
 }

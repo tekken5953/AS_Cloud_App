@@ -25,8 +25,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
  **/
 class LocPermCautionDialog(
     mActivity: Activity,
-    private val fm: FragmentManager, private val tagId: String?,
-) : BottomSheetDialogFragment() {
+    private val fm: FragmentManager, private val tagId: String?
+    ) : BottomSheetDialogFragment() {
     private val activity = mActivity
 
     override fun onCreateView(
@@ -66,7 +66,7 @@ class LocPermCautionDialog(
             this.setOnShowListener { dialogInterface ->
                 val bottomSheetDialog = dialogInterface as BottomSheetDialog
                 bottomSheetDialog.behavior.isDraggable = false
-                setupRatio(bottomSheetDialog, 60)
+                GetSystemInfo.setupRatio(activity,bottomSheetDialog, 60)
             }
             this.window?.attributes?.windowAnimations = R.style.DialogAnimationBottom
 
@@ -76,16 +76,4 @@ class LocPermCautionDialog(
 
     // 레이아웃 노출
     fun show() { LocPermCautionDialog(activity, fm, tagId).showNow(fm, tagId) }
-
-    // 바텀 다이얼로그 세팅
-    private fun setupRatio(bottomSheetDialog: BottomSheetDialog, ratio: Int) {
-        val bottomSheet =
-            bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
-        val behavior = BottomSheetBehavior.from(bottomSheet)
-        val layoutParams = bottomSheet.layoutParams
-        layoutParams.height = GetSystemInfo.getBottomSheetDialogDefaultHeight(activity,ratio)
-        bottomSheet.layoutParams = layoutParams
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        bottomSheet.background = ResourcesCompat.getDrawable(resources, R.drawable.loc_perm_bg,null)
-    }
 }

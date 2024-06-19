@@ -53,15 +53,13 @@ object DataTypeParser {
     fun isRainyDay(rainType: String?): Boolean = rainType != "없음"
 
     /** 어제 날씨와 오늘 날씨의 비교 값 반환 **/
-    fun getComparedTemp(yesterday: Double?, today: Double?): Double? {
-        val temp = yesterday?.let { y ->
+    fun getComparedTemp(yesterday: Double?, today: Double?): Double? =
+        yesterday?.let { y ->
             today?.let { t ->
                 if (y != -100.0 && t != -100.0) ((today - yesterday) * 10).roundToInt() / 10.0
                 else null
             }
         }
-        return temp
-    }
 
     /** rain type에 따른 이미지 설정 **/
     private fun getRainTypeLarge(context: Context, rain: String?): Drawable? {
@@ -75,8 +73,8 @@ object DataTypeParser {
     }
 
     /** sky value에 따른 이미지 설정 **/
-    fun getSkyImgLarge(context: Context, sky: String?, isNight: Boolean, lunar: Int): Drawable? {
-        val id = when(sky) {
+    fun getSkyImgLarge(context: Context, sky: String?, isNight: Boolean, lunar: Int): Drawable? =
+        getDrawable(context, when(sky) {
             context.getString(R.string.sky_sunny) ->
                 if (isNight) R.drawable.ico_moon_big
                 else R.drawable.b_ico_sunny
@@ -89,13 +87,10 @@ object DataTypeParser {
             "구름많고 소나기", "흐리고 비", "구름많고 비", "흐리고 소나기" -> R.drawable.b_ico_cloudy_rainy
             "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
             else -> R.drawable.cancel
-        }
+        })
 
-        return getDrawable(context,id)
-    }
-
-    fun getSkyImgWidget(rainType: String?, sky: String?, isNight: Boolean): Int {
-        return if (rainType == "없음" || rainType == null) {
+    fun getSkyImgWidget(rainType: String?, sky: String?, isNight: Boolean): Int =
+        if (rainType == "없음" || rainType == null)
             when (sky) {
                 "맑음" ->
                     if (isNight) R.drawable.w_ico_status
@@ -110,19 +105,16 @@ object DataTypeParser {
                 "구름많고 비/눈", "흐리고 비/눈", "비/눈" -> R.drawable.b_ico_rainy_snow
                 else -> R.drawable.cancel
             }
-        } else {
-            when(rainType) {
-                "비" -> R.drawable.b_ico_cloudy_rainy
-                "눈" -> R.drawable.sm_snow
-                "비/눈" -> R.drawable.b_ico_rainy_snow
-                "소나기" -> R.drawable.b_ico_rainy
-                else -> R.drawable.cancel
-            }
+        else when(rainType) {
+            "비" -> R.drawable.b_ico_cloudy_rainy
+            "눈" -> R.drawable.sm_snow
+            "비/눈" -> R.drawable.b_ico_rainy_snow
+            "소나기" -> R.drawable.b_ico_rainy
+            else -> R.drawable.cancel
         }
-    }
 
-    fun getBackgroundImgWidget(sort: String, rainType: String?, sky: String?, isNight: Boolean): Int {
-        return if (rainType == "없음" || rainType == null) {
+    fun getBackgroundImgWidget(sort: String, rainType: String?, sky: String?, isNight: Boolean): Int =
+        if (rainType == "없음" || rainType == null)
             when (sky) {
                 "맑음", "구름많음" ->
                     if (sort == BaseWidgetProvider.WIDGET_22) if (isNight) R.drawable.w_bg_night else R.drawable.w_bg_sunny
@@ -135,13 +127,10 @@ object DataTypeParser {
                     if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
                 else -> if (sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
             }
-        } else {
-            when (rainType) {
-                "비","소나기" -> if(sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_cloudy else R.drawable.widget_bg4x2_cloud
-                else -> if(sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
-            }
+        else when (rainType) {
+            "비","소나기" -> if(sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_cloudy else R.drawable.widget_bg4x2_cloud
+            else -> if(sort == BaseWidgetProvider.WIDGET_22) R.drawable.w_bg_snow else R.drawable.widget_bg4x2_snow
         }
-    }
 
     /** rain type에 따른 이미지 설정 **/
     private fun getRainTypeSmall(context: Context, rain: String?): Drawable? {
@@ -183,8 +172,7 @@ object DataTypeParser {
         thunder: Double?,
         isLarge: Boolean,
         isNight: Boolean?,
-        lunar: Int
-    ): Drawable? =
+        lunar: Int): Drawable? =
         if (rain != "없음" && (thunder == null || thunder < 0.2)) {
             if (isLarge) getRainTypeLarge(context, rain) ?: getDrawable(context, R.drawable.cancel)
             else getRainTypeSmall(context, rain) ?: getDrawable(context, R.drawable.cancel)
@@ -350,6 +338,4 @@ object DataTypeParser {
             in Int.MIN_VALUE..10 -> "0${progress}"
             else -> progress.toString()
         }
-
-
 }

@@ -12,6 +12,7 @@ import app.airsignal.weather.login.NaverLogin
 import app.airsignal.weather.repository.GetAppVersionRepo
 import app.airsignal.weather.repository.GetWarningRepo
 import app.airsignal.weather.repository.GetWeatherRepo
+import app.airsignal.weather.utils.plain.ToastUtils
 import app.airsignal.weather.viewmodel.GetAppVersionViewModel
 import app.airsignal.weather.viewmodel.GetWarningViewModel
 import app.airsignal.weather.viewmodel.GetWeatherViewModel
@@ -42,6 +43,7 @@ class WeatherApp : Application() {
         single { GetLocation(applicationContext) }
         single { HttpClient }
         factory { SubFCM() }
+        single { ToastUtils(applicationContext) }
     }
 
     private val repositoryModule = module {

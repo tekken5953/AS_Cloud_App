@@ -19,12 +19,15 @@ import app.airsignal.weather.utils.view.EnterPageUtil
 import app.airsignal.weather.view.perm.FirstLocCheckDialog
 import app.airsignal.weather.view.perm.RequestPermissionsUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class PermissionActivity :
-    BaseActivity<ActivityPermissionBinding>() {
+    BaseActivity<ActivityPermissionBinding>(), KoinComponent{
     override val resID: Int get() = R.layout.activity_permission
     private val perm = RequestPermissionsUtil(this)
     private val enter by lazy { EnterPageUtil(this) }
+    private val toast: ToastUtils by inject()
 
     override fun onResume() {
         super.onResume()
@@ -44,7 +47,7 @@ class PermissionActivity :
         }
 
         if (GetAppInfo.getInitNotiPermission(this) != "") {
-            ToastUtils(this).showMessage(getString(R.string.noti_always_can))
+            toast.showMessage(getString(R.string.noti_always_can))
             enter.toMain(GetAppInfo.getUserLoginPlatform(this), inAppExtraList)
             return
         }

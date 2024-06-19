@@ -9,6 +9,8 @@ object TypeFaceObject {
     private const val TYPEFACE_BOLD = "spoqa_hansansneo_bold.ttf"
 
     fun getBold(context: Context): Typeface = Typeface.createFromAsset(context.assets, TYPEFACE_BOLD)
+
     fun getMedium(context: Context): Typeface = Typeface.createFromAsset(context.assets, TYPEFACE_MEDIUM)
+
     fun getRegular(context: Context): Typeface = Typeface.createFromAsset(context.assets, TYPEFACE_REGULAR)
 }

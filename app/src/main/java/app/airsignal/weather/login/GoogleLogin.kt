@@ -7,8 +7,8 @@ import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.RDBLogcat
 import app.airsignal.weather.db.sp.SetAppInfo
-import app.airsignal.weather.utils.view.RefreshUtils
 import app.airsignal.weather.utils.plain.ToastUtils
+import app.airsignal.weather.utils.view.RefreshUtils
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -20,21 +20,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 /**
  * @author : Lee Jae Young
  * @since : 2023-03-08 오후 3:47
  **/
 
-class GoogleLogin(private val activity: Activity) {
-    private var client: GoogleSignInClient
-    private var lastLogin: GoogleSignInAccount? = null
+class GoogleLogin(private val activity: Activity): KoinComponent {
+    private val client: GoogleSignInClient get() = activity.let {GoogleSignIn.getClient(activity, getGoogleSignInOptions())}
+    private val lastLogin: GoogleSignInAccount? get() = activity.let {GoogleSignIn.getLastSignedInAccount(activity)}
 
-    init {
-        client = GoogleSignIn.getClient(activity, getGoogleSignInOptions())
-        lastLogin = GoogleSignIn.getLastSignedInAccount(activity)
-    }
-
+    private val toast: ToastUtils by inject()
     /** 로그인 진행 + 로그인 버튼 비활성화 **/
     fun login(mBtn: AppCompatButton, result: ActivityResultLauncher<Intent>) {
         kotlin.runCatching {
@@ -58,7 +56,7 @@ class GoogleLogin(private val activity: Activity) {
                 }
             }
             .addOnCanceledListener {
-                ToastUtils(activity).showMessage("로그아웃에 실패했습니다",1)
+                toast.showMessage("로그아웃에 실패했습니다",1)
             }
     }
 
@@ -67,12 +65,18 @@ class GoogleLogin(private val activity: Activity) {
         client.silentSignIn()
             .addOnCompleteListener { handleSignInResult(it) }
             .addOnFailureListener {
-                ToastUtils(activity).showMessage("마지막 로그인 세션을 찾을 수 없습니다",1)
+                toast.showMessage("마지막 로그인 세션을 찾을 수 없습니다",1)
             }
     }
 
-    fun revokeAccess() {
-        client.revokeAccess()
+    fun revokeAccess(pb: LottieAnimationView?) {
+        val task = client.revokeAccess()
+        task.addOnSuccessListener {
+            pb?.let { RefreshUtils(activity).refreshActivityAfterSecond(sec = 1, pbLayout = it) }
+        }
+        task.addOnFailureListener {
+            toast.showMessage("로그아웃에 실패했습니다")
+        }
     }
 
     /** 앱에 필요한 사용자 데이터를 요청하도록 로그인 옵션을 설정
