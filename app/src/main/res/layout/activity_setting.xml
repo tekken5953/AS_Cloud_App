@@ -283,6 +283,53 @@
                     android:textColor="@color/theme_text_color"
                     app:layout_constraintTop_toBottomOf="@+id/settingNotice" />
 
+                <!--                <TextView-->
+                <!--                    android:id="@+id/settingEvent"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    style="@style/settingSingleTextView"-->
+                <!--                    android:paddingStart="24dp"-->
+                <!--                    android:background="?android:attr/selectableItemBackground"-->
+                <!--                    android:paddingEnd="24dp"-->
+                <!--                    android:text="@string/event"-->
+                <!--                    android:textColor="@color/theme_text_color"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@+id/settingNotice" />-->
+
+                <!--                <TextView-->
+                <!--                    android:id="@+id/settingFaq"-->
+                <!--                    android:layout_width="match_parent"-->
+                <!--                    style="@style/settingSingleTextView"-->
+                <!--                    android:layout_marginBottom="30dp"-->
+                <!--                    android:paddingStart="24dp"-->
+                <!--                    android:paddingEnd="24dp"-->
+                <!--                    android:background="?android:attr/selectableItemBackground"-->
+                <!--                    android:text="@string/setting_faq"-->
+                <!--                    android:textColor="@color/theme_text_color"-->
+                <!--                    app:layout_constraintTop_toBottomOf="@+id/settingEvent" />-->
+
+<!--                <app.airsignal.weather.view.custom_view.SettingSystemView-->
+<!--                    android:id="@+id/settingCustomerService"-->
+<!--                    style="@style/basicMediumTextView"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="52dp"-->
+<!--                    android:gravity="center_vertical|start"-->
+<!--                    app:left="@string/customers_center"-->
+<!--                    android:textColor="@color/theme_text_color"-->
+<!--                    android:textSize="16sp"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/settingLine4" />-->
+
+<!--                <app.airsignal.weather.view.custom_view.SettingSystemView-->
+<!--                    android:id="@+id/settingComplain"-->
+<!--                    style="@style/basicMediumTextView"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="52dp"-->
+<!--                    android:gravity="center_vertical|start"-->
+<!--                    app:left="@string/inquiry"-->
+<!--                    android:textColor="@color/theme_text_color"-->
+<!--                    android:textSize="16sp"-->
+<!--                    app:layout_constraintTop_toBottomOf="@+id/settingCustomerService" />-->
+
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>

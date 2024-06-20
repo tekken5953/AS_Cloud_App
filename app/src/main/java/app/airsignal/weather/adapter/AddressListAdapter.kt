@@ -32,7 +32,8 @@ import java.util.*
  **/
 class AddressListAdapter(
     private val context: Context,
-    list: ArrayList<AdapterModel.AddressListItem>) :
+    list: ArrayList<AdapterModel.AddressListItem>
+) :
     RecyclerView.Adapter<AddressListAdapter.ViewHolder>() {
     private val mList = list
     private var visible = false
@@ -72,8 +73,7 @@ class AddressListAdapter(
 
         @SuppressLint("InflateParams")
         fun bind(dao: AdapterModel.AddressListItem) {
-            val isEnglish = isEnglish()
-            address.text = if (isEnglish) dao.en else dao.kr
+            address.text = if (isEnglish()) dao.en else dao.kr
             delete.animate().alpha(if (visible) 1f else 0f).duration = 500
             delete.visibility = if (visible) View.VISIBLE else View.GONE
 
@@ -95,14 +95,15 @@ class AddressListAdapter(
                     cancel.text = context.getString(R.string.cancel)
 
                     val span = SpannableStringBuilder(
-                        if (isEnglish) "Delete ${address.text}?"
+                        if (isEnglish()) "Delete ${address.text}?"
                         else "${address.text}을(를)\n삭제하시겠습니까?")
 
                     span.setSpan(
                         ForegroundColorSpan(ResourcesCompat.getColor(
-                            context.resources, R.color.theme_alert_double_apply_color, null)),
-                        if(isEnglish) 7 else 0,
-                        if(isEnglish) 7 + address.text.length else address.text.length,
+                            context.resources, R.color.theme_alert_double_apply_color, null)
+                        ),
+                        if(isEnglish()) 7 else 0,
+                        if(isEnglish()) 7 + address.text.length else address.text.length,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
 

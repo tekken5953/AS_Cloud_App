@@ -123,7 +123,7 @@ class BackLocCheckDialog(
             this.setOnShowListener { dialogInterface ->
                 val bottomSheetDialog = dialogInterface as BottomSheetDialog
                 bottomSheetDialog.behavior.isDraggable = false
-                setupRatio(bottomSheetDialog, 65)
+                GetSystemInfo.setupRatio(activity,bottomSheetDialog, 65)
             }
             this.window?.attributes?.windowAnimations = R.style.DialogAnimationBottom
 
@@ -134,15 +134,4 @@ class BackLocCheckDialog(
     // 레이아웃 노출
     fun show() = BackLocCheckDialog(activity, fm, tagId).showNow(fm, tagId)
 
-    // 바텀 다이얼로그 세팅
-    private fun setupRatio(bottomSheetDialog: BottomSheetDialog, ratio: Int) {
-        val bottomSheet =
-            bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
-        val behavior = BottomSheetBehavior.from(bottomSheet)
-        val layoutParams = bottomSheet.layoutParams
-        layoutParams.height = GetSystemInfo.getBottomSheetDialogDefaultHeight(activity,ratio)
-        bottomSheet.layoutParams = layoutParams
-        behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        bottomSheet.background = ResourcesCompat.getDrawable(resources, R.drawable.loc_perm_bg, null)
-    }
 }

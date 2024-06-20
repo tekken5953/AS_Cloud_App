@@ -6,7 +6,12 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.util.DisplayMetrics
+import android.view.View
 import androidx.core.content.pm.PackageInfoCompat
+import androidx.core.content.res.ResourcesCompat
+import app.airsignal.weather.R
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.util.*
 
 /**
@@ -66,6 +71,17 @@ object GetSystemInfo {
     }
 
     // 다이얼로그 비율설정
-    fun getBottomSheetDialogDefaultHeight(context: Context, per: Int): Int =
+    private fun getBottomSheetDialogDefaultHeight(context: Context, per: Int): Int =
         getWindowHeight(context) * per / 100
+
+    fun setupRatio(context: Context, bottomSheetDialog: BottomSheetDialog, ratio: Int) {
+        val bottomSheet =
+            bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet) as View
+        val behavior = BottomSheetBehavior.from(bottomSheet)
+        val layoutParams = bottomSheet.layoutParams
+        layoutParams.height = getBottomSheetDialogDefaultHeight(context,ratio)
+        bottomSheet.layoutParams = layoutParams
+        behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        bottomSheet.background = ResourcesCompat.getDrawable(context.resources, R.drawable.loc_perm_bg, null)
+    }
 }

@@ -34,9 +34,9 @@ class GetLocation(private val context: Context) {
                 SetAppInfo.setNotificationAddress(appContext, notiAddr)
                 SetAppInfo.setUserLastAddr(appContext, fullAddr)
             }
-            if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
+            if (address.isNotEmpty() && address[0].getAddressLine(0) != "null")
                 address[0].getAddressLine(0)
-            } else ""
+            else ""
         } catch (e: Exception) {
             e.printStackTrace()
             ""
@@ -97,11 +97,7 @@ class GetLocation(private val context: Context) {
     }
 
     /** 핸드폰 위치 서비스가 켜져있는지 확인 **/
-    fun requestSystemGPSEnable() {
-//        Toast.makeText(context, "핸드폰 GPS 가 켜져있는지 확인해주세요", Toast.LENGTH_SHORT).show()
-        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-        context.startActivity(intent)
-    }
+    fun requestSystemGPSEnable() = context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
 
     /** 디바이스 네트워크 프로바이더 접근 가능한지 확인 **/
     fun isNetworkProviderConnected(): Boolean {

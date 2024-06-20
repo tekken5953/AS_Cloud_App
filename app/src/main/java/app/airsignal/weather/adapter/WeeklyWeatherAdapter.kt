@@ -20,7 +20,8 @@ import com.bumptech.glide.Glide
  **/
 class WeeklyWeatherAdapter(
     private val context: Context,
-    list: ArrayList<AdapterModel.WeeklyWeatherItem>) :
+    list: ArrayList<AdapterModel.WeeklyWeatherItem>
+) :
     RecyclerView.Adapter<WeeklyWeatherAdapter.ViewHolder>() {
     private val mList = list
     private var isWhite = false

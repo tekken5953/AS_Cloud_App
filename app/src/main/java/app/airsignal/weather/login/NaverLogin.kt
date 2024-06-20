@@ -21,6 +21,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 
 /**
@@ -28,8 +30,8 @@ import kotlinx.coroutines.withContext
  * @since : 2023-03-09 오후 2:56
  **/
 
-class NaverLogin(private val activity: Activity) {
-    private val toast by lazy { ToastUtils(activity) }
+class NaverLogin(private val activity: Activity): KoinComponent {
+    private val toast: ToastUtils by inject()
 
     fun init(): NaverLogin {
         NaverIdLoginSDK.initialize(

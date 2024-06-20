@@ -61,6 +61,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.component.inject
 import java.io.IOException
 import java.time.LocalDateTime
 import java.util.*
@@ -82,6 +83,7 @@ class MainActivity
     private val vib by lazy { VibrateUtil(this) }
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
     private val locationClass: GetLocation by inject()
+    private val toast: ToastUtils by inject()
 
     private var isNight = false
     private var isBackPressed = false
@@ -653,7 +655,7 @@ class MainActivity
     override fun onBackPressed() {
         // 뒤로가기 한번 클릭 시 토스트
         if (!isBackPressed) {
-            ToastUtils(this).showMessage(getString(R.string.back_press), 2)
+            toast.showMessage(getString(R.string.back_press), 2)
             isBackPressed = true
         }
         // 2초안에 한번 더 클릭 시 종료
@@ -1714,7 +1716,7 @@ class MainActivity
                 val lng = loc.longitude
                 if (isKorea(lat, lng)) processAddress(lat, lng, locationClass.getAddress(lat, lng))
                 else {
-                    ToastUtils(this).showMessage(getString(R.string.error_not_service_locale))
+                    toast.showMessage(getString(R.string.error_not_service_locale))
                     loadSavedViewModelData(getString(R.string.seoul_si))
                 }
             } ?: run {
@@ -1743,15 +1745,13 @@ class MainActivity
                 val lng = db?.lng
 
                 if (lat == null || lng == null) {
-                    ToastUtils(this@MainActivity)
-                        .showMessage(getString(R.string.error_not_service_locale))
+                   toast.showMessage(getString(R.string.error_not_service_locale))
                     loadSavedViewModelData(getString(R.string.seoul_si))
                 } else {
                     if (isKorea(lat, lng)) {
                         val getAddr = locationClass.getAddress(lat, lng)
                         if (getAddr != "") {
-                            ToastUtils(this@MainActivity)
-                                .showMessage(getString(R.string.last_location_call_msg), 1)
+                            toast.showMessage(getString(R.string.last_location_call_msg), 1)
                             processAddress(lat, lng, getAddr)
                         } else hideAllViews(ErrorCode.ERROR_GET_LOCATION_FAILED)
                     } else loadSavedViewModelData(getString(R.string.seoul_si))
