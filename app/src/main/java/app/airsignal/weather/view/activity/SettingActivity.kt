@@ -65,8 +65,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class SettingActivity
-    : BaseActivity<ActivitySettingBinding>() {
+class SettingActivity : BaseActivity<ActivitySettingBinding>() {
     override val resID: Int get() = R.layout.activity_setting
 
     private val noticeItem = arrayListOf<ApiModel.NoticeItem>()

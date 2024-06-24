@@ -32,8 +32,7 @@ class LocPermCautionDialog(
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
+        savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.dialog_loc_perm_caution, container, false)
     }
 
@@ -75,5 +74,5 @@ class LocPermCautionDialog(
     }
 
     // 레이아웃 노출
-    fun show() { LocPermCautionDialog(activity, fm, tagId).showNow(fm, tagId) }
+    fun show() = LocPermCautionDialog(activity, fm, tagId).showNow(fm, tagId)
 }

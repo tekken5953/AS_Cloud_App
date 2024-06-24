@@ -129,13 +129,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             }
 
                             // 최신 버전 설치와 현재 버전 사용 선택 다이얼로그 노출
-                            val dialog = MakeDoubleDialog(this)
-                                .make(
-                                    getString(R.string.exist_last_version),
-                                    getString(R.string.download),
-                                    getString(R.string.use_current_version),
-                                    R.color.main_blue_color
-                                )
+                            val dialog = MakeDoubleDialog(this).make(
+                                getString(R.string.exist_last_version),
+                                getString(R.string.download),
+                                getString(R.string.use_current_version),
+                                R.color.main_blue_color
+                            )
                             // 설치 선택 시 스토어 이동
                             dialog.first.setOnClickListener {
                                 sp.setBoolean(skipThisPatchKey, false)

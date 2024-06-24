@@ -109,6 +109,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
                             } ?: showNoResult()
                         is BaseRepository.ApiState.Error -> showNoResult()
                         is BaseRepository.ApiState.Loading -> binding.warningPb.visibility = View.VISIBLE
+                        else -> {}
                     }
                 } ?: run { showNoResult() }
             }

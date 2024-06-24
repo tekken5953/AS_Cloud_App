@@ -19,6 +19,7 @@ import android.widget.*
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.os.HandlerCompat
+import androidx.lifecycle.ReportFragment.Companion.reportFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -505,8 +506,8 @@ class MainActivity
             } else checkLocationAvailability()
 
             // TimeOut
-            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
-                hideProgressBar() },1000 * 8)
+            HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed(
+                { hideProgressBar() },1000 * 8)
         }
     }
 
@@ -1068,8 +1069,10 @@ class MainActivity
     // 주소 업데이트 후 적용
     private fun updateAddress(addr: String?) {
         // UI 업데이트: 주소 텍스트뷰에 주소를 설정하고 데이터 로딩을 시작합니다.
-        binding.mainGpsTitleTv.text = addr
-        binding.mainTopBarGpsTitle.text = addr ?: " ".trim().split(" ").last()
+        runOnUiThread {
+            binding.mainGpsTitleTv.text = addr
+            binding.mainTopBarGpsTitle.text = addr ?: " ".trim().split(" ").last()
+        }
     }
 
     // 기상 경보 업데이트
