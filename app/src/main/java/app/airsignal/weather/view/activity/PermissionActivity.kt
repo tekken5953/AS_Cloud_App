@@ -39,20 +39,20 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>(), KoinCompon
                 ?.toTypedArray()
 
             if (perm.isNotificationPermitted()) {
-                SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, true)
-                SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiVibrate, true)
-                enter.toMain(GetAppInfo.getUserLoginPlatform(this), inAppExtraList)
+                SetAppInfo.setUserNoti(IgnoredKeyFile.notiEnable, true)
+                SetAppInfo.setUserNoti(IgnoredKeyFile.notiVibrate, true)
+                enter.toMain(GetAppInfo.getUserLoginPlatform(), inAppExtraList)
                 return
             }
 
-            if (GetAppInfo.getInitNotiPermission(this) != "") {
+            if (GetAppInfo.getInitNotiPermission() != "") {
                 toast.showMessage(getString(R.string.noti_always_can))
-                enter.toMain(GetAppInfo.getUserLoginPlatform(this), inAppExtraList)
+                enter.toMain(GetAppInfo.getUserLoginPlatform(), inAppExtraList)
                 return
             }
         }.exceptionOrNull()?.stackTraceToString()
 
-        SetAppInfo.setInitNotiPermission(this, "Not Init")
+        SetAppInfo.setInitNotiPermission("Not Init")
         perm.requestNotification()  // 알림 권한 요청
     }
 

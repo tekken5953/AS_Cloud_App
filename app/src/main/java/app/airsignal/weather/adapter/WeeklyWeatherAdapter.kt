@@ -32,7 +32,7 @@ class WeeklyWeatherAdapter(
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val view: View = inflater.inflate(R.layout.list_item_weekly_weather, parent, false)
-        when(GetAppInfo.getUserFontScale(context)) {
+        when(GetAppInfo.getUserFontScale()) {
             "small" -> SetSystemInfo.setTextSizeSmall(view.context)
             "big" -> SetSystemInfo.setTextSizeLarge(view.context)
             else -> SetSystemInfo.setTextSizeDefault(view.context)

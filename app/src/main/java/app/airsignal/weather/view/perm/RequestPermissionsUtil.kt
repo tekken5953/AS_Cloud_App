@@ -86,7 +86,7 @@ class RequestPermissionsUtil(private val context: Context) {
 
     /** 권한 요청 거부 횟수에 따른 반환 **/
     fun isShouldShowRequestPermissionRationale(activity: Activity, perm: String): Boolean =
-        when (GetAppInfo.getInitLocPermission(activity)) {
+        when (GetAppInfo.getInitLocPermission()) {
             "" -> true
             "Second" -> true
             else -> {

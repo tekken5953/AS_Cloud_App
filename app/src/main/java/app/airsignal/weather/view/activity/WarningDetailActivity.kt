@@ -1,6 +1,5 @@
 package app.airsignal.weather.view.activity
 
-import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
@@ -10,22 +9,16 @@ import app.airsignal.weather.R
 import app.airsignal.weather.adapter.WarningDetailAdapter
 import app.airsignal.weather.databinding.ActivityWarningDetailBinding
 import app.airsignal.weather.db.sp.GetAppInfo
-import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.location.AddressFromRegex
 import app.airsignal.weather.repository.BaseRepository
 import app.airsignal.weather.utils.controller.ScreenController
 import app.airsignal.weather.viewmodel.GetWarningViewModel
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.IOException
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     override val resID: Int get() = R.layout.activity_warning_detail
-
-    private val context: Context by inject()
-    private val isKorea get() = GetSystemInfo.getLocale(context) == Locale.KOREA
 
     private enum class CityCode(val code: Int, val title: String, val titleShort: String) {
         ENTIRE(109, "전국", "전국"),
@@ -67,11 +60,11 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
 
         val regexAddress =
             if (intent.extras?.getBoolean("isMain") == true)
-                AddressFromRegex(GetAppInfo.getUserLastAddress(this)).getWarningAddress()
-            else GetAppInfo.getWarningFixed(this)
+                AddressFromRegex(GetAppInfo.getUserLastAddress()).getWarningAddress()
+            else GetAppInfo.getWarningFixed()
 
         // 수정 된 주소에 따른 적용
-        val regexAddr = if (regexAddress != "Error") regexAddress else GetAppInfo.getNotificationAddress(this)
+        val regexAddr = if (regexAddress != "Error") regexAddress else GetAppInfo.getNotificationAddress()
 
         binding.warningAddr.selectItemByIndex(parseStringToIndex(regexAddr))
         warningViewModel.loadDataResult(parseRegionToCode(regexAddr))
@@ -82,7 +75,7 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
 
         binding.warningNoResult.setOnClickListener {
             binding.warningAddr.selectItemByIndex(0)
-            warningViewModel.loadDataResult(109)
+            warningViewModel.loadDataResult(CityCode.ENTIRE.code)
         }
     }
 

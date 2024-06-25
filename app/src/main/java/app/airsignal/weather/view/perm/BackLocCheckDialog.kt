@@ -16,13 +16,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import app.airsignal.weather.R
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.db.sp.SetAppInfo
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -77,9 +75,9 @@ class BackLocCheckDialog(
                             android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
                         )
                 ) {
-                    when (GetAppInfo.getInitLocPermission(activity)) {
-                        "" -> SetAppInfo.setInitLocPermission(activity, "Second")
-                        "Second" -> SetAppInfo.setInitLocPermission(activity, "Done")
+                    when (GetAppInfo.getInitLocPermission()) {
+                        "" -> SetAppInfo.setInitLocPermission("Second")
+                        "Second" -> SetAppInfo.setInitLocPermission("Done")
                     }
 
                     RequestPermissionsUtil(activity).requestBackgroundLocation()
@@ -96,7 +94,7 @@ class BackLocCheckDialog(
             title.text = getString(R.string.back_perm_down_title)
             subTitle.visibility = View.GONE
             apply.apply {
-                val isPermedBackLoc = GetAppInfo.isPermedBackLoc(activity)
+                val isPermedBackLoc = GetAppInfo.isPermedBackLoc()
                 this.text = if (isPermedBackLoc) getString(R.string.undo_active) else getString(R.string.do_active)
                 this.backgroundTintList =
                     ColorStateList.valueOf(
@@ -106,7 +104,7 @@ class BackLocCheckDialog(
                         )
                     )
                 this.setOnClickListener {
-                    SetAppInfo.setPermedBackLog(activity, !isPermedBackLoc)
+                    SetAppInfo.setPermedBackLog(!isPermedBackLoc)
                     dismiss()
                     activity.recreate()
                 }

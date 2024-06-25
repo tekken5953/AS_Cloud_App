@@ -4,10 +4,9 @@ import android.app.Activity
 import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
-import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SharedPreferenceManager
-import app.airsignal.weather.utils.plain.TimberUtil
 import app.airsignal.weather.utils.plain.ToastUtils
 import app.airsignal.weather.utils.view.RefreshUtils
 import app.airsignal.weather.view.activity.LoginActivity
@@ -32,6 +31,7 @@ import org.koin.core.component.inject
 
 class NaverLogin(private val activity: Activity): KoinComponent {
     private val toast: ToastUtils by inject()
+    private val sp: SharedPreferenceManager by inject()
 
     fun init(): NaverLogin {
         NaverIdLoginSDK.initialize(
@@ -81,8 +81,6 @@ class NaverLogin(private val activity: Activity): KoinComponent {
             val refreshResult = NidOAuthLogin().refreshToken()
             if (refreshResult) NaverIdLoginSDK.authenticate(activity, oauthLoginCallback)
             else ToastUtils(activity).showMessage("로그인에 실패했습니다")
-
-            TimberUtil.d("testtest","refresh token result is $refreshResult")
         }
     }
 
@@ -91,12 +89,11 @@ class NaverLogin(private val activity: Activity): KoinComponent {
         override fun onSuccess(result: NidProfileResponse) {
             result.profile?.let {
                 CoroutineScope(Dispatchers.IO).launch {
-                    SharedPreferenceManager(activity)
-                        .setString(IgnoredKeyFile.lastLoginPhone, it.mobile.toString())
+                    sp.setString(IgnoredKeyFile.lastLoginPhone, it.mobile.toString())
                         .setString(IgnoredKeyFile.userId, it.name.toString())
                         .setString(IgnoredKeyFile.userProfile, it.profileImage ?: "")
                         .setString(IgnoredKeyFile.userEmail, it.email.toString())
-                    SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_NAVER)
+                    SetAppInfo.setUserLoginPlatform(StaticDataObject.LOGIN_NAVER)
 
                     withContext(Dispatchers.Main) {
                         if (activity is LoginActivity) activity.finish()
@@ -126,7 +123,6 @@ class NaverLogin(private val activity: Activity): KoinComponent {
 
         override fun onError(errorCode: Int, message: String) {
             onFailure(errorCode, message)
-            TimberUtil.d("testtest","naver login error : ${errorCode}/${message}")
         }
     }
 

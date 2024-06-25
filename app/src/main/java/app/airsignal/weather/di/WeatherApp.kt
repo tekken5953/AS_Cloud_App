@@ -2,8 +2,9 @@ package app.airsignal.weather.di
 
 import android.app.Activity
 import android.app.Application
-import android.content.Context
 import app.airsignal.weather.api.retrofit.HttpClient
+import app.airsignal.weather.db.room.repository.GpsRepository
+import app.airsignal.weather.db.sp.SharedPreferenceManager
 import app.airsignal.weather.firebase.fcm.SubFCM
 import app.airsignal.weather.location.GetLocation
 import app.airsignal.weather.login.GoogleLogin
@@ -21,6 +22,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.core.logger.Level
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 class WeatherApp : Application() {
@@ -30,7 +32,7 @@ class WeatherApp : Application() {
         startKoin {
             androidLogger(level = Level.INFO)
             androidContext(this@WeatherApp)
-            modules(listOf(baseModule,repositoryModule,viewModelModule,loginModule))
+            modules(listOf(baseModule,repositoryModule,viewModelModule,loginModule,dataBaseModule))
         }
     }
 
@@ -39,11 +41,10 @@ class WeatherApp : Application() {
     /* viewModel : 뷰모델 의존성 제거 객체 생성 */
 
     private val baseModule = module {
-        single<Context> { applicationContext }
-        single { GetLocation(applicationContext) }
         single { HttpClient }
         factory { SubFCM() }
-        single { ToastUtils(applicationContext) }
+        single { GetLocation(get()) }
+        single { ToastUtils(get()) }
     }
 
     private val repositoryModule = module {
@@ -59,8 +60,13 @@ class WeatherApp : Application() {
     }
 
     private val loginModule = module {
-        factory { (activity: Activity) -> GoogleLogin(activity) }
-        factory { (activity: Activity) -> KakaoLogin(activity) }
-        factory { (activity: Activity) -> NaverLogin(activity) }
+        factory(named("googleLogin")) { (activity: Activity) -> GoogleLogin(activity) }
+        factory(named("kakaoLogin")) { (activity: Activity) -> KakaoLogin(activity) }
+        factory(named("naverLogin")) { (activity: Activity) -> NaverLogin(activity) }
+    }
+
+    private val dataBaseModule = module {
+        single { SharedPreferenceManager(androidContext()) }
+        single { GpsRepository(androidContext()) }
     }
 }

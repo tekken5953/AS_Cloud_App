@@ -31,6 +31,7 @@ import java.util.*
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override val resID: Int get() = R.layout.activity_splash
+    private val sp: SharedPreferenceManager by inject()
 
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
     private val locationClass: GetLocation by inject()
@@ -75,7 +76,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
             if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted())
                 EnterPageUtil(this@SplashActivity).toMain(
-                    GetAppInfo.getUserLoginPlatform(this),
+                    GetAppInfo.getUserLoginPlatform(),
                     inAppMsgList?.toTypedArray()
                 )
             else EnterPageUtil(this@SplashActivity).toPermission()
@@ -90,7 +91,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     when (ver) {
                         // 통신 성공
                         is BaseRepository.ApiState.Success -> {
-                            val sp = SharedPreferenceManager(this@SplashActivity)
                             val inAppArray = ver.data.inAppMsg
                             val versionName = GetSystemInfo.getApplicationVersionName(this)
                             val versionCode = GetSystemInfo.getApplicationVersionCode(this)

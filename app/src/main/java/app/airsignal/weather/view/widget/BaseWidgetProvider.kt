@@ -53,18 +53,18 @@ open class BaseWidgetProvider: AppWidgetProvider(), KoinComponent {
     fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean =
         LocalDateTime.parse(realTime)?.let {LocalDateTime.parse(currentTime).isAfter(it)} ?: true
 
-    fun isRefreshable(context: Context, type: String): Boolean {
+    fun isRefreshable(type: String): Boolean {
         val currentTime = getCurrentTime()
         val lastRefresh = when (type) {
-            WIDGET_42 -> GetAppInfo.getLastRefreshTime42(context)
-            WIDGET_22 -> GetAppInfo.getLastRefreshTime22(context)
+            WIDGET_42 -> GetAppInfo.getLastRefreshTime42()
+            WIDGET_22 -> GetAppInfo.getLastRefreshTime22()
             else -> currentTime
         }
         return currentTime - lastRefresh >= 1000 * 60
     }
 
-    fun setRefreshTime(context: Context, type: String) {
-        if (type == WIDGET_42) SetAppInfo.setLastRefreshTime42(context, getCurrentTime())
-        else if (type == WIDGET_22) SetAppInfo.setLastRefreshTime22(context, getCurrentTime())
+    fun setRefreshTime(type: String) {
+        if (type == WIDGET_42) SetAppInfo.setLastRefreshTime42(getCurrentTime())
+        else if (type == WIDGET_22) SetAppInfo.setLastRefreshTime22(getCurrentTime())
     }
 }

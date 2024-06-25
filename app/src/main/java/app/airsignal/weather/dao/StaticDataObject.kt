@@ -10,6 +10,11 @@ object StaticDataObject {
     const val REQUEST_NOTIFICATION = 0x0000002                    // 알림권한 요청 Result Code
     const val REQUEST_BACKGROUND_LOCATION = 0x0000003
 
+    const val LOGIN_GOOGLE = "구글"
+    const val LOGIN_KAKAO = "카카오"
+    const val LOGIN_PHONE = "phone"
+    const val LOGIN_NAVER = "네이버"
+
     enum class FcmSort(val key: String) {
         FCM_DAILY("daily"), FCM_PATCH("patch"), FCM_EVENT("event"), FCM_ADMIN("admin")
     }

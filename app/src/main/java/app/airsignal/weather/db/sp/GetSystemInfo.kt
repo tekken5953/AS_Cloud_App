@@ -26,12 +26,11 @@ object GetSystemInfo {
                 Configuration.UI_MODE_NIGHT_YES
 
     /** 현재 설정된 국가를 반환 **/
-    fun getLocale(context: Context): Locale =
-        when (GetAppInfo.getUserLocation(context)) {
-            SpDao.LANG_KR -> Locale.KOREA
-            SpDao.LANG_EN -> Locale.ENGLISH
-            else -> Locale.getDefault()
-        }
+    fun getLocale(): Locale = when (GetAppInfo.getUserLocation()) {
+        SpDao.LANG_KR -> Locale.KOREA
+        SpDao.LANG_EN -> Locale.ENGLISH
+        else -> Locale.getDefault()
+    }
 
     /** 현재 앱 버전 반환 **/
     fun getApplicationVersionName(context: Context): String =

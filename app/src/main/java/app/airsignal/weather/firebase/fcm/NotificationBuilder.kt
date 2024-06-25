@@ -46,7 +46,7 @@ class NotificationBuilder: KoinComponent {
             val notificationFcmChannel = NotificationChannel(
                 StaticDataObject.FcmChannel.NOTIFICATION_CHANNEL_ID.value,
                 StaticDataObject.FcmChannel.NOTIFICATION_CHANNEL_NAME.value,
-                if (GetAppInfo.getUserNotiVibrate(appContext))
+                if (GetAppInfo.getUserNotiVibrate())
                     NotificationManager.IMPORTANCE_DEFAULT
                 else NotificationManager.IMPORTANCE_LOW
             ).apply {
@@ -81,7 +81,7 @@ class NotificationBuilder: KoinComponent {
                     val lunar = data["lunar"]?.toInt()
                     setNotiBuilder(
                         title = "${temp}˚ ${DataTypeParser.applySkyText(appContext, rainType, sky, thunder)}",
-                        subtext = GetAppInfo.getNotificationAddress(appContext),
+                        subtext = GetAppInfo.getNotificationAddress(),
                         content = "최대 : ${parseStringToDoubleToInt(data["max"].toString())}˚ " +
                                 "최소 : ${parseStringToDoubleToInt(data["min"].toString())}˚",
                         imgPath = getSkyBitmap(appContext, rainType, sky, thunder, lunar ?: -1)
@@ -104,7 +104,7 @@ class NotificationBuilder: KoinComponent {
                 }
             }
 
-            if (GetAppInfo.getUserNotiEnable(appContext)) {
+            if (GetAppInfo.getUserNotiEnable()) {
                 (appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
                     .let {
                         it.createNotificationChannel(notificationFcmChannel)

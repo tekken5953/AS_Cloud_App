@@ -9,12 +9,10 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import app.airsignal.weather.R
 import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.db.sp.SetAppInfo
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -53,7 +51,7 @@ class LocPermCautionDialog(
         // 확인 버튼 클릭
         okBtn.setOnClickListener {
             dismiss()
-            SetAppInfo.setInitLocPermission(activity, "Done")
+            SetAppInfo.setInitLocPermission("Done")
             RequestPermissionsUtil(activity).requestLocation()
         }
     }

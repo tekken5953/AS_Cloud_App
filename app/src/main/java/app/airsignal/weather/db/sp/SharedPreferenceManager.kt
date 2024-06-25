@@ -1,7 +1,6 @@
 package app.airsignal.weather.db.sp
 
 import android.content.Context
-import androidx.annotation.RequiresApi
 import org.json.JSONException
 import org.json.JSONObject
 

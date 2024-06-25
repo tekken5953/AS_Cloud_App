@@ -24,6 +24,8 @@ import app.airsignal.weather.db.room.repository.GpsRepository
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.utils.controller.OnAdapterItemSingleClick
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.*
 
 /**
@@ -33,11 +35,10 @@ import java.util.*
 class AddressListAdapter(
     private val context: Context,
     list: ArrayList<AdapterModel.AddressListItem>
-) :
-    RecyclerView.Adapter<AddressListAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<AddressListAdapter.ViewHolder>(), KoinComponent {
     private val mList = list
     private var visible = false
-    val db = GpsRepository(context)
+    val db: GpsRepository by inject()
 
     private lateinit var onClickListener: OnAdapterItemSingleClick
 
@@ -60,7 +61,7 @@ class AddressListAdapter(
         holder.bind(mList[position])
 
         applyColorFirstIndex(
-            mList[position].kr == GetAppInfo.getUserLastAddress(context),
+            mList[position].kr == GetAppInfo.getUserLastAddress(),
             holder.address,
             holder.gpsImg
         )
@@ -149,5 +150,5 @@ class AddressListAdapter(
     fun getCheckBoxVisible(): Boolean = visible
 
     fun isEnglish(): Boolean =
-        GetAppInfo.getUserLocation(context) == SpDao.LANG_EN || Locale.getDefault().language == "en"
+        GetAppInfo.getUserLocation() == SpDao.LANG_EN || Locale.getDefault().language == "en"
 }
