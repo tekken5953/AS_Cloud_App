@@ -10,49 +10,71 @@ import java.util.*
  **/
 object GetAppInfo {
 
-    fun getUserTheme(context: Context): String {
-        return SharedPreferenceManager(context).getString(SpDao.userTheme)
-    }
+    fun getUserTheme(context: Context): String =
+        SharedPreferenceManager(context).getString(SpDao.userTheme)
 
-    fun getUserEmail(context: Context): String {
-        return SharedPreferenceManager(context).getString(SpDao.userEmail)
-    }
+    fun getUserEmail(context: Context): String =
+        SharedPreferenceManager(context).getString(SpDao.userEmail)
 
-    fun getUserLocation(context: Context): String {
-        return SharedPreferenceManager(context).getString(SpDao.userLocation)
-    }
+    fun getUserLocation(context: Context): String =
+        SharedPreferenceManager(context).getString(SpDao.userLocation)
 
-    fun getUserFontScale(context: Context): String {
-        return SharedPreferenceManager(context).getString(SpDao.userFontScale)
-    }
+    fun getUserFontScale(context: Context): String =
+        SharedPreferenceManager(context).getString(SpDao.userFontScale)
 
-    fun getUserNotiEnable(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(SpDao.notiEnable, true)
-    }
+    fun getUserNotiEnable(context: Context): Boolean =
+        SharedPreferenceManager(context).getBoolean(SpDao.notiEnable, true)
 
-    fun getUserNotiVibrate(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(SpDao.notiVibrate, true)
-    }
+    fun getUserNotiVibrate(context: Context): Boolean =
+        SharedPreferenceManager(context).getBoolean(SpDao.notiVibrate, true)
 
-    fun getUserNotiSound(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(SpDao.notiSound, false)
-    }
+    fun getUserNotiSound(context: Context): Boolean =
+        SharedPreferenceManager(context).getBoolean(SpDao.notiSound, false)
 
-    fun getUserLoginPlatform(context: Context): String {
-        return SharedPreferenceManager(context).getString(SpDao.lastLoginPlatform)
-    }
+    fun getUserLoginPlatform(context: Context): String =
+        SharedPreferenceManager(context).getString(SpDao.lastLoginPlatform)
 
-    fun getUserLastAddress(context: Context): String {
-        return SharedPreferenceManager(context).getString(SpDao.lastAddress)
-    }
+    fun getUserLastAddress(context: Context): String =
+        SharedPreferenceManager(context).getString(SpDao.lastAddress)
 
-    fun getUserProfileImage(context: Context): String {
-        return SharedPreferenceManager(context).getString(SpDao.userProfile)
-    }
+    fun getUserProfileImage(context: Context): String =
+        SharedPreferenceManager(context).getString(SpDao.userProfile)
 
-    fun getTopicNotification(context: Context): String {
-        return SharedPreferenceManager(context).getString(SpDao.NOTIFICATION_TOPIC_DAILY)
-    }
+    fun getTopicNotification(context: Context): String =
+        SharedPreferenceManager(context).getString(SpDao.NOTIFICATION_TOPIC_DAILY)
+
+    fun getNotificationAddress(context: Context): String =
+        SharedPreferenceManager(context).getString(SpDao.NOTIFICATION_ADDRESS)
+
+    fun getInitLocPermission(context: Context): String =
+        SharedPreferenceManager(context).getString(SpDao.INITIALIZED_LOC_PERMISSION)
+
+    fun getInitNotiPermission(context: Context): String =
+        SharedPreferenceManager(context).getString(SpDao.INITIALIZED_NOTI_PERMISSION)
+
+    fun isPermedBackLoc(context: Context): Boolean =
+        SharedPreferenceManager(context).getBoolean(SpDao.IS_PERMED_BACK_LOG, false)
+
+    fun getWarningFixed(context: Context): String =
+        SharedPreferenceManager(context).getString(SpDao.WARNING_FIXED)
+
+    fun getLastRefreshTime42(context: Context): Long =
+        SharedPreferenceManager(context).getLong(SpDao.LAST_REFRESH42)
+
+    fun getLastRefreshTime22(context: Context): Long =
+        SharedPreferenceManager(context).getLong(SpDao.LAST_REFRESH22)
+
+    fun getInAppMsgEnabled(context: Context): Boolean =
+        SharedPreferenceManager(context).getBoolean(SpDao.IN_APP_MSG, false)
+
+    fun getInAppMsgTime(context: Context): Long =
+        SharedPreferenceManager(context).getLong(SpDao.IN_APP_MSG_TIME)
+
+    fun getWeatherBoxOpacity(context: Context): Int =
+        SharedPreferenceManager(context).getInt(SpDao.WEATHER_BOX_OPACITY, 60)
+
+    fun getWeatherBoxOpacity2(context: Context): Int =
+        SharedPreferenceManager(context).getInt(SpDao.WEATHER_BOX_OPACITY2, 60)
 
     private fun getEntireSun(sunRise: String, sunSet: String): Int {
         val sunsetTime = parseTimeToMinutes(sunSet)
@@ -93,49 +115,5 @@ object GetAppInfo {
                 if (getEntireSun(sunrise, sunset) == 0) 1
                 else getEntireSun(sunrise, sunset)
         return dailySunProgress >= 100 || dailySunProgress < 0
-    }
-
-    fun getNotificationAddress(context: Context): String {
-        return SharedPreferenceManager(context).getString(SpDao.NOTIFICATION_ADDRESS)
-    }
-
-    fun getInitLocPermission(context: Context): String {
-        return SharedPreferenceManager(context).getString(SpDao.INITIALIZED_LOC_PERMISSION)
-    }
-
-    fun getInitNotiPermission(context: Context): String {
-        return SharedPreferenceManager(context).getString(SpDao.INITIALIZED_NOTI_PERMISSION)
-    }
-
-    fun isPermedBackLoc(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(SpDao.IS_PERMED_BACK_LOG, false)
-    }
-
-    fun getWarningFixed(context: Context): String {
-        return SharedPreferenceManager(context).getString(SpDao.WARNING_FIXED)
-    }
-
-    fun getLastRefreshTime42(context: Context): Long {
-        return SharedPreferenceManager(context).getLong(SpDao.LAST_REFRESH42)
-    }
-
-    fun getLastRefreshTime22(context: Context): Long {
-        return SharedPreferenceManager(context).getLong(SpDao.LAST_REFRESH22)
-    }
-
-    fun getInAppMsgEnabled(context: Context): Boolean {
-        return SharedPreferenceManager(context).getBoolean(SpDao.IN_APP_MSG, false)
-    }
-
-    fun getInAppMsgTime(context: Context): Long {
-        return SharedPreferenceManager(context).getLong(SpDao.IN_APP_MSG_TIME)
-    }
-
-    fun getWeatherBoxOpacity(context: Context): Int {
-        return SharedPreferenceManager(context).getInt(SpDao.WEATHER_BOX_OPACITY, 60)
-    }
-
-    fun getWeatherBoxOpacity2(context: Context): Int {
-        return SharedPreferenceManager(context).getInt(SpDao.WEATHER_BOX_OPACITY2, 60)
     }
 }

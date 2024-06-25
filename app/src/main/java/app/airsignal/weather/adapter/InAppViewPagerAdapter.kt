@@ -48,9 +48,7 @@ class InAppViewPagerAdapter(
                         outline?.setRect(0, 0, view?.width ?: 0, view?.height ?: 0)
                     }
                 }
-            } else {
-                linear.clipToOutline = true
-            }
+            } else linear.clipToOutline = true
 
             webView.settings.apply {
                 useWideViewPort = true // 화면 맞추기
@@ -66,7 +64,7 @@ class InAppViewPagerAdapter(
                     intent.putExtra("redirect", dao.redirect)
                     context.startActivity(intent)
                     true
-                } else { false }
+                } else false
             }
         }
     }

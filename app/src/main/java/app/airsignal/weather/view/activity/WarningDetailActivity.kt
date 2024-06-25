@@ -89,8 +89,6 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
     // 앱 버전 뷰모델 데이터 호출
     private fun applyWarning() {
         kotlin.runCatching {
-            warningList.clear()
-
             warningViewModel.getResultData.observe(this) { result ->
                 result?.let { warning ->
                     when (warning) {
@@ -100,11 +98,13 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
                                     hideNoResult()
 
                                     binding.warningTime.text =
-                                        if (isKorea) "${warning.data.time?.format(DateTimeFormatter.ofPattern("HH : mm"))} 기준"
-                                        else "${warning.data.time?.format(DateTimeFormatter.ofPattern("HH : mm"))} KST"
+                                        buildString {
+                                            append(warning.data.time?.format(DateTimeFormatter.ofPattern("HH : mm")))
+                                            append(" ")
+                                            append(getString(R.string.warning_time_unit))
+                                        }
 
-                                    warningList.addAll(content.map { it.replace("○", "").trim() })
-                                    warningAdapter.notifyItemRangeInserted(0, warningList.size)
+                                    submit(content.map { it.replace("○", "").trim() })
                                 } else showNoResult()
                             } ?: showNoResult()
                         is BaseRepository.ApiState.Error -> showNoResult()
@@ -115,6 +115,8 @@ class WarningDetailActivity : BaseActivity<ActivityWarningDetailBinding>() {
             }
         }.onFailure { exception -> if (exception == IOException()) showNoResult() }
     }
+
+    private fun submit(newList: List<String>) = warningAdapter.submitList(ArrayList(newList))
 
     private fun showNoResult() {
         val isNationwide = binding.warningAddr.text.toString() == CityCode.ENTIRE.title

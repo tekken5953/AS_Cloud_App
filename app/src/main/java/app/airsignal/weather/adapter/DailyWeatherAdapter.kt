@@ -26,7 +26,8 @@ class DailyWeatherAdapter(
     RecyclerView.Adapter<DailyWeatherAdapter.ViewHolder>() {
     private var mList = list
     private val dateSection = ArrayList<Int>()
-    private var isWhite: Boolean = false
+    private var isWhite = false
+    val resultWhite get() = isWhite
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -63,7 +64,7 @@ class DailyWeatherAdapter(
 
     fun getDateSectionList(): ArrayList<Int> = dateSection
 
-    fun getIsWhite(): Boolean = isWhite
+    fun getIsWhite() = resultWhite
 
     fun setIsWhite(b: Boolean) { isWhite = b }
 

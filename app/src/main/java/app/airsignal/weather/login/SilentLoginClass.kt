@@ -17,15 +17,11 @@ class SilentLoginClass(private val activity: Activity) : KoinComponent{
     private val naverLogin: NaverLogin by inject { parametersOf(activity) }  // 네이버 로그인
     /** 플랫폼 별 자동로그인 **/
     suspend fun login() {
-        when (GetAppInfo.getUserLoginPlatform(activity)) {
-            RDBLogcat.LOGIN_GOOGLE -> {
-                // 구글 자동 로그인
-                if (!googleLogin.isValidToken()) googleLogin.checkSilenceLogin()
-            }
-            RDBLogcat.LOGIN_KAKAO -> {
-                kakaoLogin.checkInstallKakaoTalk(null) // 카카오 자동 로그인
-            }
+        naverLogin.init()
 
+        when (GetAppInfo.getUserLoginPlatform(activity)) {
+            RDBLogcat.LOGIN_GOOGLE -> if (!googleLogin.isValidToken()) googleLogin.checkSilenceLogin() // 구글 자동 로그인
+            RDBLogcat.LOGIN_KAKAO -> kakaoLogin.checkInstallKakaoTalk(null) // 카카오 자동 로그인
             RDBLogcat.LOGIN_NAVER -> {
                 // 네이버 자동 로그인
                 if (naverLogin.getAccessToken() != null) naverLogin.silentLogin()

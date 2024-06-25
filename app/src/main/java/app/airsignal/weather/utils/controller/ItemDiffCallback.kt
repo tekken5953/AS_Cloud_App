@@ -2,7 +2,7 @@ package app.airsignal.weather.utils.controller
 
 import androidx.recyclerview.widget.DiffUtil
 
-class  ItemDiffCallback <T> (private val oldList: ArrayList<T>, private val newList: ArrayList<T>)
+open class ItemDiffCallback <T> (private val oldList: ArrayList<T>, private val newList: ArrayList<T>)
     : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = oldList.size

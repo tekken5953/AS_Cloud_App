@@ -53,7 +53,7 @@ class WarningViewPagerAdapter(
             viewPager2.visibility = if (mList.size == 0) View.GONE else View.VISIBLE
 
             itemView.setOnClickListener {
-                if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                if (bindingAdapterPosition != RecyclerView.NO_POSITION)
                     kotlin.runCatching {
                         if (mList.size != 0) {
                             val intent = Intent(context, WarningDetailActivity::class.java)
@@ -62,7 +62,6 @@ class WarningViewPagerAdapter(
                             context.startActivity(intent)
                         }
                     }.exceptionOrNull()?.stackTraceToString()
-                }
             }
         }
     }

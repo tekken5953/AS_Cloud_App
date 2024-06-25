@@ -123,10 +123,9 @@ class AddressListAdapter(
 
             itemView.setOnClickListener {
                 val position = bindingAdapterPosition
-                if (position != RecyclerView.NO_POSITION) {
+                if (position != RecyclerView.NO_POSITION)
                     kotlin.runCatching { onClickListener.onItemClick(it, position) }
                         .exceptionOrNull()?.stackTraceToString()
-                }
             }
         }
     }

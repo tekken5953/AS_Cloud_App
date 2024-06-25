@@ -626,29 +626,6 @@ class MainActivity
                 binding.mainDailyWeatherRv.post { scrollSmoothFirst(DataTypeParser.getHourCountToTomorrow() + 24) }
             } else afterTomorrowSection.visibility = GONE
         }
-
-        // 시간별 날씨 스크롤에 따른 탭 변화
-        binding.mainDailyWeatherRv.addOnScrollListener(object : OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val sectionList = dailyWeatherAdapter.getDateSectionList()
-                // 현재 스크롤 위치 확인
-                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                when (sectionList.size) {
-                    1 -> setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection)
-                    2 -> when (layoutManager.findFirstVisibleItemPosition()) {
-                            sectionList[0] -> setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection)
-                            sectionList[1] -> setSectionTextColor(tomorrowSection, todaySection, afterTomorrowSection)
-                    }
-                    3 -> when (layoutManager.findFirstVisibleItemPosition()) {
-                            sectionList[0] -> setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection)
-                            sectionList[1] -> setSectionTextColor(tomorrowSection, todaySection, afterTomorrowSection)
-                            sectionList[2] -> setSectionTextColor(afterTomorrowSection, todaySection, tomorrowSection)
-                    }
-                    else -> {}
-                }
-            }
-        })
     }
 
     @SuppressLint("MissingSuperCall")
@@ -766,11 +743,8 @@ class MainActivity
         }
     }
 
-    private fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean {
-        val timeFormed = LocalDateTime.parse(currentTime)
-        val realtimeFormed = LocalDateTime.parse(realTime)
-        return realtimeFormed?.let { timeFormed.isAfter(it) } ?: true
-    }
+    private fun currentIsAfterRealtime(currentTime: String, realTime: String?): Boolean =
+        LocalDateTime.parse(realTime)?.let { LocalDateTime.parse(currentTime).isAfter(it) } ?: true
 
     // API 통신이 에러일 때 처리
     private fun handleApiError(errorMessage: String) {
@@ -804,21 +778,47 @@ class MainActivity
             binding.subAirWave.visibility = VISIBLE
         } else binding.subAirWave.visibility = GONE
 
-
         // 메인 날씨 아이콘 세팅
         binding.mainSkyImg.setImageDrawable(
             DataTypeParser.applySkyImg(
             this,
             if (currentIsAfterRealtime(result.current.currentTime, realtimeFirst.forecast))
                 result.current.rainType else realtimeFirst.rainType,
-            realtimeFirst.sky, result.thunder,
-            isLarge = true, isNight,  lunar = lunar))
+            realtimeFirst.sky, result.thunder, isLarge = true, isNight,  lunar = lunar))
 
         val lunarClass = LunarShape(result.lunarAge)
         binding.mainLunarImg.setImageDrawable(lunarClass.shapeDrawable(this))
         binding.mainLunarProgress.text = "${lunarClass.progress()}%"
 
         binding.mainLunarShapeText.text = lunarClass.shapeText(this)
+
+        binding.mainDailyWeatherRv.clearOnScrollListeners()
+
+        val todaySection = binding.dailySectionToday
+        val tomorrowSection = binding.dailySectionTomorrow
+        val afterTomorrowSection = binding.dailySectionAfterTomorrow
+        // 시간별 날씨 스크롤에 따른 탭 변화
+        binding.mainDailyWeatherRv.addOnScrollListener(object : OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val sectionList = dailyWeatherAdapter.getDateSectionList()
+                // 현재 스크롤 위치 확인
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                when (sectionList.size) {
+                    1 -> setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection)
+                    2 -> when (layoutManager.findFirstVisibleItemPosition()) {
+                        sectionList[0] -> setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection)
+                        sectionList[1] -> setSectionTextColor(tomorrowSection, todaySection, afterTomorrowSection)
+                    }
+                    3 -> when (layoutManager.findFirstVisibleItemPosition()) {
+                        sectionList[0] -> setSectionTextColor(todaySection, tomorrowSection, afterTomorrowSection)
+                        sectionList[1] -> setSectionTextColor(tomorrowSection, todaySection, afterTomorrowSection)
+                        sectionList[2] -> setSectionTextColor(afterTomorrowSection, todaySection, tomorrowSection)
+                    }
+                    else -> {}
+                }
+            }
+        })
     }
 
     private fun updateWeatherItems(result: ApiModel.GetEntireData) {
@@ -889,14 +889,16 @@ class MainActivity
                 val rainType = if (isAfterRealtime) current.rainType else dailyIndex.rainType
                 val rainP =  dailyIndex.rainP ?: 0.0
 
-                addDailyWeatherItem(
-                    "${forecastToday.hour}${getString(R.string.hour)}",
-                    skyImg,
-                    temperature,
-                    dailyIndex.forecast ?: "",
-                    DataTypeParser.isRainyDay(rainType),
-                    rainP
-                )
+                if (LocalDateTime.now().hour <= forecastToday.hour) {
+                    addDailyWeatherItem(
+                        "${forecastToday.hour}${getString(R.string.hour)}",
+                        skyImg,
+                        temperature,
+                        dailyIndex.forecast ?: "",
+                        DataTypeParser.isRainyDay(rainType),
+                        rainP
+                    )
+                }
             } else {
                 val skyImg = DataTypeParser.applySkyImg(
                     this, dailyIndex.rainType, dailyIndex.sky, thunder,
@@ -1070,8 +1072,8 @@ class MainActivity
     private fun updateAddress(addr: String?) {
         // UI 업데이트: 주소 텍스트뷰에 주소를 설정하고 데이터 로딩을 시작합니다.
         runOnUiThread {
-            binding.mainGpsTitleTv.text = addr
-            binding.mainTopBarGpsTitle.text = addr ?: " ".trim().split(" ").last()
+            binding.mainGpsTitleTv.text = addr ?: ""
+            binding.mainTopBarGpsTitle.text = addr ?: ""
         }
     }
 
@@ -1274,6 +1276,12 @@ class MainActivity
         } ?: window.setBackgroundDrawableResource(R.color.theme_view_color)
 
         changeTextColorStyle(id ?: R.color.theme_view_color)
+
+        setSectionTextColor(
+            binding.dailySectionToday,
+            binding.dailySectionTomorrow,
+            binding.dailySectionAfterTomorrow
+        )
     }
 
     // 필드값이 없을 때 -100 출력 됨
@@ -1679,12 +1687,6 @@ class MainActivity
 
         window.navigationBarColor = getColor(android.R.color.transparent)
         window.statusBarColor = getColor(android.R.color.transparent)
-
-        setSectionTextColor(
-            binding.dailySectionToday,
-            binding.dailySectionTomorrow,
-            binding.dailySectionAfterTomorrow
-        )
     }
 
     // 기상특보 자동 슬라이드 적용
@@ -1798,13 +1800,15 @@ class MainActivity
                 .replace("null", "")
 
             // 주소 포맷을 정의하거나 필요한 경우 다른 변환 작업을 수행
-            val formattedAddr =
-                if (GetAppInfo.getUserLocation(this@MainActivity) == StaticDataObject.LANG_EN)
-                    cleanedAddr.replace("South Korea", "")
-                else AddressFromRegex(cleanedAddr).getAddress()
+            kotlin.runCatching {
+                val formattedAddr =
+                    if (GetAppInfo.getUserLocation(this@MainActivity) == StaticDataObject.LANG_EN)
+                        cleanedAddr.replace("South Korea", "")
+                    else AddressFromRegex(cleanedAddr).getAddress()
 
-            loadCurrentViewModelData(lat, lng, formattedAddr)
-            updateAddress(formattedAddr)
+                loadCurrentViewModelData(lat, lng, formattedAddr)
+                updateAddress(formattedAddr)
+            }.onFailure { loadSavedViewModelData(getString(R.string.seoul_si)) }
         }
     }
 
