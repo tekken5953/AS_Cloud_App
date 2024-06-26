@@ -102,8 +102,7 @@ class SharedPreferenceManager(context: Context) {
         val keysItr = `object`.keys()
         while (keysItr.hasNext()) {
             val key = keysItr.next()
-            val value = `object`[key]
-            map[key] = value
+            map[key] = `object`[key]
         }
         return map
     }

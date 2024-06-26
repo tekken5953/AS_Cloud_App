@@ -22,8 +22,7 @@ class InAppViewPagerAdapter(
     private val mList = list
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
-    ): InAppViewPagerAdapter.ViewHolder {
+        viewType: Int): InAppViewPagerAdapter.ViewHolder {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val view: View = inflater.inflate(R.layout.view_pager_item_in_app, parent, false)
@@ -58,11 +57,12 @@ class InAppViewPagerAdapter(
 
             webView.setOnTouchListener { _, event ->
                 if (event.action == MotionEvent.ACTION_UP) {
-                    val intent = Intent(context, WebURLActivity::class.java)
-                    intent.putExtra("appBar",false)
-                    intent.putExtra("sort","inAppLink")
-                    intent.putExtra("redirect", dao.redirect)
-                    context.startActivity(intent)
+                    Intent(context, WebURLActivity::class.java).apply {
+                        putExtra("appBar",false)
+                        putExtra("sort","inAppLink")
+                        putExtra("redirect", dao.redirect)
+                        context.startActivity(this)
+                    }
                     true
                 } else false
             }

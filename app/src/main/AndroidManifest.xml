@@ -15,7 +15,7 @@
 
     <application
         android:name="app.airsignal.weather.di.WeatherApp"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app__name"

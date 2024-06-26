@@ -56,9 +56,10 @@ object GetSystemInfo {
 
     /** 플레이 스토어로 이동 **/
     fun goToPlayStore(activity: Activity) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(getPlayStoreURL(activity))
-        activity.startActivity(intent)
+        Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(getPlayStoreURL(activity))
+            activity.startActivity(this)
+        }
     }
 
     // 디바이스 높이 구하기

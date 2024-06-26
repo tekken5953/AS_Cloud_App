@@ -27,7 +27,7 @@ class DailyWeatherAdapter(
     private var mList = list
     private val dateSection = ArrayList<Int>()
     private var isWhite = false
-    val resultWhite get() = isWhite
+    private val resultWhite get() = isWhite
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -52,11 +52,16 @@ class DailyWeatherAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.setIsRecyclable(true)
         holder.bind(mList[position]).apply {
-            if (position == 0 ||
-                LocalDateTime.parse(mList[position - 1].date).toLocalDate()
-                    .compareTo(LocalDateTime.parse(mList[position].date).toLocalDate()) != 0)
-                if (!dateSection.contains(position)) dateSection.add(position)
+            val isFirstPosition = (position == 0)
+            val isDateChanged = {
+                val prevDate = LocalDateTime.parse(mList[position - 1].date).toLocalDate()
+                val currDate = LocalDateTime.parse(mList[position].date).toLocalDate()
+                prevDate != currDate
+            }
 
+            if (isFirstPosition || isDateChanged())  {
+                if (!dateSection.contains(position)) dateSection.add(position)
+            }
 
             holder.rain.visibility = if (mList[position].isRain) View.VISIBLE else View.INVISIBLE
         }

@@ -79,10 +79,8 @@ class AddressListAdapter(
             delete.visibility = if (visible) View.VISIBLE else View.GONE
 
             delete.setOnClickListener {
-                val builder = Dialog(context)
-                val view = LayoutInflater.from(context)
-                    .inflate(R.layout.dialog_alert_double_btn, null)
-                builder.run {
+                val view = LayoutInflater.from(context).inflate(R.layout.dialog_alert_double_btn, null)
+                Dialog(context).run {
                     this.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                     this.requestWindowFeature(Window.FEATURE_NO_TITLE)
                     this.setContentView(view)
@@ -103,8 +101,8 @@ class AddressListAdapter(
                         ForegroundColorSpan(ResourcesCompat.getColor(
                             context.resources, R.color.theme_alert_double_apply_color, null)
                         ),
-                        if(isEnglish()) 7 else 0,
-                        if(isEnglish()) 7 + address.text.length else address.text.length,
+                        if (isEnglish()) 7 else 0,
+                        if (isEnglish()) 7 + address.text.length else address.text.length,
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                     )
 

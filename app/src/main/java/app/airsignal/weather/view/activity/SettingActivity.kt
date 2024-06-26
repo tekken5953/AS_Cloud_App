@@ -908,8 +908,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                seekBar: SeekBar?, progress: Int, fromUser: Boolean
-            ) {
+                seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 opacityValue.text = "$progress%"
                 opacityBox.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${DataTypeParser.progressToHex(progress)}FFFFFF"))
             }
@@ -930,8 +929,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
         seekBar2.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
-                seekBar: SeekBar?, progress: Int, fromUser: Boolean
-            ) {
+                seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 opacityValue2.text = "$progress%"
                 opacityBox2.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#${DataTypeParser.progressToHex(progress)}000000"))
             }

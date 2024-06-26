@@ -10,8 +10,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
+import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.SetSystemInfo
+import app.airsignal.weather.db.sp.SpDao
 import com.bumptech.glide.Glide
 
 /**
@@ -33,8 +35,8 @@ class WeeklyWeatherAdapter(
 
         val view: View = inflater.inflate(R.layout.list_item_weekly_weather, parent, false)
         when(GetAppInfo.getUserFontScale()) {
-            "small" -> SetSystemInfo.setTextSizeSmall(view.context)
-            "big" -> SetSystemInfo.setTextSizeLarge(view.context)
+            SpDao.TEXT_SCALE_SMALL -> SetSystemInfo.setTextSizeSmall(view.context)
+            SpDao.TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(view.context)
             else -> SetSystemInfo.setTextSizeDefault(view.context)
         }
         Thread.sleep(100)
