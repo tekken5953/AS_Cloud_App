@@ -3,6 +3,9 @@ package app.airsignal.weather.login
 import android.app.Activity
 import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.sp.GetAppInfo
+import app.airsignal.weather.db.sp.SetAppInfo
+import app.airsignal.weather.db.sp.SharedPreferenceManager
+import app.airsignal.weather.db.sp.SpDao
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import org.koin.core.parameter.parametersOf
@@ -26,7 +29,7 @@ class SilentLoginClass(private val activity: Activity) : KoinComponent{
             StaticDataObject.LOGIN_NAVER -> {
                 // 네이버 자동 로그인
                 if (naverLogin.getAccessToken() != null) naverLogin.silentLogin()
-                else naverLogin.refreshToken()
+                else SharedPreferenceManager(activity).removeKey(SpDao.LAST_LOGIN_PLATFORM)
             }
         }
     }

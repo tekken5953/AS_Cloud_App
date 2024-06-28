@@ -39,8 +39,8 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>(), KoinCompon
                 ?.toTypedArray()
 
             if (perm.isNotificationPermitted()) {
-                SetAppInfo.setUserNoti(IgnoredKeyFile.notiEnable, true)
-                SetAppInfo.setUserNoti(IgnoredKeyFile.notiVibrate, true)
+                SetAppInfo.setUserNoti(SpDao.NOTI_ENABLE, true)
+                SetAppInfo.setUserNoti(SpDao.NOTI_VIBRATE, true)
                 enter.toMain(GetAppInfo.getUserLoginPlatform(), inAppExtraList)
                 return
             }

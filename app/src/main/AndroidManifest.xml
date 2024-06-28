@@ -24,7 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AirSignal_App.RemoveSplash"
         android:windowSoftInputMode="adjustNothing"
-        tools:replace="android:icon,android:label">
+        tools:replace="android:icon,android:label, android:allowBackup">
         <activity
             android:name=".view.widget.WidgetPermActivity"
             android:exported="false">

@@ -13,7 +13,7 @@ android {
         applicationId "app.airsignal.weather"
         minSdk 26
         targetSdk 33
-        versionCode 33
+        versionCode 34
         versionName "1.07"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

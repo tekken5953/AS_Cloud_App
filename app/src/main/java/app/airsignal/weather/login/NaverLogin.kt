@@ -7,6 +7,7 @@ import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SharedPreferenceManager
+import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.utils.plain.ToastUtils
 import app.airsignal.weather.utils.view.RefreshUtils
 import app.airsignal.weather.view.activity.LoginActivity
@@ -36,9 +37,9 @@ class NaverLogin(private val activity: Activity): KoinComponent {
     fun init(): NaverLogin {
         NaverIdLoginSDK.initialize(
             activity,
-            IgnoredKeyFile.naverDefaultClientId,
-            IgnoredKeyFile.naverDefaultClientSecret,
-            IgnoredKeyFile.naverDefaultClientName
+            IgnoredKeyFile.NAVER_DEFAULT_CLIENT_ID,
+            IgnoredKeyFile.NAVER_DEFAULT_CLIENT_SECRETE,
+            IgnoredKeyFile.NAVER_DEFAULT_CLIENT_NAME
         )
 
         return this
@@ -73,7 +74,13 @@ class NaverLogin(private val activity: Activity): KoinComponent {
      *
      * @return String?
      * **/
-    fun getAccessToken(): String? = NaverIdLoginSDK.getAccessToken()
+    fun getAccessToken(): String? {
+        kotlin.runCatching {
+            return NaverIdLoginSDK.getAccessToken()
+        }
+
+        return null
+    }
 
     /** 엑세스 토큰 리프래시 **/
     suspend fun refreshToken() {
@@ -89,10 +96,10 @@ class NaverLogin(private val activity: Activity): KoinComponent {
         override fun onSuccess(result: NidProfileResponse) {
             result.profile?.let {
                 CoroutineScope(Dispatchers.IO).launch {
-                    sp.setString(IgnoredKeyFile.lastLoginPhone, it.mobile.toString())
-                        .setString(IgnoredKeyFile.userId, it.name.toString())
-                        .setString(IgnoredKeyFile.userProfile, it.profileImage ?: "")
-                        .setString(IgnoredKeyFile.userEmail, it.email.toString())
+                    sp.setString(SpDao.LAST_LOGIN_PHONE, it.mobile.toString())
+                        .setString(SpDao.USER_ID, it.name.toString())
+                        .setString(SpDao.USER_PROFILE, it.profileImage ?: "")
+                        .setString(SpDao.USER_EMAIL, it.email.toString())
                     SetAppInfo.setUserLoginPlatform(StaticDataObject.LOGIN_NAVER)
 
                     withContext(Dispatchers.Main) {

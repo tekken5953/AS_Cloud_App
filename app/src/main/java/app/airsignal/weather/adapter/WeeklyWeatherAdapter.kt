@@ -2,11 +2,13 @@ package app.airsignal.weather.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.os.HandlerCompat
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.AdapterModel
@@ -15,6 +17,7 @@ import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.SetSystemInfo
 import app.airsignal.weather.db.sp.SpDao
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.*
 
 /**
  * @author : Lee Jae Young
@@ -39,7 +42,9 @@ class WeeklyWeatherAdapter(
             SpDao.TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(view.context)
             else -> SetSystemInfo.setTextSizeDefault(view.context)
         }
-        Thread.sleep(100)
+
+        MainScope().launch { delay(100) }
+
         return ViewHolder(view)
     }
 
@@ -82,15 +87,16 @@ class WeeklyWeatherAdapter(
             maxRain.compoundDrawablesRelative[0]?.mutate()?.setTint(applySubColor)
             minRain.compoundDrawablesRelative[0]?.mutate()?.setTint(applySubColor)
 
-            day.setTextColor(applyColor)
-            date.setTextColor(applySubColor)
             minText.setTextColor(applyColor)
             maxText.setTextColor(applyColor)
             section.setTextColor(applyColor)
 
-             if (bindingAdapterPosition == 0) {
+            if (bindingAdapterPosition == 0) {
                 day.setTextColor(context.getColor(R.color.main_blue_color))
                 date.setTextColor(context.getColor(R.color.main_blue_color))
+            } else {
+                day.setTextColor(applyColor)
+                date.setTextColor(applySubColor)
             }
         }
     }

@@ -486,7 +486,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             val notiPerm = RequestPermissionsUtil(this)
 
             if (VERSION.SDK_INT >= 33)
-                SetAppInfo.setUserNoti(IgnoredKeyFile.notiEnable, notiPerm.isNotificationPermitted())
+                SetAppInfo.setUserNoti(SpDao.NOTI_ENABLE, notiPerm.isNotificationPermitted())
 
             // 알림 미허용시 다른 아이템 숨김
             fun setVisibility(isChecked: Boolean) {
@@ -552,7 +552,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
             // 알림 설정 스위치 변화
             notiSettingSwitch.setOnCheckedChangeListener { _, isChecked ->
                 if (VERSION.SDK_INT < 33) {
-                    SetAppInfo.setUserNoti(IgnoredKeyFile.notiEnable, isChecked)
+                    SetAppInfo.setUserNoti(SpDao.NOTI_ENABLE, isChecked)
                     showSnackBar(notificationView, isChecked)
                     setVisibility(isChecked)
                     applyBack(isChecked)
@@ -561,7 +561,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                 }
 
                 if (!isChecked) {
-                    SetAppInfo.setUserNoti(IgnoredKeyFile.notiEnable, false)
+                    SetAppInfo.setUserNoti(SpDao.NOTI_ENABLE, false)
                     showSnackBar(notificationView, false)
                     setVisibility(false)
                     applyBack(false)
@@ -573,19 +573,19 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                     return@setOnCheckedChangeListener
                 }
 
-                SetAppInfo.setUserNoti(IgnoredKeyFile.notiEnable, true)
+                SetAppInfo.setUserNoti(SpDao.NOTI_ENABLE, true)
                 showSnackBar(notificationView, true)
                 setVisibility(true)
                 applyBack(true)
             }
             // 진동 설정 스위치 변화
             notiVibrateSwitch.setOnCheckedChangeListener { _, isChecked ->
-                SetAppInfo.setUserNoti(IgnoredKeyFile.notiVibrate, isChecked)
+                SetAppInfo.setUserNoti(SpDao.NOTI_VIBRATE, isChecked)
                 showSnackBar(notificationView, isChecked)
             }
             // 소리 설정 스위치 변화
             notiSoundSwitch.setOnCheckedChangeListener { _, isChecked ->
-                SetAppInfo.setUserNoti(IgnoredKeyFile.notiSound, isChecked)
+                SetAppInfo.setUserNoti(SpDao.NOTI_SOUND, isChecked)
                 showSnackBar(notificationView, isChecked)
             }
 

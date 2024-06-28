@@ -376,7 +376,7 @@ class MainActivity
                     "The weather ${binding.mainTopBarGpsTitle.text} is ${binding.mainLiveTempValue.text}˚ " +
                             "${DataTypeParser.translateSkyText(binding.mainSkyText.text.toString())}. The chance of rain is ${binding.subAirRainP.getValue().text}," +
                             " and the humidity is ${binding.subAirHumid.getValue().text}"
-                }\n\n${"Click the link for real-time weather information on Airsignal\n${IgnoredKeyFile.playStoreURL}"}"
+                }\n\n${"Click the link for real-time weather information on Airsignal\n${IgnoredKeyFile.PLAY_STORE_URL}"}"
             )
             startActivity(Intent.createChooser(intent, "Share weather data"))
         } else {
@@ -384,7 +384,7 @@ class MainActivity
                 Intent.EXTRA_TEXT, "${
                     "현재 ${binding.mainTopBarGpsTitle.text}의 날씨는 ${binding.mainLiveTempValue.text}˚로 ${binding.mainSkyText.text}입니다. " +
                             "강수확률은 ${binding.subAirRainP.getValue().text}이고 습도는 ${binding.subAirHumid.getValue().text}입니다."
-                }\n\n${"에어시그널의 실시간 날씨 정보를 알고싶다면 아래 링크를 클릭하세요.\n${IgnoredKeyFile.playStoreURL}"}"
+                }\n\n${"에어시그널의 실시간 날씨 정보를 알고싶다면 아래 링크를 클릭하세요.\n${IgnoredKeyFile.PLAY_STORE_URL}"}"
             )
             startActivity(Intent.createChooser(intent, "날씨 데이터 공유하기"))
         }
@@ -637,7 +637,7 @@ class MainActivity
         }
         // 2초안에 한번 더 클릭 시 종료
         else {
-            SetAppInfo.removeSingleKey(IgnoredKeyFile.lastAddress)
+            SetAppInfo.removeSingleKey(SpDao.LAST_ADDRESS)
             EnterPageUtil(this).fullyExit()
         }
         // 2초간 스레드 유지

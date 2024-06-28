@@ -84,7 +84,7 @@ class GoogleLogin(private val activity: Activity): KoinComponent {
      * DEFAULT_SIGN_IN parameter 는 유저의 ID와 기본적인 프로필 정보를 요청하는데 사용**/
     private fun getGoogleSignInOptions(): GoogleSignInOptions =
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(IgnoredKeyFile.googleDefaultClientId) // 토큰 요청
+            .requestIdToken(IgnoredKeyFile.GOOGLE_DEFAULT_CLIENT_ID) // 토큰 요청
             .requestEmail() // email addresses 도 요청함
             .build()
 

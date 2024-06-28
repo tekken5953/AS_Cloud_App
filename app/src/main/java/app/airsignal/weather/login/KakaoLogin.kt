@@ -6,6 +6,7 @@ import app.airsignal.weather.dao.IgnoredKeyFile
 import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SharedPreferenceManager
+import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.utils.view.RefreshUtils
 import app.airsignal.weather.utils.plain.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
@@ -132,10 +133,10 @@ class KakaoLogin(private val activity: Activity): KoinComponent {
     private fun saveUserSettings() {
         UserApiClient.instance.me { user, _ ->
             user?.kakaoAccount?.let { account ->
-                sp.setString(IgnoredKeyFile.lastLoginPhone, account.phoneNumber.toString())
-                    .setString(IgnoredKeyFile.userId, account.profile?.nickname.toString())
-                    .setString(IgnoredKeyFile.userProfile, account.profile?.profileImageUrl.toString())
-                    .setString(IgnoredKeyFile.userEmail, account.email.toString())
+                sp.setString(SpDao.LAST_LOGIN_PHONE, account.phoneNumber.toString())
+                    .setString(SpDao.USER_ID, account.profile?.nickname.toString())
+                    .setString(SpDao.USER_PROFILE, account.profile?.profileImageUrl.toString())
+                    .setString(SpDao.USER_EMAIL, account.email.toString())
             }
         }
     }

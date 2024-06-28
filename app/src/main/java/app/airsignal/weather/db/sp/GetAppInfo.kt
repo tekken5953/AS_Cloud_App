@@ -14,25 +14,25 @@ object GetAppInfo : KoinComponent {
     val context: Context by inject()
     private val sp: SharedPreferenceManager by inject()
 
-    fun getUserTheme(): String = sp.getString(SpDao.userTheme)
+    fun getUserTheme(): String = sp.getString(SpDao.USER_THEME)
 
-    fun getUserEmail(): String = sp.getString(SpDao.userEmail)
+    fun getUserEmail(): String = sp.getString(SpDao.USER_EMAIL)
 
-    fun getUserLocation(): String = sp.getString(SpDao.userLocation)
+    fun getUserLocation(): String = sp.getString(SpDao.USER_LOCATION)
 
-    fun getUserFontScale(): String = sp.getString(SpDao.userFontScale)
+    fun getUserFontScale(): String = sp.getString(SpDao.USER_FONT_SCALE)
 
-    fun getUserNotiEnable(): Boolean = sp.getBoolean(SpDao.notiEnable, true)
+    fun getUserNotiEnable(): Boolean = sp.getBoolean(SpDao.NOTI_ENABLE, true)
 
-    fun getUserNotiVibrate(): Boolean = sp.getBoolean(SpDao.notiVibrate, true)
+    fun getUserNotiVibrate(): Boolean = sp.getBoolean(SpDao.NOTI_VIBRATE, true)
 
-    fun getUserNotiSound(): Boolean = sp.getBoolean(SpDao.notiSound, false)
+    fun getUserNotiSound(): Boolean = sp.getBoolean(SpDao.NOTI_SOUND, false)
 
-    fun getUserLoginPlatform(): String = sp.getString(SpDao.lastLoginPlatform)
+    fun getUserLoginPlatform(): String = sp.getString(SpDao.LAST_LOGIN_PLATFORM)
 
-    fun getUserLastAddress(): String = sp.getString(SpDao.lastAddress)
+    fun getUserLastAddress(): String = sp.getString(SpDao.LAST_ADDRESS)
 
-    fun getUserProfileImage(): String = sp.getString(SpDao.userProfile)
+    fun getUserProfileImage(): String = sp.getString(SpDao.USER_PROFILE)
 
     fun getTopicNotification(): String = sp.getString(SpDao.NOTIFICATION_TOPIC_DAILY)
 

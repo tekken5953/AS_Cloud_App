@@ -17,31 +17,31 @@ object SetAppInfo : KoinComponent {
     private val ioThread = CoroutineScope(Dispatchers.IO)
 
     fun setUserFontScale(type: String) =
-        ioThread.launch { sp.setString(SpDao.userFontScale, type) }
+        ioThread.launch { sp.setString(SpDao.USER_FONT_SCALE, type) }
 
     fun setUserLocation(location: String) =
-        ioThread.launch { sp.setString(SpDao.userLocation, location) }
+        ioThread.launch { sp.setString(SpDao.USER_LOCATION, location) }
 
     fun setUserTheme(theme: String) =
-        ioThread.launch { sp.setString(SpDao.userTheme, theme) }
+        ioThread.launch { sp.setString(SpDao.USER_THEME, theme) }
 
     fun setUserNoti(tag: String, boolean: Boolean) =
         ioThread.launch { sp.setBoolean(tag, boolean) }
 
     fun setUserLastAddr(addr: String) =
-        ioThread.launch { sp.setString(SpDao.lastAddress, addr) }
+        ioThread.launch { sp.setString(SpDao.LAST_ADDRESS, addr) }
 
     fun setUserEmail(email: String) =
-        ioThread.launch { sp.setString(SpDao.userEmail, email) }
+        ioThread.launch { sp.setString(SpDao.USER_EMAIL, email) }
 
     fun setUserProfile(profile: String) =
-        ioThread.launch { sp.setString(SpDao.userProfile, profile) }
+        ioThread.launch { sp.setString(SpDao.USER_PROFILE, profile) }
 
     fun setUserId(id: String) =
-        ioThread.launch { sp.setString(SpDao.userId, id) }
+        ioThread.launch { sp.setString(SpDao.USER_ID, id) }
 
     fun setUserLoginPlatform(platform: String) =
-        ioThread.launch { sp.setString(SpDao.lastLoginPlatform, platform) }
+        ioThread.launch { sp.setString(SpDao.LAST_LOGIN_PLATFORM, platform) }
 
     fun setTopicNotification(topic: String) =
         ioThread.launch { sp.setString(SpDao.NOTIFICATION_TOPIC_DAILY, topic) }
@@ -86,11 +86,11 @@ object SetAppInfo : KoinComponent {
     fun removeAllKeys() =
         ioThread.launch {
             sp.run {
-                removeKey(SpDao.userId)
-                removeKey(SpDao.userProfile)
-                removeKey(SpDao.lastLoginPhone)
-                removeKey(SpDao.lastLoginPlatform)
-                removeKey(SpDao.userEmail)
+                removeKey(SpDao.USER_ID)
+                removeKey(SpDao.USER_PROFILE)
+                removeKey(SpDao.LAST_LOGIN_PHONE)
+                removeKey(SpDao.LAST_LOGIN_PLATFORM)
+                removeKey(SpDao.USER_EMAIL)
             }
         }
 }

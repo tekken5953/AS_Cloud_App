@@ -60,7 +60,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                 // 로그인 성공 함
                 RESULT_OK -> {
                     val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                    if (task.result.email == IgnoredKeyFile.notificationAdmin) subFCM.subAdminTopic()
+                    if (task.result.email == IgnoredKeyFile.NOTIFICATION_ADMIN_EMAIL) subFCM.subAdminTopic()
 
                     googleLogin.handleSignInResult(task)
                 }

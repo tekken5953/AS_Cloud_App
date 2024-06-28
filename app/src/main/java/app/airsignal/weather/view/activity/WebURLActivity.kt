@@ -51,8 +51,8 @@ class WebURLActivity : BaseActivity<ActivityWebUrlBinding>() {
 
         val (webUrlTitleText, url) = when (intent.extras?.getString("sort")) {
             "as-eye" -> "AS-EYE" to blankURL
-            "termsOfService" -> getString(R.string.term_of_services) to IgnoredKeyFile.termsOfServiceURL
-            "dataUsage" -> getString(R.string.data_usages) to IgnoredKeyFile.privacyPolicyURI
+            "termsOfService" -> getString(R.string.term_of_services) to IgnoredKeyFile.TERMS_OF_SERVICE_URL
+            "dataUsage" -> getString(R.string.data_usages) to IgnoredKeyFile.PRIVACY_POLICY_URL
             "inAppLink" -> "공지사항" to intent.extras?.getString("redirect",null)
             else -> "" to blankURL
         }
