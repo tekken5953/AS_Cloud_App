@@ -66,7 +66,7 @@ open class WidgetProvider22 : BaseWidgetProvider() {
             return
         }
 
-        if (!isRefreshable(context, WIDGET_22)) {
+        if (!isRefreshable(WIDGET_22)) {
             ToastUtils(context).showMessage(context.getString(R.string.widget_not_refreshable))
             return
         }
@@ -138,7 +138,7 @@ open class WidgetProvider22 : BaseWidgetProvider() {
                         updateUI(context, views, data, addr)
                     }
                     withContext(Dispatchers.IO) {
-                        BaseWidgetProvider().setRefreshTime(context, WIDGET_22)
+                        BaseWidgetProvider().setRefreshTime(WIDGET_22)
                     }
                 }
             }.exceptionOrNull()?.stackTraceToString()

@@ -30,7 +30,8 @@ class ApiModel {
         @SerializedName("img")
         val img: String,
         @SerializedName("redirect")
-        val redirect: String)
+        val redirect: String
+    )
 
     data class MetaData(
         @SerializedName("address")

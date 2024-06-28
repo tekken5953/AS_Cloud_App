@@ -9,12 +9,10 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import app.airsignal.weather.R
 import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.db.sp.SetAppInfo
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -32,8 +30,7 @@ class LocPermCautionDialog(
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
+        savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.dialog_loc_perm_caution, container, false)
     }
 
@@ -54,7 +51,7 @@ class LocPermCautionDialog(
         // 확인 버튼 클릭
         okBtn.setOnClickListener {
             dismiss()
-            SetAppInfo.setInitLocPermission(activity, "Done")
+            SetAppInfo.setInitLocPermission("Done")
             RequestPermissionsUtil(activity).requestLocation()
         }
     }
@@ -75,5 +72,9 @@ class LocPermCautionDialog(
     }
 
     // 레이아웃 노출
+<<<<<<< HEAD
     fun show() { LocPermCautionDialog(activity, fm, tagId).showNow(fm, tagId) }
+=======
+    fun show() = LocPermCautionDialog(activity, fm, tagId).showNow(fm, tagId)
+>>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
 }

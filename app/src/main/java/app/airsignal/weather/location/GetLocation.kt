@@ -17,26 +17,30 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.*
 
-class GetLocation(private val context: Context) {
+class GetLocation(private val context: Context) : KoinComponent {
+
+    private val db: GpsRepository by inject()
 
     /** 현재 주소를 불러옵니다 **/
     fun getAddress(lat: Double, lng: Double): String {
         val appContext = context.applicationContext
         return try {
-            val geocoder = Geocoder(appContext, GetSystemInfo.getLocale(appContext))
+            val geocoder = Geocoder(appContext, GetSystemInfo.getLocale())
             @Suppress("DEPRECATION")
             val address = geocoder.getFromLocation(lat, lng, 1) as List<Address>
             val fullAddr = address[0].getAddressLine(0)
             CoroutineScope(Dispatchers.IO).launch {
                 val notiAddr = AddressFromRegex(fullAddr).getNotificationAddress()
-                SetAppInfo.setNotificationAddress(appContext, notiAddr)
-                SetAppInfo.setUserLastAddr(appContext, fullAddr)
+                SetAppInfo.setNotificationAddress(notiAddr)
+                SetAppInfo.setUserLastAddr(fullAddr)
             }
-            if (address.isNotEmpty() && address[0].getAddressLine(0) != "null") {
+            if (address.isNotEmpty() && address[0].getAddressLine(0) != "null")
                 address[0].getAddressLine(0)
-            } else ""
+            else ""
         } catch (e: Exception) {
             e.printStackTrace()
             ""
@@ -49,7 +53,6 @@ class GetLocation(private val context: Context) {
         mLng: Double,
         mAddr: String?
     ) = CoroutineScope(Dispatchers.IO).launch {
-            val db = GpsRepository(context)
             val model = GpsEntity(
                 name = SpDao.CURRENT_GPS_ID,
                 lat = mLat,
@@ -97,11 +100,7 @@ class GetLocation(private val context: Context) {
     }
 
     /** 핸드폰 위치 서비스가 켜져있는지 확인 **/
-    fun requestSystemGPSEnable() {
-//        Toast.makeText(context, "핸드폰 GPS 가 켜져있는지 확인해주세요", Toast.LENGTH_SHORT).show()
-        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-        context.startActivity(intent)
-    }
+    fun requestSystemGPSEnable() = context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
 
     /** 디바이스 네트워크 프로바이더 접근 가능한지 확인 **/
     fun isNetworkProviderConnected(): Boolean {

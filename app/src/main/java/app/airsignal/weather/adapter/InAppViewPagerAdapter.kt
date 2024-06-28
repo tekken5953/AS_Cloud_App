@@ -49,7 +49,6 @@ class InAppViewPagerAdapter(
                 }
             } else linear.clipToOutline = true
 
-
             webView.settings.apply {
                 useWideViewPort = true // 화면 맞추기
             }
@@ -58,11 +57,12 @@ class InAppViewPagerAdapter(
 
             webView.setOnTouchListener { _, event ->
                 if (event.action == MotionEvent.ACTION_UP) {
-                    val intent = Intent(context, WebURLActivity::class.java)
-                    intent.putExtra("appBar",false)
-                    intent.putExtra("sort","inAppLink")
-                    intent.putExtra("redirect", dao.redirect)
-                    context.startActivity(intent)
+                    Intent(context, WebURLActivity::class.java).apply {
+                        putExtra("appBar",false)
+                        putExtra("sort","inAppLink")
+                        putExtra("redirect", dao.redirect)
+                        context.startActivity(this)
+                    }
                     true
                 } else false
             }

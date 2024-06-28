@@ -48,7 +48,8 @@ class SensibleTempFormula {
      * @param rh 상대습도
      */
     private fun getTw(ta: Double, rh: Double) : Double =
-        ta * atan(0.151977 * (rh + 8.313659).pow(0.5)) + atan(ta+rh) - atan(rh-1.67633) +
+        ta * atan(0.151977 * (rh + 8.313659).pow(0.5)) +
+                atan(ta+rh) - atan(rh-1.67633) +
                 (0.00391838 * rh.pow(1.5) * atan(0.023101 * rh)) - 4.686035
 
     /** 현재 월수 출력 **/

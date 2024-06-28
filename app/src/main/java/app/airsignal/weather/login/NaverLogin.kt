@@ -4,10 +4,10 @@ import android.app.Activity
 import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.R
 import app.airsignal.weather.dao.IgnoredKeyFile
-import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SharedPreferenceManager
-import app.airsignal.weather.utils.plain.TimberUtil
+import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.utils.plain.ToastUtils
 import app.airsignal.weather.utils.view.RefreshUtils
 import app.airsignal.weather.view.activity.LoginActivity
@@ -32,13 +32,17 @@ import org.koin.core.component.inject
 
 class NaverLogin(private val activity: Activity): KoinComponent {
     private val toast: ToastUtils by inject()
+<<<<<<< HEAD
+=======
+    private val sp: SharedPreferenceManager by inject()
+>>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
 
     fun init(): NaverLogin {
         NaverIdLoginSDK.initialize(
             activity,
-            IgnoredKeyFile.naverDefaultClientId,
-            IgnoredKeyFile.naverDefaultClientSecret,
-            IgnoredKeyFile.naverDefaultClientName
+            IgnoredKeyFile.NAVER_DEFAULT_CLIENT_ID,
+            IgnoredKeyFile.NAVER_DEFAULT_CLIENT_SECRETE,
+            IgnoredKeyFile.NAVER_DEFAULT_CLIENT_NAME
         )
 
         return this
@@ -73,7 +77,13 @@ class NaverLogin(private val activity: Activity): KoinComponent {
      *
      * @return String?
      * **/
-    fun getAccessToken(): String? = NaverIdLoginSDK.getAccessToken()
+    fun getAccessToken(): String? {
+        kotlin.runCatching {
+            return NaverIdLoginSDK.getAccessToken()
+        }
+
+        return null
+    }
 
     /** 엑세스 토큰 리프래시 **/
     suspend fun refreshToken() {
@@ -81,8 +91,6 @@ class NaverLogin(private val activity: Activity): KoinComponent {
             val refreshResult = NidOAuthLogin().refreshToken()
             if (refreshResult) NaverIdLoginSDK.authenticate(activity, oauthLoginCallback)
             else ToastUtils(activity).showMessage("로그인에 실패했습니다")
-
-            TimberUtil.d("testtest","refresh token result is $refreshResult")
         }
     }
 
@@ -91,12 +99,11 @@ class NaverLogin(private val activity: Activity): KoinComponent {
         override fun onSuccess(result: NidProfileResponse) {
             result.profile?.let {
                 CoroutineScope(Dispatchers.IO).launch {
-                    SharedPreferenceManager(activity)
-                        .setString(IgnoredKeyFile.lastLoginPhone, it.mobile.toString())
-                        .setString(IgnoredKeyFile.userId, it.name.toString())
-                        .setString(IgnoredKeyFile.userProfile, it.profileImage ?: "")
-                        .setString(IgnoredKeyFile.userEmail, it.email.toString())
-                    SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_NAVER)
+                    sp.setString(SpDao.LAST_LOGIN_PHONE, it.mobile.toString())
+                        .setString(SpDao.USER_ID, it.name.toString())
+                        .setString(SpDao.USER_PROFILE, it.profileImage ?: "")
+                        .setString(SpDao.USER_EMAIL, it.email.toString())
+                    SetAppInfo.setUserLoginPlatform(StaticDataObject.LOGIN_NAVER)
 
                     withContext(Dispatchers.Main) {
                         if (activity is LoginActivity) activity.finish()
@@ -126,7 +133,6 @@ class NaverLogin(private val activity: Activity): KoinComponent {
 
         override fun onError(errorCode: Int, message: String) {
             onFailure(errorCode, message)
-            TimberUtil.d("testtest","naver login error : ${errorCode}/${message}")
         }
     }
 

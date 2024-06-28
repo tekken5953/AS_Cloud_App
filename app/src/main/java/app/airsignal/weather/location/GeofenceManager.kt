@@ -14,9 +14,7 @@ import org.koin.core.component.inject
 class GeofenceManager(private val context: Context): KoinComponent {
     private val requestId = "request_id_geofence"
 
-    private val geofencingClient: GeofencingClient by lazy {
-        LocationServices.getGeofencingClient(context)
-    }
+    private val geofencingClient by lazy { LocationServices.getGeofencingClient(context) }
 
     private val locationClass: GetLocation by inject()
 
@@ -50,14 +48,9 @@ class GeofenceManager(private val context: Context): KoinComponent {
         }
     }
 
-    private fun removeGeofence() {
-        geofencingClient.removeGeofences(listOf(requestId))
-    }
+    private fun removeGeofence() = geofencingClient.removeGeofences(listOf(requestId))
 
-    fun getSimpleAddress(lat: Double, lng: Double): String {
-        val addr = locationClass.getAddress(lat, lng)
-        return getWidgetAddress(addr)
-    }
+    fun getSimpleAddress(lat: Double, lng: Double): String = getWidgetAddress(locationClass.getAddress(lat, lng))
 
     private fun getWidgetAddress(addr: String): String {
         val result = AddressFromRegex(addr).getNotificationAddress()

@@ -31,7 +31,7 @@ class EnterPageUtil(private val activity: Activity) {
      * @param sort 간편로그인의 분류 ex) "카카오"
      */
     fun toMain(sort: String?, inAppMsg: Array<ApiModel.InAppMsgItem?>?) {
-        sort?.let { SetAppInfo.setUserLoginPlatform(activity, it) }
+        sort?.let { SetAppInfo.setUserLoginPlatform(it) }
         val intent = Intent(activity, MainActivity::class.java)
         activity.run {
             var count = 0

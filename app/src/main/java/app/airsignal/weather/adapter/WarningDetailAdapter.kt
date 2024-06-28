@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import app.airsignal.weather.R
+import app.airsignal.weather.utils.controller.ItemDiffCallback
 
 /**
  * @author : Lee Jae Young
@@ -15,9 +17,10 @@ import app.airsignal.weather.R
  **/
 class WarningDetailAdapter(
     private val context: Activity,
-    list: ArrayList<String>, ) :
+    list: ArrayList<String>,
+) :
     RecyclerView.Adapter<WarningDetailAdapter.ViewHolder>() {
-    private val mList = list
+    private var mList = list
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -27,6 +30,14 @@ class WarningDetailAdapter(
 
         val view: View = inflater.inflate(R.layout.list_item_warning_detail, parent, false)
         return ViewHolder(view)
+    }
+
+    fun submitList(newItems: ArrayList<String>) {
+        val diffCallback = ItemDiffCallback(mList, newItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback, true)
+
+        mList = newItems
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun getItemCount(): Int = mList.size

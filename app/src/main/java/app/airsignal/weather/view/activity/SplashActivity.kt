@@ -31,6 +31,7 @@ import java.util.*
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override val resID: Int get() = R.layout.activity_splash
+    private val sp: SharedPreferenceManager by inject()
 
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
     private val locationClass: GetLocation by inject()
@@ -75,7 +76,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         HandlerCompat.createAsync(Looper.getMainLooper()).postDelayed({
             if (RequestPermissionsUtil(this@SplashActivity).isLocationPermitted())
                 EnterPageUtil(this@SplashActivity).toMain(
-                    GetAppInfo.getUserLoginPlatform(this),
+                    GetAppInfo.getUserLoginPlatform(),
                     inAppMsgList?.toTypedArray()
                 )
             else EnterPageUtil(this@SplashActivity).toPermission()
@@ -90,7 +91,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                     when (ver) {
                         // 통신 성공
                         is BaseRepository.ApiState.Success -> {
-                            val sp = SharedPreferenceManager(this@SplashActivity)
                             val inAppArray = ver.data.inAppMsg
                             val versionName = GetSystemInfo.getApplicationVersionName(this)
                             val versionCode = GetSystemInfo.getApplicationVersionCode(this)
@@ -129,13 +129,12 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                             }
 
                             // 최신 버전 설치와 현재 버전 사용 선택 다이얼로그 노출
-                            val dialog = MakeDoubleDialog(this)
-                                .make(
-                                    getString(R.string.exist_last_version),
-                                    getString(R.string.download),
-                                    getString(R.string.use_current_version),
-                                    R.color.main_blue_color
-                                )
+                            val dialog = MakeDoubleDialog(this).make(
+                                getString(R.string.exist_last_version),
+                                getString(R.string.download),
+                                getString(R.string.use_current_version),
+                                R.color.main_blue_color
+                            )
                             // 설치 선택 시 스토어 이동
                             dialog.first.setOnClickListener {
                                 sp.setBoolean(skipThisPatchKey, false)

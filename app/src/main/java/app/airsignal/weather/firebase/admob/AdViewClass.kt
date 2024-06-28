@@ -21,7 +21,7 @@ class AdViewClass(activity: Activity) {
         MobileAds.initialize(activity)
         adRequest = AdRequest.Builder().build()
         val conf = RequestConfiguration.Builder()
-            .setTestDeviceIds(listOf(IgnoredKeyFile.adMobTestDeviceId)).build()
+            .setTestDeviceIds(listOf(IgnoredKeyFile.ADMOB_TEST_DEVICE_ID)).build()
         MobileAds.setRequestConfiguration(conf)
     }
 

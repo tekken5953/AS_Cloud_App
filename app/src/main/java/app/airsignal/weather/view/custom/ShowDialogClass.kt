@@ -27,13 +27,13 @@ class ShowDialogClass(activity: Activity, isEye: Boolean) {
 
     init {
         // 폰트 크기 설정
-        when(GetAppInfo.getUserFontScale(activity)) {
+        when(GetAppInfo.getUserFontScale()) {
             TEXT_SCALE_SMALL -> SetSystemInfo.setTextSizeSmall(activity)
             TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(activity)
             else -> SetSystemInfo.setTextSizeDefault(activity)
         }
 
-        when (GetAppInfo.getUserLocation(activity)) {
+        when (GetAppInfo.getUserLocation()) {
             StaticDataObject.LANG_KR -> SetSystemInfo.updateConfiguration(activity, Locale.KOREA)
             StaticDataObject.LANG_EN -> SetSystemInfo.updateConfiguration(activity, Locale.ENGLISH)
             else -> SetSystemInfo.updateConfiguration(activity, Locale.getDefault())

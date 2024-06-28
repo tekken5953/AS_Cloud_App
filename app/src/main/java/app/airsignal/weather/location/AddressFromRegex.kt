@@ -35,7 +35,6 @@ class AddressFromRegex(private val address: String) {
                     if (!sbArray[0].contains(it) && !sbArray[1].contains(it) && !sbArray[2].contains(it))
                         sbArray[3].append(it)
                 }
-
             }
         }
         generatePatternRoad().forEach { road ->
@@ -46,10 +45,11 @@ class AddressFromRegex(private val address: String) {
             }
         }
 
-        val fullAddress = replaceKorea(address)
         val formatAddress =
-            if (isRoadAddress()) "${sbArray[0]}${sbArray[1]}${sbArray[4]}".trim() else "${sbArray[0]}${sbArray[1]}${sbArray[2]}${sbArray[3]}".trim()
-        return if (countSpacesInStringBuilder(formatAddress) < 2 || formatAddress == "") fullAddress.trim() else formatAddress.trim()
+            if (isRoadAddress()) "${sbArray[0]}${sbArray[1]}${sbArray[4]}".trim()
+            else "${sbArray[0]}${sbArray[1]}${sbArray[2]}${sbArray[3]}".trim()
+        return if (countSpacesInStringBuilder(formatAddress) < 2 || formatAddress == "") replaceKorea(address).trim()
+        else formatAddress.trim()
     }
 
     /** 기상 특보 전용 주소 반환 **/
@@ -59,7 +59,6 @@ class AddressFromRegex(private val address: String) {
             generatePatternFirst().forEach { first ->
                 if (first.findAll(address).any()) sb.append(first.find(address)?.value)
             }
-
             if (sb.isEmpty()) getAddress().split(" ").last() else sb.toString()
         }.getOrElse { "Error" }
     }
@@ -126,9 +125,7 @@ class AddressFromRegex(private val address: String) {
 
     // 리 추출 - 구주소
     private fun generatePatternFourth(): ArrayList<Regex> =
-        arrayListOf(
-            Regex("\\b\\S+리\\b")
-        )
+        arrayListOf(Regex("\\b\\S+리\\b"))
 
     // 도로명 주소 추출 - 신주소
     private fun generatePatternRoad(): ArrayList<Regex> =

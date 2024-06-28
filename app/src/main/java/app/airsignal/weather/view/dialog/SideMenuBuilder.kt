@@ -49,11 +49,11 @@ class SideMenuBuilder(private val context: Context) {
     // 로그인 정보 반환
     fun setUserData(profile: ImageView, id: TextView): SideMenuBuilder {
         Glide.with(context)
-            .load(Uri.parse(GetAppInfo.getUserProfileImage(context)))
+            .load(Uri.parse(GetAppInfo.getUserProfileImage()))
             .error(ResourcesCompat.getDrawable(context.resources,R.mipmap.ic_launcher_round,null))
             .into(profile)
 
-        val email = GetAppInfo.getUserEmail(context)
+        val email = GetAppInfo.getUserEmail()
         id.text = if (email != "") email else context.getString(R.string.please_login)
 
         return this
@@ -61,7 +61,7 @@ class SideMenuBuilder(private val context: Context) {
 
     // 폰트 크기 반환
     private fun setFontScale(): SideMenuBuilder {
-        when (GetAppInfo.getUserFontScale(context)) {
+        when (GetAppInfo.getUserFontScale()) {
             SpDao.TEXT_SCALE_SMALL -> SetSystemInfo.setTextSizeSmall(builder.context)
             SpDao.TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(builder.context)
             else -> SetSystemInfo.setTextSizeDefault(builder.context)

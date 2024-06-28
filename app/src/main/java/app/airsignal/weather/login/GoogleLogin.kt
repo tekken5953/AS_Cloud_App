@@ -5,7 +5,7 @@ import android.content.Intent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.dao.IgnoredKeyFile
-import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.utils.plain.ToastUtils
 import app.airsignal.weather.utils.view.RefreshUtils
@@ -84,14 +84,14 @@ class GoogleLogin(private val activity: Activity): KoinComponent {
      * DEFAULT_SIGN_IN parameter 는 유저의 ID와 기본적인 프로필 정보를 요청하는데 사용**/
     private fun getGoogleSignInOptions(): GoogleSignInOptions =
         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(IgnoredKeyFile.googleDefaultClientId) // 토큰 요청
+            .requestIdToken(IgnoredKeyFile.GOOGLE_DEFAULT_CLIENT_ID) // 토큰 요청
             .requestEmail() // email addresses 도 요청함
             .build()
 
     /** 사용자의 로그인 정보를 저장
      *
      * TODO 구글로그인은 아직 테스팅 단계라 임시로 파라미터를 설정**/
-    private fun saveLoginStatus() = SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_GOOGLE)
+    private fun saveLoginStatus() = SetAppInfo.setUserLoginPlatform(StaticDataObject.LOGIN_GOOGLE)
 
     /** 로그인 이벤트 성공 **/
     fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
@@ -99,14 +99,12 @@ class GoogleLogin(private val activity: Activity): KoinComponent {
             val account = completedTask.getResult(ApiException::class.java)
             val email = account.email?.lowercase() ?: ""
             val displayName = account.displayName
-            val id = account.id?.lowercase()
             val photo: String = account?.photoUrl.toString()
-            val token = account.idToken
 
             CoroutineScope(Dispatchers.IO).launch {
-                SetAppInfo.setUserId(activity, displayName.toString())
-                SetAppInfo.setUserProfile(activity, photo)
-                SetAppInfo.setUserEmail(activity, email)
+                SetAppInfo.setUserId(displayName.toString())
+                SetAppInfo.setUserProfile(photo)
+                SetAppInfo.setUserEmail(email)
 
                 withContext(Dispatchers.Main) {
                     saveLoginStatus()

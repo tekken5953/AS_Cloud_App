@@ -65,7 +65,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
             return
         }
 
-        if (!isRefreshable(context, WIDGET_42)) {
+        if (!isRefreshable(WIDGET_42)) {
             ToastUtils(context).showMessage(context.getString(R.string.widget_not_refreshable))
             return
         }
@@ -127,7 +127,7 @@ open class WidgetProvider42 : BaseWidgetProvider() {
                     val lat = geofenceLocation.latitude
                     val lng = geofenceLocation.longitude
 
-                    withContext(Dispatchers.IO) { BaseWidgetProvider().setRefreshTime(context, WIDGET_42) }
+                    withContext(Dispatchers.IO) { BaseWidgetProvider().setRefreshTime(WIDGET_42) }
 
                     withContext(Dispatchers.Main) {
                         delay(500)

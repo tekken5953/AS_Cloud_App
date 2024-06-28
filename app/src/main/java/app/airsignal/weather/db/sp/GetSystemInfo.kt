@@ -26,12 +26,11 @@ object GetSystemInfo {
                 Configuration.UI_MODE_NIGHT_YES
 
     /** 현재 설정된 국가를 반환 **/
-    fun getLocale(context: Context): Locale =
-        when (GetAppInfo.getUserLocation(context)) {
-            SpDao.LANG_KR -> Locale.KOREA
-            SpDao.LANG_EN -> Locale.ENGLISH
-            else -> Locale.getDefault()
-        }
+    fun getLocale(): Locale = when (GetAppInfo.getUserLocation()) {
+        SpDao.LANG_KR -> Locale.KOREA
+        SpDao.LANG_EN -> Locale.ENGLISH
+        else -> Locale.getDefault()
+    }
 
     /** 현재 앱 버전 반환 **/
     fun getApplicationVersionName(context: Context): String =
@@ -57,9 +56,10 @@ object GetSystemInfo {
 
     /** 플레이 스토어로 이동 **/
     fun goToPlayStore(activity: Activity) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(getPlayStoreURL(activity))
-        activity.startActivity(intent)
+        Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(getPlayStoreURL(activity))
+            activity.startActivity(this)
+        }
     }
 
     // 디바이스 높이 구하기
@@ -71,7 +71,7 @@ object GetSystemInfo {
     }
 
     // 다이얼로그 비율설정
-    fun getBottomSheetDialogDefaultHeight(context: Context, per: Int): Int =
+    private fun getBottomSheetDialogDefaultHeight(context: Context, per: Int): Int =
         getWindowHeight(context) * per / 100
 
     fun setupRatio(context: Context, bottomSheetDialog: BottomSheetDialog, ratio: Int) {

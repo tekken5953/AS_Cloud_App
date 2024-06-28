@@ -22,8 +22,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
+<<<<<<< HEAD
 class PermissionActivity :
     BaseActivity<ActivityPermissionBinding>(), KoinComponent{
+=======
+class PermissionActivity : BaseActivity<ActivityPermissionBinding>(), KoinComponent{
+>>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
     override val resID: Int get() = R.layout.activity_permission
     private val perm = RequestPermissionsUtil(this)
     private val enter by lazy { EnterPageUtil(this) }
@@ -33,26 +37,35 @@ class PermissionActivity :
         super.onResume()
         if (!perm.isLocationPermitted()) return // 위치 서비스 이용 가능?
 
-        @Suppress("DEPRECATION")
-        val inAppExtraList =
-            intent.getParcelableArrayExtra(SpDao.IN_APP_MSG)
+        kotlin.runCatching {
+            @Suppress("DEPRECATION")
+            val inAppExtraList = intent.getParcelableArrayExtra(SpDao.IN_APP_MSG)
                 ?.map { it as ApiModel.InAppMsgItem? }
                 ?.toTypedArray()
 
-        if (perm.isNotificationPermitted()) {
-            SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiEnable, true)
-            SetAppInfo.setUserNoti(this, IgnoredKeyFile.notiVibrate, true)
-            enter.toMain(GetAppInfo.getUserLoginPlatform(this), inAppExtraList)
-            return
-        }
+            if (perm.isNotificationPermitted()) {
+                SetAppInfo.setUserNoti(SpDao.NOTI_ENABLE, true)
+                SetAppInfo.setUserNoti(SpDao.NOTI_VIBRATE, true)
+                enter.toMain(GetAppInfo.getUserLoginPlatform(), inAppExtraList)
+                return
+            }
 
+<<<<<<< HEAD
         if (GetAppInfo.getInitNotiPermission(this) != "") {
             toast.showMessage(getString(R.string.noti_always_can))
             enter.toMain(GetAppInfo.getUserLoginPlatform(this), inAppExtraList)
             return
         }
+=======
+            if (GetAppInfo.getInitNotiPermission() != "") {
+                toast.showMessage(getString(R.string.noti_always_can))
+                enter.toMain(GetAppInfo.getUserLoginPlatform(), inAppExtraList)
+                return
+            }
+        }.exceptionOrNull()?.stackTraceToString()
+>>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
 
-        SetAppInfo.setInitNotiPermission(this, "Not Init")
+        SetAppInfo.setInitNotiPermission("Not Init")
         perm.requestNotification()  // 알림 권한 요청
     }
 

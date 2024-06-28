@@ -35,6 +35,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.*
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -44,21 +46,22 @@ import java.util.concurrent.CompletableFuture
  **/
 class SearchDialog(
     mActivity: Context,
-    lId: Int, private val fm: FragmentManager, private val tagId: String?) : BottomSheetDialogFragment() {
+    lId: Int, private val fm: FragmentManager, private val tagId: String?)
+    : BottomSheetDialogFragment(), KoinComponent {
     private val activity = mActivity
     private val layoutId = lId
     val currentList = ArrayList<AdapterModel.AddressListItem>()
     private val currentAdapter = AddressListAdapter(activity, currentList)
-    private val db by lazy { GpsRepository(activity) }
+    private val db: GpsRepository by inject()
 
     init {
-        when (GetAppInfo.getUserLocation(activity)) {
+        when (GetAppInfo.getUserLocation()) {
             StaticDataObject.LANG_KR -> SetSystemInfo.updateConfiguration(activity, Locale.KOREA)
             StaticDataObject.LANG_EN -> SetSystemInfo.updateConfiguration(activity, Locale.ENGLISH)
             else -> SetSystemInfo.updateConfiguration(activity, Locale.getDefault())
         }
         // 텍스트 폰트 크기 적용
-        when (GetAppInfo.getUserFontScale(activity)) {
+        when (GetAppInfo.getUserFontScale()) {
             SpDao.TEXT_SCALE_SMALL -> SetSystemInfo.setTextSizeSmall(activity)
             SpDao.TEXT_SCALE_BIG -> SetSystemInfo.setTextSizeLarge(activity)
             else -> SetSystemInfo.setTextSizeDefault(activity)
@@ -118,11 +121,20 @@ class SearchDialog(
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
             CoroutineScope(Dispatchers.IO).launch {
+<<<<<<< HEAD
                 GpsRepository(activity).findAll().forEach { entity ->
                     withContext(Dispatchers.Main) {
                         if (entity.name == SpDao.CURRENT_GPS_ID) {
                             currentAddress.text = entity.addrKr?.replace(getString(R.string.korea), "") ?: ""
                             if (entity.addrKr == GetAppInfo.getUserLastAddress(activity)) {
+=======
+                val dataList = GpsRepository(activity).findAll()
+                withContext(Dispatchers.Main) {
+                    for (entity in dataList) {
+                        if (entity.name == SpDao.CURRENT_GPS_ID) {
+                            currentAddress.text = entity.addrKr?.replace(getString(R.string.korea), "") ?: ""
+                            if (entity.addrKr == GetAppInfo.getUserLastAddress()) {
+>>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
                                 currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))
                                 currentGpsImg.imageTintList =
                                     ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
@@ -131,11 +143,10 @@ class SearchDialog(
                                 currentGpsImg.imageTintList =
                                     ColorStateList.valueOf(activity.getColor(R.color.theme_text_color))
                             }
-                        } else {
-                            addCurrentItem(entity.addrKr.toString(), entity.addrEn.toString())
-                            currentAdapter.notifyDataSetChanged()
-                        }
+                        } else addCurrentItem(entity.addrKr.toString(), entity.addrEn.toString())
                     }
+
+                    currentAdapter.notifyDataSetChanged()
                 }
             }
 
@@ -156,8 +167,6 @@ class SearchDialog(
                     }
                 }
             })
-
-            currentAdapter.notifyDataSetChanged()
         }
         // 주소 등록 다이얼로그 생성
         else {
@@ -175,7 +184,7 @@ class SearchDialog(
     }
 
     // 검색창 리스너
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "InflateParams")
     private fun searchEditListener(listView: ListView, editText: EditText, noResult: TextView) {
         @SuppressLint("InflateParams")
         val searchItem = ArrayList<String>()
@@ -328,12 +337,11 @@ class SearchDialog(
         )
 
         db.update(model)
-        SetAppInfo.setUserLastAddr(activity, addrKr ?: "")
+        SetAppInfo.setUserLastAddr(addrKr ?: "")
     }
 
     private fun isKorea(): Boolean =
-        GetAppInfo.getUserLocation(activity) == SpDao.LANG_KR ||
-                GetSystemInfo.getLocale(activity) == Locale.KOREA
+        GetAppInfo.getUserLocation() == SpDao.LANG_KR || GetSystemInfo.getLocale() == Locale.KOREA
 
     // 리스트 아이템 추가
     private fun addCurrentItem(addrKr: String?, addrEn: String?): SearchDialog {

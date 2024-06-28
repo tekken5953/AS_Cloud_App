@@ -3,9 +3,10 @@ package app.airsignal.weather.login
 import android.app.Activity
 import androidx.appcompat.widget.AppCompatButton
 import app.airsignal.weather.dao.IgnoredKeyFile
-import app.airsignal.weather.dao.RDBLogcat
+import app.airsignal.weather.dao.StaticDataObject
 import app.airsignal.weather.db.sp.SetAppInfo
 import app.airsignal.weather.db.sp.SharedPreferenceManager
+import app.airsignal.weather.db.sp.SpDao
 import app.airsignal.weather.utils.view.RefreshUtils
 import app.airsignal.weather.utils.plain.ToastUtils
 import com.airbnb.lottie.LottieAnimationView
@@ -30,6 +31,8 @@ class KakaoLogin(private val activity: Activity): KoinComponent {
     private val toast: ToastUtils by inject()
 
     init { KakaoSdk.init(activity, IgnoredKeyFile.KAKAO_NATIVE_APP_KEY) }
+
+    private val sp: SharedPreferenceManager by inject()
 
     /** 카카오톡 설치 확인 후 로그인**/
     fun checkInstallKakaoTalk(btn: AppCompatButton?) {
@@ -119,7 +122,7 @@ class KakaoLogin(private val activity: Activity): KoinComponent {
     private fun enterMainPage() {
         CoroutineScope(Dispatchers.IO).launch {
             saveUserSettings()
-            SetAppInfo.setUserLoginPlatform(activity, RDBLogcat.LOGIN_KAKAO)
+            SetAppInfo.setUserLoginPlatform(StaticDataObject.LOGIN_KAKAO)
             withContext(Dispatchers.Main) {
                 delay(500)
                 activity.finish()
@@ -130,11 +133,10 @@ class KakaoLogin(private val activity: Activity): KoinComponent {
     private fun saveUserSettings() {
         UserApiClient.instance.me { user, _ ->
             user?.kakaoAccount?.let { account ->
-                SharedPreferenceManager(activity)
-                    .setString(IgnoredKeyFile.lastLoginPhone, account.phoneNumber.toString())
-                    .setString(IgnoredKeyFile.userId, account.profile?.nickname.toString())
-                    .setString(IgnoredKeyFile.userProfile, account.profile?.profileImageUrl.toString())
-                    .setString(IgnoredKeyFile.userEmail, account.email.toString())
+                sp.setString(SpDao.LAST_LOGIN_PHONE, account.phoneNumber.toString())
+                    .setString(SpDao.USER_ID, account.profile?.nickname.toString())
+                    .setString(SpDao.USER_PROFILE, account.profile?.profileImageUrl.toString())
+                    .setString(SpDao.USER_EMAIL, account.email.toString())
             }
         }
     }

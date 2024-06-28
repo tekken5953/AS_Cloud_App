@@ -10,13 +10,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentManager
 import app.airsignal.weather.R
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.db.sp.SetAppInfo
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -35,8 +33,7 @@ class  FirstLocCheckDialog(
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
+        savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.dialog_first_perm, container, false)
     }
 
@@ -50,9 +47,13 @@ class  FirstLocCheckDialog(
             if (!perm.isLocationPermitted()) {  // 위치 권한 허용?
                 if (perm.isShouldShowRequestPermissionRationale(    // 권한 거부가 2번 이하?
                         activity, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+<<<<<<< HEAD
                     when (GetAppInfo.getInitLocPermission(activity)) { // 위치 권한 요청이 처음?
+=======
+                    when (GetAppInfo.getInitLocPermission()) { // 위치 권한 요청이 처음?
+>>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
                         "" -> {
-                            SetAppInfo.setInitLocPermission(activity, "Second")
+                            SetAppInfo.setInitLocPermission("Second")
                             perm.requestLocation()
                         }
                         "Second" -> LocPermCautionDialog(activity, fm, BottomSheetDialogFragment().tag).show()

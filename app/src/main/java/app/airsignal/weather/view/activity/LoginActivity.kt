@@ -15,16 +15,16 @@ import app.airsignal.weather.utils.controller.ScreenController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import org.koin.android.ext.android.inject
 import org.koin.core.parameter.parametersOf
+import org.koin.core.qualifier.named
 
 
-class LoginActivity
-    : BaseActivity<ActivityLoginBinding>() {
+class LoginActivity : BaseActivity<ActivityLoginBinding>() {
     override val resID: Int get() = R.layout.activity_login
     private val subFCM: SubFCM by inject()
 
-    private val googleLogin: GoogleLogin by inject { parametersOf(this) }  // 구글 로그인
-    private val kakaoLogin: KakaoLogin by inject { parametersOf(this) }   // 카카오 로그인
-    private val naverLogin: NaverLogin by inject { parametersOf(this) }  // 네이버 로그인
+    private val googleLogin: GoogleLogin by inject(named("googleLogin")) { parametersOf(this) }  // 구글 로그인
+    private val kakaoLogin: KakaoLogin by inject(named("kakaoLogin")) { parametersOf(this) }   // 카카오 로그인
+    private val naverLogin: NaverLogin by inject(named("naverLogin")) { parametersOf(this) }  // 네이버 로그인
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +60,7 @@ class LoginActivity
                 // 로그인 성공 함
                 RESULT_OK -> {
                     val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                    if (task.result.email == IgnoredKeyFile.notificationAdmin) subFCM.subAdminTopic()
+                    if (task.result.email == IgnoredKeyFile.NOTIFICATION_ADMIN_EMAIL) subFCM.subAdminTopic()
 
                     googleLogin.handleSignInResult(task)
                 }
