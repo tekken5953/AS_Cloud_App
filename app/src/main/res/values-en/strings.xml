@@ -255,8 +255,5 @@
     <string name="widget_perm_denied">Please change the permission to \'Allow at all times\' and reinstall it</string>
     <string name="widget_not_refreshable">Data refresh is possible every 1 minute</string>
     <string name="keep_login_history">Keep login history</string>
-<<<<<<< HEAD
-=======
     <string name="warning_time_unit">KST</string>
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
 </resources>

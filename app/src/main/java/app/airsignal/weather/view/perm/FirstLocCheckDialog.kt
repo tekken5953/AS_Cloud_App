@@ -15,6 +15,7 @@ import app.airsignal.weather.R
 import app.airsignal.weather.db.sp.GetAppInfo
 import app.airsignal.weather.db.sp.GetSystemInfo
 import app.airsignal.weather.db.sp.SetAppInfo
+import app.airsignal.weather.utils.view.EnterPageUtil
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -47,11 +48,7 @@ class  FirstLocCheckDialog(
             if (!perm.isLocationPermitted()) {  // 위치 권한 허용?
                 if (perm.isShouldShowRequestPermissionRationale(    // 권한 거부가 2번 이하?
                         activity, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
-<<<<<<< HEAD
-                    when (GetAppInfo.getInitLocPermission(activity)) { // 위치 권한 요청이 처음?
-=======
                     when (GetAppInfo.getInitLocPermission()) { // 위치 권한 요청이 처음?
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
                         "" -> {
                             SetAppInfo.setInitLocPermission("Second")
                             perm.requestLocation()

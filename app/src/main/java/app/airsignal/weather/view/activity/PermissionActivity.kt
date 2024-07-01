@@ -22,12 +22,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-<<<<<<< HEAD
-class PermissionActivity :
-    BaseActivity<ActivityPermissionBinding>(), KoinComponent{
-=======
-class PermissionActivity : BaseActivity<ActivityPermissionBinding>(), KoinComponent{
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
+class PermissionActivity : BaseActivity<ActivityPermissionBinding>(), KoinComponent {
     override val resID: Int get() = R.layout.activity_permission
     private val perm = RequestPermissionsUtil(this)
     private val enter by lazy { EnterPageUtil(this) }
@@ -50,20 +45,17 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>(), KoinCompon
                 return
             }
 
-<<<<<<< HEAD
-        if (GetAppInfo.getInitNotiPermission(this) != "") {
-            toast.showMessage(getString(R.string.noti_always_can))
-            enter.toMain(GetAppInfo.getUserLoginPlatform(this), inAppExtraList)
-            return
-        }
-=======
+            if (GetAppInfo.getInitNotiPermission() != "") {
+                toast.showMessage(getString(R.string.noti_always_can))
+                enter.toMain(GetAppInfo.getUserLoginPlatform(), inAppExtraList)
+                return
+            }
             if (GetAppInfo.getInitNotiPermission() != "") {
                 toast.showMessage(getString(R.string.noti_always_can))
                 enter.toMain(GetAppInfo.getUserLoginPlatform(), inAppExtraList)
                 return
             }
         }.exceptionOrNull()?.stackTraceToString()
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
 
         SetAppInfo.setInitNotiPermission("Not Init")
         perm.requestNotification()  // 알림 권한 요청
@@ -82,21 +74,25 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>(), KoinCompon
         val userDataIndex = binding.permissionUserDataNotice.text.toString().indexOf(getString(R.string.data_usages).lowercase())
         val spanUserData = SpannableStringBuilder(binding.permissionUserDataNotice.text.toString())
 
-        spanUserData.setSpan(UnderlineSpan(),
-                userDataIndex, userDataIndex + getString(R.string.data_usages).length,
-                Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
-
-        spanUserData.setSpan(ForegroundColorSpan(getColor(R.color.main_blue_color)),
+        spanUserData.setSpan(
+            UnderlineSpan(),
             userDataIndex, userDataIndex + getString(R.string.data_usages).length,
-            Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+            Spannable.SPAN_EXCLUSIVE_INCLUSIVE
+        )
+
+        spanUserData.setSpan(
+            ForegroundColorSpan(getColor(R.color.main_blue_color)),
+            userDataIndex, userDataIndex + getString(R.string.data_usages).length,
+            Spannable.SPAN_EXCLUSIVE_INCLUSIVE
+        )
 
         binding.permissionUserDataNotice.text = spanUserData
 
         binding.permissionUserDataNotice.setOnClickListener {
             // 개인정보 처리방침 열림
             val intent = Intent(this@PermissionActivity, WebURLActivity::class.java).apply {
-                putExtra("sort","dataUsage")
-                putExtra("appBar",true)
+                putExtra("sort", "dataUsage")
+                putExtra("appBar", true)
             }
             startActivity(intent)
         }
@@ -108,12 +104,21 @@ class PermissionActivity : BaseActivity<ActivityPermissionBinding>(), KoinCompon
 
         // 권한 허용 버튼 클릭
         binding.permissionOkBtn.setOnClickListener {
-            FirstLocCheckDialog(this,supportFragmentManager,BottomSheetDialogFragment().tag).show()
+            FirstLocCheckDialog(
+                this,
+                supportFragmentManager,
+                BottomSheetDialogFragment().tag
+            ).show()
         }
     }
 
-    @Deprecated("Deprecated in Java", ReplaceWith(
-        "EnterPageUtil(this).fullyExit()",
-        "app.airsignal.weather.util.EnterPageUtil"))
-    override fun onBackPressed() { enter.fullyExit() }
+    @Deprecated(
+        "Deprecated in Java", ReplaceWith(
+            "EnterPageUtil(this).fullyExit()",
+            "app.airsignal.weather.util.EnterPageUtil"
+        )
+    )
+    override fun onBackPressed() {
+        enter.fullyExit()
+    }
 }

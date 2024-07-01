@@ -72,9 +72,5 @@ class LocPermCautionDialog(
     }
 
     // 레이아웃 노출
-<<<<<<< HEAD
     fun show() { LocPermCautionDialog(activity, fm, tagId).showNow(fm, tagId) }
-=======
-    fun show() = LocPermCautionDialog(activity, fm, tagId).showNow(fm, tagId)
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
 }

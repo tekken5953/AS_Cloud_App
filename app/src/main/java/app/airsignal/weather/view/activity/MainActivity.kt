@@ -84,10 +84,7 @@ class MainActivity
     private val getDataViewModel by viewModel<GetWeatherViewModel>()
     private val locationClass: GetLocation by inject()
     private val toast: ToastUtils by inject()
-<<<<<<< HEAD
-=======
     private val db: GpsRepository by inject()
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
 
     private var isNight = false
     private var isBackPressed = false
@@ -690,8 +687,8 @@ class MainActivity
 
                 metaAddr?.let { reNewTopicInMain(it) }
 
-//                isNight = true
-                isNight = GetAppInfo.getIsNight(result.sun?.sunrise ?: "0000",result.sun?.sunset ?: "0000")
+                isNight = true
+//                isNight = GetAppInfo.getIsNight(result.sun?.sunrise ?: "0000",result.sun?.sunset ?: "0000")
 
                 isDataResponse = true
                 withContext(mainDispatcher) {

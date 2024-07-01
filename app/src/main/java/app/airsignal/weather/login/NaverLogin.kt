@@ -32,10 +32,7 @@ import org.koin.core.component.inject
 
 class NaverLogin(private val activity: Activity): KoinComponent {
     private val toast: ToastUtils by inject()
-<<<<<<< HEAD
-=======
     private val sp: SharedPreferenceManager by inject()
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
 
     fun init(): NaverLogin {
         NaverIdLoginSDK.initialize(

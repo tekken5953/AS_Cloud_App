@@ -107,12 +107,15 @@ class SearchDialog(
                 this@SearchDialog.dismiss()
                 CoroutineScope(Dispatchers.IO).launch {
                     val dbFind = db.findByName(SpDao.CURRENT_GPS_ID)
-                    dbUpdate(dbFind?.addrKr,dbFind?.addrEn,SpDao.CURRENT_GPS_ID)
+                    dbUpdate(dbFind?.addrKr, dbFind?.addrEn, SpDao.CURRENT_GPS_ID)
 
                     withContext(Dispatchers.Main) {
                         this@SearchDialog.dismiss()
                         delay(300)
-                        if (activity is MainActivity) activity.recreateMainActivity(dbFind?.addrKr,dbFind?.addrEn)
+                        if (activity is MainActivity) activity.recreateMainActivity(
+                            dbFind?.addrKr,
+                            dbFind?.addrEn
+                        )
                     }
                 }
             }
@@ -121,65 +124,82 @@ class SearchDialog(
             val rv: RecyclerView = view.findViewById(R.id.changeAddressRv)
             rv.adapter = currentAdapter
             CoroutineScope(Dispatchers.IO).launch {
-<<<<<<< HEAD
                 GpsRepository(activity).findAll().forEach { entity ->
                     withContext(Dispatchers.Main) {
                         if (entity.name == SpDao.CURRENT_GPS_ID) {
-                            currentAddress.text = entity.addrKr?.replace(getString(R.string.korea), "") ?: ""
-                            if (entity.addrKr == GetAppInfo.getUserLastAddress(activity)) {
-=======
-                val dataList = GpsRepository(activity).findAll()
-                withContext(Dispatchers.Main) {
-                    for (entity in dataList) {
-                        if (entity.name == SpDao.CURRENT_GPS_ID) {
-                            currentAddress.text = entity.addrKr?.replace(getString(R.string.korea), "") ?: ""
+                            currentAddress.text =
+                                entity.addrKr?.replace(getString(R.string.korea), "") ?: ""
                             if (entity.addrKr == GetAppInfo.getUserLastAddress()) {
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
-                                currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))
-                                currentGpsImg.imageTintList =
-                                    ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
-                            } else {
-                                currentAddress.setTextColor(activity.getColor(R.color.theme_text_color))
-                                currentGpsImg.imageTintList =
-                                    ColorStateList.valueOf(activity.getColor(R.color.theme_text_color))
+                                val dataList = GpsRepository(activity).findAll()
+                                withContext(Dispatchers.Main) {
+                                    for (entity in dataList) {
+                                        if (entity.name == SpDao.CURRENT_GPS_ID) {
+                                            currentAddress.text = entity.addrKr?.replace(
+                                                getString(R.string.korea),
+                                                ""
+                                            ) ?: ""
+                                            if (entity.addrKr == GetAppInfo.getUserLastAddress()) {
+                                                currentAddress.setTextColor(activity.getColor(R.color.main_blue_color))
+                                                currentGpsImg.imageTintList =
+                                                    ColorStateList.valueOf(activity.getColor(R.color.main_blue_color))
+                                            } else {
+                                                currentAddress.setTextColor(activity.getColor(R.color.theme_text_color))
+                                                currentGpsImg.imageTintList =
+                                                    ColorStateList.valueOf(activity.getColor(R.color.theme_text_color))
+                                            }
+                                        } else addCurrentItem(
+                                            entity.addrKr.toString(),
+                                            entity.addrEn.toString()
+                                        )
+                                    }
+
+                                    currentAdapter.notifyDataSetChanged()
+                                }
                             }
-                        } else addCurrentItem(entity.addrKr.toString(), entity.addrEn.toString())
-                    }
 
-                    currentAdapter.notifyDataSetChanged()
-                }
-            }
+                            // 등록 된 주소 클릭 시 등록 된 주소로 데이터 호출
+                            currentAdapter.setOnItemClickListener(object :
+                                OnAdapterItemSingleClick() {
+                                override fun onSingleClick(v: View?, position: Int) {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        val currentAddr = currentList[position]
+                                        dbUpdate(
+                                            currentAddr.kr,
+                                            currentAddr.en,
+                                            currentAddr.kr ?: ""
+                                        )
 
-            // 등록 된 주소 클릭 시 등록 된 주소로 데이터 호출
-            currentAdapter.setOnItemClickListener(object : OnAdapterItemSingleClick() {
-                override fun onSingleClick(v: View?, position: Int) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val currentAddr = currentList[position]
-                        dbUpdate(currentAddr.kr,currentAddr.en,currentAddr.kr ?: "")
-
-                        withContext(Dispatchers.Main) {
-                            withContext(Dispatchers.Main) {
-                                this@SearchDialog.dismiss()
-                                delay(300)
-                                if (activity is MainActivity) activity.recreateMainActivity(currentAddr.kr,currentAddr.en)
+                                        withContext(Dispatchers.Main) {
+                                            withContext(Dispatchers.Main) {
+                                                this@SearchDialog.dismiss()
+                                                delay(300)
+                                                if (activity is MainActivity) activity.recreateMainActivity(
+                                                    currentAddr.kr,
+                                                    currentAddr.en
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                        // 주소 등록 다이얼로그 생성
+                        else {
+                            val searchBack: ImageView = view.findViewById(R.id.searchBack)
+                            searchBack.setOnClickListener {
+                                CompletableFuture.supplyAsync { this@SearchDialog.dismiss() }
+                                    .thenAccept { show(0) }
                             }
+
+                            searchEditListener(
+                                view.findViewById(R.id.searchAddressListView),
+                                view.findViewById(R.id.searchAddressView),
+                                view.findViewById(R.id.searchAddressNoResult)
+                            )
                         }
                     }
                 }
-            })
-        }
-        // 주소 등록 다이얼로그 생성
-        else {
-            val searchBack: ImageView = view.findViewById(R.id.searchBack)
-            searchBack.setOnClickListener {
-                CompletableFuture.supplyAsync { this@SearchDialog.dismiss() }.thenAccept { show(0) }
             }
-
-            searchEditListener(
-                view.findViewById(R.id.searchAddressListView),
-                view.findViewById(R.id.searchAddressView),
-                view.findViewById(R.id.searchAddressNoResult)
-            )
         }
     }
 

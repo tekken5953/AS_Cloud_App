@@ -80,10 +80,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
     private val appVersionViewModel by viewModel<GetAppVersionViewModel>()
     private val httpClient by inject<HttpClient>()
     private val toast: ToastUtils by inject()
-<<<<<<< HEAD
-=======
     private val sp: SharedPreferenceManager by inject()
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
 
     private val googleLogin: GoogleLogin by inject(named("googleLogin")) { parametersOf(this) }  // 구글 로그인
     private val kakaoLogin: KakaoLogin by inject(named("kakaoLogin")) { parametersOf(this) }   // 카카오 로그인
@@ -152,28 +149,16 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
                     builder.dismiss()
                     ioThread.launch {
                         when (lastLogin) { // 로그인 했던 플랫폼에 따라서 로그아웃 로직 호출
-<<<<<<< HEAD
-                            RDBLogcat.LOGIN_KAKAO -> {
-                                if (check.isChecked) kakaoLogin.logout(binding.settingPb)
-                                else kakaoLogin.disconnectFromKakao(binding.settingPb)
-                            }
-                            RDBLogcat.LOGIN_NAVER -> {
-=======
                             StaticDataObject.LOGIN_KAKAO -> {
                                 if (check.isChecked) kakaoLogin.logout(binding.settingPb)
                                 else kakaoLogin.disconnectFromKakao(binding.settingPb)
                             }
                             StaticDataObject.LOGIN_NAVER -> {
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
                                 val naver = naverLogin.init()
                                 if (check.isChecked) naver.logout(binding.settingPb)
                                 else naver.disconnectFromNaver(binding.settingPb)
                             }
-<<<<<<< HEAD
-                            RDBLogcat.LOGIN_GOOGLE -> {
-=======
                             StaticDataObject.LOGIN_GOOGLE -> {
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
                                 if (check.isChecked) googleLogin.logout(binding.settingPb)
                                 else googleLogin.revokeAccess(binding.settingPb)
                             }
@@ -181,11 +166,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
                         withContext(Dispatchers.IO) {
                             delay(100)
-<<<<<<< HEAD
-                            SetAppInfo.removeAllKeys(this@SettingActivity)
-=======
                             SetAppInfo.removeAllKeys()
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
                         }
                     }
                 }
@@ -957,11 +938,7 @@ class SettingActivity : BaseActivity<ActivitySettingBinding>() {
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 seekBar?.let {
-<<<<<<< HEAD
-                    ioThread.launch { SetAppInfo.setWeatherBoxOpacity2(this@SettingActivity, it.progress ) }
-=======
                     ioThread.launch { SetAppInfo.setWeatherBoxOpacity2(it.progress ) }
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
                     toast.showMessage(getString(R.string.ok_change_setting),1)
                 }
             }

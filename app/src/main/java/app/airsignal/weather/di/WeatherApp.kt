@@ -43,12 +43,9 @@ class WeatherApp : Application() {
     private val baseModule = module {
         single { HttpClient }
         factory { SubFCM() }
-<<<<<<< HEAD
         single { ToastUtils(applicationContext) }
-=======
         single { GetLocation(get()) }
         single { ToastUtils(get()) }
->>>>>>> f5127faf2733fe7a95cb90d2e31e3722846e9b16
     }
 
     private val repositoryModule = module {
